@@ -701,10 +701,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop.GetTag(tag, out value, out tagExists);
 		}
 
+		internal override void Open()
+		{
+			_realImageSop.Open();
+		}
+
+		internal override void Close()
+		{
+			_realImageSop.Close();
+		}
+
 		protected override void Dispose(bool disposing)
 		{
-			_realImageSop = null;
-			base.Dispose(disposing);
+			throw new InvalidOperationException("Sop objects should be disposed by using the Open/Close methods.");
 		}
 	}
 }

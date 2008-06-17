@@ -36,6 +36,8 @@
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using NUnit.Framework;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tests
 {
@@ -49,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Tests
 		[TestFixtureSetUp]
 		public void Init()
 		{
-
+			Platform.SetExtensionFactory(new NullExtensionFactory());
 		}
 
 		[TestFixtureTearDown]
@@ -153,18 +155,25 @@ namespace ClearCanvas.ImageViewer.Tests
 			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image1");
 
 			studyTree1.AddImage(image1);
-			ReferenceCountedObjectWrapper sop = studyTree1.SopCache[image1.SopInstanceUID];
+			studyTree1.GetSop(image1.SopInstanceUID);
 
-			Assert.IsTrue(sop.ReferenceCount == 1);
+			Sop cachedSop1 = studyTree1.GetSop(image1.SopInstanceUID);
+			Assert.IsTrue(cachedSop1 == image1, "The cached sop is not the same as the one added."); //same object
 			
 			studyTree2.AddImage(image2);
-			Assert.IsTrue(sop.ReferenceCount == 2);
-
+			Sop cachedSop2 = studyTree2.GetSop(image2.SopInstanceUID);
+			Assert.IsTrue(cachedSop2 == cachedSop1, "The sop should be the same object as cachedSop1."); //same object
+			
 			viewer2.Dispose();
-			Assert.IsTrue(sop.ReferenceCount == 1);
 
+			cachedSop1 = studyTree1.GetSop(image1.SopInstanceUID);
+			Assert.IsTrue(cachedSop1 == image1, "The cached sop is not the same as the one added."); //same object
+
+			string sopInstanceUid = image1.SopInstanceUID;
 			viewer1.Dispose();
-			Assert.IsTrue(sop.ReferenceCount == 0);
+
+			ImageSop reference = SopCache.Get(sopInstanceUid);
+			Assert.AreEqual(reference, null, "The sop should no longer be cached.");
 		}
 	}
 }

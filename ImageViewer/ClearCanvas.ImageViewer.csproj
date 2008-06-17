@@ -249,6 +249,7 @@
     <Compile Include="StudyManagement\ImagePlaneHelper.cs" />
     <Compile Include="StudyManagement\FrameDataRetrieverFactory.cs" />
     <Compile Include="StudyManagement\OpenStudyHelper.cs" />
+    <Compile Include="StudyManagement\SopCache.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
     <Compile Include="Imaging\LutCollection.cs" />

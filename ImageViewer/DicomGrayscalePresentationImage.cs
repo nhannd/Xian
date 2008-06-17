@@ -46,9 +46,7 @@ namespace ClearCanvas.ImageViewer
 		: GrayscalePresentationImage, IImageSopProvider
 	{
 		[CloneCopyReference]
-		private readonly ImageSop _imageSop;
-		[CloneCopyReference]
-		private readonly Frame _frame;
+		private Frame _frame;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomGrayscalePresentationImage"/>.
@@ -76,7 +74,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(frame, "frame");
 			_frame = frame;
-			_imageSop = frame.ParentImageSop;
+			_frame.ParentImageSop.Open();
 		}
 
 		/// <summary>
@@ -86,6 +84,7 @@ namespace ClearCanvas.ImageViewer
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
+			_frame.ParentImageSop.Open();
 		}
 
 		/// <summary>
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public ImageSop ImageSop
 		{
-			get { return _imageSop; }
+			get { return _frame.ParentImageSop; }
 		}
 
 		/// <summary>
@@ -123,6 +122,20 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Dispose method.  Inheritors should override this method to do any additional cleanup.
+		/// </summary>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && _frame != null)
+			{
+				_frame.ParentImageSop.Close();
+				_frame = null;
+			}
+
+			base.Dispose(disposing);
+		}
 
 		/// <summary>
 		/// Creates the <see cref="IAnnotationLayout"/> for this image.
@@ -139,7 +152,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>The Instance Number as a string.</returns>
 		public override string ToString()
 		{
-			return _imageSop.InstanceNumber.ToString();
+			return _frame.ParentImageSop.InstanceNumber.ToString();
 		}
 	}
 }

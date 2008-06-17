@@ -34,13 +34,14 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
 	/// Represents the DICOM concept of a frame.
 	/// </summary>
-	public abstract class Frame
+	public abstract class Frame : IDisposable
 	{
 		#region Private fields
 
@@ -59,6 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="frameNumber">The first frame is frame 1.</param>
 		protected internal Frame(ImageSop parentImageSop, int frameNumber)
 		{
+			Platform.CheckForNullReference(parentImageSop, "parentImageSop");
 			Platform.CheckPositive(frameNumber, "frameNumber");
 			_parentImageSop = parentImageSop;
 			_frameNumber = frameNumber;
@@ -900,5 +902,33 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				greenLut,
 				blueLut);
 		}
+
+		/// <summary>
+		/// Inheritors should override this method to do additional cleanup.
+		/// </summary>
+		/// <remarks>
+		/// Frames should never be disposed by client code; they are disposed by
+		/// the parent <see cref="ImageSop"/> via the <see cref="Sop.Close"/> method.
+		/// </remarks>
+		protected virtual void Dispose(bool disposing)
+		{
+		}
+
+		#region IDisposable Members
+
+		void IDisposable.Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
+		}
+
+		#endregion
 	}
 }

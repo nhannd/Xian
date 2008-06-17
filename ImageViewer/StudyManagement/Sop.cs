@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -104,9 +105,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </list>
 	/// </para>
 	/// </remarks>
-	public abstract class Sop
+	public abstract class Sop : IDisposable
 	{
-		private Series _parentSeries;
+		private readonly object _syncLock = new object();
+		private volatile int _openCount = 0;
+		private volatile bool _isDisposed = false;
+		private event EventHandler _disposing;
+
+		private volatile Series _parentSeries;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="Sop"/>.
@@ -823,11 +829,69 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		#region Disposal
+		/// <summary>
+		/// When a reference to a <see cref="Sop"/> is going to be held for an extended period
+		/// of time, call this method to ensure the object remains in a valid state.
+		/// </summary>
+		internal virtual void Open()
+		{
+			lock(_syncLock)
+			{
+				CheckDisposed();
+				++_openCount;
+			}
+		}
 
 		/// <summary>
+		/// Closes a reference to this <see cref="Sop"/>.
 		/// </summary>
-		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		/// <remarks>
+		/// Internally, the <see cref="Sop"/> maintains a reference count of the number
+		/// of calls to <see cref="Open"/>; you must call <see cref="Close"/> exactly once
+		/// for each call to <see cref="Open"/>.
+		/// </remarks>
+		internal virtual void Close()
+		{
+			lock (_syncLock)
+			{
+				CheckDisposed();
+				if (_openCount > 0)
+					--_openCount;
+
+				if (_openCount == 0)
+					(this as IDisposable).Dispose();
+			}
+		}
+
+		#region Disposal
+
+		internal event EventHandler Disposing
+		{
+			add { _disposing += value; }
+			remove { _disposing += value; }
+		}
+
+		/// <summary>
+		/// Checks if the <see cref="Sop"/> has already been disposed, and if so, throws an exception.
+		/// </summary>
+		internal void CheckDisposed()
+		{
+			lock (_syncLock)
+			{
+				if (_isDisposed)
+					throw new ObjectDisposedException("The Sop is already disposed.");
+			}
+		}
+
+		/// <summary>
+		/// Called indirectly via the <see cref="Close"/> method when the object
+		/// is no longer needed.
+		/// </summary>
+		/// <remarks>
+		/// You should not dispose of the <see cref="Sop"/> directly, but
+		/// rather use the <see cref="Open"/> and <see cref="Close"/> methods,
+		/// as these objects are often referenced in many places.
+		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
 		}
@@ -837,12 +901,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Releases all resources used by this <see cref="Sop"/>.
 		/// </summary>
-		public void Dispose()
+		/// <remarks>
+		/// You should not dispose of the <see cref="Sop"/> directly, but
+		/// rather use the <see cref="Open"/> and <see cref="Close"/> methods,
+		/// as these objects are often referenced in many places.
+		/// </remarks>
+		void IDisposable.Dispose()
 		{
 			try
 			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
+				lock (_syncLock)
+				{
+					EventsHelper.Fire(_disposing, this, EventArgs.Empty);
+					Dispose(true);
+					_isDisposed = true;
+					GC.SuppressFinalize(this);
+				}
 			}
 			catch (Exception e)
 			{

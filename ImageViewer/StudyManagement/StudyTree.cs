@@ -30,10 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
@@ -41,29 +38,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public sealed class StudyTree
 	{
-		private PatientCollection _patients;
-
 		// We add these master dictionaries so we can have rapid
 		// look up of study, series and sop objects without having to traverse
 		// the tree.
+		private PatientCollection _patients;
 		private StudyCollection _studies;
 		private SeriesCollection _series;
 		private SopCollection _sops;
 
-		private static readonly Dictionary<string,ReferenceCountedObjectWrapper<Sop>> _sopCache = new Dictionary<string, ReferenceCountedObjectWrapper<Sop>>();
-
 		internal StudyTree()
 		{
+			_patients = new PatientCollection();
+			_studies = new StudyCollection();
+			_series = new SeriesCollection();
+			_sops = new SopCollection();
 		}
-
-#if UNIT_TESTS
-
-		internal Dictionary<string, ReferenceCountedObjectWrapper<Sop>> SopCache
-		{
-			get { return _sopCache; }
-		}
-
-#endif
 
 		/// <summary>
 		/// Gets the collection of <see cref="Patient"/> objects that belong
@@ -71,46 +60,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public PatientCollection Patients
 		{
-			get 
-			{ 
-				if (_patients == null)
-					_patients = new PatientCollection();
-
-				return _patients; 
-			}
+			get { return _patients; }
 		}
 
 		private StudyCollection Studies
 		{
-			get
-			{
-				if (_studies == null)
-					_studies = new StudyCollection();
-
-				return _studies;
-			}
+			get { return _studies; }
 		}
 
-		private SeriesCollection SeriesCollection
+		private SeriesCollection Series
 		{
-			get
-			{
-				if (_series == null)
-					_series = new SeriesCollection();
-
-				return _series;
-			}
+			get { return _series; }
 		}
 
 		private SopCollection Sops
 		{
-			get
-			{
-				if (_sops == null)
-					_sops = new SopCollection();
-
-				return _sops;
-			}
+			get { return _sops; }
 		}
 
 		/// <summary>
@@ -155,10 +120,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForEmptyString(seriesInstanceUID, "seriesInstanceUID");
 
-			if (!this.SeriesCollection.ContainsKey(seriesInstanceUID))
+			if (!this.Series.ContainsKey(seriesInstanceUID))
 				return null;
 
-			return this.SeriesCollection[seriesInstanceUID];
+			return this.Series[seriesInstanceUID];
 		}
 
 		/// <summary>
@@ -177,118 +142,82 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return this.Sops[sopInstanceUID];
 		}
 
+		#region Private methods
+
+		/// <summary>
+		/// Adds an <see cref="ImageSop"/> to the <see cref="StudyTree"/>.
+		/// </summary>
 		internal void AddImage(ImageSop image)
 		{
 			Platform.CheckForNullReference(image, "image");
 
 			image.Validate();
 
-			Patient patient = AddPatient(image.PatientId);
-			Study study = AddStudy(image.StudyInstanceUID, patient);
-			Series series = AddSeries(image.SeriesInstanceUID, study);
+			image.Open();
 
-			AddImage(image, series);
+			if (this.Sops.ContainsKey(image.SopInstanceUID))
+			{
+				image.Close();
+				return;
+			}
+
+			ImageSop cachedSop = SopCache.Add(image);
+			if (image != cachedSop) //there was already one in the cache.
+			{
+				image.Close();
+				cachedSop.Open();
+			}
+
+			image = new ImageSopProxy(cachedSop);
+			AddPatient(image);
+			AddStudy(image);
+			AddSeries(image);
+			this.Sops[image.SopInstanceUID] = image;
 		}
 
-		#region Private methods
-
-		private Patient AddPatient(string patientID)
+		private void AddPatient(ImageSop sop)
 		{
-			Patient patient;
-			if (!this.Patients.ContainsKey(patientID))
-			{
-				patient = new Patient();
-				this.Patients.Add(patientID, patient);
-			}
-			else
-			{
-				patient = _patients[patientID];
-			}
-			return patient;
+			if (_patients.ContainsKey(sop.PatientId))
+				return;
+
+			Patient patient = new Patient();
+			patient.SetSop(sop);
+
+			_patients[sop.PatientId] = patient;
 		}
 
-		private Study AddStudy(string studyInstanceUID, Patient patient)
+		private void AddStudy(ImageSop sop)
 		{
-			Study study;
-			StudyCollection studies = patient.Studies;
+			if (_studies.ContainsKey(sop.StudyInstanceUID))
+				return;
 
-			if (!studies.ContainsKey(studyInstanceUID))
-			{
-				// If this ever happens, it means that the study
-				// belongs to more than one patient, which means
-				// something has gone terribly wrong on the modality
-				if (this.Studies.ContainsKey(studyInstanceUID))
-					throw new Exception("Study belongs to more than one patient.");
+			Patient patient = _patients[sop.PatientId];
+			Study study = new Study(patient);
+			study.SetSop(sop);
+			patient.Studies[study.StudyInstanceUID] = study;
 
-				study = new Study(patient);
-				studies.Add(studyInstanceUID, study);
-				this.Studies.Add(studyInstanceUID, study);
-			}
-			else
-			{
-				study = studies[studyInstanceUID];
-			}
-			return study;
+			_studies[study.StudyInstanceUID] = study;
 		}
 
-		private Series AddSeries(string seriesInstanceUID, Study study)
+		private void AddSeries(ImageSop sop)
 		{
 			Series series;
-			SeriesCollection seriesCollection = study.Series;
-
-			if (!seriesCollection.ContainsKey(seriesInstanceUID))
+			if (_series.ContainsKey(sop.SeriesInstanceUID))
 			{
-				// If this ever happens, it means that the series
-				// belongs to more than one study, which means
-				// something has gone terribly wrong on the modality
-				if (this.SeriesCollection.ContainsKey(seriesInstanceUID))
-					throw new Exception("Series belongs to more than one study.");
-
-				series = new Series(study);
-				seriesCollection.Add(seriesInstanceUID, series);
-				this.SeriesCollection.Add(seriesInstanceUID, series);
+				series = _series[sop.SeriesInstanceUID];
 			}
 			else
 			{
-				series = seriesCollection[seriesInstanceUID];
+				Study study = _studies[sop.StudyInstanceUID];
+				series = new Series(study);
+				series.SetSop(sop);
+				study.Series[series.SeriesInstanceUID] = series;
+
+				_series[series.SeriesInstanceUID] = series;
 			}
 
-			return series;
-		}
-
-		private void AddImage(ImageSop image, Series series)
-		{
-			SopCollection sops = series.Sops;
-
-			if (!sops.ContainsKey(image.SopInstanceUID))
-			{
-				// If this ever happens, it means that the SOP
-				// belongs to more than one series, which means
-				// something has gone terribly wrong on the modality
-				if (this.Sops.ContainsKey(image.SopInstanceUID))
-					throw new Exception("SOP belongs to more than one series.");
-
-				// Try and add the image to the cache.  If it already exists
-				// it won't be added
-				if (!_sopCache.ContainsKey(image.SopInstanceUID))
-					_sopCache[image.SopInstanceUID] = new ReferenceCountedObjectWrapper<Sop>(image);
-				
-				_sopCache[image.SopInstanceUID].IncrementReferenceCount();
-				
-				// Create a proxy for actual image in the cache.  This allows
-				// for the sharing of images so we never have to keep copies
-				// of the image.  Clients use the proxy instead of the real image.
-				ImageSopProxy imageSopProxy = new ImageSopProxy((ImageSop)_sopCache[image.SopInstanceUID].Item);
-				imageSopProxy.ParentSeries = series;
-
-				// Propagate the image proxy up the tree so the parent nodes
-				// can access the tags in the image
-				series.SetSop(imageSopProxy);
-
-				// Add the proxy the SOP collection
-				sops.Add(imageSopProxy.SopInstanceUID, imageSopProxy);
-				this.Sops.Add(imageSopProxy.SopInstanceUID, imageSopProxy);
-			}
+			sop.ParentSeries = series;
+			series.Sops[sop.SopInstanceUID] = sop;
 		}
 
 		#endregion
@@ -324,28 +253,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (disposing)
 			{
-				foreach (Sop sop in _sops.Values)
+				if (_sops != null)
 				{
-					sop.ParentSeries.SetSop(null);
+					foreach (Sop sop in _sops.Values)
+						sop.Close();
 
-					if (_sopCache.ContainsKey(sop.SopInstanceUID))
-					{
-						_sopCache[sop.SopInstanceUID].DecrementReferenceCount();
-						if (!_sopCache[sop.SopInstanceUID].IsReferenceCountAboveZero())
-							_sopCache.Remove(sop.SopInstanceUID);
-					}
-				}
-
-				if (_patients != null)
-				{
-					_patients.Clear();
-					_patients = null;
-				}
-
-				if (_studies != null)
-				{
-					_studies.Clear();
-					_studies = null;
+					_sops.Clear();
+					_sops = null;
 				}
 
 				if (_series != null)
@@ -354,10 +268,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					_series = null;
 				}
 
-				if (_sops != null)
+				if (_studies != null)
 				{
-					_sops.Clear();
-					_sops = null;
+					_studies.Clear();
+					_studies = null;
+				}
+
+				if (_patients != null)
+				{
+					_patients.Clear();
+					_patients = null;
 				}
 			}
 		}

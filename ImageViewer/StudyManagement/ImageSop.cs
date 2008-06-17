@@ -88,6 +88,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					lock (_syncLock)
 					{
+						CheckDisposed();
 						if (_frames == null)
 						{
 							_frames = new FrameCollection();
@@ -504,6 +505,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Called indirectly via the <see cref="Sop.Close"/> method when the object
+		/// is no longer needed.
+		/// </summary>
+		/// <remarks>
+		/// You should not dispose of the <see cref="Sop"/> directly, but
+		/// rather use the <see cref="Sop.Open"/> and <see cref="Sop.Close"/> methods,
+		/// as these objects are often referenced in many places.
+		/// </remarks>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				lock(_syncLock)
+				{
+					if (_frames != null)
+					{
+						foreach (Frame frame in _frames)
+							(frame as IDisposable).Dispose();
+
+						_frames = null;
+					}
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+		
 		private void ValidateAllowableTransferSyntax()
 		{
 			// If it isn't one of the regular uncompressed transfer syntaxes, or if a codec does not
