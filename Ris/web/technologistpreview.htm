@@ -162,36 +162,8 @@
    		            var patientOrderData = data.ListOrdersResponse.Orders;
 		            if (patientOrderData)
 		            {
-
-		                var today = Date.today();
-		                var pastProcedures = patientOrderData.select(
-		                    function(item) 
-		                    { 
-		                        return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
-		                    }).sort(procedureScheduledDateComparison);
-
-		                var activeProcedures = patientOrderData.select(
-		                    function(item) 
-		                    { 
-		                        return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0;
-		                    }).sort(procedureScheduledDateComparison);
-
-			            var notScheduledActiveProceduress = patientOrderData.select(
-			                function(item) 
-			                { 
-			                    return item.ProcedureScheduledStartTime == null
-								&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0;
-			                }).sort(orderRequestScheduledDateComparison);
-							
-			            var notScheduledPastProceduress = patientOrderData.select(
-			                function(item) 
-			                { 
-			                    return item.ProcedureScheduledStartTime == null
-								&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
-			                }).sort(orderRequestScheduledDateComparison);
-
-			            activeProcedures = activeProcedures.concat(notScheduledActiveProceduress);
-			            pastProcedures = pastProcedures.concat(notScheduledPastProceduress);
+			            var activeProcedures = getActiveProcedures(patientOrderData);
+			            var pastProcedures = getNonActiveProcedures(patientOrderData);
 
 						// add a renderRow handler to highlight the correct row
 						var currentAccession = worklistItem.AccessionNumber;

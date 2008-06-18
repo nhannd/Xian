@@ -479,3 +479,72 @@ function getPatientAge(dateOfBirth, deathIndicator, timeOfDeath)
 		
 	return ageString;
 }
+
+function isProcedureStatusActive(procedureStatus)
+{
+	return procedureStatus.Code == "SC" || 
+			procedureStatus.Code == "IP";
+}
+
+function getActiveProcedures(patientOrderData)
+{
+	var today = Date.today();
+
+	var presentScheduledProcedures = patientOrderData.select(
+		function(item) 
+		{ 
+			return item.ProcedureScheduledStartTime &&
+					Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
+					isProcedureStatusActive(item.ProcedureStatus);
+		}).sort(procedureScheduledDateComparison);
+
+	var presentNotScheduledProceduress = patientOrderData.select(
+		function(item) 
+		{ 
+			return item.ProcedureScheduledStartTime == null &&
+					item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
+					isProcedureStatusActive(item.ProcedureStatus);
+		}).sort(orderRequestScheduledDateComparison);
+		
+	return presentScheduledProcedures .concat(presentNotScheduledProceduress);
+}
+
+function getNonActiveProcedures(patientOrderData)
+{
+
+	var today = Date.today();
+
+	// List only the non-Active present procedures
+	var presentScheduledProcedures = patientOrderData.select(
+		function(item) 
+		{ 
+			return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
+					isProcedureStatusActive(item.ProcedureStatus) == false;
+		}).sort(procedureScheduledDateComparison);
+
+	// List only the non-Active present not-scheduled procedures
+	var presentNotScheduledProceduress = patientOrderData.select(
+		function(item) 
+		{ 
+			return item.ProcedureScheduledStartTime == null &&
+					item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
+					isProcedureStatusActive(item.ProcedureStatus) == false;
+		}).sort(orderRequestScheduledDateComparison);
+
+	var pastScheduledProcedures = patientOrderData.select(
+		function(item) 
+		{ 
+			return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
+		}).sort(procedureScheduledDateComparison);
+
+	var pastNotScheduledProceduress = patientOrderData.select(
+		function(item) 
+		{ 
+			return item.ProcedureScheduledStartTime == null
+			&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
+		}).sort(orderRequestScheduledDateComparison);
+
+	return presentScheduledProcedures.concat(
+			presentNotScheduledProceduress.concat(
+			pastScheduledProcedures.concat(pastNotScheduledProceduress)));
+}
