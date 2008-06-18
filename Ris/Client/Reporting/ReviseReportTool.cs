@@ -47,7 +47,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [ButtonAction("apply", "folderexplorer-items-toolbar/Revise Report", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
     public class ReviseReportTool : ReportingWorkflowItemTool
     {
 

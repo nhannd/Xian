@@ -87,7 +87,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Report.Create,
                         AuthorityTokens.Workflow.Report.Cancel,
                         AuthorityTokens.Workflow.Report.Verify,
-                        AuthorityTokens.Workflow.Report.Publish,
                         AuthorityTokens.Workflow.Report.UnsupervisedReporting,
                         AuthorityTokens.Workflow.ExternalPractitioner.Create,
                         AuthorityTokens.Workflow.ExternalPractitioner.Update,

@@ -123,6 +123,10 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow creation of randomly generated test orders.")]
 			public const string CreateTestOrder = "Development/Create Test Order";
+
+			[AuthorityToken(Description = "Allow usage of the tool for manual publication of radiology reports.")]
+			public const string TestPublishReport = "Development/Test Publish";
+
 		}
 
 		/// <summary>
@@ -156,9 +160,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow radiology reports to be cancelled and returned to the communal worklist.")]
 				public const string Cancel = "Workflow/Report/Cancel";
-
-				[AuthorityToken(Description = "Allow manual publication of radiology reports.")]
-				public const string Publish = "Workflow/Report/Publish";
 
 				[AuthorityToken(Description = "Allow creation of radiology reports without specifying a supervising radiologist.")]
 				public const string UnsupervisedReporting = "Workflow/Report/Unsupervised Reporting";
