@@ -159,8 +159,8 @@
 					[
 						{	label: "Has allergies?",
 							cellType: "choice",
-							choices: ["No", "Yes"],
-							getValue: function(item) { return item.allergyStatus || "No"; },
+							choices: ["No known allergies", "Yes"],
+							getValue: function(item) { return item.allergyStatus || "No known allergies"; },
 							setValue: function(item, value) { item.allergyStatus = value; Field.show($("drugAllergiesSection"), item.allergyStatus == "Yes"); },
 							getError: function(item) { return null; }
 						}
