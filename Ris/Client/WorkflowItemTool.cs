@@ -8,6 +8,11 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Abstract base class for tools that operate in a <see cref="IWorkflowItemToolContext{TItem}"/> based context.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+	/// <typeparam name="TContext"></typeparam>
     public abstract class WorkflowItemTool<TItem, TContext> : Tool<TContext>, IDropHandler<TItem>
         where TItem : WorklistItemSummaryBase
 		where TContext : IWorkflowItemToolContext<TItem>
@@ -18,14 +23,6 @@ namespace ClearCanvas.Ris.Client
         {
             _operationName = operationName;
         }
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			// ensure this service is registered for operation enablement
-			//this.Context.RegisterWorkflowService(typeof(TWorkflowService));
-		}
 
         public virtual bool Enabled
         {

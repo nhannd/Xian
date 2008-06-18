@@ -38,7 +38,10 @@ namespace ClearCanvas.Ris.Client
     public interface IFolderExplorerToolContext : IToolContext
     {
         IDesktopWindow DesktopWindow { get; }
+
         IFolder SelectedFolder { get; set; }
+    	event EventHandler SelectedFolderChanged;
+
         ISelection SelectedItems { get; }
    }
 

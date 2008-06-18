@@ -152,7 +152,6 @@ namespace ClearCanvas.Ris.Client
 
 		private event EventHandler _selectedItemDoubleClicked;
 		private event EventHandler _selectedItemsChanged;
-		private event EventHandler _selectedFolderChanged;
 		private event EventHandler _titleChanged;
 		private event EventHandler _titleIconChanged;
 
@@ -267,11 +266,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _titleIconChanged += value; }
 			remove { _titleIconChanged -= value; }
-		}
-
-		public virtual void OnSelectedFolderChanged()
-		{
-			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
 		}
 
 		public void OnSelectedItemsChanged()
@@ -461,8 +455,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		protected internal event EventHandler SelectedFolderChanged
 		{
-			add { _selectedFolderChanged += value; }
-			remove { _selectedFolderChanged -= value; }
+			add { _folderExplorer.SelectedFolderChanged += value; }
+			remove { _folderExplorer.SelectedFolderChanged -= value; }
 		}
 
 		/// <summary>

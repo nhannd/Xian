@@ -190,6 +190,8 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				PathSegment segment = folder.FolderPath.Segments[depth];
+
+				// find an existing node at this path point
 				FolderTreeNode node = CollectionUtils.SelectFirst(_subTree.Items,
 											delegate(FolderTreeNode n)
 											{

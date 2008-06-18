@@ -131,6 +131,12 @@ namespace ClearCanvas.Ris.Client
 				set { _component.SelectedFolder = value; }
 			}
 
+			public event EventHandler SelectedFolderChanged
+			{
+				add { _component.SelectedFolderChanged += value; }
+				remove { _component.SelectedFolderChanged -= value; }
+			}
+
 			public ISelection SelectedItems
 			{
 				get { return _component._contentComponent.SelectedItems; }

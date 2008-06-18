@@ -75,6 +75,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 		}
 
+		// used by databinding within this control only
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool SearchTextBoxEnabled
 		{
@@ -82,6 +83,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			set { _searchTextBox.Enabled = value; }
 		}
 
+		// used by databinding within this control only
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string SearchTextBoxMessage
 		{

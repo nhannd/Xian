@@ -93,9 +93,6 @@ namespace ClearCanvas.Ris.Client
 
 
 		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
-		void OnSelectedFolderChanged();
-
-		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
 		void OnSelectedItemsChanged();
 
 		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
