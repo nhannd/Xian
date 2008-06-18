@@ -154,8 +154,9 @@ div.alert {
 	font-size: 100%;
 }
 
-img.alert {
-	text-align: right;
+img.alert 
+{
+	margin-left: 5px;
 }
 
 a.collapsibleHeading {
