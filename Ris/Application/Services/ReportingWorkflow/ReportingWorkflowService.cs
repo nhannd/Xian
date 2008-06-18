@@ -488,7 +488,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanPublishReport(WorklistItemKey itemKey)
         {
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Publish))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.TestPublishReport))
 				return false;
 			return CanExecuteOperation(new Operations.PublishReport(), itemKey);
         }
