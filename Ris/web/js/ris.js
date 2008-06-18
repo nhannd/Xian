@@ -115,6 +115,18 @@ if(window.external)
 			return mrn ? window.external.FormatMrn(JSML.create(mrn, "Mrn")) : "";
 		},
 
+		// formats the specified Visit number object
+		formatVisitNumber: function(visitNumber)
+		{
+			return visitNumber ? window.external.FormatVisitNumber(JSML.create(visitNumber, "VisitNumber")) : "";
+		},
+
+		// formats the specified Visit number object
+		formatAccessionNumber: function(accessionNumber)
+		{
+			return accessionNumber ? window.external.FormatAccessionNumber(accessionNumber) : "";
+		},
+
 		// formats the specified personName object
 		formatPersonName: function(personName)
 		{

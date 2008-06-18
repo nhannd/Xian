@@ -320,6 +320,17 @@ namespace ClearCanvas.Ris.Client
 				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingOrderNoteboxFolderSystemUrl"]));
 			}
 		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("printreportpreview.htm")]
+		public string PrintReportPreviewUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PrintReportPreviewUrl"]));
+			}
+		}
+
 		#endregion
 	}
 

@@ -31,6 +31,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
@@ -41,6 +42,7 @@
     <Compile Include="EditReportTool.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="PreliminaryDiagnosis.cs" />
+    <Compile Include="PrintReportTool.cs" />
     <Compile Include="ReportingPreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ProtocolGroupSettings.cs" />
     <Compile Include="ProtocolGroupSettings.Designer.cs">

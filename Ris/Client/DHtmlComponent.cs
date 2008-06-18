@@ -162,6 +162,17 @@ namespace ClearCanvas.Ris.Client
                 return detail == null ? "" : MrnFormat.Format(detail);
             }
 
+            public string FormatVisitNumber(string jsml)
+            {
+                CompositeIdentifierDetail detail = JsmlSerializer.Deserialize<CompositeIdentifierDetail>(jsml);
+                return detail == null ? "" : VisitNumberFormat.Format(detail);
+            }
+
+            public string FormatAccessionNumber(string accessionString)
+            {
+                return AccessionFormat.Format(accessionString);
+            }
+
             public string FormatPersonName(string jsml)
             {
                 PersonNameDetail detail = JsmlSerializer.Deserialize<PersonNameDetail>(jsml);
