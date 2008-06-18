@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 0;
-			this._acceptButton.Text = "Accept";
+			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
 			// 
@@ -149,6 +149,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._codesSelector.Location = new System.Drawing.Point(3, 3);
 			this._codesSelector.Name = "_codesSelector";
 			this._codesSelector.SelectedItemsTable = null;
+			this._codesSelector.ShowToolbars = false;
 			this._codesSelector.Size = new System.Drawing.Size(638, 367);
 			this._codesSelector.TabIndex = 0;
 			// 

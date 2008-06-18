@@ -84,8 +84,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 0;
-			this._acceptButton.Text = "Accept";
-			this._acceptButton.UseVisualStyleBackColor = true;
+			this._acceptButton.Text = "OK";
+			this._acceptButton.UseVisualStyleBackColor = false;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
 			// 
 			// _name

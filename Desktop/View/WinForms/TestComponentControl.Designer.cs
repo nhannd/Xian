@@ -152,7 +152,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._accept.Name = "_accept";
 			this._accept.Size = new System.Drawing.Size(74, 23);
 			this._accept.TabIndex = 6;
-			this._accept.Text = "Accept";
+			this._accept.Text = "OK";
 			this._accept.UseVisualStyleBackColor = true;
 			this._accept.Click += new System.EventHandler(this._accept_Click);
 			// 

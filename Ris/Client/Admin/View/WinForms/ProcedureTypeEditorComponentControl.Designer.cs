@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+			this.procedureTypeEditorComponentBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._baseType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
@@ -68,6 +69,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
+			// procedureTypeEditorComponentBindingSource
+			// 
+			this.procedureTypeEditorComponentBindingSource.DataSource = typeof(ClearCanvas.Ris.Client.Admin.ProcedureTypeEditorComponent);
+			// 
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -75,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 8;
-			this._acceptButton.Text = "Accept";
+			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
 			// 
