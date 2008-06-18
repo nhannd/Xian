@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			base.InitializeActionModel(model);
 
-			_resetPasswordAction = model.AddAction("resetPassword", SR.TitleResetPassword, "Icons.EditToolSmall.png",
+			_resetPasswordAction = model.AddAction("resetPassword", SR.TitleResetPassword, "Icons.ResetToolSmall.png",
 				SR.TitleResetPassword, ResetUserPassword, ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);

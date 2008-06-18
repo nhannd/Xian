@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client
 		private EventHandler _copyCannedTextRequested;
 
 		private Action _duplicateCannedTextAction;
-		private Action _copyCannedTextAction;
+		private Action _copyCannedTextToClipboardAction;
 
 		#region Presentation Model
 
@@ -165,13 +165,13 @@ namespace ClearCanvas.Ris.Client
 			_duplicateCannedTextAction = model.AddAction("duplicateCannedText", SR.TitleDuplicate, "Icons.DuplicateToolSmall.png",
 				SR.TitleDuplicate, DuplicateAdd);
 
-			_copyCannedTextAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToolSmall.png",
+			_copyCannedTextToClipboardAction = model.AddAction("copyCannedText", SR.TitleCopy, "Icons.CopyToClipboardToolSmall.png",
 				SR.MessageCopyToClipboard, CopyCannedText);
 
 			model.Edit.Enabled = false;
 			model.Delete.Enabled = false;
 			_duplicateCannedTextAction.Enabled = false;
-			_copyCannedTextAction.Enabled = false;
+			_copyCannedTextToClipboardAction.Enabled = false;
 
 		}
 
@@ -277,7 +277,7 @@ namespace ClearCanvas.Ris.Client
 				CannedTextSummary selectedItem = this.SelectedItems[0];
 
 				_duplicateCannedTextAction.Enabled = true;
-				_copyCannedTextAction.Enabled = true;
+				_copyCannedTextToClipboardAction.Enabled = true;
 
 				if (selectedItem.IsPersonal)
 				{
@@ -295,7 +295,7 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				_duplicateCannedTextAction.Enabled = false;
-				_copyCannedTextAction.Enabled = false;
+				_copyCannedTextToClipboardAction.Enabled = false;
 			}
 
 			// The detail is only loaded whenever a copy/drag is performed
