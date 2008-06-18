@@ -182,7 +182,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		public string FormatBaseTypeItem(object item)
 		{
 			ProcedureTypeSummary summary = (ProcedureTypeSummary)item;
-			return summary.Name;
+			return "("+summary.Id+")" + " " + summary.Name;
 		}
 
 		public void Accept()
