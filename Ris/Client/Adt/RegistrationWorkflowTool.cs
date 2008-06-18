@@ -43,11 +43,18 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-	public abstract class RegistrationWorkflowTool : WorkflowItemTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext, IRegistrationWorkflowService>
+	public abstract class RegistrationWorkflowTool : WorkflowItemTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
 	{
 		protected RegistrationWorkflowTool(string operationName)
 			: base(operationName)
 		{
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Context.RegisterWorkflowService(typeof(IRegistrationWorkflowService));
 		}
 	}
 

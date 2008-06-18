@@ -8,9 +8,8 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class WorkflowItemTool<TItem, TContext, TWorkflowService> : Tool<TContext>, IDropHandler<TItem>
+    public abstract class WorkflowItemTool<TItem, TContext> : Tool<TContext>, IDropHandler<TItem>
         where TItem : WorklistItemSummaryBase
-		where TWorkflowService : IWorkflowService<TItem>
 		where TContext : IWorkflowItemToolContext<TItem>
     {
         private readonly string _operationName;
@@ -25,7 +24,7 @@ namespace ClearCanvas.Ris.Client
 			base.Initialize();
 
 			// ensure this service is registered for operation enablement
-			this.Context.RegisterWorkflowService(typeof(TWorkflowService));
+			//this.Context.RegisterWorkflowService(typeof(TWorkflowService));
 		}
 
         public virtual bool Enabled

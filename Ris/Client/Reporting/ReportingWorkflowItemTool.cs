@@ -40,7 +40,7 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext, IReportingWorkflowService>
+    public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
     {
         public class StepType
         {
@@ -64,7 +64,14 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Context.RegisterWorkflowService(typeof(IReportingWorkflowService));
+		}
+
+		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
         {
             Workspace workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
             if (workspace != null)

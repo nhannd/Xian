@@ -35,14 +35,22 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-	public abstract class BookingProtocolWorkflowTool : WorkflowItemTool<WorklistItemSummaryBase, IWorkflowItemToolContext<WorklistItemSummaryBase>, IProtocollingWorkflowService>
+	public abstract class BookingProtocolWorkflowTool : WorkflowItemTool<RegistrationWorklistItem, IWorkflowItemToolContext<RegistrationWorklistItem>>
 	{
 		protected BookingProtocolWorkflowTool(string operationName)
 			: base(operationName)
 		{
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Context.RegisterWorkflowService(typeof(IProtocollingWorkflowService));
 		}
 	}
 
@@ -59,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Adt
 		{
 		}
 
-		protected override bool Execute(WorklistItemSummaryBase item)
+		protected override bool Execute(RegistrationWorklistItem item)
 		{
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
@@ -85,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Adt
 		{
 		}
 
-		protected override bool Execute(WorklistItemSummaryBase item)
+		protected override bool Execute(RegistrationWorklistItem item)
 		{
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
