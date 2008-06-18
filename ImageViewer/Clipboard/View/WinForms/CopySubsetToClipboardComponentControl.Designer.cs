@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._sendToClipboardButton.Name = "_sendToClipboardButton";
 			this._sendToClipboardButton.Size = new System.Drawing.Size(110, 23);
 			this._sendToClipboardButton.TabIndex = 14;
-			this._sendToClipboardButton.Text = "Send To Clipboard";
+			this._sendToClipboardButton.Text = "Copy To Clipboard";
 			this._sendToClipboardButton.UseVisualStyleBackColor = true;
 			this._sendToClipboardButton.Click += new System.EventHandler(this.OnSendToClipboard);
 			// 
