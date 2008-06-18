@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt
 			editedItems = new List<VisitSummary>();
 			VisitSummary item = CollectionUtils.FirstElement(items);
 
-			VisitEditorComponent editor = new VisitEditorComponent(item.VisitRef);
+			VisitEditorComponent editor = new VisitEditorComponent(item);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
