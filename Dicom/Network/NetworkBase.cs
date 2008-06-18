@@ -975,6 +975,7 @@ namespace ClearCanvas.Dicom.Network
 
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
             message.CommandField = DicomCommandField.CMoveRequest;
+			message.MessageId = messageID;
             message.AffectedSopClassUid = affectedClass.UID;
             if (!message.CommandSet.Contains(DicomTags.Priority))
                 message.Priority = DicomPriority.Medium;
