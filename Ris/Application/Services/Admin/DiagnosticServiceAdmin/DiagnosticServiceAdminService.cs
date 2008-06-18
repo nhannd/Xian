@@ -100,7 +100,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 		[ReadOperation]
 		public LoadDiagnosticServiceEditorFormDataResponse LoadDiagnosticServiceEditorFormData(LoadDiagnosticServiceEditorFormDataRequest request)
 		{
-			return new LoadDiagnosticServiceEditorFormDataResponse();
+			ProcedureTypeSearchCriteria where = new ProcedureTypeSearchCriteria();
+			where.Id.SortAsc(0);
+
+			IList<ProcedureType> procTypes = PersistenceContext.GetBroker<IProcedureTypeBroker>().Find(where);
+
+			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
+			return new LoadDiagnosticServiceEditorFormDataResponse(
+				CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(procTypes,
+					delegate(ProcedureType pt) { return assembler.CreateSummary(pt); }));
 		}
 
 		[UpdateOperation]
