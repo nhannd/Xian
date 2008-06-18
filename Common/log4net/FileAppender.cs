@@ -675,9 +675,7 @@ namespace ClearCanvas.Common.log4net
 
             private Mutex CreateMutex()
             {
-                bool mutexWasCreated = false;
-
-                m_mutexname = GetMutexName(m_filename);
+            	m_mutexname = GetMutexName(m_filename);
 
                 try
                 {
@@ -687,7 +685,6 @@ namespace ClearCanvas.Common.log4net
                 catch (WaitHandleCannotBeOpenedException)
                 {
                     // The named mutex does not exist.
-                    LogLog.Warn("The named mutex does not exist.");
                     MutexSecurity mSec = new MutexSecurity();
 
                     MutexAccessRule rule = new MutexAccessRule(
@@ -695,7 +692,8 @@ namespace ClearCanvas.Common.log4net
                         MutexRights.FullControl, AccessControlType.Allow);
                     mSec.AddAccessRule(rule);
 
-                    m_mutex = new Mutex(false, m_mutexname, out mutexWasCreated, mSec);
+                	bool mutexWasCreated;
+                	m_mutex = new Mutex(false, m_mutexname, out mutexWasCreated, mSec);
                 }
                 catch (UnauthorizedAccessException)
                 {
