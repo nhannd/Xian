@@ -30,6 +30,8 @@
 #endregion
 
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
@@ -47,13 +49,22 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public ProcedureTypeDetail CreateDetail(ProcedureType procedureType)
         {
-			//TODO: should be a better way than calling GetPlanXml().Tostring
+			// write plan to string
+			string planXml;
+			StringBuilder sb = new StringBuilder();
+			using (XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb)))
+			{
+				writer.Formatting = Formatting.Indented;
+				procedureType.GetPlanXml().Save(writer);
+				planXml = sb.ToString();
+			}
+
             return new ProcedureTypeDetail(
                 procedureType.GetRef(),
                 procedureType.Id,
                 procedureType.Name,
 				procedureType.BaseType == null ? null : CreateSummary(procedureType.BaseType),
-				procedureType.GetPlanXml().ToString());
+				planXml);
         }
 
 		public void UpdateProcedureType(ProcedureType procType, ProcedureTypeDetail detail, IPersistenceContext context)
@@ -64,10 +75,16 @@ namespace ClearCanvas.Ris.Application.Services
 			                    	? null
 			                    	: context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy);
 
-			//TODO: should be a better way of doing this - can we send Xml directly in data contract??
-			XmlDocument xmlPlan = new XmlDocument();
-			xmlPlan.LoadXml(detail.PlanXml);
-			procType.SetPlanXml(xmlPlan);
+			try
+			{
+				XmlDocument xmlPlan = new XmlDocument();
+				xmlPlan.LoadXml(detail.PlanXml);
+				procType.SetPlanXml(xmlPlan);
+			}
+			catch (XmlException e)
+			{
+				throw new RequestValidationException(string.Format("Procedure plan XML is invalid: {0}", e.Message));
+			}
 		}
     }
 }

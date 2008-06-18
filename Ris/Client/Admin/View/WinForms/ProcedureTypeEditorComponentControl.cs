@@ -61,13 +61,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_id.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
-			_planXml.DataBindings.Add("Value", _component, "PlanXml", true, DataSourceUpdateMode.OnPropertyChanged);
 			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_baseType.DataSource = _component.BaseTypeList;
 			_baseType.DataBindings.Add("Value", _component, "BaseType", true, DataSourceUpdateMode.OnPropertyChanged);
 			_baseType.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatBaseTypeItem(e.ListItem); };
 
+        	Control xmlEditor = (Control) _component.XmlEditorHost.ComponentView.GuiElement;
+        	xmlEditor.Dock = DockStyle.Fill;
+			_xmlEditorPanel.Controls.Add(xmlEditor);
 		}
 
 		private void _acceptButton_Click(object sender, EventArgs e)

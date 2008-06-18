@@ -59,27 +59,19 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this.components = new System.ComponentModel.Container();
-			this.baseTypeListBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
-			this.procedureTypeEditorComponentBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this._baseType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._id = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._planXml = new ClearCanvas.Desktop.View.WinForms.TextField();
-			((System.ComponentModel.ISupportInitialize)(this.baseTypeListBindingSource)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.procedureTypeEditorComponentBindingSource)).BeginInit();
+			this._xmlEditorPanel = new System.Windows.Forms.Panel();
+			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			// 
-			// baseTypeListBindingSource
-			// 
-			this.baseTypeListBindingSource.DataMember = "BaseTypeList";
-			this.baseTypeListBindingSource.DataSource = this.procedureTypeEditorComponentBindingSource;
 			// 
 			// _acceptButton
 			// 
-			this._acceptButton.Location = new System.Drawing.Point(165, 222);
+			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._acceptButton.Location = new System.Drawing.Point(612, 405);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 8;
@@ -89,7 +81,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(246, 222);
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._cancelButton.Location = new System.Drawing.Point(693, 405);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 9;
@@ -97,32 +90,28 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
-			// procedureTypeEditorComponentBindingSource
-			// 
-			this.procedureTypeEditorComponentBindingSource.DataSource = typeof(ClearCanvas.Ris.Client.Admin.ProcedureTypeEditorComponent);
-			// 
 			// _baseType
 			// 
 			this._baseType.DataSource = null;
 			this._baseType.DisplayMember = "";
 			this._baseType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._baseType.LabelText = "Base Type";
-			this._baseType.Location = new System.Drawing.Point(11, 108);
+			this._baseType.Location = new System.Drawing.Point(11, 52);
 			this._baseType.Margin = new System.Windows.Forms.Padding(2);
 			this._baseType.Name = "_baseType";
-			this._baseType.Size = new System.Drawing.Size(282, 41);
+			this._baseType.Size = new System.Drawing.Size(757, 41);
 			this._baseType.TabIndex = 10;
 			this._baseType.Value = null;
 			// 
 			// _id
 			// 
 			this._id.LabelText = "ID";
-			this._id.Location = new System.Drawing.Point(11, 18);
+			this._id.Location = new System.Drawing.Point(11, 7);
 			this._id.Margin = new System.Windows.Forms.Padding(2);
 			this._id.Mask = "";
 			this._id.Name = "_id";
 			this._id.PasswordChar = '\0';
-			this._id.Size = new System.Drawing.Size(282, 41);
+			this._id.Size = new System.Drawing.Size(165, 41);
 			this._id.TabIndex = 11;
 			this._id.ToolTip = null;
 			this._id.Value = null;
@@ -130,44 +119,50 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _name
 			// 
 			this._name.LabelText = "Name";
-			this._name.Location = new System.Drawing.Point(11, 63);
+			this._name.Location = new System.Drawing.Point(199, 7);
 			this._name.Margin = new System.Windows.Forms.Padding(2);
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(282, 41);
+			this._name.Size = new System.Drawing.Size(569, 41);
 			this._name.TabIndex = 12;
 			this._name.ToolTip = null;
 			this._name.Value = null;
 			// 
-			// _planXml
+			// _xmlEditorPanel
 			// 
-			this._planXml.LabelText = "Plan XML Document";
-			this._planXml.Location = new System.Drawing.Point(11, 153);
-			this._planXml.Margin = new System.Windows.Forms.Padding(2);
-			this._planXml.Mask = "";
-			this._planXml.Name = "_planXml";
-			this._planXml.PasswordChar = '\0';
-			this._planXml.Size = new System.Drawing.Size(282, 41);
-			this._planXml.TabIndex = 13;
-			this._planXml.ToolTip = null;
-			this._planXml.Value = null;
+			this._xmlEditorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._xmlEditorPanel.Location = new System.Drawing.Point(11, 121);
+			this._xmlEditorPanel.Name = "_xmlEditorPanel";
+			this._xmlEditorPanel.Size = new System.Drawing.Size(757, 278);
+			this._xmlEditorPanel.TabIndex = 13;
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(15, 105);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(105, 13);
+			this.label1.TabIndex = 14;
+			this.label1.Text = "Procedure Plan XML";
 			// 
 			// ProcedureTypeEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._planXml);
+			this.Controls.Add(this.label1);
+			this.Controls.Add(this._xmlEditorPanel);
 			this.Controls.Add(this._name);
 			this.Controls.Add(this._id);
 			this.Controls.Add(this._baseType);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Name = "ProcedureTypeEditorComponentControl";
-			this.Size = new System.Drawing.Size(324, 248);
-			((System.ComponentModel.ISupportInitialize)(this.baseTypeListBindingSource)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.procedureTypeEditorComponentBindingSource)).EndInit();
+			this.Size = new System.Drawing.Size(777, 431);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
@@ -175,11 +170,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 		private System.Windows.Forms.Button _acceptButton;
 		private System.Windows.Forms.Button _cancelButton;
-		private System.Windows.Forms.BindingSource procedureTypeEditorComponentBindingSource;
-		private System.Windows.Forms.BindingSource baseTypeListBindingSource;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _baseType;
 		private ClearCanvas.Desktop.View.WinForms.TextField _id;
 		private ClearCanvas.Desktop.View.WinForms.TextField _name;
-		private ClearCanvas.Desktop.View.WinForms.TextField _planXml;
+		private System.Windows.Forms.Panel _xmlEditorPanel;
+		private System.Windows.Forms.Label label1;
     }
 }

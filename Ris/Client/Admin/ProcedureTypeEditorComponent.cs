@@ -59,9 +59,11 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		private readonly EntityRef _procedureTypeRef;
 		private ProcedureTypeDetail _procedureTypeDetail;
-		private bool _isNew;
+		private readonly bool _isNew;
 
 		private ProcedureTypeSummary _procedureTypeSummary;
+
+		private ChildComponentHost _xmlEditorHost;
 
 		/// <summary>
 		/// Constructor.
@@ -110,10 +112,37 @@ namespace ClearCanvas.Ris.Client.Admin
 					});
 			}
 
+			ICodeEditor editor = CodeEditorFactory.CreateCodeEditor();
+			editor.Language = "xml";
+			editor.Text = _procedureTypeDetail.PlanXml;
+			editor.Modified = false;
+			editor.ModifiedChanged += delegate { this.Modified = this.Modified || editor.Modified; };
+			_xmlEditorHost = new ChildComponentHost(this.Host, editor.GetComponent());
+			_xmlEditorHost.StartComponent();
+
 			base.Start();
 		}
 
+		/// <summary>
+		/// Called by the host when the application component is being terminated.
+		/// </summary>
+		public override void Stop()
+		{
+			if(_xmlEditorHost != null)
+			{
+				_xmlEditorHost.StopComponent();
+				_xmlEditorHost = null;
+			}
+
+			base.Stop();
+		}
+
 		#region Presentation Model
+
+		public ApplicationComponentHost XmlEditorHost
+		{
+			get { return _xmlEditorHost; }
+		}
 
 		public string ID
 		{
@@ -187,6 +216,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public void Accept()
 		{
+			_procedureTypeDetail.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
+
 			if (this.HasValidationErrors)
 			{
 				this.ShowValidation(true);
@@ -247,14 +278,5 @@ namespace ClearCanvas.Ris.Client.Admin
 			remove { this.ModifiedChanged -= value; }
 		}
 
-		/// <summary>
-		/// Called by the host when the application component is being terminated.
-		/// </summary>
-		public override void Stop()
-		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
-			base.Stop();
-		}
 	}
 }
