@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
     public class EditReportTool : ReportingWorkflowItemTool
     {
 

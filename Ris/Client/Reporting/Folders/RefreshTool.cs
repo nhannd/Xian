@@ -33,8 +33,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
-	[ExtensionOf(typeof(ReportingMainWorkflowFolderToolExtensionPoint))]
-	[ExtensionOf(typeof(ReportingProtocolWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(ReportingWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(ProtocolWorkflowFolderToolExtensionPoint))]
 	public class ReportingWorkflowRefreshTool : RefreshTool<IReportingWorkflowFolderToolContext>
 	{
 	}

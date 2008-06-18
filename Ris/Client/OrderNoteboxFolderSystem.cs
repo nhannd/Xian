@@ -45,7 +45,6 @@ namespace ClearCanvas.Ris.Client
 
 	public class OrderNoteboxFolderSystem: WorkflowFolderSystem<
 		OrderNoteboxItemSummary,
-		OrderNoteboxFolderExtensionPoint,
 		OrderNoteboxFolderToolExtensionPoint,
 		OrderNoteboxItemToolExtensionPoint>
 	{
@@ -100,6 +99,12 @@ namespace ClearCanvas.Ris.Client
 			return new OrderNoteboxItemToolContext(this);
 		}
 
+		public override bool SearchEnabled
+		{
+			// searching not currently supported
+			get { return false; }
+		}
+
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
             // searching not currently supported
@@ -109,11 +114,6 @@ namespace ClearCanvas.Ris.Client
 		protected override string GetPreviewUrl()
 		{
 			return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl;
-		}
-
-		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
-		{
-			return new ListWorklistsForUserResponse(new List<WorklistSummary>());
 		}
 
 		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)

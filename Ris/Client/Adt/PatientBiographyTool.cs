@@ -54,10 +54,10 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 	[ActionPermission("view", AuthorityTokens.Workflow.PatientBiography.View)]
-    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PreviewToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
     {

@@ -37,70 +37,70 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
-    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationScheduledWorklist)]
     [FolderPath("Scheduled", true)]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationCheckedInWorklist)]
     [FolderPath("Checked In")]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationInProgressWorklist)]
     [FolderPath("In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationCompletedWorklist)]
     [FolderPath("Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationCancelledWorklist)]
     [FolderPath("Cancelled")]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
     [FolderPath("Completed Protocol", true)]
     public class CompletedProtocolFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationSuspendedProtocolWorklist)]
     [FolderPath("Suspended Protocol")]
     public class SuspendedProtocolFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
     [FolderPath("Rejected Protocol")]
     public class RejectedProtocolFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
     [FolderPath("Pending Protocol")]
     public class PendingProtocolFolder : RegistrationWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
     [FolderPath("To Be Scheduled")]
     public class ToBeScheduledFolder : RegistrationWorkflowFolder

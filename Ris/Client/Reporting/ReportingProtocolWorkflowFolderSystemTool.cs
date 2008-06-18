@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             base.Initialize();
 
-            _folderSystem = new ReportingProtocolWorkflowFolderSystem(this.Context);
+            _folderSystem = new ProtocolWorkflowFolderSystem(this.Context);
         }
     }
 }

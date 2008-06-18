@@ -48,9 +48,9 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
 
-	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class ReplaceOrderTool : Tool<IWorkflowItemToolContext>
     {
         public event EventHandler EnabledChanged

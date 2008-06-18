@@ -37,50 +37,47 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [ExtensionPoint]
-    public class ReportingMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
-    {
-    }
+	[ExtensionPoint]
+	public class ProtocolWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
+	{
+	}
 
-    [ExtensionPoint]
-    public class ReportingMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class ProtocolWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [ExtensionPoint]
-    public class ReportingMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class ProtocolWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    public class ReportingMainWorkflowFolderSystem
-		: ReportingWorkflowFolderSystemBase<ReportingMainWorkflowFolderExtensionPoint, ReportingMainWorkflowFolderToolExtensionPoint,
-			ReportingMainWorkflowItemToolExtensionPoint>
-    {
-        public ReportingMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(SR.TitleReportingFolderSystem, folderExplorer) 
-        {
+	public class ProtocolWorkflowFolderSystem
+		: ReportingWorkflowFolderSystemBase<ProtocolWorkflowFolderExtensionPoint, ProtocolWorkflowFolderToolExtensionPoint,
+			ProtocolWorkflowItemToolExtensionPoint>
+	{
+		public ProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+			: base(SR.TitleProtocollingFolderSystem, folderExplorer)
+		{
             // add the personal folders, since they are not extensions and will not be automatically added
-            this.Folders.Add(new Folders.AssignedFolder());
-			this.Folders.Add(new Folders.DraftFolder());
-
-            if (ReportingSettings.Default.EnableTranscriptionWorkflow)
-				this.Folders.Add(new Folders.InTranscriptionFolder());
-
-			this.Folders.Add(new Folders.ToBeVerifiedFolder());
-			this.Folders.Add(new Folders.VerifiedFolder());
-
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting))
-				this.Folders.Add(new Folders.ReviewResidentReportFolder());
-        }
+			this.Folders.Add(new Folders.DraftProtocolFolder());
+			this.Folders.Add(new Folders.CompletedProtocolFolder());
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval))
+			{
+				this.Folders.Add(new Folders.AwaitingApprovalProtocolFolder());
+			}
+			this.Folders.Add(new Folders.SuspendedProtocolFolder());
+			this.Folders.Add(new Folders.RejectedProtocolFolder());
+		}
 
 		protected override string GetPreviewUrl()
-        {
-            return WebResourcesSettings.Default.RadiologistFolderSystemUrl;
-        }
+		{
+			return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
+		}
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new Folders.ReportingSearchFolder();
+            return new Folders.ProtocollingSearchFolder();
         }
     }
 }

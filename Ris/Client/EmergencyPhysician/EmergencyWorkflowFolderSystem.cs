@@ -12,25 +12,25 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
 	[ExtensionPoint]
-	public class EmergencyPhysicianMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+	public class EmergencyWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
 	{
 	}
 
 	[ExtensionPoint]
-	public class EmergencyPhysicianMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	public class EmergencyWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
 	[ExtensionPoint]
-	public class EmergencyPhysicianMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	public class EmergencyWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
-	public class EmergencyPhysicianMainWorkflowFolderSystem
-		: RegistrationWorkflowFolderSystemBase<EmergencyPhysicianMainWorkflowFolderExtensionPoint, EmergencyPhysicianMainWorkflowFolderToolExtensionPoint,
-			EmergencyPhysicianMainWorkflowItemToolExtensionPoint>
+	public class EmergencyWorkflowFolderSystem
+		: RegistrationWorkflowFolderSystemBase<EmergencyWorkflowFolderExtensionPoint, EmergencyWorkflowFolderToolExtensionPoint,
+			EmergencyWorkflowItemToolExtensionPoint>
 	{
-		public EmergencyPhysicianMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+		public EmergencyWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleEmergencyFolderSystem, folderExplorer)
 		{
 		}

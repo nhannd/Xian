@@ -47,8 +47,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Order.Modify)]
 
-    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     public class ModifyOrderTool : Tool<IRegistrationWorkflowItemToolContext>
     {
         private bool _enabled;

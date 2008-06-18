@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Documentation.Create)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistMainWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class TechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
     {
         public override void Initialize()

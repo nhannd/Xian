@@ -62,13 +62,15 @@ namespace ClearCanvas.Ris.Client
 
 			protected override void OnItemAdded(ListEventArgs<IFolder> e)
 			{
-				((IInitializeWorkflowFolder)e.Item).SetFolderSystem(_owner);
+				// this cast is safe in practice
+				((WorkflowFolder)e.Item).SetFolderSystem(_owner);
 				base.OnItemAdded(e);
 			}
 
 			protected override void OnItemRemoved(ListEventArgs<IFolder> e)
 			{
-				((IInitializeWorkflowFolder)e.Item).SetFolderSystem(null);
+				// this cast is safe in practice
+				((WorkflowFolder)e.Item).SetFolderSystem(null);
 				base.OnItemRemoved(e);
 			}
 		}
@@ -173,8 +175,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="title">Initial title of the folder system.</param>
 		/// <param name="folderExplorer">The folder explorer that is hosting the folder system.</param>
-		/// <param name="folderExtensionPoint">The extension point that defines the set of folders for the folder system.</param>
-		protected WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer, ExtensionPoint<IFolder> folderExtensionPoint)
+		protected WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
 		{
 			_title = title;
 			_folderExplorer = folderExplorer;
@@ -183,7 +184,6 @@ namespace ClearCanvas.Ris.Client
 			_resourceResolver = new ResourceResolver(this.GetType(), true);
 
 			_workflowFolders = new FolderList(this);
-			InitializeFolders(folderExtensionPoint);
 		}
 
 		/// <summary>
@@ -359,14 +359,6 @@ namespace ClearCanvas.Ris.Client
 		#region Protected API
 
 		/// <summary>
-		/// Called to obtain the set of worklists for the current user.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		//TODO: does this make sense here? or should it be moved down to WorklistFolderSystem class?
-		protected abstract ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request);
-
-		/// <summary>
 		/// Called to instantiate the tool set for tools that operate on items.
 		/// </summary>
 		/// <returns></returns>
@@ -537,61 +529,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Creates the folder system based on the specified extension point.
-		/// </summary>
-		/// <param name="folderExtensionPoint"></param>
-		//TODO: should this be here or in the WorklistFolderSystem class?
-		private void InitializeFolders(ExtensionPoint<IFolder> folderExtensionPoint)
-		{
-			Dictionary<string, Type> mapWorklistClassToFolderClass = new Dictionary<string, Type>();
-
-			// collect worklist class names, and add unfiltered folders if authorized
-			foreach (IFolder folder in folderExtensionPoint.CreateExtensions())
-			{
-                WorkflowFolder wf = folder as WorkflowFolder;
-                if (wf != null && !string.IsNullOrEmpty(wf.WorklistClassName))
-                    mapWorklistClassToFolderClass.Add(wf.WorklistClassName, wf.GetType());
-
-                // if unfiltered folders are visible, add the root folder
-                if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
-                {
-                    _workflowFolders.Add(wf);
-                }
-
-			}
-
-			if (mapWorklistClassToFolderClass.Keys.Count > 0)
-			{
-				ListWorklistsForUserResponse response = QueryWorklistSet(new ListWorklistsForUserRequest(new List<string>(mapWorklistClassToFolderClass.Keys)));
-				foreach (WorklistSummary summary in response.Worklists)
-				{
-					try
-					{
-						Type folderClass = mapWorklistClassToFolderClass[summary.ClassName];
-						WorkflowFolder folder = (WorkflowFolder)folderExtensionPoint.CreateExtension(new ClassNameExtensionFilter(folderClass.FullName));
-                        IInitializeWorkflowFolder initFolder = folder;
-
-						// augment default base path with worklist name
-						Path path = folder.FolderPath;
-						if (!string.IsNullOrEmpty(summary.DisplayName))
-						{
-                            path = new Path(string.Concat(path.ToString(), "/", summary.DisplayName), folder.ResourceResolver);
-						}
-
-						initFolder.Initialize(path, summary.WorklistRef, summary.Description, false);
-
-						_workflowFolders.Add(folder);
-
-					}
-					catch (KeyNotFoundException e)
-					{
-						Platform.Log(LogLevel.Error, e, string.Format("Worklist class {0} is not mapped to a folder class.", summary.ClassName));
-					}
-				}
-			}
-		}
-
-		/// <summary>
 		/// Registers the specified workflow service.
 		/// </summary>
 		/// <param name="workflowService"></param>
@@ -648,11 +585,10 @@ namespace ClearCanvas.Ris.Client
 	/// Abstract base class for workflow folder systems.
 	/// </summary>
 	/// <typeparam name="TItem">The class of item that the folders contain.</typeparam>
-	/// <typeparam name="TFolderExtensionPoint">Extension point that defines the set of folders for this folder system.</typeparam>
 	/// <typeparam name="TFolderToolExtensionPoint">Extension point that defines the set of folder tools for this folders system.</typeparam>
 	/// <typeparam name="TItemToolExtensionPoint">Extension point that defines the set of item tools for this folders system.</typeparam>
-	public abstract class WorkflowFolderSystem<TItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint> : WorkflowFolderSystem
-		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+	public abstract class WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint> : WorkflowFolderSystem
+		where TItem : DataContractBase
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
     {
@@ -693,7 +629,7 @@ namespace ClearCanvas.Ris.Client
 				_owner = owner;
 			}
 
-			public IEnumerable Folders
+			public IEnumerable<IFolder> Folders
 			{
 				get { return _owner.Folders; }
 			}
@@ -723,7 +659,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="title"></param>
 		/// <param name="folderExplorer"></param>
 		protected WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
-			:base(title, folderExplorer, new TFolderExtensionPoint())
+			:base(title, folderExplorer)
 		{
 		}
 
@@ -774,7 +710,47 @@ namespace ClearCanvas.Ris.Client
                 });
         }
 
-        #endregion
+		/// <summary>
+		/// Called whenever the selection changes, to obtain the operation enablement for a given selection.
+		/// </summary>
+		/// <param name="selection"></param>
+		/// <returns></returns>
+		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
+		{
+			TItem item = (TItem)selection.Item;
+			Dictionary<string, bool> enablement = new Dictionary<string, bool>();
+
+			// query all registered workflow service for operation enablement
+			foreach (Type serviceContract in GetRegisteredWorkflowServices())
+			{
+				if (typeof(IWorkflowService<TItem>).IsAssignableFrom(serviceContract))
+				{
+					IWorkflowService<TItem> service = (IWorkflowService<TItem>)Platform.GetService(serviceContract);
+					GetOperationEnablementResponse response = service.GetOperationEnablement(
+						new GetOperationEnablementRequest<TItem>(item));
+
+					// add fully qualified operation name to dictionary
+					CollectionUtils.ForEach(response.OperationEnablementDictionary,
+						delegate(KeyValuePair<string, bool> kvp)
+						{
+							enablement.Add(string.Format("{0}.{1}", serviceContract.FullName, kvp.Key), kvp.Value);
+						});
+
+					// ensure to dispose of service
+					if (service is IDisposable)
+						(service as IDisposable).Dispose();
+				}
+				else
+				{
+					Platform.Log(LogLevel.Error, "Can not use service {0} to obtain operation enablement because its does not extend {1}",
+						serviceContract.FullName, typeof(IWorkflowService<TItem>).FullName);
+				}
+			}
+
+			return enablement;
+		}
+
+		#endregion
 
 		#region Protected API
 
@@ -802,12 +778,12 @@ namespace ClearCanvas.Ris.Client
 	/// <typeparam name="TItemToolExtensionPoint"></typeparam>
 	/// <typeparam name="TWorklistService"></typeparam>
 	public abstract class WorklistFolderSystem<TItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, TWorklistService>
-		: WorkflowFolderSystem<TItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint>
 		where TItem : DataContractBase
-		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
-		where TWorklistService : IWorklistService<TItem>
+		where TWorklistService : IWorklistService<TItem>, IWorkflowService<TItem>
 	{
 		/// <summary>
 		/// Constructor.
@@ -817,14 +793,15 @@ namespace ClearCanvas.Ris.Client
 		protected WorklistFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
 			: base(title, folderExplorer)
 		{
+			InitializeFolders(new TFolderExtensionPoint());
 		}
 
 		/// <summary>
-		/// Called to obtain the set of worklists for the current user.
+		/// Called to obtain the set of worklists for the current user.  May be overridden, but typically not necessary.
 		/// </summary>
 		/// <param name="request"></param>
 		/// <returns></returns>
-		protected override ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
+		protected virtual ListWorklistsForUserResponse QueryWorklistSet(ListWorklistsForUserRequest request)
 		{
 			ListWorklistsForUserResponse response = null;
 			Platform.GetService<TWorklistService>(
@@ -837,43 +814,58 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Called whenever the selection changes, to obtain the operation enablement for a given selection.
+		/// Creates the folder system based on the specified extension point.
 		/// </summary>
-		/// <param name="selection"></param>
-		/// <returns></returns>
-		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
+		/// <param name="folderExtensionPoint"></param>
+		private void InitializeFolders(ExtensionPoint<IWorklistFolder> folderExtensionPoint)
 		{
-			TItem item = (TItem)selection.Item;
-			Dictionary<string, bool> enablement = new Dictionary<string, bool>();
+			Dictionary<string, Type> mapWorklistClassToFolderClass = new Dictionary<string, Type>();
 
-			// query all registered workflow service for operation enablement
-			foreach (Type serviceContract in GetRegisteredWorkflowServices())
+			// collect worklist class names, and add unfiltered folders if authorized
+			foreach (IWorklistFolder folder in folderExtensionPoint.CreateExtensions())
 			{
-				if(typeof(IWorkflowService<TItem>).IsAssignableFrom(serviceContract))
-				{
-					IWorkflowService<TItem> service = (IWorkflowService<TItem>)Platform.GetService(serviceContract);
-					GetOperationEnablementResponse response = service.GetOperationEnablement(
-						new GetOperationEnablementRequest<TItem>(item));
+				if (!string.IsNullOrEmpty(folder.WorklistClassName))
+					mapWorklistClassToFolderClass.Add(folder.WorklistClassName, folder.GetType());
 
-					// add fully qualified operation name to dictionary
-					CollectionUtils.ForEach(response.OperationEnablementDictionary,
-						delegate(KeyValuePair<string, bool> kvp)
-						{
-							 enablement.Add(string.Format("{0}.{1}", serviceContract.FullName, kvp.Key), kvp.Value);
-						});
-
-					// ensure to dispose of service
-					if(service is IDisposable)
-						(service as IDisposable).Dispose();
-				}
-				else
+				// if unfiltered folders are visible, add the root folder
+				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Development.ViewUnfilteredWorkflowFolders))
 				{
-					Platform.Log(LogLevel.Error, "Can not use service {0} to obtain operation enablement because its does not extend {1}",
-						serviceContract.FullName, typeof(IWorkflowService<TItem>).FullName);
+					this.Folders.Add(folder);
 				}
+
 			}
 
-			return enablement;
+			if (mapWorklistClassToFolderClass.Keys.Count > 0)
+			{
+				ListWorklistsForUserResponse response = QueryWorklistSet(new ListWorklistsForUserRequest(new List<string>(mapWorklistClassToFolderClass.Keys)));
+				foreach (WorklistSummary summary in response.Worklists)
+				{
+					try
+					{
+						Type folderClass = mapWorklistClassToFolderClass[summary.ClassName];
+						IWorklistFolder folder = (IWorklistFolder)folderExtensionPoint.CreateExtension(new ClassNameExtensionFilter(folderClass.FullName));
+						if(folder is IInitializeWorklistFolder)
+						{
+							IInitializeWorklistFolder initFolder = folder as IInitializeWorklistFolder;
+
+							// augment default base path with worklist name
+							Path path = folder.FolderPath;
+							if (!string.IsNullOrEmpty(summary.DisplayName))
+							{
+								path = new Path(string.Concat(path.ToString(), "/", summary.DisplayName), folder.ResourceResolver);
+							}
+
+							initFolder.Initialize(path, summary.WorklistRef, summary.Description, false);
+						}
+
+						this.Folders.Add(folder);
+					}
+					catch (KeyNotFoundException e)
+					{
+						Platform.Log(LogLevel.Error, e, string.Format("Worklist class {0} is not mapped to a folder class.", summary.ClassName));
+					}
+				}
+			}
 		}
 	}
 }

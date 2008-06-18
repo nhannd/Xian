@@ -33,9 +33,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
-    [ExtensionOf(typeof(RegistrationMainWorkflowFolderToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowFolderToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderToolExtensionPoint))]
     public class RefreshTool : RefreshTool<IWorkflowFolderToolContext>
     {
     }

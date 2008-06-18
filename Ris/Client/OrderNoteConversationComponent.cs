@@ -289,16 +289,6 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
-		/// <summary>
-		/// Called by the host when the application component is being terminated.
-		/// </summary>
-		public override void Stop()
-		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
-			base.Stop();
-		}
-
 		#endregion
 
 		#region Presentation Model

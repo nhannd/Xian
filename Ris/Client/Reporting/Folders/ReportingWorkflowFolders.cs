@@ -39,7 +39,7 @@ using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
-    [ExtensionOf(typeof(ReportingMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.ReportingToBeReportedWorklist)]
     [FolderPath("To be Reported", true)]
     public class ToBeReportedFolder : ReportingWorkflowFolder
@@ -106,14 +106,14 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    [ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.ReportingToBeProtocolledWorklist)]
     [FolderPath("To be Protocolled", true)]
     public class ToBeProtocolledFolder : ReportingWorkflowFolder
     {
     }
 
-	[ExtensionOf(typeof(ReportingProtocolWorkflowFolderExtensionPoint))]
+	[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
 	[FolderForWorklistClass(WorklistClassNames.ReportingToBeApprovedProtocolWorklist)]
 	[FolderPath("To be Approved", true)]
 	public class ToBeApprovedFolder : ReportingWorkflowFolder

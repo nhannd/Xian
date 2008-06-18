@@ -38,25 +38,25 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Adt
 {
 	[ExtensionPoint]
-	public class RegistrationMainWorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+	public class RegistrationWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
 	{
 	}
 
 	[ExtensionPoint]
-	public class RegistrationMainWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	public class RegistrationWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
 	[ExtensionPoint]
-	public class RegistrationMainWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	public class RegistrationWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
-	public class RegistrationMainWorkflowFolderSystem
-		: RegistrationWorkflowFolderSystemBase<RegistrationMainWorkflowFolderExtensionPoint, RegistrationMainWorkflowFolderToolExtensionPoint,
-			RegistrationMainWorkflowItemToolExtensionPoint>
+	public class RegistrationWorkflowFolderSystem
+		: RegistrationWorkflowFolderSystemBase<RegistrationWorkflowFolderExtensionPoint, RegistrationWorkflowFolderToolExtensionPoint,
+			RegistrationWorkflowItemToolExtensionPoint>
 	{
-		public RegistrationMainWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+		public RegistrationWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
 			: base(SR.TitleRegistrationFolderSystem, folderExplorer)
 		{
 		}

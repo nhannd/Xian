@@ -33,7 +33,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    [ExtensionOf(typeof(ReportingMainWorkflowFolderToolExtensionPoint))]
+    [ExtensionOf(typeof(ReportingWorkflowFolderToolExtensionPoint))]
     public class SearchTool : SearchTool<IReportingWorkflowFolderToolContext>
     {
     }

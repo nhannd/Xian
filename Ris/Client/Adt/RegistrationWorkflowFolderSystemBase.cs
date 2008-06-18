@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
 	public abstract class RegistrationWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
 		: WorklistFolderSystem<RegistrationWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IRegistrationWorkflowService>
-		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
 	{

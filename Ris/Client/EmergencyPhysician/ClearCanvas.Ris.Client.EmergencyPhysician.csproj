@@ -39,7 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EmergencyPhysicianHomeTool.cs" />
-    <Compile Include="EmergencyPhysicianMainWorkflowFolderSystem.cs" />
+    <Compile Include="EmergencyWorkflowFolderSystem.cs" />
     <Compile Include="EmergencyPhysicianMainWorkflowFolderSystemTool.cs" />
     <Compile Include="EmergencyPhysicianWorkflowFolder.cs" />
     <Compile Include="EmergencyPhysicianWorkflowItemTools.cs" />

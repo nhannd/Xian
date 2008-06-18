@@ -38,42 +38,42 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistScheduledWorklist)]
     [FolderPath("Scheduled", true)]
     public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistCheckedInWorklist)]
     [FolderPath("Checked In")]
     public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistInProgressWorklist)]
     [FolderPath("In Progress")]
     public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistCompletedWorklist)]
     [FolderPath("Completed")]
     public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistUndocumentedWorklist)]
     [FolderPath("Undocumented")]
     public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
     }
 
-    [ExtensionOf(typeof(TechnologistMainWorkflowFolderExtensionPoint))]
+    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistCancelledWorklist)]
     [FolderPath("Cancelled")]
     public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolder

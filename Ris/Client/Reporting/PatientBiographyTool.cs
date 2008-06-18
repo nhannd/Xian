@@ -49,8 +49,8 @@ namespace ClearCanvas.Ris.Client.Reporting
     [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 	[ActionPermission("view", AuthorityTokens.Workflow.PatientBiography.View)]
-	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
     {
         private bool _enabled;

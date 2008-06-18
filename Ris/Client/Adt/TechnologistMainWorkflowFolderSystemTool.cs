@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Initialize();
 
-            _folderSystem = new TechnologistMainWorkflowFolderSystem(this.Context);
+            _folderSystem = new TechnologistWorkflowFolderSystem(this.Context);
         }
     }
 }

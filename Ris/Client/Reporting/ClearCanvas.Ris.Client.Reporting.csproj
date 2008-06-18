@@ -56,9 +56,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ReportingProtocolWorkflowFolderSystem.cs" />
+    <Compile Include="ProtocolWorkflowFolderSystem.cs" />
     <Compile Include="ReportingProtocolWorkflowFolderSystemTool.cs" />
-    <Compile Include="ReportingMainWorkflowFolderSystem.cs" />
+    <Compile Include="ReportingWorkflowFolderSystem.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="RadiologistHomeTool.cs" />

@@ -4,7 +4,7 @@ using ClearCanvas.Ris.Client.Reporting.Folders;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-	[ExtensionOf(typeof(ReportingMainWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class ReportingMainWorkflowConversationTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
 	{
 	}

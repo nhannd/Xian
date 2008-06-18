@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
 	public abstract class TechnologistWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
 		: WorklistFolderSystem<ModalityWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IModalityWorkflowService>
-		where TFolderExtensionPoint : ExtensionPoint<IFolder>, new()
+		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
     {

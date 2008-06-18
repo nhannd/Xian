@@ -38,14 +38,29 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Defines interface to context for tools that operate on workflow folders.
+	/// </summary>
     public interface IWorkflowFolderToolContext : IToolContext
     {
-        IEnumerable Folders { get; }
+		/// <summary>
+		/// Gets the set of folders in the folder system.
+		/// </summary>
+        IEnumerable<IFolder> Folders { get; }
+
+		/// <summary>
+		/// Gets the currently selected folder, or null if no folder is selected.
+		/// </summary>
         IFolder SelectedFolder { get; }
 
+		/// <summary>
+		/// Occurs when <see cref="SelectedFolder"/> changes.
+		/// </summary>
         event EventHandler SelectedFolderChanged;
+
+		/// <summary>
+		/// Gets the desktop window.
+		/// </summary>
         IDesktopWindow DesktopWindow { get; }
-
-
     }
 }

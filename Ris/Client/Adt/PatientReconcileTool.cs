@@ -54,8 +54,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Reconcile)]
 
     [ExtensionOf(typeof(PatientBiographyToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     public class PatientReconcileTool : ToolBase
     {
         private bool _enabled;

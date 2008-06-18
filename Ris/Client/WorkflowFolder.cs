@@ -60,57 +60,18 @@ namespace ClearCanvas.Ris.Client
     }
 
 	/// <summary>
-	/// Internal inteface used to initialize a <see cref="WorkflowFolder"/> once,
-	/// without having to define a constructor.
-	/// </summary>
-    internal interface IInitializeWorkflowFolder
-    {
-		/// <summary>
-		/// Initializes this folder with the specified arguments.
-		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="worklistRef"></param>
-		/// <param name="description"></param>
-		/// <param name="isStatic"></param>
-    	void Initialize(Path path, EntityRef worklistRef, string description, bool isStatic);
-
-		/// <summary>
-		/// Associates this folder with the specified folder system.
-		/// </summary>
-		/// <param name="folderSystem"></param>
-    	void SetFolderSystem(WorkflowFolderSystem folderSystem);
-    }
-
-	/// <summary>
 	/// Abstract base class for workflow folders.  A workflow folder is characterized by the fact
 	/// that it contains "work items".
 	/// </summary>
-	public abstract class WorkflowFolder : Folder, IInitializeWorkflowFolder, IDisposable
+	public abstract class WorkflowFolder : Folder, IDisposable
 	{
         private WorkflowFolderSystem _folderSystem;
-        private EntityRef _worklistRef;
         private int _itemCount = -1;
         private bool _isPopulated;
 
         private Timer _refreshTimer;
         private int _refreshTime;
 
-		#region IInitializeWorkflowFolder Members
-
-		void IInitializeWorkflowFolder.Initialize(Path path, EntityRef worklistRef, string description, bool isStatic)
-		{
-			this.FolderPath = path;
-			_worklistRef = worklistRef;
-			this.Tooltip = description;
-			this.IsStatic = isStatic;
-		}
-
-		void IInitializeWorkflowFolder.SetFolderSystem(WorkflowFolderSystem folderSystem)
-		{
-			_folderSystem = folderSystem;
-		}
-
-		#endregion
 
         #region IDisposable Members
 
@@ -126,29 +87,6 @@ namespace ClearCanvas.Ris.Client
         #endregion
 
 		#region Public API
-
-		/// <summary>
-		/// Gets the reference to the worklist that populates this folder, or null if the folder is not associated with a worklist instance.
-		/// </summary>
-		//TODO: does this belong here or on the WorklistFolder class?
-		public EntityRef WorklistRef
-		{
-			get { return _worklistRef; }
-		}
-
-		/// <summary>
-		/// Gets the name of the worklist class that this folder is associated with,
-		/// typically defined by the <see cref="FolderForWorklistClassAttribute"/>.
-		/// </summary>
-		//TODO: does this belong here or on the WorklistFolder class?
-		public virtual string WorklistClassName
-		{
-			get
-			{
-				FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(this.GetType());
-				return a == null ? null : a.WorklistClassName;
-			}
-		}
 
 		/// <summary>
 		/// Gets the folder system that this folder belongs to.
@@ -233,6 +171,15 @@ namespace ClearCanvas.Ris.Client
 		protected override bool IsItemCountKnown
         {
             get { return _isPopulated || _itemCount > -1; }
+		}
+
+		#endregion
+
+		#region Internal API
+
+		internal void SetFolderSystem(WorkflowFolderSystem folderSystem)
+		{
+			_folderSystem = folderSystem;
 		}
 
 		#endregion
@@ -529,15 +476,47 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
+	/// Internal inteface used to initialize a <see cref="WorkflowFolder"/> once,
+	/// without having to define a constructor.
+	/// </summary>
+	internal interface IInitializeWorklistFolder
+	{
+		/// <summary>
+		/// Initializes this folder with the specified arguments.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="worklistRef"></param>
+		/// <param name="description"></param>
+		/// <param name="isStatic"></param>
+		void Initialize(Path path, EntityRef worklistRef, string description, bool isStatic);
+	}
+
+	public interface IWorklistFolder : IFolder
+	{
+		/// <summary>
+		/// Gets the reference to the worklist that populates this folder, or null if the folder is not associated with a worklist instance.
+		/// </summary>
+		EntityRef WorklistRef { get;}
+
+		/// <summary>
+		/// Gets the name of the worklist class that this folder is associated with.
+		/// </summary>
+		string WorklistClassName { get;}
+	}
+
+
+	/// <summary>
 	/// Abstract base class for folders that display the contents of worklists.
 	/// </summary>
 	/// <typeparam name="TItem"></typeparam>
 	/// <typeparam name="TWorklistService"></typeparam>
-	public abstract class WorklistFolder<TItem, TWorklistService> : WorkflowFolder<TItem>
+	public abstract class WorklistFolder<TItem, TWorklistService> : WorkflowFolder<TItem>, IInitializeWorklistFolder, IWorklistFolder
 		where TItem : DataContractBase
 		where TWorklistService : IWorklistService<TItem>, IWorkflowService<TItem>
 
 	{
+		private EntityRef _worklistRef;
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -546,6 +525,45 @@ namespace ClearCanvas.Ris.Client
 			: base(itemsTable)
 		{
 		}
+
+		#region IInitializeWorklistFolder Members
+
+		void IInitializeWorklistFolder.Initialize(Path path, EntityRef worklistRef, string description, bool isStatic)
+		{
+			this.FolderPath = path;
+			_worklistRef = worklistRef;
+			this.Tooltip = description;
+			this.IsStatic = isStatic;
+		}
+
+		#endregion
+
+		#region IWorklistFolder Members
+
+		/// <summary>
+		/// Gets the reference to the worklist that populates this folder, or null if the folder is not associated with a worklist instance.
+		/// </summary>
+		public EntityRef WorklistRef
+		{
+			get { return _worklistRef; }
+		}
+
+		/// <summary>
+		/// Gets the name of the worklist class that this folder is associated with,
+		/// typically defined by the <see cref="FolderForWorklistClassAttribute"/>.
+		/// </summary>
+		public virtual string WorklistClassName
+		{
+			get
+			{
+				FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(this.GetType());
+				return a == null ? null : a.WorklistClassName;
+			}
+		}
+
+		#endregion
+
+		#region Protected API
 
 		/// <summary>
 		/// Called to obtain the set of items in the folder.
@@ -591,5 +609,7 @@ namespace ClearCanvas.Ris.Client
 
 			return count;
 		}
+
+		#endregion
 	}
 }

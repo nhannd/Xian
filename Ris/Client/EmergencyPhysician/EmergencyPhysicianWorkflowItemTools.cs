@@ -5,7 +5,7 @@ using ClearCanvas.Ris.Client.EmergencyPhysician.Folders;
 
 namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
-	[ExtensionOf(typeof(EmergencyPhysicianMainWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	public class EmergencyPhysicianEmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
 	{
         public override void Initialize()

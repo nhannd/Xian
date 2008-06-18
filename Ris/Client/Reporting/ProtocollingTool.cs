@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Create)]
-	[ExtensionOf(typeof(ReportingProtocolWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
 	{
         public override void Initialize()

@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("apply", IconScheme.Colour, "Icons.CheckInToolSmall.png", "Icons.CheckInToolMedium.png", "Icons.CheckInToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Procedure.CheckIn)]
-	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	public class CheckInProceduresTool : RegistrationWorkflowTool
 	{
 		public CheckInProceduresTool()
@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Order.Cancel)]
-	[ExtensionOf(typeof(RegistrationMainWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	public class CancelOrdersTool : RegistrationWorkflowTool
 	{
 		public CancelOrdersTool()

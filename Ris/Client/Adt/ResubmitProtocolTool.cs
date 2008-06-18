@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
-    [ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class ResubmitProtocolTool : BookingProtocolWorkflowTool
     {
 		public ResubmitProtocolTool()
@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
-	[ExtensionOf(typeof(RegistrationBookingWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class CancelProtocolTool : BookingProtocolWorkflowTool
     {
 		public CancelProtocolTool()

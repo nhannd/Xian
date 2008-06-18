@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 		{
 			base.Initialize();
 
-			_folderSystem = new EmergencyPhysicianMainWorkflowFolderSystem(this.Context);
+			_folderSystem = new EmergencyWorkflowFolderSystem(this.Context);
 		}
 	}
 }

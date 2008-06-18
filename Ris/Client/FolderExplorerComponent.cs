@@ -206,12 +206,12 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-        void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
+		private void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
         {
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(true));
         }
 
-        void OnSelectedFolderRefreshFinish(object sender, EventArgs e)
+		private void OnSelectedFolderRefreshFinish(object sender, EventArgs e)
         {
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(false));
         }
@@ -257,9 +257,10 @@ namespace ClearCanvas.Ris.Client
 
 		private void FolderRemovedEventHandler(object sender, ListEventArgs<IFolder> e)
 		{
-			// if the folder being removed is currently selected, de-select it first
-			//if(this.SelectedFolder == e.Item)
-			//	this.SelectedFolder = null;
+			// bug: noticed that if the folder being removed or one of its parents is currently selected,
+			// the UI may exhibit strange behaviour
+			// to be safe, just remove the current selection
+			this.SelectedFolder = null;
 
 			// folder was removed from the folder system, so remove it from the tree
 			_folderTreeRoot.RemoveFolder(e.Item);

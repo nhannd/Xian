@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Initialize();
 
-            _folderSystem = new RegistrationBookingWorkflowFolderSystem(this.Context);
+            _folderSystem = new BookingWorkflowFolderSystem(this.Context);
         }
     }
 }

@@ -33,12 +33,12 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-	[ExtensionOf(typeof(RegistrationMainWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
 	public class RegistrationMainWorkflowFolderSearchTool : SearchTool<IRegistrationWorkflowFolderToolContext>
 	{
 	}
 
-	[ExtensionOf(typeof(TechnologistMainWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(TechnologistWorkflowFolderToolExtensionPoint))]
 	public class TechnologistMainWorkflowFolderSearchTool : SearchTool<ITechnologistWorkflowFolderToolContext>
 	{
 	}

@@ -34,12 +34,12 @@ using ClearCanvas.Ris.Client.Adt;
 
 namespace ClearCanvas.Ris.Client.EmergencyPhysician
 {
-	[ExtensionOf(typeof(EmergencyPhysicianMainWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyWorkflowFolderToolExtensionPoint))]
 	public class EmergencyPhysicianWorkflowFolderTools : SearchTool<IRegistrationWorkflowFolderToolContext>
 	{
 	}
 
-	[ExtensionOf(typeof(EmergencyPhysicianMainWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyWorkflowFolderToolExtensionPoint))]
 	public class EmergencyPhysicianMainWorkflowRefreshTool : RefreshTool<IRegistrationWorkflowFolderToolContext>
 	{
 	}
