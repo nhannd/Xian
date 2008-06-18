@@ -59,7 +59,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this.procedureTypeEditorComponentBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this._acceptButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._baseType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
@@ -71,7 +70,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// procedureTypeEditorComponentBindingSource
 			// 
-			this.procedureTypeEditorComponentBindingSource.DataSource = typeof(ClearCanvas.Ris.Client.Admin.ProcedureTypeEditorComponent);
 			// 
 			// _acceptButton
 			// 
