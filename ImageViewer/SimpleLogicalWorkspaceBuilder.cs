@@ -37,6 +37,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -169,8 +170,11 @@ namespace ClearCanvas.ImageViewer
 			DateTime studyDate;
 			DateParser.Parse(study.StudyDate, out studyDate);
 
-			imageSet.Name = String.Format("{0} · {1}",
-				studyDate.ToString(Format.DateFormat),
+			string modalitiesInStudy = StringUtilities.Combine(GetModalitiesInStudy(study), ", ");
+
+			imageSet.Name = String.Format("{0} [{1}] {2}", 
+				studyDate.ToString(Format.DateFormat), 
+				modalitiesInStudy ?? "",
 				study.StudyDescription);
 
 			imageSet.PatientInfo = String.Format("{0} · {1}",
@@ -220,6 +224,19 @@ namespace ClearCanvas.ImageViewer
 				image.Uid = imageSop.SopInstanceUID;
 				displaySet.PresentationImages.Add(image);
 			}
+		}
+
+		private static List<string> GetModalitiesInStudy(Study study)
+		{
+			List<string> modalities = new List<string>();
+			foreach (Series series in study.Series.Values)
+			{
+				string modality = series.Modality;
+				if (!modalities.Contains(modality))
+					modalities.Add(modality);
+			}
+
+			return modalities;
 		}
 
 		private static void SortImages(IDisplaySet displaySet)
