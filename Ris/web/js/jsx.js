@@ -168,6 +168,16 @@ if(!String.prototype.escapeHTML)
     }
 }
 
+if(!String.prototype.replaceLineBreak)
+{
+    // from Prototype.js library (www.prototypejs.org)
+    String.prototype.replaceLineBreak = function()
+    {
+		var newString = this.replace(/\r\n/g, "<br>");
+		return newString.replace(/[\r\n]/g, "<br>");
+    }
+}
+
 // utility to combine a list of strings with separator
 if (!String.combine)
 {

@@ -345,7 +345,7 @@ var Table = {
 
 			if(["readonly"].indexOf(column.cellType) > -1)
 			{
-				var field = document.createElement("pre");
+				var field = document.createElement("div");
 				field.className = "readonlyField";
 				td.appendChild(field);
 				td._setCellDisplayValue = function(value) { Field.setPreFormattedValue(field, value); }
@@ -751,7 +751,7 @@ var Field =
 
 	setPreFormattedValue: function(element, value)
 	{
-		element.innerHTML = value ? "<PRE>" + (value + "") + "</PRE>" : "";
+		element.innerHTML = value ? (value + "").replaceLineBreak() : "";
 	},
 
 	getValue: function(element)

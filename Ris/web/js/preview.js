@@ -314,7 +314,7 @@ function createReportPreview(element, report)
 			if (addendumContent)
 			{
 				formattedReport += "<b>Addendum " + i + " (" + statusMap[addendumStatus] + "): </b><br>";
-				formattedReport += "<pre>" + addendumContent + "</pre>";
+				formattedReport += addendumContent.replaceLineBreak();
 				formattedReport += formatReportPerformer(addendumPart);
 
 				if (['D', 'P'].indexOf(addendumStatus) > -1)
@@ -362,7 +362,7 @@ function createReportPreview(element, report)
 	formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
 	if(mainReportText)
 	{
-		formattedReport += "<pre>" + mainReportText + "</pre>";
+		formattedReport += mainReportText.replaceLineBreak();
 	}
 
 	formattedReport += formatReportPerformer(report.Parts[0]);
