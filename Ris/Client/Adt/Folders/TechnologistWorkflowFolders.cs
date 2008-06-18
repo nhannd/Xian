@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
     [FolderForWorklistClass(WorklistClassNames.TechnologistUndocumentedWorklist)]
-    [FolderPath("Undocumented")]
+    [FolderPath("Incomplete Documentation")]
     public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
     }
