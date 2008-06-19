@@ -115,26 +115,46 @@ namespace ClearCanvas.Enterprise.Core.Imex
                             return ec.FullName == data.EnumerationClass;
                         });
 
-                    IList<EnumValue> existingValues = enumBroker.Load(enumClass);
-                    foreach (EnumerationMemberData md in data.Members)
-                    {
-                        // check if the value already exists
-                        EnumValue value = CollectionUtils.SelectFirst(existingValues,
-                            delegate(EnumValue v) { return v.Code == md.Code; });
+					if(enumClass == null)
+					{
+						Platform.Log(LogLevel.Error, string.Format("{0} is not a valid enumeration class name.", data.EnumerationClass));
+						continue;
+					}
 
-                        if(value == null)
-                        {
-                            // value does not exist - add it
-                            value = enumBroker.AddValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder);
-                            existingValues.Add(value);
-                        }
-                        else
-                        {
-                            // value exists - update it
-                            enumBroker.UpdateValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder);
-                        }
-                    }
-                }
+					IList<EnumValue> existingValues = enumBroker.Load(enumClass);
+					foreach (EnumerationMemberData md in data.Members)
+					{
+						// check if a conflicting value exists
+						// (this can happen if there is existing data in the db with the same value but different code)
+						EnumValue conflict = CollectionUtils.SelectFirst(existingValues,
+							delegate(EnumValue v) { return v.Code != md.Code && v.Value == md.Value; });
+
+						if(conflict != null)
+						{
+							Platform.Log(LogLevel.Error, string.Format("{0} value {1} conflicts with existing value {2} and will not be imported.",
+								data.EnumerationClass, md.Code, conflict.Code));
+							continue;
+						}
+
+						// check if the value already exists
+						EnumValue value = CollectionUtils.SelectFirst(existingValues,
+							delegate(EnumValue v) { return v.Code == md.Code; });
+
+						if (value == null)
+						{
+							// value does not exist - add it
+							value = enumBroker.AddValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder);
+							existingValues.Add(value);
+						}
+						else
+						{
+							// value exists - update it
+							enumBroker.UpdateValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder);
+						}
+					}
+
+					context.SynchState();
+				}
 
                 scope.Complete();
             }
