@@ -46,6 +46,7 @@ namespace ClearCanvas.Common.Utilities
 	public class ObservableList<TItem> : IList<TItem>
 	{
 		private readonly List<TItem> _list;
+		private bool _enableEvents = true;	// events are enabled by default
 		
 		private event EventHandler<ListEventArgs<TItem>> _itemAddedEvent;
 		private event EventHandler<ListEventArgs<TItem>> _itemRemovedEvent;
@@ -115,6 +116,16 @@ namespace ClearCanvas.Common.Utilities
 		{
 			add { _itemChanging += value; }
 			remove { _itemChanging -= value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether <see cref="ItemAdded"/>, <see cref="ItemChanged"/>,
+		/// <see cref="ItemChanging"/> and <see cref="ItemRemoved"/> events are raised.
+		/// </summary>
+		public bool EnableEvents
+		{
+			get { return _enableEvents; }
+			set { _enableEvents = value; }
 		}
 
 		#region IList<T> Members
@@ -307,7 +318,8 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		protected virtual void OnItemAdded(ListEventArgs<TItem> e)
 		{
-			EventsHelper.Fire(_itemAddedEvent, this, e);
+			if(_enableEvents)
+				EventsHelper.Fire(_itemAddedEvent, this, e);
 		}
 
 		/// <summary>
@@ -315,7 +327,8 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		protected virtual void OnItemRemoved(ListEventArgs<TItem> e)
 		{
-			EventsHelper.Fire(_itemRemovedEvent, this, e);
+			if (_enableEvents)
+				EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}
 
 		/// <summary>
@@ -323,7 +336,8 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		protected virtual void OnItemChanging(ListEventArgs<TItem> e)
 		{
-			EventsHelper.Fire(_itemChanging, this, e);
+			if (_enableEvents)
+				EventsHelper.Fire(_itemChanging, this, e);
 		}
 
 		/// <summary>
@@ -331,7 +345,8 @@ namespace ClearCanvas.Common.Utilities
 		/// </summary>
 		protected virtual void OnItemChanged(ListEventArgs<TItem> e)
 		{
-			EventsHelper.Fire(_itemChangedEvent, this, e);
+			if (_enableEvents)
+				EventsHelper.Fire(_itemChangedEvent, this, e);
 		}
 	}
 }

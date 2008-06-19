@@ -181,7 +181,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="folder"></param>
 		/// <param name="depth"></param>
-		protected void InsertFolder(IFolder folder, int depth)
+		/// <param name="alphabetical"></param>
+		protected void InsertFolder(IFolder folder, int depth, bool alphabetical)
 		{
 			if(depth == folder.FolderPath.Segments.Length)
 			{
@@ -201,9 +202,12 @@ namespace ClearCanvas.Ris.Client
 				if (node == null)
 				{
 					node = new FolderTreeNode(_explorer, this, folder.FolderPath.SubPath(depth));
-					_subTree.Items.Add(node);
+					if(alphabetical)
+						InsertChildAlphabetical(node, depth);
+					else
+						_subTree.Items.Add(node);
 				}
-				node.InsertFolder(folder, depth + 1);
+				node.InsertFolder(folder, depth + 1, alphabetical);
 			}
 		}
 
@@ -267,6 +271,28 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
+		/// Inserts the specified node alphabetically as a child of this node.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="pathDepth"></param>
+		private void InsertChildAlphabetical(FolderTreeNode node, int pathDepth)
+		{
+			PathSegment segment = node.Folder.FolderPath.Segments[pathDepth];
+
+			// find the insertion point - the first node greater/equalto the node to be inserted
+			int insertPoint = _subTree.Items.FindIndex(
+				delegate(FolderTreeNode n)
+				{
+					return n.Folder.FolderPath.Segments[pathDepth].LocalizedText.CompareTo(segment.LocalizedText) >= 0;
+				});
+
+			if (insertPoint > -1)
+				_subTree.Items.Insert(insertPoint, node);
+			else
+				_subTree.Items.Add(node);
+		}
+
+		/// <summary>
 		/// Constructs a tree item binding.
 		/// </summary>
 		/// <param name="explorer"></param>
@@ -312,11 +338,12 @@ namespace ClearCanvas.Ris.Client
 		/// Inserts the specified folders into the tree.
 		/// </summary>
 		/// <param name="folders"></param>
-		public void InsertFolders(IEnumerable<IFolder> folders)
+		/// <param name="alphabetical"></param>
+		public void InsertFolders(IEnumerable<IFolder> folders, bool alphabetical)
 		{
 			foreach (IFolder folder in folders)
 			{
-				InsertFolder(folder, 0);
+				InsertFolder(folder, 0, alphabetical);
 			}
 		}
 
@@ -325,9 +352,10 @@ namespace ClearCanvas.Ris.Client
 		/// Inserts the specified folder into the tree.
 		/// </summary>
 		/// <param name="folder"></param>
-		public void InsertFolder(IFolder folder)
+		/// <param name="alphabetical"></param>
+		public void InsertFolder(IFolder folder, bool alphabetical)
 		{
-			InsertFolder(folder, 0);
+			InsertFolder(folder, 0, alphabetical);
 		}
 
 		/// <summary>

@@ -146,6 +146,12 @@ namespace ClearCanvas.Ris.Client
 						});
 				});
 
+			// sort groups alphabetically
+			groupsToShow.Sort(delegate(StaffGroupSummary x, StaffGroupSummary y) { return x.Name.CompareTo(y.Name); });
+
+			// temporarily disable events while we manipulate the folders collection
+			this.Folders.EnableEvents = false;
+
 			// remove existing group folders
 			CollectionUtils.Remove(this.Folders,
 				delegate(IFolder f) { return f is GroupInboxFolder; });
@@ -156,6 +162,12 @@ namespace ClearCanvas.Ris.Client
 				GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
 				this.Folders.Add(groupFolder);
 			}
+
+			// re-enable events
+			this.Folders.EnableEvents = true;
+
+			// notify that the entire folders collection has changed so that the tree is reconstructed
+			this.NotifyFoldersChanged();
 		}
 	}
 }

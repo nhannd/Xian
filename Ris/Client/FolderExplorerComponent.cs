@@ -85,34 +85,12 @@ namespace ClearCanvas.Ris.Client
         {
             base.Start();
 
-			// update paths of all folders from XML
-			CollectionUtils.ForEach(_folderSystem.Folders,
-				delegate (IFolder f) { FolderExplorerComponentSettings.Default.UpdateFolderPath(f); });
-
-			// put folders in correct order from XML
-        	List<IFolder> orderedFolders;
-        	List<IFolder> remainderFolders;
-            FolderExplorerComponentSettings.Default.OrderFolders(_folderSystem, out orderedFolders, out remainderFolders);
-
-			_folderTreeRoot.InsertFolders(orderedFolders);
-			_folderTreeRoot.InsertFolders(remainderFolders);
-
-			// after building initial folder system, listen for changes
+			// subscribe to events
 			_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
 			_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
+			_folderSystem.FoldersChanged += FoldersChangedEventHandler;
 
-			RefreshCounts(_folderTreeRoot);
-        }
-
-        private void RefreshCounts(FolderTreeNode node)
-        {
-			if (node == null) return;
-
-			foreach (FolderTreeNode child in node.GetSubTree().Items)
-            {
-				RefreshCounts(child);
-				child.Folder.RefreshCount();
-            }
+			BuildFolderTree();
         }
 
         public override IActionSet ExportedActions
@@ -247,21 +225,10 @@ namespace ClearCanvas.Ris.Client
             return DragDropKind.None;
         }
 
-        /// <summary>
-        /// Insert a folder into the folder system.  This will use the folder.FolderPath property to 
-        /// insert the folder into the right structure.  Container folders are created whenever necessary
-        /// </summary>
-        /// <param name="folder"></param>
-        private void InsertFolderUsingPath(IFolder folder)
-        {
-			_folderTreeRoot.InsertFolder(folder);
-        }
-
 		private void FolderAddedEventHandler(object sender, ListEventArgs<IFolder> e)
 		{
 			// folder was added to the folder system, so add it to the tree
-			// TODO: should update folder path from XML settings first
-			_folderTreeRoot.InsertFolder(e.Item);
+			_folderTreeRoot.InsertFolder(e.Item, false);
 		}
 
 		private void FolderRemovedEventHandler(object sender, ListEventArgs<IFolder> e)
@@ -275,6 +242,38 @@ namespace ClearCanvas.Ris.Client
 			_folderTreeRoot.RemoveFolder(e.Item);
 		}
 
-        #endregion
+		private void FoldersChangedEventHandler(object sender, EventArgs e)
+		{
+			BuildFolderTree();
+		}
+
+		private void BuildFolderTree()
+		{
+			// clear existing
+			_folderTreeRoot.GetSubTree().Items.Clear();
+
+			// put folders in correct insertion order from XML
+			List<IFolder> orderedFolders;
+			List<IFolder> remainderFolders;
+			FolderExplorerComponentSettings.Default.OrderFolders(_folderSystem, out orderedFolders, out remainderFolders);
+
+			_folderTreeRoot.InsertFolders(orderedFolders, false);	// insert the ordered folders as ordered
+			_folderTreeRoot.InsertFolders(remainderFolders, true);	// insert the remainder sorting alphabetically
+
+			RefreshCounts(_folderTreeRoot);
+		}
+
+		private void RefreshCounts(FolderTreeNode node)
+		{
+			if (node == null) return;
+
+			foreach (FolderTreeNode child in node.GetSubTree().Items)
+			{
+				RefreshCounts(child);
+				child.Folder.RefreshCount();
+			}
+		}
+
+		#endregion
     }
 }

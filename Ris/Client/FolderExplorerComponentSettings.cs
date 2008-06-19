@@ -87,21 +87,6 @@ namespace ClearCanvas.Ris.Client
 				out ordered, out remainder);
 		}
 
-		/// <summary>
-		/// Updates the <see cref="IFolder.FolderPath"/> of the specified folder from the XML store.
-		/// </summary>
-		/// <param name="folder"></param>
-		public void UpdateFolderPath(IFolder folder)
-		{
-			XmlElement xmlFolderSystem = FindXmlFolderSystem(folder.FolderSystem.Id);
-			if(xmlFolderSystem != null)
-			{
-				XmlElement xmlFolder = FindXmlFolder(folder.Id, xmlFolderSystem);
-				if (xmlFolder != null)
-					folder.FolderPath = new Path(xmlFolder.GetAttribute("path"), folder.ResourceResolver);
-			}
-		}
-
 		#endregion
 
 		#region Private Utility Methods

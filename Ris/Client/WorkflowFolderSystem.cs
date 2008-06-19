@@ -154,6 +154,8 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _selectedItemsChanged;
 		private event EventHandler _titleChanged;
 		private event EventHandler _titleIconChanged;
+		private event EventHandler _foldersChanged;
+
 
 		private string _title;
 		private IconSet _titleIcon;
@@ -271,6 +273,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _titleIconChanged += value; }
 			remove { _titleIconChanged -= value; }
+		}
+
+		public event EventHandler FoldersChanged
+		{
+			add { _foldersChanged += value; }
+			remove { _foldersChanged -= value; }
 		}
 
 		public void OnSelectedItemsChanged()
@@ -498,6 +506,14 @@ namespace ClearCanvas.Ris.Client
 		protected IEnumerable<Type> GetRegisteredWorkflowServices()
 		{
 			return _workflowServices;
+		}
+
+		/// <summary>
+		/// Notifies that the entire <see cref="Folders"/> collection has changed.
+		/// </summary>
+		protected void NotifyFoldersChanged()
+		{
+			EventsHelper.Fire(_foldersChanged, this, EventArgs.Empty);
 		}
 
 		#endregion

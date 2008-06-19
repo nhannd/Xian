@@ -72,6 +72,16 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		event EventHandler TitleIconChanged;
 
+		/// <summary>
+		/// Occurs to indicate that the entire folder system should be rebuilt.
+		/// </summary>
+		/// <remarks>
+		/// This is distinct from incremental changes to the <see cref="Folders"/> collection,
+		/// which can be observed via the <see cref="ObservableList{TItem}.ItemAdded"/> and
+		/// <see cref="ObservableList{TItem}.ItemRemoved"/> events.
+		/// </remarks>
+		event EventHandler FoldersChanged;
+
 		#endregion
 
 		#region Methods
