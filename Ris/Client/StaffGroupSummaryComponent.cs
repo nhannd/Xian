@@ -197,7 +197,7 @@ namespace ClearCanvas.Ris.Client
 
             StaffGroupEditorComponent editor = new StaffGroupEditorComponent(item.StaffGroupRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, "Edit Staff Group");
+                this.Host.DesktopWindow, editor, "Edit Staff Group - " + item.Name);
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
                 editedItems.Add(editor.StaffGroupSummary);

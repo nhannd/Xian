@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			FacilityEditorComponent editor = new FacilityEditorComponent(item.FacilityRef);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateFacility + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.FacilitySummary);

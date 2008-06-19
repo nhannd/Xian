@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			LocationEditorComponent editor = new LocationEditorComponent(item.LocationRef);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateLocation + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.LocationSummary);

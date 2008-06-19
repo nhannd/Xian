@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client.Admin
             WorklistAdminSummary worklist = CollectionUtils.FirstElement(items);
             WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, false);
             ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
-                new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist, null, DialogSizeHint.Medium));
+                new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.Name, null, DialogSizeHint.Medium));
 
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {

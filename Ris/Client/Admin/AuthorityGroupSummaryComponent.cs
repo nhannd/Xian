@@ -233,7 +233,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item.Name, false);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.AuthorityGroupSummary);

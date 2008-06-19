@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			UserEditorComponent editor = new UserEditorComponent(item.UserName);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateUser + " - " + item.UserName);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.UserSummary);

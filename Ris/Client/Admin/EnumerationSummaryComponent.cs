@@ -264,7 +264,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _selectedEnumeration.AssemblyQualifiedClassName,
                     (EnumValueInfo)_selectedEnumValue.Clone(),
                     _enumValues.Items);
-                ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue);
+                ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue + " - " + _selectedEnumValue.Code);
                 if (result == ApplicationComponentExitCode.Accepted)
                 {
                     // refresh entire table

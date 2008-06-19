@@ -162,7 +162,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			ProtocolGroupEditorComponent editor = new ProtocolGroupEditorComponent(item.ProtocolGroupRef);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleEditProtocolGroup);
+				this.Host.DesktopWindow, editor, SR.TitleEditProtocolGroup + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.ProtocolGroupSummary);

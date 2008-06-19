@@ -232,7 +232,7 @@ namespace ClearCanvas.Ris.Client
 
 			StaffEditorComponent editor = new StaffEditorComponent(item.StaffRef);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateStaff + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.StaffSummary);
