@@ -108,7 +108,7 @@ namespace ClearCanvas.Dicom.IO
             ushort[] words = new ushort[count];
             for (int i = 0, p = 0; i < count; i++, p += 2)
             {
-                words[i] = unchecked((ushort)((bytes[p] << 8) + bytes[p + 1]));
+                words[i] = BitConverter.ToUInt16(bytes, p);
             }
             return words;
         }
@@ -124,7 +124,7 @@ namespace ClearCanvas.Dicom.IO
             short[] words = new short[count];
             for (int i = 0, p = 0; i < count; i++, p += 2)
             {
-                words[i] = unchecked((short)((bytes[p] << 8) + bytes[p + 1]));
+                words[i] = BitConverter.ToInt16(bytes, p);
             }
             return words;
         }
@@ -164,7 +164,7 @@ namespace ClearCanvas.Dicom.IO
         /// Converts an array of bytes to an array of floats.
         /// </summary>
         /// <param name="bytes">Array of bytes</param>
-        /// <returns>Newly allocated double array</returns>
+        /// <returns>Newly allocated float array</returns>
         public static float[] ToFloatArray(byte[] bytes)
         {
             int count = bytes.Length / 4;
@@ -177,7 +177,7 @@ namespace ClearCanvas.Dicom.IO
         }
 
         /// <summary>
-        /// Converts an array of bytes to an array of floats.
+        /// Converts an array of bytes to an array of doubles.
         /// </summary>
         /// <param name="bytes">Array of bytes</param>
         /// <returns>Newly allocated double array</returns>
@@ -185,7 +185,7 @@ namespace ClearCanvas.Dicom.IO
         {
             int count = bytes.Length / 8;
             double[] doubles = new double[count];
-            for (int i = 0, p = 0; i < count; i++, p += 4)
+            for (int i = 0, p = 0; i < count; i++, p += 8)
             {
                 doubles[i] = BitConverter.ToDouble(bytes, p);
             }
