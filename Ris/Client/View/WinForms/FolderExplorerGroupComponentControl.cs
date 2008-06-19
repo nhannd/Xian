@@ -32,8 +32,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-			_menuModel = _component.ContextMenuModel;
-			_toolbarModel = _component.ToolbarModel;
+			_component.SelectedFolderSystemChanged += delegate
+				{
+					InitializeToolStrip();
+				};
 
 			Control stackTabGroups = (Control)_component.StackTabComponentContainerHost.ComponentView.GuiElement;
 			stackTabGroups.Dock = DockStyle.Fill;
@@ -127,6 +129,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private void InitializeToolStrip()
 		{
 			ToolStripBuilder.Clear(_toolStrip.Items);
+
+			_toolbarModel = _component.ToolbarModel;
+
 			if (_toolbarModel != null)
 			{
 				if (_toolStripItemAlignment == ToolStripItemAlignment.Right)

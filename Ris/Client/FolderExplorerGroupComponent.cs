@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
@@ -18,25 +17,6 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
-	[ExtensionPoint]
-	public class FolderExplorerGroupToolExtensionPoint : ExtensionPoint<ITool>
-	{
-	}
-
-	public interface IFolderExplorerGroupToolContext : IToolContext
-	{
-		IEnumerable FolderSystems { get; }
-		IFolderSystem SelectedFolderSystem { get; }
-
-		IEnumerable Folders { get; }
-		IFolder SelectedFolder { get; }
-
-		event EventHandler SelectedFolderSystemChanged;
-		event EventHandler SelectedFolderChanged;
-
-		IDesktopWindow DesktopWindow { get; }
-	}
-
 	/// <summary>
 	/// FolderExplorerGroupComponent class
 	/// </summary>
@@ -48,61 +28,6 @@ namespace ClearCanvas.Ris.Client
 		public SearchData SearchData
 		{
 			set { Search(value); }
-		}
-
-		#endregion
-
-		#region IFolderExplorerGroupToolContext implementation
-
-		class FolderExplorerGroupToolContext : ToolContext, IFolderExplorerGroupToolContext
-		{
-			private readonly FolderExplorerGroupComponent _component;
-
-			public FolderExplorerGroupToolContext(FolderExplorerGroupComponent component)
-			{
-				_component = component;
-			}
-
-			#region IFolderExplorerGroupToolContext Members
-
-			public IEnumerable FolderSystems
-			{
-				get { return _component._folderExplorerComponents.Values; }
-			}
-
-			public IFolderSystem SelectedFolderSystem
-			{
-				get { return _component.SelectedFolderSystem; }
-			}
-
-			public IEnumerable Folders
-			{
-				get { return _component.SelectedFolderSystem.Folders; }
-			}
-
-			public IFolder SelectedFolder
-			{
-				get { return _component.SelectedFolder; }
-			}
-
-			public IDesktopWindow DesktopWindow
-			{
-				get { return _component.Host.DesktopWindow; }
-			}
-
-			public event EventHandler SelectedFolderSystemChanged
-			{
-				add { _component.SelectedFolderSystemChanged += value; }
-				remove { _component.SelectedFolderSystemChanged -= value; }
-			}
-
-			public event EventHandler SelectedFolderChanged
-			{
-				add { _component.SelectedFolderChanged += value; }
-				remove { _component.SelectedFolderChanged -= value; }
-			}
-
-			#endregion
 		}
 
 		#endregion
@@ -158,8 +83,6 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _selectedFolderSystemChanged;
 		private event EventHandler _selectedFolderChanged;
 
-		private readonly ToolSet _toolSet;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
@@ -208,9 +131,6 @@ namespace ClearCanvas.Ris.Client
 					folderSystem.TitleChanged += delegate { thisPage.SetTitle(string.Empty, folderSystem.Title, string.Empty); };
 					folderSystem.TitleIconChanged += delegate { thisPage.IconSet = folderSystem.TitleIcon; };
 				});
-
-			// Find all the folder explorer group tools
-			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
 		}
 
 		#region Application Overrides
@@ -257,14 +177,9 @@ namespace ClearCanvas.Ris.Client
 			get { return _stackTabComponentContainerHost; }
 		}
 
-		public ActionModelRoot ContextMenuModel
+		public ActionModelNode ToolbarModel
 		{
-			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-group-contextmenu", _toolSet.Actions); }
-		}
-
-		public ActionModelRoot ToolbarModel
-		{
-			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-group-toolbar", _toolSet.Actions); }
+			get { return _selectedFolderExplorer.FoldersToolbarModel; }
 		}
 
 		public event EventHandler SelectedFolderSystemChanged
