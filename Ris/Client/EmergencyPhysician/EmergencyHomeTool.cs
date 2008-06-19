@@ -4,10 +4,10 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client;
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician
+namespace ClearCanvas.Ris.Client.Emergency
 {
 	[ExtensionPoint]
-	public class EmergencyPhysicianHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+	public class EmergencyHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.EmergencyPhysician
 	// TODO: change icons
 	[IconSet("launch", IconScheme.Colour, "Icons.EmergencyPhysicianHomeToolSmall.png", "Icons.EmergencyPhysicianHomeToolMedium.png", "Icons.EmergencyPhysicianHomeToolLarge.png")]
 	//[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class EmergencyPhysicianHomeTool : WorklistPreviewHomeTool<EmergencyPhysicianHomeFolderSystemToolExtensionPoint>
+	public class EmergencyHomeTool : WorklistPreviewHomeTool<EmergencyHomeFolderSystemToolExtensionPoint>
 	{
 		public override string Title
 		{

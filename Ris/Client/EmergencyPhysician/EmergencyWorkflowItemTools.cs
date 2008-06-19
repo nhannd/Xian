@@ -1,12 +1,11 @@
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Adt;
-using ClearCanvas.Ris.Client.EmergencyPhysician.Folders;
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician
+namespace ClearCanvas.Ris.Client.Emergency
 {
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
-	public class EmergencyPhysicianEmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	public class EmergencyOrdersConversationTool : PreliminaryDiagnosisConversationTool<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
 	{
         public override void Initialize()
         {

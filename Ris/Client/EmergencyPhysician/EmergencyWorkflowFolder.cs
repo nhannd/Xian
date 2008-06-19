@@ -6,11 +6,11 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Adt;
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician
+namespace ClearCanvas.Ris.Client.Emergency
 {
-	public abstract class EmergencyPhysicianWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+	public abstract class EmergencyWorkflowFolder : WorklistFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
 	{
-		public EmergencyPhysicianWorkflowFolder()
+		public EmergencyWorkflowFolder()
 			: base(new RegistrationWorklistTable())
 		{
 		}

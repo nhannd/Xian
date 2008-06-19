@@ -2,14 +2,14 @@ using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Client.EmergencyPhysician;
+using ClearCanvas.Ris.Client.Emergency;
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician
+namespace ClearCanvas.Ris.Client.Emergency
 {
 	[ExtensionOf(typeof(GlobalHomeFolderSystemToolExtensionPoint))]
-	[ExtensionOf(typeof(EmergencyPhysicianHomeFolderSystemToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyHomeFolderSystemToolExtensionPoint))]
 	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Emergency)]
-	public class EmergencyPhysicianMainWorkflowFolderSystemTool : FolderExplorerToolBase
+	public class EmergencyWorkflowFolderSystemTool : FolderExplorerToolBase
 	{
 		public override void Initialize()
 		{

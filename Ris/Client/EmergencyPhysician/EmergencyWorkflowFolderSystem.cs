@@ -6,10 +6,10 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Adt;
 using ClearCanvas.Ris.Client.Adt.Folders;
-using ClearCanvas.Ris.Client.EmergencyPhysician.Folders;
+using ClearCanvas.Ris.Client.Emergency.Folders;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician
+namespace ClearCanvas.Ris.Client.Emergency
 {
 	[ExtensionPoint]
 	public class EmergencyWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>

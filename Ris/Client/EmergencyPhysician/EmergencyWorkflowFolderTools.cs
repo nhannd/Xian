@@ -32,15 +32,15 @@
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Client.Adt;
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician
+namespace ClearCanvas.Ris.Client.Emergency
 {
 	[ExtensionOf(typeof(EmergencyWorkflowFolderToolExtensionPoint))]
-	public class EmergencyPhysicianWorkflowFolderTools : SearchTool<IRegistrationWorkflowFolderToolContext>
+	public class EmergencyWorkflowFolderTools : SearchTool<IRegistrationWorkflowFolderToolContext>
 	{
 	}
 
 	[ExtensionOf(typeof(EmergencyWorkflowFolderToolExtensionPoint))]
-	public class EmergencyPhysicianMainWorkflowRefreshTool : RefreshTool<IRegistrationWorkflowFolderToolContext>
+	public class EmergencyWorkflowRefreshTool : RefreshTool<IRegistrationWorkflowFolderToolContext>
 	{
 	}
 

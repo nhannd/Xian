@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Client.EmergencyPhysician {
+namespace ClearCanvas.Ris.Client.Emergency {
     using System;
     
     
