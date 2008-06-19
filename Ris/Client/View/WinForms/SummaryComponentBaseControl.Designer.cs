@@ -71,7 +71,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._summaryTableView.FilterTextBoxVisible = true;
 			this._summaryTableView.Location = new System.Drawing.Point(3, 3);
-			this._summaryTableView.MultiSelect = false;
 			this._summaryTableView.Name = "_summaryTableView";
 			this._summaryTableView.ReadOnly = false;
 			this._summaryTableView.Size = new System.Drawing.Size(644, 457);
