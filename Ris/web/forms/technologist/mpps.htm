@@ -43,8 +43,8 @@
 		}
 		function selectPage(mpps)
 		{
-				var modalityName = mpps.ModalityProcedureSteps[0].ModalityName;
-
+				var modalityName = mpps.ModalityProcedureSteps[0].Modality.Name;
+				
 				if(modalityName == "CT")
 					return "ct-mpps.htm";
 
