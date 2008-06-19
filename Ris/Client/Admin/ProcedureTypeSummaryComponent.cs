@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			ProcedureTypeEditorComponent editor = new ProcedureTypeEditorComponent(item.ProcedureTypeRef);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateProcedureType + " - " + item.Name);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateProcedureType + " - " + "("+item.Id+") " +item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.ProcedureTypeSummary);
