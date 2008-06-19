@@ -41,7 +41,9 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public class Path
     {
-        const char SEPARATOR = '/';
+		private const string SEPARATOR = "/";
+    	private const string ESCAPED_SEPARATOR = "//";
+		private const string TEMP = "__$:$__";
 
         private PathSegment[] _segments;
 
@@ -58,13 +60,18 @@ namespace ClearCanvas.Desktop
         /// <param name="resolver">The <see cref="IResourceResolver"/> to use for localization.</param>
         public Path(string pathString, IResourceResolver resolver)
         {
-            string[] parts = pathString.Split(new char[] { SEPARATOR });
+			// replace any escaped separators with some weird temporary string
+			pathString = pathString.Replace(ESCAPED_SEPARATOR, TEMP);
 
+			// split string by separator
+            string[] parts = pathString.Split(new string[] { SEPARATOR }, StringSplitOptions.None);
             int n = parts.Length;
             _segments = new PathSegment[n];
             for (int i = 0; i < n; i++)
             {
-                _segments[i] = new PathSegment(parts[i], resolver != null ? resolver.LocalizeString(parts[i]) : parts[i]);
+				// replace the temp string with the unescaped separator
+				parts[i] = parts[i].Replace(TEMP, SEPARATOR);
+				_segments[i] = new PathSegment(parts[i], resolver != null ? resolver.LocalizeString(parts[i]) : parts[i]);
             }
         }
 
@@ -95,49 +102,37 @@ namespace ClearCanvas.Desktop
         }
 
 		/// <summary>
+		/// Gets the path up to the specified depth.
+		/// </summary>
+		public Path SubPath(int depth)
+		{
+			Platform.CheckIndexRange(depth, 0, _segments.Length - 1, "depth");
+
+			PathSegment[] copy = new PathSegment[depth + 1];
+			Array.Copy(_segments, 0, copy, 0, depth + 1);
+
+			return new Path(copy);
+		}
+
+		/// <summary>
 		/// Gets the full path, localized.
 		/// </summary>
 		public string LocalizedPath
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
-				foreach (PathSegment segment in _segments)
-				{
-					if (sb.Length > 0)
-						sb.Append(SEPARATOR);
-					sb.Append(segment.LocalizedText);
-				}
-				return sb.ToString();
+				return StringUtilities.Combine(_segments, SEPARATOR,
+					delegate(PathSegment s) { return s.LocalizedText.Replace(SEPARATOR, ESCAPED_SEPARATOR); }, false);
 			}
 		}
 
-		/// <summary>
-		/// Gets the path up to the specified depth.
-		/// </summary>
-        public Path SubPath(int depth)
-        {
-            Platform.CheckIndexRange(depth, 0, _segments.Length - 1, "depth");
-
-			PathSegment[] copy = new PathSegment[depth + 1];
-			Array.Copy(_segments, 0, copy, 0, depth + 1);
-
-			return new Path(copy);
-        }
-
         /// <summary>
-        /// Converts this path back to the original string from which it was created.
+        /// Converts this path back to a string.
         /// </summary>
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (PathSegment segment in _segments)
-            {
-                if (sb.Length > 0)
-                    sb.Append(SEPARATOR);
-                sb.Append(segment.ResourceKey);
-            }
-            return sb.ToString();
-        }
+			return StringUtilities.Combine(_segments, SEPARATOR,
+				delegate(PathSegment s) { return s.ResourceKey.Replace(SEPARATOR, ESCAPED_SEPARATOR); }, false);
+		}
     }
 }

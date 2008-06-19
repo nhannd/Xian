@@ -247,6 +247,8 @@
       <DependentUpon>LoginDialogSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="WorkflowItemTool.cs" />
+    <Compile Include="WorklistFolder.cs" />
+    <Compile Include="WorklistFolderSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
