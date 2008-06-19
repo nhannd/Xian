@@ -39,18 +39,19 @@ namespace ClearCanvas.Common.Specifications
     {
         private readonly string _pattern;
         private readonly bool _ignoreCase;
+    	private readonly bool _nullMatches;
 
-        public RegexSpecification(string pattern, bool ignoreCase)
+        public RegexSpecification(string pattern, bool ignoreCase, bool nullMatches)
         {
             _pattern = pattern;
             _ignoreCase = ignoreCase;
+        	_nullMatches = nullMatches;
         }
 
         protected override TestResult InnerTest(object exp, object root)
         {
-            // assume that null matches anything
             if (exp == null)
-                return DefaultTestResult(true);
+				return DefaultTestResult(_nullMatches);
 
             if (exp is string)
             {

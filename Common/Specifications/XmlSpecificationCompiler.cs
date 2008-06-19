@@ -415,8 +415,13 @@ namespace ClearCanvas.Common.Specifications
             string pattern = GetAttributeOrNull(node, "pattern");
             if (pattern == null)
                 throw new XmlSpecificationCompilerException("Xml attribute 'pattern' is required for regex.");
-            
-            return new RegexSpecification(pattern, ignoreCase);
+
+        	bool nullMatches = false;
+			string stringNullMatches = GetAttributeOrNull(node, "nullMatches");
+			if (stringNullMatches != null)
+				nullMatches = stringNullMatches.Equals("true", StringComparison.InvariantCultureIgnoreCase);
+
+            return new RegexSpecification(pattern, ignoreCase, nullMatches);
         }
 
         private static XmlSchemaElement RegexSchema()
@@ -434,6 +439,12 @@ namespace ClearCanvas.Common.Specifications
             attrib.Use = XmlSchemaUse.Optional;
             attrib.SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "nullMatches";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("boolean", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
 
             attrib = new XmlSchemaAttribute();
             attrib.Name = "pattern";
