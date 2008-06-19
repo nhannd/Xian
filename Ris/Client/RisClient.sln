@@ -267,13 +267,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Oto.Executable"
 		{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F} = {F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.EmergencyPhysician", "EmergencyPhysician\ClearCanvas.Ris.Client.EmergencyPhysician.csproj", "{95B89FE3-2F50-4059-A02C-21661203E413}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotingClient", "..\RemotingClient\RemotingClient.csproj", "{F6A8E937-A0F5-4DC3-91E3-F93B388DFADA}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemotingClient", "..\RemotingClient\RemotingClient.csproj", "{F6A8E937-A0F5-4DC3-91E3-F93B388DFADA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Emergency", "Emergency\ClearCanvas.Ris.Client.Emergency.csproj", "{95B89FE3-2F50-4059-A02C-21661203E413}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -413,14 +413,14 @@ Global
 		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{95B89FE3-2F50-4059-A02C-21661203E413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{95B89FE3-2F50-4059-A02C-21661203E413}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{95B89FE3-2F50-4059-A02C-21661203E413}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{95B89FE3-2F50-4059-A02C-21661203E413}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6A8E937-A0F5-4DC3-91E3-F93B388DFADA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6A8E937-A0F5-4DC3-91E3-F93B388DFADA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6A8E937-A0F5-4DC3-91E3-F93B388DFADA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6A8E937-A0F5-4DC3-91E3-F93B388DFADA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95B89FE3-2F50-4059-A02C-21661203E413}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95B89FE3-2F50-4059-A02C-21661203E413}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95B89FE3-2F50-4059-A02C-21661203E413}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95B89FE3-2F50-4059-A02C-21661203E413}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

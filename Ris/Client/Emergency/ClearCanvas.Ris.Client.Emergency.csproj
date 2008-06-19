@@ -7,8 +7,8 @@
     <ProjectGuid>{95B89FE3-2F50-4059-A02C-21661203E413}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Ris.Client.EmergencyPhysician</RootNamespace>
-    <AssemblyName>ClearCanvas.Ris.Client.EmergencyPhysician</AssemblyName>
+    <RootNamespace>ClearCanvas.Ris.Client.Emergency</RootNamespace>
+    <AssemblyName>ClearCanvas.Ris.Client.Emergency</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

@@ -51,6 +51,9 @@
 		<folder id="IncomingDeletedFolder" />
 		<folder id="IncomingSpamFolder" />
 	</folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Emergency.EmergencyWorkflowFolderSystem">
+    <folder id="EROrdersFolder" />
+  </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.OrderNoteboxFolderSystem">
     <folder id="PersonalInboxFolder" />
     <folder id="GroupInboxFolder" />
