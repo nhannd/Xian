@@ -102,6 +102,7 @@ namespace ClearCanvas.Ris.Client
         private readonly IList<EnumValueInfo> _addressTypeChoices;
         private readonly IList<EnumValueInfo> _phoneTypeChoices;
         private readonly IList<EnumValueInfo> _resultCommunicationModeChoices;
+		private readonly string _practitionerName;
 
         /// <summary>
         /// Constructor for editing. Set the <see cref="Subject"/> property before starting.
@@ -110,13 +111,15 @@ namespace ClearCanvas.Ris.Client
 			EntityRef practitionerRef,
 			IList<EnumValueInfo> addressTypeChoices, 
 			IList<EnumValueInfo> phoneTypeChoices, 
-			IList<EnumValueInfo> resultCommunicationModeChoices)
+			IList<EnumValueInfo> resultCommunicationModeChoices,
+			string practitionerName)
             :base(false)
         {
 			_practitionerRef = practitionerRef;
             _addressTypeChoices = addressTypeChoices;
             _phoneTypeChoices = phoneTypeChoices;
             _resultCommunicationModeChoices = resultCommunicationModeChoices;
+			_practitionerName = practitionerName;
         }
 
         /// <summary>
@@ -197,7 +200,7 @@ namespace ClearCanvas.Ris.Client
 				_resultCommunicationModeChoices);
 
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleAddContactPoint);
+				this.Host.DesktopWindow, editor, SR.TitleAddContactPoint + " - " + _practitionerName);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(contactPoint);
@@ -233,7 +236,7 @@ namespace ClearCanvas.Ris.Client
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, 
 				editor, 
-				string.Format(SR.TitleUpdateContactPoint, contactPoint.Name));
+				string.Format(SR.TitleUpdateContactPoint + " - " + _practitionerName, contactPoint.Name));
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{

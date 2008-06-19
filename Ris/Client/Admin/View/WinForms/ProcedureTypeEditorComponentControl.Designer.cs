@@ -67,9 +67,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._xmlEditorPanel = new System.Windows.Forms.Panel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-			// 
-			// procedureTypeEditorComponentBindingSource
-			// 
+
 			// 
 			// _acceptButton
 			// 

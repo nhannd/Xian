@@ -46,7 +46,7 @@ using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client
 {
-    [MenuAction("launch", "global-menus/Admin/ExternalPractitioner", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/External Practitioners", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExternalPractitionerSummaryTool : Tool<IDesktopToolContext>
@@ -258,7 +258,7 @@ namespace ClearCanvas.Ris.Client
 
 			ExternalPractitionerEditorComponent editor = new ExternalPractitionerEditorComponent(item.PractitionerRef);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner);
+				this.Host.DesktopWindow, editor, SR.TitleUpdateExternalPractitioner + " - " + Formatting.PersonNameFormat.Format(item.Name));
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.ExternalPractitionerSummary);
