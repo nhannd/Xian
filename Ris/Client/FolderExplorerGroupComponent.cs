@@ -180,7 +180,12 @@ namespace ClearCanvas.Ris.Client
 				});
 
 			// Order the Folder Systems
-			folderSystems = FolderExplorerComponentSettings.Default.OrderFolderSystems(folderSystems);
+			//List<IFolderSystem> ordered;
+			List<IFolderSystem> remainder;
+			FolderExplorerComponentSettings.Default.OrderFolderSystems(folderSystems, out folderSystems, out remainder);
+
+			// add the remainder to the end of the ordered list
+			folderSystems.AddRange(remainder);
 
 			// create a folder explorer component and a tab page for each folder system
 			CollectionUtils.ForEach(folderSystems,

@@ -46,6 +46,11 @@ namespace ClearCanvas.Ris.Client
 		#region Properties
 
 		/// <summary>
+		/// Gets the folder system that owns this folder.
+		/// </summary>
+		IFolderSystem FolderSystem { get; }
+
+		/// <summary>
 		/// Gets the ID that identifies the folder
 		/// </summary>
 		string Id { get; }

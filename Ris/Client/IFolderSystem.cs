@@ -14,6 +14,11 @@ namespace ClearCanvas.Ris.Client
 		#region Properties
 
 		/// <summary>
+		/// Gets the desktop window of the folder explorer that is hosting this folder system.
+		/// </summary>
+		IDesktopWindow DesktopWindow { get; }
+
+		/// <summary>
 		/// Gets the ID that identifies the folder system
 		/// </summary>
 		string Id { get; }

@@ -56,62 +56,96 @@ namespace ClearCanvas.Ris.Client
         private FolderExplorerComponentSettings()
         {
             ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-        }
+		}
 
-        /// <summary>
-        /// Builds an in-memory folder system from the specified XML system and the specified set of folders.
-        /// The folders will be ordered according to the XML system.  Any folders that are not a part of the
-        /// XML system will be added to the memory folder system and inserted into the XML system based on the path.
-        /// The XML system is automatically persisted, and new systems that have never before been persisted
-        /// will be added to the store.
-        /// </summary>
-        /// <param name="folderSystem">FolderSystem that contains lists of folders</param>
-        /// <param name="insertFolderDelegate">A delegate to insert folder</param>
-        public void BuildAndSynchronize(IFolderSystem folderSystem, InsertFolderDelegate insertFolderDelegate)
+		#region Public API
+
+		/// <summary>
+        /// Orders the folder systems based on what is in the XML document,
+		/// and puts any items without an XML entry into the remainder list.
+		/// </summary>
+        /// <param name="folderSystems">Input list of folder systems</param>
+		/// <param name="ordered"></param>
+		/// <param name="remainder"></param>
+		public void OrderFolderSystems(IEnumerable<IFolderSystem> folderSystems, out List<IFolderSystem> ordered, out List<IFolderSystem> remainder)
         {
-            string folderSystemID = folderSystem.Id;
-
-            IDictionary<string, IFolder> folderMap = BuildFolderMap(folderSystem.Folders);
-            XmlElement xmlFolderSystem = Synchronize(folderSystemID, folderMap);
-
-            Build(xmlFolderSystem, folderMap, insertFolderDelegate);
+			Order(folderSystems, this.ListXmlFolderSystems(), delegate(IFolderSystem fs) { return fs.Id; },
+				out ordered, out remainder);
         }
 
-        /// <summary>
-        /// Ordered the folder systems based on what is in the XML.  Any new folder systems will be appended at the end
-        /// </summary>
-        /// <param name="folderSystems">a list of folder systems</param>
-        /// <returns>A list of folder systems that is ordered based on the XML</returns>
-        public List<IFolderSystem> OrderFolderSystems(List<IFolderSystem> folderSystems)
-        {
-            List<IFolderSystem> orderedList = new List<IFolderSystem>();
+		/// <summary>
+		/// Orders the folders in the specified folder system according to what is in the XML document,
+		/// and puts any items without an XML entry into the remainder list.
+		/// </summary>
+		/// <param name="folderSystem"></param>
+		/// <param name="ordered"></param>
+		/// <param name="remainder"></param>
+		public void OrderFolders(IFolderSystem folderSystem, out List<IFolder> ordered, out List<IFolder> remainder)
+		{
+			XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id) ?? CreateXmlFolderSystem(folderSystem.Id);
+			Order(folderSystem.Folders, xmlFolderSystem.GetElementsByTagName("folder"), delegate (IFolder f) { return f.Id; },
+				out ordered, out remainder);
+		}
 
-            // order the folderSystems based on the order in the XML
-            foreach (XmlElement xmlFolderSystem in this.ListXmlFolderSystems())
-            {
-                string folderSystemID = xmlFolderSystem.GetAttribute("id");
+		/// <summary>
+		/// Updates the <see cref="IFolder.FolderPath"/> of the specified folder from the XML store.
+		/// </summary>
+		/// <param name="folder"></param>
+		public void UpdateFolderPath(IFolder folder)
+		{
+			XmlElement xmlFolderSystem = FindXmlFolderSystem(folder.FolderSystem.Id);
+			if(xmlFolderSystem != null)
+			{
+				XmlElement xmlFolder = FindXmlFolder(folder.Id, xmlFolderSystem);
+				if (xmlFolder != null)
+					folder.FolderPath = new Path(xmlFolder.GetAttribute("path"), folder.ResourceResolver);
+			}
+		}
 
-                IFolderSystem folderSystem = CollectionUtils.SelectFirst(folderSystems, 
-                    delegate(IFolderSystem fs) { return Equals(fs.Id, folderSystemID); });
+		#endregion
 
-                if (folderSystem != null)
-                {
-                    orderedList.Add(folderSystem);
-                    folderSystems.Remove(folderSystem);
-                    if (folderSystems.Count == 0)
-                        break;
-                }
-            }
+		#region Private Utility Methods
 
-            // Add all remaining folder systems, which does not yet exist in the XML
-            orderedList.AddRange(folderSystems);
+		/// <summary>
+		/// Orders the items in the input list.
+		/// </summary>
+		/// <remarks>
+		/// Orders the input items according to the order specified by the <paramref name="ordering"/> XML list,
+		/// and puts the result into the <paramref name="ordered"/> list.  Any items not found in the XML ordering list
+		/// are put into the <paramref name="remainder"/> list.
+		/// </remarks>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="input"></param>
+		/// <param name="ordering"></param>
+		/// <param name="idProvider"></param>
+		/// <param name="ordered"></param>
+		/// <param name="remainder"></param>
+		private void Order<T>(IEnumerable<T> input, XmlNodeList ordering, Converter<T, string> idProvider,
+			out List<T> ordered, out List<T> remainder)
+			where T : class
+		{
+			ordered = new List<T>();
+			remainder = new List<T>(input);
 
-            return orderedList;
-        }
+			// order the items based on the order in the XML
+			foreach (XmlElement element in ordering)
+			{
+				string id = element.GetAttribute("id");
 
-        #region Private Utility Methods
+				T item = CollectionUtils.SelectFirst(remainder,
+					delegate(T x) { return Equals(idProvider(x), id); });
 
-        private XmlDocument GetXmlDocument()
+				if (item != null)
+				{
+					ordered.Add(item);
+					remainder.Remove(item);
+					if (remainder.Count == 0)
+						break;
+				}
+			}
+		}
+
+		private XmlDocument GetXmlDocument()
         {
             if (_xmlDoc == null)
             {
@@ -137,27 +171,8 @@ namespace ClearCanvas.Ris.Client
             return (XmlElement)this.GetXmlDocument().GetElementsByTagName("folder-systems")[0];
         }
 
-
-        /// <summary>
-        /// Builds a map of folder IDs to folders.
-        /// </summary>
-        /// <param name="folders">the set of folders from which to build a map</param>
-        /// <returns>a map of folder IDs to folders</returns>
-        private IDictionary<string, IFolder> BuildFolderMap(IEnumerable<IFolder> folders)
-        {
-            Dictionary<string, IFolder> folderMap = new Dictionary<string, IFolder>();
-
-            foreach (IFolder folder in folders)
-                folderMap[folder.Id] = folder;
-
-            return folderMap;
-        }
-
         /// <summary>
         /// Creates the specified folder system, but *does not* immediately append it to the xmlDoc.
-        /// Since not all folders are persistent (e.g. some could be generated), we need to figure
-        /// out how many folders (if any) belonging to the node will be persisted in the store
-        /// before adding the folder to the store.
         /// </summary>
         /// <param name="id">the id of the "folder-system" to create</param>
         /// <returns>An "folder-system" element</returns>
@@ -215,38 +230,9 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        /// <summary>
-        /// Builds an in-memory folder system from the specified XML system and the specified set of folders.
-        /// The folders will be ordered according to the XML system.
-        /// </summary>
-        /// <param name="xmlFolderSystem">an XML "folder-system" node</param>
-        /// <param name="folders">the set of folders that the system should contain</param>
-        /// <param name="insertFolderDelegate">A delegate to insert folder</param>
-        private void Build(XmlElement xmlFolderSystem, IDictionary<string, IFolder> folders, InsertFolderDelegate insertFolderDelegate)
-        {
-            // process xml system, inserting folders in order
-            foreach (XmlElement xmlFolder in xmlFolderSystem.GetElementsByTagName("folder"))
-            {
-                string folderID = xmlFolder.GetAttribute("id");
-                if (folders.ContainsKey(folderID))
-                {
-                    IFolder folder = folders[folderID];
-                    folders.Remove(folderID);
+		#region Not currently in use - may need these in future if we save the folder ordering per user
 
-                    // update the folder path from the xml
-                    string path = xmlFolder.GetAttribute("path");
-                    folder.FolderPath = new Path(path, folder.ResourceResolver);
-
-                    // insert the folder into the system
-                    insertFolderDelegate(folder);
-                }
-            }
-
-            if (folders.Count > 0)
-                Debug.Assert(false);
-        }
-
-        /// <summary>
+		/// <summary>
         /// Synchronizes persistent folders with the xml store.
         /// Refer to <see cref="BuildAndSynchronize"/> for more details.
         /// </summary>
@@ -282,8 +268,8 @@ namespace ClearCanvas.Ris.Client
                 if (!systemExists)
                     this.GetFolderSystemsNode().AppendChild(xmlFolderSystem);
 
-                this.FolderPathXml = _xmlDoc.InnerXml;
-                this.Save();
+				//this.FolderPathXml = _xmlDoc.InnerXml;
+				//this.Save();
             }
 
             XmlElement xmlFolderSystemClone = (XmlElement)xmlFolderSystem.CloneNode(true);
@@ -335,6 +321,8 @@ namespace ClearCanvas.Ris.Client
                 xmlFolderSystem.AppendChild(newXmlFolder);
 
             return true;
-        }
-    }
+		}
+
+		#endregion
+	}
 }

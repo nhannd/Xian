@@ -195,6 +195,11 @@ namespace ClearCanvas.Ris.Client
 
 		#region IFolderSystem implementation
 
+		public IDesktopWindow DesktopWindow
+		{
+			get { return _folderExplorer.DesktopWindow; }
+		}
+
 		public string Id
 		{
 			get { return this.GetType().FullName; }
@@ -457,14 +462,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _folderExplorer.SelectedFolderChanged += value; }
 			remove { _folderExplorer.SelectedFolderChanged -= value; }
-		}
-
-		/// <summary>
-		/// Gets the desktop window of the folder explorer that is hosting this folder system.
-		/// </summary>
-		protected internal IDesktopWindow DesktopWindow
-		{
-			get { return _folderExplorer.DesktopWindow; }
 		}
 
 		/// <summary>

@@ -65,7 +65,6 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public abstract class WorkflowFolder : Folder, IDisposable
 	{
-        private WorkflowFolderSystem _folderSystem;
         private int _itemCount = -1;
         private bool _isPopulated;
 
@@ -87,14 +86,6 @@ namespace ClearCanvas.Ris.Client
         #endregion
 
 		#region Public API
-
-		/// <summary>
-		/// Gets the folder system that this folder belongs to.
-		/// </summary>
-		public WorkflowFolderSystem FolderSystem
-		{
-			get { return _folderSystem; }
-		}
 
 		/// <summary>
 		/// Gets or sets the auto-refresh interval for this folder.
@@ -121,19 +112,6 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 
 		#region Folder overrides
-
-		/// <summary>
-		/// Gets the ID that identifies the folder
-		/// </summary>
-		public override string Id
-		{
-			get
-			{
-				return this.IsStatic
-						   ? string.Concat(this.GetType().Name)
-						   : string.Concat(this.GetType().Name, ":", this.FolderPath.LastSegment.LocalizedText);
-			}
-		}
 
 		/// <summary>
 		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
@@ -175,14 +153,6 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		#region Internal API
-
-		internal void SetFolderSystem(WorkflowFolderSystem folderSystem)
-		{
-			_folderSystem = folderSystem;
-		}
-
-		#endregion
 
 		#region Protected API
 
@@ -375,7 +345,9 @@ namespace ClearCanvas.Ris.Client
     	/// <returns></returns>
     	public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
 		{
-			_currentDropHandler = (IDropHandler<TItem>)this.FolderSystem.GetDropHandler(this, items);
+			// this cast is not terribly safe, but in practice it should always succeed
+    		WorkflowFolderSystem fs = (WorkflowFolderSystem) this.FolderSystem;
+			_currentDropHandler = (IDropHandler<TItem>)fs.GetDropHandler(this, items);
 
 			// if the items are acceptable, return Move (never Copy, which would make no sense for a workflow folder)
 			return _currentDropHandler != null ? DragDropKind.Move : DragDropKind.None;
@@ -416,17 +388,10 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                // special case: if this is a search folder, the query may have returned to many results
-                // this message must be reported to the user
-                if (args.Exception is WeakSearchCriteriaException)
-                {
-                    ExceptionHandler.Report(args.Exception, this.FolderSystem.DesktopWindow);
-                }
-                else
-                {
-                    // otherwise just log the exception
-                    Platform.Log(LogLevel.Error, args.Exception);
-                }
+				// since this was running in the background, we can't report the exception to the user
+				// because they would have no context for it, and it would be annoying
+				// therefore, just log it
+                Platform.Log(LogLevel.Error, args.Exception);
             }
 
             // dispose of the task
@@ -445,7 +410,10 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                Platform.Log(LogLevel.Error, args.Exception);
+				// since this was running in the background, we can't report the exception to the user
+				// because they would have no context for it, and it would be annoying
+				// therefore, just log it
+				Platform.Log(LogLevel.Error, args.Exception);
             }
 
             // dispose of the task

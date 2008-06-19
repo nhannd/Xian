@@ -309,6 +309,19 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
+		/// Inserts the specified folders into the tree.
+		/// </summary>
+		/// <param name="folders"></param>
+		public void InsertFolders(IEnumerable<IFolder> folders)
+		{
+			foreach (IFolder folder in folders)
+			{
+				InsertFolder(folder, 0);
+			}
+		}
+
+
+		/// <summary>
 		/// Inserts the specified folder into the tree.
 		/// </summary>
 		/// <param name="folder"></param>

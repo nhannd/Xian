@@ -85,8 +85,17 @@ namespace ClearCanvas.Ris.Client
         {
             base.Start();
 
-			// build initial folder system
-            FolderExplorerComponentSettings.Default.BuildAndSynchronize(_folderSystem, InsertFolderUsingPath);
+			// update paths of all folders from XML
+			CollectionUtils.ForEach(_folderSystem.Folders,
+				delegate (IFolder f) { FolderExplorerComponentSettings.Default.UpdateFolderPath(f); });
+
+			// put folders in correct order from XML
+        	List<IFolder> orderedFolders;
+        	List<IFolder> remainderFolders;
+            FolderExplorerComponentSettings.Default.OrderFolders(_folderSystem, out orderedFolders, out remainderFolders);
+
+			_folderTreeRoot.InsertFolders(orderedFolders);
+			_folderTreeRoot.InsertFolders(remainderFolders);
 
 			// after building initial folder system, listen for changes
 			_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;

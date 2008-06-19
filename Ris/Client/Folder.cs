@@ -87,6 +87,7 @@ namespace ClearCanvas.Ris.Client
 		private bool _isOpen;
 		private bool _refreshOnOpen = true;
 
+		private IFolderSystem _folderSystem;
 		private Path _folderPath;
 		private readonly bool _startExpanded;
 		private bool _isStatic = true;
@@ -138,7 +139,7 @@ namespace ClearCanvas.Ris.Client
 		#region IFolder Members
 
 		/// <summary>
-		/// Gets the ID that identifies the folder
+		/// Gets the ID that identifies the folder, which by default is the short-name of the class.
 		/// </summary>
 		public virtual string Id
 		{
@@ -159,6 +160,14 @@ namespace ClearCanvas.Ris.Client
 				return this.IsItemCountKnown ?
 					string.Format("{0} ({1})", this.Name, this.TotalItemCount) : this.Name;
 			}
+		}
+
+		/// <summary>
+		/// Gets the folder system that owns this folder.
+		/// </summary>
+		public IFolderSystem FolderSystem
+		{
+			get { return _folderSystem; }
 		}
 
 		/// <summary>
@@ -428,6 +437,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		#region Internal API
+
+		internal void SetFolderSystem(IFolderSystem folderSystem)
+		{
+			_folderSystem = folderSystem;
+		}
+
+		#endregion
+
 
 		#region Protected members
 

@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="folderSystem"></param>
 		/// <param name="itemsTable"></param>
 		protected SearchResultsFolder(Table<TItem> itemsTable)
 		{
