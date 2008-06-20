@@ -105,6 +105,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _stretchToken = value; }
 		}
 
+		//TODO: rename and use CursorTokenStrategy
+		
 		/// <summary>
 		/// Gets or sets the <see cref="CursorToken"/> that should be shown to indicate
 		/// that the operation performed at a given point will be a stretch operation.

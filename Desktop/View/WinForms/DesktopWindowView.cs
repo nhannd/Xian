@@ -33,10 +33,13 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
+using System.IO;
+using System.Text;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -93,6 +96,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             _form.DockingManager.WindowActivated += new DockingManager.WindowHandler(DockingManagerWindowActivatedEventHandler);
             _form.DockingManager.WindowDeactivated += new DockingManager.WindowHandler(FormDockingManagerWindowDeactivatedEventHandler);
         }
+
+    	internal string DesktopWindowName
+    	{
+			get { return _desktopWindow.Name; }	
+    	}
 
         #region Form Event Handlers
 
@@ -277,7 +285,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Shelf Management
 
-        internal Content AddShelfView(ShelfView shelfView, Control control, string title, ShelfDisplayHint hint)
+        internal Content AddShelfView(ShelfView shelfView, Control control, string title, ShelfDisplayHint hint, MemoryStream shelfRestoreStream)
         {
         	// Forcing this makes the control resize *before* adding it to the DotNetMagic control, 
         	// so the shelf will be the correct size.  This would be done automatically when the
@@ -285,8 +293,19 @@ namespace ClearCanvas.Desktop.View.WinForms
         	control.Font = _form.DockingManager.TabControlFont;
         	Size displaySize = control.Size;
 
-        	Content content = _form.DockingManager.Contents.Add(control, title);
-        	content.Tag = shelfView;
+			Content content = _form.DockingManager.Contents.Add(control, title);
+			content.Tag = shelfView;
+
+			if (shelfRestoreStream != null)
+			{
+				content.LoadContentFromStream(shelfRestoreStream);
+
+				_form.DockingManager.ShowContent(content);
+				if (content.IsAutoHidden && hint != ShelfDisplayHint.HideOnWorkspaceOpen)
+					_form.DockingManager.BringAutoHideIntoView(content);
+
+				return content;
+			}
 
         	content.DisplaySize = displaySize;
         	content.AutoHideSize = displaySize;
@@ -314,17 +333,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         	}
         	else
         	{
-        		Point displayLocation;
 				if ((hint & ShelfDisplayHint.ShowNearMouse) != 0)
 				{
 					content.DisplayLocation = Control.MousePosition;
 				}
-        		else if (shelfView.GetFloatingState(_desktopWindow.Name, out displayLocation))
-        		{
-					//we can only save/restore the window position when it is floating because DotNetMagic doesn't expose enough docked 
-					//state information without using their Restore object(s).
-        			content.DisplayLocation = displayLocation;
-        		}
 
         		_form.DockingManager.AddContentWithState(content, State.Floating);
         	}
@@ -428,7 +440,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         internal void RemoveShelfView(ShelfView shelfView)
         {
-			shelfView.SaveState(this._desktopWindow.Name);
+			shelfView.SaveState();
 
             _form.DockingManager.Contents.Remove(shelfView.Content);
             shelfView.SetVisibleStatus(false);

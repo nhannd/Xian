@@ -30,8 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer
 	/// </list>
 	/// </para>
 	/// </remarks>
-	public interface IDisplaySet : IDrawable, IDisposable
+	public interface IDisplaySet : IDrawable, IMemorable, IDisposable
 	{
 		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.

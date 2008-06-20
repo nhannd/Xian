@@ -53,6 +53,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 	internal class MockFrame : Frame
 	{
+		private string _acquisitionDate;
+		private string _acquisitionTime;
+		private string _acquisitionDateTime;
+		
+		private ImageOrientationPatient _imageOrientationPatient =
+			new ImageOrientationPatient(0, 0, 0, 0, 0, 0);
+
+		private ImagePositionPatient _imagePositionPatient = 
+			new ImagePositionPatient(0, 0, 0);
+
 		public MockFrame(MockImageSop parent, int frameNumber)
 			: base(parent, frameNumber)
 		{
@@ -147,6 +157,72 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
+		public override int AcquisitionNumber
+		{
+			get
+			{
+				return 1;
+			}
+		}
+
+		public override string FrameOfReferenceUid
+		{
+			get
+			{
+				return "123";
+			}
+		}
+
+		public override ImageOrientationPatient ImageOrientationPatient
+		{
+			get { return _imageOrientationPatient; }
+		}
+
+		public override ImagePositionPatient ImagePositionPatient
+		{
+			get { return _imagePositionPatient; }
+		}
+
+		public override string AcquisitionDate
+		{
+			get { return _acquisitionDate; }
+		}
+
+		public override string AcquisitionTime
+		{
+			get { return _acquisitionTime; }
+		}
+
+		public override string AcquisitionDateTime
+		{
+			get { return _acquisitionDateTime; }
+		}
+
+		public void SetImageOrientationPatient(ImageOrientationPatient orientation)
+		{
+			_imageOrientationPatient = orientation;
+		}
+
+		public void SetImagePositionPatient(ImagePositionPatient position)
+		{
+			_imagePositionPatient = position;
+		}
+
+		public void SetAcquisitionDate(string value)
+		{
+			_acquisitionDate = value;
+		}
+
+		public void SetAcquisitionTime(string value)
+		{
+			_acquisitionTime = value;
+		}
+		
+		public void SetAcquisitionDateTime(string value)
+		{
+			_acquisitionDateTime = value;
+		}
+
 		public override void UnloadPixelData()
 		{
 			throw new Exception("The method or operation is not implemented.");
@@ -165,12 +241,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		private int _seriesNumber;
 		private int _instanceNumber;
 		private string _studyDate;
+		private int _numberOfFrames;
 
 		public MockImageSop()
+			: this(1)
 		{
 		}
 
+		public MockImageSop(int numberOfFrames)
+		{
+			_numberOfFrames = numberOfFrames;
+		}
+
 		public MockImageSop(string patientId, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid)
+			: this(1)
 		{
 			_patientID = patientId;
 			_studyInstanceUID = studyInstanceUid;
@@ -180,7 +264,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 
 		protected override Frame CreateFrame(int index)
 		{
-			return new MockFrame(this, 1);
+			return new MockFrame(this, index);
 		}
 
 		protected override void ValidateInternal()
@@ -215,6 +299,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public override int InstanceNumber
 		{
 			get { return _instanceNumber; }
+		}
+
+		public override int NumberOfFrames
+		{
+			get { return _numberOfFrames; }
 		}
 
 		public override int SeriesNumber
@@ -531,14 +620,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			get
 			{
 				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override int NumberOfFrames
-		{
-			get
-			{
-				return 1;
 			}
 		}
 

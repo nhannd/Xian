@@ -80,9 +80,8 @@ namespace ClearCanvas.Desktop
 		HideOnWorkspaceOpen = 64,
 
 		/// <summary>
-		/// Works only with <see cref="DockFloat"/>, indicating that
-		/// the shelf should always be shown near the mouse.
+		/// Show the shelf floating (<see cref="DockFloat"/>) near the mouse.
 		/// </summary>
-		ShowNearMouse = 128
+		ShowNearMouse = 144 //128 + 16 (DockFloat)
     }
 }

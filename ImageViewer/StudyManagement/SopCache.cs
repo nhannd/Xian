@@ -4,8 +4,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	using ReferenceCountedImageSop = ReferenceCountedObjectWrapper<Sop>;
-
 	internal static class SopCache
 	{
 		private static readonly object _syncLock = new object();

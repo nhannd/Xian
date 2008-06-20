@@ -6,8 +6,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
-	//TODO: Unit tests
-
 	/// <summary>
 	/// Compares two <see cref="Frame"/>s based on slice location.
 	/// </summary>

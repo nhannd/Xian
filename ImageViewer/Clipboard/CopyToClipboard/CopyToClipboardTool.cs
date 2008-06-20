@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 					desktopWindow,
 					component,
 					SR.TitleCopySubsetToClipboard,
-					ShelfDisplayHint.DockFloat | ShelfDisplayHint.ShowNearMouse);
+					ShelfDisplayHint.ShowNearMouse);
 
 				_copySubsetShelf.Closed += delegate { _copySubsetShelf = null; };
 			}

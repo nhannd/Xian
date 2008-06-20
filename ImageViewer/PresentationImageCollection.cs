@@ -30,6 +30,9 @@
 #endregion
 
 using ClearCanvas.Common.Utilities;
+using System.Collections.Generic;
+using ClearCanvas.ImageViewer.Comparers;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -38,12 +41,31 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class PresentationImageCollection : ObservableList<IPresentationImage>
 	{
+		private IComparer<IPresentationImage> _currentComparer;
+
 		/// <summary>
 		/// Instantiates a new instance of <see cref="PresentationImageCollection"/>.
 		/// </summary>
 		internal PresentationImageCollection()
 		{
+		}
 
+		internal IComparer<IPresentationImage> CurrentComparer
+		{
+			get { return _currentComparer; }
+			set { _currentComparer = value; }
+		}
+
+		//TODO: make base virtual
+
+		/// <summary>
+		/// Sorts the collection with the given comparer.
+		/// </summary>
+		public new void Sort(IComparer<IPresentationImage> comparer)
+		{
+			Platform.CheckForNullReference(comparer, "comparer");
+			_currentComparer = comparer;
+			base.Sort(comparer);
 		}
 	}
 }

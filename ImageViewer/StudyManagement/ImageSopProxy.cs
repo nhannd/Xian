@@ -701,6 +701,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop.GetTag(tag, out value, out tagExists);
 		}
 
+		//TODO: rename to IncrementReferenceCount/decrement
 		internal override void Open()
 		{
 			_realImageSop.Open();

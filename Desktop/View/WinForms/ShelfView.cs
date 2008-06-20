@@ -30,8 +30,12 @@
 #endregion
 
 using System.Windows.Forms;
+using ClearCanvas.Desktop;
 using Crownwood.DotNetMagic.Docking;
-using System.Drawing;
+using System.Xml;
+using System.IO;
+using System.Text;
+using System;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -90,8 +94,30 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_shelf.Component.GetType());
             componentView.SetComponent((IApplicationComponent)_shelf.Component);
-            _content = _desktopView.AddShelfView(this, (Control)componentView.GuiElement, _shelf.Title, _shelf.DisplayHint);
-        }
+
+        	XmlDocument restoreDocument;
+        	if (DesktopViewSettings.Default.GetShelfState(_desktopView.DesktopWindowName, _shelf.Name, out restoreDocument))
+			{
+				using (MemoryStream memoryStream = new MemoryStream())
+				{
+					using (XmlTextWriter writer = new XmlTextWriter(memoryStream, Encoding.UTF8))
+					{
+						restoreDocument.WriteContentTo(writer);
+						writer.Flush();
+						memoryStream.Position = 0;
+
+						_content = _desktopView.AddShelfView(this, (Control) componentView.GuiElement, _shelf.Title, _shelf.DisplayHint, memoryStream);
+
+						writer.Close();
+						memoryStream.Close();
+					}
+				}
+			}
+			else
+			{
+				_content = _desktopView.AddShelfView(this, (Control)componentView.GuiElement, _shelf.Title, _shelf.DisplayHint, null);
+			}
+		}
 
         /// <summary>
         /// Sets the title of the shelf.
@@ -129,27 +155,31 @@ namespace ClearCanvas.Desktop.View.WinForms
             _desktopView.HideShelfView(this);
         }
 
-		public void SaveState(string desktopWindowName)
+		public void SaveState()
 		{
-			// DotNetMagic doesn't allow you to figure out *where* it is docked, so all we can do right now
-			// is save the position of floating shelves.  We could use the Restore objects provided by DotNetMagic
-			// but that's a bit risky so close to a 1.0 release.
-			if ((_shelf.DisplayHint & ShelfDisplayHint.DockFloat) != ShelfDisplayHint.DockFloat)
+			if (String.IsNullOrEmpty(_shelf.Name) || 0 != (_shelf.DisplayHint & ShelfDisplayHint.ShowNearMouse))
 				return;
 
-			// because of what was mentioned above, just remember the state when the window is floating.
-			DesktopViewSettings.Default.SaveFloatingShelfState(desktopWindowName, _shelf.Name, _content.DisplayLocation);
-		}
+			Content.RecordRestore();
 
-		public bool GetFloatingState(string desktopWindowName, out Point displayLocation)
-		{
-			if ((_shelf.DisplayHint & ShelfDisplayHint.DockFloat) != ShelfDisplayHint.DockFloat)
+			using (MemoryStream stream = new MemoryStream())
 			{
-				displayLocation = Point.Empty;
-				return false;
-			}
+				using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
+				{
+					writer.Formatting = Formatting.Indented;
+					Content.SaveContentToXml(writer);
+					writer.Flush();
 
-			return DesktopViewSettings.Default.GetFloatingShelfState(desktopWindowName, _shelf.Name, out displayLocation);
+					stream.Position = 0;
+					XmlDocument state = new XmlDocument();
+					state.Load(stream);
+
+					writer.Close();
+					stream.Close();
+
+					DesktopViewSettings.Default.SaveShelfState(_desktopView.DesktopWindowName, _shelf.Name, state);
+				}
+			}
 		}
 
     	/// <summary>

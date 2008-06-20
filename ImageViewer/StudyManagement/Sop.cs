@@ -108,6 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public abstract class Sop : IDisposable
 	{
 		private readonly object _syncLock = new object();
+		//TODO: change to reference count
 		private volatile int _openCount = 0;
 		private volatile bool _isDisposed = false;
 		private event EventHandler _disposing;
@@ -871,6 +872,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			remove { _disposing += value; }
 		}
 
+		//TODO: CheckIsDisposed
 		/// <summary>
 		/// Checks if the <see cref="Sop"/> has already been disposed, and if so, throws an exception.
 		/// </summary>
@@ -914,6 +916,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					EventsHelper.Fire(_disposing, this, EventArgs.Empty);
 					Dispose(true);
+					//TODO: put this in finally
 					_isDisposed = true;
 					GC.SuppressFinalize(this);
 				}

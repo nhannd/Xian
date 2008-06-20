@@ -95,38 +95,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 			private set { _returnValue = value; }
 		}
 
-		//TODO: make this private (?)
-
-		/// <summary>
-		/// Performs a comparison of the 2 input values strictly based on whether or
-		/// not either or both of the inputs are null.
-		/// </summary>
-		/// <returns>
-		/// Returns zero in 2 cases:
-		///  - when both inputs are null
-		///  - when both inputs are non-null
-		/// Otherwise, +-<see cref="ReturnValue"/> is returned.
-		/// </returns>
-		protected int NullCompare<T>(T x, T y, out bool bothNull) where T : class
-		{
-			bothNull = false;
-
-			if (x == null)
-			{
-				if (y == null)
-					bothNull = true;
-				else
-					return (-this.ReturnValue); // x > y (because we want x at the end for non-reverse sorting)
-			}
-			else
-			{
-				if (y == null)
-					return this.ReturnValue; // x < y (because we want y at the end for non-reverse sorting)
-			}
-
-			return 0; //both are either null or non-null
-		}
-
 		/// <summary>
 		/// Compares two sets of values, where the position of the items
 		/// in <paramref name="x"/> corresponds with the position of the items
@@ -157,14 +125,14 @@ namespace ClearCanvas.ImageViewer.Comparers
 				IComparable xValue = enumeratorX.Current;
 				IComparable yValue = enumeratorY.Current;
 
-				bool bothNull;
-				int compare = NullCompare(xValue, yValue, out bothNull);
-				if (compare != 0)
-					return compare;
-
-				if (!bothNull)
+				if (!ReferenceEquals(xValue, yValue))
 				{
-					compare = xValue.CompareTo(yValue);
+					if (xValue == null)
+						return ReturnValue;
+					if (yValue == null)
+						return -ReturnValue;
+
+					int compare = xValue.CompareTo(yValue);
 					if (compare < 0)
 						return ReturnValue;
 					else if (compare > 0)

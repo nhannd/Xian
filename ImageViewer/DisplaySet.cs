@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -42,6 +43,50 @@ namespace ClearCanvas.ImageViewer
 	[Cloneable(true)]
 	public class DisplaySet : IDisplaySet
 	{
+		#region DisplaySetMemento class
+
+		private class DisplaySetMemento
+		{
+			public readonly IComparer<IPresentationImage> Comparer;
+
+			public DisplaySetMemento(IDisplaySet displaySet)
+			{
+				Comparer = displaySet.PresentationImages.CurrentComparer;
+			}
+
+			public bool ComparersEqual(IComparer<IPresentationImage> x, IComparer<IPresentationImage> y)
+			{
+				if (x == y)
+					return true;
+
+				if (x == null || y == null)
+					return false;
+
+				return x.GetType() == y.GetType();
+			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				if (obj is DisplaySetMemento)
+				{
+					DisplaySetMemento other = (DisplaySetMemento) obj;
+					return ComparersEqual(Comparer, other.Comparer);
+				}
+
+				return false;
+			}
+		}
+
+		#endregion
+
 		#region Private Fields
 
 		[CloneIgnore]
@@ -296,6 +341,8 @@ namespace ClearCanvas.ImageViewer
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.CreateFreshCopy());
 
+			displaySet.PresentationImages.CurrentComparer = PresentationImages.CurrentComparer;
+
 			if (ParentImageSet != null)
 				((ImageSet)ParentImageSet).AddCopy(displaySet);
 
@@ -394,6 +441,45 @@ namespace ClearCanvas.ImageViewer
 				if (clone != null)
 					PresentationImages.Add(clone);
 			}
+
+			//keep the sort order.
+			PresentationImages.CurrentComparer = source.PresentationImages.CurrentComparer;
 		}
+
+		#region IMemorable Members
+
+		/// <summary>
+		/// Captures the state of an object.
+		/// </summary>
+		/// <remarks>
+		/// The implementation of <see cref="IMemorable.CreateMemento"/> should return an
+		/// object containing enough state information so that
+		/// when <see cref="IMemorable.SetMemento"/> is called, the object can be restored
+		/// to the original state.
+		/// </remarks>
+		public virtual object CreateMemento()
+		{
+			return new DisplaySetMemento(this);
+		}
+
+		/// <summary>
+		/// Restores the state of an object.
+		/// </summary>
+		/// <param name="memento">The object that was
+		/// originally created with <see cref="IMemorable.CreateMemento"/>.</param>
+		/// <remarks>
+		/// The implementation of <see cref="IMemorable.SetMemento"/> should return the 
+		/// object to the original state captured by <see cref="IMemorable.CreateMemento"/>.
+		/// </remarks>
+		public virtual void SetMemento(object memento)
+		{
+			DisplaySetMemento displaySetMemento = memento as DisplaySetMemento;
+			Platform.CheckForInvalidCast(displaySetMemento, "displaySetMemento", typeof(DisplaySetMemento).FullName);
+
+			if (displaySetMemento.Comparer != null)
+				this.PresentationImages.Sort(displaySetMemento.Comparer);
+		}
+
+		#endregion
 	}
 }

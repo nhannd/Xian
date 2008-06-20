@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer
 	internal class ImageBoxMemento : IEquatable<ImageBoxMemento>
 	{
 		private IDisplaySet _displaySet;
+		private object _displaySetMemento;
 		private int _rows;
 		private int _columns;
 		private int _topLeftPresentationImageIndex;
@@ -47,6 +48,7 @@ namespace ClearCanvas.ImageViewer
 
 		public ImageBoxMemento(
 			IDisplaySet displaySet, 
+			object displaySetMemento,
 			int rows,
 			int columns,
 			int topLeftPresentationImageIndex,
@@ -60,6 +62,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckNonNegative(_topLeftPresentationImageIndex, "_topLeftPresentationImageIndex");
 
 			_displaySet = displaySet;
+			_displaySetMemento = displaySetMemento;
 			_rows = rows;
 			_columns = columns;
 			_topLeftPresentationImageIndex = topLeftPresentationImageIndex;
@@ -70,6 +73,11 @@ namespace ClearCanvas.ImageViewer
 		public IDisplaySet DisplaySet
 		{
 			get { return _displaySet; }
+		}
+
+		public object DisplaySetMemento
+		{
+			get { return _displaySetMemento; }	
 		}
 
 		public int Rows
@@ -124,6 +132,7 @@ namespace ClearCanvas.ImageViewer
 				return false;
 
 			return DisplaySet == other.DisplaySet &&
+				   Object.Equals(DisplaySetMemento, other.DisplaySetMemento) &&
 			       Rows == other.Rows &&
 			       Columns == other.Columns &&
 			       TopLeftPresentationImageIndex == other.TopLeftPresentationImageIndex &&

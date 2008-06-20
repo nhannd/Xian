@@ -74,13 +74,18 @@ namespace ClearCanvas.ImageViewer.Comparers
 			IImageSopProvider xProvider = x as IImageSopProvider;
 			IImageSopProvider yProvider = y as IImageSopProvider;
 
-			bool bothNull;
-			int compare = NullCompare(xProvider, yProvider, out bothNull);
-			if (compare != 0 || bothNull)
-				return compare; //when bothNull is true, this is zero.
+			if (ReferenceEquals(xProvider, yProvider))
+				return 0; //same object or both are null
 
-			compare = Compare(GetCompareValues(xProvider), GetCompareValues(yProvider));
-			if (compare == 0 && xProvider.Frame != yProvider.Frame)
+			//at this point, at least one of x or y is non-null and they are not the same object
+
+			if (xProvider == null)
+				return -ReturnValue; // x > y (because we want x at the end for non-reverse sorting)
+			if (yProvider == null)
+				return ReturnValue; // x < y (because we want y at the end for non-reverse sorting)
+
+			int compare = Compare(GetCompareValues(xProvider), GetCompareValues(yProvider));
+			if (compare == 0 && !ReferenceEquals(xProvider.Frame, yProvider.Frame))
 				compare = Compare(xProvider.Frame, yProvider.Frame);
 
 			return compare;

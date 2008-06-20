@@ -678,8 +678,13 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public virtual object CreateMemento()
 		{
+			object displaySetMemento = null;
+			if (this.DisplaySet != null)
+				displaySetMemento = this.DisplaySet.CreateMemento();
+
 			ImageBoxMemento imageBoxMemento =
 					new ImageBoxMemento(this.DisplaySet,
+										displaySetMemento,
 										this.Rows,
 										this.Columns,
 										this.TopLeftPresentationImageIndex,
@@ -713,6 +718,9 @@ namespace ClearCanvas.ImageViewer
 				this.SetTileGrid(imageBoxMemento.Rows, imageBoxMemento.Columns);
 
 			this.DisplaySet = imageBoxMemento.DisplaySet;
+			if (this.DisplaySet != null)
+				this.DisplaySet.SetMemento(imageBoxMemento.DisplaySetMemento);
+
 			this.NormalizedRectangle = imageBoxMemento.NormalizedRectangle;
 
 			if (imageBoxMemento.TopLeftPresentationImageIndex != -1)

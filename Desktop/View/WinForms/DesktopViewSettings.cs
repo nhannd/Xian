@@ -29,16 +29,17 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Drawing;
-using System.Globalization;
+using System.IO;
 using System.Windows.Forms;
 using ClearCanvas.Common.Configuration;
 using System.Xml;
 using System.ComponentModel;
+using System.Text;
 using ClearCanvas.Common;
+using System;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -46,360 +47,312 @@ namespace ClearCanvas.Desktop.View.WinForms
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class DesktopViewSettings
 	{
-		#region FloatingShelfState class
-		
-		private class FloatingShelfState : IEquatable<FloatingShelfState>
+		#region Desktop class
+
+		private class Desktop
 		{
-			public FloatingShelfState(string desktopWindowName, string name, Point displayLocation)
-			{
-				DesktopWindowName = desktopWindowName ?? "";
-				Name = name ?? "";
-				DisplayLocation = displayLocation;
-			}
+			#region Fields
 
-			public readonly string DesktopWindowName;
-			public readonly string Name;
-			public readonly Point DisplayLocation;
+			public readonly Rectangle VirtualScreen;
 
-			public static FloatingShelfState FromXmlElement(XmlElement element)
-			{
-				string desktopWindowName = element.GetAttribute("desktop-window-name");
-				string name = element.GetAttribute("shelf-name");
-
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Point));
-				Point displayLocation = (Point)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("display-location"));
-
-				return new FloatingShelfState(desktopWindowName, name, displayLocation);
-			}
-
-			public void UpdateXmlElement(XmlElement element)
-			{
-				element.SetAttribute("desktop-window-name", DesktopWindowName);
-				element.SetAttribute("shelf-name", Name);
-
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Point));
-				element.SetAttribute("display-location", converter.ConvertToString(null, CultureInfo.InvariantCulture, this.DisplayLocation));
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
-				if (obj is FloatingShelfState)
-					return Equals((FloatingShelfState)obj);
-
-				return false;
-			}
-
-			public override int  GetHashCode()
-			{
- 				 return base.GetHashCode();
-			}
-			
-			#region IEquatable<FloatingShelfState> Members
-
-			public bool  Equals(FloatingShelfState other)
-			{
-				return other != null && this.DesktopWindowName == other.DesktopWindowName && this.Name == other.Name;
-			}
+			private readonly List<Screen> _screens = new List<Screen>();
+			private readonly List<DesktopWindow> _desktopWindows = new List<DesktopWindow>();
 
 			#endregion
-		}
 
-		#endregion
-
-		#region DesktopWindowState class 
-
-		private class DesktopWindowState : IEquatable<DesktopWindowState>
-		{
-			public DesktopWindowState(string windowName, Rectangle windowRegion, FormWindowState windowState)
+			private Desktop(Rectangle virtualScreen)
 			{
-				Name = windowName ?? "";
-				WindowRegion = windowRegion;
-				WindowState = windowState;
+				VirtualScreen = virtualScreen;
 			}
 
-			public readonly string Name;
-			public readonly Rectangle WindowRegion;
-			public readonly FormWindowState WindowState;
-			
-			public static DesktopWindowState FromXmlElement(XmlElement element)
+			#region Public Properties and Methods
+
+			public bool IsCurrent
 			{
-				string name = element.GetAttribute("name");
-
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Rectangle));
-				Rectangle windowRegion = (Rectangle)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("region"));
-
-				converter = TypeDescriptor.GetConverter(typeof(FormWindowState));
-				FormWindowState windowState = (FormWindowState)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("state"));
-
-				return new DesktopWindowState(name, windowRegion, windowState);
-			}
-
-			public void UpdateXmlElement(XmlElement element)
-			{
-				element.SetAttribute("name", Name ?? "");
-
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				element.SetAttribute("region", converter.ConvertToString(null, CultureInfo.InvariantCulture, WindowRegion));
-
-				converter = TypeDescriptor.GetConverter(typeof(FormWindowState));
-				element.SetAttribute("state", converter.ConvertToString(null, CultureInfo.InvariantCulture, WindowState));
-			}
-
-			public override int  GetHashCode()
-			{
- 				 return base.GetHashCode();
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
-				if (obj is DesktopWindowState)
-					return Equals((DesktopWindowState)obj);
-
-				return false;
-			}
-
-			#region IEquatable<DesktopWindowState> Members
-
-			public bool Equals(DesktopWindowState other)
-			{
-				return other != null && other.Name.Equals(Name);
-			}
-
-			#endregion
-		}
-
-		#endregion
-
-		#region ScreenConfiguration class
-
-		private class ScreenConfiguration : IEquatable<ScreenConfiguration>
-		{
-			private ScreenConfiguration(Rectangle screenRegion)
-			{
-				ScreenRegion = screenRegion;
-			}
-
-			public readonly Rectangle ScreenRegion;
-
-			public static ScreenConfiguration FromXmlElement(XmlElement element)
-			{
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				Rectangle region = (Rectangle)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("region"));
-
-				return new ScreenConfiguration(region);
-			}
-
-			public void UpdateXmlElement(XmlElement element)
-			{
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				element.SetAttribute("region", converter.ConvertToString(null, CultureInfo.InvariantCulture, ScreenRegion));
-			}
-
-			public static ScreenConfiguration[] Get()
-			{
-				List<ScreenConfiguration> configurations = new List<ScreenConfiguration>();
-
-				foreach (Screen screen in Screen.AllScreens)
-					configurations.Add(new ScreenConfiguration(screen.Bounds));
-
-				return configurations.ToArray();
-			}
-
-			public override int GetHashCode()
-			{
-				return base.GetHashCode();
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
-				if (obj is ScreenConfiguration)
-					return Equals((ScreenConfiguration)obj);
-			
-				return false;
-			}
-
-			#region IEquatable<ScreenConfiguration> Members
-
-			public bool Equals(ScreenConfiguration other)
-			{
-				return other != null && other.ScreenRegion.Equals(ScreenRegion);
-			}
-
-			#endregion
-		}
-
-		#endregion
-
-		#region DesktopWindowSetting class
-
-		private class DesktopWindowSetting : IEquatable<DesktopWindowSetting>
-		{
-			private readonly List<DesktopWindowState> _desktopWindowStates;
-			private readonly List<FloatingShelfState> _floatingShelfStates;
-
-			private DesktopWindowSetting(Rectangle virtualScreenRectangle, ScreenConfiguration[] screenConfigurations)
-				: this(virtualScreenRectangle, screenConfigurations, new List<DesktopWindowState>(), new List<FloatingShelfState>())
-			{
-			}
-
-			private DesktopWindowSetting(
-				Rectangle virtualScreenRectangle, 
-				ScreenConfiguration[] screenConfigurations, 
-				List<DesktopWindowState> desktopWindowStates, 
-				List<FloatingShelfState> floatingShelfStates)
-			{
-				VirtualScreenRectangle = virtualScreenRectangle;
-				ScreenConfigurations = screenConfigurations;
-				_desktopWindowStates = desktopWindowStates;
-				_floatingShelfStates = floatingShelfStates;
-			}
-			
-			public readonly Rectangle VirtualScreenRectangle;
-			public readonly ScreenConfiguration[] ScreenConfigurations;
-
-			public static DesktopWindowSetting FromXmlElement(XmlElement element)
-			{
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof (Rectangle));
-				Rectangle virtualScreenRectangle = (Rectangle)converter.ConvertFromString(null, CultureInfo.InvariantCulture, element.GetAttribute("virtual-screen-rectangle"));
-
-				List<ScreenConfiguration> screenConfigurations = new List<ScreenConfiguration>();
-				foreach (XmlElement screenConfigurationElement in element.SelectNodes("screen-configurations/screen-configuration"))
-					screenConfigurations.Add(ScreenConfiguration.FromXmlElement(screenConfigurationElement));
-
-				List<DesktopWindowState> desktopWindowStates = new List<DesktopWindowState>();
-				foreach (XmlElement desktopWindowStateElement in element.SelectNodes("desktop-window-states/desktop-window-state"))
-					desktopWindowStates.Add(DesktopWindowState.FromXmlElement(desktopWindowStateElement));
-
-				List<FloatingShelfState> floatingShelfStates = new List<FloatingShelfState>();
-				foreach (XmlElement floatingShelfStateElement in element.SelectNodes("floating-shelf-states/floating-shelf-state"))
-					floatingShelfStates.Add(FloatingShelfState.FromXmlElement(floatingShelfStateElement));
-
-				return new DesktopWindowSetting(virtualScreenRectangle, screenConfigurations.ToArray(), desktopWindowStates, floatingShelfStates);
-			}
-
-			public void UpdateXmlElement(XmlElement element)
-			{
-				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
-				element.SetAttribute("virtual-screen-rectangle", converter.ConvertToString(null, CultureInfo.InvariantCulture, VirtualScreenRectangle));
-
-				XmlElement screenConfigurationsElement = element.OwnerDocument.CreateElement("screen-configurations");
-				element.AppendChild(screenConfigurationsElement);
-
-				foreach (ScreenConfiguration screenConfiguration in ScreenConfigurations)
+				get
 				{
-					XmlElement screenConfigurationElement = element.OwnerDocument.CreateElement("screen-configuration");
-					screenConfiguration.UpdateXmlElement(screenConfigurationElement);
-					screenConfigurationsElement.AppendChild(screenConfigurationElement);
-				}
-
-				XmlElement desktopWindowStatesElement = element.OwnerDocument.CreateElement("desktop-window-states");
-				element.AppendChild(desktopWindowStatesElement);
-
-				foreach (DesktopWindowState desktopWindowState in _desktopWindowStates)
-				{
-					XmlElement desktopWindowStateElement = element.OwnerDocument.CreateElement("desktop-window-state");
-					desktopWindowState.UpdateXmlElement(desktopWindowStateElement);
-					desktopWindowStatesElement.AppendChild(desktopWindowStateElement);
-				}
-
-				XmlElement floatingShelfStatesElement = element.OwnerDocument.CreateElement("floating-shelf-states");
-				element.AppendChild(floatingShelfStatesElement);
-				foreach (FloatingShelfState floatingShelfState in _floatingShelfStates)
-				{
-					XmlElement floatingShelfStateElement = element.OwnerDocument.CreateElement("floating-shelf-state");
-					floatingShelfState.UpdateXmlElement(floatingShelfStateElement);
-					floatingShelfStatesElement.AppendChild(floatingShelfStateElement);
-				}
-			}
-
-			public bool Bad
-			{
-				get { return ScreenConfigurations.Length == 0; }	
-			}
-
-			public DesktopWindowState GetDesktopWindowState(string name)
-			{
-				name = name ?? "";
-				return _desktopWindowStates.Find(delegate(DesktopWindowState test) { return test.Name == name; });
-			}
-
-			public FloatingShelfState GetFloatingShelfState(string desktopWindowName, string shelfName)
-			{
-				desktopWindowName = desktopWindowName ?? "";
-				shelfName = shelfName ?? "";
-				return _floatingShelfStates.Find(delegate(FloatingShelfState test) { return test.DesktopWindowName == desktopWindowName && test.Name == shelfName; });
-			}
-
-			public void Update(DesktopWindowState state)
-			{
-				int existingStateIndex = _desktopWindowStates.IndexOf(state);
-				if (existingStateIndex >= 0)
-					_desktopWindowStates[existingStateIndex] = state;
-				else
-					_desktopWindowStates.Add(state);
-			}
-
-			public void Update(FloatingShelfState state)
-			{
-				int existingStateIndex = _floatingShelfStates.IndexOf(state);
-				if (existingStateIndex >= 0)
-					_floatingShelfStates[existingStateIndex] = state;
-				else
-					_floatingShelfStates.Add(state);
-			}
-
-			public static DesktopWindowSetting Get()
-			{
-				return new DesktopWindowSetting(SystemInformation.VirtualScreen, ScreenConfiguration.Get());
-			}
-
-			public override int GetHashCode()
-			{
-				return base.GetHashCode();
-			}
-
-			public override bool Equals(object obj)
-			{
-				if (obj == this)
-					return true;
-				if (obj is DesktopWindowSetting)
-					return Equals((DesktopWindowSetting) obj);
-
-				return false;
-			}
-
-			#region IEquatable<DesktopWindowSetting> Members
-
-			public bool Equals(DesktopWindowSetting other)
-			{
-				if (other == null)
-					return false;
-
-				if (!other.VirtualScreenRectangle.Equals(VirtualScreenRectangle))
-					return false;
-
-				if (other.ScreenConfigurations.Length != ScreenConfigurations.Length)
-					return false;
-
-				int i = 0;
-				foreach (ScreenConfiguration configuration in other.ScreenConfigurations)
-				{
-					if (!configuration.Equals(ScreenConfigurations[i++]))
+					if (VirtualScreen != SystemInformation.VirtualScreen)
 						return false;
-				}
 
-				return true;
+					List<Screen> currentScreens = Screen.GetAllScreens();
+					if (currentScreens.Count == _screens.Count)
+					{
+						for (int i = 0; i < currentScreens.Count; ++i)
+						{
+							if (!currentScreens[i].Equals(_screens[i]))
+								return false;
+						}
+					}
+
+					return true;
+				}
+			}
+
+			public static Desktop CreateCurrent()
+			{
+				Desktop desktop = new Desktop(SystemInformation.VirtualScreen);
+				desktop._screens.AddRange(Screen.GetAllScreens());
+				return desktop;
+			}
+
+			public static Desktop FromXmlElement(XmlElement element)
+			{
+				Platform.CheckTrue(element.Name == "desktop", "The settings xml is invalid.");
+				
+				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
+				Rectangle virtualScreen = (Rectangle)converter.ConvertFromInvariantString(element.GetAttribute("virtual-screen"));
+
+				Desktop desktop = new Desktop(virtualScreen);
+				
+				foreach (XmlElement screen in element["screens"].ChildNodes)
+					desktop._screens.Add(Screen.FromXmlElement(screen));
+
+				foreach (XmlElement window in element["desktop-windows"].ChildNodes)
+					desktop._desktopWindows.Add(DesktopWindow.FromXmlElement(window));
+
+				return desktop;
+			}
+
+			public void WriteToXml(XmlTextWriter writer)
+			{
+				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
+				string virtualScreen = converter.ConvertToInvariantString(VirtualScreen);
+
+				writer.WriteStartElement("desktop");
+				writer.WriteAttributeString("virtual-screen", virtualScreen);
+				
+				writer.WriteStartElement("screens");
+				foreach (Screen screen in _screens)
+					screen.WriteToXml(writer);
+				writer.WriteEndElement();
+				
+				writer.WriteStartElement("desktop-windows");
+				foreach (DesktopWindow window in _desktopWindows)
+					window.WriteToXml(writer);
+				writer.WriteEndElement();
+				
+				writer.WriteEndElement();
+			}
+
+			public DesktopWindow GetDesktopWindow(string name)
+			{
+				return _desktopWindows.Find(delegate(DesktopWindow window) { return window.Name == name; });
+			}
+
+			public void AddDesktopWindow(DesktopWindow desktopWindow)
+			{
+				DesktopWindow existing = _desktopWindows.Find(delegate(DesktopWindow test) { return test.Name == desktopWindow.Name; });
+				if (existing != null)
+					throw new InvalidOperationException("A desktop window with the specified name already exists.");
+
+				_desktopWindows.Add(desktopWindow);
 			}
 
 			#endregion
 		}
 
+		#endregion
+
+		#region Screen class
+
+		private class Screen
+		{
+			#region Fields
+
+			public readonly Rectangle Bounds;
+
+			#endregion
+
+			private Screen(Rectangle bounds)
+			{
+				this.Bounds = bounds;
+			}
+
+			#region Public Methods
+
+			public static List<Screen> GetAllScreens()
+			{
+				List<Screen> screens = new List<Screen>();
+
+				foreach (System.Windows.Forms.Screen screen in System.Windows.Forms.Screen.AllScreens)
+					screens.Add(new Screen(screen.Bounds));
+
+				return screens;
+			}
+
+			public static Screen FromXmlElement(XmlElement element)
+			{
+				Platform.CheckTrue(element.Name == "screen", "The settings xml is invalid.");
+
+				string bounds = element.GetAttribute("bounds");
+				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
+				return new Screen((Rectangle) converter.ConvertFromInvariantString(bounds));
+			}
+
+			public void WriteToXml(XmlTextWriter writer)
+			{
+				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
+				string bounds = converter.ConvertToInvariantString(this.Bounds);
+
+				writer.WriteStartElement("screen");
+				writer.WriteAttributeString("bounds", bounds);
+				writer.WriteEndElement();
+			}
+
+			public override int GetHashCode()
+			{
+				return base.GetHashCode();
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				if (obj is Screen)
+					return Bounds == ((Screen) obj).Bounds;
+
+				return false;
+			}
+			
+			#endregion
+		}
+
+		#endregion
+
+		#region DesktopWindow class
+
+		private class DesktopWindow
+		{
+			public DesktopWindow(string name)
+			{
+				this.Name = name;
+			}
+
+			#region Fields
+
+			public readonly string Name;
+			public Rectangle Bounds;
+			public FormWindowState State;
+
+			private readonly List<Shelf> _shelves = new List<Shelf>();
+
+			#endregion
+
+			#region Public Methods
+
+			public static DesktopWindow FromXmlElement(XmlElement element)
+			{
+				Platform.CheckTrue(element.Name == "desktop-window", "The settings xml is invalid.");
+
+				string name = element.GetAttribute("name");
+				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
+				Rectangle restoreBounds = (Rectangle)converter.ConvertFromInvariantString(element.GetAttribute("bounds"));
+
+				converter = TypeDescriptor.GetConverter(typeof(FormWindowState));
+				FormWindowState restoreState = (FormWindowState)converter.ConvertFromInvariantString(element.GetAttribute("state"));
+
+				DesktopWindow window = new DesktopWindow(name);
+				window.Bounds = restoreBounds;
+				window.State = restoreState;
+
+				foreach (XmlElement shelf in element["shelves"].ChildNodes)
+					window._shelves.Add(Shelf.FromXmlElement(shelf));
+
+				return window;
+			}
+
+			public void WriteToXml(XmlWriter writer)
+			{
+				TypeConverter converter = TypeDescriptor.GetConverter(typeof(Rectangle));
+				string bounds = converter.ConvertToInvariantString(this.Bounds);
+				converter = TypeDescriptor.GetConverter(typeof(FormWindowState));
+				string state = converter.ConvertToInvariantString(this.State);
+
+				writer.WriteStartElement("desktop-window");
+				writer.WriteAttributeString("name", this.Name);
+				writer.WriteAttributeString("bounds", bounds);
+				writer.WriteAttributeString("state", state);
+				
+				writer.WriteStartElement("shelves");
+				foreach (Shelf shelf in _shelves)
+					shelf.WriteToXml(writer);
+				writer.WriteEndElement();
+				
+				writer.WriteEndElement();
+			}
+
+			public Shelf GetShelf(string name)
+			{
+				return _shelves.Find(delegate(Shelf shelf) { return shelf.Name == name; });
+			}
+
+			public void AddShelf(Shelf shelf)
+			{
+				Shelf existing = _shelves.Find(delegate(Shelf test) { return test.Name == shelf.Name; });
+				if (existing != null)
+					throw new InvalidOperationException("A shelf with the specified name already exists.");
+
+				_shelves.Add(shelf);
+			}
+
+			#endregion
+		}
+
+		#endregion
+		
+		#region Shelf class
+
+		private class Shelf
+		{
+			#region Fields
+
+			public readonly string Name;
+			public XmlDocument RestoreDocument;
+			
+			#endregion
+
+			public Shelf(string name)
+			{
+				this.Name = name;
+			}
+
+			#region Public Methods
+
+			public static Shelf FromXmlElement(XmlElement element)
+			{
+				Platform.CheckTrue(element.Name == "shelf", "The settings xml is invalid.");
+
+				string name = element.GetAttribute("name");
+				XmlElement restoreElement = (XmlElement) element["restore-document"].FirstChild;
+				XmlDocument restoreDocument = new XmlDocument();
+				restoreDocument.AppendChild(restoreDocument.ImportNode(restoreElement, true));
+
+				Shelf shelf = new Shelf(name);
+				shelf.RestoreDocument = restoreDocument;
+				return shelf;
+			}
+
+			public void WriteToXml(XmlWriter writer)
+			{
+				writer.WriteStartElement("shelf");
+				writer.WriteAttributeString("name", this.Name);
+				writer.WriteStartElement("restore-document");
+				this.RestoreDocument.WriteContentTo(writer);
+				writer.WriteEndElement();
+				writer.WriteEndElement();
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		#region Private fields
+
+		private readonly List<Desktop> _desktops = new List<Desktop>();
+		private Desktop _currentDesktop = null;
+		
 		#endregion
 
 		private DesktopViewSettings()
@@ -409,130 +362,184 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Private Methods
 
-		private DesktopWindowSetting GetDesktopWindowSetting()
+		private void OnQuitting(object sender, QuittingEventArgs e)
 		{
-			DesktopWindowSetting currentSetting = DesktopWindowSetting.Get();
-
-			foreach(DesktopWindowSetting setting in GetDesktopWindowSettings())
+			try
 			{
-				if (currentSetting.Equals(setting))
-					return setting;
+				SaveAllDesktops();
+			}
+			catch(Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex);
 			}
 
-			return currentSetting;
+			ApplicationSettingsRegistry.Instance.UnregisterInstance(this);
 		}
 
-		private List<DesktopWindowSetting> GetDesktopWindowSettings()
+		private void LoadAllDesktops()
 		{
-			List<DesktopWindowSetting> settings = new List<DesktopWindowSetting>();
-			
-			foreach (XmlElement element in DesktopWindowSettingsXml.SelectNodes("desktop-window-settings/desktop-window-setting"))
+			_currentDesktop = null;
+			_desktops.Clear();
+
+			XmlElement desktops = DesktopViewSettingsXml["desktops"];
+			if (desktops != null)
 			{
-				try
+				foreach (XmlElement desktop in desktops.ChildNodes)
+					_desktops.Add(Desktop.FromXmlElement(desktop));
+
+				foreach (Desktop desktop in _desktops)
 				{
-					DesktopWindowSetting setting = DesktopWindowSetting.FromXmlElement(element);
-					int existingIndex = settings.IndexOf(setting);
-					if (existingIndex >= 0)
-						settings[existingIndex] = setting;
-					else 
-						settings.Add(setting);
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Warn, e);
+					if (desktop.IsCurrent)
+					{
+						_currentDesktop = desktop;
+						break;
+					}
 				}
 			}
-
-			return settings;
 		}
 
-		private void SaveDesktopWindowSettings(IEnumerable<DesktopWindowSetting> desktopWindowSettings)
+		private void SaveAllDesktops()
 		{
-			XmlDocument document = new XmlDocument();
-			XmlElement settingsElement = document.CreateElement("desktop-window-settings");
-			document.AppendChild(settingsElement);
-
-			foreach (DesktopWindowSetting setting in desktopWindowSettings)
+			using (MemoryStream stream = new MemoryStream(1024))
 			{
-				if (!setting.Bad)
+				using (XmlTextWriter writer = new XmlTextWriter(stream, Encoding.UTF8))
 				{
-					XmlElement settingElement = document.CreateElement("desktop-window-setting");
-					setting.UpdateXmlElement(settingElement);
-					settingsElement.AppendChild(settingElement);
+					writer.Formatting = Formatting.Indented;
+
+					writer.WriteStartDocument();
+					writer.WriteStartElement("desktops");
+
+					foreach (Desktop desktop in _desktops)
+						desktop.WriteToXml(writer);
+
+					writer.WriteEndElement();
+					writer.WriteEndDocument();
+
+					writer.Flush();
+					stream.Position = 0;
+
+					XmlDocument doc = new XmlDocument();
+					doc.Load(stream);
+					
+					writer.Close();
+					stream.Close();
+					
+					DesktopViewSettingsXml = doc;
+					Save();
 				}
 			}
+		}
 
-			DesktopWindowSettingsXml = document;
-			Save();
+		private void Initialize()
+		{
+			if (_currentDesktop != null)
+				return;
+
+			Application.Quitting += new EventHandler<QuittingEventArgs>(OnQuitting);
+
+			try
+			{
+				LoadAllDesktops();
+			}
+			catch
+			{
+				_desktops.Clear();
+				_currentDesktop = null;
+				throw;
+			}
+			finally
+			{
+				if (_currentDesktop == null)
+				{
+					_currentDesktop = Desktop.CreateCurrent();
+					_desktops.Add(_currentDesktop);
+				}
+			}
 		}
 
 		#endregion
 
 		#region Public Methods
 
-		public bool GetDesktopWindowState(string windowName, out Rectangle windowRegion, out FormWindowState windowState)
+		public void SaveDesktopWindowState(string desktopWindowName, Rectangle restoreBounds, FormWindowState restoreState)
 		{
-			DesktopWindowState existingState = GetDesktopWindowSetting().GetDesktopWindowState(windowName);
-			if (existingState == null)
+			Initialize();
+
+			DesktopWindow window = _currentDesktop.GetDesktopWindow(desktopWindowName);
+			if (window == null)
 			{
-				windowRegion = Rectangle.Empty;
-				windowState = FormWindowState.Normal;
-				return false;
+				window = new DesktopWindow(desktopWindowName);
+				window.Bounds = restoreBounds;
+				window.State = restoreState;
+				_currentDesktop.AddDesktopWindow(window);
 			}
 
-			windowRegion = existingState.WindowRegion;
-			windowState = existingState.WindowState;
+			window.Bounds = restoreBounds;
+			window.State = restoreState;
+		}
+
+		public bool GetDesktopWindowState(string windowName, out Rectangle restoreBounds, out FormWindowState restoreState)
+		{
+			Initialize();
+
+			restoreBounds = Rectangle.Empty;
+			restoreState = FormWindowState.Maximized;
+
+			DesktopWindow window = _currentDesktop.GetDesktopWindow(windowName);
+			if (window == null || window.Bounds.IsEmpty)
+				return false;
+
+			restoreBounds = window.Bounds;
+			restoreState = window.State;
+
 			return true;
 		}
 
-		public void SaveDesktopWindowState(string windowName, Rectangle windowRegion, FormWindowState windowState)
-		{
-			List<DesktopWindowSetting> settings = GetDesktopWindowSettings();
-			DesktopWindowSetting currentSetting = DesktopWindowSetting.Get();
-
-			int existingIndex = settings.IndexOf(currentSetting);
-			if (existingIndex >= 0)
-				currentSetting = settings[existingIndex];
-			else	
-				settings.Add(currentSetting);
-			
-			currentSetting.Update(new DesktopWindowState(windowName, windowRegion, windowState));
-
-			SaveDesktopWindowSettings(settings);
-		}
-
-		public bool GetFloatingShelfState(string desktopWindowName, string shelfName, out Point displayLocation)
-		{
-			FloatingShelfState existingState = GetDesktopWindowSetting().GetFloatingShelfState(desktopWindowName, shelfName);
-			if (existingState == null)
-			{
-				displayLocation = Point.Empty;
-				return false;
-			}
-			else
-			{
-				displayLocation = existingState.DisplayLocation;
-				return true;
-			}
-		}
-
-		public void SaveFloatingShelfState(string desktopWindowName, string shelfName, Point displayLocation)
+		public void SaveShelfState(string desktopWindowName, string shelfName, XmlDocument restoreDocument)
 		{
 			if (String.IsNullOrEmpty(shelfName))
 				return;
 
-			List<DesktopWindowSetting> settings = GetDesktopWindowSettings();
-			DesktopWindowSetting currentSetting = DesktopWindowSetting.Get();
+			desktopWindowName = desktopWindowName ?? "";
 
-			int existingIndex = settings.IndexOf(currentSetting);
-			if (existingIndex >= 0)
-				currentSetting = settings[existingIndex];
-			else
-				settings.Add(currentSetting);
+			Initialize();
 
-			currentSetting.Update(new FloatingShelfState(desktopWindowName, shelfName, displayLocation));
+			DesktopWindow window = _currentDesktop.GetDesktopWindow(desktopWindowName);
+			if (window == null)
+			{
+				window = new DesktopWindow(desktopWindowName);
+				_currentDesktop.AddDesktopWindow(window);
+			}
 
-			SaveDesktopWindowSettings(settings);
+			Shelf shelf = window.GetShelf(shelfName);
+			if (shelf == null)
+			{
+				shelf = new Shelf(shelfName);
+				window.AddShelf(shelf);
+			}
+
+			shelf.RestoreDocument = restoreDocument;
+		}
+
+		public bool GetShelfState(string desktopWindowName, string shelfName, out XmlDocument restoreDocument)
+		{
+			restoreDocument = null;
+
+			if (String.IsNullOrEmpty(shelfName))
+				return false;
+
+			Initialize();
+
+			DesktopWindow window = _currentDesktop.GetDesktopWindow(desktopWindowName);
+			if (window == null)
+				return false;
+
+			Shelf shelf = window.GetShelf(shelfName);
+			if (shelf == null)
+				return false;
+
+			restoreDocument = shelf.RestoreDocument;
+			return true;
 		}
 
 		#endregion
