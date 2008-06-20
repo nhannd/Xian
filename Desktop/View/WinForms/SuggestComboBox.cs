@@ -154,7 +154,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
                 else
                 {
-                    // doesn't match any suggestions
+                    // doesn't match any suggestions, clear the text
+					this.Text = null;
                 }
             }
             catch (ArgumentOutOfRangeException)
@@ -182,6 +183,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                 //case Keys.Back:
                 //    _textDeleted = true;
                 //    break;
+				case Keys.Escape:
+					this.Text = null;
+            		OnSelectionChangeCommitted(e);
+            		break;
                 default:
                     break;
             }
