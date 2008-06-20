@@ -24,7 +24,10 @@ namespace ClearCanvas.Healthcare.Imex
             [DataMember]
             public string Description;
 
-            [DataMember]
+			[DataMember]
+			public bool Elective;
+
+			[DataMember]
             public List<StaffMemberData> Members;
 
         }
@@ -51,6 +54,7 @@ namespace ClearCanvas.Healthcare.Imex
             StaffGroupData data = new StaffGroupData();
             data.Name = entity.Name;
             data.Description = entity.Description;
+        	data.Elective = entity.Elective;
 
             data.Members = CollectionUtils.Map<Staff, StaffMemberData>(
                 entity.Members,
@@ -68,6 +72,7 @@ namespace ClearCanvas.Healthcare.Imex
         {
             StaffGroup group = LoadOrCreateGroup(data.Name,context);
             group.Description = data.Description;
+        	group.Elective = data.Elective;
 
             if (data.Members != null)
             {
