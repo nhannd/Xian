@@ -30,54 +30,49 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-	[DataContract]
-	public class ExternalPractitionerContactPointSummary : DataContractBase, ICloneable
-	{
-		public ExternalPractitionerContactPointSummary(
-			EntityRef contactPointRef, 
-			string name, 
-			string description, 
-			bool isDefaultContactPoint)
-		{
-			this.ContactPointRef = contactPointRef;
-			this.Name = name;
-			this.Description = description;
-			this.IsDefaultContactPoint = isDefaultContactPoint;
-		}
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="RepublishReportComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(RepublishReportComponentViewExtensionPoint))]
+    public class RepublishReportComponentView : WinFormsView, IApplicationComponentView
+    {
+        private RepublishReportComponent _component;
+        private RepublishReportComponentControl _control;
 
-		public ExternalPractitionerContactPointSummary()
-		{
-		}
+        #region IApplicationComponentView Members
 
-		[DataMember]
-		public EntityRef ContactPointRef;
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (RepublishReportComponent)component;
+        }
 
-		[DataMember]
-		public string Name;
+        #endregion
 
-		[DataMember]
-		public string Description;
-
-		[DataMember]
-		public bool IsDefaultContactPoint;
-
-		#region ICloneable Members
-
-		public object Clone()
-		{
-			ExternalPractitionerContactPointSummary clone = new ExternalPractitionerContactPointSummary();
-			clone.ContactPointRef = this.ContactPointRef;
-			clone.Name = this.Name;
-			clone.Description = this.Description;
-			clone.IsDefaultContactPoint = this.IsDefaultContactPoint;
-			return clone;
-		}
-
-		#endregion
-	}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new RepublishReportComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

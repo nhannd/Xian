@@ -56,6 +56,12 @@
 	width:77px;
 }
 
+#recipient {
+	margin-left: 1em;
+	margin-bottom: 1em;
+	font-weight: bold;
+}
+
 #ordersummary {
 	border:thin solid black;
 	padding: 0.5em 1em 0.5em 1em;

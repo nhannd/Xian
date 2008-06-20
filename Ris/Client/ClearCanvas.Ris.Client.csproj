@@ -47,6 +47,7 @@
     <Compile Include="AddressesSummaryComponent.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
+    <Compile Include="BiographyPrintReportTool.cs" />
     <Compile Include="BiographyVisitHistoryComponent.cs" />
     <Compile Include="BiographyOrderDetailViewComponent.cs" />
     <Compile Include="CannedTextLookupHandler.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="RefreshTool.cs" />
+    <Compile Include="RepublishReportComponent.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />

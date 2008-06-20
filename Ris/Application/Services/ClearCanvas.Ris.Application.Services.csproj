@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="OrderNotes\OrderNoteboxItemAssembler.cs" />
     <Compile Include="OrderNotes\OrderNoteService.cs" />
+    <Compile Include="ResultRecipientAssembler.cs" />
     <Compile Include="StaffGroupAssembler.cs" />
     <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
     <Compile Include="Admin\UserAdmin\AuthorityGroupAssembler.cs" />

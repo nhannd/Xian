@@ -3,7 +3,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -20,37 +19,17 @@ namespace ClearCanvas.Ris.Client.Reporting
 			{
 				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
 				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
+
+				RepublishReportComponent component = new RepublishReportComponent(
+					item.PatientProfileRef,
+					item.OrderRef,
+					item.ReportRef);
+
 				ApplicationComponent.LaunchAsDialog(
-					context.DesktopWindow, 
-					new DialogBoxCreationArgs(new PrintReportComponent(item), "Foo", "Foo", DialogSizeHint.Large));
+					context.DesktopWindow,
+					component,
+					"TODO: Print Report");
 			}
 		}
-	}
-
-	public class PrintReportComponent : DHtmlComponent
-	{
-		private readonly ReportingWorklistItem _item;
-
-		public PrintReportComponent(ReportingWorklistItem owner)
-		{
-			_item = owner;
-		}
-
-		public override void Start()
-		{
-			SetUrl(this.PageUrl);
-			base.Start();
-		}
-
-		protected virtual string PageUrl
-		{
-			get { return WebResourcesSettings.Default.PrintReportPreviewUrl; }
-		}
-
-		protected override DataContractBase GetHealthcareContext()
-		{
-			return _item;
-		}
-
 	}
 }

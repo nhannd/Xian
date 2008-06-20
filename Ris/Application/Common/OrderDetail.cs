@@ -103,5 +103,8 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public List<OrderAttachmentSummary> Attachments;
+
+		[DataMember]
+		public List<ResultRecipientDetail> ResultRecipients;
     }
 }

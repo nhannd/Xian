@@ -35,66 +35,74 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 {
-    [DataContract]
-    public class GetOrderDetailRequest : DataContractBase
-    {
-        public GetOrderDetailRequest(EntityRef orderRef,
-            bool includeVisit,
-            bool includeProcedures,
-            bool includeAlerts,
-            bool includeNotes,
-			bool includeAttachments)
-        {
-            this.OrderRef = orderRef;
-            this.IncludeVisit = includeVisit;
-            this.IncludeProcedures = includeProcedures;
-            this.IncludeAlerts = includeAlerts;
-            this.IncludeNotes = includeNotes;
-        	this.IncludeAttachments = includeAttachments;
-        }
+	[DataContract]
+	public class GetOrderDetailRequest : DataContractBase
+	{
+		public GetOrderDetailRequest(EntityRef orderRef,
+			bool includeVisit,
+			bool includeProcedures,
+			bool includeAlerts,
+			bool includeNotes,
+			bool includeAttachments,
+			bool includeResultRecipients)
+		{
+			this.OrderRef = orderRef;
+			this.IncludeVisit = includeVisit;
+			this.IncludeProcedures = includeProcedures;
+			this.IncludeAlerts = includeAlerts;
+			this.IncludeNotes = includeNotes;
+			this.IncludeAttachments = includeAttachments;
+			this.includeResultRecipients = includeResultRecipients;
+		}
 
-        public GetOrderDetailRequest()
-        {
-        }
+		public GetOrderDetailRequest()
+		{
+		}
 
-        [DataMember]
-        public EntityRef OrderRef;
+		[DataMember]
+		public EntityRef OrderRef;
 
-        /// <summary>
-        /// Include order alerts.
-        /// </summary>
-        [DataMember]
-        public bool IncludeAlerts;
+		/// <summary>
+		/// Include order alerts.
+		/// </summary>
+		[DataMember]
+		public bool IncludeAlerts;
 
-        /// <summary>
-        /// Include visit information.
-        /// </summary>
-        [DataMember]
-        public bool IncludeVisit;
+		/// <summary>
+		/// Include visit information.
+		/// </summary>
+		[DataMember]
+		public bool IncludeVisit;
 
-        /// <summary>
-        /// Include detailed procedure information.
-        /// </summary>
-        [DataMember]
-        public bool IncludeProcedures;
+		/// <summary>
+		/// Include detailed procedure information.
+		/// </summary>
+		[DataMember]
+		public bool IncludeProcedures;
 
-        /// <summary>
-        /// Include order notes.
-        /// </summary>
-        [DataMember]
-        public bool IncludeNotes;
+		/// <summary>
+		/// Include order notes.
+		/// </summary>
+		[DataMember]
+		public bool IncludeNotes;
 
-        /// <summary>
-        /// Include order attachments.
-        /// </summary>
-        [DataMember]
-        public bool IncludeAttachments;
+		/// <summary>
+		/// Include order attachments.
+		/// </summary>
+		[DataMember]
+		public bool IncludeAttachments;
 
-        /// <summary>
-        /// A list of filters that determine which categories of order notes are returned. Optional, defaults to all.
-        /// Ignored if <see cref="IncludeNotes"/> is false.
-        /// </summary>
-        [DataMember]
-        public List<string> NoteCategoriesFilter;
-    }
+		/// <summary>
+		/// Include order result recipients.
+		/// </summary>
+		[DataMember]
+		public bool includeResultRecipients;
+
+		/// <summary>
+		/// A list of filters that determine which categories of order notes are returned. Optional, defaults to all.
+		/// Ignored if <see cref="IncludeNotes"/> is false.
+		/// </summary>
+		[DataMember]
+		public List<string> NoteCategoriesFilter;
+	}
 }

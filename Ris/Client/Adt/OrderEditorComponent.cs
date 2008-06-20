@@ -219,9 +219,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly CrudActionModel _proceduresActionModel;
         private ProcedureRequisition _selectedProcedure;
 
-        private readonly Table<ResultRecipientSummary> _recipientsTable;
+        private readonly Table<ResultRecipientDetail> _recipientsTable;
         private readonly CrudActionModel _recipientsActionModel;
-        private ResultRecipientSummary _selectedRecipient;
+        private ResultRecipientDetail _selectedRecipient;
         private ExternalPractitionerLookupHandler _recipientLookupHandler;
         private ExternalPractitionerSummary _recipientToAdd;
         private ExternalPractitionerContactPointDetail _recipientContactPointToAdd;
@@ -314,11 +314,11 @@ namespace ClearCanvas.Ris.Client.Adt
             _proceduresActionModel.Delete.SetClickHandler(RemoveSelectedProcedure);
             UpdateProcedureActionModel();
 
-            _recipientsTable = new Table<ResultRecipientSummary>();
-            _recipientsTable.Columns.Add(new TableColumn<ResultRecipientSummary, string>("Practitioner",
-                                      delegate(ResultRecipientSummary item) { return PersonNameFormat.Format(item.Practitioner.Name); }));
-            _recipientsTable.Columns.Add(new TableColumn<ResultRecipientSummary, string>("Contact Point",
-                                      delegate(ResultRecipientSummary item) { return item.ContactPoint.Name; }));
+            _recipientsTable = new Table<ResultRecipientDetail>();
+            _recipientsTable.Columns.Add(new TableColumn<ResultRecipientDetail, string>("Practitioner",
+                                      delegate(ResultRecipientDetail item) { return PersonNameFormat.Format(item.Practitioner.Name); }));
+            _recipientsTable.Columns.Add(new TableColumn<ResultRecipientDetail, string>("Contact Point",
+                                      delegate(ResultRecipientDetail item) { return item.ContactPoint.Name; }));
 
             _recipientsActionModel = new CrudActionModel(true, false, true);
             _recipientsActionModel.Add.SetClickHandler(AddRecipient);
@@ -672,7 +672,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if(!object.Equals(value, _selectedRecipient))
                 {
-                    _selectedRecipient = (ResultRecipientSummary)value.Item;
+                    _selectedRecipient = (ResultRecipientDetail)value.Item;
                     UpdateRecipientsActionModel();
                     NotifyPropertyChanged("SelectedRecipient");
                 }
@@ -807,7 +807,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             if(_recipientToAdd != null && _recipientContactPointToAdd != null)
             {
-                _recipientsTable.Items.Add(new ResultRecipientSummary(_recipientToAdd, _recipientContactPointToAdd.GetSummary(), new EnumValueInfo("ANY", null, null)));
+                _recipientsTable.Items.Add(new ResultRecipientDetail(_recipientToAdd, _recipientContactPointToAdd, new EnumValueInfo("ANY", null, null)));
             }
         }
 
@@ -894,15 +894,15 @@ namespace ClearCanvas.Ris.Client.Adt
             requisition.Attachments = new List<OrderAttachmentSummary>(_attachmentSummaryComponent.OrderAttachments);
             requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
             requisition.ExtendedProperties = _extendedProperties;
-            requisition.ResultRecipients = new List<ResultRecipientSummary>(_recipientsTable.Items);
+            requisition.ResultRecipients = new List<ResultRecipientDetail>(_recipientsTable.Items);
 
             // there should always be a selected contact point, unless the ordering practitioner has 0 contact points
             if (_selectedOrderingPractitionerContactPoint != null)
             {
                 // add the ordering practitioner as a result recipient
                 requisition.ResultRecipients.Add(
-                    new ResultRecipientSummary(_selectedOrderingPractitioner,
-                                               _selectedOrderingPractitionerContactPoint.GetSummary(),
+                    new ResultRecipientDetail(_selectedOrderingPractitioner,
+                                               _selectedOrderingPractitionerContactPoint,
                                                new EnumValueInfo("ANY", null)));
             }
 
@@ -935,8 +935,8 @@ namespace ClearCanvas.Ris.Client.Adt
             // recipients table, since he already appears on the main part of the screen
 
             // select the recipient representing the ordering practitioner at the default contact point
-            ResultRecipientSummary orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
-                delegate(ResultRecipientSummary r)
+            ResultRecipientDetail orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
+                delegate(ResultRecipientDetail r)
                 {
                     return r.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef
                         && r.ContactPoint.IsDefaultContactPoint;
@@ -946,7 +946,7 @@ namespace ClearCanvas.Ris.Client.Adt
             if(orderingRecipient == null)
             {
                 orderingRecipient = CollectionUtils.SelectFirst(existingOrder.ResultRecipients,
-                    delegate(ResultRecipientSummary r)
+                    delegate(ResultRecipientDetail r)
                     {
                         return r.Practitioner.PractitionerRef == existingOrder.OrderingPractitioner.PractitionerRef;
                     });
@@ -965,7 +965,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 // populate the recipients table, excuding the orderingRecipient 
                 _recipientsTable.Items.Clear();
                 _recipientsTable.Items.AddRange(CollectionUtils.Reject(existingOrder.ResultRecipients,
-                    delegate (ResultRecipientSummary r) { return r == orderingRecipient; }));
+                    delegate (ResultRecipientDetail r) { return r == orderingRecipient; }));
             }
             else
             {

@@ -379,7 +379,7 @@ namespace ClearCanvas.Ris.Client
                                return req;
                            }));
                    
-                    requisition.ResultRecipients = new List<ResultRecipientSummary>();
+                    requisition.ResultRecipients = new List<ResultRecipientDetail>();
                     requisition.Attachments = new List<OrderAttachmentSummary>();
                     requisition.Notes = new List<OrderNoteDetail>();
 

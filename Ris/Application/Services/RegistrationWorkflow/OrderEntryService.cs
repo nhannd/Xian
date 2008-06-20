@@ -355,9 +355,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             
             Facility orderingFacility = PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 
-            List<ResultRecipient> resultRecipients = CollectionUtils.Map<ResultRecipientSummary, ResultRecipient>(
+            List<ResultRecipient> resultRecipients = CollectionUtils.Map<ResultRecipientDetail, ResultRecipient>(
                 requisition.ResultRecipients,
-                delegate(ResultRecipientSummary s)
+                delegate(ResultRecipientDetail s)
                     {
                         return new ResultRecipient(
                             PersistenceContext.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),

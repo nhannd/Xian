@@ -204,7 +204,7 @@
     <Compile Include="Login\LogoutResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetExternalPractitionerContactPointsRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\ResultRecipientSummary.cs" />
+    <Compile Include="ResultRecipientDetail.cs" />
     <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />

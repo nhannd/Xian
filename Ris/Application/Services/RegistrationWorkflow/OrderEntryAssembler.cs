@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+			ResultRecipientAssembler resultRecipientAssembler = new ResultRecipientAssembler();
 
             OrderRequisition requisition = new OrderRequisition();
             requisition.Patient = order.Patient.GetRef();
@@ -61,14 +62,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             requisition.OrderingFacility = facilityAssembler.CreateFacilitySummary(order.OrderingFacility);
             requisition.ReasonForStudy = order.ReasonForStudy;
             requisition.Priority = EnumUtils.GetEnumValueInfo(order.Priority, context);
-            requisition.ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientSummary>(
+            requisition.ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientDetail>(
                 order.ResultRecipients,
                 delegate(ResultRecipient r)
                 {
-                    return new ResultRecipientSummary(
-                        pracAssembler.CreateExternalPractitionerSummary(r.PractitionerContactPoint.Practitioner, context),
-                        pracAssembler.CreateExternalPractitionerContactPointSummary(r.PractitionerContactPoint),
-                        EnumUtils.GetEnumValueInfo(r.PreferredCommunicationMode, context));
+                    return resultRecipientAssembler.CreateResultRecipientDetail(r, context);
                 });
 
             requisition.Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
@@ -116,9 +114,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // wipe out and reset the result recipients
             order.ResultRecipients.Clear();
 
-            CollectionUtils.Map<ResultRecipientSummary, ResultRecipient>(
+            CollectionUtils.Map<ResultRecipientDetail, ResultRecipient>(
                 requisition.ResultRecipients,
-                delegate(ResultRecipientSummary s)
+                delegate(ResultRecipientDetail s)
                 {
                     return new ResultRecipient(
                         context.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),

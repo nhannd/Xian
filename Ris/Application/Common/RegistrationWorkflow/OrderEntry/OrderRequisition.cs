@@ -109,7 +109,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// List of recipients to receive results of the order.
         /// </summary>
         [DataMember]
-        public List<ResultRecipientSummary> ResultRecipients;
+        public List<ResultRecipientDetail> ResultRecipients;
 
         /// <summary>
         /// A list of attachments for this order.  Optional.

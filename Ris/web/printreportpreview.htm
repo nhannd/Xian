@@ -31,7 +31,7 @@
 					Field.setValue($("myForm"), "");
 					return;
 				}
-
+				
 				// construct request object
 				var request = 
 				{
@@ -107,6 +107,17 @@
 						}
 					 ]);				 
 				proceduresTable.bindItems(procedures);
+				
+				if(worklistItem.SelectedResultRecipient)
+				{
+					Field.show($("recipient"), true);
+					Field.setValue($("recipientName"), Ris.formatPersonName(worklistItem.SelectedResultRecipient.Practitioner.Name));
+					Field.setValue($("recipientAddress1"), Ris.formatAddress(worklistItem.SelectedResultRecipient.ContactPoint.CurrentAddress));
+				}
+				else
+				{
+					Field.show($("recipient"), false);
+				}
 			}
 			catch(e)
 			{
@@ -170,8 +181,8 @@
 		var mshLetterheadInfo =
 		{
 			className: "msh",
-			name: "Mount Sinai Hospital",
-			description: "Department of Medical Imaging",
+			name: "",
+			description: "",
 			address1: "???",
 			address2: "???",
 			phone: "Tel: (416) 586-4800 Ext. ????"
@@ -215,7 +226,10 @@
 			</div>
 			<div class="clear"></div>
 		</div>
-		<div id="recipient"></div>
+		<div id="recipient">
+			<div id="recipientName"></div>
+			<div id="recipientAddress1"></div>
+		</div>
 		<div id="ordersummary">
 			<div class="leftcolumn">
 				<table>

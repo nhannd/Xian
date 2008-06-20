@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
         {
-            return CreateOrderDetail(order, context, true, true, true, true, null);
+            return CreateOrderDetail(order, context, true, true, true, true, true, null);
         }
 
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context,
@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Application.Services
             bool includeProcedures,
             bool includeNotes,
 			bool includeAttachments,
+			bool includeResultRecipients,
             IList<string> noteCategoriesFilter)
         {
             OrderDetail detail = new OrderDetail();
@@ -133,6 +134,19 @@ namespace ClearCanvas.Ris.Application.Services
 						return orderAttachmentAssembler.CreateOrderAttachmentSummary(a);
                     });
             }
+
+			if(includeResultRecipients)
+			{
+				ResultRecipientAssembler resultRecipientAssembler = new ResultRecipientAssembler();
+				List<ResultRecipient> resultRecipients = new List<ResultRecipient>(order.ResultRecipients);
+
+				detail.ResultRecipients = CollectionUtils.Map<ResultRecipient, ResultRecipientDetail>(
+					resultRecipients,
+					delegate(ResultRecipient r)
+					{
+						return resultRecipientAssembler.CreateResultRecipientDetail(r, context);
+					});
+			}
 
             return detail;
         }

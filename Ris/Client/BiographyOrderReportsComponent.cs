@@ -29,13 +29,17 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 
 namespace ClearCanvas.Ris.Client
@@ -48,31 +52,72 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
+	[ExtensionPoint]
+	public class BiographyOrderReportsToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
+	public interface IBiographyOrderReportsToolContext : IToolContext
+	{
+		EntityRef PatientRef { get; }
+		EntityRef PatientProfileRef { get; }
+		EntityRef OrderRef { get; }
+		EntityRef ReportRef { get; }
+		IDesktopWindow DesktopWindow { get; }
+	}
+
 	/// <summary>
 	/// BiographyOrderReportsComponent class.
 	/// </summary>
 	[AssociateView(typeof(BiographyOrderReportsComponentViewExtensionPoint))]
 	public class BiographyOrderReportsComponent : ApplicationComponent
 	{
-		public class ReportsContext
+		public class BiographyOrderReportsToolContext : ToolContext, IBiographyOrderReportsToolContext
 		{
-			public ReportsContext(EntityRef orderRef, EntityRef patientRef)
+			private readonly BiographyOrderReportsComponent _component;
+
+			internal BiographyOrderReportsToolContext(BiographyOrderReportsComponent component)
 			{
-				OrderRef = orderRef;
-				PatientRef = patientRef;
+				_component = component;
 			}
 
-			public EntityRef OrderRef;
-			public EntityRef PatientRef;
+			#region IBiographyOrderReportsToolContext Members
+
+			public EntityRef PatientRef
+			{
+				get { return _component.PatientRef; }
+			}
+
+			public EntityRef PatientProfileRef
+			{
+				get { return _component.PatientProfileRef; }
+			}
+
+			public EntityRef OrderRef
+			{
+				get { return _component.OrderRef; }
+			}
+
+			public EntityRef ReportRef
+			{
+				get { return _component.ReportRef; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+
+			#endregion
 		}
 
 		class ReportPreviewComponent : DHtmlComponent
 		{
 			// Internal data contract used for jscript deserialization
 			[DataContract]
-			public class ReportContext : DataContractBase
+			public class ReportPreviewContext : DataContractBase
 			{
-				public ReportContext(EntityRef reportRef)
+				public ReportPreviewContext(EntityRef reportRef)
 				{
 					this.ReportRef = reportRef;
 				}
@@ -81,11 +126,11 @@ namespace ClearCanvas.Ris.Client
 				public EntityRef ReportRef;
 			}
 
-			private ReportContext _context;
+			private ReportPreviewContext _previewContext;
 
 			public ReportPreviewComponent(EntityRef reportRef)
 			{
-				_context = reportRef != null ? new ReportContext(reportRef) : null;
+				_previewContext = reportRef != null ? new ReportPreviewContext(reportRef) : null;
 			}
 
 			public override void Start()
@@ -101,20 +146,36 @@ namespace ClearCanvas.Ris.Client
 
 			protected override DataContractBase GetHealthcareContext()
 			{
-				return _context;
+				return _previewContext;
 			}
 
-			public ReportContext Context
+			public ReportPreviewContext PreviewContext
 			{
-				get { return _context; }
+				get { return _previewContext; }
 				set
 				{
-					_context = value;
+					_previewContext = value;
 					Refresh();
 				}
 			}
 		}
 
+		public class ReportsContext
+		{
+			public ReportsContext(EntityRef orderRef, EntityRef patientRef)
+			{
+				OrderRef = orderRef;
+				PatientRef = patientRef;
+			}
+
+			public EntityRef OrderRef;
+			public EntityRef PatientRef;
+		}
+
+		/// <summary>
+		/// Represents a collection of <see cref="ReportListItem"/> which share a common report which should be presented to the user
+		/// as a single entity.
+		/// </summary>
 		public class CommonReportListItem
 		{
 			private readonly EntityRef _reportRef;
@@ -162,8 +223,11 @@ namespace ClearCanvas.Ris.Client
 		private List<CommonReportListItem> _reports;
 		private CommonReportListItem _selectedReport;
 
+		private ToolSet _toolSet;
+
 		private ReportPreviewComponent _reportPreviewComponent;
 		private ChildComponentHost _reportPreviewComponentHost;
+		private EntityRef _patientProfileRef;
 
 		#region Constructor
 
@@ -190,6 +254,8 @@ namespace ClearCanvas.Ris.Client
 			_reportPreviewComponent = new ReportPreviewComponent(null);
 			_reportPreviewComponentHost = new ChildComponentHost(this.Host, _reportPreviewComponent);
 			_reportPreviewComponentHost.StartComponent();
+
+			_toolSet = new ToolSet(new BiographyOrderReportsToolExtensionPoint(), new BiographyOrderReportsToolContext(this));
 
 			base.Start();
 		}
@@ -226,6 +292,14 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public ActionModelNode ActionModel
+		{
+			get 
+			{
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "biographyorderreports-toolbar", _toolSet.Actions);
+			}
+		}
+
 		public ApplicationComponentHost ReportPreviewComponentHost
 		{
 			get { return _reportPreviewComponentHost; }
@@ -249,6 +323,26 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public EntityRef PatientRef
+		{
+			get { return this.Context.PatientRef; }
+		}
+
+		public EntityRef PatientProfileRef
+		{
+			get { return _patientProfileRef; }
+		}
+
+		public EntityRef OrderRef
+		{
+			get { return this.Context.OrderRef; }
+		}
+
+		public EntityRef ReportRef
+		{
+			get { return this._selectedReport.ReportRef; }
+		}
+
 		private void RefreshOrderReports()
 		{
 			if (_context == null)
@@ -259,8 +353,24 @@ namespace ClearCanvas.Ris.Client
 				{
 					GetDataRequest request = new GetDataRequest();
 					request.ListReportsRequest = new ListReportsRequest(_context.PatientRef, _context.OrderRef);
+					request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_context.PatientRef);
+					request.GetOrderDetailRequest = new GetOrderDetailRequest(_context.OrderRef, true, true, false, false, false, false);
 
 					GetDataResponse response = service.GetData(request);
+
+					ProcedureDetail procedure = response.GetOrderDetailResponse.Order.Procedures[0];
+					if (procedure != null)
+					{
+						string facilityCode = procedure.PerformingFacility.InformationAuthority.Code;
+						PatientProfileSummary matchingProfile = CollectionUtils.SelectFirst(
+							response.ListPatientProfilesResponse.Profiles,
+							delegate(PatientProfileSummary summary)
+							{
+								return summary.Mrn.AssigningAuthority.Code == facilityCode;
+							});
+						_patientProfileRef = matchingProfile != null ? matchingProfile.PatientProfileRef : null;
+					}
+
 
 					List<CommonReportListItem> reports = new List<CommonReportListItem>();
 
@@ -295,7 +405,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void ReportSelectionChanged()
 		{
-			_reportPreviewComponent.Context = _selectedReport != null ? new ReportPreviewComponent.ReportContext(_selectedReport.ReportRef) : null;
+			_reportPreviewComponent.PreviewContext = _selectedReport != null ? new ReportPreviewComponent.ReportPreviewContext(_selectedReport.ReportRef) : null;
 		}
 	}
 }

@@ -31,45 +31,56 @@
 
 using System;
 using System.Windows.Forms;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="BiographyOrderReportsComponent"/>.
+	/// Provides a Windows Forms user-interface for <see cref="RepublishReportComponent"/>.
 	/// </summary>
-	public partial class BiographyOrderReportsComponentControl : ApplicationComponentUserControl
+	public partial class RepublishReportComponentControl : ApplicationComponentUserControl
 	{
-		private BiographyOrderReportsComponent _component;
-		private ActionModelNode _toolbarActionModel;
+		private readonly RepublishReportComponent _component;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public BiographyOrderReportsComponentControl(BiographyOrderReportsComponent component)
+		public RepublishReportComponentControl(RepublishReportComponent component)
 			: base(component)
 		{
 			_component = component;
 			InitializeComponent();
 
-			Control reportPreview = (Control) _component.ReportPreviewComponentHost.ComponentView.GuiElement;
-			reportPreview.Dock = DockStyle.Fill;
-			_reportPreviewPanel.Controls.Add(reportPreview);
+			Control browser = (Control) _component.RepublishReportPreviewComponentHost.ComponentView.GuiElement;
+			_browserPanel.Controls.Add(browser);
+			browser.Dock = DockStyle.Fill;
 
-			_reports.DataSource = _component.Reports;
-			_reports.DataBindings.Add("Value", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reports.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatReportListItem(e.ListItem); };
+			_recipientsTableView.Table = _component.Recipients;
+			_recipientsTableView.MenuModel = _component.RecipientsActionModel;
+			_recipientsTableView.ToolbarModel = _component.RecipientsActionModel;
+			_recipientsTableView.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
+			_addConsultantButton.DataBindings.Add("Enabled", _component.RecipientsActionModel.Add, "Enabled");
 
-			_toolbarActionModel = _component.ActionModel;
-			ToolStripBuilder.BuildToolbar(_toolstrip.Items, _toolbarActionModel.ChildNodes, ToolStripItemDisplayStyle.Image);
-
-			_component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
+			_consultantLookup.LookupHandler = _component.RecipientsLookupHandler;
+			_consultantLookup.DataBindings.Add("Value", _component, "RecipientToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+			_consultantContactPoint.DataBindings.Add("DataSource", _component, "RecipientContactPointChoices", true, DataSourceUpdateMode.Never);
+			_consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
+			_consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 		}
 
-		private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
+		private void _btnOk_Click(object sender, EventArgs e)
 		{
-			_reports.DataSource = _component.Reports;
+			_component.Accept();
+		}
+
+		private void _btnCancel_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
+
+		private void _addConsultantButton_Click(object sender, EventArgs e)
+		{
+			_component.AddRecipient();
 		}
 	}
 }
