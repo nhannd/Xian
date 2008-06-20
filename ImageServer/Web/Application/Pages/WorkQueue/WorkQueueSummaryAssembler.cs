@@ -80,22 +80,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 summary.PatientName = studyList[0].PatientsName;
             }
 
-            if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
+            if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy
+			 || item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
             {
                 DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
                 Device dest = deviceAdaptor.Get(item.DeviceKey);
 
                 summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
             }
-            else if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy)
-            {
-                DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
-                Device dest = deviceAdaptor.Get(item.DeviceKey);
+			else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
+					&& item.FailureDescription != null)
+			{
+				summary.Notes = item.FailureDescription.Substring(0, 60);
+				if (summary.Notes.Length != item.FailureDescription.Length)
+					summary.Notes += " ...";
+			}
 
-                summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
-            }
-
-            return summary;
+        	return summary;
         }
     }
 }

@@ -66,7 +66,7 @@
                                 </asp:TemplateField>
                                 <asp:TemplateField HeaderText="Notes">
                                     <HeaderStyle Wrap="false" HorizontalAlign="Left"/>
-                                    <ItemStyle Wrap="false" HorizontalAlign="Left" />
+                                    <ItemStyle Wrap="true" HorizontalAlign="Left" />
                                     <ItemTemplate>
                                         <asp:Label ID="Notes" runat="server" Text='<%# Eval("Notes") %>'></asp:Label>
                                     </ItemTemplate>
