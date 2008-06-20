@@ -12,9 +12,7 @@
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
-                                            </td>                                        
+                         
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
@@ -50,6 +48,9 @@
                                                     EnableViewState="False" /><br />
                                                 <asp:DropDownList ID="PriorityDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>               
                                         </tr>
                                     </table>
                                 </asp:Panel>

@@ -12,9 +12,6 @@
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
-                                            </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Type" CssClass="SearchTextBoxLabel" EnableViewState="False" /><br />
                                                 <asp:DropDownList ID="RuleTypeDropDownList" runat="server" CssClass="SearchDropDownList" ToolTip="Search by type" />
@@ -33,6 +30,9 @@
                                                 <asp:Label ID="Label4" runat="server" Text="Default" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DefaultFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
+                                            </td>
+                                            <td align="right" valign="bottom">
+                                                <asp:Panel ID="Panel2" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>

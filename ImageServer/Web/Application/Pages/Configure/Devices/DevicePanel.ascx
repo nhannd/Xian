@@ -12,9 +12,7 @@
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td align="right" valign="bottom">
-                                                <asp:Panel ID="Panel3" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
-                                            </td>
+
                                             <td align="left">
                                                 <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False"></asp:Label><br />
@@ -31,6 +29,9 @@
                                                 <asp:Label ID="Label4" runat="server" Text="DHCP" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
+                                            <td align="right" valign="bottom">
+                                                <asp:Panel ID="Panel3" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
                                         </tr>
                                     </table>                    
                         </asp:Panel>

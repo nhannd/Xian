@@ -11,9 +11,6 @@
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContentWithoutTabs" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
-                                            <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
-                                            </td>
                                             <td align="left">
                                                 <asp:Label ID="Label1" runat="server" Text="Description" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:TextBox ID="DescriptionFilter" runat="server" CssClass="SearchTextBox" ToolTip="Search by description"></asp:TextBox></td>
@@ -21,7 +18,9 @@
                                                 <asp:Label ID="Label2" runat="server" Text="Tiers" CssClass="SearchTextBoxLabel"></asp:Label><br />
                                                 <asp:DropDownList ID="TiersDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
-
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
                                         </tr> 
                                     </table>
                             </asp:Panel>

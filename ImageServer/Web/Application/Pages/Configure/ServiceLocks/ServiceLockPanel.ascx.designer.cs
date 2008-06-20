@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
-using GridPager=ClearCanvas.ImageServer.Web.Application.Controls.GridPager;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
     
     
@@ -50,24 +47,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         protected global::System.Web.UI.WebControls.Panel Panel6;
         
         /// <summary>
-        /// Panel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-        
-        /// <summary>
-        /// SearchButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
-        
-        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>
@@ -102,6 +81,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList StatusFilter;
+        
+        /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
+        /// SearchButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
         
         /// <summary>
         /// ToolbarUpdatePanel control.
@@ -146,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected GridPager GridPagerTop;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerTop;
         
         /// <summary>
         /// ServiceLockGridViewControl control.
@@ -164,7 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected GridPager GridPagerBottom;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
         
         /// <summary>
         /// ConfirmEditDialog control.
@@ -173,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ConfirmationDialog ConfirmEditDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog ConfirmEditDialog;
         
         /// <summary>
         /// EditServiceLockDialog control.

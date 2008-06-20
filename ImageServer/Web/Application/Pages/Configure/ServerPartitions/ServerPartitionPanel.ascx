@@ -13,9 +13,6 @@
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="right" valign="bottom">
-                                            <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
-                                            </td>
                                             </td>
                                             <td align="left">
                                                 <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchTextBoxLabel"></asp:Label><br />
@@ -34,7 +31,9 @@
                                                 <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             </td>
-
+                                            <td valign="bottom">
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                            </td>
                                         </tr>
                                     </table>
                                 </asp:Panel>

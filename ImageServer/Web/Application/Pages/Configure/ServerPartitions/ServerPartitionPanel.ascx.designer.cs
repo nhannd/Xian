@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using GridPager=ClearCanvas.ImageServer.Web.Application.Controls.GridPager;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions {
     
     
@@ -38,24 +36,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Panel Panel6;
-        
-        /// <summary>
-        /// Panel1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-        
-        /// <summary>
-        /// SearchButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
         
         /// <summary>
         /// Label1 control.
@@ -130,6 +110,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         protected global::System.Web.UI.WebControls.DropDownList StatusFilter;
         
         /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
+        /// SearchButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
+        
+        /// <summary>
         /// ToolBarUpdatePanel control.
         /// </summary>
         /// <remarks>
@@ -190,7 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected GridPager GridPagerTop;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerTop;
         
         /// <summary>
         /// ServerPartitionGridPanel control.
@@ -208,6 +206,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected GridPager GridPagerBottom;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
     }
 }
