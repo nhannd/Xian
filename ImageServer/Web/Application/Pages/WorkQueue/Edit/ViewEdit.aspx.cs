@@ -33,7 +33,8 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Common;
+using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
@@ -259,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     {
                         InformationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                         InformationDialog.MessageType =
-                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR; 
+                                ConfirmationDialog.MessageTypeEnum.ERROR; 
                         InformationDialog.Show();
                         ItemNotAvailableAlertShown = true;
                     }

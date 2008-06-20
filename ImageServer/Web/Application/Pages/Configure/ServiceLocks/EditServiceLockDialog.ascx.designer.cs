@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
     
     
@@ -26,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
+        protected ModalDialog ModalDialog;
         
         /// <summary>
         /// Table1 control.
@@ -143,6 +146,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog MessageBox;
+        protected ConfirmationDialog MessageBox;
     }
 }

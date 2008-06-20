@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using InvalidInputIndicator=ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator;
+using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions {
     
     
@@ -26,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
+        protected ModalDialog ModalDialog;
         
         /// <summary>
         /// Panel3 control.
@@ -107,7 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator AETitleHelp;
+        protected InvalidInputIndicator AETitleHelp;
         
         /// <summary>
         /// RequiredFieldValidator2 control.
@@ -215,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator PortHelp;
+        protected InvalidInputIndicator PortHelp;
         
         /// <summary>
         /// Td4 control.
@@ -260,7 +263,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator FolderHelp;
+        protected InvalidInputIndicator FolderHelp;
         
         /// <summary>
         /// Tr3 control.
@@ -377,7 +380,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator DefaultPortHelp;
+        protected InvalidInputIndicator DefaultPortHelp;
         
         /// <summary>
         /// DefaultRemotePortRangeValidator control.

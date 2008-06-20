@@ -168,13 +168,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowRetrieve")))
             {
                 img = new Image();
-                img.ImageUrl = "~/images/icons/RetrieveSmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.RetrieveFeature, Page.Theme);
                 img.AlternateText = "Retrieve";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -187,13 +186,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowQuery")))
             {
                 img = new Image();
-                img.ImageUrl = "~/images/icons/QuerySmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.QueryFeature, Page.Theme);
                 img.AlternateText = "Query";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme); ;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -204,13 +202,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
-                img.ImageUrl = "~/images/icons/StoreSmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.StoreFeature, Page.Theme);
                 img.AlternateText = "Store";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme); ;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -221,13 +218,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
-                img.ImageUrl = "~/images/icons/AutoRouteSmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.StoreFeature, Page.Theme);
                 img.AlternateText = "Auto Route";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme); ;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -241,11 +237,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
                 if (active)
                 {
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
                 }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
@@ -258,10 +254,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }

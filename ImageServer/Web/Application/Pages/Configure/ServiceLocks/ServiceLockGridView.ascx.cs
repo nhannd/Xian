@@ -107,13 +107,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         /// </summary>
         public Unit Height
         {
-            get
-            {
-                if (ContainerTable != null)
-                    return ContainerTable.Height;
-                else
-                    return _height;
-            }
+            get { return ContainerTable == null ? _height : ContainerTable.Height; }
             set
             {
                 _height = value;
@@ -144,7 +138,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 
         #region protected methods
 
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -153,66 +146,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
         }
-
-        /// <summary>
-        /// Updates the grid pager based on the current list.
-        /// </summary>
-        protected void UpdatePager()
-        {
-            #region update pager of the gridview if it is used
-
-            if (GridView.BottomPagerRow != null)
-            {
-                // Show Number of services in the list
-                Label lbl = GridView.BottomPagerRow.Cells[0].FindControl("PagerServiceLockCountLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("{0} service(s)", ServiceLocks.Count);
-
-                // Show current page and the number of pages for the list
-                lbl = GridView.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("Page {0} of {1}", GridView.PageIndex + 1, GridView.PageCount);
-
-                // Enable/Disable the "Prev" page button
-                ImageButton btn = GridView.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (ServiceLocks.Count == 0 || GridView.PageIndex == 0)
-                    {
-                        btn.ImageUrl = "~/images/prev_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/prev.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-
-                // Enable/Disable the "Next" page button
-                btn = GridView.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (ServiceLocks.Count == 0 || GridView.PageIndex == GridView.PageCount - 1)
-                    {
-                        btn.ImageUrl = "~/images/next_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/next.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-            }
-
-            #endregion
-        }
-
 
         protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -264,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (img!=null && item != null)
             {
-                img.ImageUrl = item.Enabled ? "~/Common/Images/checked.png" : "~/Common/Images/unchecked.png";
+                img.ImageUrl = item.Enabled ? string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme) : string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
             }
         }
         protected void CustomizeLockColumn(GridViewRow row)
@@ -274,7 +207,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (img != null && item != null)
             {
-                img.ImageUrl = item.Lock ? "~/Common/Images/checked.png" : "~/Common/Images/unchecked.png";
+                img.ImageUrl = item.Lock ? string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme) : string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
             }
         }
         protected void CustomizeFilesystemColumn(GridViewRow row)
@@ -282,10 +215,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             Label text = row.FindControl("Filesystem") as Label;
 
             ServiceLock item = row.DataItem as ServiceLock;
-            if (item.FilesystemKey == null)
-                text.Text = "N/A";
-            else
-                text.Text = _fsController.LoadFileSystem(item.FilesystemKey).Description;            
+            if (text != null && item != null)
+                text.Text = item.FilesystemKey == null ? "N/A" : _fsController.LoadFileSystem(item.FilesystemKey).Description;
         }
 
         protected void GridView_SelectedIndexChanged(object sender, EventArgs e)

@@ -31,7 +31,7 @@
 
 
 using System;
-using ClearCanvas.ImageServer.Web.Application.Common;
+using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.About
 {

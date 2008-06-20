@@ -132,6 +132,9 @@
   <data name="Default" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="DeviceAE" xml:space="preserve">
+    <value>DEVICEAE</value>
+  </data>
   <data name="DeviceDefaultPort" xml:space="preserve">
     <value>104</value>
   </data>

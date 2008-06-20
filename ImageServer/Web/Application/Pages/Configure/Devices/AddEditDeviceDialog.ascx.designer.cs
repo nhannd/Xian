@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using InvalidInputIndicator=ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator;
+using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
     
     
@@ -26,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog1;
+        protected ModalDialog ModalDialog1;
         
         /// <summary>
         /// TabContainer1 control.
@@ -98,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator AETitleHelp;
+        protected InvalidInputIndicator AETitleHelp;
         
         /// <summary>
         /// RequiredFieldValidator2 control.
@@ -197,7 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator IPAddressHelp;
+        protected InvalidInputIndicator IPAddressHelp;
         
         /// <summary>
         /// ConditionalRequiredFieldValidator1 control.
@@ -287,7 +290,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator PortHelp;
+        protected InvalidInputIndicator PortHelp;
         
         /// <summary>
         /// PortValidator1 control.

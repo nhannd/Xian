@@ -7,7 +7,7 @@
         <asp:TableCell VerticalAlign="top">
             <ccUI:GridView ID="StudyListControl" runat="server" AutoGenerateColumns="False"
                 CssClass="GlobalGridView" Width="100%" OnRowDataBound="StudyListControl_RowDataBound"
-                OnDataBound="StudyListControl_DataBound" EmptyDataText="" CellPadding="0" OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
+                EmptyDataText="" CellPadding="0" OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
                 OnSelectedIndexChanging="StudyListControl_SelectedIndexChanging" OnPageIndexChanging="StudyListControl_PageIndexChanging"
                 SelectionMode="Multiple" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="0px" HorizontalAlign="Left">

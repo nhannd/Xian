@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
     
     
@@ -26,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
+        protected ModalDialog ModalDialog;
         
         /// <summary>
         /// Panel1 control.
@@ -107,7 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog PreOpenConfirmDialog;
+        protected ConfirmationDialog PreOpenConfirmDialog;
         
         /// <summary>
         /// PreApplyChangeConfirmDialog control.
@@ -116,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog PreApplyChangeConfirmDialog;
+        protected ConfirmationDialog PreApplyChangeConfirmDialog;
         
         /// <summary>
         /// MessageDialog control.
@@ -125,6 +128,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog MessageDialog;
+        protected ConfirmationDialog MessageDialog;
     }
 }

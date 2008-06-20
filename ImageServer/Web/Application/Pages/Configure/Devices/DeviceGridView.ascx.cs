@@ -119,10 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         {
             get
             {
-                if (ContainerTable != null)
-                    return ContainerTable.Height;
-                else
-                    return _height;
+                return ContainerTable != null ? ContainerTable.Height : _height;
             }
             set
             {
@@ -174,66 +171,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
         }
 
-        /// <summary>
-        /// Updates the grid pager based on the current list.
-        /// </summary>
-        protected void UpdatePager()
-        {
-            #region update pager of the gridview if it is used
-
-            if (GridView1.BottomPagerRow != null)
-            {
-                // Show Number of devices in the list
-                Label lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerDeviceCountLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("{0} device(s)", Devices.Count);
-
-                // Show current page and the number of pages for the list
-                lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("Page {0} of {1}", GridView1.PageIndex + 1, GridView1.PageCount);
-
-                // Enable/Disable the "Prev" page button
-                ImageButton btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (Devices.Count == 0 || GridView1.PageIndex == 0)
-                    {
-                        btn.ImageUrl = "~/images/prev_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/prev.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-
-                // Enable/Disable the "Next" page button
-                btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (Devices.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
-                    {
-                        btn.ImageUrl = "~/images/next_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/next.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-            }
-
-            #endregion
-        }
-
-
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             if (GridView1.EditIndex != e.Row.RowIndex)
@@ -279,13 +216,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowRetrieve")))
             {
                 img = new Image();
-                img.ImageUrl = "~/images/icons/RetrieveSmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.RetrieveFeature, Page.Theme);
                 img.AlternateText = "Retrieve";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -298,13 +234,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowQuery")))
             {
                 img = new Image();
-                img.ImageUrl = "~/images/icons/QuerySmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.QueryFeature, Page.Theme);
                 img.AlternateText = "Query";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -315,13 +250,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
-                img.ImageUrl = "~/images/icons/StoreSmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.StoreFeature, Page.Theme);
                 img.AlternateText = "Store";
             }
             else
             {
-                //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -332,13 +266,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
-                img.ImageUrl = "~/images/icons/AutoRouteSmall.png";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.AutoRouteFeature, Page.Theme);
                 img.AlternateText = "Auto Route";
             }
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = "~/images/blankfeature.gif";
+                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -352,11 +286,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
                 if (active)
                 {
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
                 }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
@@ -369,10 +303,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
@@ -390,10 +326,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         {
             Device dev = e.Row.DataItem as Device;
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
-            if (dev.Dhcp)
-                lbl.Text = "";
-            else
-                lbl.Text = dev.IpAddress;
+            lbl.Text = dev.Dhcp ? "" : dev.IpAddress;
         }
 
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
@@ -406,11 +339,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
         protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
-        }
-
-        protected void GridView1_DataBound(object sender, EventArgs e)
-        {
-            UpdatePager();
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)

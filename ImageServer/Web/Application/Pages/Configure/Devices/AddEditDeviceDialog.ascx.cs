@@ -124,9 +124,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
             TabContainer1.ActiveTabIndex = 0;
 
-
-            //OKButton.OnClientClick = ClientID + "_clearFields()";
-
             DHCPCheckBox.InputAttributes.Add("onClick", "EnableDisableIp();");
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID,
@@ -238,18 +235,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (EditMode)
             {
                 ModalDialog1.Title  = App_GlobalResources.SR.DialogEditDeviceTitle;
-                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
+                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.UpdateButtonEnabled, Page.Theme);
             }
             else
             {
                 ModalDialog1.Title = App_GlobalResources.SR.DialogAddDeviceTitle;
-                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";   
+                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.AddButtonEnabled, Page.Theme);
             }
 
             // Update the rest of the fields
             if (Device == null)
             {
-                AETitleTextBox.Text = "DEVICEAE";
+                AETitleTextBox.Text = App_GlobalResources.SR.DeviceAE;
                 IPAddressTextBox.Text = "";
                 ActiveCheckBox.Checked = true;
                 DHCPCheckBox.Checked = false;

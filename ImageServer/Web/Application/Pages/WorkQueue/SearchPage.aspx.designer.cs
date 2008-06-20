@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using ServerPartitionTabs=ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
     
     
@@ -44,7 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
+        protected ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
         /// Label1 control.
@@ -62,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmRescheduleDialog;
+        protected ConfirmationDialog ConfirmRescheduleDialog;
         
         /// <summary>
         /// InformationDialog control.
@@ -71,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog InformationDialog;
+        protected ConfirmationDialog InformationDialog;
         
         /// <summary>
         /// ScheduleWorkQueueDialog control.

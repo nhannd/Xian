@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ServerPartitionTabs=ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
     
     
@@ -44,6 +46,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ServerPartitionTabs ServerPartitionTabs;
+        protected ServerPartitionTabs ServerPartitionTabs;
     }
 }

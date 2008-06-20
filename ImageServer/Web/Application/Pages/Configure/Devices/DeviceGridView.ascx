@@ -8,7 +8,7 @@
         <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
         
             <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" OnRowDataBound="GridView1_RowDataBound" OnDataBound="GridView1_DataBound"
+                Width="100%" OnRowDataBound="GridView1_RowDataBound" 
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">

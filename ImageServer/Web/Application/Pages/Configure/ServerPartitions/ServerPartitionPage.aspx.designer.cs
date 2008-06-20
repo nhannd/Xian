@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions {
     
     
@@ -62,7 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog deleteConfirmBox;
+        protected ConfirmationDialog deleteConfirmBox;
         
         /// <summary>
         /// MessageBox control.
@@ -71,6 +73,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog MessageBox;
+        protected ConfirmationDialog MessageBox;
     }
 }

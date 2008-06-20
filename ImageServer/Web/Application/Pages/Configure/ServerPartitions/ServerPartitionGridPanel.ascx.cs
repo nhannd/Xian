@@ -160,10 +160,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
@@ -176,10 +178,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             {
                 bool acceptAnyDevice = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AcceptAnyDevice"));
                 if (acceptAnyDevice)
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }

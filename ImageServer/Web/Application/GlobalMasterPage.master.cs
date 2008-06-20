@@ -67,7 +67,7 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
                         (
                             this.runtimeStyle.backgroundImage = ""none"",
                             this.runtimeStyle.filter = ""progid:DXImageTransform.Microsoft.AlphaImageLoader(src='"" + this.src + ""', sizingMethod='image')"",
-                            this.src = """ + Page.ResolveClientUrl("~/images/blank.gif") + @"""
+                            this.src = """ + Page.ResolveClientUrl("~/App_Themes/Default/Images/blank.gif") + @"""
                         )
                         
                 );

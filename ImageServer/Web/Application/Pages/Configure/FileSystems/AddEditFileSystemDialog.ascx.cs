@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
         // This list will be determined by the user level permission.
         private IList<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
 
-        private bool _editMode = false;
+        private bool _editMode;
         private Filesystem _filesystem;
 
         #endregion
@@ -202,12 +202,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             if (EditMode)
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
-                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
+                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.UpdateButtonEnabled, Page.Theme);
             }
             else
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
-                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";
+                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.AddButtonEnabled, Page.Theme);
             }
 
             // update the dropdown list
@@ -300,6 +300,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
         {
             ModalDialog.Hide();
 
+        }
+
+        public AddFilesystemDialog()
+        {
+            _editMode = false;
         }
 
         #endregion Public methods

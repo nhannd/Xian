@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
     
     
@@ -26,7 +28,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog PreDeleteConfirmDialog;
+        protected ConfirmationDialog PreDeleteConfirmDialog;
         
         /// <summary>
         /// ConfirmationDialog control.
@@ -35,6 +37,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog;
+        protected ConfirmationDialog ConfirmationDialog;
     }
 }

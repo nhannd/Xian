@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using GridPager=ClearCanvas.ImageServer.Web.Application.Controls.GridPager;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
     
     
@@ -197,7 +199,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerTop;
+        protected GridPager GridPagerTop;
         
         /// <summary>
         /// ServerRuleGridViewControl control.
@@ -215,6 +217,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerBottom;
+        protected GridPager GridPagerBottom;
     }
 }

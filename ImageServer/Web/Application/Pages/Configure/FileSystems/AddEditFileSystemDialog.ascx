@@ -54,7 +54,7 @@
                                                         BorderWidth="1px" ValidationGroup="vg1" MaxLength="256" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
                                                 <td>
-                                                    <ccAsp:InvalidInputIndicator ID="InvalidPathHint" runat="server" SkinID="InvalidInputIndicator">
+                                                    <ccAsp:InvalidInputIndicator ID="InvalidPathHint" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
                                                         InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateFilesystemPath"

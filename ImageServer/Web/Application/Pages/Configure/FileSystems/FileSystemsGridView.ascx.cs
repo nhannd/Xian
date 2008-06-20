@@ -143,86 +143,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
         #endregion // Events
 
-        #region protected methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            GridView1.DataBind();
-        }
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-
-            // Set up the grid
-            if (Height != Unit.Empty)
-                ContainerTable.Height = _height;
-
-            // The embeded grid control will show pager control if "allow paging" is set to true
-            // We want to use our own pager control instead so let's hide it.
-            GridView1.PagerSettings.Visible = false;
-            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
-        }
-
-        /// <summary>
-        /// Updates the grid pager based on the current list.
-        /// </summary>
-        protected void UpdatePager()
-        {
-            #region update pager of the gridview if it is used
-
-            if (GridView1.BottomPagerRow != null)
-            {
-                // Show Number of devices in the list
-                Label lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerFileSystemCountLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("{0} device(s)", FileSystems.Count);
-
-                // Show current page and the number of pages for the list
-                lbl = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("Page {0} of {1}", GridView1.PageIndex + 1, GridView1.PageCount);
-
-                // Enable/Disable the "Prev" page button
-                ImageButton btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (FileSystems.Count == 0 || GridView1.PageIndex == 0)
-                    {
-                        btn.ImageUrl = "~/images/prev_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/prev.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-
-                // Enable/Disable the "Next" page button
-                btn = GridView1.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (FileSystems.Count == 0 || GridView1.PageIndex == GridView1.PageCount - 1)
-                    {
-                        btn.ImageUrl = "~/images/next_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/next.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-            }
-
-            #endregion
-        }
-
+        #region private methods
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
@@ -239,17 +161,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                     // For some reason, double-click won't work if single-click is used
                     // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
 
+                    CustomizeUsageColumn(e.Row);
                     CustomizePathColumn(e.Row);
                     CustomizeEnabledColumn(e);
                     CustomizeReadColumn(e);
                     CustomizeWriteColumn(e);
                     CustomizeFilesystemTierColumn(e.Row);
-                    CustomizeUsageColumn(e.Row);
                 }
             }
         }
 
-        
 
         private float GetFilesystemUsedPercentage(Filesystem fs)
         {
@@ -257,16 +178,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 return float.NaN;
 
             FilesystemServiceProxy.FilesystemServiceClient client = new FilesystemServiceProxy.FilesystemServiceClient();
-            
+
             try
             {
-                FilesystemServiceProxy.FilesystemInfo fsInfo =  client.GetFilesystemInfo(fs.FilesystemPath);
+                FilesystemServiceProxy.FilesystemInfo fsInfo = client.GetFilesystemInfo(fs.FilesystemPath);
 
                 _serviceIsOffline = false;
                 _lastServiceAvailableTime = DateTime.Now;
-                return 100.0f - ((float)fsInfo.FreeSizeInKB)/fsInfo.SizeInKB*100.0F;
+                return 100.0f - ((float)fsInfo.FreeSizeInKB) / fsInfo.SizeInKB * 100.0F;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 _serviceIsOffline = true;
                 _lastServiceAvailableTime = DateTime.Now;
@@ -330,20 +251,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
         private void CustomizeBooleanColumn(GridViewRow row, string controlName, string fieldName)
         {
-            Image img = ((Image) row.FindControl(controlName));
+            Image img = ((Image)row.FindControl(controlName));
             if (img != null)
             {
                 bool active = Convert.ToBoolean(DataBinder.Eval(row.DataItem, fieldName));
                 if (active)
                 {
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
                 }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
+
+        #endregion
+
+        #region protected methods
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            GridView1.DataBind();
+        }
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            // Set up the grid
+            if (Height != Unit.Empty)
+                ContainerTable.Height = _height;
+
+            // The embeded grid control will show pager control if "allow paging" is set to true
+            // We want to use our own pager control instead so let's hide it.
+            GridView1.PagerSettings.Visible = false;
+            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
+        }
+
+        #endregion   
 
         protected void CustomizeReadColumn(GridViewRowEventArgs e)
         {
@@ -358,11 +304,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canRead)
                 {
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
                 }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
@@ -385,11 +331,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canWrite)
                 {
-                    img.ImageUrl = "~/Common/Images/checked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
                 }
                 else
                 {
-                    img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
                 }
             }
         }
@@ -404,11 +350,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
         protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
-        }
-
-        protected void GridView1_DataBound(object sender, EventArgs e)
-        {
-            UpdatePager();
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
@@ -445,8 +386,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
             DataBind();
         }
-
-        #endregion
 
         #region Private Static members
         static private bool _serviceIsOffline = false;

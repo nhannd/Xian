@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using GridPager=ClearCanvas.ImageServer.Web.Application.Controls.GridPager;
+using TimedDialog=ClearCanvas.ImageServer.Web.Application.Controls.TimedDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
     
     
@@ -98,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerTop;
+        protected GridPager GridPagerTop;
         
         /// <summary>
         /// DeviceGridPanel control.
@@ -116,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerBottom;
+        protected GridPager GridPagerBottom;
         
         /// <summary>
         /// TimedDialog control.
@@ -125,6 +128,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.TimedDialog TimedDialog;
+        protected TimedDialog TimedDialog;
     }
 }

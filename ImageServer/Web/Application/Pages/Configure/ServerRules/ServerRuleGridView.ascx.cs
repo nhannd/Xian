@@ -177,37 +177,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			if (img != null)
 			{
 				if (fs.Enabled)
-				{
-					img.ImageUrl = "~/Common/Images/checked.png";
-				}
-				else
-				{
-					img.ImageUrl = "~/Common/Images/unchecked.png";
-				}
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                }
+                else
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                }
 			}
 
 			img = ((Image)e.Row.FindControl("DefaultImage"));
 			if (img != null)
 			{
 				if (fs.DefaultRule)
-				{
-					img.ImageUrl = "~/Common/Images/checked.png";
-				}
-				else
-				{
-					img.ImageUrl = "~/Common/Images/unchecked.png";
-				}
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                }
+                else
+                {
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                }
 			}
 			img = ((Image)e.Row.FindControl("ExemptImage"));
 			if (img != null)
 			{
 				if (fs.ExemptRule)
 				{
-					img.ImageUrl = "~/Common/Images/checked.png";
+					img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
 				}
 				else
 				{
-					img.ImageUrl = "~/Common/Images/unchecked.png";
+                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
 				}
 			}
 		}

@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 {
@@ -101,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 {
                     ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                     ConfirmationDialog.MessageType =
-                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                        ConfirmationDialog.MessageTypeEnum.ERROR;
                     ConfirmationDialog.Show();
                 }
                 else
@@ -136,7 +137,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
                             ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueResetFailed;
                             ConfirmationDialog.MessageType =
-                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                                ConfirmationDialog.MessageTypeEnum.ERROR;
                             ConfirmationDialog.Show();
                         }
 
@@ -148,7 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
                         ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueResetFailed;
                         ConfirmationDialog.MessageType =
-                            ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                            ConfirmationDialog.MessageTypeEnum.ERROR;
                         ConfirmationDialog.Show();
                     }
 
@@ -192,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     if (!String.IsNullOrEmpty(_workQueue.ProcessorID)) // somebody has claimed it
                     {
                         PreResetConfirmDialog.MessageType =
-                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                        ConfirmationDialog.MessageTypeEnum.INFORMATION;
                         PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
                         PreResetConfirmDialog.Show();
                         return;
@@ -203,7 +204,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
                 PreResetConfirmDialog.Data = WorkQueueItemKey;
                 PreResetConfirmDialog.MessageType =
-                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
+                    ConfirmationDialog.MessageTypeEnum.YESNO;
                 PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
                 PreResetConfirmDialog.Show();
             }

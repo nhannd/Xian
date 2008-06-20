@@ -36,6 +36,8 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
@@ -130,7 +132,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         protected override void OnPreRender(EventArgs e)
         {
             WorkQueueItemListPanel.AutoRefresh = Visible 
-                            && ModalDialog.State == ClearCanvas.ImageServer.Web.Application.Common.ModalDialog.ShowState.Show
+                            && ModalDialog.State == ModalDialog.ShowState.Show
                             && WorkQueueKeys!=null && WorkQueueItemListPanel.WorkQueueItems != null;
 
             base.OnPreRender(e);
@@ -145,7 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 {
                     MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                     MessageDialog.MessageType =
-                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                        ConfirmationDialog.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
                     
                 }
@@ -166,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     // the workqueue no longer exist in the db
                     MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemNotAvailable;
                     MessageDialog.MessageType =
-                        ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                        ConfirmationDialog.MessageTypeEnum.ERROR;
                     MessageDialog.Show();
                     return; // don't apply the changes
                 }
@@ -185,7 +187,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         }
                         PreApplyChangeConfirmDialog.Title = "Warning";
                         PreApplyChangeConfirmDialog.MessageType =
-                            ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.YESNO;
+                            ConfirmationDialog.MessageTypeEnum.YESNO;
                         PreApplyChangeConfirmDialog.Show();
                         prompt = true;
                         break;
@@ -194,7 +196,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     {
                         MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
                         MessageDialog.MessageType =
-                            ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                            ConfirmationDialog.MessageTypeEnum.ERROR;
                         MessageDialog.Show();
                         return; // don't apply the changes
                     }
@@ -235,7 +237,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     if (newScheduleTime < Platform.Time)
                     {
                         MessageDialog.MessageType =
-                                ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                                ConfirmationDialog.MessageTypeEnum.ERROR;
                         MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_MustBeInFuture;
                         MessageDialog.Show();
                         ModalDialog.Show(); 
@@ -260,7 +262,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                             {
                                 Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
                                 MessageDialog.MessageType =
-                                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                                    ConfirmationDialog.MessageTypeEnum.ERROR;
                                 MessageDialog.Message = "Unable to reschedule this/these work queue items";
                                 MessageDialog.Show();
                             }
@@ -270,7 +272,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                             Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}", e.StackTrace);
 
                             MessageDialog.MessageType =
-                                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                                    ConfirmationDialog.MessageTypeEnum.ERROR;
                             MessageDialog.Message =
                                 String.Format(App_GlobalResources.SR.WorkQueueRescheduleFailed_Exception, e.Message);
                             MessageDialog.Show();
@@ -353,7 +355,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                 MessageDialog.MessageType =
-                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    ConfirmationDialog.MessageTypeEnum.INFORMATION;
                 MessageDialog.Show();    
             }
             

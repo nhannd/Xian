@@ -8,6 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using GridPager=ClearCanvas.ImageServer.Web.Application.Controls.GridPager;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions {
     
     
@@ -188,7 +190,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerTop;
+        protected GridPager GridPagerTop;
         
         /// <summary>
         /// ServerPartitionGridPanel control.
@@ -206,6 +208,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerBottom;
+        protected GridPager GridPagerBottom;
     }
 }

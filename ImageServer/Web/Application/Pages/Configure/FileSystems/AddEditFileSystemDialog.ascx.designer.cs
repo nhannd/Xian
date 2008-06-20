@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using InvalidInputIndicator=ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator;
+using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
     
     
@@ -35,7 +38,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ModalDialog ModalDialog;
+        protected ModalDialog ModalDialog;
         
         /// <summary>
         /// TabContainer1 control.
@@ -116,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator InvalidDescriptionHint;
+        protected InvalidInputIndicator InvalidDescriptionHint;
         
         /// <summary>
         /// ConditionalRequiredFieldValidator1 control.
@@ -179,7 +182,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator InvalidPathHint;
+        protected InvalidInputIndicator InvalidPathHint;
         
         /// <summary>
         /// PathValidator control.
@@ -368,7 +371,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator HighWatermarkHelp;
+        protected InvalidInputIndicator HighWatermarkHelp;
         
         /// <summary>
         /// HighWatermarkValidator control.
@@ -431,7 +434,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.InvalidInputIndicator LowWatermarkHelp;
+        protected InvalidInputIndicator LowWatermarkHelp;
         
         /// <summary>
         /// LowWatermarkValidator control.

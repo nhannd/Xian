@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 ConfirmationDialog.BackgroundCSS = "";
                 ConfirmationDialog.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
                 ConfirmationDialog.MessageType =
-                    ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog.MessageTypeEnum.ERROR;
+                    Web.Application.Controls.ConfirmationDialog.MessageTypeEnum.ERROR;
                 ConfirmationDialog.Show();
             }
         }

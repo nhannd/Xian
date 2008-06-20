@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using GridPager=ClearCanvas.ImageServer.Web.Application.Controls.GridPager;
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
     
     
@@ -278,7 +281,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerTop;
+        protected GridPager GridPagerTop;
         
         /// <summary>
         /// workQueueItemListPanel control.
@@ -296,7 +299,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.GridPager GridPagerBottom;
+        protected GridPager GridPagerBottom;
         
         /// <summary>
         /// ConfirmationDialog control.
@@ -305,6 +308,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Common.ConfirmationDialog ConfirmationDialog;
+        protected ConfirmationDialog ConfirmationDialog;
     }
 }

@@ -3,8 +3,8 @@
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="Edit Service Schedule" Width="450px">
     <ContentTemplate>
-        <asp:Panel runat="server" CssClass="DialogPanelContent">
-            <asp:Table ID="Table1" runat="server" CellSpacing="3" CellPadding="3">
+        <asp:Panel runat="server" CssClass="DialogPanelContent" style="padding: 6px;">
+            <asp:Table ID="Table1" runat="server">
                 <asp:TableRow>
                     <asp:TableCell Width="30%" CssClass="DialogTextBoxLabel">
                         Description
@@ -56,7 +56,7 @@
                     </asp:TableCell>
                 </asp:TableRow>
                 
-                <asp:TableRow><asp:TableCell><img src="../../../images/blank.gif" height="3" /></asp:TableCell></asp:TableRow>
+                <asp:TableRow><asp:TableCell><asp:image runat="server" SkinID="Spacer" height="3" /></asp:TableCell></asp:TableRow>
             </asp:Table>
 </asp:Panel>
                 <table width="100%" cellpadding="0" cellspacing="0">

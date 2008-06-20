@@ -187,72 +187,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
         }
 
-         /// <summary>
-        /// Updates the grid pager based on the current list.
-        /// </summary>
-        protected void UpdatePager()
-        {
-            #region update pager of the gridview if it is used
-            if (StudyListControl.BottomPagerRow != null) 
-            {
-                // Show Number of devices in the list
-                Label lbl = StudyListControl.BottomPagerRow.Cells[0].FindControl("PagerDeviceCountLabel") as Label;
-                if (lbl != null)
-                {
-                    if (Studies.Count > 1)
-                        lbl.Text = string.Format("{0} studies", this.Studies.Count);
-                    else
-                        lbl.Text = string.Format("{0} study", this.Studies.Count);
-                }
-
-                // Show current page and the number of pages for the list
-                lbl = StudyListControl.BottomPagerRow.Cells[0].FindControl("PagerPagingLabel") as Label;
-                if (lbl != null)
-                    lbl.Text = string.Format("Page {0} of {1}", StudyListControl.PageIndex + 1, StudyListControl.PageCount);
-
-                // Enable/Disable the "Prev" page button
-                ImageButton btn = StudyListControl.BottomPagerRow.Cells[0].FindControl("PagerPrevImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (this.Studies.Count == 0 || StudyListControl.PageIndex == 0)
-                    {
-                        btn.ImageUrl = "~/images/prev_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/prev.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-
-                // Enable/Disable the "Next" page button
-                btn = StudyListControl.BottomPagerRow.Cells[0].FindControl("PagerNextImageButton") as ImageButton;
-                if (btn != null)
-                {
-                    if (this.Studies.Count == 0 || StudyListControl.PageIndex == StudyListControl.PageCount - 1)
-                    {
-                        btn.ImageUrl = "~/images/next_disabled.gif";
-                        btn.Enabled = false;
-                    }
-                    else
-                    {
-                        btn.ImageUrl = "~/images/next.gif";
-                        btn.Enabled = true;
-                    }
-
-                    btn.Style.Add("cursor", "hand");
-                }
-
-            }
-            #endregion
-
-
-        }
-
-
         protected void StudyListControl_RowDataBound(object sender, GridViewRowEventArgs e)
         {
             StudySummary studySummary = e.Row.DataItem as StudySummary;
@@ -307,11 +241,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         protected void StudyListControl_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
         {
             
-        }
-
-        protected void StudyListControl_DataBound(object sender, EventArgs e)
-        {
-            UpdatePager();          
         }
 
         protected void StudyListControl_PageIndexChanged(object sender, EventArgs e)

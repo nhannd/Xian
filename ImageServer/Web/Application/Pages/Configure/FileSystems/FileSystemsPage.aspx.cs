@@ -32,7 +32,7 @@
 using System;
 using ClearCanvas.ImageServer.Model;
 using System.Collections.Generic;
-using ClearCanvas.ImageServer.Web.Application.Common;
+using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 

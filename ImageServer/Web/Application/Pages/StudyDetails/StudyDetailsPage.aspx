@@ -1,4 +1,4 @@
-<%@ Page Language="C#" AutoEventWireup="true"  MasterPageFile="~/Common/Pages/MainContentSection.Master" Codebehind="StudyDetailsPage.aspx.cs" 
+<%@ Page Language="C#" AutoEventWireup="true"  MasterPageFile="~/Pages/Common/MainContentSection.Master" Codebehind="StudyDetailsPage.aspx.cs" 
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.StudyDetailsPage" %>
 
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="localAsp" %>

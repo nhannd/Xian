@@ -106,6 +106,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DEVICEAE.
+        /// </summary>
+        internal static string DeviceAE {
+            get {
+                return ResourceManager.GetString("DeviceAE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 104.
         /// </summary>
         internal static string DeviceDefaultPort {

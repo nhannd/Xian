@@ -175,12 +175,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             if (EditMode)
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogEditPartitionTitle;
-                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/UpdateEnabled.png";
+                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.UpdateButtonEnabled, Page.Theme);
             }
             else
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogAddPartitionTitle;
-                OKButton.EnabledImageURL = "~/App_Themes/" + this.Page.Theme + "/images/Buttons/AddEnabled.png";
+                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.AddButtonEnabled, Page.Theme);
             }
 
             // update the dropdown list
