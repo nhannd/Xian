@@ -299,12 +299,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
         
         /// <summary>
-        /// ConfirmationDialog control.
+        /// MessageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog ConfirmationDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
     }
 }

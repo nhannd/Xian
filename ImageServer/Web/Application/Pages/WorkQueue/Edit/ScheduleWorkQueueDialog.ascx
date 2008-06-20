@@ -37,6 +37,6 @@
     
 </ContentTemplate>
 </ccAsp:ModalDialog>
-<ccAsp:confirmationdialog id="PreOpenConfirmDialog" runat="server" />
-<ccAsp:confirmationdialog id="PreApplyChangeConfirmDialog" runat="server" />
-<ccAsp:confirmationdialog id="MessageDialog" runat="server" />
+<ccAsp:MessageBox id="PreOpenConfirmDialog" runat="server" />
+<ccAsp:MessageBox id="PreApplyChangeConfirmDialog" runat="server" />
+<ccAsp:MessageBox id="MessageDialog" runat="server" />

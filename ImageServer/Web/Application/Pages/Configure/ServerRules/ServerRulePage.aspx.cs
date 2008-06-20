@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
         public void OnDeleteRule(ServerRule rule, ServerPartition partition)
         {
             ConfirmDialog.Message = string.Format("Are you sure you want to remove rule \"{0}\" from partition {1}?", rule.RuleName, partition.AeTitle);
-            ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
+            ConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ConfirmDialog.Data = rule.GetKey();
             ConfirmDialog.Show();
         }

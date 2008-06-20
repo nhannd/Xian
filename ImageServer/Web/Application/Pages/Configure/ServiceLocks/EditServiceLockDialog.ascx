@@ -72,4 +72,4 @@
     </ContentTemplate>
 </ccAsp:ModalDialog>
 
-<ccAsp:ConfirmationDialog ID="MessageBox" runat="server" />
+<ccAsp:MessageBox ID="MessageBox" runat="server" />

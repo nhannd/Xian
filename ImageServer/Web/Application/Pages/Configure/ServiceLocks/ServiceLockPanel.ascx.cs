@@ -37,7 +37,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 {
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                 {
                     ConfirmEditDialog.Message = App_GlobalResources.SR.ServiceLockUpdate_Confirm_ServiceIsLocked;
                     ConfirmEditDialog.MessageType =
-                        ConfirmationDialog.MessageTypeEnum.YESNO;
+                        MessageBox.MessageTypeEnum.YESNO;
                     ConfirmEditDialog.Show();
                 }
                 else

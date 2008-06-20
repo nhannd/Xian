@@ -103,4 +103,4 @@
 </asp:UpdatePanel>
 
 
-<ccAsp:ConfirmationDialog runat="server" ID="ConfirmationDialog" />
+<ccAsp:MessageBox runat="server" ID="MessageBox" />

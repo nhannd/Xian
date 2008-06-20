@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            ConfirmDialog.Confirmed += new ConfirmationDialog.ConfirmedEventHandler(ConfirmDialog_Confirmed);
+            ConfirmDialog.Confirmed += new MessageBox.ConfirmedEventHandler(ConfirmDialog_Confirmed);
         }
 
         public override void DataBind()
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
-            ConfirmDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
+            ConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
             ConfirmDialog.Data = Study;
 

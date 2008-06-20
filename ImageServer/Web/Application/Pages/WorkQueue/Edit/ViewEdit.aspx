@@ -18,7 +18,7 @@
                     <localAsp:ScheduleWorkQueueDialog ID="ScheduleWorkQueueDialog" runat="server" />
                     <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" />
                     <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
-                    <ccAsp:ConfirmationDialog runat="server" ID="InformationDialog" MessageType="INFORMATION" Title="" />
+                    <ccAsp:MessageBox runat="server" ID="InformationDialog" MessageType="INFORMATION" Title="" />
                     <center>
                         <asp:Label ID="Message" runat="server" Text="Label"></asp:Label>
                     </center>

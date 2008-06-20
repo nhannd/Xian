@@ -14,8 +14,8 @@
                 <uc1:ServerPartitionPanel ID="ServerPartitionPanel" runat="server"></uc1:ServerPartitionPanel>
             </asp:Panel>
             <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
-            <ccAsp:ConfirmationDialog ID="deleteConfirmBox" runat="server" />       
-            <ccAsp:ConfirmationDialog ID="MessageBox" runat="server" />             
+            <ccAsp:MessageBox ID="deleteConfirmBox" runat="server" />       
+            <ccAsp:MessageBox ID="MessageBox" runat="server" />             
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

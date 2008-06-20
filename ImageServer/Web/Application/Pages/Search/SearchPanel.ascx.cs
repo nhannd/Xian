@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                               };
 
 
-            ConfirmationDialog.Confirmed += delegate(object data)
+            MessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Study>)
                                 {
@@ -270,21 +270,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
             if (studies != null && studies.Count>0)
             {
-                if (studies.Count > 1) ConfirmationDialog.Message = string.Format(App_GlobalResources.SR.MultipleStudyDelete);
-                else ConfirmationDialog.Message = string.Format(App_GlobalResources.SR.SingleStudyDelete);
+                if (studies.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleStudyDelete);
+                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleStudyDelete);
 
-                ConfirmationDialog.Message += "<table>";
+                MessageBox.Message += "<table>";
                 foreach (Study study in studies)
                 {
                     String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
                                     study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                    ConfirmationDialog.Message += text;
+                    MessageBox.Message += text;
                 }
-                ConfirmationDialog.Message += "</table>";
+                MessageBox.Message += "</table>";
 
-                ConfirmationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
-                ConfirmationDialog.Data = studies;
-                ConfirmationDialog.Show();
+                MessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                MessageBox.Data = studies;
+                MessageBox.Show();
             }
         }
 

@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 {
                     // prompt the user first
                     InformationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed_CannotReschedule;
-                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
+                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
 
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
                     InformationDialog.Message = App_GlobalResources.SR.WorkQueueFailed_CannotReschedule;
-                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
+                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
                 }

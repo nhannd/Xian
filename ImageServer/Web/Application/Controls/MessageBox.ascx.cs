@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
     /// when users press "Yes" (or equivalent buttons). The dialog box will close automatically when users press on the buttons.
     /// </para>
     /// </remark>
-    public partial class ConfirmationDialog : System.Web.UI.UserControl
+    public partial class MessageBox : System.Web.UI.UserControl
     {
         /// <summary>
         /// Types of confirmation message.

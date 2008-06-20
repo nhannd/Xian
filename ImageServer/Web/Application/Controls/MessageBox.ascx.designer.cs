@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
     
     
     /// <summary>
-    /// ConfirmationDialog class.
+    /// MessageBox class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ConfirmationDialog {
+    public partial class MessageBox {
         
         /// <summary>
         /// ModalDialog control.

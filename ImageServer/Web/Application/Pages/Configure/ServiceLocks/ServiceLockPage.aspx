@@ -10,7 +10,7 @@
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <localAsp:ServiceLockPanel ID="ServiceLockPanel" runat="server" />
-            <ccAsp:ConfirmationDialog ID="ConfirmationDialog1" runat="server" />
+            <ccAsp:MessageBox ID="MessageBox1" runat="server" />
         </ContentTemplate>
     </asp:UpdatePanel>
     

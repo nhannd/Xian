@@ -69,12 +69,12 @@
     </Compile>
     <Compile Include="App_Code\KeyedCollectionBase.cs" />
     <Compile Include="App_Code\EntityCollection.cs" />
-    <Compile Include="Controls\ConfirmationDialog.ascx.cs">
-      <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
+    <Compile Include="Controls\MessageBox.ascx.cs">
+      <DependentUpon>MessageBox.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Controls\ConfirmationDialog.ascx.designer.cs">
-      <DependentUpon>ConfirmationDialog.ascx</DependentUpon>
+    <Compile Include="Controls\MessageBox.ascx.designer.cs">
+      <DependentUpon>MessageBox.ascx</DependentUpon>
     </Compile>
     <Compile Include="Controls\GridPager.ascx.cs">
       <DependentUpon>GridPager.ascx</DependentUpon>
@@ -663,7 +663,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
-    <Content Include="Controls\ConfirmationDialog.ascx" />
+    <Content Include="Controls\MessageBox.ascx" />
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
     <Content Include="Controls\ModalDialog.ascx" />

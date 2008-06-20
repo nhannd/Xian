@@ -36,7 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
+using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 {
@@ -100,10 +100,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 Model.WorkQueue item = adaptor.Get(key);
                 if (item == null)
                 {
-                    ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
-                    ConfirmationDialog.MessageType =
-                        ConfirmationDialog.MessageTypeEnum.ERROR;
-                    ConfirmationDialog.Show();
+                    MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+                    MessageBox.MessageType =
+                        MessageBox.MessageTypeEnum.ERROR;
+                    MessageBox.Show();
                 }
                 else
                 {
@@ -135,10 +135,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                             Platform.Log(LogLevel.Error,
                                          "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. GUID={0}", item.GetKey());
 
-                            ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueResetFailed;
-                            ConfirmationDialog.MessageType =
-                                ConfirmationDialog.MessageTypeEnum.ERROR;
-                            ConfirmationDialog.Show();
+                            MessageBox.Message = App_GlobalResources.SR.WorkQueueResetFailed;
+                            MessageBox.MessageType =
+                                MessageBox.MessageTypeEnum.ERROR;
+                            MessageBox.Show();
                         }
 
                     }
@@ -147,10 +147,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         Platform.Log(LogLevel.Error,
                                          "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. GUID={0}. Error: {1}", item.GetKey().Key, e.StackTrace);
 
-                        ConfirmationDialog.Message = App_GlobalResources.SR.WorkQueueResetFailed;
-                        ConfirmationDialog.MessageType =
-                            ConfirmationDialog.MessageTypeEnum.ERROR;
-                        ConfirmationDialog.Show();
+                        MessageBox.Message = App_GlobalResources.SR.WorkQueueResetFailed;
+                        MessageBox.MessageType =
+                            MessageBox.MessageTypeEnum.ERROR;
+                        MessageBox.Show();
                     }
 
                 }
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     if (!String.IsNullOrEmpty(_workQueue.ProcessorID)) // somebody has claimed it
                     {
                         PreResetConfirmDialog.MessageType =
-                        ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                        MessageBox.MessageTypeEnum.INFORMATION;
                         PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
                         PreResetConfirmDialog.Show();
                         return;
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
                 PreResetConfirmDialog.Data = WorkQueueItemKey;
                 PreResetConfirmDialog.MessageType =
-                    ConfirmationDialog.MessageTypeEnum.YESNO;
+                    MessageBox.MessageTypeEnum.YESNO;
                 PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
                 PreResetConfirmDialog.Show();
             }
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         public void Hide()
         {
             PreResetConfirmDialog.Close();
-            ConfirmationDialog.Close();
+            MessageBox.Close();
         }
 
         #endregion Public Methods

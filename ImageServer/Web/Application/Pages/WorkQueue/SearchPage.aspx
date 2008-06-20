@@ -24,8 +24,8 @@
             </td>
         </tr>
     </table>
-    <ccAsp:ConfirmationDialog runat="server" ID="ConfirmRescheduleDialog"/>
-    <ccAsp:ConfirmationDialog runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
+    <ccAsp:MessageBox runat="server" ID="ConfirmRescheduleDialog"/>
+    <ccAsp:MessageBox runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
     <localAsp:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
     <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" />
     <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />

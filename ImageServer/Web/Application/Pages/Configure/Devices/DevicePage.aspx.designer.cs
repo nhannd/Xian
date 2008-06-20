@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
-using ServerPartitionTabs=ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
     
     
@@ -56,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ServerPartitionTabs ServerPartitionTabs;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
         /// AddEditDeviceControl1 control.
@@ -68,12 +65,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices.AddEditDeviceDialog AddEditDeviceControl1;
         
         /// <summary>
-        /// ConfirmationDialog1 control.
+        /// MessageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ConfirmationDialog ConfirmationDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
     }
 }

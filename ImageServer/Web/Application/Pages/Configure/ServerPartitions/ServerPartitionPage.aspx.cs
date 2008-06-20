@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 if (_controller.UpdatePartition(partition))
                 {
                     UpdateUI();
-                    MessageBox.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
                     MessageBox.Message =
                         String.Format("Server partition {0} has been updated. Please restart the Image Server.",
                                       partition.AeTitle);
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 if (_controller.AddPartition(partition))
                 {
                     UpdateUI();
-                    MessageBox.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                    MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
                     MessageBox.Message =
                         String.Format("New server partition {0} has been added. Please restart the Image Server.",
                                       partition.AeTitle);
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 {
                     UpdateUI();
 
-                    MessageBox.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
+                    MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     MessageBox.Message =
                         "Unable to delete this server partition. This could mean there are studies on this partition.<BR>Please check the log file or contact the server administrator";
                     MessageBox.Show();
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                     UpdateUI();
                     if (ServerPartitionPanel.Partitions != null && ServerPartitionPanel.Partitions.Count == 0)
                     {
-                        MessageBox.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                        MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
                         MessageBox.Message =
                             String.Format(
                                 "Server partition {0} has been removed.<P>At least one server partition is required. Please add a new server partition.",
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                     }
                     else
                     {
-                        MessageBox.MessageType = ConfirmationDialog.MessageTypeEnum.INFORMATION;
+                        MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
                         MessageBox.Message =
                             String.Format("Server partition {0} has been removed. Please restart the Image Server.",
                                           partition.AeTitle);
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         public void DeletePartition(ServerPartition selectedPartition)
         {
             deleteConfirmBox.Data = selectedPartition;
-            deleteConfirmBox.MessageType = ConfirmationDialog.MessageTypeEnum.YESNO;
+            deleteConfirmBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
             deleteConfirmBox.Message =
                 String.Format(
                     "It's recommended that you disable the partition instead of deleting it.<P>Are you sure you still want to delete partition {0} and all related settings permanently?",

@@ -188,14 +188,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                 if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                 {
                     InformationDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
-                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
+                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
                 }
                 else if (WorkQueueItemDetailsPanel.WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                 {
                     InformationDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
-                    InformationDialog.MessageType = ConfirmationDialog.MessageTypeEnum.ERROR;
+                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                     InformationDialog.Show();
                     return;
                 }
@@ -260,7 +260,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     {
                         InformationDialog.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                         InformationDialog.MessageType =
-                                ConfirmationDialog.MessageTypeEnum.ERROR; 
+                                MessageBox.MessageTypeEnum.ERROR; 
                         InformationDialog.Show();
                         ItemNotAvailableAlertShown = true;
                     }

@@ -1,5 +1,5 @@
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="ConfirmationDialog.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog" %>
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="MessageBox.ascx.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.Controls.MessageBox" %>
 
 <%@ Register Src="ModalDialog.ascx" TagName="ModalDialog" TagPrefix="localAsp" %>
 

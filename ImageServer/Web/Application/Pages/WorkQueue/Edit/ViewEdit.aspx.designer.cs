@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
     
     
@@ -91,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ConfirmationDialog InformationDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox InformationDialog;
         
         /// <summary>
         /// Message control.

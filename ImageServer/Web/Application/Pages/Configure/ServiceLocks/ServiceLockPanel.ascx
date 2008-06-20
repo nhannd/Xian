@@ -57,7 +57,7 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-        <ccAsp:ConfirmationDialog ID="ConfirmEditDialog" runat="server" />
+        <ccAsp:MessageBox ID="ConfirmEditDialog" runat="server" />
         <localAsp:EditServiceLockDialog ID="EditServiceLockDialog" runat="server" />
     </ContentTemplate>
 </asp:UpdatePanel>

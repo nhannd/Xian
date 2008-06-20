@@ -233,6 +233,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog ConfirmDialog1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ConfirmDialog1;
     }
 }

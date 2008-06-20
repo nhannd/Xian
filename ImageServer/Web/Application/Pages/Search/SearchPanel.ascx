@@ -88,6 +88,6 @@
                 </asp:TableRow>
             </asp:Table>
 
-        <ccAsp:ConfirmationDialog ID="ConfirmationDialog" runat="server" />    
+        <ccAsp:MessageBox ID="MessageBox" runat="server" />    
     </ContentTemplate>
 </asp:UpdatePanel>

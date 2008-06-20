@@ -264,12 +264,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             else 
             {
                 // the item no longer exist on the list... either it is deleted or filtered
-                ConfirmationDialog.Title = "";
-                ConfirmationDialog.BackgroundCSS = "";
-                ConfirmationDialog.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
-                ConfirmationDialog.MessageType =
-                    Web.Application.Controls.ConfirmationDialog.MessageTypeEnum.ERROR;
-                ConfirmationDialog.Show();
+                MessageBox.Title = "";
+                MessageBox.BackgroundCSS = "";
+                MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
+                MessageBox.MessageType =
+                    Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Show();
             }
         }
 

@@ -8,8 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
     
     
@@ -67,12 +65,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         protected global::System.Web.UI.Timer RefreshTimer;
         
         /// <summary>
-        /// ConfirmationDialog control.
+        /// MessageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ConfirmationDialog ConfirmationDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
     }
 }

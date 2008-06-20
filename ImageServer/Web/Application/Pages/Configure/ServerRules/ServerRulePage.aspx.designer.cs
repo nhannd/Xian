@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using ConfirmationDialog=ClearCanvas.ImageServer.Web.Application.Controls.ConfirmationDialog;
-using ServerPartitionTabs=ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
     
     
@@ -47,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ServerPartitionTabs ServerPartitionTabs;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
         /// ConfirmDialog control.
@@ -56,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ConfirmationDialog ConfirmDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ConfirmDialog;
         
         /// <summary>
         /// AddEditServerRuleControl control.

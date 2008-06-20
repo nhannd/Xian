@@ -16,7 +16,7 @@
         <ContentTemplate>
             <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
             <ccAddEdit:AddEditDeviceDialog ID="AddEditDeviceControl1" runat="server" />
-            <ccAsp:ConfirmationDialog ID="ConfirmationDialog1" runat="server" />
+            <ccAsp:MessageBox ID="MessageBox" runat="server" />
         </ContentTemplate>
     </asp:UpdatePanel>
     
