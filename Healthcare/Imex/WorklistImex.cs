@@ -172,46 +172,46 @@ namespace ClearCanvas.Healthcare.Imex
             data.Name = worklist.Name;
             data.Description = worklist.Description;
 
-            data.StaffSubscribers = CollectionUtils.Map<Staff, WorklistImex.WorklistData.StaffSubscriberData>(
+            data.StaffSubscribers = CollectionUtils.Map<Staff, WorklistData.StaffSubscriberData>(
                 worklist.StaffSubscribers,
                 delegate(Staff staff)
                 {
-                    WorklistImex.WorklistData.StaffSubscriberData s = new WorklistData.StaffSubscriberData();
+                    WorklistData.StaffSubscriberData s = new WorklistData.StaffSubscriberData();
                     s.StaffId = staff.Id;
                     return s;
                 });
 
-            data.GroupSubscribers = CollectionUtils.Map<StaffGroup, WorklistImex.WorklistData.GroupSubscriberData>(
+            data.GroupSubscribers = CollectionUtils.Map<StaffGroup, WorklistData.GroupSubscriberData>(
                 worklist.GroupSubscribers,
                 delegate(StaffGroup group)
                 {
-                    WorklistImex.WorklistData.GroupSubscriberData s = new WorklistData.GroupSubscriberData();
+                    WorklistData.GroupSubscriberData s = new WorklistData.GroupSubscriberData();
                     s.StaffGroupName = group.Name;
                     return s;
                 });
 
-            ExportFilter<ProcedureTypeGroup, WorklistData.ProcedureTypeGroupData>(
+            ExportFilter(
                 worklist.ProcedureTypeGroupFilter,
                 data.Filters.ProcedureTypeGroups,
                 delegate(ProcedureTypeGroup group)
                 {
-                    WorklistImex.WorklistData.ProcedureTypeGroupData s = new WorklistData.ProcedureTypeGroupData();
+                    WorklistData.ProcedureTypeGroupData s = new WorklistData.ProcedureTypeGroupData();
                     s.Class = group.GetClass().FullName;
                     s.Name = group.Name;
                     return s;
                 });
 
             data.Filters.Facilities.IncludeWorkingFacility = worklist.FacilityFilter.IncludeWorkingFacility;
-            ExportFilter<Facility, WorklistData.EnumValueData>(
+            ExportFilter(
                 worklist.FacilityFilter,
                 data.Filters.Facilities,
                 delegate(Facility item) { return new WorklistData.EnumValueData(item.Code); });
 
 
 
-            ExportFilter<OrderPriorityEnum, WorklistData.EnumValueData>(worklist.OrderPriorityFilter, data.Filters.OrderPriorities,
+            ExportFilter(worklist.OrderPriorityFilter, data.Filters.OrderPriorities,
                 delegate(OrderPriorityEnum item) { return new WorklistData.EnumValueData(item.Code); });
-            ExportFilter<PatientClassEnum, WorklistData.EnumValueData>(worklist.PatientClassFilter, data.Filters.PatientClasses,
+            ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
                 delegate(PatientClassEnum item) { return new WorklistData.EnumValueData(item.Code); });
 
             data.Filters.Portable.Enabled = worklist.PortableFilter.IsEnabled;
@@ -251,7 +251,7 @@ namespace ClearCanvas.Healthcare.Imex
                 }
             }
 
-            ImportFilter<ProcedureTypeGroup, WorklistData.ProcedureTypeGroupData>(
+            ImportFilter(
                 worklist.ProcedureTypeGroupFilter,
                 data.Filters.ProcedureTypeGroups,
                 delegate(WorklistData.ProcedureTypeGroupData s)
@@ -262,8 +262,10 @@ namespace ClearCanvas.Healthcare.Imex
                     IProcedureTypeGroupBroker broker = context.GetBroker<IProcedureTypeGroupBroker>();
                     return CollectionUtils.FirstElement(broker.Find(criteria, ProcedureTypeGroup.GetSubClass(s.Class, context)));
                 });
+			//Bug #2284: don't forget to set the IncludeWorkingFacility property
+        	worklist.FacilityFilter.IncludeWorkingFacility = data.Filters.Facilities.IncludeWorkingFacility;
 
-            ImportFilter<Facility, WorklistData.EnumValueData>(
+            ImportFilter(
                 worklist.FacilityFilter,
                 data.Filters.Facilities,
                 delegate(WorklistData.EnumValueData s)
@@ -275,7 +277,7 @@ namespace ClearCanvas.Healthcare.Imex
                     return CollectionUtils.FirstElement(broker.Find(criteria));
                 });
 
-            ImportFilter<OrderPriorityEnum, WorklistData.EnumValueData>(
+            ImportFilter(
                 worklist.OrderPriorityFilter,
                 data.Filters.OrderPriorities,
                 delegate(WorklistData.EnumValueData s)
@@ -284,7 +286,7 @@ namespace ClearCanvas.Healthcare.Imex
                     return broker.Find<OrderPriorityEnum>(s.Code);
                 });
 
-            ImportFilter<PatientClassEnum, WorklistData.EnumValueData>(
+            ImportFilter(
                 worklist.PatientClassFilter,
                 data.Filters.PatientClasses,
                 delegate(WorklistData.EnumValueData s)
