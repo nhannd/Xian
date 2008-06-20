@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             set
             {
-                ViewState["EnabledImageURL"] = value;
+                ViewState["EnabledImageURL"] = inspectURL(value);
             }
         }
 
@@ -70,12 +70,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             get
             {
                 String s = (String)ViewState["EnabledHoverImageURL"];
-                return ((s == null) ? String.Empty : s);
+                return (s ?? String.Empty);
             }
 
             set
             {
-                ViewState["EnabledHoverImageURL"] = value;
+                ViewState["EnabledHoverImageURL"] = inspectURL(value);
             }
         }
 
@@ -89,21 +89,28 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             get
             {
                 String s = (String)ViewState["DisabledImageURL"];
-                return ((s == null) ? String.Empty : s);
+                return (s ?? String.Empty);
             }
 
             set
             {
-                ViewState["DisabledImageURL"] = value;
+                ViewState["DisabledImageURL"] = inspectURL(value);
             }
         }
 
         #endregion Public Properties
 
-        #region Protected Methods
+        #region Private Methods
 
+        private string inspectURL(string value)
+        {
+            if (!value.StartsWith("~/") && !value.StartsWith("/")) 
+                value = value.Insert(0, "~/App_Themes/" + Page.Theme + "/");
+            
+            return value;
+        }       
 
-        #endregion Protected Methods
+        #endregion Private Methods
 
 
         public override void  RenderControl(HtmlTextWriter writer)

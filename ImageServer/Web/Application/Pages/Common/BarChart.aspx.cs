@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             Response.ContentType = App_GlobalResources.Constants.image_PNG;
 
             // Load the background image
-            Image bmp = Image.FromFile(string.Format(App_GlobalResources.ImageFileLocation.UsageBar, Page.Theme));
+            Image bmp = Image.FromFile(App_GlobalResources.ImageFileLocation.UsageBar);
             Graphics graphics = Graphics.FromImage(bmp);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 
                 // add watermark icons
                 graphics.CompositingMode = CompositingMode.SourceOver;
-                Image watermark = Image.FromFile(string.Format(App_GlobalResources.ImageFileLocation.Watermark, Page.Theme));
+                Image watermark = Image.FromFile(App_GlobalResources.ImageFileLocation.Watermark);
 
 
                 graphics.DrawImageUnscaled(watermark, (int)(_width * _high / 100f) - watermark.Width / 2 + leftoffset, 12);

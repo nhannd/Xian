@@ -329,7 +329,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			if (EditMode)
 			{
                 ModalDialog.Title = App_GlobalResources.SR.DialogEditServerRuleTitle;
-                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.UpdateButtonEnabled, Page.Theme);
+                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.UpdateButtonEnabled;
                 
 				DefaultCheckBox.Checked = _rule.DefaultRule;
 				EnabledCheckBox.Checked = _rule.Enabled;
@@ -401,7 +401,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			else
 			{
                 ModalDialog.Title = App_GlobalResources.SR.DialogAddServerRuleTitle;
-                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.AddButtonEnabled, Page.Theme);
+                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.AddButtonEnabled;
 
 				DefaultCheckBox.Checked = false;
 				EnabledCheckBox.Checked = true;

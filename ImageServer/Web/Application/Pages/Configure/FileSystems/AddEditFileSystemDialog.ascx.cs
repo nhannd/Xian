@@ -202,12 +202,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             if (EditMode)
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogEditFileSystemTitle;
-                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.UpdateButtonEnabled, Page.Theme);
+                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.UpdateButtonEnabled;
             }
             else
             {
                 ModalDialog.Title = App_GlobalResources.SR.DialogAddFileSystemTitle;
-                OKButton.EnabledImageURL = string.Format(App_GlobalResources.ImageFileLocation.AddButtonEnabled, Page.Theme);
+                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.AddButtonEnabled;
             }
 
             // update the dropdown list

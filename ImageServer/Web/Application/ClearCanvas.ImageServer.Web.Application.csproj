@@ -56,7 +56,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Code\ImageServerConstants.cs" />
+    <Compile Include="App_Code\ImageServerConstants.cs" />
     <Compile Include="App_GlobalResources\Constants.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

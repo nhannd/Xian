@@ -178,11 +178,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (fs.Enabled)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
 			}
 
@@ -191,11 +191,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (fs.DefaultRule)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
 			}
 			img = ((Image)e.Row.FindControl("ExemptImage"));
@@ -203,11 +203,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (fs.ExemptRule)
 				{
-					img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+					img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
 				}
 				else
 				{
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
 				}
 			}
 		}

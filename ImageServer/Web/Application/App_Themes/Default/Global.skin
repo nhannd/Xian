@@ -1,7 +1,7 @@
 <%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
 <%@ Register src="~/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
 
-<asp:Image runat="server" SkinID="Spacer" ImageUrl="~/images/blank.gif" />
+<asp:Image runat="server" SkinID="Spacer" ImageUrl="images/blank.gif" />
 
 <%-- Header and Menu Images --%>
 
@@ -25,20 +25,20 @@
 <%-- Buttons --%>
 
 <asp:ImageButton runat="server" SkinID="SearchButton" ImageUrl="images/Buttons/Search.png" />
-<ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/ViewDetailsDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/MoveEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/MoveDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/DeleteEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/DeleteDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/EditEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/EditDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/ResetEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/ResetDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="AddButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/AddEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/AddDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="DoneButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/DoneEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/DoneDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="SearchButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/SearchEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/SearchDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="OKButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/OKEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/OKDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="CancelButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/CancelEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/CancelDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="YesButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/YesEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/YesDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="NoButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/NoEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/NoDisabled.png" />
-<ccUI:ToolbarButton runat="server" SkinID="ApplyButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/ApplyEnabled.png" DisabledImageURL="~/App_Themes/Default/images/Buttons/ApplyDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="images/Buttons/ViewDetailsDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="images/Buttons/MoveEnabled.png" DisabledImageURL="images/Buttons/MoveDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="images/Buttons/DeleteEnabled.png" DisabledImageURL="images/Buttons/DeleteDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="images/Buttons/EditEnabled.png" DisabledImageURL="images/Buttons/EditDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="images/Buttons/ResetEnabled.png" DisabledImageURL="images/Buttons/ResetDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="images/Buttons/RescheduleDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="AddButton" EnabledImageURL="images/Buttons/AddEnabled.png" DisabledImageURL="images/Buttons/AddDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="DoneButton" EnabledImageURL="images/Buttons/DoneEnabled.png" DisabledImageURL="images/Buttons/DoneDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="SearchButton" EnabledImageURL="images/Buttons/SearchEnabled.png" DisabledImageURL="images/Buttons/SearchDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="OKButton" EnabledImageURL="images/Buttons/OKEnabled.png" DisabledImageURL="images/Buttons/OKDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="CancelButton" EnabledImageURL="images/Buttons/CancelEnabled.png" DisabledImageURL="images/Buttons/CancelDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="YesButton" EnabledImageURL="images/Buttons/YesEnabled.png" DisabledImageURL="images/Buttons/YesDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="NoButton" EnabledImageURL="images/Buttons/NoEnabled.png" DisabledImageURL="images/Buttons/NoDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="ApplyButton" EnabledImageURL="images/Buttons/ApplyEnabled.png" DisabledImageURL="images/Buttons/ApplyDisabled.png" />
 <asp:LinkButton runat="server" SkinId="CloseButton" Text="Close" CssClass="CloseButton" />
 
 <%-- Tables --%>
@@ -47,8 +47,8 @@
 <asp:table runat="server" SkinId="MainContentTable" CellPadding="0" BorderWidth="0" CellSpacing="0" Width="100%" CssClass="MainContentTable"/>
 
 <%-- Images --%>
-<asp:Image runat="server" SkinID="Unchecked" ImageUrl="~/App_Themes/Default/images/Indicators/unchecked.png" />
-<asp:Image runat="server" SkinID="Checked" ImageUrl="~/App_Themes/Default/images/Indicators/checked.png" />
+<asp:Image runat="server" SkinID="Unchecked" ImageUrl="images/Indicators/unchecked.png" />
+<asp:Image runat="server" SkinID="Checked" ImageUrl="images/Indicators/checked.png" />
 
 <%-- Custom Controls --%>
-<ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />
+<ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="images/Indicators/HelpSmall.png" Visible="true" />

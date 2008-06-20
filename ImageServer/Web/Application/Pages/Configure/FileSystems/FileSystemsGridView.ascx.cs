@@ -257,11 +257,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 bool active = Convert.ToBoolean(DataBinder.Eval(row.DataItem, fieldName));
                 if (active)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
             }
         }
@@ -304,11 +304,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canRead)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
             }
         }
@@ -331,11 +331,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canWrite)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
             }
         }

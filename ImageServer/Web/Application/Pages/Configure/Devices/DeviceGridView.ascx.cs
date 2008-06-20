@@ -216,12 +216,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowRetrieve")))
             {
                 img = new Image();
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.RetrieveFeature, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.RetrieveFeature;
                 img.AlternateText = "Retrieve";
             }
             else
             {
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -234,12 +234,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowQuery")))
             {
                 img = new Image();
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.QueryFeature, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.QueryFeature;
                 img.AlternateText = "Query";
             }
             else
             {
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -250,12 +250,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.StoreFeature, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.StoreFeature;
                 img.AlternateText = "Store";
             }
             else
             {
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -266,13 +266,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.AutoRouteFeature, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.AutoRouteFeature;
                 img.AlternateText = "Auto Route";
             }
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Blank, Page.Theme);
+                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
                 img.AlternateText = "";
             }
             placeHolder.Controls.Add(img);
@@ -286,11 +286,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
                 if (active)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
             }
         }
@@ -304,11 +304,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Checked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = string.Format(App_GlobalResources.ImageFileLocation.Unchecked, Page.Theme);
+                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
                 }
             }
         }
