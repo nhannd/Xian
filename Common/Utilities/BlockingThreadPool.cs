@@ -353,10 +353,18 @@ namespace ClearCanvas.Common.Utilities
 				if (!queueEmpty)
 				{
 					lock (_syncLock) { _activeCount++; }
-
-					ProcessItem(item);
-
-					lock (_syncLock) { _activeCount--; }
+					try
+					{
+						ProcessItem(item);
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Error, e, "Unexpected exception processing thread pool item.");
+					}
+					finally
+					{
+						lock (_syncLock) { _activeCount--; }
+					}
 				}
 				if (State == StartStopState.Stopping)
 				{
