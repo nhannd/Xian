@@ -111,10 +111,21 @@ namespace ClearCanvas.Desktop.Trees
     	/// <summary>
     	/// Gets a value indicating if the item should be expanded when the tree is initially loaded.
     	/// </summary>
-    	public virtual bool IsInitiallyExpanded(object item)
+    	public virtual bool GetExpanded(object item)
         {
             return false;
         }
+
+    	/// <summary>
+    	/// Sets a value indicating whether the specified item is currently expanded.
+    	/// </summary>
+    	/// <param name="item"></param>
+    	/// <param name="expanded"></param>
+    	/// <returns></returns>
+    	public virtual void SetExpanded(object item, bool expanded)
+		{
+			
+		}
 
     	/// <summary>
     	/// Gets the <see cref="ITree"/> that represents the subtree for the specified item,

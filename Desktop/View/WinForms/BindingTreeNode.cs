@@ -60,9 +60,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_treeView = treeView;
 
 			UpdateDisplay(_treeView.ImageList);
-
-            if (_parentTree.Binding.IsInitiallyExpanded(_item))
-                this.Expand();
         }
 
         /// <summary>
@@ -187,6 +184,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (this.TreeView != null)
 				this.TreeView.EndUpdate();
+
+			// check whether to start in expanded or collapsed state
+			if (_parentTree.Binding.GetExpanded(_item))
+				this.Expand();
+			else
+				this.Collapse();
 		}
 
 		/// <summary>
@@ -215,6 +218,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             _parentTree.Binding.SetIsChecked(_item, this.Checked);
         }
+
+		public void OnExpandCollapse()
+		{
+			_parentTree.Binding.SetExpanded(_item, this.IsExpanded);
+		}
 
 		#region IDisposable Members
 

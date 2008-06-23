@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
@@ -36,5 +37,15 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public interface IWorkspaceHost : IApplicationComponentHost
     {
+		/// <summary>
+		/// Gets a value indicating whether the workspace in which the component
+		/// is hosted is currently the active workspace.
+		/// </summary>
+		bool IsWorkspaceActive { get; }
+
+		/// <summary>
+		/// Occurs when the <see cref="IsWorkspaceActive"/> property changes.
+		/// </summary>
+    	event EventHandler IsWorkspaceActiveChanged;
     }
 }

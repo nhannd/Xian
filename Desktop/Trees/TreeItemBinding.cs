@@ -30,41 +30,14 @@
 #endregion
 
 using ClearCanvas.Common.Utilities;
+using System;
 
 namespace ClearCanvas.Desktop.Trees
 {
-    /// <summary>
-	/// A delegate that returns text for <paramref name="item"/> in a tree.
-    /// </summary>
-	public delegate string TextProviderDelegate<T>(T item);
-	/// <summary>
-	/// A delegate that returns whether or not <paramref name="item"/> is checked in a tree.
-	/// </summary>
-	public delegate bool IsCheckedGetterDelegate<T>(T item);
 	/// <summary>
 	/// A delegate that allows setting whether or not <paramref name="item"/> is checked in a tree.
 	/// </summary>
-	public delegate void IsCheckedSetterDelegate<T>(T item, bool value);
-	/// <summary>
-	/// A delegate that returns the icon set for <paramref name="item"/> in a tree.
-	/// </summary>
-    public delegate IconSet IconSetProviderDelegate<T>(T item);
-	/// <summary>
-	/// A delegate that returns an <see cref="IResourceResolver"/> for <paramref name="item"/> in a tree.
-	/// </summary>
-	public delegate IResourceResolver ResourceResolverProviderDelegate<T>(T item);
-	/// <summary>
-	/// A delegate that returns whether or not an <paramref name="item"/> in a tree can have a sub-tree.
-	/// </summary>
-	public delegate bool CanHaveSubTreeDelegate<T>(T item);
-	/// <summary>
-	/// A delegate that gets the <see cref="ITree"/> associated with <paramref name="item"/>.
-	/// </summary>
-    public delegate ITree TreeProviderDelegate<T>(T item);
-	/// <summary>
-	/// A delegate that gets whether or not the sub-tree should be expanded for <param name="item"/>.
-	/// </summary>
-    public delegate bool IsInitiallyExpandedDelegate<T>(T item);
+	public delegate void SetterDelegate<T, TValue>(T item, TValue value);
 	/// <summary>
 	/// A delegate that determines whether or not <paramref name="item"/> can accept a dropped item.
 	/// </summary>
@@ -80,15 +53,16 @@ namespace ClearCanvas.Desktop.Trees
     /// <typeparam name="TItem">The type of item being bound to a tree.</typeparam>
     public class TreeItemBinding<TItem> : TreeItemBindingBase
     {
-        private TextProviderDelegate<TItem> _nodeTextProvider;
-        private IsCheckedGetterDelegate<TItem> _isCheckedGetter;
-        private IsCheckedSetterDelegate<TItem> _isCheckedSetter;
-        private TextProviderDelegate<TItem> _tooltipTextProvider;
-        private IconSetProviderDelegate<TItem> _iconSetIndexProvider;
-        private ResourceResolverProviderDelegate<TItem> _resourceResolverProvider;
-        private CanHaveSubTreeDelegate<TItem> _canHaveSubTreeHandler;
-        private IsInitiallyExpandedDelegate<TItem> _isInitiallyExpandedHandler;
-        private TreeProviderDelegate<TItem> _subTreeProvider;
+        private Converter<TItem, string> _nodeTextProvider;
+        private Converter<TItem, bool> _isCheckedGetter;
+        private SetterDelegate<TItem, bool> _isCheckedSetter;
+        private Converter<TItem, string> _tooltipTextProvider;
+        private Converter<TItem, IconSet> _iconSetIndexProvider;
+        private Converter<TItem, IResourceResolver> _resourceResolverProvider;
+        private Converter<TItem, bool> _canHaveSubTreeHandler;
+        private Converter<TItem, bool> _isExpandedGetter;
+    	private SetterDelegate<TItem, bool> _isExpandedSetter;
+        private Converter<TItem, ITree> _subTreeProvider;
         private CanAcceptDropDelegate<TItem> _canAcceptDropHandler;
         private AcceptDropDelegate<TItem> _acceptDropHandler;
 
@@ -98,7 +72,7 @@ namespace ClearCanvas.Desktop.Trees
         /// </summary>
         /// <param name="nodeTextProvider">A delegate providing text for the node in the tree.</param>
         /// <param name="subTreeProvider">A delegate providing the sub-tree for a node in the tree.</param>
-        public TreeItemBinding(TextProviderDelegate<TItem> nodeTextProvider, TreeProviderDelegate<TItem> subTreeProvider)
+        public TreeItemBinding(Converter<TItem, string> nodeTextProvider, Converter<TItem, ITree> subTreeProvider)
         {
             _nodeTextProvider = nodeTextProvider;
             _subTreeProvider = subTreeProvider;
@@ -108,7 +82,7 @@ namespace ClearCanvas.Desktop.Trees
         /// Constructor.
         /// </summary>
 		/// <param name="nodeTextProvider">A delegate providing text for the node in the tree.</param>
-        public TreeItemBinding(TextProviderDelegate<TItem> nodeTextProvider)
+		public TreeItemBinding(Converter<TItem, string> nodeTextProvider)
             : this(nodeTextProvider, null)
         {
         }
@@ -124,7 +98,7 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets or sets the node text provider for this binding.
         /// </summary>
-        public TextProviderDelegate<TItem> NodeTextProvider
+		public Converter<TItem, string> NodeTextProvider
         {
             get { return _nodeTextProvider; }
             set { _nodeTextProvider = value; }
@@ -133,7 +107,7 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets or sets the node checked status provider for this binding.
         /// </summary>
-        public IsCheckedGetterDelegate<TItem> IsCheckedGetter
+		public Converter<TItem, bool> IsCheckedGetter
         {
             get { return _isCheckedGetter; }
             set { _isCheckedGetter = value; }
@@ -142,7 +116,7 @@ namespace ClearCanvas.Desktop.Trees
 		/// <summary>
 		/// Gets or sets the node checked setter for this binding.
 		/// </summary>
-		public IsCheckedSetterDelegate<TItem> IsCheckedSetter
+		public SetterDelegate<TItem, bool> IsCheckedSetter
         {
             get { return _isCheckedSetter; }
             set { _isCheckedSetter = value; }
@@ -151,7 +125,7 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets or sets the tooltip text provider for this binding.
         /// </summary>
-        public TextProviderDelegate<TItem> TooltipTextProvider
+		public Converter<TItem, string> TooltipTextProvider
         {
             get { return _tooltipTextProvider; }
             set { _tooltipTextProvider = value; }
@@ -160,7 +134,7 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets or sets the iconset provider for this binding.
         /// </summary>
-        public IconSetProviderDelegate<TItem> IconSetProvider
+		public Converter<TItem, IconSet> IconSetProvider
         {
             get { return _iconSetIndexProvider; }
             set { _iconSetIndexProvider = value; }
@@ -169,7 +143,7 @@ namespace ClearCanvas.Desktop.Trees
         /// <summary>
         /// Gets or sets the resource resolver provider for this binding.
         /// </summary>
-        public ResourceResolverProviderDelegate<TItem> ResourceResolverProvider
+		public Converter<TItem, IResourceResolver> ResourceResolverProvider
         {
             get { return _resourceResolverProvider; }
             set { _resourceResolverProvider = value; }
@@ -178,25 +152,34 @@ namespace ClearCanvas.Desktop.Trees
 		/// <summary>
 		/// Gets or sets the handler that determines whether or not this item can have a sub-tree.
 		/// </summary>
-        public CanHaveSubTreeDelegate<TItem> CanHaveSubTreeHandler
+		public Converter<TItem, bool> CanHaveSubTreeHandler
         {
             get { return _canHaveSubTreeHandler; }
             set { _canHaveSubTreeHandler = value; }
         }
 
         /// <summary>
-        /// Gets or sets the subtree expansion state provider for this binding.
+        /// Gets or sets the subtree expansion state getter for this binding.
         /// </summary>
-        public IsInitiallyExpandedDelegate<TItem> IsInitiallyExpandedHandler
+		public Converter<TItem, bool> IsExpandedGetter
         {
-            get { return _isInitiallyExpandedHandler; }
-            set { _isInitiallyExpandedHandler = value; }
+            get { return _isExpandedGetter; }
+            set { _isExpandedGetter = value; }
         }
+
+		/// <summary>
+		/// Gets or sets the subtree expansion state getter for this binding.
+		/// </summary>
+		public SetterDelegate<TItem, bool> IsExpandedSetter
+		{
+			get { return _isExpandedSetter; }
+			set { _isExpandedSetter = value; }
+		}
 
         /// <summary>
         /// Gets or sets the subtree provider for this binding.
         /// </summary>
-        public TreeProviderDelegate<TItem> SubTreeProvider
+		public Converter<TItem, ITree> SubTreeProvider
         {
             get { return _subTreeProvider; }
             set { _subTreeProvider = value; }
@@ -276,10 +259,22 @@ namespace ClearCanvas.Desktop.Trees
     	///<summary>
     	/// Gets a value indicating if the item should be expanded when the tree is initially loaded.
     	///</summary>
-    	public override bool IsInitiallyExpanded(object item)
+    	public override bool GetExpanded(object item)
         {
-             return _isInitiallyExpandedHandler == null ? base.IsInitiallyExpanded(item) : _isInitiallyExpandedHandler((TItem)item);
+             return _isExpandedGetter == null ? base.GetExpanded(item) : _isExpandedGetter((TItem)item);
         }
+
+    	/// <summary>
+    	/// Sets a value indicating whether the specified item is currently expanded.
+    	/// </summary>
+    	/// <param name="item"></param>
+    	/// <param name="expanded"></param>
+    	/// <returns></returns>
+    	public override void SetExpanded(object item, bool expanded)
+		{
+			if (_isExpandedSetter != null)
+				_isExpandedSetter((TItem)item, expanded);
+		}
 
     	///<summary>
     	/// Gets the tooltip to display for the specified item.

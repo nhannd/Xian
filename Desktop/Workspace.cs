@@ -81,6 +81,17 @@ namespace ClearCanvas.Desktop
                 get { return _workspace.Title; }
                 set { _workspace.Title = value; }
             }
+
+        	public bool IsWorkspaceActive
+        	{
+				get { return _workspace.Active; }
+        	}
+
+			public event EventHandler IsWorkspaceActiveChanged
+			{
+				add { _workspace.ActiveChanged += value; }
+				remove { _workspace.ActiveChanged -= value; }
+			}
         }
 
         #endregion

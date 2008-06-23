@@ -689,6 +689,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             EventsHelper.Fire(_itemDrag, this, args);
         }
 
+		private void _treeCtrl_AfterExpand(object sender, TreeViewEventArgs e)
+		{
+			BindingTreeNode node = e.Node as BindingTreeNode;
+			if (node != null)
+			{
+				node.OnExpandCollapse();
+			}
+		}
+
+		private void _treeCtrl_AfterCollapse(object sender, TreeViewEventArgs e)
+		{
+			BindingTreeNode node = e.Node as BindingTreeNode;
+			if (node != null)
+			{
+				node.OnExpandCollapse();
+			}
+		}
+
 
 
     }

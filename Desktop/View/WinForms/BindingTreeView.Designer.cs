@@ -109,10 +109,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._treeCtrl.TabIndex = 1;
 			this._treeCtrl.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._treeCtrl_NodeMouseDoubleClick);
 			this._treeCtrl.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterCheck);
+			this._treeCtrl.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterCollapse);
 			this._treeCtrl.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeExpand);
 			this._treeCtrl.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterSelect);
 			this._treeCtrl.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._treeCtrl_NodeMouseClick);
 			this._treeCtrl.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeSelect);
+			this._treeCtrl.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterExpand);
 			this._treeCtrl.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this._treeCtrl_ItemDrag);
 			// 
 			// _contextMenu

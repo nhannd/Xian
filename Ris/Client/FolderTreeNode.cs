@@ -81,6 +81,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly FolderExplorerComponent _explorer;
 		private readonly Tree<FolderTreeNode> _subTree;
 		private readonly FolderTreeNode _parent;
+		private bool _expanded;
 		private IFolder _folder;
 
 		/// <summary>
@@ -211,6 +212,15 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		protected bool Expanded
+		{
+			get { return _expanded; }
+			set
+			{
+				_expanded = value;
+			}
+		}
+
 		#endregion
 
 		#region Private Helpers
@@ -233,6 +243,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_folder.TextChanged += FolderTextOrIconChangedEventHandler;
 				_folder.IconChanged += FolderTextOrIconChangedEventHandler;
+				_expanded = _folder.StartExpanded;
 
 				// since the folder has changed, need to immediately notify the tree that this item is updated.
 				NotifyItemUpdated();
@@ -309,8 +320,9 @@ namespace ClearCanvas.Ris.Client
 			binding.CanAcceptDropHandler = explorer.CanFolderAcceptDrop;
 			binding.AcceptDropHandler = explorer.FolderAcceptDrop;
 
-			binding.CanHaveSubTreeHandler = delegate(FolderTreeNode node) { return node._subTree.Items.Count > 0; };
-			binding.IsInitiallyExpandedHandler = delegate(FolderTreeNode node) { return node.Folder.StartExpanded; };
+			binding.CanHaveSubTreeHandler = delegate(FolderTreeNode node) { return node.GetSubTree().Items.Count > 0; };
+			binding.IsExpandedGetter = delegate(FolderTreeNode node) { return node.Expanded; };
+			binding.IsExpandedSetter = delegate(FolderTreeNode node, bool expanded) { node.Expanded = expanded; };
 			binding.SubTreeProvider = delegate(FolderTreeNode node) { return node.GetSubTree(); };
 
 			return binding;
