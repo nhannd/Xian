@@ -151,7 +151,7 @@
 					startTime = mpps.StartTime;
 					stopTime = mpps.EndTime;
 					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
-					modality = mpps.ModalityProcedureSteps[0].ModalityName;
+					modality = mpps.ModalityProcedureSteps[0].Modality.Name;
 				}
 
 				data.acquisition = data.acquisition || {};
