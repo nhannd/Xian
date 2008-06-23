@@ -99,10 +99,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
                     "New passwords do not match" : null);
 
             bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text) &&
-                      !string.IsNullOrEmpty(_newPassword.Text) && !string.IsNullOrEmpty(_newPasswordConfirm.Text);
+                      !string.IsNullOrEmpty(_newPassword.Text) && !string.IsNullOrEmpty(_newPasswordConfirm.Text) &&
+                      _newPassword.Text.Equals(_newPasswordConfirm.Text);
 
             _okButton.Enabled = ok;
-            this.AcceptButton = ok ? _okButton : _cancelButton;
         }
 
         private void ChangePasswordForm_Load(object sender, EventArgs e)

@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _cancelButton
 			// 
+			this._cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
 			this._cancelButton.Location = new System.Drawing.Point(173, 225);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
@@ -176,9 +177,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// ChangePasswordForm
 			// 
-			this.AcceptButton = this._cancelButton;
+			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.ClientSize = new System.Drawing.Size(272, 258);
 			this.Controls.Add(this.label4);
 			this.Controls.Add(this._newPasswordConfirm);
