@@ -38,7 +38,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
@@ -52,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private readonly string _name;
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory>();
-        private readonly SimpleBlockingThreadPool _threadPool;
+		private readonly ItemProcessingThreadPool<Model.WorkQueue> _threadPool;
         private ManualResetEvent _threadStop;
         private Thread _theThread = null;
         private bool _stop = false;
@@ -62,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         public WorkQueueProcessor(String name, int numberThreads)
         {
             _name = name;
-            _threadPool = new SimpleBlockingThreadPool(numberThreads);
+			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
@@ -112,12 +111,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         public void Stop()
         {
-            _stop = true;
-            _threadStop.Set();
-            _theThread.Join();
-            _theThread = null;
-            if (_threadPool.Active)
-                _threadPool.Stop();
+			if (_theThread.IsAlive)
+			{
+				_stop = true;
+				_threadStop.Set();
+				_theThread.Join();
+				_theThread = null;
+				if (_threadPool.Active)
+					_threadPool.Stop();
+			}
         }
 
         /// <summary>
@@ -250,7 +252,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 bool foundResult = false;
 
-                if (_threadPool.QueueCount < _threadPool.Concurrency)
+				if (_threadPool.QueueAndActiveCount < _threadPool.Concurrency)
                 {
                     try
                     {
@@ -271,20 +273,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         if (list.Count > 0)
                             foundResult = true;
 
-                        foreach (Model.WorkQueue queueItem in list)
+                        foreach (Model.WorkQueue queueListItem in list)
                         {
-                            if (!_extensions.ContainsKey(queueItem.WorkQueueTypeEnum))
+                            if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
                             {
                                 Platform.Log(LogLevel.Error,
                                              "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
-                                             queueItem.WorkQueueTypeEnum);
+                                             queueListItem.WorkQueueTypeEnum);
 
                                 //Just fail the WorkQueue item, not much else we can do
-                                FailQueueItem(queueItem, "No plugin to handle Workqueue type: " + queueItem.WorkQueueTypeEnum );
+                                FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum );
                                 continue;
                             }
 
-                            IWorkQueueProcessorFactory factory = _extensions[queueItem.WorkQueueTypeEnum];
+                            IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
 
                             IWorkQueueItemProcessor processor;
                             try
@@ -294,14 +296,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             catch (Exception e)
                             {
                                 Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
-                                FailQueueItem(queueItem, "Failure getting WorkQueue processor: " + e.Message);
+                                FailQueueItem(queueListItem, "Failure getting WorkQueue processor: " + e.Message);
                                 continue;
                             }
 
                             
                             // Enqueue the actual processing of the item to the 
                             // thread pool.  
-                            _threadPool.Enqueue(delegate
+                            _threadPool.Enqueue(queueListItem,delegate(Model.WorkQueue queueItem)
                                                     {
                                                         try
                                                         {

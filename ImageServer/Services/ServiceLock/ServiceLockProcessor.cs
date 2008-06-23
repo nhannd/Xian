@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         private readonly string _name;
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory> _extensions = new Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory>();
-        private readonly SimpleBlockingThreadPool _threadPool;
+        private readonly ItemProcessingThreadPool<Model.ServiceLock> _threadPool;
         private ManualResetEvent _threadStop;
         private Thread _theThread = null;
         private bool _stop = false;
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         public ServiceLockProcessor(String name, int numberThreads)
         {
             _name = name;
-            _threadPool = new SimpleBlockingThreadPool(numberThreads);
+			_threadPool = new ItemProcessingThreadPool<Model.ServiceLock>(numberThreads);
 
             ServiceLockFactoryExtensionPoint ep = new ServiceLockFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
@@ -117,12 +117,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         /// </summary>
         public void Stop()
         {
-            _stop = true;
-            _threadStop.Set();
-            _theThread.Join();
-            _theThread = null;
-            if (_threadPool.Active)
-                _threadPool.Stop();
+			if (_theThread.IsAlive)
+			{
+				_stop = true;
+				_threadStop.Set();
+				_theThread.Join();
+				_theThread = null;
+				if (_threadPool.Active)
+					_threadPool.Stop();
+			}
         }
         #endregion
 
@@ -207,7 +210,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             {
                 bool foundResult = false;
 
-                if (_threadPool.QueueCount < _threadPool.Concurrency)
+                if (_threadPool.QueueAndActiveCount < _threadPool.Concurrency)
                 {
                     IList<Model.ServiceLock> list;
 
@@ -224,20 +227,20 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                     if (list.Count > 0)
                         foundResult = true;
 
-                    foreach (Model.ServiceLock queueItem in list)
+                    foreach (Model.ServiceLock queueListItem in list)
                     {
-                        if (!_extensions.ContainsKey(queueItem.ServiceLockTypeEnum))
+                        if (!_extensions.ContainsKey(queueListItem.ServiceLockTypeEnum))
                         {
                             Platform.Log(LogLevel.Error,
                                          "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
-                                         queueItem.ServiceLockTypeEnum);
+                                         queueListItem.ServiceLockTypeEnum);
 
                             //Just fail the ServiceLock item, not much else we can do
-                            ResetServiceLock(queueItem);
+                            ResetServiceLock(queueListItem);
                             continue;
                         }
 
-                        IServiceLockProcessorFactory factory = _extensions[queueItem.ServiceLockTypeEnum];
+                        IServiceLockProcessorFactory factory = _extensions[queueListItem.ServiceLockTypeEnum];
 
                         IServiceLockItemProcessor processor;
                         try
@@ -247,11 +250,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                         catch (Exception e)
                         {
                             Platform.Log(LogLevel.Error, e, "Unexpected exception creating ServiceLock processor.");
-                            ResetServiceLock(queueItem);
+                            ResetServiceLock(queueListItem);
                             continue;
                         }
 
-                        _threadPool.Enqueue(delegate
+                        _threadPool.Enqueue(queueListItem,delegate(Model.ServiceLock queueItem)
                                                 {
                                                     try
                                                     {
