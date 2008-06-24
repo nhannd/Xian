@@ -150,15 +150,6 @@
   <data name="ColumnDescription" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="ColumnEnumCode" xml:space="preserve">
-    <value>Code</value>
-  </data>
-  <data name="ColumnEnumDescription" xml:space="preserve">
-    <value>Description</value>
-  </data>
-  <data name="ColumnEnumValue" xml:space="preserve">
-    <value>Value</value>
-  </data>
   <data name="ColumnFacility" xml:space="preserve">
     <value>Facility</value>
   </data>

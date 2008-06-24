@@ -177,6 +177,15 @@
   <data name="ColumnEndTime" xml:space="preserve">
     <value>End Time</value>
   </data>
+  <data name="ColumnEnumCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ColumnEnumDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColumnEnumValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
   <data name="ColumnExpiryDate" xml:space="preserve">
     <value>Expiry Date</value>
   </data>

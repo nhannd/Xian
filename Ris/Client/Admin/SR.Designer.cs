@@ -160,33 +160,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code.
-        /// </summary>
-        internal static string ColumnEnumCode {
-            get {
-                return ResourceManager.GetString("ColumnEnumCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Description.
-        /// </summary>
-        internal static string ColumnEnumDescription {
-            get {
-                return ResourceManager.GetString("ColumnEnumDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Value.
-        /// </summary>
-        internal static string ColumnEnumValue {
-            get {
-                return ResourceManager.GetString("ColumnEnumValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Facility.
         /// </summary>
         internal static string ColumnFacility {

@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._enumerationValuesTableView.Location = new System.Drawing.Point(3, 93);
-			this._enumerationValuesTableView.MultiSelect = false;
 			this._enumerationValuesTableView.Name = "_enumerationValuesTableView";
 			this._enumerationValuesTableView.ReadOnly = false;
 			this._enumerationValuesTableView.Size = new System.Drawing.Size(623, 382);

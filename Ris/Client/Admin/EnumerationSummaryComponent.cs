@@ -31,16 +31,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -79,9 +77,6 @@ namespace ClearCanvas.Ris.Client.Admin
         }
     }
 
-
-
-
     /// <summary>
     /// Extension point for views onto <see cref="EnumerationSummaryComponent"/>
     /// </summary>
@@ -94,41 +89,21 @@ namespace ClearCanvas.Ris.Client.Admin
     /// EnumerationSummaryComponent class
     /// </summary>
     [AssociateView(typeof(EnumerationSummaryComponentViewExtensionPoint))]
-    public class EnumerationSummaryComponent : ApplicationComponent
+	public class EnumerationSummaryComponent : SummaryComponentBase<EnumValueInfo, EnumValueInfoTable>
     {
         private List<EnumerationSummary> _enumerations;
         private EnumerationSummary _selectedEnumeration;
-
-        private Table<EnumValueInfo> _enumValues;
-        private EnumValueInfo _selectedEnumValue;
-
-        private CrudActionModel _crudActionModel;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public EnumerationSummaryComponent()
         {
+			_enumerations = new List<EnumerationSummary>();
         }
 
         public override void Start()
         {
-            _enumValues = new Table<EnumValueInfo>();
-            _enumValues.Columns.Add(new TableColumn<EnumValueInfo, string>(SR.ColumnEnumCode,
-                delegate(EnumValueInfo info) { return info.Code; }, 0.4F));
-            _enumValues.Columns.Add(new TableColumn<EnumValueInfo, string>(SR.ColumnEnumValue,
-                delegate(EnumValueInfo info) { return info.Value; }, 1.0F));
-            _enumValues.Columns.Add(new TableColumn<EnumValueInfo, string>(SR.ColumnEnumDescription,
-                delegate(EnumValueInfo info) { return info.Description; }, 1.5F));
-
-            _crudActionModel = new CrudActionModel();
-            _crudActionModel.Add.SetClickHandler(AddValue);
-			_crudActionModel.Add.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
-            _crudActionModel.Edit.SetClickHandler(EditValue);
-			_crudActionModel.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
-			_crudActionModel.Delete.SetClickHandler(RemoveValue);
-			_crudActionModel.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
-
             Platform.GetService<IEnumerationAdminService>(
                 delegate(IEnumerationAdminService service)
                 {
@@ -139,23 +114,10 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _selectedEnumeration = CollectionUtils.FirstElement(_enumerations);
 
-            LoadEnumerationValues();
-            UpdateCrudEnablement();
-
             base.Start();
         }
 
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
         #region Presentation Model
-
-        public ActionModelNode CrudActionModel
-        {
-            get { return _crudActionModel; }
-        }
 
         public List<string> EnumerationChoices
         {
@@ -171,15 +133,14 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedEnumeration.DisplayName; }
             set
             {
-                EnumerationSummary summary = CollectionUtils.SelectFirst<EnumerationSummary>(_enumerations,
+                EnumerationSummary summary = CollectionUtils.SelectFirst(_enumerations,
                     delegate(EnumerationSummary s) { return s.DisplayName == value; });
 
                 if (_selectedEnumeration != summary)
                 {
                     _selectedEnumeration = summary;
 
-                    LoadEnumerationValues();
-                    UpdateCrudEnablement();
+					LoadEnumerationValues();
 
                     NotifyPropertyChanged("SelectedEnumeration");
                     NotifyPropertyChanged("SelectedEnumerationClassName");
@@ -192,123 +153,160 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedEnumeration == null ? null : _selectedEnumeration.AssemblyQualifiedClassName; }
         }
 
-        public ITable EnumerationValues
-        {
-            get { return _enumValues; }
-        }
-
-        public ISelection SelectedEnumerationValue
-        {
-            get { return new Selection(_selectedEnumValue); }
-            set
-            {
-                EnumValueInfo val = (EnumValueInfo)value.Item;
-                if (val != _selectedEnumValue)
-                {
-                    _selectedEnumValue = val;
-
-                    UpdateCrudEnablement();
-                    NotifyPropertyChanged("SelectedEnumerationValue");
-                }
-            }
-        }
-
-        public void EnumerationValueDoubleClicked()
-        {
-            EditValue();
-        }
-        
         #endregion
 
-        private void LoadEnumerationValues()
-        {
-            _enumValues.Items.Clear();
-            if (_selectedEnumeration != null)
-            {
-                Platform.GetService<IEnumerationAdminService>(
-                    delegate(IEnumerationAdminService service)
-                    {
-                        ListEnumerationValuesResponse response = 
-                            service.ListEnumerationValues(new ListEnumerationValuesRequest(_selectedEnumeration.AssemblyQualifiedClassName));
+		#region Overrides
 
-                        _enumValues.Items.AddRange(response.Values);
-                    });
-            }
-        }
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        private void AddValue()
-        {
-            try
-            {
-                EnumerationEditorComponent component = new EnumerationEditorComponent(
-                    _selectedEnumeration.AssemblyQualifiedClassName,
-                    _enumValues.Items);
-                ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumAddValue);
-                if(result == ApplicationComponentExitCode.Accepted)
-                {
-                    // refresh entire table
-                    LoadEnumerationValues();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
+			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
+			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
+		}
 
-        private void EditValue()
-        {
-            try
-            {
-                EnumerationEditorComponent component = new EnumerationEditorComponent(
-                    _selectedEnumeration.AssemblyQualifiedClassName,
-                    (EnumValueInfo)_selectedEnumValue.Clone(),
-                    _enumValues.Items);
-                ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue + " - " + _selectedEnumValue.Code);
-                if (result == ApplicationComponentExitCode.Accepted)
-                {
-                    // refresh entire table
-                    LoadEnumerationValues();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
 
-        private void RemoveValue()
-        {
-            DialogBoxAction result = this.Host.ShowMessageBox(SR.MessageEnumConfirmDelete, MessageBoxActions.YesNo);
-            if (result == DialogBoxAction.Yes)
-            {
-                try
-                {
-                    Platform.GetService<IEnumerationAdminService>(
-                        delegate(IEnumerationAdminService service)
-                        {
-                            EnumValueInfo valueToDelete = _selectedEnumValue;
-                            service.RemoveValue(new RemoveValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, valueToDelete));
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<EnumValueInfo> ListItems(int firstItem, int maxItems)
+		{
+			ListEnumerationValuesResponse listResponse = new ListEnumerationValuesResponse();
+			if (_selectedEnumeration != null)
+			{
+				Platform.GetService<IEnumerationAdminService>(
+					delegate(IEnumerationAdminService service)
+					{
+						listResponse = service.ListEnumerationValues(new ListEnumerationValuesRequest(_selectedEnumeration.AssemblyQualifiedClassName));
+					});
+			}
 
-                            _enumValues.Items.Remove(valueToDelete);
-                        });
-                    _selectedEnumValue = null;
+			return listResponse.Values;
+		}
 
-                    UpdateCrudEnablement();
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, SR.ExceptionEnumValueDelete, this.Host.DesktopWindow);
-                }
-            }
-        }
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<EnumValueInfo> addedItems)
+		{
+			// Assign value to addedItems, but we actually don't use this
+			// because the entire table need to be refreshed after changes to any enumValueInfo item
+			addedItems = new List<EnumValueInfo>();
 
-        private void UpdateCrudEnablement()
-        {
-            _crudActionModel.Add.Enabled = (_selectedEnumeration != null && _selectedEnumeration.CanAddRemoveValues);
-            _crudActionModel.Delete.Enabled = (_selectedEnumeration != null && _selectedEnumeration.CanAddRemoveValues && _selectedEnumValue != null);
-            _crudActionModel.Edit.Enabled = (_selectedEnumeration != null && _selectedEnumValue != null);
-        }
+			EnumerationEditorComponent component = new EnumerationEditorComponent(
+				_selectedEnumeration.AssemblyQualifiedClassName,
+				this.Table.Items);
 
-    }
+			ApplicationComponentExitCode result = LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumAddValue);
+			if (result == ApplicationComponentExitCode.Accepted)
+			{
+				// refresh entire table
+				LoadEnumerationValues();
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<EnumValueInfo> items, out IList<EnumValueInfo> editedItems)
+		{
+			// Assign value to addedItems, but we actually don't use this
+			// because the entire table need to be refreshed after changes to any enumValueInfo item
+			editedItems = new List<EnumValueInfo>();
+
+			EnumValueInfo item = CollectionUtils.FirstElement(items);
+			EnumerationEditorComponent component = new EnumerationEditorComponent(
+				_selectedEnumeration.AssemblyQualifiedClassName,
+				(EnumValueInfo)item.Clone(),
+				this.Table.Items);
+			ApplicationComponentExitCode result = LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue + " - " + item.Code);
+			if (result == ApplicationComponentExitCode.Accepted)
+			{
+				// refresh entire table
+				LoadEnumerationValues();
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<EnumValueInfo> items)
+		{
+			foreach (EnumValueInfo item in items)
+			{
+				Platform.GetService<IEnumerationAdminService>(
+					delegate(IEnumerationAdminService service)
+					{
+						EnumValueInfo valueToDelete = item;
+						service.RemoveValue(new RemoveValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, valueToDelete));
+					});
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(EnumValueInfo x, EnumValueInfo y)
+		{
+			return Equals(x.Code, y.Code);
+		}
+
+		protected override void OnSelectedItemsChanged()
+		{
+			base.OnSelectedItemsChanged();
+
+			// overriding base behaviour
+			if (_selectedEnumeration == null)
+			{
+				this.ActionModel.Add.Enabled = false;
+				this.ActionModel.Delete.Enabled = false;
+				this.ActionModel.Edit.Enabled = false;
+			}
+			else
+			{
+				this.ActionModel.Add.Enabled = this.ActionModel.Add.Enabled && _selectedEnumeration.CanAddRemoveValues;
+				this.ActionModel.Delete.Enabled = this.ActionModel.Delete.Enabled && _selectedEnumeration.CanAddRemoveValues;
+			}
+
+		}
+
+		#endregion
+
+		private void LoadEnumerationValues()
+		{
+			this.Table.Items.Clear();
+			this.Table.Items.AddRange(this.PagingController.GetFirst());
+		}
+	}
 }

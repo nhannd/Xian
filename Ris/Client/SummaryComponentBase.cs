@@ -379,7 +379,9 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="model"></param>
 		protected virtual void InitializeActionModel(CrudActionModel model)
 		{
-			
+			model.Add.Enabled = false;
+			model.Edit.Enabled = false;
+			model.Delete.Enabled = false;
 		}
 
         /// <summary>
