@@ -47,13 +47,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         internal ProcedureTypeSummaryTable()
         {
-            this.Columns.Add(new TableColumn<ProcedureTypeSummary, int>("ID",
-                delegate(ProcedureTypeSummary rpt)
-                {
-                    int id;
-                    return int.TryParse(rpt.Id, out id) ? id : -1 ;
-                },
-                0.5f));
+            this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>("ID",
+				delegate(ProcedureTypeSummary rpt) { return rpt.Id; },
+				0.5f));
 
             this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>("Name",
                 delegate(ProcedureTypeSummary rpt) { return rpt.Name; },

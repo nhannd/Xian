@@ -231,6 +231,9 @@
   <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
     <value>Unable to save Authority Group</value>
   </data>
+  <data name="ExceptionSaveDiagnosticService" xml:space="preserve">
+    <value>Unable to save Diagnostic Service</value>
+  </data>
   <data name="ExceptionSaveFacility" xml:space="preserve">
     <value>Unable to save Facility</value>
   </data>
