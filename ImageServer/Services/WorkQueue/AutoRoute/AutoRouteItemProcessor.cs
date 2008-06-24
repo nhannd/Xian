@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 			}
 
         	// Reset the WorkQueue entry status
-            if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed)
+            if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed || scu.Status == ScuOperationStatus.ConnectFailed)
                 PostProcessingFailure(item, false); // failures occurred
             else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
                 PostProcessing(item, true, false); // no failures

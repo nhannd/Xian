@@ -136,6 +136,13 @@ namespace ClearCanvas.Dicom.Network
                 throw new NetworkException(String.Format("Timeout while attempting to connect to remote server {0}",ep));
             }
 
+			if (!_socket.Connected)
+			{
+				// NOTE, MUST CLOSE THE SOCKET
+				_socket.Close();
+				throw new NetworkException(String.Format("Connection failed to remote server {0}",ep));
+			}
+
 
             _network = new NetworkStream(_socket);
 
