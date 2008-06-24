@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				RepublishReportComponent component = new RepublishReportComponent(
+				PrintReportComponent component = new PrintReportComponent(
 					this.Context.PatientProfileRef,
 					this.Context.OrderRef,
 					this.Context.ReportRef);
@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
 					component,
-					"TODO: Print Report");
+					SR.TitlePrintReport);
 			}
 			catch (Exception e)
 			{

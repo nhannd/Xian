@@ -201,6 +201,11 @@ if(window.external)
 		openPractitionerDetails: function(practitionerJsml)
 		{
 			window.external.OpenPractitionerDetail(practitionerJsml);
+		},
+		
+		notifyScriptCompleted: function()
+		{
+			return window.external.OnScriptCompleted();
 		}
 	};
 	

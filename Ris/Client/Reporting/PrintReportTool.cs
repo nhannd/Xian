@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
 				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
 
-				RepublishReportComponent component = new RepublishReportComponent(
+				PrintReportComponent component = new PrintReportComponent(
 					item.PatientProfileRef,
 					item.OrderRef,
 					item.ReportRef);
@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 				ApplicationComponent.LaunchAsDialog(
 					context.DesktopWindow,
 					component,
-					"TODO: Print Report");
+					SR.TitlePrintReport);
 			}
 		}
 	}

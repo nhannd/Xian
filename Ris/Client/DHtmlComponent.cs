@@ -228,6 +228,11 @@ namespace ClearCanvas.Ris.Client
                 ExternalPractitionerEditorComponent component = new ExternalPractitionerEditorComponent(summary.PractitionerRef);
                 LaunchAsDialog(_component.Host.DesktopWindow, component, SR.TitleExternalPractitioner);
             }
+
+            public void OnScriptCompleted()
+            {
+                _component.OnScriptCompleted();
+            }
         }
 
         #endregion
@@ -235,7 +240,11 @@ namespace ClearCanvas.Ris.Client
 
         private DHtmlScriptCallback _scriptCallback;
         private Uri _htmlPageUrl;
+
         private event EventHandler _dataSaving;
+        private event EventHandler _printDocumentRequested;
+        private event EventHandler _scriptCompleted;
+
 
         /// <summary>
         /// Constructor
@@ -244,7 +253,7 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-        public DHtmlComponent(string url)
+    	public DHtmlComponent(string url)
         {
             SetUrl(url);
         }
@@ -410,6 +419,45 @@ namespace ClearCanvas.Ris.Client
             this.HtmlPageUrl = string.IsNullOrEmpty(url) ? null : new Uri(url);
         }
 
+        /// <summary>
+        /// Indicates the component's document should be printed by the view.
+        /// </summary>
+        public event EventHandler PrintDocumentRequested
+        {
+            add { _printDocumentRequested += value; }
+            remove { _printDocumentRequested += value; }
+        }
 
+        /// <summary>
+        /// Print the component's current document.
+        /// </summary>
+        /// <remarks>
+        /// This method should be called from the body of an EventHandler attached to the <see cref="ScriptCompleted"/> 
+        /// to ensure all data is loaded in the document.
+        /// </remarks>
+        public void PrintDocument()
+        {
+            EventsHelper.Fire(_printDocumentRequested, this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Notifies the client that scripts have completed in the document.
+        /// </summary>
+        /// <remarks>
+        /// This would typically be fired after the document's body onload is finished.
+        /// </remarks>
+        public event EventHandler ScriptCompleted
+        {
+            add { _scriptCompleted += value; }
+            remove { _scriptCompleted -= value; }
+        }
+
+        /// <summary>
+        /// Allows the <see cref="ScriptObject"/> to raise the <see cref="ScriptCompleted"/> event.
+        /// </summary>
+        internal void OnScriptCompleted()
+        {
+            EventsHelper.Fire(_scriptCompleted, this, EventArgs.Empty);
+        }
     }
 }

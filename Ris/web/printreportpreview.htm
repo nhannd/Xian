@@ -124,6 +124,10 @@
 				var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 				Field.setValue($("myForm"), message);
 			}
+			finally
+			{
+				Ris.notifyScriptCompleted();
+			}
 		}
 		
 		function createReportLetterhead(facilityCode)
@@ -285,7 +289,7 @@
 		</div>
 		<div id="preview"></div>
 		<div id="endofreport">***** END OF REPORT *****</div>
-		<div id="footer">(Medical Imageing Report for <span class="propertyname">Patient:</span> <span id="patientFooter"></span>; <span class="propertyname">MRN:</span> <span id="mrnFooter"></span>)</div>
+		<div id="footer">(Medical Imaging Report for <span class="propertyname">Patient:</span> <span id="patientFooter"></span>; <span class="propertyname">MRN:</span> <span id="mrnFooter"></span>)</div>
 	</form>
 </body>
 </html>

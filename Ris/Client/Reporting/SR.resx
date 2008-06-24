@@ -204,4 +204,7 @@
   <data name="TitleReviseReport" xml:space="preserve">
     <value>Revise Report</value>
   </data>
+  <data name="TitlePrintReport" xml:space="preserve">
+    <value>Print Report</value>
+  </data>
 </root>

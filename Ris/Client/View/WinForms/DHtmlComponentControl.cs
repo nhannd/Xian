@@ -31,10 +31,9 @@
 
 using System;
 using System.Windows.Forms;
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -77,6 +76,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _component.ValidationVisibleChanged += _component_ValidationVisibleChanged;
             _component.DataSaving += _component_DataSaving;
+
+        	_component.PrintDocumentRequested += _component_PrintDocument;
+        }
+
+        private void _component_PrintDocument(object sender, EventArgs e)
+        {
+            _webBrowser.Print();
         }
 
         private void _component_DataSaving(object sender, EventArgs e)

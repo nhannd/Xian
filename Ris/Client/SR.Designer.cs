@@ -1528,6 +1528,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Print Report.
+        /// </summary>
+        internal static string TitlePrintReport {
+            get {
+                return ResourceManager.GetString("TitlePrintReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string TitleSearch {

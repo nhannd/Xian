@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Client
 	/// RepublishReportComponent class.
 	/// </summary>
 	[AssociateView(typeof(RepublishReportComponentViewExtensionPoint))]
-	public class RepublishReportComponent : ApplicationComponent
+	public abstract class RepublishReportComponent : ApplicationComponent
 	{
 		public class RepublishReportPreviewComponent : DHtmlComponent
 		{
@@ -154,6 +155,10 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public RepublishReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
 		{
+			Platform.CheckForNullReference(patientProfileRef, "patientProfileRef");
+			Platform.CheckForNullReference(orderRef, "orderRef");
+			Platform.CheckForNullReference(reportRef, "reportRef");
+
 			_patientProfileRef = patientProfileRef;
 			_orderRef = orderRef;
 			_reportRef = reportRef;
@@ -162,7 +167,7 @@ namespace ClearCanvas.Ris.Client
 			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, bool>(
 				"Select",
 				delegate(Checkable<ResultRecipientDetail> checkable) { return checkable.IsChecked; },
-				delegate(Checkable<ResultRecipientDetail> checkable, bool isChecked) { checkable.IsChecked = isChecked; },
+				delegate(Checkable<ResultRecipientDetail> checkable, bool isChecked) { checkable.IsChecked = isChecked; NotifyPropertyChanged("AcceptEnabled"); },
 				0.3f));
 			_recipientsTable.Columns.Add(new TableColumn<Checkable<ResultRecipientDetail>, string>(
 				"Practitioner",
@@ -203,9 +208,9 @@ namespace ClearCanvas.Ris.Client
 					_recipientsTable.Items.AddRange(
 						CollectionUtils.Map<ResultRecipientDetail, Checkable<ResultRecipientDetail>>(
 							response.GetOrderDetailResponse.Order.ResultRecipients,
-							delegate (ResultRecipientDetail summary)
+							delegate(ResultRecipientDetail summary)
 							{
-								return new Checkable<ResultRecipientDetail>(summary,false);
+								return new Checkable<ResultRecipientDetail>(summary, false);
 							}));
 				});
 
@@ -223,6 +228,27 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		protected EntityRef ReportRef
+		{
+			get { return _reportRef; }
+		}
+
+		protected EntityRef OrderRef
+		{
+			get { return _orderRef; }
+		}
+
+		protected EntityRef PatientProfileRef
+		{
+			get { return _patientProfileRef; }
+		}
+
+		protected RepublishReportPreviewComponent PreviewComponent
+		{
+			get { return _republishReportPreviewComponent; }
+		}
+
 
 		#region Presentation model
 
@@ -316,11 +342,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 
-		public void Accept()
-		{
-			//Execute republish task
+		public abstract void Accept();
 
-			this.Exit(ApplicationComponentExitCode.Accepted);
+		public bool AcceptEnabled
+		{
+			get
+			{
+				return CollectionUtils.Contains(
+					_recipientsTable.Items,
+					delegate(Checkable<ResultRecipientDetail> checkable) { return checkable.IsChecked; });
+			}
 		}
 
 		public void Cancel()
@@ -367,6 +398,62 @@ namespace ClearCanvas.Ris.Client
 			return choices;
 		}
 
-#endregion
+		#endregion
+	}
+
+	public class PrintReportComponent : RepublishReportComponent
+	{
+		public PrintReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
+			: base(patientProfileRef, orderRef, reportRef)
+		{
+		}
+
+		public override void Accept()
+		{
+			using (new HeaderFooterSettings())
+			{
+				foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+				{
+					if (checkable.IsChecked)
+					{
+						ResultRecipientDetail detail = checkable.Item;
+
+						RepublishReportPreviewComponent component = new RepublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ReportRef);
+						ChildComponentHost host = new ChildComponentHost(this.Host, component);
+						host.StartComponent();
+						object view = host.ComponentView.GuiElement;
+
+						component.Context = new RepublishReportPreviewComponent.RepublishReportPreviewContext(
+							this.PatientProfileRef,
+							this.OrderRef,
+							this.ReportRef,
+							detail);
+
+						component.ScriptCompleted += PrintDocument;
+					}
+				}
+			}
+
+			this.Exit(ApplicationComponentExitCode.Accepted);
+		}
+
+		private void PrintDocument(object sender, EventArgs e)
+		{
+			RepublishReportPreviewComponent component = (RepublishReportPreviewComponent)sender;
+			component.PrintDocument();
+		}
+	}
+
+	public class FaxReportComponent : RepublishReportComponent
+	{
+		public FaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
+			: base(patientProfileRef, orderRef, reportRef)
+		{
+		}
+
+		public override void Accept()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

@@ -277,6 +277,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Print Report.
+        /// </summary>
+        internal static string TitlePrintReport {
+            get {
+                return ResourceManager.GetString("TitlePrintReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protocolling.
         /// </summary>
         internal static string TitleProtocollingFolderSystem {
@@ -295,20 +304,20 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Review Protocol.
-        /// </summary>
-        internal static string TitleReviewProtocol {
-            get {
-                return ResourceManager.GetString("TitleReviewProtocol", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reporting.
         /// </summary>
         internal static string TitleReportingFolderSystem {
             get {
                 return ResourceManager.GetString("TitleReportingFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Review Protocol.
+        /// </summary>
+        internal static string TitleReviewProtocol {
+            get {
+                return ResourceManager.GetString("TitleReviewProtocol", resourceCulture);
             }
         }
         

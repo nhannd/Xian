@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -66,11 +67,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_consultantContactPoint.DataBindings.Add("DataSource", _component, "RecipientContactPointChoices", true, DataSourceUpdateMode.Never);
 			_consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
 			_consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
+
+			_btnOk.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_component.PropertyChanged += _component_propertyChanged;
 		}
+
+		private void _component_propertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "AcknowledgeEnabled")
+			{
+				_btnOk.Enabled = _component.AcceptEnabled;
+			}
+		}
+
 
 		private void _btnOk_Click(object sender, EventArgs e)
 		{
-			_component.Accept();
+			using(new CursorManager(Cursors.WaitCursor))
+			{
+				_component.Accept();
+			}
 		}
 
 		private void _btnCancel_Click(object sender, EventArgs e)
