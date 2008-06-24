@@ -62,19 +62,20 @@ namespace ClearCanvas.Ris.Client
 			get { return true; }
 		}
 
-        public override ITable ItemsTable
+		protected override bool UpdateCore()
+		{
+			// do nothing
+			return false;
+		}
+
+		protected override void InvalidateCore()
+		{
+			// do nothing
+		}
+
+		public override ITable ItemsTable
         {
             get { return _itemsTable; }
-        }
-
-        public override void Update()
-        {
-            // do nothing
-        }
-
-        public override void Invalidate()
-        {
-            // do nothing
         }
 
         public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)

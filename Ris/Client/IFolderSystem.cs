@@ -82,6 +82,11 @@ namespace ClearCanvas.Ris.Client
 		/// </remarks>
 		event EventHandler FoldersChanged;
 
+		/// <summary>
+		/// Occurs when one or more folders in the system have been invalidated.
+		/// </summary>
+		event EventHandler FoldersInvalidated;
+
 		#endregion
 
 		#region Methods
@@ -101,6 +106,12 @@ namespace ClearCanvas.Ris.Client
 		/// Invalidates all folders of the specified class in this folder system.
 		/// </summary>
 		void InvalidateFolders(Type folderClass);
+
+		/// <summary>
+		/// Invalidates the specified folder.
+		/// </summary>
+		/// <param name="folder"></param>
+		void InvalidateFolder(IFolder folder);
 
 
 		#endregion

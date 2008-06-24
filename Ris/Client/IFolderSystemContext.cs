@@ -45,9 +45,5 @@ namespace ClearCanvas.Ris.Client
         ISelection SelectedItems { get; }
 		event EventHandler SelectedItemsChanged;
     	event EventHandler SelectedItemDoubleClicked;
-
-    	void InvalidateFolders();
-		void InvalidateFolders(Type folderClass);
-    	void InvalidateFolder(IFolder folder);
 	}
 }

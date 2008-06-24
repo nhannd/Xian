@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common;
 using System.Threading;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
+using Timer=ClearCanvas.Common.Utilities.Timer;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -160,6 +161,7 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _titleChanged;
 		private event EventHandler _titleIconChanged;
 		private event EventHandler _foldersChanged;
+		private event EventHandler _foldersInvalidated;
 
 
 		private string _title;
@@ -189,6 +191,7 @@ namespace ClearCanvas.Ris.Client
 
 			_workflowFolders = new FolderList(this);
 		}
+
 
 		/// <summary>
 		/// Finalizer
@@ -291,6 +294,12 @@ namespace ClearCanvas.Ris.Client
 			remove { _foldersChanged -= value; }
 		}
 
+		public event EventHandler FoldersInvalidated
+		{
+			add { _foldersInvalidated += value; }
+			remove { _foldersInvalidated -= value; }
+		}
+
         /// <summary>
         /// Gets a value indicating whether this folder system supports searching.
         /// </summary>
@@ -317,15 +326,15 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void InvalidateFolders()
 		{
-			_context.InvalidateFolders();
+			InvalidateFolders(delegate { return true; });
 		}
 
 		/// <summary>
-		/// Invalidates all folders.
+		/// Invalidates all folders of the specified class.
 		/// </summary>
 		public void InvalidateFolders(Type folderClass)
 		{
-			_context.InvalidateFolders(folderClass);
+			InvalidateFolders(delegate(IFolder f) { return folderClass.IsAssignableFrom(f.GetType()); });
 		}
 
 		/// <summary>
@@ -333,8 +342,17 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void InvalidateSelectedFolder()
 		{
-			if(_context.SelectedFolder != null)
-				_context.InvalidateFolder(_context.SelectedFolder);
+			if(this.SelectedFolder != null)
+				InvalidateFolders(delegate(IFolder f) { return f == this.SelectedFolder; });
+		}
+
+		/// <summary>
+		/// Invalidates the specified folder.
+		/// </summary>
+		/// <param name="folder"></param>
+		public void InvalidateFolder(IFolder folder)
+		{
+			InvalidateFolders(delegate(IFolder f) { return f == folder; });
 		}
 
 		#endregion
@@ -419,8 +437,16 @@ namespace ClearCanvas.Ris.Client
 						((IDisposable)folder).Dispose();
 				}
 
-				if (_itemTools != null) _itemTools.Dispose();
-				if (_folderTools != null) _folderTools.Dispose();
+				if (_itemTools != null)
+				{
+					_itemTools.Dispose();
+					_itemTools = null;
+				}
+				if (_folderTools != null)
+				{
+					_folderTools.Dispose();
+					_folderTools = null;
+				}
 			}
 		}
 
@@ -490,6 +516,14 @@ namespace ClearCanvas.Ris.Client
 		protected void NotifyFoldersChanged()
 		{
 			EventsHelper.Fire(_foldersChanged, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Notifies that one or more folders has been invalidated.
+		/// </summary>
+		protected void NotifyFoldersInvalidated()
+		{
+			EventsHelper.Fire(_foldersInvalidated, this, EventArgs.Empty);
 		}
 
 		#endregion
@@ -595,6 +629,26 @@ namespace ClearCanvas.Ris.Client
 		private bool GetOperationEnablement(Type serviceContract, string operationName)
 		{
 			return GetOperationEnablement(string.Format("{0}.{1}", serviceContract.FullName, operationName));
+		}
+
+		/// <summary>
+		/// Invalidates any folders matching the specified condition.
+		/// </summary>
+		/// <param name="condition"></param>
+		private void InvalidateFolders(Predicate<IFolder> condition)
+		{
+			int count = 0;
+			foreach (IFolder folder in _workflowFolders)
+			{
+				if (condition(folder))
+				{
+					folder.Invalidate();
+					count++;
+				}
+			}
+
+			if(count > 0)
+				NotifyFoldersInvalidated();
 		}
 
 		#endregion

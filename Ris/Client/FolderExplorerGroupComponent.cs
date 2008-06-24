@@ -81,21 +81,6 @@ namespace ClearCanvas.Ris.Client
 				add { _contentsComponent.SelectedItemDoubleClicked += value; }
 				remove { _contentsComponent.SelectedItemDoubleClicked -= value; }
 			}
-
-			public void InvalidateFolders()
-			{
-				_explorerComponent.InvalidateFolders();
-			}
-
-			public void InvalidateFolders(Type folderClass)
-			{
-				_explorerComponent.InvalidateFolders(folderClass);
-			}
-
-			public void InvalidateFolder(IFolder folder)
-			{
-				_explorerComponent.InvalidateFolder(folder);
-			}
 		}
 
 		#endregion

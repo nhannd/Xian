@@ -61,6 +61,7 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _suppressSelectionChangedEvent;
 
         private readonly IFolderSystem _folderSystem;
+    	private Timer _folderInvalidateTimer;
 
         /// <summary>
         /// Constructor
@@ -80,24 +81,6 @@ namespace ClearCanvas.Ris.Client
 			}
     	}
 
-		internal void InvalidateFolders()
-		{
-			_folderTreeRoot.Invalidate();
-			_folderTreeRoot.Update();
-		}
-
-		internal void InvalidateFolders(Type folderClass)
-		{
-			_folderTreeRoot.Invalidate(folderClass);
-			_folderTreeRoot.Update();
-		}
-
-		internal void InvalidateFolder(IFolder folder)
-		{
-			_folderTreeRoot.Invalidate(folder);
-			_folderTreeRoot.Update();
-		}
-
         #region Application Component overrides
 
         public override void Start()
@@ -106,12 +89,31 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
 			_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
 			_folderSystem.FoldersChanged += FoldersChangedEventHandler;
+			_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
 
+			// build the initial folder tree
 			BuildFolderTree();
 
+			// invalidate all folders and update the entire tree
+			_folderSystem.InvalidateFolders();
 			_folderTreeRoot.Update();
 
+			// this timer is responsible for monitoring the auto-invalidation of all folders
+			// in the folder system, and performing the appropriate invalidations
+        	_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); });
+			_folderInvalidateTimer.IntervalMilliseconds = 1000;		// resolution of 1 second
+			_folderInvalidateTimer.Start();
+
+
 			base.Start();
+		}
+
+		public override void Stop()
+		{
+			_folderInvalidateTimer.Stop();
+			_folderInvalidateTimer.Dispose();
+
+			base.Stop();
 		}
 
         public override IActionSet ExportedActions
@@ -191,7 +193,24 @@ namespace ClearCanvas.Ris.Client
 
         #region Private methods
 
-        private void SelectFolder(FolderTreeNode node)
+		private void AutoInvalidateFolders()
+		{
+			foreach (IFolder folder in _folderSystem.Folders)
+			{
+				if(folder.AutoInvalidateInterval > TimeSpan.Zero
+					&& (Platform.Time - folder.LastUpdateTime) > folder.AutoInvalidateInterval)
+				{
+					_folderSystem.InvalidateFolder(folder);
+				}
+			}
+
+			// update folder tree in case any folders were invalidated
+			// this is done regardless of whether this folder explorer is currently visible, because
+			// we need to keep the title bars of the folder explorers updated
+			_folderTreeRoot.Update();
+		}
+
+    	private void SelectFolder(FolderTreeNode node)
         {
             if (_selectedTreeNode != node)
             {
@@ -269,6 +288,12 @@ namespace ClearCanvas.Ris.Client
 		private void FoldersChangedEventHandler(object sender, EventArgs e)
 		{
 			BuildFolderTree();
+		}
+
+		private void FoldersInvalidatedEventHandler(object sender, EventArgs e)
+		{
+			//TODO: only do update if this explorer is active
+			_folderTreeRoot.Update();
 		}
 
 		private void BuildFolderTree()

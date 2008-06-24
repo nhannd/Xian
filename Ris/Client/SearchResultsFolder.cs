@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client
 
         /// <summary>
         /// Gets or sets the search arguments.  Setting this property will automatically
-        /// call <see cref="Invalidate"/> on this folder.
+        /// call <see cref="InvalidateCore"/> on this folder.
         /// </summary>
         public SearchData SearchData
         {
@@ -29,24 +29,26 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _searchData = value;
-                this.Invalidate();
+                this.InvalidateCore();
             }
         }
 
         #region Folder overrides
 
-		public override void Invalidate()
+		protected override void InvalidateCore()
 		{
 			_isValid = false;
 		}
 
-		public override void Update()
+		protected override bool UpdateCore()
 		{
 			if(!_isValid)
 			{
 				BeginQueryItems();
 				_isValid = true;
+				return true;
 			}
+			return false;
 		}
 
         protected override IconSet OpenIconSet

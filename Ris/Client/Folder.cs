@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -96,6 +97,9 @@ namespace ClearCanvas.Ris.Client
 		private IconSet _iconSet;
 		private string _folderTooltip;
 		private int _totalItemCount = -1;
+
+		private TimeSpan _autoInvalidateInterval = TimeSpan.Zero;
+		private DateTime _lastUpdateTime = DateTime.MinValue;	// basically "never"
 
 		/// <summary>
 		/// Constructor
@@ -179,20 +183,30 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+		/// Gets or sets the auto-invalidate time interval for this folder.
+		/// A value of <see cref="TimeSpan.Zero"/> means auto-invalidation is effectively disabled.
 		/// </summary>
-		public abstract void Update();
+		public TimeSpan AutoInvalidateInterval
+		{
+			get { return _autoInvalidateInterval; }
+			protected set { _autoInvalidateInterval = value; }
+		}
 
-		/// <summary>
-		/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
-		/// The implementation may be asynchronous.
-		/// </summary>
-		//public abstract void UpdateCount();
+		public DateTime LastUpdateTime
+		{
+			get { return _lastUpdateTime; }
+		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public abstract void Invalidate();
+		public void Update()
+		{
+			if (UpdateCore())
+				_lastUpdateTime = Platform.Time;
+		}
+
+		public void Invalidate()
+		{
+			InvalidateCore();
+		}
 
 		/// <summary>
 		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
@@ -423,6 +437,10 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 
 		#region Overridable members
+
+		protected abstract void InvalidateCore();
+
+		protected abstract bool UpdateCore();
 
 		/// <summary>
 		/// Gets the closed-state <see cref="IconSet"/>.

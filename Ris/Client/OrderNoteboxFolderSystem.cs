@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly IconSet _unacknowledgedNotesIconSet;
 		private readonly string _baseTitle;
+		private readonly PersonalInboxFolder _inboxFolder;
 
         public OrderNoteboxFolderSystem()
 			: base(SR.TitleOrderNoteboxFolderSystem)
@@ -84,9 +85,9 @@ namespace ClearCanvas.Ris.Client
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
 			_baseTitle = SR.TitleOrderNoteboxFolderSystem;
 
-			PersonalInboxFolder inboxFolder = new PersonalInboxFolder(this);
-			inboxFolder.TotalItemCountChanged += OnPrimaryFolderCountChanged;
-			this.Folders.Add(inboxFolder);
+			_inboxFolder = new PersonalInboxFolder(this);
+			_inboxFolder.TotalItemCountChanged += FolderItemCountChangedEventHandler;
+			this.Folders.Add(_inboxFolder);
 			this.Folders.Add(new SentItemsFolder(this));
 
 			RebuildGroupFolders();
@@ -124,11 +125,21 @@ namespace ClearCanvas.Ris.Client
 			return new Dictionary<string, bool>();
 		}
 
-		protected void OnPrimaryFolderCountChanged(object sender, EventArgs e)
+		protected void FolderItemCountChangedEventHandler(object sender, EventArgs e)
 		{
-			IFolder folder = (IFolder)sender;
-			this.Title = string.Format(SR.FormatOrderNoteboxFolderSystemTitle, _baseTitle, folder.TotalItemCount);
-			this.TitleIcon = folder.TotalItemCount > 0 ? _unacknowledgedNotesIconSet : null;
+			int count = CountTotalInboxItems();
+			this.Title = string.Format(SR.FormatOrderNoteboxFolderSystemTitle, _baseTitle, count);
+			this.TitleIcon = count > 0 ? _unacknowledgedNotesIconSet : null;
+		}
+
+		private int CountTotalInboxItems()
+		{
+			return _inboxFolder.TotalItemCount +
+				CollectionUtils.Reduce<IFolder, int>(this.Folders, 0,
+					delegate(IFolder f, int sum)
+					{
+						return sum + ((f is GroupInboxFolder) ? f.TotalItemCount : 0);
+					});
 		}
 
 		private void RebuildGroupFolders()
@@ -163,6 +174,8 @@ namespace ClearCanvas.Ris.Client
 			foreach (StaffGroupSummary group in groupsToShow)
 			{
 				GroupInboxFolder groupFolder = new GroupInboxFolder(this, group);
+				groupFolder.TotalItemCountChanged += FolderItemCountChangedEventHandler;
+
 				this.Folders.Add(groupFolder);
 			}
 

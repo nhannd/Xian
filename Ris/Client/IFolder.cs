@@ -117,6 +117,24 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		bool IsStatic { get; }
 
+		/// <summary>
+		/// Gets a value indicating how much time may elapse since <see cref="LastUpdateTime"/> before
+		/// this folder is automatically invalidated.
+		/// </summary>
+		TimeSpan AutoInvalidateInterval { get; }
+
+		/// <summary>
+		/// Gets a timestamp indicating the last time that this folder was updated
+		/// (which may not be equivalent to the last time that <see cref="Update"/> was called. 
+		/// </summary>
+		/// <remarks>
+		/// The value of this property reflects the last time that the folder was actually updated,
+		/// not the last time that <see cref="Update"/> was called (eg. a call to Update has no effect
+		/// if the folder has not been invalidated, in which case it should not set this property).
+		/// It is the responsiblity of the implementor to set this property appropriately.
+		/// </remarks>
+		DateTime LastUpdateTime { get; }
+
 		#endregion
 
 		#region Events

@@ -1,3 +1,4 @@
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -7,16 +8,14 @@ namespace ClearCanvas.Ris.Client
 {
 	public abstract class OrderNoteboxFolder : WorkflowFolder<OrderNoteboxItemSummary>
 	{
-		private readonly OrderNoteboxFolderSystem _folderSystem;
 		private readonly string _noteboxClassName;
 
 		public OrderNoteboxFolder(OrderNoteboxFolderSystem folderSystem, string noteboxClassName)
 			: base(new OrderNoteboxTable())
 		{
-			_folderSystem = folderSystem;
 			_noteboxClassName = noteboxClassName;
 
-			this.RefreshTime = OrderNoteboxFolderSystemSettings.Default.RefreshTime;
+			this.AutoInvalidateInterval = new TimeSpan(0, 0, 0, 0, OrderNoteboxFolderSystemSettings.Default.RefreshTime);
 		}
 
 		protected override QueryItemsResult QueryItems()

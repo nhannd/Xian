@@ -68,74 +68,28 @@ namespace ClearCanvas.Ris.Client
 	/// Abstract base class for workflow folders.  A workflow folder is characterized by the fact
 	/// that it contains "work items".
 	/// </summary>
-	public abstract class WorkflowFolder : Folder, IDisposable
+	public abstract class WorkflowFolder : Folder
 	{
 		private bool _isCountValid;
 		private bool _isItemsValid;
 
-        private Timer _refreshTimer;
-        private int _refreshTime;
 
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            if (_refreshTimer != null)
-            {
-                _refreshTimer.Dispose();
-                _refreshTimer = null;
-            }
-        }
-
-        #endregion
 
 		#region Public API
 
-		/// <summary>
-		/// Gets or sets the auto-refresh interval for this folder.
-		/// </summary>
-		public int RefreshTime
-		{
-			get { return _refreshTime; }
-			set
-			{
-				_refreshTime = value;
-				this.RestartRefreshTimer();
-			}
-		}
 
 		#endregion
 
 		#region Folder overrides
 
-		/// <summary>
-		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
-		/// </summary>
-		public override void OpenFolder()
-        {
-            base.OpenFolder();
-
-            this.RestartRefreshTimer();
-        }
-
-		/// <summary>
-		/// Closes the folder (i.e. instructs the folder to show its "closed" state icon).
-		/// </summary>
-		public override void CloseFolder()
-        {
-            base.CloseFolder();
-
-            this.RestartRefreshTimer();
-        }
-
-		public override void Invalidate()
+		protected override void InvalidateCore()
 		{
 			_isCountValid = false;
 			_isItemsValid = false;
 		}
 
-		public override void Update()
+		protected override bool UpdateCore()
 		{
 			if(this.IsOpen)
 			{
@@ -146,6 +100,7 @@ namespace ClearCanvas.Ris.Client
 					BeginQueryItems();
 					_isItemsValid = true;
 					_isCountValid = true;
+					return true;
 				}
 			}
 			else
@@ -155,8 +110,11 @@ namespace ClearCanvas.Ris.Client
 				{
 					BeginQueryCount();
 					_isCountValid = true;
+					return true;
 				}
 			}
+
+			return false;	// nothing updated
 		}
 
 		#endregion
@@ -170,31 +128,6 @@ namespace ClearCanvas.Ris.Client
 		protected abstract void BeginQueryItems();
 
 		protected abstract void BeginQueryCount();
-
-		/// <summary>
-		/// Restarts the refresh timer.
-		/// </summary>
-        protected void RestartRefreshTimer()
-        {
-            if (_refreshTimer != null)
-            {
-                _refreshTimer.Stop();
-                _refreshTimer.Dispose();
-                _refreshTimer = null;
-            }
-
-            if (_refreshTime > 0)
-            {
-                TimerDelegate timerDelegate = this.IsOpen
-                    ? new TimerDelegate(delegate(object state) { Update(); })
-                    //: new TimerDelegate(delegate(object state) { UpdateCount(); });
-                    : new TimerDelegate(delegate(object state) { });
-
-                _refreshTimer = new Timer(timerDelegate);
-                _refreshTimer.IntervalMilliseconds = _refreshTime;
-                _refreshTimer.Start();
-            }
-		}
 
 		#endregion
 	}
@@ -397,7 +330,7 @@ namespace ClearCanvas.Ris.Client
             _queryItemsTask.Dispose();
             _queryItemsTask = null;
 
-            this.RestartRefreshTimer();
+//            this.RestartRefreshTimer();
         }
 
         private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
@@ -419,7 +352,7 @@ namespace ClearCanvas.Ris.Client
             _queryCountTask.Dispose();
             _queryCountTask = null;
 
-            this.RestartRefreshTimer();
+//            this.RestartRefreshTimer();
 		}
 
 		#endregion
