@@ -133,10 +133,16 @@ namespace ClearCanvas.Ris.Client
             _actionModel.Add.SetClickHandler(AddItems);
 
 			if (SupportsEdit)
-            _actionModel.Edit.SetClickHandler(EditSelectedItems);
+			{
+				_actionModel.Edit.SetClickHandler(EditSelectedItems);
+				_actionModel.Edit.Enabled = false;
+			}
 
-            if(SupportsDelete)
-                _actionModel.Delete.SetClickHandler(DeleteSelectedItems);
+			if(SupportsDelete)
+			{
+				_actionModel.Delete.SetClickHandler(DeleteSelectedItems);
+				_actionModel.Delete.Enabled = false;
+			}
 
 			InitializeActionModel(_actionModel);
 
@@ -392,9 +398,6 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="model"></param>
 		protected virtual void InitializeActionModel(CrudActionModel model)
 		{
-			model.Add.Enabled = true;
-			model.Edit.Enabled = false;
-			model.Delete.Enabled = false;
 		}
 
         /// <summary>

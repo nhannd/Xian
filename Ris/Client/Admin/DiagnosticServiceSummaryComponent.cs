@@ -84,6 +84,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -148,10 +154,33 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<DiagnosticServiceSummary> items)
+		protected override bool DeleteItems(IList<DiagnosticServiceSummary> items, out IList<DiagnosticServiceSummary> deletedItems, out string failureMessage)
 		{
-			throw new NotImplementedException();
+			failureMessage = null;
+			deletedItems = new List<DiagnosticServiceSummary>();
+
+			foreach (DiagnosticServiceSummary item in items)
+			{
+				try
+				{
+					Platform.GetService<IDiagnosticServiceAdminService>(
+						delegate(IDiagnosticServiceAdminService service)
+						{
+							service.DeleteDiagnosticService(new DeleteDiagnosticServiceRequest(item.DiagnosticServiceRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
+			}
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>
