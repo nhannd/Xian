@@ -333,7 +333,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         	}
         	else
         	{
-				if ((hint & ShelfDisplayHint.ShowNearMouse) != 0)
+				if ((hint & ShelfDisplayHint.ShowNearMouse) == ShelfDisplayHint.ShowNearMouse)
 				{
 					content.DisplayLocation = Control.MousePosition;
 				}

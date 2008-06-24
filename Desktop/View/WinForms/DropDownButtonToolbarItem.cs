@@ -110,6 +110,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#endregion
 
+		private ToolStripRenderer _currentRenderer;
 		private FakeToolstripButton _fakeButton;
 
 		private IClickAction _action;
@@ -174,10 +175,36 @@ namespace ClearCanvas.Desktop.View.WinForms
 			base.OnParentChanged(oldParent, newParent);
 
 			if (oldParent != null)
-				oldParent.Renderer.RenderSplitButtonBackground -= OnRenderedSplitButtonBackground;
+			{
+				oldParent.RendererChanged -= OnParentRendererChanged;
+				UpdateRenderer(null);
+			}
 
 			if (newParent != null)
-				newParent.Renderer.RenderSplitButtonBackground += OnRenderedSplitButtonBackground;
+			{
+				newParent.RendererChanged += OnParentRendererChanged;
+				UpdateRenderer(newParent);
+			}
+		}
+
+		private void OnParentRendererChanged(object sender, EventArgs e)
+		{
+			UpdateRenderer(this.Parent);
+		}
+
+		private void UpdateRenderer(ToolStrip newParent)
+		{
+			if (_currentRenderer != null && (newParent == null || _currentRenderer != newParent.Renderer))
+			{
+				_currentRenderer.RenderSplitButtonBackground -= OnRenderedSplitButtonBackground;
+				_currentRenderer = null;
+			}
+
+			if (newParent != null)
+			{
+				_currentRenderer = newParent.Renderer;
+				_currentRenderer.RenderSplitButtonBackground += OnRenderedSplitButtonBackground;
+			}
 		}
 
 		private void OnRenderedSplitButtonBackground(object sender, ToolStripItemRenderEventArgs e)

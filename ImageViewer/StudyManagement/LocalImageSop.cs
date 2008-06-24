@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (_loaded)
 					return;
 
-				CheckDisposed();
+				CheckIsDisposed();
 
 				_dicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 				_loaded = true;

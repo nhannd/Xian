@@ -36,40 +36,39 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// A Color Map Manager, which is responsible for managing installation and restoration
-	/// of <see cref="IColorMap"/>s via the Memento pattern.
+	/// of color maps via the Memento pattern.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// Implementors can maintain the named <see cref="IColorMap"/>s any way they choose.
+	/// Implementors can maintain the named color maps any way they choose.
 	/// However, the <see cref="ColorMapFactoryExtensionPoint"/> is the preferred method of 
-	/// creating new <see cref="IColorMap"/>s.
+	/// creating new color maps.
 	/// </para>
 	/// <para>
 	/// Implementors must not return null from the <see cref="GetColorMap"/> method.
 	/// </para>
 	/// </remarks>
-	/// <seealso cref="IColorMap"/>
 	public interface IColorMapManager : IMemorable
 	{
 		/// <summary>
-		/// Gets the currently installed <see cref="IColorMap"/>.
+		/// Gets the currently installed color map.
 		/// </summary>
-		IColorMap GetColorMap();
+		IDataLut GetColorMap();
 
 		/// <summary>
-		/// Installs an <see cref="IColorMap"/> by name.
+		/// Installs a color map by name.
 		/// </summary>
-		/// <param name="name">the name of the <see cref="IColorMap"/>to install.</param>
+		/// <param name="name">the name of the color map to install.</param>
 		void InstallColorMap(string name);
 
 		/// <summary>
-		/// Installs an <see cref="IColorMap"/> by name, given the input <see cref="ColorMapDescriptor"/>.
+		/// Installs a color map by name, given the input <see cref="ColorMapDescriptor"/>.
 		/// </summary>
-		/// <param name="descriptor">a <see cref="ColorMapDescriptor"/> describing the <see cref="IColorMap"/> to be installed.</param>
+		/// <param name="descriptor">a <see cref="ColorMapDescriptor"/> describing the color map to be installed.</param>
 		void InstallColorMap(ColorMapDescriptor descriptor);
 
 		/// <summary>
-		/// Gets all available Color Maps in the form of <see cref="ColorMapDescriptor"/>s.
+		/// Gets all available color maps in the form of <see cref="ColorMapDescriptor"/>s.
 		/// </summary>
 		IEnumerable<ColorMapDescriptor> AvailableColorMaps { get; }
 	}

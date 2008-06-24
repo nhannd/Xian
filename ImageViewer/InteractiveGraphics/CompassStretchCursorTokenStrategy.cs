@@ -46,18 +46,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// the case with most ROI graphic implementations).
 	/// </summary>
 	[Cloneable(true)]
-	internal class CompassCursorTokenProvider : IControlPointGroupCursorTokenProvider
+	internal class CompassStretchCursorTokenStrategy : StretchCursorTokenStrategy
 	{
 		private enum CompassPoints { NorthEast = 0, SouthEast = 1, SouthWest = 2, NorthWest = 3, North = 4, East = 5, South = 6, West = 7 };
 
 		[CloneIgnore]
 		private SortedList<CompassPoints, CursorToken> _stretchIndicatorTokens;
-		[CloneIgnore]
-		private ControlPointGroup _controlPoints;
 
-		public CompassCursorTokenProvider()
+		public CompassStretchCursorTokenStrategy()
 		{
 			InstallDefaults();
+		}
+
+		private ControlPointGroup ControlPoints
+		{
+			get { return TargetGraphic.ControlPoints; }	
 		}
 
 		/// <summary>
@@ -68,8 +71,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get
 			{
 				List<PointF> controlPoints = new List<PointF>();
-				for (int i = 0; i < _controlPoints.Count; ++i)
-					controlPoints.Add(_controlPoints[i]);
+				for (int i = 0; i < ControlPoints.Count; ++i)
+					controlPoints.Add(ControlPoints[i]);
 
 				return RectangleUtilities.ComputeBoundingRectangle(controlPoints.ToArray());
 			}
@@ -178,32 +181,25 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		#region ICursorTokenProvider Members
-
-		public void SetControlPoints(ControlPointGroup controlPoints)
-		{
-			_controlPoints = controlPoints;
-		}
-
 		/// <summary>
 		/// Gets the appropriate <see cref="CursorToken"/> for a given point (in destination coordinates).
 		/// </summary>
 		/// <param name="point">the point (in destination coordinates).</param>
 		/// <returns>a <see cref="CursorToken"/> that is appropriate for the given point, or null.</returns>
-		public CursorToken GetCursorToken(Point point)
+		public override CursorToken GetCursorToken(Point point)
 		{
 			if (_stretchIndicatorTokens.Count == 0)
 				return null;
 
-			Platform.CheckForNullReference(_controlPoints, "_controlPoints");
+			Platform.CheckForNullReference(ControlPoints, "_controlPoints");
 
-			int controlPointIndex = _controlPoints.HitTestControlPoint(point);
+			int controlPointIndex = ControlPoints.HitTestControlPoint(point);
 			if (controlPointIndex < 0)
 				return null;
 
-			_controlPoints.CoordinateSystem = CoordinateSystem.Destination;
+			ControlPoints.CoordinateSystem = CoordinateSystem.Destination;
 
-			PointF controlPoint = _controlPoints[controlPointIndex];
+			PointF controlPoint = ControlPoints[controlPointIndex];
 			RectangleF containingRectangle = this.BoundingRectangle;
 
 			CompassPoints closestCompassPoint = _stretchIndicatorTokens.Keys[0];
@@ -221,11 +217,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				}
 			}
 
-			_controlPoints.ResetCoordinateSystem();
+			ControlPoints.ResetCoordinateSystem();
 		
 			return _stretchIndicatorTokens[closestCompassPoint];
 		}
-
-		#endregion
 	}
 }

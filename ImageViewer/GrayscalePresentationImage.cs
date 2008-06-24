@@ -173,9 +173,9 @@ namespace ClearCanvas.ImageViewer
 		#region IModalityLutProvider Members
 
 		/// <summary>
-		/// Gets this image's <see cref="IModalityLut"/>.
+		/// Gets this image's modality lut.
 		/// </summary>
-		public IModalityLut ModalityLut
+		public IComposableLut ModalityLut
 		{
 			get
 			{

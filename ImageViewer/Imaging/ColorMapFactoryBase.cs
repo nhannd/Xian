@@ -68,9 +68,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract string Description { get; }
 
 		/// <summary>
-		/// Creates an <see cref="IColorMap"/>.
+		/// Creates and returns a <see cref="ColorMap"/>.
 		/// </summary>
-		public IColorMap Create()
+		public IDataLut Create()
 		{
 			return new T();
 		}

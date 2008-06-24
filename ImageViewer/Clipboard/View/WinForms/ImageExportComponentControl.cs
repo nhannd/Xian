@@ -80,23 +80,28 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 		{
 			if (_component.NumberOfImagesToExport > 1)
 			{
-				FolderBrowserDialog dialog = new FolderBrowserDialog();
-				if (DialogResult.OK == dialog.ShowDialog())
-					_component.ExportFilePath = dialog.SelectedPath;
-				else
-					return;
+				using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+				{
+					if (DialogResult.OK == dialog.ShowDialog())
+						_component.ExportFilePath = dialog.SelectedPath;
+					else
+						return;
+				}
 			}
 			else
 			{
-				SaveFileDialog dialog = new SaveFileDialog();
-				dialog.Filter = _component.SelectedExporterInfo.FileExtensionFilter;
-				dialog.DefaultExt = _component.SelectedExporterInfo.DefaultExtension;
-				dialog.AddExtension = true;
+				using (SaveFileDialog dialog = new SaveFileDialog())
+				{
+					dialog.Filter = _component.SelectedExporterInfo.FileExtensionFilter;
+					dialog.DefaultExt = _component.SelectedExporterInfo.DefaultExtension;
+					dialog.RestoreDirectory = true;
+					dialog.AddExtension = true;
 
-				if (DialogResult.OK == dialog.ShowDialog())
-					_component.ExportFilePath = dialog.FileName;
-				else
-					return;
+					if (DialogResult.OK == dialog.ShowDialog())
+						_component.ExportFilePath = dialog.FileName;
+					else
+						return;
+				}
 			}
 
 			_component.Accept();

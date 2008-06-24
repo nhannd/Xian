@@ -134,12 +134,14 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		{
 			base.Initialize();
 
-			base.Context.Viewer.EventBroker.TileSelected += OnTileSelected;
+			base.Context.Viewer.EventBroker.ImageBoxSelected += OnImageBoxSelected;
+			base.Context.Viewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			base.Context.Viewer.EventBroker.TileSelected -= OnTileSelected;
+			base.Context.Viewer.EventBroker.ImageBoxSelected -= OnImageBoxSelected;
+			base.Context.Viewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
 
 			base.Dispose(disposing);
 		}
@@ -214,15 +216,26 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			}
 		}
 
-		protected void OnTileSelected(object sender, TileSelectedEventArgs e)
+		private void OnImageBoxSelected(object sender, ImageBoxSelectedEventArgs e)
 		{
-			if (e.SelectedTile.PresentationImage == null || e.SelectedTile.ParentImageBox.DisplaySet.PresentationImages.Count < 1)
+			if (e.SelectedImageBox.DisplaySet == null)
+				UpdateEnabled(null);
+		}
+
+		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
+		{
+			UpdateEnabled(e.SelectedDisplaySet);
+		}
+
+		private void UpdateEnabled(IDisplaySet selectedDisplaySet)
+		{
+			if (selectedDisplaySet == null || selectedDisplaySet.PresentationImages.Count < 1)
 			{
 				CopyDisplaySetEnabled = false;
 				CopySubsetEnabled = false;
 				CopyImageEnabled = false;
 			}
-			else if (e.SelectedTile.ParentImageBox.DisplaySet.PresentationImages.Count == 1)
+			else if (selectedDisplaySet.PresentationImages.Count == 1)
 			{
 				CopyDisplaySetEnabled = false;
 				CopySubsetEnabled = false;

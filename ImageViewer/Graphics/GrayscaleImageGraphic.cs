@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private IVoiLutManager _voiLutManager;
 
 		private IColorMapManager _colorMapManager;
-		private IColorMap _colorMap;
+		private IDataLut _colorMap;
 
 		#endregion
 
@@ -290,14 +290,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		/// <summary>
-		/// Retrieves this image's <see cref="IModalityLut"/>
+		/// Retrieves this image's modality lut.
 		/// </summary>
-		public IModalityLut ModalityLut
+		public IComposableLut ModalityLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Modality);
-				return this.LutComposer.LutCollection[0] as IModalityLut; 
+				return this.LutComposer.LutCollection[0]; 
 			}
 		}
 
@@ -326,9 +326,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Retrieves this image's <see cref="IColorMap"/>.
+		/// Retrieves this image's color map.
 		/// </summary>
-		public IColorMap ColorMap
+		public IDataLut ColorMap
 		{
 			get
 			{
@@ -442,7 +442,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (luts >= Luts.Modality && LutComposer.LutCollection.Count == 0)
 			{
-				IModalityLut modalityLut =
+				IComposableLut modalityLut =
 					this.LutFactory.GetModalityLutLinear(this.BitsStored, this.IsSigned, _rescaleSlope, _rescaleIntercept);
 			
 				this.LutComposer.LutCollection.Add(modalityLut);
@@ -492,7 +492,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			InstallColorMap(this.LutFactory.GetColorMap(name));
 		}
 
-		internal void InstallColorMap(IColorMap colorMap)
+		internal void InstallColorMap(IDataLut colorMap)
 		{
 			if (_colorMap == colorMap)
 				return;

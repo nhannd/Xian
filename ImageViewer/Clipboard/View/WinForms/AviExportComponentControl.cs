@@ -103,15 +103,18 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 
 		private void OnOk(object sender, EventArgs e)
 		{
-			SaveFileDialog dialog = new SaveFileDialog();
-			dialog.Filter = "Avi Files|*.avi;";
-			dialog.DefaultExt = "avi";
-			dialog.AddExtension = true;
-
-			if (DialogResult.OK == dialog.ShowDialog())
+			using (SaveFileDialog dialog = new SaveFileDialog())
 			{
-				_component.FilePath = dialog.FileName;
-				_component.Accept();
+				dialog.Filter = "Avi Files|*.avi;";
+				dialog.DefaultExt = "avi";
+				dialog.AddExtension = true;
+				dialog.RestoreDirectory = true;
+
+				if (DialogResult.OK == dialog.ShowDialog())
+				{
+					_component.FilePath = dialog.FileName;
+					_component.Accept();
+				}
 			}
 		}
 	}

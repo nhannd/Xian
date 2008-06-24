@@ -45,6 +45,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop = realImageSop;
 		}
 
+		//for unit testing
+		internal ImageSop RealImageSop
+		{
+			get { return _realImageSop; }
+		}
 
 		public override Series ParentSeries
 		{
@@ -701,15 +706,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop.GetTag(tag, out value, out tagExists);
 		}
 
-		//TODO: rename to IncrementReferenceCount/decrement
-		internal override void Open()
+		internal override void IncrementReferenceCount()
 		{
-			_realImageSop.Open();
+			_realImageSop.IncrementReferenceCount();
 		}
 
-		internal override void Close()
+		internal override void DecrementReferenceCount()
 		{
-			_realImageSop.Close();
+			_realImageSop.DecrementReferenceCount();
 		}
 
 		protected override void Dispose(bool disposing)

@@ -153,19 +153,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			image.Validate();
 
-			image.Open();
+			image.IncrementReferenceCount();
 
 			if (this.Sops.ContainsKey(image.SopInstanceUID))
 			{
-				image.Close();
+				image.DecrementReferenceCount();
 				return;
 			}
 
 			ImageSop cachedSop = SopCache.Add(image);
 			if (image != cachedSop) //there was already one in the cache.
 			{
-				image.Close();
-				cachedSop.Open();
+				image.DecrementReferenceCount();
+				cachedSop.IncrementReferenceCount();
 			}
 
 			image = new ImageSopProxy(cachedSop);
@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (_sops != null)
 				{
 					foreach (Sop sop in _sops.Values)
-						sop.Close();
+						sop.DecrementReferenceCount();
 
 					_sops.Clear();
 					_sops = null;

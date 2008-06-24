@@ -31,7 +31,6 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Imaging
@@ -52,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IColorMapManager Members
 
-		public IColorMap GetColorMap()
+		public IDataLut GetColorMap()
 		{
 			return _grayscaleImageGraphic.ColorMap;
 		}
@@ -90,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ComposableLutMemento).Name);
 
 			if (_grayscaleImageGraphic.ColorMap != lutMemento.OriginatingLut)
-				_grayscaleImageGraphic.InstallColorMap(lutMemento.OriginatingLut as IColorMap);
+				_grayscaleImageGraphic.InstallColorMap(lutMemento.OriginatingLut as IDataLut);
 
 			if (lutMemento.InnerMemento != null)
 				_grayscaleImageGraphic.ColorMap.SetMemento(lutMemento.InnerMemento);

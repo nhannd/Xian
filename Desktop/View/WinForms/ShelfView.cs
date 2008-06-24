@@ -157,7 +157,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public void SaveState()
 		{
-			if (String.IsNullOrEmpty(_shelf.Name) || 0 != (_shelf.DisplayHint & ShelfDisplayHint.ShowNearMouse))
+			if (String.IsNullOrEmpty(_shelf.Name) || ShelfDisplayHint.ShowNearMouse == (_shelf.DisplayHint & ShelfDisplayHint.ShowNearMouse))
 				return;
 
 			Content.RecordRestore();

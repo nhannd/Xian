@@ -42,10 +42,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	}
 
 	/// <summary>
-	/// A factory for <see cref="IColorMap"/>s.
+	/// A factory for color maps.
 	/// </summary>
 	/// <seealso cref="ColorMapFactoryExtensionPoint"/>
-	/// <seealso cref="IColorMap"/>
+	/// <seealso cref="ColorMap"/>
 	public interface IColorMapFactory
 	{
 		/// <summary>
@@ -62,8 +62,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		string Description { get; }
 
 		/// <summary>
-		/// Creates an <see cref="IColorMap"/>.
+		/// Creates a color map.
 		/// </summary>
-		IColorMap Create();
+		IDataLut Create();
 	}
 }

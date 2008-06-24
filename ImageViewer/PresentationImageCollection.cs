@@ -56,12 +56,10 @@ namespace ClearCanvas.ImageViewer
 			set { _currentComparer = value; }
 		}
 
-		//TODO: make base virtual
-
 		/// <summary>
 		/// Sorts the collection with the given comparer.
 		/// </summary>
-		public new void Sort(IComparer<IPresentationImage> comparer)
+		public override void Sort(IComparer<IPresentationImage> comparer)
 		{
 			Platform.CheckForNullReference(comparer, "comparer");
 			_currentComparer = comparer;

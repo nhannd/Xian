@@ -40,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		#region Cached Color Map
 
-		private class CachedColorMap : SimpleDataLut, IColorMap
+		private class CachedColorMap : SimpleDataLut
 		{
-			public CachedColorMap(IColorMap source)
+			public CachedColorMap(IDataLut source)
 				: base(source.MinInputValue, source.Data, 0, 0, source.GetKey(), source.GetDescription())
 			{
 			}
@@ -63,9 +63,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Cached Modality Lut
 
-		private class CachedModalityLutLinear : SimpleDataLut, IModalityLut
+		private class CachedModalityLutLinear : SimpleDataLut
 		{
-			public CachedModalityLutLinear(ModalityLutLinear source)
+			public CachedModalityLutLinear(IDataLut source)
 				: base(	source.MinInputValue, source.Data, 
 						source.MinOutputValue, source.MaxOutputValue, 
 						source.GetKey(), source.GetDescription())
@@ -75,18 +75,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		//TODO: unify with modality lut proxy after removing dead interfaces
 		#region ColorMap Proxy Class
 
 		[Cloneable(true)]
-		private class ColorMapProxy : ComposableLut, IColorMap
+		private class ColorMapProxy : ComposableLut, IDataLut
 		{
 			private readonly string _factoryName;
 			private int _minInputValue;
 			private int _maxInputValue;
 
 			[CloneIgnore]
-			private IColorMap _realLut;
+			private IDataLut _realLut;
 
 			//For cloning.
 			private ColorMapProxy()
@@ -99,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_realLut = null;
 			}
 
-			private IColorMap RealLut
+			private IDataLut RealLut
 			{
 				get
 				{
@@ -209,12 +208,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region Modality Lut Proxy
 
 		[Cloneable(true)]
-		private class ModalityLutProxy : ComposableLut, IModalityLut
+		private class ModalityLutProxy : ComposableLut
 		{
 			[CloneCopyReference]
-			private readonly IModalityLut _realLut;
+			private readonly IComposableLut _realLut;
 
-			public ModalityLutProxy(IModalityLut realLut)
+			public ModalityLutProxy(IComposableLut realLut)
 			{
 				_realLut = realLut;
 			}
@@ -273,9 +272,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private static readonly object _syncLock = new object();
 		private static readonly LutFactory _instance = new LutFactory();
 
-		private readonly List<IModalityLut> _modalityLUTs = new List<IModalityLut>();
+		private readonly List<IComposableLut> _modalityLUTs = new List<IComposableLut>();
 		private readonly List<IColorMapFactory> _colorMapFactories = CreateColorMapFactories();
-		private readonly List<IColorMap> _colorMaps = new List<IColorMap>();
+		private readonly List<IDataLut> _colorMaps = new List<IDataLut>();
 		
 		private int _referenceCount = 0;
 
@@ -304,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Properties
 
-		private List<IModalityLut> ModalityLuts
+		private List<IComposableLut> ModalityLuts
 		{
 			get { return _modalityLUTs; }
 		}
@@ -314,7 +313,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _colorMapFactories; }
 		}
 
-		private List<IColorMap> ColorMaps
+		private List<IDataLut> ColorMaps
 		{
 			get { return _colorMaps; }
 		}
@@ -342,14 +341,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Internal Methods
 
-		internal IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		internal IComposableLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 		{
 			ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 
 			lock (_syncLock)
 			{
-				IModalityLut existingLut =
-					this.ModalityLuts.Find(delegate(IModalityLut lut) { return lut.GetKey() == modalityLut.GetKey(); });
+				IComposableLut existingLut =
+					this.ModalityLuts.Find(delegate(IComposableLut lut) { return lut.GetKey() == modalityLut.GetKey(); });
 
 				// cache the lut (and generate it's data right away) for thread-safety
 				if (existingLut == null)
@@ -359,12 +358,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		internal IColorMap GetGrayscaleColorMap()
+		internal IDataLut GetGrayscaleColorMap()
 		{
 			return this.GetColorMap(GrayscaleColorMapFactory.FactoryName);
 		}
 		
-		internal IColorMap GetColorMap(string name)
+		internal IDataLut GetColorMap(string name)
 		{
 			if (this.ColorMapFactories.Find(delegate(IColorMapFactory factory) { return factory.Name == name; }) == null)
 				throw new ArgumentException(String.Format("No Color Map factory extension exists with the name {0}.", name));
@@ -376,18 +375,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Methods
 
-		private IColorMap GetRealColorMap(string factoryName, int minInputValue, int maxInputValue)
+		private IDataLut GetRealColorMap(string factoryName, int minInputValue, int maxInputValue)
 		{
 			IColorMapFactory factory =
 				this.ColorMapFactories.Find(delegate(IColorMapFactory testFactory) { return testFactory.Name == factoryName; });
 
-			IColorMap colorMap = factory.Create();
+			IDataLut colorMap = factory.Create();
 			colorMap.MinInputValue = minInputValue;
 			colorMap.MaxInputValue = maxInputValue;
 
 			lock (_syncLock)
 			{
-				IColorMap existingLut = this.ColorMaps.Find(delegate(IColorMap lut) { return lut.GetKey() == colorMap.GetKey(); });
+				IDataLut existingLut = this.ColorMaps.Find(delegate(IDataLut lut) { return lut.GetKey() == colorMap.GetKey(); });
 
 				// cache the lut (and generate it's data right away) for thread-safety
 				if (existingLut == null)

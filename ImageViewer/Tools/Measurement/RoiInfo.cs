@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private PixelData _pixelData;
 		private PixelAspectRatio _pixelAspectRatio;
 		private PixelSpacing _normalizedPixelSpacing;
-		private IModalityLut _modalityLut;
+		private IComposableLut _modalityLut;
 		private RectangleF _boundingBox;
 
 		protected RoiInfo()
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return _normalizedPixelSpacing; }
 		}
 
-		public IModalityLut ModalityLut
+		public IComposableLut ModalityLut
 		{
 			get { return _modalityLut; }
 		}

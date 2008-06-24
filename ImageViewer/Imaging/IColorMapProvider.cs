@@ -33,17 +33,16 @@
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A provider of an <see cref="IColorMap"/>, accessed and manipulated via the <see cref="ColorMapManager"/> property.
+	/// A provider of a color map, accessed and manipulated via the <see cref="ColorMapManager"/> property.
 	/// </summary>
 	/// <remarks>
 	/// <para>
-	/// The <see cref="ColorMapManager"/> property allows access to and manipulation of the installed <see cref="IColorMap"/>.
+	/// The <see cref="ColorMapManager"/> property allows access to and manipulation of the installed color map.
 	/// </para>
 	/// <para>
 	/// Implementors should not return null for the <see cref="ColorMapManager"/> property.
 	/// </para>
 	/// </remarks>
-	/// <seealso cref="IColorMap"/>
 	/// <seealso cref="IColorMapManager"/>
 	public interface IColorMapProvider : IDrawable
 	{

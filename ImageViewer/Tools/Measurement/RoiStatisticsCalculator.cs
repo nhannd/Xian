@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			(
 				RectangleF roiBoundingBox,
 				GrayscalePixelData pixelData, 
-				IModalityLut modalityLut,
+				IComposableLut modalityLut,
 				IsPointInRoiDelegate isPointInRoi
 			)
 		{
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				int mean,
 				RectangleF roiBoundingBox,
 				GrayscalePixelData pixelData, 
-				IModalityLut modalityLut,
+				IComposableLut modalityLut,
 				IsPointInRoiDelegate isPointInRoi
 			)
 		{

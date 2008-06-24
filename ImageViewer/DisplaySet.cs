@@ -357,11 +357,6 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IDisplaySet Clone()
 		{
-			// TODO: although there are unit tests for cloning, 
-			// we need to write extensive unit tests for cloning of 
-			// DisplaySets/PresentationImages/Graphics so we will know
-			// when one is broken.
-
 			try
 			{
 				DisplaySet clone = CloneBuilder.Clone(this) as DisplaySet;

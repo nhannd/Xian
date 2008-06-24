@@ -853,7 +853,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				);
 		}
 
-		private IColorMap CreateColorMap()
+		private IDataLut CreateColorMap()
 		{
 			bool tagExists;
 			int lutSize, firstMappedPixel, bitsPerLutEntry;
@@ -908,7 +908,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <remarks>
 		/// Frames should never be disposed by client code; they are disposed by
-		/// the parent <see cref="ImageSop"/> via the <see cref="Sop.Close"/> method.
+		/// the parent <see cref="ImageSop"/>.
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{

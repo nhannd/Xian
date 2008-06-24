@@ -33,20 +33,19 @@
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A provider of an <see cref="IModalityLut"/>.
+	/// A provider of a modality lut.
 	/// </summary>
 	/// <remarks>
 	/// Implementors should not return null from the <see cref="ModalityLut"/> property.
 	/// </remarks>
-	/// <seealso cref="IModalityLut"/>
 	public interface IModalityLutProvider
 	{
 		/// <summary>
-		/// Gets the <see cref="IModalityLut"/> owned by the provider.
+		/// Gets the modality lut owned by the provider.
 		/// </summary>
 		/// <remarks>
 		/// This property should never return null.
 		/// </remarks>
-		IModalityLut ModalityLut { get; }
+		IComposableLut ModalityLut { get; }
 	}
 }

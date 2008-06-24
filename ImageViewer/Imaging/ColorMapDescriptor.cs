@@ -34,9 +34,8 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Provides a description of an <see cref="IColorMap"/>.
+	/// Provides a description of a color map.
 	/// </summary>
-	/// <seealso cref="IColorMap"/>
 	/// <seealso cref="IColorMapFactory"/>
 	public sealed class ColorMapDescriptor
 	{

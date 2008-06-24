@@ -137,7 +137,7 @@
     <Compile Include="Imaging\Tests\MiscellaneousLutTests.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
-    <Compile Include="InteractiveGraphics\IControlPointGroupCursorTokenProvider.cs" />
+    <Compile Include="InteractiveGraphics\StretchCursorTokenStrategy.cs" />
     <Compile Include="InteractiveGraphics\IRoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
@@ -207,8 +207,6 @@
     <Compile Include="Imaging\IColorMapFactory.cs" />
     <Compile Include="Imaging\MinMaxPixelCalculatedLinearLut.cs" />
     <Compile Include="Imaging\IGeneratedDataLut.cs" />
-    <Compile Include="Imaging\IModalityLut.cs" />
-    <Compile Include="Imaging\IColorMap.cs" />
     <Compile Include="Imaging\IColorMapManager.cs" />
     <Compile Include="Imaging\IVoiLutLinear.cs" />
     <Compile Include="Imaging\IBasicVoiLutLinear.cs" />
@@ -255,7 +253,7 @@
     <Compile Include="Imaging\LutCollection.cs" />
     <Compile Include="Imaging\LutFactory.cs" />
     <Compile Include="Imaging\ColorMap.cs" />
-    <Compile Include="InteractiveGraphics\CompassCursorTokenProvider.cs" />
+    <Compile Include="InteractiveGraphics\CompassStretchCursorTokenStrategy.cs" />
     <Compile Include="InteractiveGraphics\CreateGraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicStateManager.cs" />
     <Compile Include="IDrawable.cs" />

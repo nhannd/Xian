@@ -50,8 +50,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private ControlPointGroup _controlPointGroup;
 		
 		[CloneCopyReference]
-		private CursorToken _stretchToken;
-		private IControlPointGroupCursorTokenProvider _stretchIndicatorCursorTokenProvider;
+		private CursorToken _stretchingToken;
+		private StretchCursorTokenStrategy _stretchCursorTokenStrategy;
 
 		/// <summary>
 		/// Cloning constructor.
@@ -99,22 +99,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Gets or sets the <see cref="CursorToken"/> that should be shown when stretching
 		/// this graphic.
 		/// </summary>
-		public CursorToken StretchToken
+		public CursorToken StretchingToken
 		{
-			get { return _stretchToken; }
-			set { _stretchToken = value; }
+			get { return _stretchingToken; }
+			set { _stretchingToken = value; }
 		}
 
-		//TODO: rename and use CursorTokenStrategy
-		
 		/// <summary>
 		/// Gets or sets the <see cref="CursorToken"/> that should be shown to indicate
 		/// that the operation performed at a given point will be a stretch operation.
 		/// </summary>
-		public IControlPointGroupCursorTokenProvider StretchIndicatorCursorTokenProvider
+		public StretchCursorTokenStrategy StretchCursorTokenStrategy
 		{
-			get { return _stretchIndicatorCursorTokenProvider; }
-			set { _stretchIndicatorCursorTokenProvider = value; }
+			get { return _stretchCursorTokenStrategy; }
+			set { _stretchCursorTokenStrategy = value; }
 		}
 
 		private bool Stretching
@@ -149,11 +147,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			if (_controlPointGroup.HitTest(point))
 			{
-				returnToken = this.StretchToken;
+				returnToken = this.StretchingToken;
 
-				if (!this.Stretching && _stretchIndicatorCursorTokenProvider != null)
+				if (!this.Stretching && _stretchCursorTokenStrategy != null)
 				{
-					CursorToken indicatorToken = _stretchIndicatorCursorTokenProvider.GetCursorToken(point);
+					CursorToken indicatorToken = _stretchCursorTokenStrategy.GetCursorToken(point);
 					if (indicatorToken != null)
 						returnToken = indicatorToken;
 				}
@@ -223,13 +221,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// Make sure we know when the control points change
 			_controlPointGroup.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
 
-			if (_stretchToken == null)
-				_stretchToken = new CursorToken(CursorToken.SystemCursors.Cross);
+			if (_stretchingToken == null)
+				_stretchingToken = new CursorToken(CursorToken.SystemCursors.Cross);
 
-			if (_stretchIndicatorCursorTokenProvider == null)
-				_stretchIndicatorCursorTokenProvider = new CompassCursorTokenProvider();
+			if (_stretchCursorTokenStrategy == null)
+				_stretchCursorTokenStrategy = new CompassStretchCursorTokenStrategy();
 
-			_stretchIndicatorCursorTokenProvider.SetControlPoints(_controlPointGroup);
+			_stretchCursorTokenStrategy.TargetGraphic = this;
 		}
 
 		[OnCloneComplete]

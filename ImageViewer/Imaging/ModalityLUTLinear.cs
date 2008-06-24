@@ -39,10 +39,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	/// <remarks>
 	/// For efficiency's sake, <see cref="ModalityLutLinear"/> is implemented as a <see cref="GeneratedDataLut"/>
-	/// although it could also be a purely calculated Lut.  See the comments for <see cref="IModalityLut"/>
+	/// although it could also be a purely calculated Lut.
 	/// for more information.
 	/// </remarks>
-	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut
+	internal sealed class ModalityLutLinear : GeneratedDataLut
 	{
 		#region Private Fields
 

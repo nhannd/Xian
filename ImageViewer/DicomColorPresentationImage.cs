@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(frame, "frame");
 
 			_frame = frame;
-			_frame.ParentImageSop.Open();
+			_frame.ParentImageSop.IncrementReferenceCount();
 		}
 
 		/// <summary>
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
-			_frame.ParentImageSop.Open();
+			_frame.ParentImageSop.IncrementReferenceCount();
 		}
 
 		/// <summary>
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing && _frame != null)
 			{
-				_frame.ParentImageSop.Close();
+				_frame.ParentImageSop.DecrementReferenceCount();
 				_frame = null;
 			}
 			

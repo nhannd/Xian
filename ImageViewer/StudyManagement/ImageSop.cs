@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					lock (_syncLock)
 					{
-						CheckDisposed();
+						CheckIsDisposed();
 						if (_frames == null)
 						{
 							_frames = new FrameCollection();
@@ -506,13 +506,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Called indirectly via the <see cref="Sop.Close"/> method when the object
-		/// is no longer needed.
+		/// Called indirectly via the <see cref="Sop.DecrementReferenceCount"/>
+		/// method when the object is no longer needed.
 		/// </summary>
 		/// <remarks>
 		/// You should not dispose of the <see cref="Sop"/> directly, but
-		/// rather use the <see cref="Sop.Open"/> and <see cref="Sop.Close"/> methods,
-		/// as these objects are often referenced in many places.
+		/// rather use the <see cref="Sop.IncrementReferenceCount"/> and 
+		/// <see cref="Sop.DecrementReferenceCount"/> methods, as these objects 
+		/// are often referenced in many places.
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{

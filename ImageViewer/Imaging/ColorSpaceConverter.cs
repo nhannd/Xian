@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="srcPixelData">The input pixel data to be converted.</param>
 		/// <param name="argbPixelData">The converted output pixel data in ARGB format.</param>
 		/// <remarks>
-		/// Only RGB and YBR variants can be converted.  For PALETTE COLOR, use <see cref="ToArgb(int,bool,byte[],byte[],IColorMap)"/>.
+		/// Only RGB and YBR variants can be converted.  For PALETTE COLOR, use <see cref="ToArgb(int,bool,byte[],byte[],IDataLut)"/>.
 		/// </remarks>
 		public static void ToArgb(
 			PhotometricInterpretation photometricInterpretation,
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			bool isSigned, 
 			byte[] srcPixelData, 
 			byte[] argbPixelData, 
-			IColorMap map)
+			IDataLut map)
 		{
 			int sizeInPixels = argbPixelData.Length/4;
 			int firstPixelMapped = map.MinInputValue;

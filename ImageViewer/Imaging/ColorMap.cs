@@ -41,8 +41,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// by an <see cref="ClearCanvas.ImageViewer.Rendering.IRenderer"/> to display the image.
 	/// </remarks>
 	/// <seealso cref="GeneratedDataLut"/>
-	/// <seealso cref="IColorMap"/>
-	public abstract class ColorMap : GeneratedDataLut, IColorMap
+	public abstract class ColorMap : GeneratedDataLut
 	{
 		/// <summary>
 		/// Default constructor.

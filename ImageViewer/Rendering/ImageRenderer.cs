@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			dstVisibleRectangle = Rectangle.Round(dstRectangle);
 		}
 
-		private static int[] ConstructFinalLut(IComposedLut outputLut, IColorMap colorMap, bool invert)
+		private static int[] ConstructFinalLut(IComposedLut outputLut, IDataLut colorMap, bool invert)
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();

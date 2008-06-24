@@ -37,8 +37,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <seealso cref="IComposableLut"/>
 	public interface IDataLut : IComposableLut
 	{
-		//TODO: put Length property back?
-
 		/// <summary>
 		/// Gets the lut data.
 		/// </summary>

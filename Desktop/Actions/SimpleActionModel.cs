@@ -141,7 +141,9 @@ namespace ClearCanvas.Desktop.Actions
             ClickAction action = new ClickAction(displayName, new ActionPath(string.Format("root/{0}", displayName), _resolver), ClickActionFlags.None, _resolver);
             action.Tooltip = tooltip;
             action.Label = displayName;
-            action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
+            if (icon != null)
+				action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
+
             if (clickHandler != null)
             {
                 action.SetClickHandler(clickHandler);

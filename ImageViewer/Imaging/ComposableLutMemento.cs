@@ -89,7 +89,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (this._innerMemento != null)
 				return this._originatingLut.Equals(other._originatingLut) && this._innerMemento.Equals(other._innerMemento);
 			
-			//TODO: was removing IEquatable a bad idea?
 			return this._originatingLut.Equals(other._originatingLut);
 		}
 

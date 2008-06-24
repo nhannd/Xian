@@ -108,8 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public abstract class Sop : IDisposable
 	{
 		private readonly object _syncLock = new object();
-		//TODO: change to reference count
-		private volatile int _openCount = 0;
+		private volatile int _referenceCount = 0;
 		private volatile bool _isDisposed = false;
 		private event EventHandler _disposing;
 
@@ -831,35 +830,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#endregion
 
 		/// <summary>
-		/// When a reference to a <see cref="Sop"/> is going to be held for an extended period
-		/// of time, call this method to ensure the object remains in a valid state.
+		/// Increments the reference count on this <see cref="Sop"/>.
 		/// </summary>
-		internal virtual void Open()
+		/// <remarks>
+		/// Internally, the <see cref="Sop"/> maintains a reference count and disposes
+		/// itself when the count goes to zero; you must call <see cref="DecrementReferenceCount"/>
+		/// exactly once for each call to <see cref="IncrementReferenceCount"/>.
+		/// </remarks>
+		internal virtual void IncrementReferenceCount()
 		{
 			lock(_syncLock)
 			{
-				CheckDisposed();
-				++_openCount;
+				CheckIsDisposed();
+				++_referenceCount;
 			}
 		}
 
 		/// <summary>
-		/// Closes a reference to this <see cref="Sop"/>.
+		/// Decrements the reference count on this <see cref="Sop"/>.
 		/// </summary>
 		/// <remarks>
-		/// Internally, the <see cref="Sop"/> maintains a reference count of the number
-		/// of calls to <see cref="Open"/>; you must call <see cref="Close"/> exactly once
-		/// for each call to <see cref="Open"/>.
+		/// Internally, the <see cref="Sop"/> maintains a reference count and disposes
+		/// itself when the count goes to zero; you must call <see cref="DecrementReferenceCount"/>
+		/// exactly once for each call to <see cref="IncrementReferenceCount"/>.
 		/// </remarks>
-		internal virtual void Close()
+		internal virtual void DecrementReferenceCount()
 		{
 			lock (_syncLock)
 			{
-				CheckDisposed();
-				if (_openCount > 0)
-					--_openCount;
+				CheckIsDisposed();
+				if (_referenceCount > 0)
+					--_referenceCount;
 
-				if (_openCount == 0)
+				if (_referenceCount == 0)
 					(this as IDisposable).Dispose();
 			}
 		}
@@ -872,11 +875,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			remove { _disposing += value; }
 		}
 
-		//TODO: CheckIsDisposed
 		/// <summary>
 		/// Checks if the <see cref="Sop"/> has already been disposed, and if so, throws an exception.
 		/// </summary>
-		internal void CheckDisposed()
+		internal void CheckIsDisposed()
 		{
 			lock (_syncLock)
 			{
@@ -886,13 +888,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Called indirectly via the <see cref="Close"/> method when the object
-		/// is no longer needed.
+		/// Called indirectly via the <see cref="DecrementReferenceCount"/>
+		/// method when the object is no longer needed.
 		/// </summary>
 		/// <remarks>
 		/// You should not dispose of the <see cref="Sop"/> directly, but
-		/// rather use the <see cref="Open"/> and <see cref="Close"/> methods,
-		/// as these objects are often referenced in many places.
+		/// rather use the <see cref="IncrementReferenceCount"/> and 
+		/// <see cref="DecrementReferenceCount"/> methods, as these objects 
+		/// are often referenced in many places.
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
@@ -905,8 +908,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <remarks>
 		/// You should not dispose of the <see cref="Sop"/> directly, but
-		/// rather use the <see cref="Open"/> and <see cref="Close"/> methods,
-		/// as these objects are often referenced in many places.
+		/// rather use the <see cref="IncrementReferenceCount"/> and 
+		/// <see cref="DecrementReferenceCount"/> methods, as these objects 
+		/// are often referenced in many places.
 		/// </remarks>
 		void IDisposable.Dispose()
 		{
@@ -916,8 +920,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					EventsHelper.Fire(_disposing, this, EventArgs.Empty);
 					Dispose(true);
-					//TODO: put this in finally
-					_isDisposed = true;
 					GC.SuppressFinalize(this);
 				}
 			}
@@ -925,6 +927,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				// shouldn't throw anything from inside Dispose()
 				Platform.Log(LogLevel.Error, e);
+			}
+			finally
+			{
+				_isDisposed = true;
 			}
 		}
 
