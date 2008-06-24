@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				return GetNodeText(item);
 			}
 
-			public override bool IsInitiallyExpanded(object item)
+			public override bool GetExpanded(object item)
 			{
 				if (item is PatientTreeItem)
 					return ((PatientTreeItem) item).IsIntiallyExpanded;
