@@ -538,60 +538,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the selected worklist(s)?.
-        /// </summary>
-        internal static string MessageConfirmDeleteWorklists {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteWorklists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this diagnostic service?.
-        /// </summary>
-        internal static string MessageDeleteSelectedDiagnosticService {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedDiagnosticService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this facility?.
-        /// </summary>
-        internal static string MessageDeleteSelectedFacility {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedFacility", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this location?.
-        /// </summary>
-        internal static string MessageDeleteSelectedLocation {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this modality?.
-        /// </summary>
-        internal static string MessageDeleteSelectedModality {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedModality", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this staff?.
-        /// </summary>
-        internal static string MessageDeleteSelectedStaff {
-            get {
-                return ResourceManager.GetString("MessageDeleteSelectedStaff", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This diagnostic ID already exist.  Your changes could not be saved..
         /// </summary>
         internal static string MessageDuplicateDiagnosticServiceID {

@@ -136,12 +136,8 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		[UpdateOperation]
 		public DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request)
 		{
-			CollectionUtils.ForEach(request.CannedTextRefs,
-				delegate(EntityRef canntedTextRef)
-					{
-						CannedText cannedText = this.PersistenceContext.Load<CannedText>(canntedTextRef, EntityLoadFlags.Proxy);
-						PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
-					});
+			CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
+			PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
 
 			return new DeleteCannedTextResponse();
 		}

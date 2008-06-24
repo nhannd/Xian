@@ -267,19 +267,30 @@ namespace ClearCanvas.Ris.Client
                 DialogBoxAction action = this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedItems, MessageBoxActions.YesNo);
                 if (action == DialogBoxAction.Yes)
                 {
+                	string failureMessage;
+					IList<TSummary> deletedItems;
 
-                    if(DeleteItems(_selectedItems))
+					if (DeleteItems(_selectedItems, out deletedItems, out failureMessage))
                     {
+						List<TSummary> notDeletedItems = new List<TSummary>(_selectedItems);
+
                         // remove from table
-                        CollectionUtils.ForEach(_selectedItems, delegate(TSummary item) { _summaryTable.Items.Remove(item); });
+						CollectionUtils.ForEach(deletedItems, 
+							delegate(TSummary item)
+								{
+									notDeletedItems.Remove(item);
+									_summaryTable.Items.Remove(item);
+								});
 
                         // clear selection
-                        this.SummarySelection = Selection.Empty;
+						this.SummarySelection = new Selection(notDeletedItems);
 						if (_supportModified)
 							this.Modified = true;
 					}
-                }
 
+					if (!string.IsNullOrEmpty(failureMessage))
+						this.Host.ShowMessageBox(failureMessage, MessageBoxActions.Ok);
+                }
             }
             catch (Exception e)
             {
@@ -351,8 +362,10 @@ namespace ClearCanvas.Ris.Client
         /// Called to handle the "delete" action, if supported.
         /// </summary>
         /// <param name="items"></param>
-        /// <returns>True if items were deleted, false otherwise.</returns>
-        protected abstract bool DeleteItems(IList<TSummary> items);
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
+		/// <returns>True if any items were deleted, false otherwise.</returns>
+		protected abstract bool DeleteItems(IList<TSummary> items, out IList<TSummary> deletedItems, out string failureMessage);
 
         /// <summary>
         /// Compares two items to see if they represent the same item.
@@ -379,7 +392,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="model"></param>
 		protected virtual void InitializeActionModel(CrudActionModel model)
 		{
-			model.Add.Enabled = false;
+			model.Add.Enabled = true;
 			model.Edit.Enabled = false;
 			model.Delete.Enabled = false;
 		}

@@ -276,24 +276,6 @@
   <data name="LabelSaveAll" xml:space="preserve">
     <value>Save All</value>
   </data>
-  <data name="MessageConfirmDeleteWorklists" xml:space="preserve">
-    <value>Are you sure you want to delete the selected worklist(s)?</value>
-  </data>
-  <data name="MessageDeleteSelectedDiagnosticService" xml:space="preserve">
-    <value>Are you sure you want to delete this diagnostic service?</value>
-  </data>
-  <data name="MessageDeleteSelectedFacility" xml:space="preserve">
-    <value>Are you sure you want to delete this facility?</value>
-  </data>
-  <data name="MessageDeleteSelectedLocation" xml:space="preserve">
-    <value>Are you sure you want to delete this location?</value>
-  </data>
-  <data name="MessageDeleteSelectedModality" xml:space="preserve">
-    <value>Are you sure you want to delete this modality?</value>
-  </data>
-  <data name="MessageDeleteSelectedStaff" xml:space="preserve">
-    <value>Are you sure you want to delete this staff?</value>
-  </data>
   <data name="MessageDuplicateDiagnosticServiceID" xml:space="preserve">
     <value>This diagnostic ID already exist.  Your changes could not be saved.</value>
   </data>

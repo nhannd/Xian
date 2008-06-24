@@ -182,18 +182,32 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<PatientNoteCategorySummary> items)
+		protected override bool DeleteItems(IList<PatientNoteCategorySummary> items, out IList<PatientNoteCategorySummary> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<PatientNoteCategorySummary>();
+
 			foreach (PatientNoteCategorySummary item in items)
 			{
-				Platform.GetService<INoteCategoryAdminService>(
-					delegate(INoteCategoryAdminService service)
-					{
-						service.DeleteNoteCategory(new DeleteNoteCategoryRequest(item.NoteCategoryRef));
-					});
+				try
+				{
+					Platform.GetService<INoteCategoryAdminService>(
+						delegate(INoteCategoryAdminService service)
+						{
+							service.DeleteNoteCategory(new DeleteNoteCategoryRequest(item.NoteCategoryRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
-			return true;
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>

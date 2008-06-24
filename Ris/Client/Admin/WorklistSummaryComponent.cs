@@ -158,18 +158,31 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        protected override bool DeleteItems(IList<WorklistAdminSummary> items)
+		protected override bool DeleteItems(IList<WorklistAdminSummary> items, out IList<WorklistAdminSummary> deletedItems, out string failureMessage)
         {
+			failureMessage = null;
+			deletedItems = new List<WorklistAdminSummary>();
+
 			foreach (WorklistAdminSummary item in items)
-            {
-                Platform.GetService<IWorklistAdminService>(
-                    delegate(IWorklistAdminService service)
-                    {
-						service.DeleteWorklist(new DeleteWorklistRequest(item.EntityRef));
-                    });
-            }
-            return true;
-        }
+			{
+				try
+				{
+					Platform.GetService<IWorklistAdminService>(
+						delegate(IWorklistAdminService service)
+						{
+							service.DeleteWorklist(new DeleteWorklistRequest(item.EntityRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
+			}
+
+			return deletedItems.Count > 0;
+		}
 
         protected override bool IsSameItem(WorklistAdminSummary x, WorklistAdminSummary y)
         {

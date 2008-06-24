@@ -135,18 +135,33 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<ProcedureTypeSummary> items)
+		protected override bool DeleteItems(IList<ProcedureTypeSummary> items, out IList<ProcedureTypeSummary> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<ProcedureTypeSummary>();
+
 			foreach (ProcedureTypeSummary item in items)
 			{
-				Platform.GetService<IProcedureTypeAdminService>(
-					delegate(IProcedureTypeAdminService service)
-					{
-						service.DeleteProcedureType(new DeleteProcedureTypeRequest(item.ProcedureTypeRef));
-					});
+				try
+				{
+					Platform.GetService<IProcedureTypeAdminService>(
+						delegate(IProcedureTypeAdminService service)
+						{
+							service.DeleteProcedureType(new DeleteProcedureTypeRequest(item.ProcedureTypeRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
-			return true;
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>

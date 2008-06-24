@@ -255,20 +255,33 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<EnumValueInfo> items)
+		protected override bool DeleteItems(IList<EnumValueInfo> items, out IList<EnumValueInfo> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<EnumValueInfo>();
+
 			foreach (EnumValueInfo item in items)
 			{
-				Platform.GetService<IEnumerationAdminService>(
-					delegate(IEnumerationAdminService service)
-					{
-						EnumValueInfo valueToDelete = item;
-						service.RemoveValue(new RemoveValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, valueToDelete));
-					});
+				try
+				{
+					Platform.GetService<IEnumerationAdminService>(
+						delegate(IEnumerationAdminService service)
+						{
+							service.RemoveValue(new RemoveValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, item));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
 
-			return true;
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>

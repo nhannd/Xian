@@ -251,18 +251,33 @@ namespace ClearCanvas.Ris.Client
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<StaffSummary> items)
+		protected override bool DeleteItems(IList<StaffSummary> items, out IList<StaffSummary> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<StaffSummary>();
+
 			foreach (StaffSummary item in items)
 			{
-				Platform.GetService<IStaffAdminService>(
-					delegate(IStaffAdminService service)
-					{
-						service.DeleteStaff(new DeleteStaffRequest(item.StaffRef));
-					});
+				try
+				{
+					Platform.GetService<IStaffAdminService>(
+						delegate(IStaffAdminService service)
+						{
+							service.DeleteStaff(new DeleteStaffRequest(item.StaffRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
-			return true;
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>

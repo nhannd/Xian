@@ -254,8 +254,10 @@ namespace ClearCanvas.Ris.Client
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<ExternalPractitionerContactPointDetail> items)
+		protected override bool DeleteItems(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> deletedItems, out string failureMessage)
 		{
 			// TODO implement delete action, which should de-activate the contact point (can't delete it)
 			throw new NotImplementedException();

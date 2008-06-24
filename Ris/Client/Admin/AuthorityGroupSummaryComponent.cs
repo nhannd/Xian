@@ -252,18 +252,33 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<AuthorityGroupSummary> items)
+		protected override bool DeleteItems(IList<AuthorityGroupSummary> items, out IList<AuthorityGroupSummary> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<AuthorityGroupSummary>();
+
 			foreach (AuthorityGroupSummary item in items)
 			{
-				Platform.GetService<IUserAdminService>(
-					delegate(IUserAdminService service)
-					{
-						service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.Name));
-					});
+				try
+				{
+					Platform.GetService<IUserAdminService>(
+						delegate(IUserAdminService service)
+						{
+							service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.Name));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
-			return true;
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>

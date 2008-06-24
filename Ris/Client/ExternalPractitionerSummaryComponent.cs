@@ -278,18 +278,33 @@ namespace ClearCanvas.Ris.Client
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<ExternalPractitionerSummary> items)
+		protected override bool DeleteItems(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<ExternalPractitionerSummary>();
+
 			foreach (ExternalPractitionerSummary item in items)
 			{
-				Platform.GetService<IExternalPractitionerAdminService>(
-					delegate(IExternalPractitionerAdminService service)
-					{
-						service.DeleteExternalPractitioner(new DeleteExternalPractitionerRequest(item.PractitionerRef));
-					});
+				try
+				{
+					Platform.GetService<IExternalPractitionerAdminService>(
+						delegate(IExternalPractitionerAdminService service)
+						{
+							service.DeleteExternalPractitioner(new DeleteExternalPractitionerRequest(item.PractitionerRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
-			return true;
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>

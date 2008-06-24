@@ -182,18 +182,33 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Called to handle the "delete" action, if supported.
 		/// </summary>
 		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<ModalitySummary> items)
+		protected override bool DeleteItems(IList<ModalitySummary> items, out IList<ModalitySummary> deletedItems, out string failureMessage)
 		{
+			failureMessage = null;
+			deletedItems = new List<ModalitySummary>();
+
 			foreach (ModalitySummary item in items)
 			{
-				Platform.GetService<IModalityAdminService>(
-					delegate(IModalityAdminService service)
-					{
-						service.DeleteModality(new DeleteModalityRequest(item.ModalityRef));
-					});
+				try
+				{
+					Platform.GetService<IModalityAdminService>(
+						delegate(IModalityAdminService service)
+						{
+							service.DeleteModality(new DeleteModalityRequest(item.ModalityRef));
+						});
+
+					deletedItems.Add(item);
+				}
+				catch (Exception e)
+				{
+					failureMessage = e.Message;
+				}
 			}
-			return true;
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>
