@@ -159,14 +159,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             
             int prevSelectedIndex = TypeDropDownList.SelectedIndex;
             TypeDropDownList.Items.Clear();
-            TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
+            TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
             foreach (WorkQueueTypeEnum t in workQueueTypes)
                 TypeDropDownList.Items.Add(new ListItem( t.Description, t.Lookup));
             TypeDropDownList.SelectedIndex = prevSelectedIndex;
 
             prevSelectedIndex = StatusDropDownList.SelectedIndex;
             StatusDropDownList.Items.Clear();
-            StatusDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
+            StatusDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
             foreach (WorkQueueStatusEnum s in workQueueStatuses)
                 StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusDropDownList.SelectedIndex = prevSelectedIndex;
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
             prevSelectedIndex = PriorityDropDownList.SelectedIndex;
             PriorityDropDownList.Items.Clear();
-            PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, ""));
+            PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)
                 PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
@@ -201,13 +201,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 parameters.Accession = AccessionNumber.Text;
                 parameters.StudyDescription = StudyDescription.Text;
 
-                if (TypeDropDownList.SelectedValue != "")
+                if (TypeDropDownList.SelectedValue != string.Empty)
                     parameters.Type = WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
 
-                if (StatusDropDownList.SelectedValue != "")
+                if (StatusDropDownList.SelectedValue != string.Empty)
                     parameters.Status = WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
 
-                if (PriorityDropDownList.SelectedValue!="")
+                if (PriorityDropDownList.SelectedValue!=string.Empty)
                     parameters.Priority = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
 
                 IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
@@ -264,8 +264,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             else 
             {
                 // the item no longer exist on the list... either it is deleted or filtered
-                MessageBox.Title = "";
-                MessageBox.BackgroundCSS = "";
+                MessageBox.Title = string.Empty;
+                MessageBox.BackgroundCSS = string.Empty;
                 MessageBox.Message = App_GlobalResources.SR.SelectedWorkQueueNoLongerOnTheList;
                 MessageBox.MessageType =
                     Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;

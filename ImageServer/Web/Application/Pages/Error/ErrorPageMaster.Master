@@ -1,0 +1,35 @@
+<%@ Master Language="C#" AutoEventWireup="true" Codebehind="ErrorPageMaster.master.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.ErrorPageMaster" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title></title>
+</head>
+<body class="ErrorBody">
+    <form runat="server">
+        <center>
+        <asp:Panel runat="server" CssClass="ErrorPanel">
+        <asp:Table ID="Table1" runat="server" HorizontalAlign="Center" CssClass="ErrorTable">
+            <asp:TableRow>
+                <asp:TableCell HorizontalAlign="left">
+                    <asp:Image ID="Image1" ImageUrl="~/Images/ImageServerLogo.png" runat="server" />
+                    <div class="ErrorMessage">
+                        <asp:ContentPlaceHolder ID="ErrorMessagePlaceHolder" runat="server" />
+                    </div>
+                    <div class="Description">
+                        <asp:ContentPlaceHolder ID="DescriptionPlaceHolder" runat="server" />
+                        
+                        <p>For further assistance, try the following links:</p>
+		                <ul>
+		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca">ClearCanvas.ca</a></li>
+		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca/dnn/Community/Forums/tabid/69/view/topics/forumid/11/Default.aspx">ImageServer Users Forum</a></li>
+		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca/dnn/Community/Forums/tabid/69/view/topics/forumid/12/Default.aspx">ImageServer Developers Forum</a></li>
+		                </ul>
+                    </div>
+                </asp:TableCell></asp:TableRow>
+        </asp:Table>
+        </asp:Panel>
+        </center>
+    </form>
+</body>
+</html>

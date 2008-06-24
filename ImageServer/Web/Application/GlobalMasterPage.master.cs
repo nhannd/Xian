@@ -48,12 +48,8 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
     {
         if (IsPostBack)
             return;
-        
-        Assembly asm = Assembly.GetExecutingAssembly();
-        //VersionLabel.Text = string.Format("Ver: {0}", asm.GetName().Version.ToString());
 
-        AddIE6PngBugFixCSS();
-       
+        AddIE6PngBugFixCSS(); 
     }
 
     private void AddIE6PngBugFixCSS()

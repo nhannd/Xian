@@ -141,10 +141,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
         protected void Clear()
         {
-            AETitleFilter.Text = "";
-            DescriptionFilter.Text = "";
+            AETitleFilter.Text = string.Empty;
+            DescriptionFilter.Text = string.Empty;
             StatusFilter.SelectedIndex = 0;
-            FolderFilter.Text = "";
+            FolderFilter.Text = string.Empty;
         }
 
         protected void LoadData()

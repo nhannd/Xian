@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
             if (lbl == null) return;
             if (dev.Dhcp)
-                lbl.Text = "";
+                lbl.Text = string.Empty;
             else
                 lbl.Text = dev.IpAddress;
         }

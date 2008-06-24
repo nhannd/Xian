@@ -1,0 +1,48 @@
+.ErrorBody {
+	background-color: #c5dee7;
+	margin: 50px;
+}
+
+.Description {
+	background-color: #eeeeee;
+	border: 1px solid #618FAD;
+	padding: 10px 10px 0px 10px;
+	margin-top: 10px;
+	font-size: 16px;
+	font-family: sans-serif;
+	color: #16425D;
+	text-align: left;
+}
+
+.ErrorMessage
+{
+    margin-top: 10px;
+    background: #ffffcc url(../images/Error/ErrorMessageBackground.png) repeat-x; 
+    border: solid 1px #ff0000; 
+    font-family: Sans-Serif; 
+    font-size: 18px; 
+    font-weight: bold; 
+    padding: 10px; 
+    color: #ff0000;
+    text-align: center;
+}
+
+.ErrorPanel
+{
+    background-color: #ffffff;
+    border: solid 2px #3D98D1;
+    padding: 10px;
+    width: 50%;
+}
+
+.ErrorTable
+{
+	background-color: #ffffff;
+}
+
+.ErrorLink
+{
+    color: #3D98D1;
+    text-decoration: none;
+    font-weight: bold;
+}

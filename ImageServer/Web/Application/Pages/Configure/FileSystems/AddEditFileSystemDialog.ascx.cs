@@ -220,8 +220,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             if (FileSystem == null)
             {
                 // Clear input
-                DescriptionTextBox.Text = "";
-                PathTextBox.Text = "";
+                DescriptionTextBox.Text = string.Empty;
+                PathTextBox.Text = string.Empty;
                 ReadCheckBox.Checked = true;
                 WriteCheckBox.Checked = true;
                 LowWatermarkTextBox.Text = "80.00";

@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             if (Partition == null)
             {
                 AETitleTextBox.Text = "SERVERAE";
-                DescriptionTextBox.Text = "";
+                DescriptionTextBox.Text = string.Empty;
                 PortTextBox.Text = "104";
                 PartitionFolderTextBox.Text = "SERVERAE";
                 EnabledCheckBox.Checked = true;

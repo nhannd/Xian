@@ -85,8 +85,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
         protected void Clear()
         {
-            AETitleFilter.Text = "";
-            IPAddressFilter.Text = "";
+            AETitleFilter.Text = string.Empty;
+            IPAddressFilter.Text = string.Empty;
             StatusFilter.SelectedIndex = 0;
             DHCPFilter.SelectedIndex = 0;
         }

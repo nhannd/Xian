@@ -247,10 +247,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Device == null)
             {
                 AETitleTextBox.Text = App_GlobalResources.SR.DeviceAE;
-                IPAddressTextBox.Text = "";
+                IPAddressTextBox.Text = string.Empty;
                 ActiveCheckBox.Checked = true;
                 DHCPCheckBox.Checked = false;
-                DescriptionTextBox.Text = "";
+                DescriptionTextBox.Text = string.Empty;
                 PortTextBox.Text = App_GlobalResources.SR.DeviceDefaultPort;
                 AllowStorageCheckBox.Checked = true;
                 AllowQueryCheckBox.Checked = true;

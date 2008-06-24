@@ -1,18 +1,22 @@
 <%@ Master Language="C#" AutoEventWireup="true" Inherits="GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Untitled Page</title>
+    <title>ClearCanvas ImageServer</title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
 </head>
-<body id="MasterBody" runat="server" class="GlobalBody">
+<body id="MasterBody" class="GlobalBody">
+
+
 
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
 
     <!-- this is special code that web service validation needs -->
     <div id="service" style="behavior: url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->
-    <form id="form1" runat="server" submitdisabledcontrols="true">
+    <form id="MasterForm" runat="server" submitdisabledcontrols="true">
+        <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/ErrorPage.aspx" />   
         <asp:ScriptManager ID="MainScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true" />
         <asp:Panel runat="server" CssClass="GlobalContentPanel">

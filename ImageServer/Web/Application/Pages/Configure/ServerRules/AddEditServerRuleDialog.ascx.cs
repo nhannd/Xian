@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 		#region Protected Methods
 		private static string GetJavascriptForSampleRule(ServerRuleTypeEnum typeEnum, ServerRuleApplyTimeEnum applyTimeEnum, object[] extensions )
 		{
-			string sampleList = "";
+			string sampleList = string.Empty;
 
 			foreach (ISampleRule extension in extensions)
 			{
@@ -407,8 +407,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 				EnabledCheckBox.Checked = true;
 				ExemptRuleCheckBox.Checked = false;
 
-				RuleNameTextBox.Text = "";
-				RuleXmlTextBox.Text = "";
+				RuleNameTextBox.Text = string.Empty;
+				RuleXmlTextBox.Text = string.Empty;
 
 				SampleRuleDropDownList.Visible = true;
 				SelectSampleRuleLabel.Visible = true;
@@ -429,7 +429,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
                                                         ServerRuleApplyTimeEnum.SopProcessed.Lookup));
 				
 				SampleRuleDropDownList.Items.Clear();
-				SampleRuleDropDownList.Items.Add(new ListItem("", ""));
+				SampleRuleDropDownList.Items.Add(new ListItem(string.Empty, string.Empty));
 				SampleRuleDropDownList.Items.Add(new ListItem("Multi-Tag AutoRoute", "MultiTagAutoRoute"));
 				SampleRuleDropDownList.Items.Add(new ListItem("Simple AutoRoute", "SimpleAutoRoute"));
 			}

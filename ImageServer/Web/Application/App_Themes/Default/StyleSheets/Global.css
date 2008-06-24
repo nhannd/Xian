@@ -121,44 +121,6 @@ Global.css - Defines the global styles for the entire web application relating
 .MainContentCornersFG{
   background:#3d98d1}
 
-.spiffy{display:block}
-.spiffy *{
-  display:block;
-  height:1px;
-  overflow:hidden;
-  font-size:.01em;
-  background:#8FC3E4}
-.spiffy1{
-  margin-left:3px;
-  margin-right:3px;
-  padding-left:1px;
-  padding-right:1px;
-  border-left:1px solid #60aad9;
-  border-right:1px solid #60aad9;
-  background:#7ab8df}
-.spiffy2{
-  margin-left:1px;
-  margin-right:1px;
-  padding-right:1px;
-  padding-left:1px;
-  border-left:1px solid #459cd2;
-  border-right:1px solid #459cd2;
-  background:#7fbae0}
-.spiffy3{
-  margin-left:1px;
-  margin-right:1px;
-  border-left:1px solid #7fbae0;
-  border-right:1px solid #7fbae0;}
-.spiffy4{
-  border-left:1px solid #60aad9;
-  border-right:1px solid #60aad9}
-.spiffy5{
-  border-left:1px solid #7ab8df;
-  border-right:1px solid #7ab8df}
-.spiffyfg{
-  background:#8FC3E4}
-
-
 .ToolbarButtonPanel
 {
     background: #B8D9EE url(../images/MainContent/ToolbarButtonPanelBackground.png) repeat-x;

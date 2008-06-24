@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 ViewState[ClientID + "_NewScheduledDateTime"] = value;
                 CalendarExtender.SelectedDate = value;
-                NewScheduleDate.Text = value == null ? "" : value.Value.ToString(CalendarExtender.Format);
+                NewScheduleDate.Text = value == null ? string.Empty : value.Value.ToString(CalendarExtender.Format);
                 if (value != null)
                 {
                     AddCustomTime(value.Value);

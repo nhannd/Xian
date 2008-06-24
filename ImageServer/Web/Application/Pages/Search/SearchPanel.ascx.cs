@@ -112,11 +112,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         /// </summary>
         public void Clear()
         {
-            PatientId.Text = "";
-            PatientName.Text = "";
-            AccessionNumber.Text = "";
-            StudyDescription.Text = "";
-            StudyDate.Text = "";
+            PatientId.Text = string.Empty;
+            PatientName.Text = string.Empty;
+            AccessionNumber.Text = string.Empty;
+            StudyDescription.Text = string.Empty;
+            StudyDate.Text = string.Empty;
         }
 
         public override void DataBind()

@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 			string inputString = Server.HtmlEncode(type);
 			if (String.IsNullOrEmpty(inputString))
-				inputString = "";
+				inputString = string.Empty;
 
 			SampleRuleExtensionPoint ep = new SampleRuleExtensionPoint();
 			object[] extensions = ep.CreateExtensions();

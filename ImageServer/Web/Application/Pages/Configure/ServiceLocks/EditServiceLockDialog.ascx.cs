@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                         FileSystem.Text = fs.Description;
                     }
                     else
-                        FileSystem.Text = "";
+                        FileSystem.Text = string.Empty;
 
                     CalendarExtender.SelectedDate = service.ScheduledTime;
                     

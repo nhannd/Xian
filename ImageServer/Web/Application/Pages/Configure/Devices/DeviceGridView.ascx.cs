@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -240,7 +240,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             else
             {
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             {
                 //img.Visible = false;
                 img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
-                img.AlternateText = "";
+                img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
         }
@@ -326,7 +326,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         {
             Device dev = e.Row.DataItem as Device;
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
-            lbl.Text = dev.Dhcp ? "" : dev.IpAddress;
+            lbl.Text = dev.Dhcp ? string.Empty : dev.IpAddress;
         }
 
         protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)

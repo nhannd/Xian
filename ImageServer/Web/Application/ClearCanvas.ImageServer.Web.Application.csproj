@@ -69,6 +69,13 @@
     </Compile>
     <Compile Include="App_Code\KeyedCollectionBase.cs" />
     <Compile Include="App_Code\EntityCollection.cs" />
+    <Compile Include="Controls\CheckJavascript.ascx.cs">
+      <DependentUpon>CheckJavascript.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\CheckJavascript.ascx.designer.cs">
+      <DependentUpon>CheckJavascript.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MessageBox.ascx.cs">
       <DependentUpon>MessageBox.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -300,6 +307,20 @@
     </Compile>
     <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\ErrorPage.aspx.cs">
+      <DependentUpon>ErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\ErrorPage.aspx.designer.cs">
+      <DependentUpon>ErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\ErrorPageMaster.Master.cs">
+      <DependentUpon>ErrorPageMaster.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\ErrorPageMaster.Master.designer.cs">
+      <DependentUpon>ErrorPageMaster.Master</DependentUpon>
     </Compile>
     <Compile Include="Pages\Help\About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
@@ -618,6 +639,7 @@
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveRight.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabHeaderBackgroundTop.png" />
+    <Content Include="App_Themes\Default\images\Error\ErrorMessageBackground.png" />
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
@@ -625,6 +647,7 @@
     <Content Include="App_Themes\Default\images\Indicators\RetrieveFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\StoreFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\usage.png" />
+    <Content Include="App_Themes\Default\images\MainContent\Loading.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottom.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottomLeftCorner.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottomRightCorner.png" />
@@ -635,10 +658,13 @@
     <Content Include="App_Themes\Default\images\Header\MenuEdge.png" />
     <Content Include="App_Themes\Default\images\MainContent\PatientSummaryBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentTitleBackground.png" />
+    <Content Include="App_Themes\Default\images\MainContent\SearchPanelBackground.png" />
+    <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
     <Content Include="App_Themes\Default\images\Watermark.gif" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />
+    <Content Include="App_Themes\Default\StyleSheets\Error.css" />
     <Content Include="App_Themes\Default\StyleSheets\Global.css" />
     <Content Include="App_Themes\Default\StyleSheets\Header.css" />
     <Content Include="App_Themes\Default\StyleSheets\Search.css" />
@@ -663,6 +689,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
+    <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\MessageBox.ascx" />
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
@@ -671,6 +698,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\ServerPartitionTabs.js" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
     <Content Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx" />
@@ -695,6 +723,7 @@
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
+    <Content Include="Pages\Error\ErrorPage.aspx" />
     <Content Include="Pages\Help\About.aspx" />
     <Content Include="Pages\Help\Documentation.aspx" />
     <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
@@ -734,6 +763,7 @@
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
+    <Content Include="Pages\Error\ErrorPageMaster.Master" />
     <None Include="Pages\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>

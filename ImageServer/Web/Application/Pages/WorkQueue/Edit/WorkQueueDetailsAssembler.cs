@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             
             AutoRouteWorkQueueDetails detail = new AutoRouteWorkQueueDetails();
             detail.GUID = item.GetKey();
-            detail.StudyInstanceUid = studyStorage==null? "":studyStorage.StudyInstanceUid;
+            detail.StudyInstanceUid = studyStorage==null? string.Empty:studyStorage.StudyInstanceUid;
 
             detail.DestinationAE = deviceAdaptor.Get(item.DeviceKey).AeTitle;
             detail.ScheduledDateTime = item.ScheduledTime;
@@ -186,8 +186,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             WebMoveStudyWorkQueueDetails detail = new WebMoveStudyWorkQueueDetails();
             detail.GUID = item.GetKey();
 
-            detail.DestinationAE = dest==null? "":dest.AeTitle;
-            detail.StudyInstanceUid = studyStorage==null? "":studyStorage.StudyInstanceUid;
+            detail.DestinationAE = dest==null? string.Empty:dest.AeTitle;
+            detail.StudyInstanceUid = studyStorage==null? string.Empty:studyStorage.StudyInstanceUid;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
             detail.FailureCount = item.FailureCount;
