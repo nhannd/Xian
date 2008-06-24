@@ -204,7 +204,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             return new UpdateUserResponse(assembler.GetUserSummary(user));
         }
 
-        [UpdateOperation]
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
+		public DeleteUserResponse DeleteUser(DeleteUserRequest request)
+		{
+			try
+			{
+				IUserBroker broker = PersistenceContext.GetBroker<IUserBroker>();
+				User user = FindUserByName(request.UserName);
+				broker.Delete(user);
+				PersistenceContext.SynchState();
+				return new DeleteUserResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(User).Name));
+			}
+		}
+
+    	[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.User)]
 		public ResetUserPasswordResponse ResetUserPassword(ResetUserPasswordRequest request)
         {
@@ -246,6 +264,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         }
 
 		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
+		public DeleteAuthorityGroupResponse DeleteAuthorityGroup(DeleteAuthorityGroupRequest request)
+		{
+			try
+			{
+				IAuthorityGroupBroker broker = PersistenceContext.GetBroker<IAuthorityGroupBroker>();
+				AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupName);
+				broker.Delete(authorityGroup);
+				PersistenceContext.SynchState();
+				return new DeleteAuthorityGroupResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(AuthorityGroup).Name));
+			}
+		}
+
+    	[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
 		public ImportAuthorityTokensResponse ImportAuthorityTokens(ImportAuthorityTokensRequest request)
 		{

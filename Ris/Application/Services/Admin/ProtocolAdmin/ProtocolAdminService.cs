@@ -139,9 +139,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 
         [UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProtocolGroups)]
-		public DeleteProtocolGroupResonse DeleteProtocolGroup(DeleteProtocolGroupRequest request)
+		public DeleteProtocolGroupResponse DeleteProtocolGroup(DeleteProtocolGroupRequest request)
         {
-            throw new System.NotImplementedException();
+			try
+			{
+				IProtocolGroupBroker broker = PersistenceContext.GetBroker<IProtocolGroupBroker>();
+				ProtocolGroup item = broker.Load(request.ProtocolGroupRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteProtocolGroupResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(ProtocolGroup).Name));
+			}
         }
 
         #endregion

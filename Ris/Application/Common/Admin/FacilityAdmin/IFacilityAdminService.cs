@@ -67,7 +67,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request);
 
-        /// <summary>
+		/// <summary>
+		/// Delete a facility.
+		/// </summary>
+		/// <param name="request"><see cref="DeleteFacilityRequest"/></param>
+		/// <returns><see cref="DeleteFacilityResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteFacilityResponse DeleteFacility(DeleteFacilityRequest request);
+		
+		/// <summary>
         /// Load details for a specified facility
         /// </summary>
         /// <param name="request"><see cref="LoadFacilityForEditRequest"/></param>

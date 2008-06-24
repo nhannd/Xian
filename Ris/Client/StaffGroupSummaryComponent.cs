@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -143,8 +142,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
-			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.StaffGroup);
+			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.StaffGroup);
+			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.StaffGroup);
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -213,8 +218,16 @@ namespace ClearCanvas.Ris.Client
         /// <returns>True if items were deleted, false otherwise.</returns>
         protected override bool DeleteItems(IList<StaffGroupSummary> items)
         {
-            throw new NotImplementedException();
-        }
+			foreach (StaffGroupSummary item in items)
+			{
+				Platform.GetService<IStaffGroupAdminService>(
+					delegate(IStaffGroupAdminService service)
+					{
+						service.DeleteStaffGroup(new DeleteStaffGroupRequest(item.StaffGroupRef));
+					});
+			}
+			return true;
+		}
 
         /// <summary>
         /// Compares two items to see if they represent the same item.

@@ -163,6 +163,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             return new UpdateStaffGroupResponse(assembler.CreateSummary(item));
         }
 
-        #endregion
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.StaffGroup)]
+		public DeleteStaffGroupResponse DeleteStaffGroup(DeleteStaffGroupRequest request)
+		{
+			try
+			{
+				IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
+				StaffGroup item = broker.Load(request.StaffGroupRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteStaffGroupResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(StaffGroup).Name));
+			}
+		}
+
+    	#endregion
     }
 }

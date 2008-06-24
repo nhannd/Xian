@@ -147,6 +147,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 			return new UpdateDiagnosticServiceResponse(assembler.CreateSummary(item));
 		}
 
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.DiagnosticService)]
+		public DeleteDiagnosticServiceResponse DeleteDiagnosticService(DeleteDiagnosticServiceRequest request)
+		{
+			try
+			{
+				IDiagnosticServiceBroker broker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
+				DiagnosticService item = broker.Load(request.DiagnosticServiceRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteDiagnosticServiceResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(DiagnosticService).Name));
+			}
+		}
+
 		#endregion
 	}
 }

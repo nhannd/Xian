@@ -89,13 +89,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
                     return group.Name;
                 });
 
-            AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
-            where.Name.In(authGroupNames);
-            IList<AuthorityGroup> authGroups = context.GetBroker<IAuthorityGroupBroker>().Find(where);
-
-
             user.AuthorityGroups.Clear();
-            user.AuthorityGroups.AddAll(authGroups);
+
+			if (authGroupNames.Count > 0)
+			{
+				AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
+				where.Name.In(authGroupNames);
+				IList<AuthorityGroup> authGroups = context.GetBroker<IAuthorityGroupBroker>().Find(where);
+				user.AuthorityGroups.AddAll(authGroups);
+			}
         }
     }
 }

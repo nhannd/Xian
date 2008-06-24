@@ -201,10 +201,17 @@ namespace ClearCanvas.Ris.Client
 				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Create));
 			model.Edit.SetPermissibility(
 				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
+			model.Delete.SetPermissibility(
+				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
 				SR.TitleMergePractitioner, Merge);
 			_mergePractitionerAction.Enabled = false;
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -274,7 +281,15 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<ExternalPractitionerSummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (ExternalPractitionerSummary item in items)
+			{
+				Platform.GetService<IExternalPractitionerAdminService>(
+					delegate(IExternalPractitionerAdminService service)
+					{
+						service.DeleteExternalPractitioner(new DeleteExternalPractitionerRequest(item.PractitionerRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

@@ -111,8 +111,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.PatientNoteCategory);
 		}
 
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
+		
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
@@ -179,7 +185,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<PatientNoteCategorySummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (PatientNoteCategorySummary item in items)
+			{
+				Platform.GetService<INoteCategoryAdminService>(
+					delegate(INoteCategoryAdminService service)
+					{
+						service.DeleteNoteCategory(new DeleteNoteCategoryRequest(item.NoteCategoryRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

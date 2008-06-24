@@ -117,6 +117,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
         {
             Type enumClass = GetEnumClass(request.AssemblyQualifiedClassName);
 
+			// Client side should enforce this.  But just in case it does not.
+			if (IsSoftEnum(enumClass) == false)
+				throw new RequestValidationException(SR.ExceptionUnableToDeleteHardEnumeration);
+
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
             broker.RemoveValue(enumClass, request.Value.Code);
 

@@ -102,6 +102,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			return new UpdateProcedureTypeResponse(assembler.CreateSummary(item));
 		}
 
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProcedureType)]
+		public DeleteProcedureTypeResponse DeleteProcedureType(DeleteProcedureTypeRequest request)
+		{
+			try
+			{
+				IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
+				ProcedureType item = broker.Load(request.ProcedureTypeRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteProcedureTypeResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(ProcedureType).Name));
+			}
+		}
+
 		#endregion
 	}
 }

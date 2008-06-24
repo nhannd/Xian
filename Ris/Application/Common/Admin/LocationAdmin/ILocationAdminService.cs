@@ -68,7 +68,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateLocationResponse UpdateLocation(UpdateLocationRequest request);
 
-        /// <summary>
+		/// <summary>
+		/// Delete a location.
+		/// </summary>
+		/// <param name="request"><see cref="DeleteLocationRequest"/></param>
+		/// <returns><see cref="DeleteLocationResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteLocationResponse DeleteLocation(DeleteLocationRequest request);
+
+		/// <summary>
         /// Loads all form data needed to edit a location
         /// </summary>
         /// <param name="request"><see cref="GetLocationEditFormDataRequest"/></param>

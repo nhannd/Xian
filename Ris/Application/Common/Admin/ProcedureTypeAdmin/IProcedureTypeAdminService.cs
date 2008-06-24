@@ -43,5 +43,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin
 		[FaultContract(typeof(RequestValidationException))]
 		UpdateProcedureTypeResponse UpdateProcedureType(UpdateProcedureTypeRequest request);
 
+		/// <summary>
+		/// Deletes an item.
+		/// </summary>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteProcedureTypeResponse DeleteProcedureType(DeleteProcedureTypeRequest request);
 	}
 }

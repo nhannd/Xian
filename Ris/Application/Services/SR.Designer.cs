@@ -97,6 +97,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to delete {0}.  The most likely cause is that something still references it..
+        /// </summary>
+        internal static string ExceptionFailedToDelete {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A family name must be provided.
         /// </summary>
         internal static string ExceptionFamilyNameMissing {
@@ -264,6 +273,15 @@ namespace ClearCanvas.Ris.Application.Services {
         internal static string ExceptionSupervisorRequired {
             get {
                 return ResourceManager.GetString("ExceptionSupervisorRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hard enumeration cannot be deleted..
+        /// </summary>
+        internal static string ExceptionUnableToDeleteHardEnumeration {
+            get {
+                return ResourceManager.GetString("ExceptionUnableToDeleteHardEnumeration", resourceCulture);
             }
         }
         

@@ -122,6 +122,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             return new UpdateExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(prac, PersistenceContext));
         }
 
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
+		public DeleteExternalPractitionerResponse DeleteExternalPractitioner(DeleteExternalPractitionerRequest request)
+		{
+			try
+			{
+				IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
+				ExternalPractitioner practitioner = broker.Load(request.PractitionerRef, EntityLoadFlags.Proxy);
+				broker.Delete(practitioner);
+				PersistenceContext.SynchState();
+				return new DeleteExternalPractitionerResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(ExternalPractitioner).Name));
+			}
+		}
+
         [ReadOperation]
 		public TextQueryResponse<ExternalPractitionerSummary> TextQuery(TextQueryRequest request)
         {
@@ -175,7 +194,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
         }
 
 		[UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ExternalPractitioner)]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Merge)]
 		public MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request)
 		{
@@ -210,18 +228,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
 			ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 			return new MergeDuplicatePractitionerResponse(assembler.CreateExternalPractitionerSummary(original, this.PersistenceContext));
-		}
-
-		/// <summary>
-		/// Delete duplicate external practitioners.
-		/// </summary>
-		[UpdateOperation]
-		public DeletePractitionerResponse DeletePractitioner(DeletePractitionerRequest request)
-		{
-			IExternalPractitionerBroker broker = PersistenceContext.GetBroker<IExternalPractitionerBroker>();
-			ExternalPractitioner practitioner = broker.Load(request.Practitioner.PractitionerRef, EntityLoadFlags.Proxy);
-			broker.Delete(practitioner);
-			return new DeletePractitionerResponse();
 		}
 
 		[UpdateOperation]

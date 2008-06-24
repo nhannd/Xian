@@ -178,6 +178,12 @@ namespace ClearCanvas.Ris.Client
 
 			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
 			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
+			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -248,7 +254,15 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<StaffSummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (StaffSummary item in items)
+			{
+				Platform.GetService<IStaffAdminService>(
+					delegate(IStaffAdminService service)
+					{
+						service.DeleteStaff(new DeleteStaffRequest(item.StaffRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

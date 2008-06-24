@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
     public interface IProcedureTypeGroupAdminService
     {
         /// <summary>
-        /// 
+		/// Loads details of specified item for editing.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
             GetProcedureTypeGroupEditFormDataRequest request);
 
         /// <summary>
-        /// 
+		/// Loads details of specified item for editing.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
 			GetProcedureTypeGroupSummaryFormDataRequest request);
 
         /// <summary>
-        /// 
+		/// Summary list of all items.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
             ListProcedureTypeGroupsRequest request);
 
         /// <summary>
-        /// 
+		/// Loads all form data needed to edit an item.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
             LoadProcedureTypeGroupForEditRequest request);
 
         /// <summary>
-        /// 
+		/// Adds a new item.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -87,14 +87,25 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
             AddProcedureTypeGroupRequest request);
 
         /// <summary>
-        /// 
+		/// Updates an item.
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        [FaultContract(typeof (RequestValidationException))]
-        [FaultContract(typeof (ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         UpdateProcedureTypeGroupResponse UpdateProcedureTypeGroup(
             UpdateProcedureTypeGroupRequest request);
-    }
+
+		/// <summary>
+		/// Deletes an item.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		DeleteProcedureTypeGroupResponse DeleteProcedureTypeGroup(
+			DeleteProcedureTypeGroupRequest request);
+	}
 }

@@ -77,6 +77,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateStaffResponse UpdateStaff(UpdateStaffRequest request);
 
+		/// <summary>
+		/// Delete a staff.
+		/// </summary>
+		/// <param name="request"><see cref="DeleteStaffRequest"/></param>
+		/// <returns><see cref="DeleteStaffResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteStaffResponse DeleteStaff(DeleteStaffRequest request);
+
         /// <summary>
         /// Load details for a specified staff
         /// </summary>

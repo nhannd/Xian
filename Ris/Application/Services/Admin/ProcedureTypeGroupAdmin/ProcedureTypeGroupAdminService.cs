@@ -159,6 +159,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
                 assembler.GetProcedureTypeGroupSummary(group, this.PersistenceContext));
         }
 
-        #endregion
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.ProcedureTypeGroup)]
+		public DeleteProcedureTypeGroupResponse DeleteProcedureTypeGroup(DeleteProcedureTypeGroupRequest request)
+		{
+			try
+			{
+				IProcedureTypeGroupBroker broker = PersistenceContext.GetBroker<IProcedureTypeGroupBroker>();
+				ProcedureTypeGroup item = broker.Load(request.ProcedureTypeGroupRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteProcedureTypeGroupResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(ProcedureTypeGroup).Name));
+			}
+		}
+
+		#endregion
     }
 }

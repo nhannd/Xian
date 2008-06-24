@@ -125,7 +125,28 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
             return new UpdateNoteCategoryResponse(assembler.CreateNoteCategorySummary(noteCategory, this.PersistenceContext));
         }
 
-        #endregion
+		/// <summary>
+		/// Delete the specified NoteCategory
+		/// </summary>
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.PatientNoteCategory)]
+		public DeleteNoteCategoryResponse DeleteNoteCategory(DeleteNoteCategoryRequest request)
+		{
+			try
+			{
+				IPatientNoteCategoryBroker broker = PersistenceContext.GetBroker<IPatientNoteCategoryBroker>();
+				PatientNoteCategory item = broker.Load(request.NoteCategoryRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteNoteCategoryResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(PatientNoteCategory).Name));
+			}
+		}
+
+		#endregion
 
     }
 }

@@ -65,8 +65,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
 		}
 
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
+		
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
@@ -132,8 +138,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<ProcedureTypeSummary> items)
 		{
-			// TODO: implement this method if delete is supported, otherwise don't 
-			throw new NotImplementedException();
+			foreach (ProcedureTypeSummary item in items)
+			{
+				Platform.GetService<IProcedureTypeAdminService>(
+					delegate(IProcedureTypeAdminService service)
+					{
+						service.DeleteProcedureType(new DeleteProcedureTypeRequest(item.ProcedureTypeRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

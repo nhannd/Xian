@@ -160,12 +160,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
         protected override bool DeleteItems(IList<WorklistAdminSummary> items)
         {
-            foreach (WorklistAdminSummary worklist in items)
+			foreach (WorklistAdminSummary item in items)
             {
                 Platform.GetService<IWorklistAdminService>(
                     delegate(IWorklistAdminService service)
                     {
-                        service.DeleteWorklist(new DeleteWorklistRequest(worklist.EntityRef));
+						service.DeleteWorklist(new DeleteWorklistRequest(item.EntityRef));
                     });
             }
             return true;

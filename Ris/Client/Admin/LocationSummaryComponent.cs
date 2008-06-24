@@ -115,6 +115,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Location);
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -183,7 +189,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<LocationSummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (LocationSummary item in items)
+			{
+				Platform.GetService<ILocationAdminService>(
+					delegate(ILocationAdminService service)
+					{
+						service.DeleteLocation(new DeleteLocationRequest(item.LocationRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

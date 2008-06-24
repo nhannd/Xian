@@ -131,6 +131,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
 		}
 
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
+		public DeleteStaffResponse DeleteStaff(DeleteStaffRequest request)
+		{
+			try
+			{
+				IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
+				Staff item = broker.Load(request.StaffRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteStaffResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(Staff).Name));
+			}
+		}
+
 		[ReadOperation]
 		public TextQueryResponse<StaffSummary> TextQuery(StaffTextQueryRequest request)
 		{

@@ -31,20 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Tables;
-
-using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -141,6 +134,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -209,7 +208,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<UserSummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (UserSummary item in items)
+			{
+				Platform.GetService<IUserAdminService>(
+					delegate(IUserAdminService service)
+					{
+						service.DeleteUser(new DeleteUserRequest(item.UserName));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

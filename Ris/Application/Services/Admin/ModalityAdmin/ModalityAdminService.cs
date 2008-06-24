@@ -105,6 +105,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             return new UpdateModalityResponse(assembler.CreateModalitySummary(modality));
         }
 
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Modality)]
+		public DeleteModalityResponse DeleteModality(DeleteModalityRequest request)
+		{
+			try
+			{
+				IModalityBroker broker = PersistenceContext.GetBroker<IModalityBroker>();
+				Modality item = broker.Load(request.ModalityRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteModalityResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(Modality).Name));
+			}
+		}
+
         #endregion
 
     }

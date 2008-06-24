@@ -201,4 +201,10 @@
   <data name="ExceptionIdenticalCannedTextExist" xml:space="preserve">
     <value>An identical canned text already exist for {0}</value>
   </data>
+  <data name="ExceptionFailedToDelete" xml:space="preserve">
+    <value>Failed to delete {0}.  The most likely cause is that something still references it.</value>
+  </data>
+  <data name="ExceptionUnableToDeleteHardEnumeration" xml:space="preserve">
+    <value>Hard enumeration cannot be deleted.</value>
+  </data>
 </root>

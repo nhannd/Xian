@@ -111,6 +111,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
 			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
+			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
+		}
+
+		protected override bool SupportsDelete
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -179,7 +185,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<FacilitySummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (FacilitySummary item in items)
+			{
+				Platform.GetService<IFacilityAdminService>(
+					delegate(IFacilityAdminService service)
+					{
+						service.DeleteFacility(new DeleteFacilityRequest(item.FacilityRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

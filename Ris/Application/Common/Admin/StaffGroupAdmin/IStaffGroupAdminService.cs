@@ -82,5 +82,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateStaffGroupResponse UpdateStaffGroup(UpdateStaffGroupRequest request);
 
-    }
+		/// <summary>
+		/// Deletes a staff group.
+		/// </summary>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteStaffGroupResponse DeleteStaffGroup(DeleteStaffGroupRequest request);
+	}
 }

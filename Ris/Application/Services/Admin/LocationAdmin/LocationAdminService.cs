@@ -130,6 +130,27 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
             return new UpdateLocationResponse(assembler.CreateLocationSummary(location));
         }
 
-        #endregion
+		/// <summary>
+		/// Delete the specified location
+		/// </summary>
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Location)]
+		public DeleteLocationResponse DeleteLocation(DeleteLocationRequest request)
+		{
+			try
+			{
+				ILocationBroker broker = PersistenceContext.GetBroker<ILocationBroker>();
+				Location item = broker.Load(request.LocationRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteLocationResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(Location).Name));
+			}
+		}
+
+		#endregion
     }
 }

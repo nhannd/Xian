@@ -51,5 +51,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 		[FaultContract(typeof(RequestValidationException))]
 		UpdateDiagnosticServiceResponse UpdateDiagnosticService(UpdateDiagnosticServiceRequest request);
 
+		/// <summary>
+		/// Deletes an item.
+		/// </summary>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteDiagnosticServiceResponse DeleteDiagnosticService(DeleteDiagnosticServiceRequest request);
 	}
 }

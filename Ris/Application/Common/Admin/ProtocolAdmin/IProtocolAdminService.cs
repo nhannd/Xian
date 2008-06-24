@@ -94,7 +94,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        AddProtocolGroupResponse AddProtocolGroup(AddProtocolGroupRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		AddProtocolGroupResponse AddProtocolGroup(AddProtocolGroupRequest request);
 
         /// <summary>
         /// Updates an existing protocol group
@@ -102,14 +103,18 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        UpdateProtocolGroupResponse UpdateProtocolGroup(UpdateProtocolGroupRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		UpdateProtocolGroupResponse UpdateProtocolGroup(UpdateProtocolGroupRequest request);
 
         /// <summary>
-        /// Marks a protocol group as deleted
+        /// Deletes an existing protocol
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        DeleteProtocolGroupResonse DeleteProtocolGroup(DeleteProtocolGroupRequest request);
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		DeleteProtocolGroupResponse DeleteProtocolGroup(DeleteProtocolGroupRequest request);
     }
 }

@@ -68,7 +68,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateModalityResponse UpdateModality(UpdateModalityRequest request);
 
-        /// <summary>
+		/// <summary>
+		/// Delete a modality.
+		/// </summary>
+		/// <param name="request"><see cref="DeleteModalityRequest"/></param>
+		/// <returns><see cref="DeleteModalityResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteModalityResponse DeleteModality(DeleteModalityRequest request);
+		
+		/// <summary>
         /// Load details for a specified modality
         /// </summary>
         /// <param name="request"><see cref="LoadModalityForEditRequest"/></param>

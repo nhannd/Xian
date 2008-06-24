@@ -112,7 +112,7 @@ namespace ClearCanvas.Ris.Client
 
 						service.MergeDuplicatePractitioner(request);
 
-						service.DeletePractitioner(new DeletePractitionerRequest(this.SelectedDuplicateSummary));
+						service.DeleteExternalPractitioner(new DeleteExternalPractitionerRequest(this.SelectedDuplicateSummary.PractitionerRef));
 					});
 
 				base.Accept();

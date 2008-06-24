@@ -112,6 +112,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 		}
 
 		#region Presentation Model
@@ -183,6 +184,11 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		#endregion
 
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
+
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
@@ -249,7 +255,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<AuthorityGroupSummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (AuthorityGroupSummary item in items)
+			{
+				Platform.GetService<IUserAdminService>(
+					delegate(IUserAdminService service)
+					{
+						service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.Name));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

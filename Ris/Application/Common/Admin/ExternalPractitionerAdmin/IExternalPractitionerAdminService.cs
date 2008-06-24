@@ -69,6 +69,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request);
 
+		/// <summary>
+		/// Delete duplicate external practitioners.
+		/// </summary>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteExternalPractitionerResponse DeleteExternalPractitioner(DeleteExternalPractitionerRequest request);
+
         /// <summary>
         /// Load details for a specified practitioner for editing.
         /// </summary>
@@ -86,12 +94,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 		/// </summary>
 		[OperationContract]
 		MergeDuplicatePractitionerResponse MergeDuplicatePractitioner(MergeDuplicatePractitionerRequest request);
-
-		/// <summary>
-		/// Delete duplicate external practitioners.
-		/// </summary>
-		[OperationContract]
-		DeletePractitionerResponse DeletePractitioner(DeletePractitionerRequest request);
 
 		/// <summary>
 		/// Merge duplicate external practitioners contact points.

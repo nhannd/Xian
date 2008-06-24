@@ -106,7 +106,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             return new UpdateFacilityResponse(assembler.CreateFacilitySummary(facility));
         }
 
-        #endregion
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Facility)]
+		public DeleteFacilityResponse DeleteFacility(DeleteFacilityRequest request)
+		{
+			try
+			{
+				IFacilityBroker broker = PersistenceContext.GetBroker<IFacilityBroker>();
+				Facility item = broker.Load(request.FacilityRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteFacilityResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(Facility).Name));
+			}
+		}
+
+		#endregion
 
     }
 }

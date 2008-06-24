@@ -69,6 +69,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateUserResponse UpdateUser(UpdateUserRequest request);
 
+		/// <summary>
+		/// Deletes a user account.
+		/// </summary>
+		/// <param name="request"><see cref="DeleteUserRequest"/></param>
+		/// <returns><see cref="DeleteUserResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteUserResponse DeleteUser(DeleteUserRequest request);
+
         /// <summary>
         /// Resets a user's password to the temporary password.
         /// </summary>
@@ -113,6 +123,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         [FaultContract(typeof(ConcurrentModificationException))]
         [FaultContract(typeof(RequestValidationException))]
         UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request);
+
+		/// <summary>
+		/// Deletes an authority group
+		/// </summary>
+		/// <param name="request"><see cref="DeleteAuthorityGroupRequest"/></param>
+		/// <returns><see cref="DeleteAuthorityGroupResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteAuthorityGroupResponse DeleteAuthorityGroup(DeleteAuthorityGroupRequest request);
 
         /// <summary>
         /// Load details for a specified authority group

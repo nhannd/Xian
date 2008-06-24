@@ -68,7 +68,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
         [FaultContract(typeof(RequestValidationException))]
         UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request);
 
-        /// <summary>
+		/// <summary>
+		/// Delete a note category.
+		/// </summary>
+		/// <param name="request"><see cref="DeleteNoteCategoryRequest "/></param>
+		/// <returns><see cref="DeleteNoteCategoryResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DeleteNoteCategoryResponse DeleteNoteCategory(DeleteNoteCategoryRequest request);
+		
+		/// <summary>
         /// Loads all form data needed to edit a note category
         /// </summary>
         /// <param name="request"><see cref="GetNoteCategoryEditFormDataRequest"/></param>

@@ -110,8 +110,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
 			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
+			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
 		}
 
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
+		
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
@@ -178,7 +184,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<ProtocolGroupSummary> items)
 		{
-			throw new NotImplementedException();
+			foreach (ProtocolGroupSummary item in items)
+			{
+				Platform.GetService<IProtocolAdminService>(
+					delegate(IProtocolAdminService service)
+					{
+						service.DeleteProtocolGroup(new DeleteProtocolGroupRequest(item.ProtocolGroupRef));
+					});
+			}
+			return true;
 		}
 
 		/// <summary>

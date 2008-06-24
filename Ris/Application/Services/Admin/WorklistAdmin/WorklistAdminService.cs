@@ -236,10 +236,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
 		public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
         {
-            Worklist worklist = this.PersistenceContext.Load<Worklist>(request.WorklistRef, EntityLoadFlags.Proxy);
-            PersistenceContext.GetBroker<IWorklistBroker>().Delete(worklist);
-
-            return new DeleteWorklistResponse();
+			try
+			{
+				IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
+				Worklist item = broker.Load(request.WorklistRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+				PersistenceContext.SynchState();
+				return new DeleteWorklistResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(Worklist).Name));
+			}
         }
 
         #endregion
