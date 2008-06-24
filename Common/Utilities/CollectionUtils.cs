@@ -977,5 +977,17 @@ namespace ClearCanvas.Common.Utilities
             }
             return result;
         }
-    }
+
+		/// <summary>
+		/// Casts each item in the target collection to the specified type, and returns the results
+		/// in a new list.
+		/// </summary>
+		/// <typeparam name="TOutput"></typeparam>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		public static List<TOutput> Cast<TOutput>(IEnumerable target)
+		{
+			return Map<object, TOutput>(target, delegate(object input) { return (TOutput) input; });
+		}
+	}
 }
