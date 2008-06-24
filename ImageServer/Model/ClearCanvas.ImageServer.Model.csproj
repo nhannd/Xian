@@ -42,6 +42,7 @@
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueCompressStudy.cs" />
+    <Compile Include="Brokers\IQueryServerPartitionTransferSyntaxes.cs" />
     <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="EntityBrokers\IFilesystemQueueTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemTierEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPartitionSopClassEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IPartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ISeriesEntityBroker.gen.cs" />
@@ -94,6 +96,8 @@
     <Compile Include="EntityBrokers\IWorkQueueUidEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PartitionSopClassSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PartitionSopClassUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\PartitionTransferSyntaxSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\PartitionTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\PatientSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PatientUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesSelectCriteria.gen.cs" />
@@ -129,12 +133,15 @@
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
+    <Compile Include="Parameters\PartitionTransferSyntaxQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueCompressStudyInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />
+    <Compile Include="PartitionTransferSyntax.cs" />
+    <Compile Include="PartitionTransferSyntax.gen.cs" />
     <Compile Include="Patient.gen.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="Series.gen.cs" />

@@ -36,6 +36,7 @@
     <Compile Include="Brokers\DeleteServerPartition.cs" />
     <Compile Include="Brokers\DeleteWorkQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueCompressStudy.cs" />
+    <Compile Include="Brokers\QueryPartitionTransferSyntaxes.cs" />
     <Compile Include="Brokers\WebQueryWorkQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="EntityBrokers\FilesystemQueueTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemTierEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\PartitionSopClassEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\PartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PatientEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\SeriesEntityBroker.gen.cs" />

@@ -33,46 +33,9 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
-    using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-    public partial class ServerTransferSyntaxSelectCriteria : EntitySelectCriteria
-    {
-        public ServerTransferSyntaxSelectCriteria()
-        : base("ServerTransferSyntax")
-        {}
-        public ISearchCondition<System.String> Description
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Description"))
-              {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
-              }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
-            } 
-        }
-        public ISearchCondition<System.Boolean> Lossless
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Lossless"))
-              {
-                 SubCriteria["Lossless"] = new SearchCondition<System.Boolean>("Lossless");
-              }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Lossless"];
-            } 
-        }
-        public ISearchCondition<System.String> Uid
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Uid"))
-              {
-                 SubCriteria["Uid"] = new SearchCondition<System.String>("Uid");
-              }
-              return (ISearchCondition<System.String>)SubCriteria["Uid"];
-            } 
-        }
-    }
+public interface IPartitionTransferSyntaxEntityBroker : IEntityBroker<PartitionTransferSyntax, PartitionTransferSyntaxSelectCriteria, PartitionTransferSyntaxUpdateColumns>
+{ }
 }

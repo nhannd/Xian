@@ -34,59 +34,57 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
-    using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
 
     [Serializable]
-    public partial class ServerTransferSyntax: ServerEntity
+    public partial class PartitionTransferSyntax: ServerEntity
     {
         #region Constructors
-        public ServerTransferSyntax():base("ServerTransferSyntax")
+        public PartitionTransferSyntax():base("PartitionTransferSyntax")
         {}
         #endregion
 
         #region Private Members
-        private System.String _description;
-        private System.Boolean _lossless;
-        private System.String _uid;
+        private System.Boolean _enabled;
+        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
-        public System.String Description
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="Enabled")]
+        public System.Boolean Enabled
         {
-        get { return _description; }
-        set { _description = value; }
+        get { return _enabled; }
+        set { _enabled = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
-        public System.Boolean Lossless
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="ServerPartitionGUID")]
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
-        get { return _lossless; }
-        set { _lossless = value; }
+        get { return _serverPartitionKey; }
+        set { _serverPartitionKey = value; }
         }
-        [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
-        public System.String Uid
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
         {
-        get { return _uid; }
-        set { _uid = value; }
+        get { return _serverTransferSyntaxKey; }
+        set { _serverTransferSyntaxKey = value; }
         }
         #endregion
 
         #region Static Methods
-        static public ServerTransferSyntax Load(ServerEntityKey key)
+        static public PartitionTransferSyntax Load(ServerEntityKey key)
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
-        static public ServerTransferSyntax Load(IReadContext read, ServerEntityKey key)
+        static public PartitionTransferSyntax Load(IReadContext read, ServerEntityKey key)
         {
-            IServerTransferSyntaxEntityBroker broker = read.GetBroker<IServerTransferSyntaxEntityBroker>();
-            ServerTransferSyntax theObject = broker.Load(key);
+            IPartitionTransferSyntaxEntityBroker broker = read.GetBroker<IPartitionTransferSyntaxEntityBroker>();
+            PartitionTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
         #endregion

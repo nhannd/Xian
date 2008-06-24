@@ -585,40 +585,40 @@ GO
 
 
 -- ServerTransferSyntax inserts
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.2', 'Explicit VR Big Endian', 0, 1)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.2', 'Explicit VR Big Endian', 1)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.1', 'Explicit VR Little Endian', 1, 1)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.1', 'Explicit VR Little Endian', 1)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2', 'Implicit VR Little Endian: Default Transfer Syntax for DICOM', 1, 1)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2', 'Implicit VR Little Endian: Default Transfer Syntax for DICOM', 1)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.4.91', 'JPEG 2000 Image Compression', 1, 0)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.4.91', 'JPEG 2000 Image Compression', 0)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.4.90', 'JPEG 2000 Image Compression (Lossless Only)', 1, 1)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.4.90', 'JPEG 2000 Image Compression (Lossless Only)', 1)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.4.50', 'JPEG Baseline (Process 1)', 1, 0)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.4.50', 'JPEG Baseline (Process 1)', 0)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.4.51', 'JPEG Extended (Process 2 & 4)', 1, 0)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.4.51', 'JPEG Extended (Process 2 & 4)', 0)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.4.70', 'JPEG Lossless, non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])', 1, 1)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.4.70', 'JPEG Lossless, non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1])', 1)
 GO
 
-INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Enabled],[Lossless])
-VALUES (newid(), '1.2.840.10008.1.2.5', 'RLE Lossless', 1, 1)
+INSERT INTO [ImageServer].[dbo].[ServerTransferSyntax] ([GUID],[Uid],[Description],[Lossless])
+VALUES (newid(), '1.2.840.10008.1.2.5', 'RLE Lossless', 1)
 GO
 
 

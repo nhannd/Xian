@@ -13,7 +13,6 @@ CREATE TABLE [dbo].[ServerTransferSyntax](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ServerTransferSyntax_GUID]  DEFAULT (newid()),
 	[Uid] [varchar](64) NOT NULL,
 	[Description] [nvarchar](256) NOT NULL,
-	[Enabled] [bit] NOT NULL,
 	[Lossless] [bit] NOT NULL,
  CONSTRAINT [PK_ServerTransferSyntax] PRIMARY KEY CLUSTERED 
 (
@@ -849,6 +848,25 @@ CREATE TABLE [dbo].[Filesystem](
 ) ON [STATIC]
 END
 GO
+/****** Object:  Table [dbo].[PartitionTransferSyntax]    Script Date: 06/24/2008 16:42:53 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PartitionTransferSyntax]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[PartitionTransferSyntax](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_PartitionTransferSyntax_GUID]  DEFAULT (newid()),
+	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[ServerTransferSyntaxGUID] [uniqueidentifier] NOT NULL,
+	[Enabled] [bit] NOT NULL,
+ CONSTRAINT [PK_PartitionTransferSyntax] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
 
 
 /****** Object:  ForeignKey [FK_Device_ServerPartition]    Script Date: 01/09/2008 15:03:26 ******/
@@ -1081,7 +1099,6 @@ ALTER TABLE [dbo].[WorkQueue]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueue_WorkQueu
 REFERENCES [dbo].[WorkQueuePriorityEnum] ([Enum])
 GO
 
-
 /****** Object:  ForeignKey [FK_WorkQueueUid_WorkQueue]    Script Date: 01/09/2008 15:04:30 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueUid_WorkQueue]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueUid]'))
 ALTER TABLE [dbo].[WorkQueueUid]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueUid_WorkQueue] FOREIGN KEY([WorkQueueGUID])
@@ -1096,4 +1113,19 @@ ALTER TABLE [dbo].[ServerPartition]  WITH CHECK ADD  CONSTRAINT [FK_ServerPartit
 REFERENCES [dbo].[DuplicateSopPolicyEnum] ([Enum])
 GO
 ALTER TABLE [dbo].[ServerPartition] CHECK CONSTRAINT [FK_ServerPartition_DuplicateSopPolicyEnum]
+GO
+
+/****** Object:  ForeignKey [FK_PartitionTransferSyntax_ServerPartition]    Script Date: 06/24/2008 16:42:53 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_PartitionTransferSyntax_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[PartitionTransferSyntax]'))
+ALTER TABLE [dbo].[PartitionTransferSyntax]  WITH CHECK ADD  CONSTRAINT [FK_PartitionTransferSyntax_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
+REFERENCES [dbo].[ServerPartition] ([GUID])
+GO
+ALTER TABLE [dbo].[PartitionTransferSyntax] CHECK CONSTRAINT [FK_PartitionTransferSyntax_ServerPartition]
+GO
+/****** Object:  ForeignKey [FK_PartitionTransferSyntax_ServerTransferSyntax]    Script Date: 06/24/2008 16:42:53 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_PartitionTransferSyntax_ServerTransferSyntax]') AND parent_object_id = OBJECT_ID(N'[dbo].[PartitionTransferSyntax]'))
+ALTER TABLE [dbo].[PartitionTransferSyntax]  WITH CHECK ADD  CONSTRAINT [FK_PartitionTransferSyntax_ServerTransferSyntax] FOREIGN KEY([ServerTransferSyntaxGUID])
+REFERENCES [dbo].[ServerTransferSyntax] ([GUID])
+GO
+ALTER TABLE [dbo].[PartitionTransferSyntax] CHECK CONSTRAINT [FK_PartitionTransferSyntax_ServerTransferSyntax]
 GO

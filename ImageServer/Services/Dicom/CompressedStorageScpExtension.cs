@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     {
         #region Private Members
         private IList<SupportedSop> _sopList;
-        private IList<ServerTransferSyntax> _syntaxList;
+        private IList<PartitionTransferSyntax> _syntaxList;
         private readonly string _type = "Compressed C-STORE-RQ";
 
         public override string StorageScpType
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 using (IReadContext read = _store.OpenReadContext())
                 {
                     // Get the transfer syntaxes
-                    _syntaxList = LoadTransferSyntaxes(read, true);
+                    _syntaxList = LoadTransferSyntaxes(read, Partition.GetKey(),true);
 
                     // Set the input parameters for query
                     PartitionSopClassQueryParameters inputParms = new PartitionSopClassQueryParameters();
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                             SupportedSop sop = new SupportedSop();
 
                             sop.SopClass = SopClass.GetSopClass(partitionSopClass.SopClassUid);
-                            foreach (ServerTransferSyntax syntax in _syntaxList)
+                            foreach (PartitionTransferSyntax syntax in _syntaxList)
                             {
                                 sop.SyntaxList.Add(TransferSyntax.GetTransferSyntax(syntax.Uid));
                             }

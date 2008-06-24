@@ -33,46 +33,24 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
-    using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
-    public partial class ServerTransferSyntaxSelectCriteria : EntitySelectCriteria
-    {
-        public ServerTransferSyntaxSelectCriteria()
-        : base("ServerTransferSyntax")
-        {}
-        public ISearchCondition<System.String> Description
+   public class PartitionTransferSyntaxUpdateColumns : EntityUpdateColumns
+   {
+       public PartitionTransferSyntaxUpdateColumns()
+       : base("PartitionTransferSyntax")
+       {}
+        public System.Boolean Enabled
         {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Description"))
-              {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
-              }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
-            } 
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
-        public ISearchCondition<System.Boolean> Lossless
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Lossless"))
-              {
-                 SubCriteria["Lossless"] = new SearchCondition<System.Boolean>("Lossless");
-              }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Lossless"];
-            } 
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
-        public ISearchCondition<System.String> Uid
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
         {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Uid"))
-              {
-                 SubCriteria["Uid"] = new SearchCondition<System.String>("Uid");
-              }
-              return (ISearchCondition<System.String>)SubCriteria["Uid"];
-            } 
+            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey", value); }
         }
     }
 }

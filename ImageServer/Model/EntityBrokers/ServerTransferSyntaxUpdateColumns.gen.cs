@@ -45,10 +45,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
-        public System.Boolean Enabled
-        {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
-        }
         public System.Boolean Lossless
         {
             set { SubParameters["Lossless"] = new EntityUpdateColumn<System.Boolean>("Lossless", value); }

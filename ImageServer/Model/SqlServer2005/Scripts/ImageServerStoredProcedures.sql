@@ -60,6 +60,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryServerPartitionSopClasses]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryServerPartitionSopClasses]
 GO
+/****** Object:  StoredProcedure [dbo].[QueryServerPartitionTransferSyntaxes]    Script Date: 06/24/2008 12:29:00 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryServerPartitionTransferSyntaxes]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryServerPartitionTransferSyntaxes]
+GO
 /****** Object:  StoredProcedure [dbo].[QueryModalitiesInStudy]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryModalitiesInStudy]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryModalitiesInStudy]
@@ -278,7 +282,7 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 13, 2007
--- Modify date: April 29, 2008
+-- Modify date: June 24, 2008
 -- Description:	Insert a ServerPartition row
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertServerPartition] 
@@ -299,6 +303,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 	DECLARE @SopClassGUID uniqueidentifier
+	DECLARE @TransferSyntaxGUID uniqueidentifier
 	DECLARE @ServerPartitionGUID uniqueidentifier
 
 	SET @ServerPartitionGUID = newid()
@@ -312,7 +317,7 @@ BEGIN
 		([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort],[DuplicateSopPolicyEnum])
 	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort, @DuplicateSopPolicyEnum)
 
-
+	-- Populate PartitionSopClass
 	DECLARE cur_sopclass CURSOR FOR 
 		SELECT GUID FROM ServerSopClass;
 
@@ -330,6 +335,26 @@ BEGIN
 
 	CLOSE cur_sopclass;
 	DEALLOCATE cur_sopclass;
+
+	-- Populate PartitionTransferSyntax
+	DECLARE cur_transfersyntax CURSOR FOR 
+		SELECT GUID FROM ServerTransferSyntax;
+
+	OPEN cur_transfersyntax;
+
+	FETCH NEXT FROM cur_transfersyntax INTO @TransferSyntaxGUID;
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		INSERT INTO [ImageServer].[dbo].[PartitionTransferSyntax]
+			([GUID],[ServerPartitionGUID],[ServerTransferSyntaxGUID],[Enabled])
+		VALUES (newid(), @ServerPartitionGUID, @TransferSyntaxGUID, 1)
+
+		FETCH NEXT FROM cur_transfersyntax INTO @TransferSyntaxGUID;	
+	END 
+
+	CLOSE cur_transfersyntax;
+	DEALLOCATE cur_transfersyntax;
+
 
 	-- Now, put in default rules for the partition
 	DECLARE  @StudyServerRuleApplyTimeEnum smallint
@@ -980,6 +1005,44 @@ BEGIN
 	FROM PartitionSopClass
 	JOIN ServerSopClass on PartitionSopClass.ServerSopClassGUID = ServerSopClass.GUID
 	WHERE PartitionSopClass.ServerPartitionGUID = @ServerPartitionGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryServerPartitionTransferSyntaxes]    Script Date: 01/08/2008 16:04:34 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryServerPartitionTransferSyntaxes]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: August 13, 2007
+-- Description:	Select all the Transfer Syntaxes for a Partition
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryServerPartitionTransferSyntaxes] 
+	-- Add the parameters for the stored procedure here
+	@ServerPartitionGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+	SELECT	PartitionTransferSyntax.GUID,
+			PartitionTransferSyntax.ServerPartitionGUID, 
+			PartitionTransferSyntax.ServerTransferSyntaxGUID,
+			PartitionTransferSyntax.Enabled,
+			ServerTransferSyntax.Uid,
+			ServerTransferSyntax.Description,
+			ServerTransferSyntax.Lossless
+	FROM PartitionTransferSyntax
+	JOIN ServerTransferSyntax on PartitionTransferSyntax.ServerTransferSyntaxGUID = ServerTransferSyntax.GUID
+	WHERE PartitionTransferSyntax.ServerPartitionGUID = @ServerPartitionGUID
+	ORDER BY ServerTransferSyntax.Lossless DESC
+	
 END
 ' 
 END
@@ -1867,6 +1930,9 @@ BEGIN
 	delete dbo.WorkQueue where ServerPartitionGUID=@ServerPartitionGUID
 	--PRINT ''Deleting PartitionSopClass''
 	delete dbo.PartitionSopClass where ServerPartitionGUID=@ServerPartitionGUID
+	--PRINT ''Deleting PartitionTransferSyntax''
+	delete dbo.PartitionTransferSyntax where ServerPartitionGUID=@ServerPartitionGUID
+
 	--PRINT ''Deleting ServerRule''
 	delete dbo.ServerRule where ServerPartitionGUID=@ServerPartitionGUID
 

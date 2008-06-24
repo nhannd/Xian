@@ -38,8 +38,10 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -85,27 +87,28 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// Load from the database the configured transfer syntaxes
         /// </summary>
         /// <param name="read">a Read context</param>
+        /// <param name="partitionKey">The partition to retrieve the transfer syntaxes for</param>
         /// <param name="encapsulated">true if searching for encapsulated syntaxes only</param>
         /// <returns>The list of syntaxes</returns>
-        protected static IList<ServerTransferSyntax> LoadTransferSyntaxes(IReadContext read, bool encapsulated)
+		protected static IList<PartitionTransferSyntax> LoadTransferSyntaxes(IReadContext read, ServerEntityKey partitionKey, bool encapsulated)
         {
-            IList<ServerTransferSyntax> list;
+            IList<PartitionTransferSyntax> list;
 
-            IServerTransferSyntaxEntityBroker broker = read.GetBroker<IServerTransferSyntaxEntityBroker>();
+			IQueryServerPartitionTransferSyntaxes broker = read.GetBroker<IQueryServerPartitionTransferSyntaxes>();
 
-            ServerTransferSyntaxSelectCriteria criteria = new ServerTransferSyntaxSelectCriteria();
+			PartitionTransferSyntaxQueryParameters criteria = new PartitionTransferSyntaxQueryParameters();
 
-            criteria.Enabled.EqualTo(encapsulated);
-            // Make lossless come first in the list
-            criteria.Lossless.SortDesc(1);
+            criteria.ServerPartitionKey = partitionKey;
 
-            list = broker.Find(criteria);
+            list = broker.Execute(criteria);
 
-            List<ServerTransferSyntax> returnList = new List<ServerTransferSyntax>();
-            foreach (ServerTransferSyntax syntax in list)
+			List<PartitionTransferSyntax> returnList = new List<PartitionTransferSyntax>();
+			foreach (PartitionTransferSyntax syntax in list)
             {
+				if (!syntax.Enabled) continue;
+
                 TransferSyntax dicomSyntax = TransferSyntax.GetTransferSyntax(syntax.Uid);
-                if (dicomSyntax.Encapsulated)
+                if (dicomSyntax.Encapsulated == encapsulated)
                     returnList.Add(syntax);
             }
             return returnList;
