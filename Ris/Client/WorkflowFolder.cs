@@ -40,24 +40,29 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	#region FolderForWorklistClassAttribute
+
 	/// <summary>
 	/// Associates a folder class with a worklist class.
 	/// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class FolderForWorklistClassAttribute : Attribute
-    {
-        private readonly string _worklistClassName;
+	[AttributeUsage(AttributeTargets.Class)]
+	public class FolderForWorklistClassAttribute : Attribute
+	{
+		private readonly string _worklistClassName;
 
-        public FolderForWorklistClassAttribute(string worklistClassName)
-        {
-            _worklistClassName = worklistClassName;
-        }
+		public FolderForWorklistClassAttribute(string worklistClassName)
+		{
+			_worklistClassName = worklistClassName;
+		}
 
-        public string WorklistClassName
-        {
-            get { return _worklistClassName; }
-        }
-    }
+		public string WorklistClassName
+		{
+			get { return _worklistClassName; }
+		}
+	}
+
+	#endregion
+
 
 	/// <summary>
 	/// Abstract base class for workflow folders.  A workflow folder is characterized by the fact
@@ -65,8 +70,8 @@ namespace ClearCanvas.Ris.Client
 	/// </summary>
 	public abstract class WorkflowFolder : Folder, IDisposable
 	{
-        private int _itemCount = -1;
-        private bool _isPopulated;
+		private bool _isCountValid;
+		private bool _isItemsValid;
 
         private Timer _refreshTimer;
         private int _refreshTime;
@@ -100,15 +105,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether this folder is populated or not.
-		/// </summary>
-		public bool IsPopulated
-		{
-			get { return _isPopulated; }
-			protected set { _isPopulated = value; }
-		}
-
 		#endregion
 
 		#region Folder overrides
@@ -133,22 +129,34 @@ namespace ClearCanvas.Ris.Client
             this.RestartRefreshTimer();
         }
 
-		/// <summary>
-		/// Gets the total number of items "contained" in this folder, which may be the same
-		/// as the number of items displayed in the <see cref="IFolder.ItemsTable"/>, or may be larger
-		/// in the event the table is only showing a subset of the total number of items.
-		/// </summary>
-		public override int TotalItemCount
-        {
-            get { return _itemCount; }
-        }
+		public override void Invalidate()
+		{
+			_isCountValid = false;
+			_isItemsValid = false;
+		}
 
-		/// <summary>
-		/// Gets a value indicating whether the count of items in the folder is currently known.
-		/// </summary>
-		protected override bool IsItemCountKnown
-        {
-            get { return _isPopulated || _itemCount > -1; }
+		public override void Update()
+		{
+			if(this.IsOpen)
+			{
+				// if the folder is open, the actual contents need to be valid
+				if (!_isItemsValid)
+				{
+					// an items query validates the count as well as the items
+					BeginQueryItems();
+					_isItemsValid = true;
+					_isCountValid = true;
+				}
+			}
+			else
+			{
+				// otherwise, only the count needs to be valid
+				if (!_isCountValid)
+				{
+					BeginQueryCount();
+					_isCountValid = true;
+				}
+			}
 		}
 
 		#endregion
@@ -157,19 +165,11 @@ namespace ClearCanvas.Ris.Client
 		#region Protected API
 
 		/// <summary>
-		/// Sets the total "logical" item count for this folder, which may be greater than the number of items in the folder,
-		/// for example, if there are too many items to display.
+		/// 
 		/// </summary>
-		/// <param name="n"></param>
-        protected void SetTotalItemCount(int n)
-        {
-            if (n != _itemCount)
-            {
-                _itemCount = n;
-                NotifyTotalItemCountChanged();
-                NotifyTextChanged();
-            }
-        }
+		protected abstract void BeginQueryItems();
+
+		protected abstract void BeginQueryCount();
 
 		/// <summary>
 		/// Restarts the refresh timer.
@@ -186,8 +186,9 @@ namespace ClearCanvas.Ris.Client
             if (_refreshTime > 0)
             {
                 TimerDelegate timerDelegate = this.IsOpen
-                    ? new TimerDelegate(delegate(object state) { Refresh(); })
-                    : new TimerDelegate(delegate(object state) { RefreshCount(); });
+                    ? new TimerDelegate(delegate(object state) { Update(); })
+                    //: new TimerDelegate(delegate(object state) { UpdateCount(); });
+                    : new TimerDelegate(delegate(object state) { });
 
                 _refreshTimer = new Timer(timerDelegate);
                 _refreshTimer.IntervalMilliseconds = _refreshTime;
@@ -244,10 +245,6 @@ namespace ClearCanvas.Ris.Client
         public WorkflowFolder(Table<TItem> itemsTable)
         {
             _itemsTable = itemsTable;
-            _itemsTable.Items.ItemsChanged += delegate
-                {
-                    SetTotalItemCount(_itemsTable.Items.Count);
-                };
 		}
 
 		#region Folder overrides
@@ -263,66 +260,6 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-    	/// <summary>
-    	/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
-    	/// </summary>
-    	public override void  Refresh()
-        {
-            if (_queryItemsTask != null)
-            {
-                // refresh already in progress
-                return;
-            }
-
-            _queryItemsTask = new BackgroundTask(
-                delegate(IBackgroundTaskContext taskContext)
-                {
-                    try
-                    {
-                        QueryItemsResult result = QueryItems();
-                        taskContext.Complete(result);
-                    }
-                    catch (Exception e)
-                    {
-                        taskContext.Error(e);
-                    }
-                },
-                false);
-
-            _queryItemsTask.Terminated += OnQueryItemsCompleted;
-            _queryItemsTask.Run();
-        }
-
-    	/// <summary>
-    	/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
-    	/// The implementation may be asynchronous.
-    	/// </summary>
-    	public override void RefreshCount()
-		{
-			if (_queryCountTask != null)
-			{
-				// refresh already in progress
-				return;
-			}
-
-			_queryCountTask = new BackgroundTask(
-				delegate(IBackgroundTaskContext taskContext)
-				{
-					try
-					{
-						int count = QueryCount();
-						taskContext.Complete(count);
-					}
-					catch (Exception e)
-					{
-						taskContext.Error(e);
-					}
-				},
-				false);
-
-			_queryCountTask.Terminated += OnQueryCountCompleted;
-			_queryCountTask.Run();
-		}
 
     	/// <summary>
     	/// Informs the folder that the specified items were dragged from it.  It is up to the implementation
@@ -372,6 +309,67 @@ namespace ClearCanvas.Ris.Client
 
 		#region Helpers
 
+		/// <summary>
+		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+		/// </summary>
+		protected override void BeginQueryItems()
+		{
+			if (_queryItemsTask != null)
+			{
+				// refresh already in progress
+				return;
+			}
+
+			_queryItemsTask = new BackgroundTask(
+				delegate(IBackgroundTaskContext taskContext)
+				{
+					try
+					{
+						QueryItemsResult result = QueryItems();
+						taskContext.Complete(result);
+					}
+					catch (Exception e)
+					{
+						taskContext.Error(e);
+					}
+				},
+				false);
+
+			_queryItemsTask.Terminated += OnQueryItemsCompleted;
+			_queryItemsTask.Run();
+		}
+
+		/// <summary>
+		/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
+		/// The implementation may be asynchronous.
+		/// </summary>
+		protected override void BeginQueryCount()
+		{
+			if (_queryCountTask != null)
+			{
+				// refresh already in progress
+				return;
+			}
+
+			_queryCountTask = new BackgroundTask(
+				delegate(IBackgroundTaskContext taskContext)
+				{
+					try
+					{
+						int count = QueryCount();
+						taskContext.Complete(count);
+					}
+					catch (Exception e)
+					{
+						taskContext.Error(e);
+					}
+				},
+				false);
+
+			_queryCountTask.Terminated += OnQueryCountCompleted;
+			_queryCountTask.Run();
+		}
+
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
         {
             if(args.Reason == BackgroundTaskTerminatedReason.Completed)
@@ -379,7 +377,7 @@ namespace ClearCanvas.Ris.Client
                 NotifyRefreshBegin();
 
                 QueryItemsResult result = (QueryItemsResult)args.Result;
-                this.IsPopulated = true;
+            	this.TotalItemCount = result.TotalItemCount;
                 _itemsTable.Items.Clear();
                 _itemsTable.Items.AddRange(result.Items);
                 _itemsTable.Sort();
@@ -406,7 +404,7 @@ namespace ClearCanvas.Ris.Client
         {
             if (args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
-                SetTotalItemCount((int)args.Result);
+                this.TotalItemCount = (int)args.Result;
             }
             else
             {

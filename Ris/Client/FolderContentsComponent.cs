@@ -202,23 +202,19 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public void OnSelectedItemDoubleClicked()
+        public void DoubleClickSelectedItem()
         {
             EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
-			if(_folderSystem != null)
-				_folderSystem.OnSelectedItemDoubleClicked();
         }
+
+		#endregion
 
 		private void OnSelectedItemsChanged(object sender, EventArgs args)
 		{
 			EventsHelper.Fire(_selectedItemsChanged, sender, args);
-			if (_folderSystem != null)
-				_folderSystem.OnSelectedItemsChanged();
 		}
 
-		#endregion
-
-        private void TotalItemCountChangedEventHandler(object sender, EventArgs e)
+		private void TotalItemCountChangedEventHandler(object sender, EventArgs e)
         {
             NotifyPropertyChanged("StatusMessage");
         }

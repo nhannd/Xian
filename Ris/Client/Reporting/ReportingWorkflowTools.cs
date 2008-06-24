@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item.ProcedureStepRef));
                 });
 
-            this.Context.InvalidateFolder(typeof(Folders.InTranscriptionFolder));
+			this.Context.InvalidateFolders(typeof(Folders.InTranscriptionFolder));
 
             return true;
         }
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item.ProcedureStepRef));
                 });
 
-            this.Context.InvalidateFolder(typeof(Folders.ToBeVerifiedFolder));
+			this.Context.InvalidateFolders(typeof(Folders.ToBeVerifiedFolder));
 
             return true;
         }
@@ -216,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 // Not defined
             }
 
-            this.Context.InvalidateFolder(typeof(Folders.VerifiedFolder));
+			this.Context.InvalidateFolders(typeof(Folders.VerifiedFolder));
 
             return true;
         }
@@ -247,7 +247,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     item.ProcedureStepRef = response.InterpretationStepRef;
                 });
 
-            this.Context.InvalidateFolder(typeof(Folders.DraftFolder));
+			this.Context.InvalidateFolders(typeof(Folders.DraftFolder));
 
             OpenReportEditor(item);
 

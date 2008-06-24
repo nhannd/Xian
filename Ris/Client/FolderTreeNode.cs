@@ -35,22 +35,17 @@ namespace ClearCanvas.Ris.Client
 				get { return this.FolderPath.LastSegment.LocalizedText; }
 			}
 
-			public override void Refresh()
+			public override void Update()
 			{
 			}
 
-			public override void RefreshCount()
+			public override void Invalidate()
 			{
 			}
 
 			public override ITable ItemsTable
 			{
 				get { return null; }
-			}
-
-			public override int TotalItemCount
-			{
-				get { return 0; }
 			}
 
 			public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
@@ -141,6 +136,53 @@ namespace ClearCanvas.Ris.Client
 			return null;
 		}
 
+		/// <summary>
+		/// Ensures that this node is up to date with respect to the folder count and/or contents.
+		/// Applies recursively to all descendants of this node.
+		/// </summary>
+		public void Update()
+		{
+			// update this node
+			_folder.Update();
+
+			// only update the child nodes if this node is expanded
+			if(_expanded)
+			{
+				foreach (FolderTreeNode child in _subTree.Items)
+				{
+					child.Update();
+				}
+			}
+		}
+
+		/// <summary>
+		/// Invalidates this node and all child nodes.
+		/// </summary>
+		public bool Invalidate()
+		{
+			return Invalidate(delegate { return true; });
+		}
+
+		/// <summary>
+		/// Invalidate this node and any child nodes where the folder is of the specified class (or a subclass of the specified class).
+		/// </summary>
+		/// <param name="folderClass"></param>
+		/// <returns></returns>
+		public bool Invalidate(Type folderClass)
+		{
+			return Invalidate(delegate(FolderTreeNode node) { return folderClass.IsAssignableFrom(node.Folder.GetType()); });
+		}
+
+		/// <summary>
+		/// Invalidates the descendant node that refers to the specified folder.
+		/// </summary>
+		/// <param name="folder"></param>
+		/// <returns></returns>
+		public bool Invalidate(IFolder folder)
+		{
+			return Invalidate(delegate(FolderTreeNode node) { return folder == node.Folder; });
+		}
+
 		#endregion
 
 		#region Protected API
@@ -218,12 +260,47 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_expanded = value;
+				if(_expanded)
+				{
+					Update();
+				}
 			}
 		}
 
 		#endregion
 
 		#region Private Helpers
+
+		/// <summary>
+		/// Recursively invalidates nodes matching the specified condition,
+		/// returning a value indicating whether any nodes were invalidated.
+		/// </summary>
+		/// <remarks>
+		/// The method recursively invalidates nodes matching the condition, but invalidation
+		/// of a child does not imply invalidation of its parent.  All nodes are treated
+		/// independently.
+		/// </remarks>
+		/// <param name="condition"></param>
+		/// <returns></returns>
+		private bool Invalidate(Predicate<FolderTreeNode> condition)
+		{
+			bool invalidated = false;
+
+			// invalidate children
+			foreach (FolderTreeNode child in _subTree.Items)
+			{
+				invalidated |= child.Invalidate(condition);
+			}
+
+			// invalidate this node if the condition is satisfied
+			if (condition(this))
+			{
+				_folder.Invalidate();
+
+				invalidated = true;
+			}
+			return invalidated;
+		}
 
 		/// <summary>
 		/// Sets the folder associatd with this node.

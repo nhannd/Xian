@@ -72,8 +72,8 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        protected RegistrationWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
-            : base(title, folderExplorer)
+        protected RegistrationWorkflowFolderSystemBase(string title)
+            : base(title)
         {
         }
 

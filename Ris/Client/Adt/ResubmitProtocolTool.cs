@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Adt
 					service.ResubmitProtocol(new ResubmitProtocolRequest(item.OrderRef));
 				});
 
-			this.Context.InvalidateFolder(typeof(Folders.SuspendedProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.SuspendedProtocolFolder));
 
 			return true;
 		}
@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Adt
 					service.CancelProtocolAndOrder(new CancelProtocolAndOrderRequest(item.OrderRef));
 				});
 
-			this.Context.InvalidateFolder(typeof(Folders.RejectedProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.RejectedProtocolFolder));
 			return true;
 		}
     }

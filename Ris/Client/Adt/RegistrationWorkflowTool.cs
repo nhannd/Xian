@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Adt
 						service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedProcedures));
 					});
 
-				this.Context.InvalidateFolder(typeof(Folders.CheckedInFolder));
+				this.Context.InvalidateFolders(typeof(Folders.CheckedInFolder));
 				return true;
 			}
 			else
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client.Adt
 						service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
 					});
 
-				this.Context.InvalidateFolder(typeof(Folders.CancelledFolder));
+				this.Context.InvalidateFolders(typeof(Folders.CancelledFolder));
 				return true;
 			}
 			else

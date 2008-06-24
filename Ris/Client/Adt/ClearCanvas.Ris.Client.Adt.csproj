@@ -44,7 +44,6 @@
     <Compile Include="ReplaceOrderTool.cs" />
     <Compile Include="TechnologistDocumentationOrderDetailsComponent.cs" />
     <Compile Include="TechnologistWorkflowFolderSystem.cs" />
-    <Compile Include="TechnologistMainWorkflowFolderSystemTool.cs" />
     <Compile Include="FolderSearchTool.cs" />
     <Compile Include="ModifyOrderTool.cs" />
     <Compile Include="NewOrderTool.cs" />
@@ -71,11 +70,8 @@
     <Compile Include="PatientAddTool.cs" />
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
-    <Compile Include="RegistrationHomeTool.cs" />
     <Compile Include="BookingWorkflowFolderSystem.cs" />
-    <Compile Include="RegistrationBookingWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowFolderSystem.cs" />
-    <Compile Include="RegistrationMainWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowFolder.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
@@ -92,7 +88,6 @@
     <Compile Include="TechnologistDocumentationDocument.cs" />
     <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
     <Compile Include="TechnologistDocumentationTool.cs" />
-    <Compile Include="TechnologistHomeTool.cs" />
     <Compile Include="TechnologistWorkflowFolder.cs" />
     <Compile Include="TechnologistWorkflowFolderSystemBase.cs" />
     <Compile Include="TechnologistWorkflowTool.cs" />

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -52,12 +53,14 @@ namespace ClearCanvas.Ris.Client.Adt
 	{
 	}
 
+	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Performing)]
 	public class TechnologistWorkflowFolderSystem
 		: TechnologistWorkflowFolderSystemBase<TechnologistWorkflowFolderExtensionPoint, TechnologistWorkflowFolderToolExtensionPoint,
 			TechnologistWorkflowItemToolExtensionPoint>
 	{
-		public TechnologistWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitlePerformingFolderSystem, folderExplorer)
+		public TechnologistWorkflowFolderSystem()
+			: base(SR.TitlePerformingFolderSystem)
 		{
 		}
 

@@ -459,7 +459,7 @@ namespace ClearCanvas.Ris.Client
                                 dsResponse=service.LoadDiagnosticServiceBreakdown(
                                       new LoadDiagnosticServiceBreakdownRequest(ds.DiagnosticServiceRef));
                                 return (ds.Name == diagnosticServiceName) || (CollectionUtils.SelectFirst(dsResponse.DiagnosticServiceDetail.ProcedureTypes,
-                                                                                                        delegate(ProcedureTypeDetail ptd)
+                                                                                                        delegate(ProcedureTypeSummary ptd)
                                                                                                         {
                                                                                                             
                                                                                                             return ptd.Name.IndexOf(Modality) == 0;

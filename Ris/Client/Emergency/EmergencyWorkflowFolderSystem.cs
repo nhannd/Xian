@@ -1,4 +1,5 @@
 using System;
+using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
@@ -26,12 +27,14 @@ namespace ClearCanvas.Ris.Client.Emergency
 	{
 	}
 
+	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Emergency)]
 	public class EmergencyWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<EmergencyWorkflowFolderExtensionPoint, EmergencyWorkflowFolderToolExtensionPoint,
 			EmergencyWorkflowItemToolExtensionPoint>
 	{
-		public EmergencyWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleEmergencyFolderSystem, folderExplorer)
+		public EmergencyWorkflowFolderSystem()
+			: base(SR.TitleEmergencyFolderSystem)
 		{
 		}
 

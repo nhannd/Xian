@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -43,7 +44,9 @@ namespace ClearCanvas.Ris.Client
 
 
 
-	public class OrderNoteboxFolderSystem: WorkflowFolderSystem<
+	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.OrderNotes)]
+	public class OrderNoteboxFolderSystem : WorkflowFolderSystem<
 		OrderNoteboxItemSummary,
 		OrderNoteboxFolderToolExtensionPoint,
 		OrderNoteboxItemToolExtensionPoint>
@@ -75,8 +78,8 @@ namespace ClearCanvas.Ris.Client
 		private readonly IconSet _unacknowledgedNotesIconSet;
 		private readonly string _baseTitle;
 
-        public OrderNoteboxFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleOrderNoteboxFolderSystem, folderExplorer)
+        public OrderNoteboxFolderSystem()
+			: base(SR.TitleOrderNoteboxFolderSystem)
 		{
 			_unacknowledgedNotesIconSet = new IconSet("NoteUnread.png");
 			_baseTitle = SR.TitleOrderNoteboxFolderSystem;

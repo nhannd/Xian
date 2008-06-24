@@ -62,5 +62,15 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the desktop window.
 		/// </summary>
         IDesktopWindow DesktopWindow { get; }
+
+		/// <summary>
+		/// Invalidates all folders in the folder system.
+		/// </summary>
+		void InvalidateFolders();
+
+		/// <summary>
+		/// Invalidates all folders of the specified class in the folder system.
+		/// </summary>
+		void InvalidateFolders(Type folderClass);
     }
 }

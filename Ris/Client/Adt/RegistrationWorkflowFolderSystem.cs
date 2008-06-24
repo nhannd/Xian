@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
@@ -52,12 +53,14 @@ namespace ClearCanvas.Ris.Client.Adt
 	{
 	}
 
+	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Registration)]
 	public class RegistrationWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<RegistrationWorkflowFolderExtensionPoint, RegistrationWorkflowFolderToolExtensionPoint,
 			RegistrationWorkflowItemToolExtensionPoint>
 	{
-		public RegistrationWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleRegistrationFolderSystem, folderExplorer)
+		public RegistrationWorkflowFolderSystem()
+			: base(SR.TitleRegistrationFolderSystem)
 		{
 		}
 

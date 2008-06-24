@@ -71,8 +71,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        protected ReportingWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
-            : base(title, folderExplorer)
+        protected ReportingWorkflowFolderSystemBase(string title)
+            : base(title)
         {
         }
 

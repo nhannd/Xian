@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -52,12 +53,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 	{
 	}
 
+	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Protocolling)]
 	public class ProtocolWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ProtocolWorkflowFolderExtensionPoint, ProtocolWorkflowFolderToolExtensionPoint,
 			ProtocolWorkflowItemToolExtensionPoint>
 	{
-		public ProtocolWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleProtocollingFolderSystem, folderExplorer)
+		public ProtocolWorkflowFolderSystem()
+			: base(SR.TitleProtocollingFolderSystem)
 		{
             // add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.DraftProtocolFolder());

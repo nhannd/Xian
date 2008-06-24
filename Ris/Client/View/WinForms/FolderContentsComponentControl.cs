@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _folderContentsTableView_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.OnSelectedItemDoubleClicked();
+            _component.DoubleClickSelectedItem();
         }
     }
 }

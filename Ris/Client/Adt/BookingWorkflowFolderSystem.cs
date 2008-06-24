@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -52,12 +53,14 @@ namespace ClearCanvas.Ris.Client.Adt
 	{
 	}
 
+	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
+	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Booking)]
 	public class BookingWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<BookingWorkflowFolderExtensionPoint,
 			BookingWorkflowFolderToolExtensionPoint, BookingWorkflowItemToolExtensionPoint>
 	{
-		public BookingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-			: base(SR.TitleBookingFolderSystem, folderExplorer)
+		public BookingWorkflowFolderSystem()
+			: base(SR.TitleBookingFolderSystem)
 		{
 		}
 

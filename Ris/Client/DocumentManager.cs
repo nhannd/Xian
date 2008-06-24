@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client
             CollectionUtils.ForEach(_folderSystems,
                 delegate(IFolderSystem folderSystem)
                 {
-                    folderSystem.InvalidateFolder(folderType);
+                    folderSystem.InvalidateFolders(folderType);
                 });
         }
 

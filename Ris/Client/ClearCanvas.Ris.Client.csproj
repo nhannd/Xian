@@ -70,7 +70,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>OrderNoteboxFolderSystemSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="OrderNoteboxFolderSystemTool.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointEditorComponent.cs" />
     <Compile Include="ExternalPractitionerContactPointSummaryComponent.cs" />
@@ -128,7 +127,7 @@
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="FolderSystemItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
-    <Compile Include="FolderExplorerToolBase.cs" />
+    <Compile Include="IFolderSystemContext.cs" />
     <Compile Include="HomePageContainer.cs" />
     <Compile Include="FolderExplorerComponent.cs" />
     <Compile Include="FolderExplorerComponentSettings.cs" />

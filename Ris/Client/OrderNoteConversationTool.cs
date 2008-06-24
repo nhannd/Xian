@@ -154,9 +154,9 @@ namespace ClearCanvas.Ris.Client
 
 		protected override void OnOpenCompleted()
 		{
-			this.Context.InvalidateFolder(typeof(PersonalInboxFolder));
-			this.Context.InvalidateFolder(typeof(GroupInboxFolder));
-			this.Context.InvalidateFolder(typeof(SentItemsFolder));
+			this.Context.InvalidateFolders(typeof(PersonalInboxFolder));
+			this.Context.InvalidateFolders(typeof(GroupInboxFolder));
+			this.Context.InvalidateFolders(typeof(SentItemsFolder));
 			base.OnOpenCompleted();
 		}
 	}

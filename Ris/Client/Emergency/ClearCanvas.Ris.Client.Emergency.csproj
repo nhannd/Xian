@@ -38,9 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmergencyHomeTool.cs" />
     <Compile Include="EmergencyWorkflowFolderSystem.cs" />
-    <Compile Include="EmergencyWorkflowFolderSystemTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />
     <Compile Include="EmergencyWorkflowItemTools.cs" />
     <Compile Include="Folders\EmergencyPhysicianWorkflowFolders.cs" />

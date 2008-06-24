@@ -46,9 +46,9 @@ namespace ClearCanvas.Ris.Client
             _folderName = folderName;
             _itemsTable = itemsTable;
 
-            _itemsTable.Items.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
+            _itemsTable.Items.ItemsChanged += delegate
                 {
-                    NotifyTextChanged();
+                	this.TotalItemCount = _itemsTable.Items.Count;
                 };
         }
 
@@ -67,18 +67,12 @@ namespace ClearCanvas.Ris.Client
             get { return _itemsTable; }
         }
 
-        public override int TotalItemCount
-        {
-            // assume all items are displayed
-            get { return _itemsTable.Items.Count; }
-        }
-
-        public override void Refresh()
+        public override void Update()
         {
             // do nothing
         }
 
-        public override void RefreshCount()
+        public override void Invalidate()
         {
             // do nothing
         }

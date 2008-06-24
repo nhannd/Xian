@@ -54,12 +54,12 @@ namespace ClearCanvas.Ris.Client
 		private readonly FolderContentsComponent _folderContentComponent;
 		private readonly IPreviewComponent _previewComponent;
 
-		public HomePageContainer(IExtensionPoint folderExplorerExtensionPoint, IPreviewComponent preview)
+		public HomePageContainer(ExtensionPoint<IFolderSystem> folderSystemExtensionPoint, IPreviewComponent preview)
 			: base(Desktop.SplitOrientation.Vertical)
 		{
 			_folderContentComponent = new FolderContentsComponent();
 			_previewComponent = preview;
-			_folderSystemGroup = new FolderExplorerGroupComponent(folderExplorerExtensionPoint, _folderContentComponent);
+			_folderSystemGroup = new FolderExplorerGroupComponent(folderSystemExtensionPoint, _folderContentComponent);
 
 			// Construct the home page
 			SplitComponentContainer contentAndPreview = new SplitComponentContainer(
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client
 			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
 
 			if (_folderContentComponent.SelectedFolder != null)
-				_folderContentComponent.SelectedFolder.Refresh();
+				_folderContentComponent.SelectedFolder.Update();
 		}
 
 		private void OnSelectedFolderChanged(object sender, System.EventArgs e)
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client
 			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
 
 			if (_folderContentComponent.SelectedFolder != null)
-				_folderContentComponent.SelectedFolder.Refresh();
+				_folderContentComponent.SelectedFolder.Update();
 		}
 	}
 }

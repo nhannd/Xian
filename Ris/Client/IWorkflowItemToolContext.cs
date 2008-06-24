@@ -66,7 +66,12 @@ namespace ClearCanvas.Ris.Client
 		event EventHandler SelectionChanged;
 
 		/// <summary>
-		/// Convenience method to invalidate the currently selected folder.
+		/// Invalidates all folders.
+		/// </summary>
+		void InvalidateFolders();
+
+		/// <summary>
+		/// Invalidates the currently selected folder.
 		/// </summary>
 		void InvalidateSelectedFolder();
 
@@ -74,7 +79,7 @@ namespace ClearCanvas.Ris.Client
 		/// Invalidates all folders of the specified class.
 		/// </summary>
 		/// <param name="folderClass"></param>
-		void InvalidateFolder(Type folderClass);
+		void InvalidateFolders(Type folderClass);
 
 		/// <summary>
 		/// Allows the tool to register itself as a double-click handler for items,

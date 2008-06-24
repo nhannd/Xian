@@ -29,23 +29,25 @@
 
 #endregion
 
-using System.Security.Permissions;
-using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common;
+using System;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
-	[ExtensionOf(typeof(GlobalHomeFolderSystemToolExtensionPoint))]
-	[ExtensionOf(typeof(RegistrationHomeFolderSystemToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistHomeFolderSystemToolExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Registration)]
-	public class RegistrationMainWorkflowFolderSystemTool : FolderExplorerToolBase
+    public interface IFolderSystemContext : IToolContext
     {
-        public override void Initialize()
-        {
-            base.Initialize();
+        IDesktopWindow DesktopWindow { get; }
 
-            _folderSystem = new RegistrationWorkflowFolderSystem(this.Context);
-        }
-    }
+        IFolder SelectedFolder { get; set; }
+    	event EventHandler SelectedFolderChanged;
+
+        ISelection SelectedItems { get; }
+		event EventHandler SelectedItemsChanged;
+    	event EventHandler SelectedItemDoubleClicked;
+
+    	void InvalidateFolders();
+		void InvalidateFolders(Type folderClass);
+    	void InvalidateFolder(IFolder folder);
+	}
 }

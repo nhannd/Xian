@@ -30,9 +30,8 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor.
 		/// </summary>
 		/// <param name="title"></param>
-		/// <param name="folderExplorer"></param>
-		protected WorklistFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
-			: base(title, folderExplorer)
+		protected WorklistFolderSystem(string title)
+			: base(title)
 		{
 			InitializeFolders(new TFolderExtensionPoint());
 		}

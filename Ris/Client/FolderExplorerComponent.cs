@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
@@ -54,7 +55,7 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
     public class FolderExplorerComponent : ApplicationComponent
     {
-    	private readonly FolderTreeRoot _folderTreeRoot;
+		private readonly FolderTreeRoot _folderTreeRoot;
 		private FolderTreeNode _selectedTreeNode;
         private event EventHandler _selectedFolderChanged;
         private event EventHandler _suppressSelectionChangedEvent;
@@ -79,19 +80,39 @@ namespace ClearCanvas.Ris.Client
 			}
     	}
 
+		internal void InvalidateFolders()
+		{
+			_folderTreeRoot.Invalidate();
+			_folderTreeRoot.Update();
+		}
+
+		internal void InvalidateFolders(Type folderClass)
+		{
+			_folderTreeRoot.Invalidate(folderClass);
+			_folderTreeRoot.Update();
+		}
+
+		internal void InvalidateFolder(IFolder folder)
+		{
+			_folderTreeRoot.Invalidate(folder);
+			_folderTreeRoot.Update();
+		}
+
         #region Application Component overrides
 
         public override void Start()
         {
-            base.Start();
-
 			// subscribe to events
 			_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
 			_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
 			_folderSystem.FoldersChanged += FoldersChangedEventHandler;
 
 			BuildFolderTree();
-        }
+
+			_folderTreeRoot.Update();
+
+			base.Start();
+		}
 
         public override IActionSet ExportedActions
         {
@@ -176,16 +197,19 @@ namespace ClearCanvas.Ris.Client
             {
                 if (_selectedTreeNode != null)
                 {
-                    _selectedTreeNode.Folder.RefreshBegin -= OnSelectedFolderRefreshBegin;
-					_selectedTreeNode.Folder.RefreshFinish -= OnSelectedFolderRefreshFinish;
+                    _selectedTreeNode.Folder.BeforeUpdate -= OnSelectedFolderBeforeUpdate;
+					_selectedTreeNode.Folder.AfterUpdate -= OnSelectedFolderAfterUpdate;
 					_selectedTreeNode.Folder.CloseFolder();
                 }
 
 				if (node != null)
                 {
-					node.Folder.RefreshBegin += OnSelectedFolderRefreshBegin;
-					node.Folder.RefreshFinish += OnSelectedFolderRefreshFinish;
+					node.Folder.BeforeUpdate += OnSelectedFolderBeforeUpdate;
+					node.Folder.AfterUpdate += OnSelectedFolderAfterUpdate;
 					node.Folder.OpenFolder();
+					
+					// ensure the content of this nodes folder is up to date
+					node.Update();
                 }
 
 				_selectedTreeNode = node;
@@ -193,12 +217,12 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
+		private void OnSelectedFolderBeforeUpdate(object sender, EventArgs e)
         {
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(true));
         }
 
-		private void OnSelectedFolderRefreshFinish(object sender, EventArgs e)
+		private void OnSelectedFolderAfterUpdate(object sender, EventArgs e)
         {
             EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(false));
         }
@@ -259,21 +283,9 @@ namespace ClearCanvas.Ris.Client
 
 			_folderTreeRoot.InsertFolders(orderedFolders, false);	// insert the ordered folders as ordered
 			_folderTreeRoot.InsertFolders(remainderFolders, true);	// insert the remainder sorting alphabetically
-
-			RefreshCounts(_folderTreeRoot);
-		}
-
-		private void RefreshCounts(FolderTreeNode node)
-		{
-			if (node == null) return;
-
-			foreach (FolderTreeNode child in node.GetSubTree().Items)
-			{
-				RefreshCounts(child);
-				child.Folder.RefreshCount();
-			}
 		}
 
 		#endregion
-    }
+
+	}
 }

@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
 		bool StartExpanded { get; }
 
 		/// <summary>
-		/// Gets a table of the items that are contained in this folder
+		/// Gets a table of the items that are contained in this folder.
 		/// </summary>
 		ITable ItemsTable { get; }
 
@@ -108,17 +108,13 @@ namespace ClearCanvas.Ris.Client
 		int TotalItemCount { get; }
 
 		/// <summary>
-		/// Gets or sets the folder path which sets up the tree structure
+		/// Gets or sets the folder path which determines the location of this folder in the explorer tree.
 		/// </summary>
 		Path FolderPath { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether or not the folder is 'static'.
 		/// </summary>
-		/// <remarks>
-		/// In the context of workflow, folders created via the normal constructor (new Folder(...)) are considered static and are
-		/// otherwise they are considered generated if created by Activator.CreateInstance.
-		/// </remarks>
 		bool IsStatic { get; }
 
 		#endregion
@@ -141,14 +137,14 @@ namespace ClearCanvas.Ris.Client
 		event EventHandler TooltipChanged;
 
 		/// <summary>
-		/// Occurs when refresh is about to begin
+		/// Occurs when update is about to begin.
 		/// </summary>
-		event EventHandler RefreshBegin;
+		event EventHandler BeforeUpdate;
 
 		/// <summary>
-		/// Occurs when refresh is about to finish
+		/// Occurs when update is about to finish.
 		/// </summary>
-		event EventHandler RefreshFinish;
+		event EventHandler AfterUpdate;
 
 		/// <summary>
 		/// Occurs when the value of the <see cref="TotalItemCount"/> property changes.
@@ -162,13 +158,15 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
 		/// </summary>
-		void Refresh();
+		void Update();
+
+		void Invalidate();
 
 		/// <summary>
 		/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
 		/// The implementation may be asynchronous.
 		/// </summary>
-		void RefreshCount();
+		//void UpdateCount();
 
 		/// <summary>
 		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).

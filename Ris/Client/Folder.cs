@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Client
 
 		private IResourceResolver _resourceResolver;
 		private bool _isOpen;
-		private bool _refreshOnOpen = true;
 
 		private IFolderSystem _folderSystem;
 		private Path _folderPath;
@@ -96,6 +95,7 @@ namespace ClearCanvas.Ris.Client
 		private static readonly IconSet _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
 		private IconSet _iconSet;
 		private string _folderTooltip;
+		private int _totalItemCount = -1;
 
 		/// <summary>
 		/// Constructor
@@ -125,15 +125,6 @@ namespace ClearCanvas.Ris.Client
 			_resourceResolver = new ResourceResolver(typeof(Folder).Assembly);
 			_folderPath = new Path(path, _resourceResolver);
 			_startExpanded = startExpanded;
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether the folder will automatically refresh when <see cref="OpenFolder"/> is called.
-		/// </summary>
-		public bool RefreshOnOpen
-		{
-			get { return _refreshOnOpen; }
-			set { _refreshOnOpen = value; }
 		}
 
 		#region IFolder Members
@@ -190,13 +181,18 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
 		/// </summary>
-		public abstract void Refresh();
+		public abstract void Update();
 
 		/// <summary>
 		/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
 		/// The implementation may be asynchronous.
 		/// </summary>
-		public abstract void RefreshCount();
+		//public abstract void UpdateCount();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		public abstract void Invalidate();
 
 		/// <summary>
 		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).
@@ -206,9 +202,6 @@ namespace ClearCanvas.Ris.Client
 			this.IconSet = OpenIconSet;
 
 			_isOpen = true;
-			
-			if(_refreshOnOpen)
-				Refresh();
 		}
 
 		/// <summary>
@@ -292,7 +285,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Occurs when refresh is about to begin.
 		/// </summary>
-		public event EventHandler RefreshBegin
+		public event EventHandler BeforeUpdate
 		{
 			add { _refreshBegin += value; }
 			remove { _refreshBegin -= value; }
@@ -301,7 +294,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Occurs when refresh is about to finish.
 		/// </summary>
-		public event EventHandler RefreshFinish
+		public event EventHandler AfterUpdate
 		{
 			add { _refreshFinish += value; }
 			remove { _refreshFinish -= value; }
@@ -369,15 +362,32 @@ namespace ClearCanvas.Ris.Client
 		/// as the number of items displayed in the <see cref="IFolder.ItemsTable"/>, or may be larger
 		/// in the event the table is only showing a subset of the total number of items.
 		/// </summary>
-		public abstract int TotalItemCount
+		public int TotalItemCount
 		{
-			get;
+			get { return _totalItemCount; }
+			protected set
+			{
+				if (value != _totalItemCount)
+				{
+					_totalItemCount = value;
+					NotifyTotalItemCountChanged();
+					NotifyTextChanged();
+				}
+			}
 		}
 
 		/// <summary>
 		/// Gets a value indicating whether the count of items in the folder is currently known.
 		/// </summary>
-		protected abstract bool IsItemCountKnown { get; }
+		/// <remarks>
+		/// The default implementation returns true if <see cref="TotalItemCount"/> returns a value
+		/// larger than -1.
+		/// </remarks>
+		protected virtual bool IsItemCountKnown
+		{
+			get { return _totalItemCount > -1; }
+		}
+
 
 		/// <summary>
 		/// Occurs when the value of the <see cref="IFolder.TotalItemCount"/> property changes.

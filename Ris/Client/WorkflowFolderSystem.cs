@@ -119,15 +119,20 @@ namespace ClearCanvas.Ris.Client
                 get { return _owner.DesktopWindow; }
             }
 
-            public void InvalidateSelectedFolder()
+            public void InvalidateFolders()
             {
-                _owner.InvalidateSelectedFolder();
+                _owner.InvalidateFolders();
             }
 
-            public void InvalidateFolder(Type folderClass)
-            {
-                _owner.InvalidateFolder(folderClass);
-            }
+			public void InvalidateSelectedFolder()
+			{
+				_owner.InvalidateSelectedFolder();
+			}
+
+			public void InvalidateFolders(Type folderClass)
+			{
+				_owner.InvalidateFolders(folderClass);
+			}
 
             public void RegisterDoubleClickHandler(ClickHandlerDelegate handler)
             {
@@ -147,8 +152,8 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-		private readonly IFolderExplorerToolContext _folderExplorer;
 		private readonly FolderList _workflowFolders;
+		private IFolderSystemContext _context;
 
 		private event EventHandler _selectedItemDoubleClicked;
 		private event EventHandler _selectedItemsChanged;
@@ -175,11 +180,9 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor.
 		/// </summary>
 		/// <param name="title">Initial title of the folder system.</param>
-		/// <param name="folderExplorer">The folder explorer that is hosting the folder system.</param>
-		protected WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
+		protected WorkflowFolderSystem(string title)
 		{
 			_title = title;
-			_folderExplorer = folderExplorer;
 
 			// establish default resource resolver
 			_resourceResolver = new ResourceResolver(this.GetType(), true);
@@ -197,9 +200,16 @@ namespace ClearCanvas.Ris.Client
 
 		#region IFolderSystem implementation
 
+		public void SetContext(IFolderSystemContext context)
+		{
+			_context = context;
+			_context.SelectedItemsChanged += SelectedItemsChangedEventHandler;
+			_context.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
+		}
+
 		public IDesktopWindow DesktopWindow
 		{
-			get { return _folderExplorer.DesktopWindow; }
+			get { return _context.DesktopWindow; }
 		}
 
 		public string Id
@@ -281,33 +291,6 @@ namespace ClearCanvas.Ris.Client
 			remove { _foldersChanged -= value; }
 		}
 
-		public void OnSelectedItemsChanged()
-		{
-			try
-			{
-				BlockingOperation.Run(
-					delegate
-					{
-						_workflowEnablement = this.Selection.Equals(Desktop.Selection.Empty) ? null :
-							QueryOperationEnablement(this.Selection);
-					});
-			}
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex);
-			}
-
-			EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
-		}
-
-		public virtual void OnSelectedItemDoubleClicked()
-		{
-			EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
-
-            if (_doubleClickHandler != null)
-                _doubleClickHandler();
-		}
-
         /// <summary>
         /// Gets a value indicating whether this folder system supports searching.
         /// </summary>
@@ -330,24 +313,28 @@ namespace ClearCanvas.Ris.Client
         }
 
 		/// <summary>
-		/// Invalidates all folders of the specified type so that they
-		/// will refresh their content or count.
+		/// Invalidates all folders.
 		/// </summary>
-		/// <param name="folderType"></param>
-		public void InvalidateFolder(Type folderType)
+		public void InvalidateFolders()
 		{
-			// TODO: could implement more of an "invalidate", rather than an immediate refresh
-			// the folder doesn't actually need to refresh unless the explorer workspace is visible
-			foreach (IFolder folder in _workflowFolders)
-			{
-				if (folder.GetType().Equals(folderType))
-				{
-					if (folder.IsOpen)
-						folder.Refresh();
-					else
-						folder.RefreshCount();
-				}
-			}
+			_context.InvalidateFolders();
+		}
+
+		/// <summary>
+		/// Invalidates all folders.
+		/// </summary>
+		public void InvalidateFolders(Type folderClass)
+		{
+			_context.InvalidateFolders(folderClass);
+		}
+
+		/// <summary>
+		/// Invalidates the currently selected folder.
+		/// </summary>
+		public void InvalidateSelectedFolder()
+		{
+			if(_context.SelectedFolder != null)
+				_context.InvalidateFolder(_context.SelectedFolder);
 		}
 
 		#endregion
@@ -442,7 +429,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		protected internal ISelection Selection
 		{
-			get { return _folderExplorer.SelectedItems; }
+			get { return _context.SelectedItems; }
 		}
 
 		/// <summary>
@@ -459,8 +446,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		protected internal IFolder SelectedFolder
 		{
-			get { return _folderExplorer.SelectedFolder; }
-			set { _folderExplorer.SelectedFolder = value; }
+			get { return _context.SelectedFolder; }
+			set { _context.SelectedFolder = value; }
 		}
 
 		/// <summary>
@@ -468,19 +455,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		protected internal event EventHandler SelectedFolderChanged
 		{
-			add { _folderExplorer.SelectedFolderChanged += value; }
-			remove { _folderExplorer.SelectedFolderChanged -= value; }
-		}
-
-		/// <summary>
-		/// Invalidates the currently selected folder, causing it to re-populate its contents.
-		/// </summary>
-		protected internal void InvalidateSelectedFolder()
-		{
-			// TODO: could implement more of an "invalidate", rather than an immediate refresh
-			// the folder doesn't actually need to refresh unless the explorer workspace is visible
-			if (_folderExplorer.SelectedFolder != null)
-				_folderExplorer.SelectedFolder.Refresh();
+			add { _context.SelectedFolderChanged += value; }
+			remove { _context.SelectedFolderChanged -= value; }
 		}
 
 		/// <summary>
@@ -533,6 +509,43 @@ namespace ClearCanvas.Ris.Client
 				handlers = new List<object>();
 
 			return SelectDropHandler(handlers, items);
+		}
+
+		/// <summary>
+		/// Handles the <see cref="IFolderSystemContext.SelectedItemsChanged"/> event.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void SelectedItemsChangedEventHandler(object sender, EventArgs args)
+		{
+			try
+			{
+				BlockingOperation.Run(
+					delegate
+					{
+						_workflowEnablement = this.Selection.Equals(Desktop.Selection.Empty) ? null :
+							QueryOperationEnablement(this.Selection);
+					});
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex);
+			}
+
+			EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Handles the <see cref="IFolderSystemContext.SelectedItemDoubleClicked"/> event.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs args)
+		{
+			EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
+
+			if (_doubleClickHandler != null)
+				_doubleClickHandler();
 		}
 
 		/// <summary>
@@ -656,6 +669,16 @@ namespace ClearCanvas.Ris.Client
 			{
 				get { return _owner.DesktopWindow; }
 			}
+
+			public void InvalidateFolders()
+			{
+				_owner.InvalidateFolders();
+			}
+
+			public void InvalidateFolders(Type folderClass)
+			{
+				_owner.InvalidateFolders(folderClass);
+			}
 		}
 
 		#endregion
@@ -664,9 +687,8 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor.
 		/// </summary>
 		/// <param name="title"></param>
-		/// <param name="folderExplorer"></param>
-		protected WorkflowFolderSystem(string title, IFolderExplorerToolContext folderExplorer)
-			:base(title, folderExplorer)
+		protected WorkflowFolderSystem(string title)
+			:base(title)
 		{
 		}
 

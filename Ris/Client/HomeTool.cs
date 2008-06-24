@@ -14,9 +14,9 @@ namespace ClearCanvas.Ris.Client
 	/// <remarks>
 	/// Subclasses of this class should specify a <see cref="MenuActionAttribute"/> attribute with the Launch method as the clickHandler
 	/// </remarks>
-	/// <typeparam name="TFolderSystemToolExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
-	public abstract class HomeTool<TFolderSystemToolExtensionPoint> : Tool<IDesktopToolContext> 
-		where TFolderSystemToolExtensionPoint : ExtensionPoint<ITool>, new()
+	/// <typeparam name="TFolderSystemExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
+	public abstract class HomeTool<TFolderSystemExtensionPoint> : Tool<IDesktopToolContext> 
+		where TFolderSystemExtensionPoint : ExtensionPoint<IFolderSystem>, new()
 	{
 		private IWorkspace _workspace;
 
@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client
 	/// <seealso cref="HomeTool{TFolderSystemToolExtensionPoint}"/>
 	/// <typeparam name="TFolderSystemToolExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
 	public abstract class WorklistPreviewHomeTool<TFolderSystemToolExtensionPoint> : HomeTool<TFolderSystemToolExtensionPoint>
-		where TFolderSystemToolExtensionPoint : ExtensionPoint<ITool>, new()
+		where TFolderSystemToolExtensionPoint : ExtensionPoint<IFolderSystem>, new()
 	{
 		protected override IApplicationComponent  BuildComponent()
 		{

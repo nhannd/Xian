@@ -32,42 +32,70 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		#region IFolderExplorerToolContext implementation
+		#region IFolderSystemContext implementation
 
-		class FolderExplorerToolContext : ToolContext, IFolderExplorerToolContext
+		class FolderSystemContext : ToolContext, IFolderSystemContext
 		{
-			private readonly FolderExplorerGroupComponent _component;
+			private readonly FolderExplorerGroupComponent _owner;
+			private readonly FolderExplorerComponent _explorerComponent;
+			private readonly FolderContentsComponent _contentsComponent;
 
-			public FolderExplorerToolContext(FolderExplorerGroupComponent component)
+
+			public FolderSystemContext(FolderExplorerGroupComponent owner, FolderExplorerComponent explorerComponent, FolderContentsComponent contentsComponent)
 			{
-				_component = component;
+				_owner = owner;
+				_explorerComponent = explorerComponent;
+				_contentsComponent = contentsComponent;
 			}
-
-			#region IFolderExplorerToolContext Members
 
 			public IDesktopWindow DesktopWindow
 			{
-				get { return _component.Host.DesktopWindow; }
+				get { return _owner.Host.DesktopWindow; }
 			}
 
 			public IFolder SelectedFolder
 			{
-				get { return _component.SelectedFolder; }
-				set { _component.SelectedFolder = value; }
+				get { return _explorerComponent.SelectedFolder; }
+				set { _explorerComponent.SelectedFolder = value; }
 			}
 
 			public event EventHandler SelectedFolderChanged
 			{
-				add { _component.SelectedFolderChanged += value; }
-				remove { _component.SelectedFolderChanged -= value; }
+				add { _explorerComponent.SelectedFolderChanged += value; }
+				remove { _explorerComponent.SelectedFolderChanged -= value; }
 			}
 
 			public ISelection SelectedItems
 			{
-				get { return _component._contentComponent.SelectedItems; }
+				get { return _contentsComponent.SelectedItems; }
 			}
 
-			#endregion
+			public event EventHandler SelectedItemsChanged
+			{
+				add { _contentsComponent.SelectedItemsChanged += value; }
+				remove { _contentsComponent.SelectedItemsChanged -= value; }
+			}
+
+			public event EventHandler SelectedItemDoubleClicked
+			{
+				add { _contentsComponent.SelectedItemDoubleClicked += value; }
+				remove { _contentsComponent.SelectedItemDoubleClicked -= value; }
+			}
+
+			public void InvalidateFolders()
+			{
+				_explorerComponent.InvalidateFolders();
+			}
+
+			public void InvalidateFolders(Type folderClass)
+			{
+				_explorerComponent.InvalidateFolders(folderClass);
+			}
+
+			public void InvalidateFolder(IFolder folder)
+			{
+				_explorerComponent.InvalidateFolder(folder);
+			}
 		}
 
 		#endregion
@@ -86,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public FolderExplorerGroupComponent(IExtensionPoint folderExplorerExtensionPoint, FolderContentsComponent contentComponent)
+		public FolderExplorerGroupComponent(ExtensionPoint<IFolderSystem> folderSystemExtensionPoint, FolderContentsComponent contentComponent)
 		{
 			_contentComponent = contentComponent;
 			_stackTabComponent = new StackTabComponentContainer(StackStyle.ShowOneOnly, false);
@@ -94,16 +122,10 @@ namespace ClearCanvas.Ris.Client
 			_folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
 
 			// Find all the folder systems
-			ToolSet folderExplorers = new ToolSet(folderExplorerExtensionPoint, new FolderExplorerToolContext(this));
-			List<IFolderSystem> folderSystems = CollectionUtils.Map<ITool, IFolderSystem, List<IFolderSystem>>(folderExplorers.Tools,
-				delegate(ITool tool)
-				{
-					FolderExplorerToolBase folderExplorerTool = (FolderExplorerToolBase)tool;
-					return folderExplorerTool.FolderSystem;
-				});
+			List<IFolderSystem> folderSystems =
+				CollectionUtils.Cast<IFolderSystem>(folderSystemExtensionPoint.CreateExtensions());
 
 			// Order the Folder Systems
-			//List<IFolderSystem> ordered;
 			List<IFolderSystem> remainder;
 			FolderExplorerComponentSettings.Default.OrderFolderSystems(folderSystems, out folderSystems, out remainder);
 
@@ -114,12 +136,13 @@ namespace ClearCanvas.Ris.Client
 			CollectionUtils.ForEach(folderSystems,
 				delegate(IFolderSystem folderSystem)
 				{
-					FolderExplorerComponent component = new FolderExplorerComponent(folderSystem);
-					_folderExplorerComponents.Add(folderSystem, component);
+					FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
+					folderSystem.SetContext(new FolderSystemContext(this, explorer, _contentComponent));
+					_folderExplorerComponents.Add(folderSystem, explorer);
 
 					StackTabPage thisPage = new StackTabPage(
 						folderSystem.Title,
-						component,
+						explorer,
 						string.Empty,
 						folderSystem.Title,
 						string.Empty,

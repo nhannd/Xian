@@ -72,8 +72,8 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        protected TechnologistWorkflowFolderSystemBase(string title, IFolderExplorerToolContext folderExplorer)
-            : base(title, folderExplorer)
+        protected TechnologistWorkflowFolderSystemBase(string title)
+            : base(title)
 		{
         }
 

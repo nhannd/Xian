@@ -87,11 +87,21 @@ namespace ClearCanvas.Ris.Client
 		#region Methods
 
 		/// <summary>
-		/// Invalidates all folders of the specified type so that they
-		/// will refresh their content or count.
+		/// Initializes the folder system with a context.
 		/// </summary>
-		/// <param name="folderType"></param>
-		void InvalidateFolder(Type folderType);
+		/// <param name="context"></param>
+		void SetContext(IFolderSystemContext context);
+
+		/// <summary>
+		/// Invalidates all folders in this folder system.
+		/// </summary>
+		void InvalidateFolders();
+
+		/// <summary>
+		/// Invalidates all folders of the specified class in this folder system.
+		/// </summary>
+		void InvalidateFolders(Type folderClass);
+
 
 		#endregion
 
@@ -105,12 +115,5 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="data"></param>
         void ExecuteSearch(SearchData data);
-
-
-		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
-		void OnSelectedItemsChanged();
-
-		//TODO: (JR Jun 2008) Get rid of this method - the folder system should subscribe to an event on IFolderExplorerToolContext instead
-		void OnSelectedItemDoubleClicked();
 	}
 }

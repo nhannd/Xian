@@ -7,7 +7,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Ris.Client
 {
 	[ExtensionPoint]
-	public class GlobalHomeFolderSystemToolExtensionPoint : ExtensionPoint<ITool>
+	public class FolderSystemExtensionPoint : ExtensionPoint<IFolderSystem>
 	{
 	}
 
@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class GlobalHomeTool : WorklistPreviewHomeTool<GlobalHomeFolderSystemToolExtensionPoint>
+	public class GlobalHomeTool : WorklistPreviewHomeTool<FolderSystemExtensionPoint>
 	{
 		public override void Initialize()
 		{

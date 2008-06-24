@@ -13,16 +13,15 @@ namespace ClearCanvas.Ris.Client
     public abstract class SearchResultsFolder : WorkflowFolder
     {
         private SearchData _searchData;
+    	private bool _isValid;
 
         protected SearchResultsFolder()
         {
-            // no need to refresh this folder every time it is opened
-            this.RefreshOnOpen = false;
         }
 
         /// <summary>
         /// Gets or sets the search arguments.  Setting this property will automatically
-        /// initiate a query to refresh the contents of this folder.
+        /// call <see cref="Invalidate"/> on this folder.
         /// </summary>
         public SearchData SearchData
         {
@@ -30,21 +29,25 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _searchData = value;
-                this.Refresh();
+                this.Invalidate();
             }
         }
 
         #region Folder overrides
 
-        protected override bool IsItemCountKnown
-        {
-            get { return this.IsPopulated; }
-        }
+		public override void Invalidate()
+		{
+			_isValid = false;
+		}
 
-        public override void RefreshCount()
-        {
-            // do nothing
-        }
+		public override void Update()
+		{
+			if(!_isValid)
+			{
+				BeginQueryItems();
+				_isValid = true;
+			}
+		}
 
         protected override IconSet OpenIconSet
         {
@@ -89,13 +92,7 @@ namespace ClearCanvas.Ris.Client
 		protected SearchResultsFolder(Table<TItem> itemsTable)
 		{
 			_itemsTable = itemsTable;
-			_itemsTable.Items.ItemsChanged += delegate
-				{
-					NotifyTotalItemCountChanged();
-					NotifyTextChanged();
-				};
 		}
-
 
 		#region Folder overrides
 
@@ -104,12 +101,27 @@ namespace ClearCanvas.Ris.Client
 			get { return _itemsTable; }
 		}
 
-		public override int TotalItemCount
+		protected override void BeginQueryCount()
 		{
-			get { return _itemsTable.Items.Count; }
+			// not supported on search folders
 		}
 
-		public override void Refresh()
+		#endregion
+
+		#region Protected API
+
+		/// <summary>
+		/// Called to execute the search query.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
+		protected abstract TextQueryResponse<TItem> DoQuery(string query, int specificityThreshold);
+
+		#endregion
+
+		#region Helpers
+
+		protected override void BeginQueryItems()
 		{
 			if (_queryItemsTask != null)
 			{
@@ -124,8 +136,10 @@ namespace ClearCanvas.Ris.Client
 					{
 						try
 						{
-							IList<TItem> result = QueryHelper();
-							taskContext.Complete(result);
+							TextQueryResponse<TItem> response = DoQuery(this.SearchData.TextSearch, SearchCriteriaSpecificityThreshold);
+							if (response.TooManyMatches)
+								throw new WeakSearchCriteriaException();
+							taskContext.Complete(response.Matches ?? new List<TItem>());
 						}
 						catch (Exception e)
 						{
@@ -139,35 +153,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		#endregion
-
-		#region Overridables
-
-		/// <summary>
-		/// Called to execute the search query.
-		/// </summary>
-		/// <param name="query"></param>
-		/// <returns></returns>
-		protected abstract TextQueryResponse<TItem> DoQuery(string query, int specificityThreshold);
-
-		#endregion
-
-		#region Helpers
-
-		private IList<TItem> QueryHelper()
-		{
-			List<TItem> worklistItems;
-			TextQueryResponse<TItem> response = DoQuery(this.SearchData.TextSearch, SearchCriteriaSpecificityThreshold);
-			if (response.TooManyMatches)
-				throw new WeakSearchCriteriaException();
-			worklistItems = response.Matches;
-			
-			if (worklistItems == null)
-				worklistItems = new List<TItem>();
-
-			return worklistItems;
-		}
-
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
 		{
 			if (args.Reason == BackgroundTaskTerminatedReason.Completed)
@@ -175,7 +160,7 @@ namespace ClearCanvas.Ris.Client
 				NotifyRefreshBegin();
 
 				IList<TItem> items = (IList<TItem>)args.Result;
-				this.IsPopulated = true;
+				this.TotalItemCount = items.Count;
 				_itemsTable.Items.Clear();
 				_itemsTable.Items.AddRange(items);
 				_itemsTable.Sort();
