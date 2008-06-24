@@ -43,6 +43,7 @@ using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Ris.Application.Common.PatientReconciliation;
 using System.IO;
 
 namespace ClearCanvas.Ris.Client
@@ -205,6 +206,87 @@ namespace ClearCanvas.Ris.Client
             result = result.Replace("xxx", dateTime.Millisecond.ToString("000"));
             return result.Trim();
         }
+        /// <summary>
+        /// Creates a new patient with multiple profiles.
+        /// </summary>
+        /// <returns></returns>
+        public static PatientProfileSummary CreatePatient(String[] InfoAuth)
+        {
+            List<PatientProfileSummary> result=new List<PatientProfileSummary>();
+
+            if (InfoAuth.Length==0)
+                result.Add(CreatePatient());
+            else
+            {
+                InitReferenceDataCacheOnce();
+                PatientProfileDetail profile = null;
+                DateTime now = Platform.Time;
+
+                profile = new PatientProfileDetail();
+
+                profile.Healthcard = new HealthcardDetail(
+                GenerateRandomIntegerString(10),
+                ChooseRandom(_patientEditorFormData.HealthcardAssigningAuthorityChoices),
+                "", null);
+
+                profile.DateOfBirth = now;
+                profile.Sex = ChooseRandom(_patientEditorFormData.SexChoices);
+                profile.PrimaryLanguage = ChooseRandom(_patientEditorFormData.PrimaryLanguageChoices);
+                profile.Religion = ChooseRandom(_patientEditorFormData.ReligionChoices);
+                profile.DeathIndicator = false;
+                profile.TimeOfDeath = null;
+
+                string givenName;
+                string familyName = GetRandomNameFromFile(RandomUtilsSettings.Default.FamilyNameDictionary);
+                if (profile.Sex.Code == "F")
+                    givenName = GetRandomNameFromFile(RandomUtilsSettings.Default.FemaleNameDictionary);
+                else
+                    givenName = GetRandomNameFromFile(RandomUtilsSettings.Default.MaleNameDictionary);
+
+                givenName += " Anonymous";
+                profile.Name = new PersonNameDetail();
+                profile.Name.FamilyName = familyName;
+                profile.Name.GivenName = givenName;
+
+                AddPatientResponse addResponse = null;
+
+                for(int i=0; i<InfoAuth.Length; i++){
+                    profile.Mrn = new CompositeIdentifierDetail(
+                                  GenerateRandomIntegerString(10),
+                                  CollectionUtils.SelectFirst(_patientEditorFormData.MrnAssigningAuthorityChoices,
+                                  delegate(EnumValueInfo MAAC){
+                                      return MAAC.Code==InfoAuth[i];
+                                  }));
+                               //   ChooseRandom(_patientEditorFormData.MrnAssigningAuthorityChoices));                                    
+
+                   Platform.GetService<IPatientAdminService>(
+                       delegate(IPatientAdminService service)
+                       {
+                            addResponse = service.AddPatient(new AddPatientRequest(profile));
+                       });
+
+                   result.Add(addResponse.PatientProfile);
+                }
+                if (InfoAuth.Length > 1)
+                {
+                    //reconcile patients
+                    List<EntityRef> checkedPatients = new List<EntityRef>();
+                    foreach (PatientProfileSummary pps in result)
+                    {
+                        checkedPatients.Add(pps.PatientRef);
+                    }
+                    Platform.GetService<IPatientReconciliationService>(
+                    delegate(IPatientReconciliationService service)
+                    {
+                        // reconcile
+                        service.ReconcilePatients(new ReconcilePatientsRequest(checkedPatients));
+
+                    });
+                }
+            }
+            return result[0];
+        }
+
 
         /// <summary>
         /// Creates a new patient with a single profile.
@@ -268,6 +350,19 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         public static VisitSummary CreateVisit(EntityRef patientRef, EnumValueInfo informationAuthority, int admitOffsetDays)
         {
+            return CreateVisit(patientRef, informationAuthority, admitOffsetDays, null);
+        }
+
+        /// <summary>
+        /// Creates a new visit for the specified patient.
+        /// </summary>
+        /// <param name="patientRef">Patient for which the visit is created.</param>
+        /// <param name="informationAuthority">Information authority to use for the visit number.</param>
+        /// <param name="admitOffsetDays">A positive or negative number of days from today.</param>
+        /// <param name="AdmissionType">Emergency or other types</param>
+        /// <returns></returns>
+        public static VisitSummary CreateVisit(EntityRef patientRef, EnumValueInfo informationAuthority, int admitOffsetDays, EnumValueInfo AdmissionType)
+        {
             InitReferenceDataCacheOnce();
 
             // Generate an active visit with randomize properties
@@ -279,7 +374,10 @@ namespace ClearCanvas.Ris.Client
             visitDetail.VisitNumber = new CompositeIdentifierDetail(GenerateRandomIntegerString(10), informationAuthority);
             visitDetail.PatientClass = ChooseRandom(_visitEditorFormData.PatientClassChoices);
             visitDetail.PatientType = ChooseRandom(_visitEditorFormData.PatientTypeChoices);
-            visitDetail.AdmissionType = ChooseRandom(_visitEditorFormData.AdmissionTypeChoices);
+            if (AdmissionType == null)
+                visitDetail.AdmissionType = ChooseRandom(_visitEditorFormData.AdmissionTypeChoices);
+            else
+                visitDetail.AdmissionType = AdmissionType;
             visitDetail.Status = CollectionUtils.SelectFirst(_visitEditorFormData.VisitStatusChoices,
                 delegate(EnumValueInfo enumValue)
                 {
@@ -310,7 +408,6 @@ namespace ClearCanvas.Ris.Client
         {
             return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays);
         }
-
         /// <summary>
         /// Create a random order on the specified visit.
         /// </summary>
@@ -321,18 +418,37 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays)
         {
+            return RandomOrder(visit, informationAuthority, diagnosticServiceName, schedulingOffsetDays,"",null);
+        }
+        public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, int schedulingOffsetDays, String Modality,String FacilityCode)
+        {
+            return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays,Modality,FacilityCode);
+        }
+        /// <summary>
+        /// Create a random order on the specified visit.
+        /// </summary>
+        /// <param name="visit">Visit/patient for which the order is created.</param>
+        /// <param name="informationAuthority">Performing facility will be selected to match this information authority.</param>
+        /// <param name="diagnosticServiceName">Name of the diagnostic service to order.</param>
+        /// <param name="schedulingOffsetDays">A positive or negative number of days from today.</param>
+        /// <param name="Modality">A string specifying the name of the modality.</param>
+        /// <returns></returns>
+        public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays,string Modality,string FacilityCode)
+        {
             InitReferenceDataCacheOnce();
 
             DateTime scheduledTime = Platform.Time + TimeSpan.FromDays(schedulingOffsetDays);
-
+            LoadDiagnosticServiceBreakdownResponse dsResponse=null;
             OrderSummary orderSummary = null;
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
                     DiagnosticServiceSummary diagnosticService;
-                    if (String.IsNullOrEmpty(diagnosticServiceName))
+                    if (String.IsNullOrEmpty(diagnosticServiceName)&&String.IsNullOrEmpty(Modality))
                     {
-                        diagnosticService = ChooseRandom(_diagnosticServices);                        
+                        diagnosticService = ChooseRandom(_diagnosticServices);
+                        dsResponse = service.LoadDiagnosticServiceBreakdown(
+                                      new LoadDiagnosticServiceBreakdownRequest(diagnosticService.DiagnosticServiceRef));
                     }
                     else
                     {
@@ -340,7 +456,14 @@ namespace ClearCanvas.Ris.Client
                             _diagnosticServices,
                             delegate(DiagnosticServiceSummary ds)
                             {
-                                return ds.Name == diagnosticServiceName;
+                                dsResponse=service.LoadDiagnosticServiceBreakdown(
+                                      new LoadDiagnosticServiceBreakdownRequest(ds.DiagnosticServiceRef));
+                                return (ds.Name == diagnosticServiceName) || (CollectionUtils.SelectFirst(dsResponse.DiagnosticServiceDetail.ProcedureTypes,
+                                                                                                        delegate(ProcedureTypeDetail ptd)
+                                                                                                        {
+                                                                                                            
+                                                                                                            return ptd.Name.IndexOf(Modality) == 0;
+                                                                                                        }) != null);
                             });
 
                         if (diagnosticService == null)
@@ -350,8 +473,12 @@ namespace ClearCanvas.Ris.Client
                     FacilitySummary performingFacility = CollectionUtils.SelectFirst(_orderEntryFormData.FacilityChoices,
                         delegate(FacilitySummary facility)
                             {
-                                return facility.InformationAuthority.Code == informationAuthority.Code;
+                                if (FacilityCode == null)
+                                    return facility.InformationAuthority.Code == informationAuthority.Code;
+                                else 
+                                    return facility.Code == FacilityCode;
                             });
+
                     ExternalPractitionerSummary randomPhysician = ChooseRandom(_practitioners);
                     EnumValueInfo randomPriority = ChooseRandom(_orderEntryFormData.OrderPriorityChoices);
 
@@ -364,9 +491,6 @@ namespace ClearCanvas.Ris.Client
                     requisition.Priority = randomPriority;
                     requisition.ReasonForStudy = "Randomly generated test order";
                     requisition.SchedulingRequestTime = scheduledTime;
-
-                    LoadDiagnosticServiceBreakdownResponse dsResponse = service.LoadDiagnosticServiceBreakdown(
-                        new LoadDiagnosticServiceBreakdownRequest(diagnosticService.DiagnosticServiceRef));
 
                     requisition.Procedures = new List<ProcedureRequisition>();
                     requisition.Procedures.AddRange(
