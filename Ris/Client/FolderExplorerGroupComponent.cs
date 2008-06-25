@@ -40,12 +40,17 @@ namespace ClearCanvas.Ris.Client
 			private readonly FolderExplorerComponent _explorerComponent;
 			private readonly FolderContentsComponent _contentsComponent;
 
+			private event EventHandler _selectedItemsChanged;
+			private event EventHandler _selectedItemDoubleClicked;
+
 
 			public FolderSystemContext(FolderExplorerGroupComponent owner, FolderExplorerComponent explorerComponent, FolderContentsComponent contentsComponent)
 			{
 				_owner = owner;
 				_explorerComponent = explorerComponent;
 				_contentsComponent = contentsComponent;
+				_contentsComponent.SelectedItemsChanged += SelectedItemsChangedEventHandler;
+				_contentsComponent.SelectedItemDoubleClicked += SelectedItemDoubleClickeEventHandler;
 			}
 
 			public IDesktopWindow DesktopWindow
@@ -67,20 +72,39 @@ namespace ClearCanvas.Ris.Client
 
 			public ISelection SelectedItems
 			{
-				get { return _contentsComponent.SelectedItems; }
+				get
+				{
+					// the folder system should see the selection as empty if it is not the active folder system
+					return (_explorerComponent == _owner._selectedFolderExplorer) ? _contentsComponent.SelectedItems : Selection.Empty;
+				}
 			}
 
 			public event EventHandler SelectedItemsChanged
 			{
-				add { _contentsComponent.SelectedItemsChanged += value; }
-				remove { _contentsComponent.SelectedItemsChanged -= value; }
+				add { _selectedItemsChanged += value; }
+				remove { _selectedItemsChanged -= value; }
 			}
 
 			public event EventHandler SelectedItemDoubleClicked
 			{
-				add { _contentsComponent.SelectedItemDoubleClicked += value; }
-				remove { _contentsComponent.SelectedItemDoubleClicked -= value; }
+				add { _selectedItemDoubleClicked += value; }
+				remove { _selectedItemDoubleClicked -= value; }
 			}
+
+			private void SelectedItemDoubleClickeEventHandler(object sender, EventArgs e)
+			{
+				// it only makes sense to notify the folder system if it is the active folder system
+				if(_explorerComponent == _owner._selectedFolderExplorer)
+					EventsHelper.Fire(_selectedItemDoubleClicked, _contentsComponent, EventArgs.Empty);
+			}
+
+			private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
+			{
+				// it only makes sense to notify the folder system if it is the active folder system
+				if (_explorerComponent == _owner._selectedFolderExplorer)
+					EventsHelper.Fire(_selectedItemsChanged, _contentsComponent, EventArgs.Empty);
+			}
+
 		}
 
 		#endregion
