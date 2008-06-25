@@ -168,10 +168,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 				this.SelectedImageIndex = this.ImageIndex;
 			}
 
-			// if the subtree was already built, we need to rebuild it because it may no longer be valid
+			// if the subtree was already built, we may need to rebuild it if it has changed
 			if (_isSubTreeBuilt)
 			{
-				RebuildSubTree();
+				// rebuild the subtree only if the binding returns a different reference
+				if (_parentTree.Binding.GetSubTree(_item) != _subtreeManager.Tree)
+					RebuildSubTree();
 			}
 			else
 			{

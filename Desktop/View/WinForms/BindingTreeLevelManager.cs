@@ -62,6 +62,14 @@ namespace ClearCanvas.Desktop.View.WinForms
             BuildLevel();
         }
 
+		/// <summary>
+		/// Gets the tree that is being managed.
+		/// </summary>
+		public ITree Tree
+		{
+			get { return _tree; }
+		}
+
 		public void Dispose()
 		{
 			_tree.Items.ItemsChanged -= TreeItemsChangedEventHandler;
