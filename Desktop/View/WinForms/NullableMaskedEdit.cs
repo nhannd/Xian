@@ -473,7 +473,9 @@ namespace Clifton.Windows.Forms
         {
             // If we're in overwrite mode with a block selected, then clear the block
             // but keep all other delimited data in its group.
-            if ((SelectionLength > 0) && (IsOverwriteMode))
+			// Bug #1824: ignore if control key is pressed...LUIJ
+			bool isControlPressed = (ModifierKeys & Keys.Control) == Keys.Control;
+			if ((SelectionLength > 0) && (IsOverwriteMode) && !isControlPressed)
             {
                 ClearSelection();
             }

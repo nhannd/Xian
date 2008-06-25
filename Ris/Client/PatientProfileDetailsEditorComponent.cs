@@ -195,7 +195,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public string HealtcardMask
+        public string HealthcardMask
         {
             get { return TextFieldMasks.HealthcardNumberMask; }
         }
