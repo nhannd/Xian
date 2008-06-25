@@ -343,7 +343,7 @@ namespace ClearCanvas.Dicom.Network
             // Tells the state of the connection as of the last activity on the socket
             if (!_socket.Connected)
             {
-                CloseNetwork();
+            	OnNetworkError(null, true);
                 return false;
             }
 
@@ -356,7 +356,7 @@ namespace ClearCanvas.Dicom.Network
                 {
                     if (_socket.Available > 0)
                         return true;
-                    CloseNetwork();
+					OnNetworkError(null, true);
                     return false;
                 } 
                 _socket.Send(new byte[1], 0, 0);
@@ -365,7 +365,7 @@ namespace ClearCanvas.Dicom.Network
             {
                 // 10035 == WSAEWOULDBLOCK
                 if (!e.NativeErrorCode.Equals(10035))
-                    CloseNetwork();
+					OnNetworkError(e, true);
             }
 
             return false;

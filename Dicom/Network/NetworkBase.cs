@@ -650,7 +650,8 @@ namespace ClearCanvas.Dicom.Network
             {
                 DicomLogger.LogError("Unexpected state for association abort, closing connection from {0} to {1}",
                                      _assoc.CallingAE, _assoc.CalledAE);
-                CloseNetwork();
+
+				OnNetworkError(null, true);
 
                 if (NetworkClosed != null)
                     NetworkClosed("Unexpected state for association abort");
@@ -1092,7 +1093,7 @@ namespace ClearCanvas.Dicom.Network
                             DicomLogger.LogError(
                                 "ARTIM timeout when waiting for AAssociate Request PDU, closing connection.");
                             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
-                            CloseNetwork(); // TODO
+							OnNetworkError(null, true);
 
                             if (NetworkClosed != null)
                                 NetworkClosed("ARTIM timeout when waiting for AAssociate Request PDU");
@@ -1102,7 +1103,7 @@ namespace ClearCanvas.Dicom.Network
 							DicomLogger.LogError(
 								"ARTIM timeout when waiting for AAssociate AC or RJ PDU, closing connection.");
 							_state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
-							CloseNetwork(); // TODO
+							OnNetworkError(null, true);
 
 							if (NetworkClosed != null)
 								NetworkClosed("ARTIM timeout when waiting for AAssociate AC or RJ PDU");							
@@ -1112,7 +1113,7 @@ namespace ClearCanvas.Dicom.Network
                             DicomLogger.LogError(
                                 "Timeout when waiting for transport connection to close from {0} to {1}.  Dropping Connection.",
                                 _assoc.CallingAE, _assoc.CalledAE);
-                            CloseNetwork(); // TODO
+							OnNetworkError(null, true);
                             if (NetworkClosed != null)
                                 NetworkClosed("Timeout when waiting for transport connection to close");
                         }
