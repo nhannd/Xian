@@ -31,25 +31,21 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
 	public interface IPreviewComponent : IApplicationComponent
 	{
-		void SetUrl(string url);
+		void SetPreviewItem(string url, DataContractBase item);
 	}
 
+	/// <summary>
+	/// Manages the interaction between a <see cref="FolderExplorerGroupComponent"/>, <see cref="FolderContentsComponent"/>,
+	/// and a <see cref="IPreviewComponent"/>, which together form a homepage.
+	/// </summary>
 	public class HomePageContainer : SplitComponentContainer, ISearchDataHandler
 	{
-		#region ISearchDataHandler implementation
-
-		public SearchData SearchData
-		{
-			set { _folderSystemGroup.SearchData = value; }
-		}
-
-		#endregion
-
 		private readonly FolderExplorerGroupComponent _folderSystemGroup;
 		private readonly FolderContentsComponent _folderContentComponent;
 		private readonly IPreviewComponent _previewComponent;
@@ -71,10 +67,20 @@ namespace ClearCanvas.Ris.Client
 			this.Pane2 = new SplitPane("Contents", contentAndPreview, 0.8f);
 		}
 
+		#region ISearchDataHandler implementation
+
+		public SearchData SearchData
+		{
+			set { _folderSystemGroup.SearchData = value; }
+		}
+
+		#endregion
+
 		public override void Start()
 		{
 			_folderSystemGroup.SelectedFolderSystemChanged += OnSelectedFolderSystemChanged;
 			_folderSystemGroup.SelectedFolderChanged += OnSelectedFolderChanged;
+			_folderContentComponent.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
 			base.Start();
 		}
@@ -83,37 +89,28 @@ namespace ClearCanvas.Ris.Client
 		{
 			_folderSystemGroup.SelectedFolderSystemChanged -= OnSelectedFolderSystemChanged;
 			_folderSystemGroup.SelectedFolderChanged -= OnSelectedFolderChanged;
+			_folderContentComponent.SelectedItemsChanged -= SelectedItemsChangedEventHandler;
 
 			base.Stop();
 		}
 
-		public FolderContentsComponent ContentsComponent
+		private void SelectedItemsChangedEventHandler(object sender, System.EventArgs e)
 		{
-			get { return _folderContentComponent; }
-		}
-
-		public IPreviewComponent PreviewComponent
-		{
-			get { return _previewComponent; }
+			// update the preview component url whenever the selected items change,
+			// regardless of whether the folder system has changed or not
+			// this should help to guarantee that the correct preview page is always displayed
+			_previewComponent.SetPreviewItem(_folderSystemGroup.SelectedFolderSystem.PreviewUrl, _folderContentComponent.SelectedItems.Item as DataContractBase);
 		}
 
 		private void OnSelectedFolderSystemChanged(object sender, System.EventArgs e)
 		{
 			_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderSystem;
-			_previewComponent.SetUrl(_folderSystemGroup.SelectedFolderSystem.PreviewUrl);
-
 			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
-
-			if (_folderContentComponent.SelectedFolder != null)
-				_folderContentComponent.SelectedFolder.Update();
 		}
 
 		private void OnSelectedFolderChanged(object sender, System.EventArgs e)
 		{
 			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
-
-			if (_folderContentComponent.SelectedFolder != null)
-				_folderContentComponent.SelectedFolder.Update();
 		}
 	}
 }

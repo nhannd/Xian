@@ -14,9 +14,7 @@ namespace ClearCanvas.Ris.Client
 	/// <remarks>
 	/// Subclasses of this class should specify a <see cref="MenuActionAttribute"/> attribute with the Launch method as the clickHandler
 	/// </remarks>
-	/// <typeparam name="TFolderSystemExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
-	public abstract class HomeTool<TFolderSystemExtensionPoint> : Tool<IDesktopToolContext> 
-		where TFolderSystemExtensionPoint : ExtensionPoint<IFolderSystem>, new()
+	public abstract class HomeTool : Tool<IDesktopToolContext> 
 	{
 		private IWorkspace _workspace;
 
@@ -26,10 +24,10 @@ namespace ClearCanvas.Ris.Client
 		public abstract string Title { get; }
 
 		/// <summary>
-		/// Creates the preview component
+		/// Creates the preview component.
 		/// </summary>
 		/// <returns></returns>
-		protected abstract IApplicationComponent BuildComponent();
+		protected abstract IApplicationComponent CreateComponent();
 
 		/// <summary>
 		/// Default clickHandler implementation for <see cref="MenuAction"/> and/or <see cref="ButtonAction"/> attributes.
@@ -43,7 +41,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					_workspace = ApplicationComponent.LaunchAsWorkspace(
 						this.Context.DesktopWindow,
-						BuildComponent(),
+						CreateComponent(),
 						this.Title);
 					_workspace.Closed += delegate { _workspace = null; };
 				}
@@ -61,24 +59,16 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
-	/// A tool for launching a home page with a <see cref="FolderSystemItemPreviewComponent"/> as the preview component
+	/// A tool for launching a home page with a <see cref="WorklistItemPreviewComponent"/> as the preview component
 	/// </summary>
-	/// <seealso cref="HomeTool{TFolderSystemToolExtensionPoint}"/>
 	/// <typeparam name="TFolderSystemToolExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
-	public abstract class WorklistPreviewHomeTool<TFolderSystemToolExtensionPoint> : HomeTool<TFolderSystemToolExtensionPoint>
+	public abstract class WorklistPreviewHomeTool<TFolderSystemToolExtensionPoint> : HomeTool
 		where TFolderSystemToolExtensionPoint : ExtensionPoint<IFolderSystem>, new()
 	{
-		protected override IApplicationComponent  BuildComponent()
+		protected override IApplicationComponent  CreateComponent()
 		{
-			FolderSystemItemPreviewComponent previewComponent = new FolderSystemItemPreviewComponent();
-			HomePageContainer homePage = new HomePageContainer(new TFolderSystemToolExtensionPoint(), previewComponent);
-
-			homePage.ContentsComponent.SelectedItemsChanged += delegate
-			{
-				previewComponent.FolderSystemItem = homePage.ContentsComponent.SelectedItems.Item as DataContractBase;
-			};
-
-			return homePage;
+			WorklistItemPreviewComponent previewComponent = new WorklistItemPreviewComponent();
+			return new HomePageContainer(new TFolderSystemToolExtensionPoint(), previewComponent);
 		}
 	}
 }

@@ -49,13 +49,13 @@ namespace ClearCanvas.Ris.Client
 		IDesktopWindow DesktopWindow { get; }
 	}
 
-	public class FolderSystemItemPreviewComponent : DHtmlComponent, IPreviewComponent
+	public class WorklistItemPreviewComponent : DHtmlComponent, IPreviewComponent
 	{
 		class PreviewToolContext : ToolContext, IPreviewToolContext
 		{
-			private readonly FolderSystemItemPreviewComponent _component;
+			private readonly WorklistItemPreviewComponent _component;
 
-			public PreviewToolContext(FolderSystemItemPreviewComponent component)
+			public PreviewToolContext(WorklistItemPreviewComponent component)
 			{
 				_component = component;
 			}
@@ -90,20 +90,6 @@ namespace ClearCanvas.Ris.Client
 			base.Stop();
 		}
 
-		#region Public Properties
-
-		public DataContractBase FolderSystemItem
-		{
-			get { return _folderSystemItem; }
-			set
-			{
-				_folderSystemItem = value;
-				NotifyAllPropertiesChanged();
-			}
-		}
-
-		#endregion
-
 		protected override ActionModelNode GetActionModel()
 		{
 			return ActionModelRoot.CreateModel(this.GetType().FullName, "WorklistPreview-menu", _toolSet.Actions);
@@ -113,5 +99,15 @@ namespace ClearCanvas.Ris.Client
 		{
 			return _folderSystemItem;
 		}
+
+		#region IPreviewComponent Members
+
+		void IPreviewComponent.SetPreviewItem(string url, DataContractBase item)
+		{
+			_folderSystemItem = item;
+			SetUrl(url);
+		}
+
+		#endregion
 	}
 }

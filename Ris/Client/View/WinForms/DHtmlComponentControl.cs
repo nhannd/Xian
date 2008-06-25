@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
 
-            _webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true, DataSourceUpdateMode.OnPropertyChanged);
+            //_webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true, DataSourceUpdateMode.OnPropertyChanged);
             _webBrowser.ObjectForScripting = _component.ScriptObject;
             _webBrowser.Navigating += NavigatingEventHandler;
             _webBrowser.ScrollBarsEnabled = _component.ScrollBarsEnabled;
@@ -97,7 +97,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
         {
-            _webBrowser.Refresh();
+        	Uri newUri = _component.HtmlPageUrl;
+
+			if(Equals(_webBrowser.Url, newUri))
+				_webBrowser.Refresh();
+			else 
+				_webBrowser.Navigate(_component.HtmlPageUrl);
         }
 
         private void NavigatingEventHandler(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)

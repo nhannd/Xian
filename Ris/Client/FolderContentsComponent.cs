@@ -249,9 +249,10 @@ namespace ClearCanvas.Ris.Client
 		private void ItemsTableChangedEventHandler(object sender, EventArgs e)
 		{
 			// update the selection appropriately - re-select the same items if possible
-			// (where "same" means that the items Equals() returns true, even if they are not the same object)
+			// (where "same" means that the items Equals() returns true, even if they are not the same object),
+			// otherwise just select the first item by default
 			_selectedItems = _selectedFolder == null
-				? Selection.Empty
+				? new Selection(CollectionUtils.FirstElement(_selectedFolder.ItemsTable.Items))
 				: new Selection(CollectionUtils.Select(_selectedFolder.ItemsTable.Items,
 					delegate(object item) { return _selectedItems.Contains(item); }));
 

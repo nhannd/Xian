@@ -80,7 +80,15 @@ namespace ClearCanvas.Ris.Client
 			}
     	}
 
-        #region Application Component overrides
+
+		internal void UpdateAllFolders()
+		{
+			// invalidate all folders, and update starting at the root
+			_folderSystem.InvalidateFolders();
+			_folderTreeRoot.Update();
+		}
+
+		#region Application Component overrides
 
         public override void Start()
         {
@@ -188,19 +196,24 @@ namespace ClearCanvas.Ris.Client
 
 		private void AutoInvalidateFolders()
 		{
+			int count = 0;
 			foreach (IFolder folder in _folderSystem.Folders)
 			{
 				if(folder.AutoInvalidateInterval > TimeSpan.Zero
 					&& (Platform.Time - folder.LastUpdateTime) > folder.AutoInvalidateInterval)
 				{
 					_folderSystem.InvalidateFolder(folder);
+					count++;
 				}
 			}
 
-			// update folder tree in case any folders were invalidated
-			// this is done regardless of whether this folder explorer is currently visible, because
-			// we need to keep the title bars of the folder explorers updated
-			_folderTreeRoot.Update();
+			if(count > 0)
+			{
+				// update folder tree in case any folders were invalidated
+				// this is done regardless of whether this folder explorer is currently visible, because
+				// we need to keep the title bars of the folder explorers updated
+				_folderTreeRoot.Update();
+			}
 		}
 
     	private void SelectFolder(FolderTreeNode node)

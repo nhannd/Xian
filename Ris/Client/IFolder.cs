@@ -174,17 +174,17 @@ namespace ClearCanvas.Ris.Client
 		#region Methods
 
 		/// <summary>
-		/// Asks the folder to refresh its contents.  The implementation may be asynchronous.
+		/// Marks the contents and/or count of the folder as invalid, causing the folder to
+		/// update itself with the next call to <see cref="Update"/>.
 		/// </summary>
-		void Update();
-
 		void Invalidate();
 
 		/// <summary>
-		/// Asks the folder to refresh the count of its contents, without actually refreshing the contents.
-		/// The implementation may be asynchronous.
+		/// Updates the contents and/or count of the folder, if the folder has been invalidated.
+		/// Calling this method has no effect if the folder is up-to-date with respect to the 
+		/// most recent call to <see cref="Invalidate"/>.
 		/// </summary>
-		//void UpdateCount();
+		void Update();
 
 		/// <summary>
 		/// Opens the folder (i.e. instructs the folder to show its "open" state icon).

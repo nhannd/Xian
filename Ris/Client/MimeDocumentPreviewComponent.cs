@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client
     /// MimeDocumentPreviewComponent class
     /// </summary>
     [AssociateView(typeof(MimeDocumentPreviewComponentViewExtensionPoint))]
-    public class MimeDocumentPreviewComponent : ApplicationComponent, IPreviewComponent
+    public class MimeDocumentPreviewComponent : ApplicationComponent
     {
         public enum AttachmentMode
         {
@@ -329,13 +329,13 @@ namespace ClearCanvas.Ris.Client
 
         #region Preview Methods
 
-        public void ClearPreviewData()
+        protected void ClearPreviewData()
         {
             _tempFileName = null;
             EventsHelper.Fire(_dataChanged, this, EventArgs.Empty);
         }
 
-        public void SetPreviewData(string mimeType, string fileExtension, EntityRef dataRef)
+		protected void SetPreviewData(string mimeType, string fileExtension, EntityRef dataRef)
         {
             if (dataRef == null)
             {
@@ -401,13 +401,5 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        #region IPreviewComponent Members
-
-        public void SetUrl(string url)
-        {
-            // this does nothing because this component does not take Url to change preview
-        }
-
-        #endregion
-    }
+	}
 }

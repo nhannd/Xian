@@ -127,7 +127,7 @@
     <Compile Include="VisitDetailViewComponent.cs" />
     <Compile Include="VisitListTable.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
-    <Compile Include="FolderSystemItemPreviewComponent.cs" />
+    <Compile Include="WorklistItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
     <Compile Include="IFolderSystemContext.cs" />
     <Compile Include="HomePageContainer.cs" />

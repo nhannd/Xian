@@ -282,7 +282,7 @@ namespace ClearCanvas.Ris.Client
             {
                 // Do not assume same url implies page should not be reloaded
                 _htmlPageUrl = value;
-                NotifyPropertyChanged("HtmlPageUrl");
+            	NotifyAllPropertiesChanged();
             }
         }
 
