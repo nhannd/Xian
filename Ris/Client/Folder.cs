@@ -94,7 +94,6 @@ namespace ClearCanvas.Ris.Client
 
 		private static readonly IconSet _closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
 		private static readonly IconSet _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
-		private IconSet _iconSet;
 		private string _folderTooltip;
 		private int _totalItemCount = -1;
 
@@ -213,9 +212,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public virtual void OpenFolder()
 		{
-			this.IconSet = OpenIconSet;
-
 			_isOpen = true;
+			NotifyIconChanged();
 		}
 
 		/// <summary>
@@ -223,9 +221,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public virtual void CloseFolder()
 		{
-			this.IconSet = ClosedIconSet;
-
 			_isOpen = false;
+			NotifyIconChanged();
 		}
 
 		/// <summary>
@@ -241,19 +238,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public IconSet IconSet
 		{
-			get
-			{
-				// if the icon set was not yet initialized, initialize it now to the default
-				if (_iconSet == null)
-					_iconSet = _isOpen ? this.OpenIconSet : this.ClosedIconSet;
-
-				return _iconSet;
-			}
-			protected set
-			{
-				_iconSet = value;
-				EventsHelper.Fire(_iconChanged, this, EventArgs.Empty);
-			}
+			get { return _isOpen ? this.OpenIconSet : this.ClosedIconSet; }
 		}
 
 		/// <summary>
@@ -481,6 +466,11 @@ namespace ClearCanvas.Ris.Client
 		protected void NotifyTextChanged()
 		{
 			EventsHelper.Fire(_textChanged, this, EventArgs.Empty);
+		}
+
+		protected void NotifyIconChanged()
+		{
+			EventsHelper.Fire(_iconChanged, this, EventArgs.Empty);
 		}
 
 		protected void NotifyRefreshBegin()

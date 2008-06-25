@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -73,15 +74,22 @@ namespace ClearCanvas.Ris.Client
 		private bool _isCountValid;
 		private bool _isItemsValid;
 
+		private static readonly IconSet _closedRefreshingIconSet = new IconSet("FolderClosedRefreshMedium.gif");
+		private static readonly IconSet _openRefreshingIconSet = new IconSet("FolderOpenRefreshMedium.gif");
 
 
-
-		#region Public API
-
-
-		#endregion
 
 		#region Folder overrides
+
+		protected override IconSet ClosedIconSet
+		{
+			get { return IsRefreshInProgress ? _closedRefreshingIconSet : base.ClosedIconSet; }
+		}
+
+		protected override IconSet OpenIconSet
+		{
+			get { return IsRefreshInProgress ? _openRefreshingIconSet : base.OpenIconSet; }
+		}
 
 		protected override void InvalidateCore()
 		{
@@ -128,6 +136,8 @@ namespace ClearCanvas.Ris.Client
 		protected abstract void BeginQueryItems();
 
 		protected abstract void BeginQueryCount();
+
+		protected abstract bool IsRefreshInProgress { get; }
 
 		#endregion
 	}
@@ -270,6 +280,8 @@ namespace ClearCanvas.Ris.Client
 
 			_queryItemsTask.Terminated += OnQueryItemsCompleted;
 			_queryItemsTask.Run();
+
+			NotifyIconChanged();
 		}
 
 		/// <summary>
@@ -301,6 +313,13 @@ namespace ClearCanvas.Ris.Client
 
 			_queryCountTask.Terminated += OnQueryCountCompleted;
 			_queryCountTask.Run();
+
+			NotifyIconChanged();
+		}
+
+		protected override bool IsRefreshInProgress
+		{
+			get { return _queryCountTask != null || _queryItemsTask != null; }
 		}
 
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
@@ -330,8 +349,8 @@ namespace ClearCanvas.Ris.Client
             _queryItemsTask.Dispose();
             _queryItemsTask = null;
 
-//            this.RestartRefreshTimer();
-        }
+			NotifyIconChanged();
+		}
 
         private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
         {
@@ -352,7 +371,7 @@ namespace ClearCanvas.Ris.Client
             _queryCountTask.Dispose();
             _queryCountTask = null;
 
-//            this.RestartRefreshTimer();
+			NotifyIconChanged();
 		}
 
 		#endregion

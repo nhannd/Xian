@@ -155,6 +155,11 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		protected override bool IsRefreshInProgress
+		{
+			get { return _queryItemsTask != null; }
+		}
+
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
 		{
 			if (args.Reason == BackgroundTaskTerminatedReason.Completed)
