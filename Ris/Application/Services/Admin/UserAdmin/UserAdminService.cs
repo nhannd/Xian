@@ -153,17 +153,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 
             PersistenceContext.Lock(user, DirtyState.New);
 
-            // create staff association
-            if (request.UserDetail.StaffRef != null)
-            {
-                IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-                Staff staff = staffBroker.Load(request.UserDetail.StaffRef);
-                staff.UserName = user.UserName;
-            }
+    		User affectedUser = null;
+			if (request.UserDetail.StaffRef != null)
+			{
+				Staff staff = PersistenceContext.Load<Staff>(request.UserDetail.StaffRef);
+				affectedUser = CreateStaffUserAssociation(staff, user);
+			}
 
-            PersistenceContext.SynchState();
+    		PersistenceContext.SynchState();
 
-            return new AddUserResponse(user.GetRef(), assembler.GetUserSummary(user));
+            return new AddUserResponse(user.GetRef(), assembler.GetUserSummary(user),
+				affectedUser == null ? null : assembler.GetUserSummary(affectedUser));
         }
 
         [UpdateOperation]
@@ -180,28 +180,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             if (request.UserDetail.ResetPassword)
                 user.ResetPassword();
 
-            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-            try
-            {
-                // dissociate any previously associated staff
-                StaffSearchCriteria where = new StaffSearchCriteria();
-                where.UserName.EqualTo(user.UserName);
-                Staff staff = staffBroker.FindOne(where);
-                staff.UserName = null;
-            }
-            catch (EntityNotFoundException)
-            {
-                // no previously associated staff
-            }
+        	DisassociateStaffFromUser(user);
 
-            // create staff association
+        	User affectedUser = null;
             if (request.UserDetail.StaffRef != null)
             {
-                Staff staff = staffBroker.Load(request.UserDetail.StaffRef);
-                staff.UserName = user.UserName;
+                Staff staff = PersistenceContext.Load<Staff>(request.UserDetail.StaffRef);
+            	affectedUser = CreateStaffUserAssociation(staff, user);
             }
 
-            return new UpdateUserResponse(assembler.GetUserSummary(user));
+            return new UpdateUserResponse(assembler.GetUserSummary(user),
+				affectedUser == null ? null : assembler.GetUserSummary(affectedUser));
         }
 
 		[UpdateOperation]
@@ -212,6 +201,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 			{
 				IUserBroker broker = PersistenceContext.GetBroker<IUserBroker>();
 				User user = FindUserByName(request.UserName);
+
+				IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+				try
+				{
+					// dissociate any previously associated staff
+					StaffSearchCriteria where = new StaffSearchCriteria();
+					where.UserName.EqualTo(user.UserName);
+					Staff staff = staffBroker.FindOne(where);
+					staff.UserName = null;
+				}
+				catch (EntityNotFoundException)
+				{
+					// no previously associated staff
+				}
+
 				broker.Delete(user);
 				PersistenceContext.SynchState();
 				return new DeleteUserResponse();
@@ -357,6 +361,52 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
                 throw new RequestValidationException(string.Format("{0} is not a valid user name.", name));
             }
         }
+
+		private void DisassociateStaffFromUser(User user)
+		{
+			IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+			try
+			{
+				// dissociate any previously associated staff
+				StaffSearchCriteria where = new StaffSearchCriteria();
+				where.UserName.EqualTo(user.UserName);
+				Staff staff = staffBroker.FindOne(where);
+				staff.UserName = null;
+			}
+			catch (EntityNotFoundException)
+			{
+				// no previously associated staff
+			}
+		}
+
+		/// <summary>
+		/// Associate the specified staff with the specified user.
+		/// </summary>
+		/// <returns>Any other user that is affected by this association</returns>
+		private User CreateStaffUserAssociation(Staff staff, User user)
+		{
+			User affectedUser = null;
+
+			if (!string.IsNullOrEmpty(staff.UserName))
+			{
+				// The staff is about to associate with a new user
+				// reset the display name of the previously associated user
+				try
+				{
+					affectedUser = FindUserByName(staff.UserName);
+					if (affectedUser != null)
+						affectedUser.DisplayName = null;
+				}
+				catch (EntityNotFoundException)
+				{
+					// no previously associated user
+				}
+			}
+
+			staff.UserName = user.UserName;
+
+			return affectedUser;
+		}
 
     }
 }

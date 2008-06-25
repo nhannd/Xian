@@ -174,6 +174,20 @@ namespace ClearCanvas.Ris.Client.Admin
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(editor.UserSummary);
+
+				if (editor.AffectedUserSummary != null)
+				{
+					// Replace the affected item
+					this.Table.Items.Replace(
+						delegate(UserSummary x) { return IsSameItem(editor.AffectedUserSummary, x); },
+						editor.AffectedUserSummary);
+
+					this.Host.DesktopWindow.ShowMessageBox(
+						string.Format(SR.MessageStaffChangeAssociation, editor.UserSummary.DisplayName,
+						              editor.AffectedUserSummary.UserName, editor.UserSummary.UserName),
+						MessageBoxActions.Ok);
+				}
+
 				return true;
 			}
 			return false;
@@ -196,6 +210,19 @@ namespace ClearCanvas.Ris.Client.Admin
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.UserSummary);
+				if (editor.AffectedUserSummary != null)
+				{
+					// Replace the affected item
+					this.Table.Items.Replace(
+						delegate(UserSummary x) { return IsSameItem(editor.AffectedUserSummary, x); },
+						editor.AffectedUserSummary);
+
+					this.Host.DesktopWindow.ShowMessageBox(
+						string.Format(SR.MessageStaffChangeAssociation, editor.UserSummary.DisplayName,
+									  editor.AffectedUserSummary.UserName, editor.UserSummary.UserName),
+						MessageBoxActions.Ok);
+				}
+
 				return true;
 			}
 			return false;

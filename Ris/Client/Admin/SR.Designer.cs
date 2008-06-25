@@ -592,6 +592,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Staff {0} has changed its association from user {1} to {2}.
+        /// </summary>
+        internal static string MessageStaffChangeAssociation {
+            get {
+                return ResourceManager.GetString("MessageStaffChangeAssociation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Worklist must have a name.
         /// </summary>
         internal static string MessageWorklistMustHaveName {

@@ -39,12 +39,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class UpdateUserResponse : DataContractBase
     {
-        public UpdateUserResponse(UserSummary userSummary)
-        {
-            UserSummary = userSummary;
-        }
-
-        [DataMember]
+		public UpdateUserResponse(UserSummary userSummary, UserSummary affectedUserSummary)
+		{
+			UserSummary = userSummary;
+			AffectedUserSummary = affectedUserSummary;
+		}
+		
+		[DataMember]
         public UserSummary UserSummary;
-    }
+
+		[DataMember]
+		public UserSummary AffectedUserSummary;
+	}
 }

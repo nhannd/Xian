@@ -39,16 +39,20 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class AddUserResponse : DataContractBase
     {
-        public AddUserResponse(EntityRef userRef, UserSummary userSummary)
-        {
-            UserRef = userRef;
-            UserSummary = userSummary;
-        }
-
-        [DataMember]
+		public AddUserResponse(EntityRef userRef, UserSummary userSummary, UserSummary affectedUserSummary)
+		{
+			UserRef = userRef;
+			UserSummary = userSummary;
+			AffectedUserSummary = affectedUserSummary;
+		}
+		
+		[DataMember]
         public EntityRef UserRef;
 
         [DataMember]
         public UserSummary UserSummary;
-    }
+
+		[DataMember]
+		public UserSummary AffectedUserSummary;
+	}
 }

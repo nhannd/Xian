@@ -112,6 +112,7 @@ namespace ClearCanvas.Ris.Client.Admin
         private SelectableAuthorityGroupTable _table;
 
         private UserSummary _userSummary;
+		private UserSummary _affectedUserSummary;
 
         /// <summary>
         /// Constructor
@@ -140,7 +141,15 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _userSummary; }
         }
 
-        public override void Start()
+		/// <summary>
+		/// Returns other user that is affected by editing the user
+		/// </summary>
+		public UserSummary AffectedUserSummary
+		{
+			get { return _affectedUserSummary; }
+		}
+		
+		public override void Start()
         {
             Platform.GetService<IUserAdminService>(
                 delegate(IUserAdminService service)
@@ -293,11 +302,13 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             AddUserResponse response = service.AddUser(new AddUserRequest(_userDetail));
                             _userSummary = response.UserSummary;
+                        	_affectedUserSummary = response.AffectedUserSummary;
                         }
                         else
                         {
                             UpdateUserResponse response = service.UpdateUser(new UpdateUserRequest(_userDetail));
                             _userSummary = response.UserSummary;
+                        	_affectedUserSummary = response.AffectedUserSummary;
                         }
                     });
 
