@@ -29,22 +29,45 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using System.Text;
+using System.IO;
 
-namespace ClearCanvas.ImageServer.Enterprise
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
+
+namespace ClearCanvas.ImageServer.Common
 {
     /// <summary>
-    /// Interface for retrieving enumerated values from the database.
+    /// A ServerCommand derived class for creating a directory.
     /// </summary>
-    /// <typeparam name="TOutput"></typeparam>
-    public interface IEnumBroker<TOutput> : IPersistenceBroker
-        where TOutput : ServerEnum, new()
+    public class CopyDirectoryCommand : ServerCommand
     {
-        /// <summary>
-        /// Retrieves all enums.
-        /// </summary>
-        /// <returns></returns>
-        List<TOutput> Execute();
+        #region Private Members
+        private string _src;
+        private string _dest;
+        private bool _created = false;
+        #endregion
+
+        public CopyDirectoryCommand(string src, string dest)
+            : base("Copy Directory", true)
+        {
+            Platform.CheckForNullReference(src, "src");
+            Platform.CheckForNullReference(dest, "dest");
+
+            _src = src;
+            _dest = dest;
+        }
+
+        protected override void OnExecute()
+        {
+            DirectoryUtility.Copy(_src, _dest);
+        }
+
+        protected override void OnUndo()
+        {
+            DirectoryUtility.DeleteIfExists(_dest, true);
+        }
     }
 }

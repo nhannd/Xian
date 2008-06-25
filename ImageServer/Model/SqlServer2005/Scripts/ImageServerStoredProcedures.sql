@@ -2102,3 +2102,73 @@ END
 END
 GO
 
+
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueMigrateStudy]    Script Date: 06/24/2008 12:21:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueMigrateStudy]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: June 24, 2008
+-- Description:	Stored procedure for inserting MigrateStudy WorkQueue entries
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertWorkQueueMigrateStudy] 
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier, 
+	@ServerPartitionGUID uniqueidentifier,
+	@ExpirationTime datetime,
+	@ScheduledTime datetime,
+	@DeleteFilesystemQueue bit 
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @WorkQueueGUID as uniqueidentifier
+
+	declare @PendingStatusEnum as smallint
+	declare @IdleStatusEnum as smallint
+	declare @MigrateStudyTypeEnum as smallint
+	declare @MigrateStudyFilesystemQueueTypeEnum smallint
+
+	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
+	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
+	select @MigrateStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''MigrateStudy''
+	select @MigrateStudyFilesystemQueueTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''TierMigrate''
+
+	BEGIN TRANSACTION
+
+    -- Insert statements for procedure here
+	SELECT @WorkQueueGUID = GUID from WorkQueue 
+		where StudyStorageGUID = @StudyStorageGUID
+		AND WorkQueueTypeEnum = @MigrateStudyTypeEnum
+	if @@ROWCOUNT = 0
+	BEGIN
+		set @WorkQueueGUID = NEWID();
+
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @MigrateStudyTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+		IF @DeleteFilesystemQueue = 1
+		BEGIN
+			DELETE FROM FilesystemQueue
+			WHERE StudyStorageGUID = @StudyStorageGUID AND FilesystemQueueTypeEnum = @MigrateStudyFilesystemQueueTypeEnum
+		END
+	END
+	ELSE
+	BEGIN
+		UPDATE WorkQueue 
+			set ExpirationTime = @ExpirationTime
+			where GUID = @WorkQueueGUID
+	END
+
+	COMMIT TRANSACTION
+END
+' 
+END
+GO
+
+

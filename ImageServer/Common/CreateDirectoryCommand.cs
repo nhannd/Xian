@@ -35,6 +35,7 @@ using System.Text;
 using System.IO;
 
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common
 {
@@ -71,7 +72,7 @@ namespace ClearCanvas.ImageServer.Common
         {
             if (_created)
             {
-                Directory.Delete(_directory);
+                DirectoryUtility.DeleteIfExists(_directory);
                 _created = false;
             }
         }

@@ -98,7 +98,7 @@ public partial class FilesystemQueueTypeEnum : ServerEnum
       {
           ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.SetEnum(this, val);
       }
-      static public IList<FilesystemQueueTypeEnum> GetAll()
+      static public List<FilesystemQueueTypeEnum> GetAll()
       {
           return ServerEnumHelper<FilesystemQueueTypeEnum, IFilesystemQueueTypeEnumBroker>.GetAll();
       }

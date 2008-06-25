@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\InsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\DeleteServerPartition.cs" />
     <Compile Include="Brokers\DeleteWorkQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueCompressStudy.cs" />

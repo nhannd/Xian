@@ -90,7 +90,7 @@ public partial class DuplicateSopPolicyEnum : ServerEnum
       {
           ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.SetEnum(this, val);
       }
-      static public IList<DuplicateSopPolicyEnum> GetAll()
+      static public List<DuplicateSopPolicyEnum> GetAll()
       {
           return ServerEnumHelper<DuplicateSopPolicyEnum, IDuplicateSopPolicyEnumBroker>.GetAll();
       }

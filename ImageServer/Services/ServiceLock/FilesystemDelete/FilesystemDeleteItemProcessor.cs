@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -49,7 +50,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #region Private Members
         private FilesystemMonitor _monitor;
         private float _bytesToRemove;
-        private int _studiesInserted = 0;
+        private int _studiesDeleted= 0;
+        private int _studiesMigrated = 0;
         #endregion
 
         #region Private Methods
@@ -74,33 +76,106 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 
                 // Get the disk usage
                 StudyStorageLocation location = storageList[0];
+
+                List<ServerFilesystemInfo> newFilesystems= _monitor.FindNextTierFilesystems(_monitor.GetFilesystemInfo(location.FilesystemKey));
+
+                if (newFilesystems != null && newFilesystems.Count > 0)
+                {
+                    float studySize = CalculateFolderSize(location.GetStudyPath());
+
+                    using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    {
+                        IInsertWorkQueueDeleteStudy studyDelete = update.GetBroker<IInsertWorkQueueDeleteStudy>();
+
+                        WorkQueueDeleteStudyInsertParameters insertParms = new WorkQueueDeleteStudyInsertParameters();
+                        insertParms.StudyStorageKey = location.GetKey();
+                        insertParms.ServerPartitionKey = location.ServerPartitionKey;
+                        DateTime expirationTime = Platform.Time.AddSeconds(10);
+                        insertParms.ScheduledTime = expirationTime;
+                        insertParms.ExpirationTime = expirationTime;
+                        insertParms.DeleteFilesystemQueue = true;
+
+                        if (false == studyDelete.Execute(insertParms))
+                        {
+                            Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
+                        }
+                        else
+                        {
+                            update.Commit();
+                            _bytesToRemove -= studySize;
+                            _studiesDeleted++;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Process StudyDelete Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
+        /// </summary>
+        /// <param name="candidateList">The list of candidate studies for deleting.</param>
+        private void ProcessStudyMigrateCandidates(IList<FilesystemQueue> candidateList)
+        {
+            Platform.Log(LogLevel.Info, "Scheduling tier-migration for {0} studies...", candidateList.Count);
+            DateTime scheduleTime = Platform.Time.AddMinutes(1);
+                    
+            foreach (FilesystemQueue queueItem in candidateList)
+            {
+                if (_bytesToRemove < 0)
+                {
+                    Platform.Log(LogLevel.Info,
+                                 "Stop further scheduling tier-migration: estimated size reduction has reached");
+                    return;
+                }
+
+                    
+
+                // First, get the StudyStorage locations for the study, and calculate the disk usage.
+                IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
+                StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
+                studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
+                IList<StudyStorageLocation> storageList = studyStorageQuery.Execute(studyStorageParms);
+
+                // Get the disk usage
+                StudyStorageLocation location = storageList[0]; // TODO: What should we do with other locations?
+
                 float studySize = CalculateFolderSize(location.GetStudyPath());
 
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-                    IInsertWorkQueueDeleteStudy studyDelete = update.GetBroker<IInsertWorkQueueDeleteStudy>();
+                    IInsertWorkQueueMigrateStudy broker = update.GetBroker<IInsertWorkQueueMigrateStudy>();
 
-                    WorkQueueDeleteStudyInsertParameters insertParms = new WorkQueueDeleteStudyInsertParameters();
+                    WorkQueueMigrateStudyInsertParameters insertParms = new WorkQueueMigrateStudyInsertParameters();
                     insertParms.StudyStorageKey = location.GetKey();
                     insertParms.ServerPartitionKey = location.ServerPartitionKey;
-                    DateTime expirationTime = Platform.Time.AddSeconds(10);
-                    insertParms.ScheduledTime = expirationTime;
-                    insertParms.ExpirationTime = expirationTime;
+                    insertParms.ScheduledTime = scheduleTime;
+                    insertParms.ExpirationTime = scheduleTime.AddMinutes(1);
                     insertParms.DeleteFilesystemQueue = true;
 
-                    if (false == studyDelete.Execute(insertParms))
+                    Platform.Log(LogLevel.Info, "Scheduling tier-migration for study {0} from {1}...", location.StudyInstanceUid, location.FilesystemTierEnum);
+                    if (false == broker.Execute(insertParms))
                     {
-                        Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
+                        Platform.Log(LogLevel.Error, "Unexpected problem inserting 'MigrateStudy' record into WorkQueue for Study {0}", location.StudyInstanceUid);
                     }
                     else
                     {
                         update.Commit();
                         _bytesToRemove -= studySize;
-                        _studiesInserted++;
+                        _studiesMigrated++;
+
+                        // spread out
+                        double migrationSpeed = 1024*1024; // 1MB / sec
+                        TimeSpan estMigrateTime = TimeSpan.FromSeconds(studySize/migrationSpeed);
+                        scheduleTime = scheduleTime.Add(estMigrateTime.Add(TimeSpan.FromSeconds(5)));
+                        
                     }
                 }
+
+                Thread.Sleep(200); // There will be tons of studies eligible.
             }
         }
+
 
         private void DoStudyDelete(Model.ServiceLock item)
         {
@@ -118,14 +193,41 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 }
                 else
                 {
-                    // No candidates, no other choice but to look for candidates eligable the next day.
-                    deleteTime = deleteTime.AddDays(1);
-                    if (deleteTime > Platform.Time.AddDays(365))
-                        break;
+                    // No candidates
+                    break;
                 }
             }
         }
 
+        private void DoStudyMigrate( ServerFilesystemInfo fs, Model.ServiceLock item)
+        {
+            DateTime migrateTime = Platform.Time;
+            FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.TierMigrate;
+
+            while (_bytesToRemove > 0)
+            {
+                Platform.Log(LogLevel.Info, "{2} MB need to be removed. Querying for studies on {0} that can be migrated on '{1}'", 
+                                        fs.Filesystem.Description, migrateTime, _bytesToRemove / 1024*1024);
+                IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, migrateTime, type);
+                Platform.Log(LogLevel.Info, "Found {0} studies eligible for migration from {1}", list.Count, fs.Filesystem.Description);
+                
+                if (list.Count > 0)
+                {
+                    ProcessStudyMigrateCandidates(list);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns number of Delete Study work queue items that are still Pending
+        /// for the filesystem associated with the specified <see cref="ServiceLock"/>.
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         private int CheckWorkQueueDeleteCount(Model.ServiceLock item)
         {
             IWorkQueueEntityBroker select = ReadContext.GetBroker<IWorkQueueEntityBroker>();
@@ -137,6 +239,26 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             // block on that.
             criteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
 
+            StorageFilesystemSelectCriteria storageCriteria = new StorageFilesystemSelectCriteria();
+
+            storageCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+
+            criteria.StudyFilesystemRelatedEntityCondition.Exists(storageCriteria);
+            int count = select.Count(criteria);
+
+            return count;
+        }
+
+        private int CheckWorkQueueMigrateCount(Model.ServiceLock item)
+        {
+            IWorkQueueEntityBroker select = ReadContext.GetBroker<IWorkQueueEntityBroker>();
+
+            WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
+
+            criteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.MigrateStudy);
+            // Do Pending status, in case there's a Failure status entry, we don't want to 
+            // block on that.
+            criteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress});
             StorageFilesystemSelectCriteria storageCriteria = new StorageFilesystemSelectCriteria();
 
             storageCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
@@ -159,21 +281,82 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             //Platform.Log(LogLevel.Info, "Starting filesystem watermark check on filesystem {0} (High Watermark: {1}, Low Watermark: {2}",
               //           fs.Filesystem.Description, fs.Filesystem.HighWatermark, fs.Filesystem.LowWatermark);
 
-            ServiceLockSettings settings = ServiceLockSettings.Default;
+
+            _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
+
+            if (NeedToShrink(item, fs))
+            {
+                MigrateStudies(item, fs);
+
+                if (_studiesMigrated==0)
+                    DeleteStudies(item, fs);
+            }
+
+            UnlockServiceLock(item, true, Platform.Time.AddMinutes(5));
+
             
             if (_monitor.CheckFilesystemAboveHighWatermark(item.FilesystemKey))
             {
-                if (CheckWorkQueueDeleteCount(item) > 0)
+                Platform.Log(LogLevel.Info, "Filesystem above high watermark: {0} (Current: {1}, High Watermark: {2}",
+                             fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
+            }
+            else
+            {
+                Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
+                             fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
+            }
+
+            _monitor.Dispose();
+            _monitor = null;
+
+        }
+
+        private bool NeedToShrink(Model.ServiceLock item,  ServerFilesystemInfo fs)
+        {
+            return fs.AboveHighWatermark;
+        }
+
+        private void MigrateStudies(Model.ServiceLock item, ServerFilesystemInfo fs)
+        {
+            List<ServerFilesystemInfo> newFS = _monitor.FindNextTierFilesystems(fs);
+            if (newFS==null || newFS.Count==0)
+            {
+                // no next tier, don't schedule any migration
+                return;
+            }
+
+            ServiceLockSettings settings = ServiceLockSettings.Default;
+            
+            try
+            {
+                DoStudyMigrate(fs, item);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when scheduling tier-migration.");
+            }
+
+            int delayMinutes = settings.FilesystemDeleteRecheckDelay;
+            DateTime scheduledTime = Platform.Time.AddMinutes(delayMinutes);
+            Platform.Log(LogLevel.Warn, "{0} studies have been scheduled for migration from filesystem '{1}'", _studiesMigrated, fs.Filesystem.Description, scheduledTime);
+            
+            
+        }
+
+        private void DeleteStudies(Model.ServiceLock item, ServerFilesystemInfo fs)
+        {
+            ServiceLockSettings settings = ServiceLockSettings.Default;
+            
+            if (fs.AboveHighWatermark)
+            {
+                if (CheckWorkQueueDeleteCount(item) > 0 || CheckWorkQueueMigrateCount(item)>0)
                 {
-                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete items still in the WorkQueue: {0} (Current: {1}, High Watermark: {2})",
+                    Platform.Log(LogLevel.Info, "Delaying filesystem check, StudyDelete or MigrateStudy items still in the WorkQueue: {0} (Current: {1}, High Watermark: {2})",
                                  fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 
-                    UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
                 }
                 else
                 {
-                    _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
-
                     int delayMinutes = settings.FilesystemDeleteRecheckDelay;
 
                     Platform.Log(LogLevel.Info,
@@ -190,33 +373,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     }
 
                     DateTime scheduledTime = Platform.Time.AddMinutes(delayMinutes);
-                    if (_studiesInserted == 0)
-                        Platform.Log(LogLevel.Warn, "No eligable candidates to remove from filesystem '{0}'.  Next scheduled filesystem check {1}", fs.Filesystem.Description, scheduledTime);
-                    else
-                        Platform.Log(LogLevel.Info, "Completed inserting delete candidates into WorkQueue: {0} (Current: {1}, High Watermark: {2}).  {3} studies inserted.  Next scheduled filesystem check {4}",
-                               fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark, _studiesInserted, scheduledTime);
-
-                    UnlockServiceLock(item, true, scheduledTime);
+                    Platform.Log(LogLevel.Warn, "{0} studies have been scheduled for removal from filesystem '{1}'", _studiesDeleted, fs.Filesystem.Description, scheduledTime);
+                
                 }
             }
-            else if (_monitor.CheckFilesystemAboveLowWatermark(item.FilesystemKey))
-            {
-                Platform.Log(LogLevel.Info, "Filesystem below high watermark: {0} (Current: {1}, High Watermark: {2}",
-                       fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
-
-                UnlockServiceLock(item, true, Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval/2));
-            }
-            else
-            {
-                Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
-                       fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
-
-                UnlockServiceLock(item, true, Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval));
-            }
-
-            _monitor.Dispose();
-            _monitor = null;
-
         }
 
         public new void Dispose()

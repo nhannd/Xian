@@ -90,7 +90,7 @@ public partial class ServerRuleApplyTimeEnum : ServerEnum
       {
           ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnumBroker>.SetEnum(this, val);
       }
-      static public IList<ServerRuleApplyTimeEnum> GetAll()
+      static public List<ServerRuleApplyTimeEnum> GetAll()
       {
           return ServerEnumHelper<ServerRuleApplyTimeEnum, IServerRuleApplyTimeEnumBroker>.GetAll();
       }

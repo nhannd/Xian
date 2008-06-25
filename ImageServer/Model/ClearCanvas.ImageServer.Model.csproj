@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\IInsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueCompressStudy.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="FilesystemQueue.gen.cs" />
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
+    <Compile Include="Parameters\WorkQueueMigrateStudyInsertParameters.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\PartitionTransferSyntaxQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />

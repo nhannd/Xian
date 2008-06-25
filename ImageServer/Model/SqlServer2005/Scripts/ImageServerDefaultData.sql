@@ -47,6 +47,11 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),107,'CompressStudy','Compress Study','Compress a study.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),108,'MigrateStudy','Study Tier Migration','Migrate studies between tiers.')
+GO
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]

@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         where TBroker : IEnumBroker<TEnum>
     {
         #region Static private members
-        static IList<TEnum> _list = new List<TEnum>();
+        static List<TEnum> _list = new List<TEnum>();
         static Dictionary<short, TEnum> _dict = new Dictionary<short, TEnum>();
         #endregion Static private members
 
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageServer.Enterprise
             throw new PersistenceException(string.Format("Unknown {0} {1}", typeof(TEnum).Name, lookup), null);
         }
 
-        public static IList<TEnum> GetAll()
+        public static List<TEnum> GetAll()
         {
             return _list;
         }

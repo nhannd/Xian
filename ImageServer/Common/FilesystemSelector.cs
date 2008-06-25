@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
@@ -52,15 +53,31 @@ namespace ClearCanvas.ImageServer.Common
             ServerFilesystemInfo selectedFilesystem = null;
             float selectedFreeBytes = 0;
 
-            foreach (ServerFilesystemInfo info in _monitor.GetFilesystems())
+            List<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>();
+            list.AddRange(_monitor.GetFilesystems());
+
+            list.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
+                           {
+                               if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
+                               {
+                                   return fs1.FreeBytes.CompareTo(fs2.FreeBytes);
+                               }
+                               else
+                               {
+                                   return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
+                               }
+
+                           }
+            );
+
+
+            // find the first filesystem that can be written to
+            foreach (ServerFilesystemInfo info in list)
             {
                 if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
                 {
-                    if (info.FreeBytes > selectedFreeBytes)
-                    {
-                        selectedFreeBytes = info.FreeBytes;
-                        selectedFilesystem = info;
-                    }
+                    selectedFilesystem = info;
+                    break;
                 }
             }
 

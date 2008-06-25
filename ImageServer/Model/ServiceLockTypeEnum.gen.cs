@@ -98,7 +98,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
       {
           ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnumBroker>.SetEnum(this, val);
       }
-      static public IList<ServiceLockTypeEnum> GetAll()
+      static public List<ServiceLockTypeEnum> GetAll()
       {
           return ServerEnumHelper<ServiceLockTypeEnum, IServiceLockTypeEnumBroker>.GetAll();
       }

@@ -203,6 +203,44 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+        public List<ServerFilesystemInfo> FindNextTierFilesystems(ServerFilesystemInfo filesystem)
+        {
+            FilesystemTierEnum currTier = filesystem.Filesystem.FilesystemTierEnum;
+            FilesystemTierEnum newTier = currTier;
+
+            List<FilesystemTierEnum> listTiers = FilesystemTierEnum.GetAll();
+            FilesystemTierEnum[] tiers = new FilesystemTierEnum[listTiers.Count];
+            listTiers.CopyTo(tiers);
+            Array.Sort(tiers, delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
+                           {
+                               return tier1.Enum.CompareTo(tier2.Enum);
+                           });
+
+            foreach (FilesystemTierEnum tier in tiers)
+            {
+                if (tier.Enum > newTier.Enum)
+                {
+                    newTier = tier;
+                    break;
+                }
+            }
+
+            List<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>();
+
+            if (newTier != currTier)
+            {
+                foreach (ServerFilesystemInfo fs in GetFilesystems())
+                {
+                    if (fs.Filesystem.FilesystemTierEnum == newTier)
+                    {
+                        list.Add(fs);
+                    }
+                }
+            }
+
+            return list;
+        }
+
         #endregion
 
         #region Private Methods

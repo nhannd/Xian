@@ -82,7 +82,7 @@ public partial class WorkQueuePriorityEnum : ServerEnum
       {
           ServerEnumHelper<WorkQueuePriorityEnum, IWorkQueuePriorityEnumBroker>.SetEnum(this, val);
       }
-      static public IList<WorkQueuePriorityEnum> GetAll()
+      static public List<WorkQueuePriorityEnum> GetAll()
       {
           return ServerEnumHelper<WorkQueuePriorityEnum, IWorkQueuePriorityEnumBroker>.GetAll();
       }

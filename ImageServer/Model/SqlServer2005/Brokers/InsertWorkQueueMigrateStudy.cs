@@ -29,22 +29,19 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Enterprise
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    /// <summary>
-    /// Interface for retrieving enumerated values from the database.
-    /// </summary>
-    /// <typeparam name="TOutput"></typeparam>
-    public interface IEnumBroker<TOutput> : IPersistenceBroker
-        where TOutput : ServerEnum, new()
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class InsertWorkQueueMigrateStudy : ProcedureUpdateBroker<WorkQueueMigrateStudyInsertParameters>, IInsertWorkQueueMigrateStudy
     {
-        /// <summary>
-        /// Retrieves all enums.
-        /// </summary>
-        /// <returns></returns>
-        List<TOutput> Execute();
+        public InsertWorkQueueMigrateStudy()
+            : base("InsertWorkQueueMigrateStudy")
+        {
+        }
     }
 }

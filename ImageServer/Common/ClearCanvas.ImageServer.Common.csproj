@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CopyDirectoryCommand.cs" />
     <Compile Include="CreateDirectoryCommand.cs" />
     <Compile Include="DicomCompressCommand.cs" />
     <Compile Include="FileDeleteCommand.cs" />

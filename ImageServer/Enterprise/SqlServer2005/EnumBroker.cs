@@ -43,9 +43,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     {
         #region IEnumBroker<TOutput> Members
 
-        IList<TOutput> IEnumBroker<TOutput>.Execute() 
+        List<TOutput> IEnumBroker<TOutput>.Execute() 
         {
-            IList<TOutput> list = new List<TOutput>();
+            List<TOutput> list = new List<TOutput>();
             TOutput tempValue = new TOutput();
 
             SqlDataReader myReader = null;

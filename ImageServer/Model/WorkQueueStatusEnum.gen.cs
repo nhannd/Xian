@@ -98,7 +98,7 @@ public partial class WorkQueueStatusEnum : ServerEnum
       {
           ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.SetEnum(this, val);
       }
-      static public IList<WorkQueueStatusEnum> GetAll()
+      static public List<WorkQueueStatusEnum> GetAll()
       {
           return ServerEnumHelper<WorkQueueStatusEnum, IWorkQueueStatusEnumBroker>.GetAll();
       }

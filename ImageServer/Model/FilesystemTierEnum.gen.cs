@@ -82,7 +82,7 @@ public partial class FilesystemTierEnum : ServerEnum
       {
           ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnumBroker>.SetEnum(this, val);
       }
-      static public IList<FilesystemTierEnum> GetAll()
+      static public List<FilesystemTierEnum> GetAll()
       {
           return ServerEnumHelper<FilesystemTierEnum, IFilesystemTierEnumBroker>.GetAll();
       }

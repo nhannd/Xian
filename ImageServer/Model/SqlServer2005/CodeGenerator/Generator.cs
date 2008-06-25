@@ -316,7 +316,7 @@ namespace CodeGenerator
             writer.WriteLine("          ServerEnumHelper<{0}, I{0}Broker>.SetEnum(this, val);", table.TableName);
             writer.WriteLine("      }");
 
-            writer.WriteLine("      static public IList<{0}> GetAll()", table.TableName);
+            writer.WriteLine("      static public List<{0}> GetAll()", table.TableName);
             writer.WriteLine("      {");
             writer.WriteLine("          return ServerEnumHelper<{0}, I{0}Broker>.GetAll();", table.TableName);
             writer.WriteLine("      }");

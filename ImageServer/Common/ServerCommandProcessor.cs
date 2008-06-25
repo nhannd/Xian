@@ -102,6 +102,12 @@ namespace ClearCanvas.ImageServer.Common
 			get { return _queue.Count; }
     	}
 
+        public IUpdateContext UpdateContext
+        {
+            get { return _updateContext; }
+            set { _updateContext = value; }
+        }
+
         #endregion
 
         #region Public Methods
@@ -131,10 +137,10 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     if (dbCommand != null)
                     {
-                        if (_updateContext == null)
-                            _updateContext =
+                        if (UpdateContext == null)
+                            UpdateContext =
                                 PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
-                        dbCommand.UpdateContext = _updateContext;
+                        dbCommand.UpdateContext = UpdateContext;
                     }
 
                     command.Execute();
@@ -159,11 +165,11 @@ namespace ClearCanvas.ImageServer.Common
                 
             }
 
-            if (_updateContext != null)
+            if (UpdateContext != null)
             {
-                _updateContext.Commit();
-                _updateContext.Dispose();
-                _updateContext = null;
+                UpdateContext.Commit();
+                UpdateContext.Dispose();
+                UpdateContext = null;
             }
 
             return true;
@@ -174,10 +180,10 @@ namespace ClearCanvas.ImageServer.Common
         /// </summary>
         public void Rollback()
         {
-            if (_updateContext != null)
+            if (UpdateContext != null)
             {
-                _updateContext.Dispose(); // Rollback the db
-                _updateContext = null;
+                UpdateContext.Dispose(); // Rollback the db
+                UpdateContext = null;
             }
 
             while (_stack.Count > 0)
@@ -203,7 +209,7 @@ namespace ClearCanvas.ImageServer.Common
 
         public void Dispose()
         {
-            if (_updateContext != null)
+            if (UpdateContext != null)
             {
                 Rollback();
             }

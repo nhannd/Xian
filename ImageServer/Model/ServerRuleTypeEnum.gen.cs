@@ -98,7 +98,7 @@ public partial class ServerRuleTypeEnum : ServerEnum
       {
           ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnumBroker>.SetEnum(this, val);
       }
-      static public IList<ServerRuleTypeEnum> GetAll()
+      static public List<ServerRuleTypeEnum> GetAll()
       {
           return ServerEnumHelper<ServerRuleTypeEnum, IServerRuleTypeEnumBroker>.GetAll();
       }

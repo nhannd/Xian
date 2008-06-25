@@ -90,7 +90,7 @@ public partial class StudyStatusEnum : ServerEnum
       {
           ServerEnumHelper<StudyStatusEnum, IStudyStatusEnumBroker>.SetEnum(this, val);
       }
-      static public IList<StudyStatusEnum> GetAll()
+      static public List<StudyStatusEnum> GetAll()
       {
           return ServerEnumHelper<StudyStatusEnum, IStudyStatusEnumBroker>.GetAll();
       }

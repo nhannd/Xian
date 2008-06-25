@@ -51,6 +51,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
       private static readonly WorkQueueTypeEnum _WebEditStudy = GetEnum("WebEditStudy");
       private static readonly WorkQueueTypeEnum _CleanupStudy = GetEnum("CleanupStudy");
       private static readonly WorkQueueTypeEnum _CompressStudy = GetEnum("CompressStudy");
+      private static readonly WorkQueueTypeEnum _MigrateStudy = GetEnum("MigrateStudy");
       #endregion
 
       #region Public Static Properties
@@ -110,6 +111,13 @@ public partial class WorkQueueTypeEnum : ServerEnum
       {
           get { return _CompressStudy; }
       }
+      /// <summary>
+      /// Migrate study to different filesystem tiers
+      /// </summary>
+      public static WorkQueueTypeEnum MigrateStudy
+      {
+          get { return _MigrateStudy; }
+      }
 
       #endregion
 
@@ -122,7 +130,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
       {
           ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.SetEnum(this, val);
       }
-      static public IList<WorkQueueTypeEnum> GetAll()
+      static public List<WorkQueueTypeEnum> GetAll()
       {
           return ServerEnumHelper<WorkQueueTypeEnum, IWorkQueueTypeEnumBroker>.GetAll();
       }
