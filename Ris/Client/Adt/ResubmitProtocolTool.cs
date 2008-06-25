@@ -56,7 +56,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Resubmit", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Resolve Protocol - Resubmit", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
@@ -82,7 +83,8 @@ namespace ClearCanvas.Ris.Client.Adt
     }
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Cancel Order", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Resolve Protocol - Cancel Order", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
