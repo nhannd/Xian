@@ -11,7 +11,7 @@ using ClearCanvas.Ris.Application.Common.CannedTextService;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("launch", "global-menus/Tools/Canned Text", "Launch")]
+	[MenuAction("launch", "global-menus/MenuTools/Canned Text", "Launch")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class CannedTextTool : Tool<IDesktopToolContext>
 	{
