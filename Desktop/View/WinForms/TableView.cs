@@ -304,7 +304,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // de-select any rows that should not be selected
                     foreach (DataGridViewRow row in _dataGridView.SelectedRows)
                     {
-                        if (!CollectionUtils.Contains(newSelection.Items, delegate(object item) { return item == row.DataBoundItem; }))
+                        if (!CollectionUtils.Contains(newSelection.Items,
+							delegate(object item) { return Equals(item, row.DataBoundItem); }))
                         {
                             row.Selected = false;
                         }
@@ -314,18 +315,18 @@ namespace ClearCanvas.Desktop.View.WinForms
                     foreach (object item in newSelection.Items)
                     {
                         DataGridViewRow row = CollectionUtils.SelectFirst<DataGridViewRow>(_dataGridView.Rows,
-                                delegate(DataGridViewRow r) { return r.DataBoundItem == item; });
+								delegate(DataGridViewRow r) { return Equals(item, r.DataBoundItem); });
                         if (row != null)
                             row.Selected = true;
                     }
 
-                    EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+                    NotifySelectionChanged();
                 }
             }
         }
 
 		/// <summary>
-		/// Exposes the <see cref="KeyDown"/> event of the underlying data grid view.
+		/// Exposes the KeyDown event of the underlying data grid view.
 		/// </summary>
 		public event KeyEventHandler DataGridKeyDown
 		{

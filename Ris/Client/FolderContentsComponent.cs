@@ -63,6 +63,8 @@ namespace ClearCanvas.Ris.Client
         private IFolderSystem _folderSystem;
         private IFolder _selectedFolder;
 
+    	private bool _suppressFolderContentSelectionChanges;
+
         public IFolderSystem FolderSystem
         {
             get { return _folderSystem; }
@@ -89,16 +91,30 @@ namespace ClearCanvas.Ris.Client
             {
                 if (value != _selectedFolder)
                 {
-                    if (_selectedFolder != null)
-                        _selectedFolder.TotalItemCountChanged -= TotalItemCountChangedEventHandler;
+					if (_selectedFolder != null)
+					{
+						_selectedFolder.TotalItemCountChanged -= TotalItemCountChangedEventHandler;
+						_selectedFolder.ItemsTableChanging -= ItemsTableChangingEventHandler;
+						_selectedFolder.ItemsTableChanged -= ItemsTableChangedEventHandler;
+					}
 
-                    _selectedFolder = value;
+                	_selectedFolder = value;
+
                     if (_selectedFolder != null)
-                        _selectedFolder.TotalItemCountChanged += TotalItemCountChangedEventHandler;
+                    {
+						_selectedFolder.TotalItemCountChanged += TotalItemCountChangedEventHandler;
+						_selectedFolder.ItemsTableChanging += ItemsTableChangingEventHandler;
+						_selectedFolder.ItemsTableChanged += ItemsTableChangedEventHandler;
+					}
+
+					// ensure that selection changes are not suppressed
+					SuppressSelectionChanges(false);
 
                     // notify view
                     EventsHelper.Fire(_tableChanged, this, EventArgs.Empty);
-					OnSelectedItemsChanged(this, EventArgs.Empty);
+
+					// notify that the selected items have changed (because the folder has changed)
+					NotifySelectedItemsChanged();
 
                     NotifyPropertyChanged("StatusMessage");
                 }
@@ -125,6 +141,12 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _selectedFolder == null ? null : _selectedFolder.ItemsTable; }
         }
+
+		// this is a bit of a hack to prevent the table view from sending selection changes during folder refreshes
+		public bool SuppressFolderContentSelectionChanges
+    	{
+			get { return _suppressFolderContentSelectionChanges; }
+    	}
 
         public string StatusMessage
         {
@@ -155,8 +177,8 @@ namespace ClearCanvas.Ris.Client
                 if (!_selectedItems.Equals(value))
                 {
                     _selectedItems = value;
-                    OnSelectedItemsChanged(this, EventArgs.Empty);
-                }
+                	NotifySelectedItemsChanged();
+				}
             }
         }
 
@@ -209,6 +231,11 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		private void NotifySelectedItemsChanged()
+		{
+			OnSelectedItemsChanged(this, EventArgs.Empty);
+		}
+
 		private void OnSelectedItemsChanged(object sender, EventArgs args)
 		{
 			EventsHelper.Fire(_selectedItemsChanged, sender, args);
@@ -219,6 +246,32 @@ namespace ClearCanvas.Ris.Client
             NotifyPropertyChanged("StatusMessage");
         }
 
+		private void ItemsTableChangedEventHandler(object sender, EventArgs e)
+		{
+			// update the selection appropriately - re-select the same items if possible
+			// (where "same" means that the items Equals() returns true, even if they are not the same object)
+			_selectedItems = _selectedFolder == null
+				? Selection.Empty
+				: new Selection(CollectionUtils.Select(_selectedFolder.ItemsTable.Items,
+					delegate(object item) { return _selectedItems.Contains(item); }));
 
-    }
+			// notify view about the updated selection table to the prior selection
+			NotifySelectedItemsChanged();
+
+			// revert back to normal mode where selection changes are not suppressed
+			SuppressSelectionChanges(false);
+		}
+
+		private void ItemsTableChangingEventHandler(object sender, EventArgs e)
+		{
+			// suppress selection changes while the folder contents are being refreshed
+			SuppressSelectionChanges(true);
+		}
+
+		private void SuppressSelectionChanges(bool suppress)
+		{
+			_suppressFolderContentSelectionChanges = suppress;
+			NotifyPropertyChanged("SuppressFolderContentSelectionChanges");
+		}
+	}
 }

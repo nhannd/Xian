@@ -155,14 +155,14 @@ namespace ClearCanvas.Ris.Client
 		event EventHandler TooltipChanged;
 
 		/// <summary>
-		/// Occurs when update is about to begin.
+		/// Occurs to indicate that the entire content of the <see cref="ItemsTable"/> is about to change.
 		/// </summary>
-		event EventHandler BeforeUpdate;
+		event EventHandler ItemsTableChanging;
 
 		/// <summary>
-		/// Occurs when update is about to finish.
+		/// Occurs to indicate that the entire content of the <see cref="ItemsTable"/> has changed.
 		/// </summary>
-		event EventHandler AfterUpdate;
+		event EventHandler ItemsTableChanged;
 
 		/// <summary>
 		/// Occurs when the value of the <see cref="TotalItemCount"/> property changes.

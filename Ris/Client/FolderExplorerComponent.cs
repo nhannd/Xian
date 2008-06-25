@@ -58,7 +58,6 @@ namespace ClearCanvas.Ris.Client
 		private readonly FolderTreeRoot _folderTreeRoot;
 		private FolderTreeNode _selectedTreeNode;
         private event EventHandler _selectedFolderChanged;
-        private event EventHandler _suppressSelectionChangedEvent;
 
         private readonly IFolderSystem _folderSystem;
     	private Timer _folderInvalidateTimer;
@@ -156,12 +155,6 @@ namespace ClearCanvas.Ris.Client
             remove { _selectedFolderChanged -= value; }
         }
 
-        public event EventHandler SuppressSelectionChanged
-        {
-            add { _suppressSelectionChangedEvent += value; }
-            remove { _suppressSelectionChangedEvent -= value; }
-        }
-
         public ActionModelRoot FoldersContextMenuModel
         {
             get
@@ -216,15 +209,11 @@ namespace ClearCanvas.Ris.Client
             {
                 if (_selectedTreeNode != null)
                 {
-                    _selectedTreeNode.Folder.BeforeUpdate -= OnSelectedFolderBeforeUpdate;
-					_selectedTreeNode.Folder.AfterUpdate -= OnSelectedFolderAfterUpdate;
 					_selectedTreeNode.Folder.CloseFolder();
                 }
 
 				if (node != null)
                 {
-					node.Folder.BeforeUpdate += OnSelectedFolderBeforeUpdate;
-					node.Folder.AfterUpdate += OnSelectedFolderAfterUpdate;
 					node.Folder.OpenFolder();
 					
 					// ensure the content of this nodes folder is up to date
@@ -235,16 +224,6 @@ namespace ClearCanvas.Ris.Client
 				EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
 			}
 		}
-
-		private void OnSelectedFolderBeforeUpdate(object sender, EventArgs e)
-        {
-            EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(true));
-        }
-
-		private void OnSelectedFolderAfterUpdate(object sender, EventArgs e)
-        {
-            EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(false));
-        }
 
         internal DragDropKind CanFolderAcceptDrop(FolderTreeNode treeNode, object dropData, DragDropKind kind)
         {

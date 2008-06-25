@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		protected override bool IsRefreshInProgress
+		protected override bool IsUpdateInProgress
 		{
 			get { return _queryItemsTask != null; }
 		}
@@ -164,7 +164,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (args.Reason == BackgroundTaskTerminatedReason.Completed)
 			{
-				NotifyRefreshBegin();
+				NotifyItemsTableChanging();
 
 				IList<TItem> items = (IList<TItem>)args.Result;
 				this.TotalItemCount = items.Count;
@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client
 				_itemsTable.Items.AddRange(items);
 				_itemsTable.Sort();
 
-				NotifyRefreshFinish();
+				NotifyItemsTableChanged();
 			}
 			else
 			{

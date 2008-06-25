@@ -83,12 +83,12 @@ namespace ClearCanvas.Ris.Client
 
 		protected override IconSet ClosedIconSet
 		{
-			get { return IsRefreshInProgress ? _closedRefreshingIconSet : base.ClosedIconSet; }
+			get { return IsUpdateInProgress ? _closedRefreshingIconSet : base.ClosedIconSet; }
 		}
 
 		protected override IconSet OpenIconSet
 		{
-			get { return IsRefreshInProgress ? _openRefreshingIconSet : base.OpenIconSet; }
+			get { return IsUpdateInProgress ? _openRefreshingIconSet : base.OpenIconSet; }
 		}
 
 		protected override void InvalidateCore()
@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected abstract void BeginQueryCount();
 
-		protected abstract bool IsRefreshInProgress { get; }
+		protected abstract bool IsUpdateInProgress { get; }
 
 		#endregion
 	}
@@ -317,7 +317,7 @@ namespace ClearCanvas.Ris.Client
 			NotifyIconChanged();
 		}
 
-		protected override bool IsRefreshInProgress
+		protected override bool IsUpdateInProgress
 		{
 			get { return _queryCountTask != null || _queryItemsTask != null; }
 		}
@@ -326,7 +326,7 @@ namespace ClearCanvas.Ris.Client
         {
             if(args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
-                NotifyRefreshBegin();
+                NotifyItemsTableChanging();
 
                 QueryItemsResult result = (QueryItemsResult)args.Result;
             	this.TotalItemCount = result.TotalItemCount;
@@ -334,7 +334,7 @@ namespace ClearCanvas.Ris.Client
                 _itemsTable.Items.AddRange(result.Items);
                 _itemsTable.Sort();
 
-                NotifyRefreshFinish();
+                NotifyItemsTableChanged();
             }
             else
             {

@@ -61,6 +61,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
             _folderContentsTableView.DataBindings.Add("StatusText", _component, "StatusMessage", true, DataSourceUpdateMode.Never);
+			_folderContentsTableView.DataBindings.Add("SuppressSelectionChangedEvent", _component, "SuppressFolderContentSelectionChanges",
+				true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         void _component_TableChanged(object sender, EventArgs e)

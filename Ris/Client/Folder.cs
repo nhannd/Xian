@@ -78,8 +78,8 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _textChanged;
 		private event EventHandler _iconChanged;
 		private event EventHandler _tooltipChanged;
-		private event EventHandler _refreshBegin;
-		private event EventHandler _refreshFinish;
+		private event EventHandler _itemsTableChanging;
+		private event EventHandler _itemsTableChanged;
 		private event EventHandler _totalItemCountChanged;
 
 		private ActionModelNode _menuModel;
@@ -284,19 +284,19 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Occurs when refresh is about to begin.
 		/// </summary>
-		public event EventHandler BeforeUpdate
+		public event EventHandler ItemsTableChanging
 		{
-			add { _refreshBegin += value; }
-			remove { _refreshBegin -= value; }
+			add { _itemsTableChanging += value; }
+			remove { _itemsTableChanging -= value; }
 		}
 
 		/// <summary>
 		/// Occurs when refresh is about to finish.
 		/// </summary>
-		public event EventHandler AfterUpdate
+		public event EventHandler ItemsTableChanged
 		{
-			add { _refreshFinish += value; }
-			remove { _refreshFinish -= value; }
+			add { _itemsTableChanged += value; }
+			remove { _itemsTableChanged -= value; }
 		}
 
 		/// <summary>
@@ -473,14 +473,14 @@ namespace ClearCanvas.Ris.Client
 			EventsHelper.Fire(_iconChanged, this, EventArgs.Empty);
 		}
 
-		protected void NotifyRefreshBegin()
+		protected void NotifyItemsTableChanging()
 		{
-			EventsHelper.Fire(_refreshBegin, this, EventArgs.Empty);
+			EventsHelper.Fire(_itemsTableChanging, this, EventArgs.Empty);
 		}
 
-		protected void NotifyRefreshFinish()
+		protected void NotifyItemsTableChanged()
 		{
-			EventsHelper.Fire(_refreshFinish, this, EventArgs.Empty);
+			EventsHelper.Fire(_itemsTableChanged, this, EventArgs.Empty);
 		}
 
 		protected void NotifyTotalItemCountChanged()
