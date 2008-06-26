@@ -98,6 +98,11 @@ namespace ClearCanvas.Ris.Client
                                  delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.Modality.Name; },
                                  0.5f));
 
+			this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?>(
+								 "Scheduled Start Time",
+								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.ScheduledStartTime; },
+								 0.5f));
+
             ITableColumn sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                                     {
