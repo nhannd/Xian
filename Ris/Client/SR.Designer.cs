@@ -1096,7 +1096,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter search criteria.
+        ///   Looks up a localized string similar to Enter search criteria (MRN#, Name, Healthcard ID, or A#).
         /// </summary>
         internal static string MessageSearchMessage {
             get {

@@ -463,7 +463,7 @@
     <value>No results were found using the specified criteria.</value>
   </data>
   <data name="MessageSearchMessage" xml:space="preserve">
-    <value>Enter search criteria</value>
+    <value>Enter search criteria (MRN#, Name, Healthcard ID, or A#)</value>
   </data>
   <data name="MessageShowAllItems" xml:space="preserve">
     <value>Showing all {0} item(s).</value>
