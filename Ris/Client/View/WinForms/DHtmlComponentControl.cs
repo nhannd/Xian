@@ -56,12 +56,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _webBrowser.IsWebBrowserContextMenuEnabled = false;
 #endif
 
-            _component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
-
-            //_webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true, DataSourceUpdateMode.OnPropertyChanged);
+			_component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
+			
+			//_webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true, DataSourceUpdateMode.OnPropertyChanged);
             _webBrowser.ObjectForScripting = _component.ScriptObject;
             _webBrowser.Navigating += NavigatingEventHandler;
             _webBrowser.ScrollBarsEnabled = _component.ScrollBarsEnabled;
+			if (_component.HtmlPageUrl != null)
+			{
+				_webBrowser.Navigate(_component.HtmlPageUrl);
+			}
+
 
             _component.Validation.Add(new ValidationRule("DUMMY_PROPERTY",
                 delegate(IApplicationComponent c)
