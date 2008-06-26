@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Application.Services
             nameAssembler.UpdatePersonName(detail.Name, profile.Name);
 
             profile.Sex = EnumUtils.GetEnumValue<Sex>(detail.Sex);
-            profile.DateOfBirth = detail.DateOfBirth.Value;
+            profile.DateOfBirth = detail.DateOfBirth;
             profile.DeathIndicator = detail.DeathIndicator;
             profile.TimeOfDeath = detail.TimeOfDeath;
 

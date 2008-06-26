@@ -102,10 +102,7 @@ namespace ClearCanvas.Ris.Client
 						if (_isNew && _isDuplicate == false)
 						{
 							_cannedTextDetail = new CannedTextDetail();
-
-							// new canned text
 							_isEditingPersonal = true;
-							_cannedTextDetail.Staff = _currentStaff;
 						}
 						else
 						{
@@ -118,7 +115,9 @@ namespace ClearCanvas.Ris.Client
 							if (_isDuplicate)
 								this.Modified = true;
 						}
-					}); 
+					});
+
+			_cannedTextDetail.Staff = _currentStaff;
 
 			// The selected staff groups should only contain entries in the selected group choices
 			if (_cannedTextDetail.StaffGroup == null)
@@ -247,6 +246,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
+				// Depends on the editing mode, remove the unnecessary information
 				if (this.IsEditingPersonal)
 					_cannedTextDetail.StaffGroup = null;
 				else
