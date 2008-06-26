@@ -49,12 +49,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
     public class ServiceLockProcessor
     {
         #region Members
-        private readonly string _name;
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory> _extensions = new Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory>();
         private readonly ItemProcessingThreadPool<Model.ServiceLock> _threadPool;
-        private ManualResetEvent _threadStop;
-        private Thread _theThread = null;
+        private readonly ManualResetEvent _threadStop;
         private bool _stop = false;
         #endregion
 
@@ -62,11 +60,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         /// <summary>
         /// Constructor for ServiceLock processor.
         /// </summary>
-        /// <param name="name">The name of the processor.</param>
         /// <param name="numberThreads">The number of threads allocated to the processor.</param>
-        public ServiceLockProcessor(String name, int numberThreads)
+		/// <param name="threadStop">Stop signal</param>
+		public ServiceLockProcessor(int numberThreads, ManualResetEvent threadStop)
         {
-            _name = name;
+			_threadStop = threadStop;
+
 			_threadPool = new ItemProcessingThreadPool<Model.ServiceLock>(numberThreads);
 
             ServiceLockFactoryExtensionPoint ep = new ServiceLockFactoryExtensionPoint();
@@ -96,38 +95,126 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #endregion
 
         #region Public Methods
-        /// <summary>
-        /// Start the ServiceLock processor
-        /// </summary>
-        public void Start()
-        {
-            if (!_threadPool.Active)
-                _threadPool.Start();
-            if (_theThread == null)
-            {
-                _threadStop = new ManualResetEvent(false);
-                _theThread = new Thread(Process);
-                _theThread.Name = _name;
-                _theThread.Start();
-            }
-        }
+		/// <summary>
+		/// The processing thread.
+		/// </summary>
+		/// <remarks>
+		/// This method queries the database for ServiceLock entries to work on, and then uses
+		/// a thread pool to process the entries.
+		/// </remarks>
+		public void Run()
+		{
+			// Start the thread pool
+			if (!_threadPool.Active)
+				_threadPool.Start();
+
+			// Reset any queue items related to this service that are have the Lock bit set.
+			try
+			{
+				ResetLocked();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Fatal, e,
+							 "Unable to reset ServiceLock items on startup.  There may be ServiceLock items orphaned in the queue.");
+			}
+
+			while (true)
+			{
+				bool foundResult = false;
+
+				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
+				{
+					IList<Model.ServiceLock> list;
+
+					using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+					{
+						IQueryServiceLock select = updateContext.GetBroker<IQueryServiceLock>();
+						ServiceLockQueryParameters parms = new ServiceLockQueryParameters();
+						parms.ProcessorId = ServiceTools.ProcessorId;
+
+						list = select.Execute(parms);
+						updateContext.Commit();
+					}
+
+					if (list.Count > 0)
+						foundResult = true;
+
+					foreach (Model.ServiceLock queueListItem in list)
+					{
+						if (!_extensions.ContainsKey(queueListItem.ServiceLockTypeEnum))
+						{
+							Platform.Log(LogLevel.Error,
+										 "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
+										 queueListItem.ServiceLockTypeEnum);
+
+							//Just fail the ServiceLock item, not much else we can do
+							ResetServiceLock(queueListItem);
+							continue;
+						}
+
+						IServiceLockProcessorFactory factory = _extensions[queueListItem.ServiceLockTypeEnum];
+
+						IServiceLockItemProcessor processor;
+						try
+						{
+							processor = factory.GetItemProcessor();
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Error, e, "Unexpected exception creating ServiceLock processor.");
+							ResetServiceLock(queueListItem);
+							continue;
+						}
+
+						_threadPool.Enqueue(queueListItem, delegate(Model.ServiceLock queueItem)
+												{
+													try
+													{
+														processor.Process(queueItem);
+													}
+													catch (Exception e)
+													{
+														Platform.Log(LogLevel.Error, e,
+																	 "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
+																	 queueItem.ServiceLockTypeEnum,
+																	 queueItem.GetKey());
+
+														ResetServiceLock(queueItem);
+													}
+
+													// Cleanup the processor
+													processor.Dispose();
+												});
+					}
+
+					if (!foundResult)
+					{
+						_threadStop.WaitOne(1000 * 30, false); // twice a minute
+						_threadStop.Reset();
+					}
+				}
+				else
+				{
+					// Wait for only 5 seconds when the thread pool is all in use.
+					_threadStop.WaitOne(5000, false);
+					_threadStop.Reset();
+				}
+				if (_stop)
+					return;
+			}
+		}
 
         /// <summary>
         /// Stop the ServiceLock processor
         /// </summary>
-        public void Stop()
+		public void Stop()
         {
-			if (_theThread.IsAlive)
-			{
-				_stop = true;
-				_threadStop.Set();
-				_theThread.Join();
-				_theThread = null;
-				if (_threadPool.Active)
-					_threadPool.Stop();
-			}
+        	_stop = true;
+        	_threadPool.Stop(true);
         }
-        #endregion
+
+    	#endregion
 
         #region Private Methods
         /// <summary>
@@ -186,111 +273,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
         }
 
-        /// <summary>
-        /// The processing thread.
-        /// </summary>
-        /// <remarks>
-        /// This method queries the database for ServiceLock entries to work on, and then uses
-        /// a thread pool to process the entries.
-        /// </remarks>
-        private void Process()
-        {
-            // Reset any queue items related to this service that are have the Lock bit set.
-            try
-            {
-                ResetLocked();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Fatal, e,
-                             "Unable to reset ServiceLock items on startup.  There may be ServiceLock items orphaned in the queue.");
-            }
-
-            while (true)
-            {
-                bool foundResult = false;
-
-                if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
-                {
-                    IList<Model.ServiceLock> list;
-
-                    using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-                    {
-                        IQueryServiceLock select = updateContext.GetBroker<IQueryServiceLock>();
-                        ServiceLockQueryParameters parms = new ServiceLockQueryParameters();
-                        parms.ProcessorId = ServiceTools.ProcessorId;
-
-                        list = select.Execute(parms);
-                        updateContext.Commit();
-                    }
-
-                    if (list.Count > 0)
-                        foundResult = true;
-
-                    foreach (Model.ServiceLock queueListItem in list)
-                    {
-                        if (!_extensions.ContainsKey(queueListItem.ServiceLockTypeEnum))
-                        {
-                            Platform.Log(LogLevel.Error,
-                                         "No extensions loaded for ServiceLockTypeEnum item type: {0}.  Failing item.",
-                                         queueListItem.ServiceLockTypeEnum);
-
-                            //Just fail the ServiceLock item, not much else we can do
-                            ResetServiceLock(queueListItem);
-                            continue;
-                        }
-
-                        IServiceLockProcessorFactory factory = _extensions[queueListItem.ServiceLockTypeEnum];
-
-                        IServiceLockItemProcessor processor;
-                        try
-                        {
-                            processor = factory.GetItemProcessor();
-                        }
-                        catch (Exception e)
-                        {
-                            Platform.Log(LogLevel.Error, e, "Unexpected exception creating ServiceLock processor.");
-                            ResetServiceLock(queueListItem);
-                            continue;
-                        }
-
-                        _threadPool.Enqueue(queueListItem,delegate(Model.ServiceLock queueItem)
-                                                {
-                                                    try
-                                                    {
-                                                        processor.Process(queueItem);
-                                                    }
-                                                    catch (Exception e)
-                                                    {
-                                                        Platform.Log(LogLevel.Error, e,
-                                                                     "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                     queueItem.ServiceLockTypeEnum,
-                                                                     queueItem.GetKey());
-
-                                                        ResetServiceLock(queueItem);
-                                                    }
-
-                                                    // Cleanup the processor
-                                                    processor.Dispose();
-                                                });
-                    }
-
-                    if (!foundResult)
-                    {
-                        _threadStop.WaitOne(1000*30, false); // twice a minute
-                        _threadStop.Reset();
-                    }
-                }
-                else
-                {
-                    // Wait for only 5 seconds when the thread pool is all in use.
-                    _threadStop.WaitOne(5000, false);
-                    _threadStop.Reset();                    
-                }
-                if (_stop)
-                    return;
-            }
-        }
         #endregion
+
     }
 }

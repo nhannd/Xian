@@ -48,19 +48,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public class WorkQueueProcessor
     {
         #region Members
-        private readonly string _name;
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory>();
 		private readonly ItemProcessingThreadPool<Model.WorkQueue> _threadPool;
-        private ManualResetEvent _threadStop;
-        private Thread _theThread = null;
+        private readonly ManualResetEvent _threadStop;
         private bool _stop = false;
         #endregion
 
         #region Constructor
-        public WorkQueueProcessor(String name, int numberThreads)
+        public WorkQueueProcessor(int numberThreads, ManualResetEvent threadStop)
         {
-            _name = name;
+        	_threadStop = threadStop;
 			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
@@ -90,39 +88,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion
 
         #region Methods
-        /// <summary>
-        /// Start the WorkQueue processor
-        /// </summary>
-        public void Start()
-        {       
-            if (!_threadPool.Active)
-                _threadPool.Start();
-            if (_theThread == null)
-            {
-                _threadStop = new ManualResetEvent(false); 
-                _theThread = new Thread(Process);
-                _theThread.Name = _name;
-                _theThread.Start();
-            }
-        }
 
         /// <summary>
         /// Stop the WorkQueue processor
         /// </summary>
-        public void Stop()
+		public void Stop()
         {
-			if (_theThread.IsAlive)
-			{
-				_stop = true;
-				_threadStop.Set();
-				_theThread.Join();
-				_theThread = null;
-				if (_threadPool.Active)
-					_threadPool.Stop();
-			}
+        	_stop = true;
+        	if (_threadPool.Active)
+        		_threadPool.Stop();
         }
 
-        /// <summary>
+    	/// <summary>
         /// Simple routine for failing a work queue item.
         /// </summary>
         /// <param name="item">The item to fail.</param>
@@ -235,9 +212,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// This method queries the database for WorkQueue entries to work on, and then uses
         /// a thread pool to process the entries.
         /// </remarks>
-        private void Process()
+        public void Run()
         {
-            // Reset any queue items related to this system that are in a "In Progress" state.
+			if (!_threadPool.Active)
+				_threadPool.Start();
+
+			// Reset any queue items related to this system that are in a "In Progress" state.
             try
             {
                 ResetFailedItems();

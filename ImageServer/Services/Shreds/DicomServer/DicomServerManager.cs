@@ -37,7 +37,6 @@ using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.Dicom;
 
@@ -46,24 +45,23 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
     /// <summary>
     /// This class manages the DICOM SCP Shred for the ImageServer.
     /// </summary>
-    public class DicomServerManager
+	public class DicomServerManager : ServiceManagerBase
     {
         #region Private Members
         private readonly List<DicomScp<DicomScpContext>> _listenerList = new List<DicomScp<DicomScpContext>>();
         private static DicomServerManager _instance;
+		IList<ServerPartition> _partitions;
+		
+
         #endregion
 
-        #region Contructors
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public DicomServerManager()
-        {
-        }
-        #endregion
+		#region Constructor
+		public DicomServerManager(string name) : base(name)
+		{}
+		#endregion
 
-        #region Properties
-        /// <summary>
+		#region Properties
+		/// <summary>
         /// Singleton instance of the class.
         /// </summary>
         public static DicomServerManager Instance
@@ -71,7 +69,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
             get
             {
                 if (_instance == null)
-                    _instance = new DicomServerManager();
+                    _instance = new DicomServerManager("DICOM Service Manager");
 
                 return _instance;
             }
@@ -84,6 +82,22 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 
         
         #region Public Methods
+		protected override void Initialize()
+		{
+			//Load Codecs
+			DicomCodecHelper.RegisterCodecExtensions();
+
+			//Get partitions
+			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+			
+			using (IReadContext read = store.OpenReadContext())
+			{
+				IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
+				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+				_partitions = broker.Find(criteria);
+			}
+		}
+
         /// <summary>
         /// Method called when starting the DICOM SCP.
         /// </summary>
@@ -94,25 +108,13 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         /// partition is unique.  
         /// </para>
         /// </remarks>
-        public void Start()
+        protected override void Run()
         {
-            //Load Codecs
-            DicomCodecHelper.RegisterCodecExtensions();
-            
-            //Get partitions
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            IList<ServerPartition> partitions;
-            using (IReadContext read = store.OpenReadContext())
-            {
-                IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
-                ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-                partitions = broker.Find(criteria);
-            }
-
+        
             FilesystemMonitor monitor = new FilesystemMonitor();
             monitor.Load();
             
-            foreach (ServerPartition part in partitions)
+            foreach (ServerPartition part in _partitions)
             {
                 if (part.Enabled)
                 {
@@ -163,7 +165,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         /// <summary>
         /// Method called when stopping the DICOM SCP.
         /// </summary>
-        public void Stop()
+        protected override void Stop()
         {
             foreach (DicomScp<DicomScpContext> scp in _listenerList)
             {

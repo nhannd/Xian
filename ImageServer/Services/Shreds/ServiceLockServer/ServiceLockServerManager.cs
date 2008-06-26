@@ -29,11 +29,12 @@
 
 #endregion
 
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Services.ServiceLock;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 {
-    public class ServiceLockServerManager
+    public class ServiceLockServerManager : ServiceManagerBase
     {
         #region Private Members
         private static ServiceLockServerManager _instance;
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
         /// <summary>
         /// **** For internal use only***
         /// </summary>
-        private ServiceLockServerManager()
+        private ServiceLockServerManager(string name) : base(name)
         { }
         #endregion
 
@@ -57,7 +58,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
             get
             {
                 if (_instance == null)
-                    _instance = new ServiceLockServerManager();
+                    _instance = new ServiceLockServerManager("ServiceLock");
 
                 return _instance;
             }
@@ -68,18 +69,31 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
         }
         #endregion
 
-        #region Public Methods
-
-        public void Start()
+        #region Protected Methods
+        protected override void Initialize()
         {
             if (_theProcessor == null)
             {
-                _theProcessor = new ServiceLockProcessor("ServiceLock Processor", 1); // 1 threads for processor
-                _theProcessor.Start();
+				// Force a read context to be opened.  When developing the retry mechanism 
+				// for startup when the DB was down, there were problems when the type
+				// initializer for enumerated values were failng first.  For some reason,
+				// when the database went back online, they would still give exceptions.
+				// changed to force the processor to open a dummy DB connect and cause an 
+				// exception here, instead of getting to the enumerated value initializer.
+				using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+				{
+				}
+
+                _theProcessor = new ServiceLockProcessor(1, ThreadStop); // 1 threads for processor
             }
         }
 
-        public void Stop()
+		protected override void Run()
+		{
+			_theProcessor.Run();
+		}
+
+        protected override void Stop()
         {
             if (_theProcessor != null)
             {

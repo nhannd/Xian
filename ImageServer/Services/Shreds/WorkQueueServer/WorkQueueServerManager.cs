@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Services.WorkQueue;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
@@ -37,7 +38,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
     /// <summary>
     /// Shreds namespace manager of processing threads for the WorkQueue.
     /// </summary>
-    public class WorkQueueServerManager
+    public class WorkQueueServerManager : ServiceManagerBase
     {
         #region Private Members
         private static WorkQueueServerManager _instance;
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
         /// <summary>
         /// **** For internal use only***
         /// </summary>
-        private WorkQueueServerManager()
+        private WorkQueueServerManager(string name) : base(name)
         { }
         #endregion
 
@@ -61,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
             get
             {
                 if (_instance == null)
-                    _instance = new WorkQueueServerManager();
+                    _instance = new WorkQueueServerManager("WorkQueue");
 
                 return _instance;
             }
@@ -72,28 +73,42 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
         }
         #endregion
 
-        #region Public Methods
-
-        public void Start()
-        {
+        
+		#region Protected Methods
+		protected override void Initialize()
+		{
 			//Load Codecs
 			DicomCodecHelper.RegisterCodecExtensions();
-           
-            if (_theProcessor == null)
-            {
-                _theProcessor = new WorkQueueProcessor("WorkQueue Processor", ImageServerServicesShredSettings.Default.WorkQueueThreadCount); // 5 threads for processor
-                _theProcessor.Start();
-            }
-        }
 
-        public void Stop()
-        {
-            if (_theProcessor != null)
-            {
-                _theProcessor.Stop();
-                _theProcessor = null;
-            }
-        }
+			if (_theProcessor == null)
+			{
+				// Force a read context to be opened.  When developing the retry mechanism 
+				// for startup when the DB was down, there were problems when the type
+				// initializer for enumerated values were failng first.  For some reason,
+				// when the database went back online, they would still give exceptions.
+				// changed to force the processor to open a dummy DB connect and cause an 
+				// exception here, instead of getting to the enumerated value initializer.
+				using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+				{
+				}
+
+				_theProcessor = new WorkQueueProcessor( ImageServerServicesShredSettings.Default.WorkQueueThreadCount, ThreadStop); // 5 threads for processor
+			}
+		}
+
+		protected override void Run()
+		{
+			_theProcessor.Run();
+		}
+
+		protected override void Stop()
+		{
+			if (_theProcessor != null)
+			{
+				_theProcessor.Stop();
+				_theProcessor = null;
+			}
+		}
         #endregion
     }
 }

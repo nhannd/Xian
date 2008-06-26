@@ -51,12 +51,12 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
         {
             Platform.Log(LogLevel.Info, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            ServiceLockServerManager.Instance.Start();
+            ServiceLockServerManager.Instance.StartService();
         }
 
         public override void Stop()
         {
-            ServiceLockServerManager.Instance.Stop();
+            ServiceLockServerManager.Instance.StopService();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
         }

@@ -52,12 +52,12 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         {
             Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            DicomServerManager.Instance.Start();
+            DicomServerManager.Instance.StartService();
         }
 
         public override void Stop()
         {
-            DicomServerManager.Instance.Stop();
+            DicomServerManager.Instance.StopService();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
         }

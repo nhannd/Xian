@@ -62,12 +62,12 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
         {
             Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            WorkQueueServerManager.Instance.Start();
+            WorkQueueServerManager.Instance.StartService();
         }
 
         public override void Stop()
         {        
-            WorkQueueServerManager.Instance.Stop();
+            WorkQueueServerManager.Instance.StopService();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
         }

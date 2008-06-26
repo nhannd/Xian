@@ -29,11 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
-
 
 namespace ClearCanvas.ImageServer.Enterprise
 {
@@ -49,8 +46,10 @@ namespace ClearCanvas.ImageServer.Enterprise
         where TBroker : IEnumBroker<TEnum>
     {
         #region Static private members
+		static readonly object _syncLock = new object();
+    	private static bool _loaded = false;
         static List<TEnum> _list = new List<TEnum>();
-        static Dictionary<short, TEnum> _dict = new Dictionary<short, TEnum>();
+        static readonly Dictionary<short, TEnum> _dict = new Dictionary<short, TEnum>();
         #endregion Static private members
 
         #region Constructors
@@ -61,23 +60,41 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
         }
 
-        static ServerEnumHelper()
-        {
-            using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                TBroker broker = read.GetBroker<TBroker>();
-                _list = broker.Execute();
-                foreach (TEnum value in _list)
-                {
-                    _dict.Add(value.Enum, value);
-                }
-            }
-        }
         #endregion Constructors
 
         #region Public methods
+		/// <summary>
+		/// Load enumerated values from the db.
+		/// </summary>
+		/// <remarks>
+		/// This code was originally contained within a static
+		/// constructor for this class.  This was causing problems, however,
+		/// when we would attempt to init a process, and the database was
+		/// down.  I moved the code to a static method.
+		/// </remarks>
+		private static void LoadEnum()
+		{
+			lock (_syncLock)
+			{
+				if (_loaded)
+					return;
+
+				using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+				{
+					TBroker broker = read.GetBroker<TBroker>();
+					_list = broker.Execute();
+					foreach (TEnum value in _list)
+					{
+						_dict.Add(value.Enum, value);
+					}
+				}
+
+				_loaded = true;
+			}
+		}
         public static TEnum GetEnum(string lookup)
         {
+			LoadEnum();
             foreach (TEnum value in _dict.Values)
             {
                 if (value.Lookup.Equals(lookup))
@@ -88,11 +105,13 @@ namespace ClearCanvas.ImageServer.Enterprise
 
         public static List<TEnum> GetAll()
         {
+			LoadEnum();
             return _list;
         }
 
         public static void SetEnum(TEnum dest, short val)
         {
+			LoadEnum();
             TEnum enumValue;
             if (false == _dict.TryGetValue(val, out enumValue))
                 throw new PersistenceException(string.Format("Unknown {0} value: {1}", typeof(TEnum).Name, val), null);
