@@ -60,6 +60,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _diagnosticServiceTree.Tree = _component.DiagnosticServiceTree;
             _diagnosticServiceTree.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceTreeItem", true, DataSourceUpdateMode.OnPropertyChanged);
+			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _procedures.Table = _component.DiagnosticServiceBreakdown;
         }
