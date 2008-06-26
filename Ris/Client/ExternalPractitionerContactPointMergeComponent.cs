@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -75,7 +76,7 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				reportBuilder.AppendLine("Affected Orders");
-				CollectionUtils.ForEach(affectedOrders, delegate(OrderSummary o) { reportBuilder.AppendLine(o.AccessionNumber); });
+				CollectionUtils.ForEach(affectedOrders, delegate(OrderSummary o) { reportBuilder.AppendLine(AccessionFormat.Format(o.AccessionNumber)); });
 			}
 
 			return reportBuilder.ToString();

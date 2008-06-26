@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Client
 				}, 2));
 
 			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnAccessionNumber,
-			//    delegate(OrderListItem order) { return order.AccessionNumber; }));
+			//    delegate(OrderListItem order) { return AccessionFormat.Format(order.AccessionNumber); }));
 			//this.Columns.Add(new TableColumn<OrderListItem, string>("Ordering Facility",
 			//    delegate(OrderListItem order) { return order.OrderingFacility.Name; }));
 			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,

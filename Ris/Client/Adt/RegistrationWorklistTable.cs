@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // Invisible but sortable columns
             TableColumn<RegistrationWorklistItem, string> accessionNumberColumn = 
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(RegistrationWorklistItem item) { return item.AccessionNumber; }, 1.0f);
+                delegate(RegistrationWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); }, 1.0f);
             accessionNumberColumn.Visible = false;
 
             TableColumn<RegistrationWorklistItem, string> diagnosticServiceColumn =

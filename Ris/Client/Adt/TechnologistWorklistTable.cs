@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Adt
             TableColumn<ModalityWorklistItem, string> descriptionRow = 
                 new TableColumn<ModalityWorklistItem, string>(SR.ColumnDescription,
                 delegate(ModalityWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
-                    item.AccessionNumber, 
+                    AccessionFormat.Format(item.AccessionNumber), 
                     item.DiagnosticServiceName, 
                     item.ProcedureName, 
                     item.Time); },
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // Invisible but sortable columns
             TableColumn<ModalityWorklistItem, string> accessionNumberColumn = 
                 new TableColumn<ModalityWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(ModalityWorklistItem item) { return item.AccessionNumber; }, 0.75f);
+                delegate(ModalityWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); }, 0.75f);
             accessionNumberColumn.Visible = false;
 
             TableColumn<ModalityWorklistItem, string> diagnosticServiceColumn =

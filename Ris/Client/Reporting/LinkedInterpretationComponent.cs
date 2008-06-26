@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -74,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; },
                 delegate(Checkable<ReportingWorklistItem> item, bool value) { item.IsChecked = value; }, 0.20f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnAccessionNumber,
-                delegate(Checkable<ReportingWorklistItem> item) { return item.Item.AccessionNumber; }, 0.75f));
+				delegate(Checkable<ReportingWorklistItem> item) { return AccessionFormat.Format(item.Item.AccessionNumber); }, 0.75f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnDiagnosticService,
                 delegate(Checkable<ReportingWorklistItem> item) { return item.Item.DiagnosticServiceName; }, 1.0f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,

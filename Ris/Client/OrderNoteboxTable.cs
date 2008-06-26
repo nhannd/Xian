@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client
 			this.Columns.Add(new TableColumn<OrderNoteboxItemSummary, string>(SR.ColumnDescription,
 				delegate(OrderNoteboxItemSummary item)
 				{
-					return string.Format("{0} {1}", item.AccessionNumber, item.DiagnosticServiceName);
+					return string.Format("{0} {1}", AccessionFormat.Format(item.AccessionNumber), item.DiagnosticServiceName);
 				},
 				1.0f, 1));
 
