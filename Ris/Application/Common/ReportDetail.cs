@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -45,18 +46,28 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public EnumValueInfo ReportStatus;
 
+		/// <summary>
+		/// This may not contains all the parts that are in a report.
+		/// The cancelled reports may not be included.
+		/// </summary>
         [DataMember]
         public List<ReportPartDetail> Parts;
 
         [DataMember]
         public List<ProcedureDetail> Procedures;
 
-        public ReportPartDetail GetPart(int index)
+		/// <summary>
+		/// Return the report part correspond to the report part index
+		/// </summary>
+		/// <param name="reportPartIndex">The report part index, not the array index of the list of Parts</param>
+		/// <returns></returns>
+        public ReportPartDetail GetPart(int reportPartIndex)
         {
-            if (this.Parts == null || index < 0)
+			if (this.Parts == null || reportPartIndex < 0)
                 return null;
 
-            return this.Parts[index];
+			return CollectionUtils.SelectFirst(this.Parts,
+				delegate(ReportPartDetail detail) { return detail.Index.Equals(reportPartIndex); });
         }
     }
 }

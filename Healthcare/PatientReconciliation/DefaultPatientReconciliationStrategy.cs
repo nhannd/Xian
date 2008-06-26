@@ -62,12 +62,16 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 
             IList<PatientProfileMatch> matches = new List<PatientProfileMatch>();
 
-            PatientProfileSearchCriteria high = new PatientProfileSearchCriteria();
-            high.Healthcard.Id.EqualTo(targetProfile.Healthcard.Id);
+            IList<PatientProfileMatch> highMatches = new List<PatientProfileMatch>();
+			if (targetProfile.Healthcard != null)
+			{
+				PatientProfileSearchCriteria high = new PatientProfileSearchCriteria();
+				high.Healthcard.Id.EqualTo(targetProfile.Healthcard.Id);
 
-            IList<PatientProfileMatch> highMatches = PatientProfileMatch.CreateList(targetProfile, broker.Find(high), PatientProfileMatch.ScoreValue.High);
+				highMatches = PatientProfileMatch.CreateList(targetProfile, broker.Find(high), PatientProfileMatch.ScoreValue.High);
+			}
 
-            PatientProfileSearchCriteria moderateViaName = new PatientProfileSearchCriteria();
+        	PatientProfileSearchCriteria moderateViaName = new PatientProfileSearchCriteria();
 
             if (targetProfile.Name.FamilyName != null && targetProfile.Name.FamilyName.Length > 0)
                 moderateViaName.Name.FamilyName.EqualTo(targetProfile.Name.FamilyName);

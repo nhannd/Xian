@@ -235,11 +235,10 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 			BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
 			List<ReportListItem> reportListItems = new List<ReportListItem>();
 
-			CollectionUtils.ForEach<Procedure>(
-				procedures,
+			CollectionUtils.ForEach(procedures,
 				delegate(Procedure rp)
 				{
-					ReportListItem reportListItem = assembler.CreateReportListItem(rp, this.PersistenceContext);
+					ReportListItem reportListItem = assembler.CreateReportListItem(rp, request.IncludeCancelledReports, this.PersistenceContext);
 					if (reportListItem != null)
 						reportListItems.Add(reportListItem);
 				});
@@ -252,7 +251,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 			Report report = PersistenceContext.Load<Report>(request.ReportRef);
 
 			ReportAssembler assembler = new ReportAssembler();
-			return new GetReportDetailResponse(assembler.CreateReportDetail(report, PersistenceContext));
+			return new GetReportDetailResponse(assembler.CreateReportDetail(report, request.IncludeCancelledParts, PersistenceContext));
 		}
 	}
 }

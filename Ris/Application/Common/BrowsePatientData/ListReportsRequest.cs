@@ -65,5 +65,11 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 		/// </summary>
 		[DataMember]
 		public EntityRef OrderRef;
+
+		/// <summary>
+		/// Specified whether cancelled report should be included in the response object.
+		/// </summary>
+		[DataMember]
+		public bool IncludeCancelledReports;
 	}
 }

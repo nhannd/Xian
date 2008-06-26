@@ -62,24 +62,15 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
             Order order = rp.Order;
-            //TODO: choose the profile based on some location instead of visit assigning authority
-            PatientProfile profile = order.Patient.Profiles.Count == 1 ?
-                CollectionUtils.FirstElement<PatientProfile>(order.Patient.Profiles) :
-                CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
-                delegate(PatientProfile thisProfile)
-                {
-                    return thisProfile.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
-                });
 
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
+			summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
             summary.AccessionNumber = order.AccessionNumber;
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
 
             return summary;
         }
 
-        public ReportDetail CreateReportDetail(Report report, IPersistenceContext context)
+        public ReportDetail CreateReportDetail(Report report, bool includeCancelledParts, IPersistenceContext context)
         {
             ReportDetail detail = new ReportDetail();
             detail.ReportRef = report.GetRef();
@@ -89,8 +80,15 @@ namespace ClearCanvas.Ris.Application.Services
             detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(report.Procedures,
                 delegate(Procedure p) { return rpAssembler.CreateProcedureDetail(p, context); });
 
-            detail.Parts = CollectionUtils.Map<ReportPart, ReportPartDetail>(report.Parts,
-                delegate(ReportPart part) { return CreateReportPartDetail(part, context); });
+			List<ReportPartDetail> parts = CollectionUtils.Map<ReportPart, ReportPartDetail>(report.Parts,
+				delegate(ReportPart part) { return CreateReportPartDetail(part, context); });
+
+			detail.Parts = includeCancelledParts ? parts :
+				CollectionUtils.Select(parts,
+					delegate(ReportPartDetail rpp)
+					{
+						return rpp.Status.Code.Equals(ReportPartStatus.X.ToString()) == false;
+					});
 
             return detail;
         }
