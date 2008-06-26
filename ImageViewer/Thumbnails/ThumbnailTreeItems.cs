@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.ImageViewer.Thumbnails

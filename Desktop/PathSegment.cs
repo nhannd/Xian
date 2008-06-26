@@ -89,18 +89,27 @@ namespace ClearCanvas.Desktop
     		return Equals(pathSegment1, pathSegment2);
     	}
 
-    	public bool Equals(PathSegment pathSegment)
+    	/// <summary>
+    	/// Gets whether or not <paramref name="pathSegment"/> is equal to this object.
+    	/// </summary>
+		public bool Equals(PathSegment pathSegment)
     	{
     		if (pathSegment == null) return false;
     		return Equals(_localized, pathSegment._localized);
     	}
 
-    	public override bool Equals(object obj)
+		/// <summary>
+		/// Gets whether or not <paramref name="obj"/> is equal to this object.
+		/// </summary>
+		public override bool Equals(object obj)
     	{
     		if (ReferenceEquals(this, obj)) return true;
     		return Equals(obj as PathSegment);
     	}
 
+		/// <summary>
+		/// Gets a hash code.
+		/// </summary>
     	public override int GetHashCode()
     	{
     		return _localized != null ? _localized.GetHashCode() : 0;

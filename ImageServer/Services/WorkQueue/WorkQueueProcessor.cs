@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 bool foundResult = false;
 
-				if (_threadPool.QueueAndActiveCount < _threadPool.Concurrency)
+				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
                 {
                     try
                     {

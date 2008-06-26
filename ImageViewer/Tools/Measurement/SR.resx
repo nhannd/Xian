@@ -234,4 +234,8 @@
   <data name="ErrorCannotCalibrateZeroLengthRuler" xml:space="preserve">
     <value>Cannot calibrate a ruler of zero-length.</value>
   </data>
+  <data name="MessageRoiAnalysisError" xml:space="preserve">
+    <value>An error has occurred while analyzing the Roi.
+Please check the log for more details.</value>
+  </data>
 </root>

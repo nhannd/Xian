@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				get
 				{
 					if (_name == null)
-						_name = InitializeString(_icInfo.szName);
+						_name = StringFromShortArray(_icInfo.szName);
 
 					return _name;
 				}
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				get
 				{
 					if (_description == null)
-						_description = InitializeString(_icInfo.szDescription);
+						_description = StringFromShortArray(_icInfo.szDescription);
 
 					return _description;
 				}
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				get
 				{
 					if (_driver == null)
-						_driver = InitializeString(_icInfo.szDriver);
+						_driver = StringFromShortArray(_icInfo.szDriver);
 
 					return _driver;
 				}
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				return String.Format("{0} | {1} | {2}", Name, Description, Driver);
 			}
 
-			private static unsafe string InitializeString(ushort[] source)
+			private static unsafe string StringFromShortArray(ushort[] source)
 			{
 				string value = "";
 				if (source.Length == 0)

@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 				using (SaveFileDialog dialog = new SaveFileDialog())
 				{
 					dialog.Filter = _component.SelectedExporterInfo.FileExtensionFilter;
-					dialog.DefaultExt = _component.SelectedExporterInfo.DefaultExtension;
+					dialog.DefaultExt = _component.SelectedExporterInfo.DefaultFileExtension;
 					dialog.RestoreDirectory = true;
 					dialog.AddExtension = true;
 

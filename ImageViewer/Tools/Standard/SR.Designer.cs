@@ -855,6 +855,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while probing the image.
+        ///Please check the log for more details..
+        /// </summary>
+        internal static string MessageProbeToolError {
+            get {
+                return ResourceManager.GetString("MessageProbeToolError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calculates Window/Level from the minimum and maximum pixel values.
         /// </summary>
         internal static string MinMaxAlgorithmPresetVoiLutOperationComponentDescription {

@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			_component = component;
             InitializeComponent();
 
-			_galleryView.DataSource = _component.DisplaySetGalleryItems;
+			_galleryView.DataSource = _component.Thumbnails;
 			_galleryView.MultiSelect = false;
 			_galleryView.DragReorder = false;
 			_galleryView.DragOutside = true;

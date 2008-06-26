@@ -533,6 +533,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			format.LineAlignment = StringAlignment.Center;
 			format.FormatFlags = StringFormatFlags.NoClip;
 
+			_brush.Color = Color.WhiteSmoke;
 			Surface.FinalBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
 
 			font.Dispose();

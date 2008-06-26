@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this._trackBarFrameRate.Maximum = 25;
 			this._trackBarFrameRate.Minimum = 1;
 			this._trackBarFrameRate.Name = "_trackBarFrameRate";
-			this._trackBarFrameRate.Size = new System.Drawing.Size(189, 42);
+			this._trackBarFrameRate.Size = new System.Drawing.Size(189, 45);
 			this._trackBarFrameRate.TabIndex = 3;
 			this._trackBarFrameRate.Value = 1;
 			// 
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(97, 13);
 			this.label3.TabIndex = 1;
-			this.label3.Text = "Frames per second";
+			this.label3.Text = "Images per second";
 			// 
 			// _duration
 			// 

@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 		[ValidationMethodFor("CustomRange")]
 		private ValidationResult ValidateCustomRange()
 		{
-			List<int> ranges;
+			List<Range> ranges;
 			if (CopyCustom && !CustomImageSelectionStrategy.Parse(CustomRange, RangeMinimum, RangeMaximum, out ranges))
 				return new ValidationResult(false, SR.MessageCustomRangeInvalid);
 

@@ -275,20 +275,6 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		/// <summary>
-		/// The current number of active threads and queued delegates.
-		/// </summary>
-		public int QueueAndActiveCount
-		{
-			get
-			{
-				lock(_syncLock)
-				{
-					return _activeCount + QueueCount;
-				}
-			}
-		}
-
-		/// <summary>
 		/// Called before the thread pool is started.
 		/// </summary>
 		/// <remarks>

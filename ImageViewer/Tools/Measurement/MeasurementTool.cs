@@ -39,6 +39,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -246,14 +247,22 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				{
 					StringBuilder builder = new StringBuilder();
 
-					foreach (IRoiAnalyzer<T> analyzer in _roiAnalyzers)
+					try
 					{
-						string analysis = analyzer.Analyze(roiInfo);
-						if (!String.IsNullOrEmpty(analysis))
-							builder.AppendLine(analysis);
-					}
+						foreach (IRoiAnalyzer<T> analyzer in _roiAnalyzers)
+						{
+							string analysis = analyzer.Analyze(roiInfo);
+							if (!String.IsNullOrEmpty(analysis))
+								builder.AppendLine(analysis);
+						}
 
-					text = builder.ToString();
+						text = builder.ToString();
+					}
+					catch (Exception e)
+					{
+						Platform.Log(LogLevel.Error, e);
+						text = SR.MessageRoiAnalysisError;
+					}
 				}
 			}
 

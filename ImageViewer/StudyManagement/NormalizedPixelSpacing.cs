@@ -77,19 +77,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			    String.Compare(_frame.ParentImageSop.Modality, "DX", true) == 0 ||
 			    String.Compare(_frame.ParentImageSop.Modality, "MG", true) == 0)
 			{
-				double pixelSpacingRow = 0, pixelSpacingColumn = 0;
-
-				bool tagExists;
-				_frame.ParentImageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingRow, 0, out tagExists);
-
-				if (tagExists)
-					_frame.ParentImageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingColumn, 1, out tagExists);
-
-				if (!tagExists)
-					pixelSpacingRow = pixelSpacingColumn = 0;
-
-				this.Row = pixelSpacingRow;
-				this.Column = pixelSpacingColumn;
+				this.Row = _frame.ImagerPixelSpacing.Row;
+				this.Column = _frame.ImagerPixelSpacing.Column;
 			}
 			// Otherwise, just use pixel spacing
 			else

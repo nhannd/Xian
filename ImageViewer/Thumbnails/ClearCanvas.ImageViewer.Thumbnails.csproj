@@ -34,7 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DisplaySetTreeItems.cs" />
+    <Compile Include="ThumbnailTreeItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -43,7 +43,7 @@
     </Compile>
     <Compile Include="ThumbnailComponent.cs" />
     <Compile Include="ShowThumbnailsTool.cs" />
-    <Compile Include="DisplaySetGalleryItem.cs" />
+    <Compile Include="Thumbnail.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

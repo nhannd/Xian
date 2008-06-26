@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		public string DefaultExtension
+		public string DefaultFileExtension
 		{
 			get { return _sourceImageExporter.FileExtensions[0]; }
 		}

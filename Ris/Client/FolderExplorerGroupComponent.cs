@@ -150,15 +150,13 @@ namespace ClearCanvas.Ris.Client
 					StackTabPage thisPage = new StackTabPage(
 						folderSystem.Title,
 						explorer,
-						string.Empty,
 						folderSystem.Title,
-						string.Empty,
 						folderSystem.TitleIcon,
 						folderSystem.ResourceResolver);
 
 					_stackTabComponent.Pages.Add(thisPage);
 
-					folderSystem.TitleChanged += delegate { thisPage.SetTitle(string.Empty, folderSystem.Title, string.Empty); };
+					folderSystem.TitleChanged += delegate { thisPage.Title = folderSystem.Title; };
 					folderSystem.TitleIconChanged += delegate { thisPage.IconSet = folderSystem.TitleIcon; };
 				});
 		}

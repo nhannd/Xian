@@ -50,15 +50,12 @@ namespace ClearCanvas.Desktop.Validation
 			get { return _propertyName; }	
 		}
 
-		/// <summary>
-		/// Verifies the method signature.
-		/// </summary>
-		protected void CheckMethodSignature(MethodInfo info)
+		private static void CheckMethodSignature(MethodInfo method)
 		{
-			if (!(typeof(ValidationResult).IsAssignableFrom(info.ReturnType)))
+			if (!(typeof(ValidationResult).IsAssignableFrom(method.ReturnType)))
 				throw new ValidationAttributeException("The decorated method does not have the correct signature.");
 
-			ParameterInfo[] parameters = info.GetParameters();
+			ParameterInfo[] parameters = method.GetParameters();
 			if (parameters.Length != 0)
 				throw new ValidationAttributeException("The decorated method does not have the correct signature.");
 		}
@@ -67,8 +64,10 @@ namespace ClearCanvas.Desktop.Validation
 		/// Factory method that creates an <see cref="IValidationRule"/> for 
 		/// the property with the name <see cref="PropertyName"/>.
 		/// </summary>
-		public IValidationRule CreateRule(MethodInfo method)
+		internal IValidationRule CreateRule(MethodInfo method)
 		{
+			CheckMethodSignature(method);
+
 			return new ValidationRule(_propertyName,
 			                          delegate(IApplicationComponent component)
 			                          	{

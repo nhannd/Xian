@@ -50,7 +50,31 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 		#endregion
 
-		private static Bitmap ExportCompleteImage(IPresentationImage image, float scale)
+		public static Bitmap DrawToBitmap(IPresentationImage image, ExportImageParams exportParams)
+		{
+			Platform.CheckForNullReference(image, "image");
+			Platform.CheckForNullReference(exportParams, "exportParams");
+			
+			if (image is ISpatialTransformProvider && image is IImageGraphicProvider)
+			{
+				ImageSpatialTransform transform = ((ISpatialTransformProvider)image).SpatialTransform as ImageSpatialTransform;
+				if (transform == null)
+					throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
+				
+				if (exportParams.ExportOption == ExportOption.Wysiwyg)
+				{
+					return DrawWysiwygImageToBitmap(image, exportParams.DisplayRectangle, exportParams.Scale);
+				}
+				else
+				{
+					return DrawCompleteImageToBitmap(image, exportParams.Scale);
+				}
+			}
+
+			throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
+		}
+
+		private static Bitmap DrawCompleteImageToBitmap(IPresentationImage image, float scale)
 		{
 			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
 			object restoreMemento = transform.CreateMemento();
@@ -76,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		private static Bitmap ExportWysiwyg(IPresentationImage image, Rectangle displayRectangle, float scale)
+		private static Bitmap DrawWysiwygImageToBitmap(IPresentationImage image, Rectangle displayRectangle, float scale)
 		{
 			ImageSpatialTransform transform = (ImageSpatialTransform)((ISpatialTransformProvider)image).SpatialTransform;
 			object restoreMemento = transform.CreateMemento();
@@ -96,31 +120,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		public static Bitmap DrawToBitmap(IPresentationImage image, ExportImageParams exportParams)
-		{
-			Platform.CheckForNullReference(image, "image");
-			Platform.CheckForNullReference(exportParams, "exportParams");
-			
-			if (image is ISpatialTransformProvider && image is IImageGraphicProvider)
-			{
-				ImageSpatialTransform transform = ((ISpatialTransformProvider)image).SpatialTransform as ImageSpatialTransform;
-				if (transform == null)
-					throw new ArgumentException("The image must have a valid ImageSpatialTransform in order to be exported.");
-				
-				if (exportParams.ExportOption == ExportOption.Wysiwyg)
-				{
-					return ExportWysiwyg(image, exportParams.DisplayRectangle, exportParams.Scale);
-				}
-				else
-				{
-					return ExportCompleteImage(image, exportParams.Scale);
-				}
-			}
-
-			throw new ArgumentException("The image must implement IImageGraphicProvider and have a valid ImageSpatialTransform in order to be exported.");
-		}
-
-		public static void Export(IPresentationImage image, string filePath, ExportImageParams exportParams, ImageFormat imageFormat)
+		protected static void Export(IPresentationImage image, string filePath, ExportImageParams exportParams, ImageFormat imageFormat)
 		{
 			using (Bitmap bmp = DrawToBitmap(image, exportParams))
 			{
@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		public static void Export(IPresentationImage image, string filePath, ExportImageParams exportParams, ImageCodecInfo encoder, EncoderParameters encoderParameters)
+		protected static void Export(IPresentationImage image, string filePath, ExportImageParams exportParams, ImageCodecInfo encoder, EncoderParameters encoderParameters)
 		{
 			using (Bitmap bmp = DrawToBitmap(image, exportParams))
 			{
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			}
 		}
 
-		public static void Export(Image image, string filePath, ImageFormat imageFormat)
+		protected static void Export(Image image, string filePath, ImageFormat imageFormat)
 		{
 			Platform.CheckForNullReference(image, "image");
 			Platform.CheckForNullReference(imageFormat, "imageFormat");
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			image.Save(filePath, imageFormat);
 		}
 
-		public static void Export(Image image, string filePath, ImageCodecInfo encoder, EncoderParameters encoderParameters)
+		protected static void Export(Image image, string filePath, ImageCodecInfo encoder, EncoderParameters encoderParameters)
 		{
 			Platform.CheckForNullReference(image, "image");
 			Platform.CheckForEmptyString(filePath, "filePath");

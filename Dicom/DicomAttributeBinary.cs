@@ -230,7 +230,7 @@ namespace ClearCanvas.Dicom
         internal virtual T[] Load()
         {
             ByteBuffer bb;
-            using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+            using (FileStream fs = File.OpenRead(_reference.Filename))
             {
                 fs.Seek(_reference.Offset, SeekOrigin.Begin);
 
@@ -267,7 +267,7 @@ namespace ClearCanvas.Dicom
             ByteBuffer bb;
             if (_reference != null)
             {
-                using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+				using (FileStream fs = File.OpenRead(_reference.Filename))
                 {
                     fs.Seek(_reference.Offset, SeekOrigin.Begin);
 
@@ -1543,7 +1543,7 @@ namespace ClearCanvas.Dicom
             ByteBuffer bb;
             if (_reference != null)
             {
-                using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+				using (FileStream fs = File.OpenRead(_reference.Filename))
                 {
                     fs.Seek(_reference.Offset, SeekOrigin.Begin);
 
@@ -1811,7 +1811,7 @@ namespace ClearCanvas.Dicom
         internal override byte[] Load()
         {
             ByteBuffer bb;
-            using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+			using (FileStream fs = File.OpenRead(_reference.Filename))
             {
                 fs.Seek(_reference.Offset, SeekOrigin.Begin);
 
@@ -1843,7 +1843,7 @@ namespace ClearCanvas.Dicom
             ByteBuffer bb;
             if (_reference != null)
             {
-                using (FileStream fs = new FileStream(_reference.Filename, FileMode.Open))
+				using (FileStream fs = File.OpenRead(_reference.Filename))
                 {
                     fs.Seek(_reference.Offset, SeekOrigin.Begin);
 

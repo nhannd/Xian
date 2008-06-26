@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			List<IImageExporter> exporters = new List<IImageExporter>();
 			
 			exporters.Add(new StandardImageExporter("Jpg", "DescriptionJpg", ImageFormat.Jpeg, new string[] { "jpg", "jpeg" }));
-			exporters.Add(new StandardImageExporter("Png", "DescriptionPng", ImageFormat.Png, new string[] { "png", "png" }));
+			exporters.Add(new StandardImageExporter("Png", "DescriptionPng", ImageFormat.Png, new string[] { "png" }));
 			exporters.Add(new StandardImageExporter("Bmp", "DescriptionBmp", ImageFormat.Bmp, new string[] { "bmp" }));
 			exporters.Add(new StandardImageExporter("Gif", "DescriptionGif", ImageFormat.Gif, new string[] { "gif" }));
 			exporters.Add(new StandardImageExporter("Tiff", "DescriptionTiff", ImageFormat.Tiff, new string[] { "tif", "tiff" }));

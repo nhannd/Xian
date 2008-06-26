@@ -196,6 +196,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while analyzing the Roi.
+        ///Please check the log for more details..
+        /// </summary>
+        public static string MessageRoiAnalysisError {
+            get {
+                return ResourceManager.GetString("MessageRoiAnalysisError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DeleteGraphic.
         /// </summary>
         public static string NameDeleteGraphic {

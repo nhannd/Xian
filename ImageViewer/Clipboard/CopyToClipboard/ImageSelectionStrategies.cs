@@ -9,6 +9,18 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 {
 	public partial class CopySubsetToClipboardComponent
 	{
+		internal struct Range
+		{
+			public Range(int start, int end)
+			{
+				Start = start;
+				End = end;
+			}
+
+			public readonly int Start;
+			public readonly int End;
+		}
+
 		internal class RangeImageSelectionStrategy : IImageSelectionStrategy
 		{
 			private readonly int _startValue;
@@ -78,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 
 		internal class CustomImageSelectionStrategy : IImageSelectionStrategy
 		{
-			private readonly List<int> _ranges;
+			private readonly List<Range> _ranges;
 			private readonly bool _useInstanceNumbers;
 
 			public CustomImageSelectionStrategy(string custom, int rangeMin, int rangeMax, bool useInstanceNumbers)
@@ -91,35 +103,34 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				_useInstanceNumbers = useInstanceNumbers;
 			}
 
-			public static bool Parse(string customRange, int rangeMin, int rangeMax, out List<int> rangeValues)
+			public static bool Parse(string customRanges, int rangeMin, int rangeMax, out List<Range> parsedRanges)
 			{
-				customRange = (customRange ?? "").Trim();
-				rangeValues = new List<int>();
+				customRanges = (customRanges ?? "").Trim();
+				parsedRanges = new List<Range>();
 
 				if (rangeMin > rangeMax)
 					return false;
 
-				if (String.IsNullOrEmpty(customRange))
+				if (String.IsNullOrEmpty(customRanges))
 					return false;
 
-				string[] ranges = customRange.Split(new char[] { ',' }, StringSplitOptions.None);
+				string[] ranges = customRanges.Split(new char[] { ',' }, StringSplitOptions.None);
 				foreach (string range in ranges)
 				{
 					if (String.IsNullOrEmpty(range))
 					{
-						rangeValues.Clear();
+						parsedRanges.Clear();
 						return false;
 					}
 
 					int start, end;
 					if (!ParseRange(range, rangeMin, rangeMax, out start, out end))
 					{
-						rangeValues.Clear();
+						parsedRanges.Clear();
 						return false;
 					}
 
-					rangeValues.Add(start);
-					rangeValues.Add(end);
+					parsedRanges.Add(new Range(start, end));
 				}
 
 				return true;
@@ -129,31 +140,31 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 			{
 				start = end = -1;
 
-				string[] subRange = range.Trim().Split(new char[] { '-' }, StringSplitOptions.None);
-				if (subRange.Length == 0 || subRange.Length > 2)
+				string[] splitRange = range.Trim().Split(new char[] { '-' }, StringSplitOptions.None);
+				if (splitRange.Length == 0 || splitRange.Length > 2)
 					return false;
 
-				if (subRange.Length == 1)
+				if (splitRange.Length == 1)
 				{
-					if (!int.TryParse(subRange[0], out start))
+					if (!int.TryParse(splitRange[0], out start))
 						return false;
 
 					end = start;
 				}
-				else if (subRange.Length == 2)
+				else if (splitRange.Length == 2)
 				{
-					string s1 = subRange[0].Trim();
-					string s2 = subRange[1].Trim();
+					string splitStart = splitRange[0].Trim();
+					string splitEnd = splitRange[1].Trim();
 
-					bool startValid = String.IsNullOrEmpty(s1) || int.TryParse(s1, out start);
-					bool endValid = String.IsNullOrEmpty(s2) || int.TryParse(s2, out end);
+					bool startValid = String.IsNullOrEmpty(splitStart) || int.TryParse(splitStart, out start);
+					bool endValid = String.IsNullOrEmpty(splitEnd) || int.TryParse(splitEnd, out end);
 
-					if ((!startValid && !endValid) || (String.IsNullOrEmpty(s1) && String.IsNullOrEmpty(s2)))
+					if ((!startValid && !endValid) || (String.IsNullOrEmpty(splitStart) && String.IsNullOrEmpty(splitEnd)))
 						return false;
 
-					if (String.IsNullOrEmpty(s1))
+					if (String.IsNullOrEmpty(splitStart))
 						start = rangeMin;
-					else if (String.IsNullOrEmpty(s2))
+					else if (String.IsNullOrEmpty(splitEnd))
 						end = rangeMax;
 				}
 
@@ -180,9 +191,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 							if (image is IImageSopProvider)
 							{
 								int instanceNumber = ((IImageSopProvider)image).ImageSop.InstanceNumber;
-								for (int i = 0; i < _ranges.Count - 1; i += 2)
+								foreach (Range range in _ranges)
 								{
-									if (instanceNumber >= _ranges[i] && instanceNumber <= _ranges[i + 1])
+									if (instanceNumber >= range.Start && instanceNumber <= range.End)
 										images.Add(image);
 								}
 							}
@@ -191,9 +202,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.CopyToClipboard
 				}
 				else
 				{
-					for (int i = 0; i < _ranges.Count - 1; i += 2)
+					foreach (Range range in _ranges)
 					{
-						for (int j = _ranges[i] - 1; j <= _ranges[i + 1] - 1; ++j)
+						for (int j = range.Start - 1; j <= range.End - 1; ++j)
 						{
 							if (j >= displaySet.PresentationImages.Count)
 								break;

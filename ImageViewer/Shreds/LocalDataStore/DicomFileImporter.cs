@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
@@ -575,26 +577,45 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							//by locking on the Uri, two threads will only ever block each other if the file they are attempting
 							//to write to is exactly the same one, which will happen very infrequently.
-
 							lock (storedUri)
 							{
 								string directoryName = System.IO.Path.GetDirectoryName(storedFile);
 								if (!System.IO.Directory.Exists(directoryName))
 									System.IO.Directory.CreateDirectory(directoryName);
 
-								if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy)
-								{
-									System.IO.File.Copy(fileImportInformation.SourceFile, storedFile, true);
-								}
-								else
-								{
-									if (System.IO.File.Exists(storedFile))
-										System.IO.File.Delete(storedFile);
+								System.IO.FileInfo sourceFileInfo = new FileInfo(fileImportInformation.SourceFile);
 
-									System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
+								bool moveFailed = false;
+								if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Move)
+								{
+									FileInfo destInfo = new FileInfo(storedFile);
+
+									try
+									{
+										if (destInfo.Exists)
+											destInfo.Delete();
+
+										sourceFileInfo.MoveTo(storedFile);
+										destInfo.Refresh();
+										destInfo.Attributes = FileAttributes.Normal;
+									}
+									catch(Exception e)
+									{
+										moveFailed = true;
+										String message = String.Format("Failed to move file {0} to {1}; a copy operation will be attempted.",
+										                         fileImportInformation.SourceFile, storedFile);
+
+										Platform.Log(LogLevel.Warn, e, message);
+									}
+								}
+
+								if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy || moveFailed)
+								{
+									System.IO.FileInfo destInfo = sourceFileInfo.CopyTo(storedFile, true);
+									destInfo.Attributes = FileAttributes.Normal;
+								}
 							}
 						}
-					}
 					}
 					finally
 					{

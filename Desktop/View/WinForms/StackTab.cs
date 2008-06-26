@@ -75,23 +75,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_titleBar.Dock = docStyle;
 
             // Set initial values
-			_titleBar.PreText = _page.PreText;
-			_titleBar.Text = _page.Text;
-			_titleBar.PostText = _page.PostText;
+			_titleBar.PreText = String.Empty;
+			_titleBar.Text = _page.Title;
+			_titleBar.PostText = String.Empty;
 			if (_page.IconSet != null)
 				_titleBar.Image = IconFactory.CreateIcon(_page.IconSet.SmallIcon, _page.ResourceResolver);
 
-			_page.TextChanged += OnPageTextChanged;
-			_page.IconChanged += OnPageIconChanged;
+			_page.TitleChanged += OnPageTitleChanged;
+			_page.IconSetChanged += OnPageIconChanged;
 		}
 
 		#region Event Handlers
 
-		private void OnPageTextChanged(object sender, EventArgs e)
+		private void OnPageTitleChanged(object sender, EventArgs e)
 		{
-			_titleBar.PreText = _page.PreText;
-			_titleBar.Text = _page.Text;
-			_titleBar.PostText = _page.PostText;
+			_titleBar.PreText = String.Empty;
+			_titleBar.Text = _page.Title;
+			_titleBar.PostText = String.Empty;
 		}
 
 		private void OnPageIconChanged(object sender, EventArgs e)

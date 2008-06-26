@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading failed.  See log..
+        /// </summary>
+        internal static string MessageLoadFailed {
+            get {
+                return ResourceManager.GetString("MessageLoadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading ....
         /// </summary>
         internal static string MessageLoading {

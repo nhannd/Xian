@@ -516,7 +516,7 @@ namespace ClearCanvas.Dicom
                 if (obAttrib._reference != null)
                 {
                     ByteBuffer bb;
-                    using (FileStream fs = new FileStream(obAttrib._reference.Filename, FileMode.Open))
+					using (FileStream fs = File.OpenRead(obAttrib._reference.Filename))
                     {
                         long offset = obAttrib._reference.Offset + frame*UncompressedFrameSize;
                         fs.Seek(offset, SeekOrigin.Begin);
@@ -550,7 +550,7 @@ namespace ClearCanvas.Dicom
                         // For odd number frames, we get a byte before the frame
                         // and for even frames we get a byte after the frame.
 
-                        using (FileStream fs = new FileStream(owAttrib._reference.Filename, FileMode.Open))
+						using (FileStream fs = File.OpenRead(owAttrib._reference.Filename))
                         {
                             if (frame%2 == 1)
                                 fs.Seek((owAttrib._reference.Offset + frame*UncompressedFrameSize) - 1, SeekOrigin.Begin);
@@ -571,7 +571,7 @@ namespace ClearCanvas.Dicom
                         return bb.ToBytes(0, UncompressedFrameSize);
                     }
 
-                    using (FileStream fs = new FileStream(owAttrib._reference.Filename, FileMode.Open))
+					using (FileStream fs = File.OpenRead(owAttrib._reference.Filename))
                     {
                         fs.Seek(owAttrib._reference.Offset + frame*UncompressedFrameSize, SeekOrigin.Begin);
 

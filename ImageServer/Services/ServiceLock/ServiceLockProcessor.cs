@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             {
                 bool foundResult = false;
 
-                if (_threadPool.QueueAndActiveCount < _threadPool.Concurrency)
+                if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
                 {
                     IList<Model.ServiceLock> list;
 

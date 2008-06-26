@@ -271,7 +271,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 			this.Controls.Add(this._betweenGroup);
 			this.Controls.Add(this.label4);
 			this.Name = "CopySubsetToClipboardComponentControl";
-			this.Size = new System.Drawing.Size(368, 342);
+			this.Size = new System.Drawing.Size(374, 342);
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeStart)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeEnd)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._copyRangeInterval)).EndInit();

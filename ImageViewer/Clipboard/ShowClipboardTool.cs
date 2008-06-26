@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ShowClipboardTool : ImageViewerTool
 	{
-		private static ClipboardComponent _clipboardComponent;
 		private static IShelf _shelf;
 
 		/// <summary>
@@ -62,13 +61,13 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		public void Show()
 		{
-			if (_clipboardComponent == null)
+			if (_shelf == null)
 			{
-				_clipboardComponent = new ClipboardComponent();
+				ClipboardComponent clipboardComponent = new ClipboardComponent();
 
 				_shelf = ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
-					_clipboardComponent,
+					clipboardComponent,
 					SR.TitleClipboard,
 					"Clipboard",
 					ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
@@ -85,7 +84,6 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			_shelf.Closed -= OnShelfClosed;
 			_shelf = null;
-			_clipboardComponent = null;
 		}
 	}
 }
