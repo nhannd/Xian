@@ -57,7 +57,9 @@
     <ClientModuleFiles Include="$(SolutionDir)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
+	<ClientModuleFiles Include="$(SolutionDir)\Workflow\bin\$(Configuration)\ClearCanvas.Ris.Client.Workflow.dll" />
+	<ClientModuleFiles Include="$(SolutionDir)\Workflow\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Workflow.View.WinForms.dll" />
+	<ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />
