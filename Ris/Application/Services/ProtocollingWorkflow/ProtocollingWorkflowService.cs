@@ -123,13 +123,19 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			Procedure rp = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
 			ProtocolAssembler assembler = new ProtocolAssembler();
 
-			ProcedureStep uncastProtcolStep = CollectionUtils.SelectFirst<ProcedureStep>(
+			ProcedureStep uncastProtocolStep = CollectionUtils.SelectFirst<ProcedureStep>(
 				rp.ProcedureSteps,
 				delegate(ProcedureStep ps) { return ps.Is<ProtocolProcedureStep>(); });
 
-			ProtocolProcedureStep protocolStep = uncastProtcolStep.Downcast<ProtocolProcedureStep>();
-
-			return new GetProcedureProtocolResponse(assembler.CreateProtocolDetail(protocolStep.Protocol, this.PersistenceContext));
+			if (uncastProtocolStep != null)
+			{
+				ProtocolProcedureStep protocolStep = uncastProtocolStep.Downcast<ProtocolProcedureStep>();
+				return new GetProcedureProtocolResponse(assembler.CreateProtocolDetail(protocolStep.Protocol, this.PersistenceContext));
+			}
+			else
+			{
+				return new GetProcedureProtocolResponse(null);
+			}
 		}
 
 		[ReadOperation]
