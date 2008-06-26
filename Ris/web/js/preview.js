@@ -427,6 +427,9 @@ function testPatientAge()
 
 function getPatientAge(dateOfBirth, deathIndicator, timeOfDeath)
 {
+	if (dateOfBirth == null)
+		return "Unknown";
+		
 	var endDate = (deathIndicator == true ? timeOfDeath : new Date());
 
 	//Define a variable to hold the anniversary of theBirthdate in the endDate year

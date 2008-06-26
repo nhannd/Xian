@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Collections;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.PatientReconciliation
@@ -79,8 +77,9 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
         /// which discrepancies were found among the specified set of profiles.  Only the discrepancies specified in
         /// <paramref name="testableDiscrepancies"/> will be tested.
         /// </summary>
-        /// <param name="profiles">The set of profiles to test</param>
-        /// <param name="testableFields">A bitmask indicating the set of discrepancies to test for</param>
+		/// <param name="x">The first profiles to test</param>
+		/// <param name="y">The second profiles to test</param>
+		/// <param name="testableDiscrepancies">A bitmask indicating the set of discrepancies to test for</param>
         /// <returns>A bitmask indicating the discrepancies found</returns>
         public static IList<DiscrepancyTestResult> GetDiscrepancies(PatientProfile x, PatientProfile y, PatientProfileDiscrepancy testableDiscrepancies)
         {
@@ -121,10 +120,19 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             // DateOfBirth
             if ((testableDiscrepancies & PatientProfileDiscrepancy.DateOfBirth) == PatientProfileDiscrepancy.DateOfBirth)
             {
-                results.Add(GetResult<DateTime>(x, y, PatientProfileDiscrepancy.DateOfBirth,
+                results.Add(GetResult<DateTime?>(x, y, PatientProfileDiscrepancy.DateOfBirth,
                     delegate(PatientProfile p) { return p.DateOfBirth; },
-                    delegate(DateTime a, DateTime b) { return a.Date.Equals(b.Date); },
-                    delegate(DateTime a) { return a.ToShortDateString(); }));
+                    delegate(DateTime? a, DateTime? b)
+                    	{
+							if (a == null)
+								return b == null;
+							else
+								return b == null ? false : a.Value.Date.Equals(b.Value.Date);
+                    	},
+                    delegate(DateTime? a)
+                    	{
+                    		return a == null ? null : a.Value.ToShortDateString();
+                    	}));
             }
 
             // Sex

@@ -148,12 +148,12 @@ namespace ClearCanvas.Ris.Client
             get { return EnumValueUtils.GetDisplayValues(_sexChoices); }
         }
 
-        public DateTime DateOfBirth
+        public DateTime? DateOfBirth
         {
-            get { return _profile.DateOfBirth.Value; }
+            get { return _profile.DateOfBirth; }
             set
             { 
-                _profile.DateOfBirth = value.Date;
+                _profile.DateOfBirth = value;
                 this.Modified = true;
             }
         }
@@ -184,7 +184,6 @@ namespace ClearCanvas.Ris.Client
             get { return _mrnAuthorityChoices;  }
         }
 
-        [ValidateNotNull]
         public string HealthcardID
         {
             get { return _profile.Healthcard.Id; }
@@ -200,7 +199,6 @@ namespace ClearCanvas.Ris.Client
             get { return TextFieldMasks.HealthcardNumberMask; }
         }
 
-        [ValidateNotNull]
         public EnumValueInfo HealthcardAuthority
         {
             get { return _profile.Healthcard.AssigningAuthority; }

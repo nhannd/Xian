@@ -140,6 +140,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._dateOfBirth.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._dateOfBirth.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._dateOfBirth.Name = "_dateOfBirth";
+			this._dateOfBirth.Nullable = true;
 			this._dateOfBirth.Size = new System.Drawing.Size(118, 44);
 			this._dateOfBirth.TabIndex = 4;
 			this._dateOfBirth.Value = null;
