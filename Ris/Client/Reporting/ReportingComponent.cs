@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 	/// <summary>
 	/// Dictates the mode the mode of operation <see cref="ReportingComponent"/>.  The mode impacts availability of "Report Next Order" checkbox
-	/// and indicates if the worklist item needs to be claimed
+	/// and indicates if the worklist item needs to be "unclaimed"
 	/// </summary>
 	public enum ReportingComponentMode
 	{
@@ -160,7 +160,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 		/// <summary>
 		/// Read-only: "Report Next Order" checkbox disabled.  Worklist item not claimed.
 		/// </summary>
-		Review
+		Review,
+
+		/// <summary>
+		/// "Report Next Order" checkbox enabled.  Worklist item is not unclaimed.
+		/// </summary>
+		Verify
 	}
 
 	/// <summary>
@@ -323,7 +328,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 			_folderName = folderName;
 			_worklistRef = worklistRef;
 
-			_reportNextItem = _componentMode == ReportingComponentMode.Create;
+			_reportNextItem = _componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.Verify;
 
 			_skippedItems = new List<ReportingWorklistItem>();
 			_worklistCache = new Stack<ReportingWorklistItem>();
@@ -442,7 +447,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
 		public bool ReportNextItemEnabled
 		{
-			get { return _componentMode == ReportingComponentMode.Create; }
+			get
+			{
+				return _componentMode == ReportingComponentMode.Create
+					|| _componentMode == ReportingComponentMode.Verify;
+			}
 		}
 
 		public string ReportContent
@@ -959,9 +968,24 @@ namespace ClearCanvas.Ris.Client.Reporting
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
 					{
-						QueryWorklistRequest request = _worklistRef != null
-							? new QueryWorklistRequest(_worklistRef, true, true)
-							: new QueryWorklistRequest(WorklistClassNames.ReportingToBeReportedWorklist, true, true);
+						QueryWorklistRequest request;
+						if (_worklistRef != null)
+						{
+							request = new QueryWorklistRequest(_worklistRef, true, true);
+						}
+						else
+						{
+							switch(_componentMode)
+							{
+								case ReportingComponentMode.Verify:
+									request = new QueryWorklistRequest(WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist, true, true);
+									break;
+								case ReportingComponentMode.Create:
+								default:
+									request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeReportedWorklist, true, true);
+									break;
+							}
+						}
 
 						QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
 

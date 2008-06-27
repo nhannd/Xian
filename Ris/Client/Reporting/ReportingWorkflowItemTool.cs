@@ -131,11 +131,17 @@ namespace ClearCanvas.Ris.Client.Reporting
 			if (item == null)
 				return ReportingComponentMode.Review;
 
+			if (item.ProcedureStepName == StepType.Publication)
+				return ReportingComponentMode.Review;
+
+			if (item.ProcedureStepName == StepType.Verification)
+				return ReportingComponentMode.Verify;
+
 			switch (item.ActivityStatus.Code)
 			{
-				case "SC":
+				case StepState.Scheduled:
 					return ReportingComponentMode.Create;
-				case "IP":
+				case StepState.InProgress:
 					return ReportingComponentMode.Edit;
 				default:
 					return ReportingComponentMode.Review;
