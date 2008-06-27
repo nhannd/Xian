@@ -25,7 +25,7 @@
   </PropertyGroup>
 	
 	<ItemGroup>
-		<ConfigFiles Include="$(SolutionDir)\..\Client\Adt\actionmodels.xml" />
+		<ConfigFiles Include="$(SolutionDir)\..\Client\Workflow\actionmodels.xml" />
 		<ConfigFiles Include="$(EnterpriseDirectory)\Hibernate\hibernate.cfg.xml" />
 	</ItemGroup>
 	
