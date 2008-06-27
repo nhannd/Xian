@@ -62,18 +62,21 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._reportEditorSplitContainer = new System.Windows.Forms.SplitContainer();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._reportEditorPanel = new System.Windows.Forms.Panel();
 			this._cancelButton = new System.Windows.Forms.Button();
+			this._reportEditorPanel = new System.Windows.Forms.Panel();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._verifyButton = new System.Windows.Forms.Button();
 			this._sendToVerifyButton = new System.Windows.Forms.Button();
 			this._sendToTranscriptionButton = new System.Windows.Forms.Button();
 			this._saveButton = new System.Windows.Forms.Button();
+			this._btnSkip = new System.Windows.Forms.Button();
+			this._reportNextItem = new System.Windows.Forms.CheckBox();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this._orderDetailsTab = new System.Windows.Forms.TabPage();
 			this._priorReportsTab = new System.Windows.Forms.TabPage();
 			this._orderAdditionalInfoTab = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this._statusText = new System.Windows.Forms.Label();
 			this._bannerPanel = new System.Windows.Forms.Panel();
 			this._reportEditorSplitContainer.Panel1.SuspendLayout();
 			this._reportEditorSplitContainer.Panel2.SuspendLayout();
@@ -87,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// _reportEditorSplitContainer
 			// 
 			this._reportEditorSplitContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reportEditorSplitContainer.Location = new System.Drawing.Point(3, 88);
+			this._reportEditorSplitContainer.Location = new System.Drawing.Point(3, 113);
 			this._reportEditorSplitContainer.Name = "_reportEditorSplitContainer";
 			// 
 			// _reportEditorSplitContainer.Panel1
@@ -97,8 +100,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// _reportEditorSplitContainer.Panel2
 			// 
 			this._reportEditorSplitContainer.Panel2.Controls.Add(this.tabControl1);
-			this._reportEditorSplitContainer.Size = new System.Drawing.Size(977, 826);
-			this._reportEditorSplitContainer.SplitterDistance = 484;
+			this._reportEditorSplitContainer.Size = new System.Drawing.Size(977, 801);
+			this._reportEditorSplitContainer.SplitterDistance = 461;
 			this._reportEditorSplitContainer.TabIndex = 0;
 			this._reportEditorSplitContainer.TabStop = false;
 			// 
@@ -120,7 +123,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel2.Size = new System.Drawing.Size(484, 826);
+			this.tableLayoutPanel2.Size = new System.Drawing.Size(461, 801);
 			this.tableLayoutPanel2.TabIndex = 0;
 			// 
 			// _supervisor
@@ -130,12 +133,22 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel2.SetColumnSpan(this._supervisor, 2);
 			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._supervisor.LabelText = "Supervising Radiologist:";
-			this._supervisor.Location = new System.Drawing.Point(2, 740);
+			this._supervisor.Location = new System.Drawing.Point(2, 700);
 			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
 			this._supervisor.Name = "_supervisor";
-			this._supervisor.Size = new System.Drawing.Size(480, 41);
+			this._supervisor.Size = new System.Drawing.Size(457, 41);
 			this._supervisor.TabIndex = 1;
 			this._supervisor.Value = null;
+			// 
+			// _cancelButton
+			// 
+			this._cancelButton.Location = new System.Drawing.Point(383, 746);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 3;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _reportEditorPanel
 			// 
@@ -145,18 +158,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._reportEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._reportEditorPanel.Location = new System.Drawing.Point(3, 3);
 			this._reportEditorPanel.Name = "_reportEditorPanel";
-			this._reportEditorPanel.Size = new System.Drawing.Size(478, 732);
+			this._reportEditorPanel.Size = new System.Drawing.Size(455, 692);
 			this._reportEditorPanel.TabIndex = 0;
-			// 
-			// _cancelButton
-			// 
-			this._cancelButton.Location = new System.Drawing.Point(397, 786);
-			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(84, 37);
-			this._cancelButton.TabIndex = 3;
-			this._cancelButton.Text = "Cancel";
-			this._cancelButton.UseVisualStyleBackColor = true;
-			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// flowLayoutPanel1
 			// 
@@ -166,19 +169,20 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.flowLayoutPanel1.Controls.Add(this._sendToVerifyButton);
 			this.flowLayoutPanel1.Controls.Add(this._sendToTranscriptionButton);
 			this.flowLayoutPanel1.Controls.Add(this._saveButton);
+			this.flowLayoutPanel1.Controls.Add(this._btnSkip);
+			this.flowLayoutPanel1.Controls.Add(this._reportNextItem);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 783);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 743);
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(394, 43);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(380, 58);
 			this.flowLayoutPanel1.TabIndex = 2;
 			// 
 			// _verifyButton
 			// 
-			this._verifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this._verifyButton.Location = new System.Drawing.Point(3, 3);
 			this._verifyButton.Name = "_verifyButton";
-			this._verifyButton.Size = new System.Drawing.Size(84, 37);
+			this._verifyButton.Size = new System.Drawing.Size(75, 23);
 			this._verifyButton.TabIndex = 0;
 			this._verifyButton.Text = "Verify";
 			this._verifyButton.UseVisualStyleBackColor = true;
@@ -186,10 +190,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _sendToVerifyButton
 			// 
-			this._sendToVerifyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._sendToVerifyButton.Location = new System.Drawing.Point(93, 3);
+			this._sendToVerifyButton.Location = new System.Drawing.Point(84, 3);
 			this._sendToVerifyButton.Name = "_sendToVerifyButton";
-			this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
+			this._sendToVerifyButton.Size = new System.Drawing.Size(83, 23);
 			this._sendToVerifyButton.TabIndex = 1;
 			this._sendToVerifyButton.Text = "To be Verified";
 			this._sendToVerifyButton.UseVisualStyleBackColor = true;
@@ -197,10 +200,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _sendToTranscriptionButton
 			// 
-			this._sendToTranscriptionButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._sendToTranscriptionButton.Location = new System.Drawing.Point(183, 3);
+			this._sendToTranscriptionButton.Location = new System.Drawing.Point(173, 3);
 			this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
-			this._sendToTranscriptionButton.Size = new System.Drawing.Size(84, 37);
+			this._sendToTranscriptionButton.Size = new System.Drawing.Size(118, 23);
 			this._sendToTranscriptionButton.TabIndex = 2;
 			this._sendToTranscriptionButton.Text = "Send to Transcription";
 			this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
@@ -208,14 +210,34 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			// _saveButton
 			// 
-			this._saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this._saveButton.Location = new System.Drawing.Point(273, 3);
+			this._saveButton.Location = new System.Drawing.Point(297, 3);
 			this._saveButton.Name = "_saveButton";
-			this._saveButton.Size = new System.Drawing.Size(84, 37);
+			this._saveButton.Size = new System.Drawing.Size(75, 23);
 			this._saveButton.TabIndex = 3;
 			this._saveButton.Text = "Save";
 			this._saveButton.UseVisualStyleBackColor = true;
 			this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
+			// 
+			// _btnSkip
+			// 
+			this._btnSkip.Location = new System.Drawing.Point(3, 32);
+			this._btnSkip.Name = "_btnSkip";
+			this._btnSkip.Size = new System.Drawing.Size(75, 23);
+			this._btnSkip.TabIndex = 7;
+			this._btnSkip.Text = "Skip";
+			this._btnSkip.UseVisualStyleBackColor = true;
+			this._btnSkip.Click += new System.EventHandler(this._btnSkip_Click);
+			// 
+			// _reportNextItem
+			// 
+			this._reportNextItem.AutoSize = true;
+			this._reportNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._reportNextItem.Location = new System.Drawing.Point(84, 32);
+			this._reportNextItem.Name = "_reportNextItem";
+			this._reportNextItem.Size = new System.Drawing.Size(112, 23);
+			this._reportNextItem.TabIndex = 8;
+			this._reportNextItem.Text = "Report Next Order";
+			this._reportNextItem.UseVisualStyleBackColor = true;
 			// 
 			// tabControl1
 			// 
@@ -226,7 +248,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(489, 826);
+			this.tabControl1.Size = new System.Drawing.Size(512, 801);
 			this.tabControl1.TabIndex = 0;
 			// 
 			// _orderDetailsTab
@@ -234,7 +256,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._orderDetailsTab.Location = new System.Drawing.Point(4, 22);
 			this._orderDetailsTab.Name = "_orderDetailsTab";
 			this._orderDetailsTab.Padding = new System.Windows.Forms.Padding(3);
-			this._orderDetailsTab.Size = new System.Drawing.Size(481, 800);
+			this._orderDetailsTab.Size = new System.Drawing.Size(504, 775);
 			this._orderDetailsTab.TabIndex = 1;
 			this._orderDetailsTab.Text = "Order Details";
 			this._orderDetailsTab.UseVisualStyleBackColor = true;
@@ -244,7 +266,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
 			this._priorReportsTab.Name = "_priorReportsTab";
 			this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
-			this._priorReportsTab.Size = new System.Drawing.Size(481, 800);
+			this._priorReportsTab.Size = new System.Drawing.Size(502, 775);
 			this._priorReportsTab.TabIndex = 0;
 			this._priorReportsTab.Text = "Prior Reports";
 			this._priorReportsTab.UseVisualStyleBackColor = true;
@@ -254,7 +276,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this._orderAdditionalInfoTab.Location = new System.Drawing.Point(4, 22);
 			this._orderAdditionalInfoTab.Name = "_orderAdditionalInfoTab";
 			this._orderAdditionalInfoTab.Padding = new System.Windows.Forms.Padding(3);
-			this._orderAdditionalInfoTab.Size = new System.Drawing.Size(481, 800);
+			this._orderAdditionalInfoTab.Size = new System.Drawing.Size(502, 775);
 			this._orderAdditionalInfoTab.TabIndex = 2;
 			this._orderAdditionalInfoTab.Text = "Additional Info";
 			this._orderAdditionalInfoTab.UseVisualStyleBackColor = true;
@@ -263,16 +285,34 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._reportEditorSplitContainer, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._statusText, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._reportEditorSplitContainer, 0, 2);
 			this.tableLayoutPanel1.Controls.Add(this._bannerPanel, 0, 0);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowCount = 3;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 85F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(983, 917);
 			this.tableLayoutPanel1.TabIndex = 0;
+			// 
+			// _statusText
+			// 
+			this._statusText.AutoSize = true;
+			this._statusText.BackColor = System.Drawing.Color.LightSteelBlue;
+			this._statusText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this._statusText.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._statusText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._statusText.ForeColor = System.Drawing.SystemColors.ControlText;
+			this._statusText.Location = new System.Drawing.Point(3, 88);
+			this._statusText.Margin = new System.Windows.Forms.Padding(3);
+			this._statusText.Name = "_statusText";
+			this._statusText.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
+			this._statusText.Size = new System.Drawing.Size(977, 19);
+			this._statusText.TabIndex = 2;
+			this._statusText.Text = "Reporting from X worklist - Y items available - Z items completed";
 			// 
 			// _bannerPanel
 			// 
@@ -296,8 +336,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.tabControl1.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -320,5 +362,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.TabPage _orderAdditionalInfoTab;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.Label _statusText;
+		private System.Windows.Forms.Button _btnSkip;
+		private System.Windows.Forms.CheckBox _reportNextItem;
     }
 }

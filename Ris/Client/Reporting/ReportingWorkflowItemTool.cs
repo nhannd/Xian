@@ -34,35 +34,32 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
-    {
-        public class StepType
-        {
-            public const string Interpretation = "Interpretation";
-            public const string Transcription = "Transcription";
-            public const string Verification = "Verification";
-            public const string Publication = "Publication";
-        }
+	public class StepType
+	{
+		public const string Interpretation = "Interpretation";
+		public const string Transcription = "Transcription";
+		public const string Verification = "Verification";
+		public const string Publication = "Publication";
+	}
 
-        public class StepState
-        {
-            public const string Scheduled = "SC";
-            public const string InProgress = "IP";
-            public const string Completed = "CM";
-        }
+	public class StepState
+	{
+		public const string Scheduled = "SC";
+		public const string InProgress = "IP";
+		public const string Completed = "CM";
+	}
 
-
-
-        protected ReportingWorkflowItemTool(string operationName)
-            :base(operationName)
-        {
-        }
+	public abstract class ReportingWorkflowItemTool : WorkflowItemTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	{
+		protected ReportingWorkflowItemTool(string operationName)
+			: base(operationName)
+		{
+		}
 
 		public override void Initialize()
 		{
@@ -72,67 +69,84 @@ namespace ClearCanvas.Ris.Client.Reporting
 		}
 
 		protected bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
-        {
-            Workspace workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
-            if (workspace != null)
-            {
-                workspace.Activate();
-                return true;
-            }
-            return false;
-        }
+		{
+			Workspace workspace = DocumentManager.Get<ReportDocument>(item.ProcedureStepRef);
+			if (workspace != null)
+			{
+				workspace.Activate();
+				return true;
+			}
+			return false;
+		}
 
-        protected void OpenReportEditor(ReportingWorklistItem item)
-        {
-            if(!ActivateIfAlreadyOpen(item))
-            {
-                if (!ReportingSettings.Default.AllowMultipleReportingWorkspaces)
-                {
-                    List<Workspace> documents = DocumentManager.GetAll<ReportDocument>();
+		protected void OpenReportEditor(ReportingWorklistItem item)
+		{
+			if (!ActivateIfAlreadyOpen(item))
+			{
+				if (!ReportingSettings.Default.AllowMultipleReportingWorkspaces)
+				{
+					List<Workspace> documents = DocumentManager.GetAll<ReportDocument>();
 
-                    // Show warning message and ask if the existing document should be closed or not
-                    if (documents.Count > 0)
-                    {
-                        Workspace firstDocument = CollectionUtils.FirstElement(documents);
-                        firstDocument.Activate();
+					// Show warning message and ask if the existing document should be closed or not
+					if (documents.Count > 0)
+					{
+						Workspace firstDocument = CollectionUtils.FirstElement(documents);
+						firstDocument.Activate();
 
 						string message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
 						if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
-                        {
-                            // Leave the existing document open
-                            return;
-                        }
-                        else
-                        {
-                            // close documents and continue
-                            CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
-                        }
-                    }
-                }
+						{
+							// Leave the existing document open
+							return;
+						}
+						else
+						{
+							// close documents and continue
+							CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
+						}
+					}
+				}
 
-                // open the report editor
-                ReportDocument doc = new ReportDocument(item, this.Context.DesktopWindow);
-                doc.Open();
+				// open the report editor
+				ReportDocument doc = new ReportDocument(item, GetMode(item), this.Context);
+				doc.Open();
 
-                // open the images
-                try
-                {
-                    IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
-                    if (viewerIntegration != null)
-                        viewerIntegration.OpenStudy(item.AccessionNumber);
-                }
-                catch (NotSupportedException)
-                {
-                    Platform.Log(LogLevel.Info, "No viewer integration extension found.");
-                }
-            }
-        }
+				// open the images
+				try
+				{
+					IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
+					if (viewerIntegration != null)
+						viewerIntegration.OpenStudy(item.AccessionNumber);
+				}
+				catch (NotSupportedException)
+				{
+					Platform.Log(LogLevel.Info, "No viewer integration extension found.");
+				}
+			}
+		}
 
-        protected ReportingWorklistItem GetSelectedItem()
-        {
-            if (this.Context.SelectedItems.Count != 1)
-                return null;
-            return CollectionUtils.FirstElement(this.Context.SelectedItems);
-        }
-    }
+		// Determine the ProtocollingComponentMode from the ReportingWorklistItem's ActivityStatus
+		private static ReportingComponentMode GetMode(ReportingWorklistItem item)
+		{
+			if (item == null)
+				return ReportingComponentMode.Review;
+
+			switch (item.ActivityStatus.Code)
+			{
+				case "SC":
+					return ReportingComponentMode.Create;
+				case "IP":
+					return ReportingComponentMode.Edit;
+				default:
+					return ReportingComponentMode.Review;
+			}
+		}
+
+		protected ReportingWorklistItem GetSelectedItem()
+		{
+			if (this.Context.SelectedItems.Count != 1)
+				return null;
+			return CollectionUtils.FirstElement(this.Context.SelectedItems);
+		}
+	}
 }

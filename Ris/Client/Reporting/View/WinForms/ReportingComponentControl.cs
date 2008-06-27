@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -70,6 +71,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			orderAdditionalInfo.Dock = DockStyle.Fill;
 			_orderAdditionalInfoTab.Controls.Add(orderAdditionalInfo);
 
+			_statusText.DataBindings.Add("Text", _component, "StatusText", true, DataSourceUpdateMode.OnPropertyChanged);
+			_statusText.DataBindings.Add("Visible", _component, "StatusTextVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_reportNextItem.DataBindings.Add("Checked", _component, "ReportNextItem", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reportNextItem.DataBindings.Add("Enabled", _component, "ReportNextItemEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			_sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			_sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -80,7 +87,20 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 			_supervisor.Visible = _component.SupervisorVisible;
 			_verifyButton.Visible = _component.VerifyReportVisible;
 			_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;
+
+			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_component.PropertyChanged += _component_PropertyChanged;
 		}
+
+		private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "StatusText")
+			{
+				_statusText.Refresh();
+			}
+		}
+
 
 		private void _verifyButton_Click(object sender, System.EventArgs e)
 		{
@@ -117,6 +137,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 		private void _cancelButton_Click(object sender, System.EventArgs e)
 		{
 			_component.CancelEditing();
+		}
+
+		private void _btnSkip_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.Skip();
+			}
 		}
 	}
 }

@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 		private readonly PreviewComponent _previewComponent;
 		private ChildComponentHost _previewHost;
 
-		private readonly IReportingContext _reportingContext;
+		private IReportingContext _reportingContext;
 
 
 		public ReportEditorComponent(IReportingContext context)
@@ -154,6 +154,14 @@ namespace ClearCanvas.Ris.Client.Reporting
 		IApplicationComponent IReportEditor.GetComponent()
 		{
 			return this;
+		}
+
+		public void SetContext(IReportingContext context)
+		{
+			_reportingContext = context;
+			_editingComponent.Refresh();
+			_previewComponent.Refresh();
+			NotifyAllPropertiesChanged();
 		}
 
 		bool IReportEditor.Save(ReportEditorCloseReason reason)

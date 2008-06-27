@@ -29,31 +29,42 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
-    public class ReportDocument : Document
-    {
-        private readonly ReportingWorklistItem _worklistItem;
+	public class ReportDocument : Document
+	{
+		private readonly ReportingWorklistItem _worklistItem;
+		private readonly ReportingComponentMode _mode;
+		private readonly string _folderName;
+		private readonly EntityRef _worklistRef;
 
-        public ReportDocument(ReportingWorklistItem worklistItem, IDesktopWindow window)
-            : base(worklistItem.ProcedureStepRef, window)
-        {
-            _worklistItem = worklistItem;
-        }
+		public ReportDocument(ReportingWorklistItem worklistItem, ReportingComponentMode mode, IReportingWorkflowItemToolContext context)
+			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
+		{
+			_worklistItem = worklistItem;
+			_mode = mode;
+			_folderName = context.SelectedFolder.Name;
+			_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
+		}
 
-        public override string GetTitle()
-        {
-            return String.Format("Report - {0}", PersonNameFormat.Format(_worklistItem.PatientName));
-        }
+		public override string GetTitle()
+		{
+			return ReportDocument.GetTitle(_worklistItem);
+		}
 
-        public override IApplicationComponent GetComponent()
-        {
-            return new ReportingComponent(_worklistItem);
-        }
-    }    
+		public override IApplicationComponent GetComponent()
+		{
+			return new ReportingComponent(_worklistItem, _mode, _folderName, _worklistRef);
+		}
+
+		public static string GetTitle(ReportingWorklistItem item)
+		{
+			return string.Format("Report - {0}", PersonNameFormat.Format(item.PatientName));
+		}
+	}
 }
