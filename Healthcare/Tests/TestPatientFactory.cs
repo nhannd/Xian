@@ -42,6 +42,7 @@ namespace ClearCanvas.Healthcare.Tests
             Patient patient = new Patient();
             PatientProfile profile = new PatientProfile(
                 new PatientIdentifier("0000111", new InformationAuthorityEnum("UHN", "UHN", "")),
+				null,
                 new HealthcardNumber("1111222333", new InsuranceAuthorityEnum("OHIP", "OHIP", ""), null, null),
                 new PersonName("Roberts", "Bob", null, null, null, null),
                 DateTime.Now - TimeSpan.FromDays(4000),

@@ -55,41 +55,46 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
-        public virtual void CopyFrom(Visit v)
-        {
-            this.VisitNumber.Id = v.VisitNumber.Id;
-            this.VisitNumber.AssigningAuthority = v.VisitNumber.AssigningAuthority;
-            this.Status = v.Status;
-            this.AdmitTime = v.AdmitTime;
-            this.PatientClass = v.PatientClass;
-            this.PatientType = v.PatientType;
-            this.AdmissionType = v.AdmissionType;
-            this.Facility = v.Facility;
-            this.DischargeTime = v.DischargeTime;
-            this.DischargeDisposition = v.DischargeDisposition;
-            this.VipIndicator = v.VipIndicator;
-            //this.AmbulatoryStatus = v.AmbulatoryStatus;
-            this.PreadmitNumber = v.PreadmitNumber;
+		public virtual void CopyFrom(Visit v)
+		{
+			this.VisitNumber.Id = v.VisitNumber.Id;
+			this.VisitNumber.AssigningAuthority = v.VisitNumber.AssigningAuthority;
+			this.Status = v.Status;
+			this.AdmitTime = v.AdmitTime;
+			this.PatientClass = v.PatientClass;
+			this.PatientType = v.PatientType;
+			this.AdmissionType = v.AdmissionType;
+			this.Facility = v.Facility;
+			this.DischargeTime = v.DischargeTime;
+			this.DischargeDisposition = v.DischargeDisposition;
+			this.VipIndicator = v.VipIndicator;
+			//this.AmbulatoryStatus = v.AmbulatoryStatus;
+			this.PreadmitNumber = v.PreadmitNumber;
 
-            foreach (AmbulatoryStatusEnum a in v.AmbulatoryStatuses)
-            {
-                this.AmbulatoryStatuses.Add(a);
-            }
+			foreach (AmbulatoryStatusEnum a in v.AmbulatoryStatuses)
+			{
+				this.AmbulatoryStatuses.Add(a);
+			}
 
-            foreach (VisitPractitioner vp in v.Practitioners)
-            {
-                VisitPractitioner practitioner = new VisitPractitioner();
-                practitioner.CopyFrom(vp);
-                this.Practitioners.Add(practitioner);
-            }
+			foreach (VisitPractitioner vp in v.Practitioners)
+			{
+				VisitPractitioner practitioner = new VisitPractitioner();
+				practitioner.CopyFrom(vp);
+				this.Practitioners.Add(practitioner);
+			}
 
-            foreach (VisitLocation vl in v.Locations)
-            {
-                VisitLocation location = new VisitLocation();
-                location.CopyFrom(vl);
-                this.Locations.Add(location);
-            }
-        }
+			foreach (VisitLocation vl in v.Locations)
+			{
+				VisitLocation location = new VisitLocation();
+				location.CopyFrom(vl);
+				this.Locations.Add(location);
+			}
+
+			foreach (System.Collections.Generic.KeyValuePair<string,string> pair in v.ExtendedProperties)
+			{
+				this.ExtendedProperties.Add(pair);
+			}
+		}
 
         public virtual void Cancel()
         {

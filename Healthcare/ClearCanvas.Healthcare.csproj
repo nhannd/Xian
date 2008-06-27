@@ -82,6 +82,7 @@
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
     <Compile Include="EmergencyWorklists.cs" />
+    <Compile Include="ExpiredPatientIdentifiers.cs" />
     <Compile Include="GroupNotePosting.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
     <Compile Include="NoteboxFactory.cs" />
@@ -112,6 +113,7 @@
     <Compile Include="OrderCreationArgs.cs" />
     <Compile Include="OrderNoteboxes.cs" />
     <Compile Include="OrderNoteboxItem.cs" />
+    <Compile Include="PatientReconciliation\Utility.cs" />
     <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />

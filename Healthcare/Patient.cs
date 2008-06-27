@@ -32,10 +32,10 @@
 using System;
 using System.Collections;
 using System.Text;
-
-using Iesi.Collections;
-using ClearCanvas.Enterprise.Core;
 using System.Collections.Generic;
+using Iesi.Collections;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
 
 
@@ -70,5 +70,24 @@ namespace ClearCanvas.Healthcare {
             profile.Patient = this;
             this.Profiles.Add(profile);
         }
+
+		/// <summary>
+		/// Allows getting at a particular PatientProfile
+		/// </summary>
+		/// <param name="patientIdentifier"></param>
+		/// <param name="authority"></param>
+		public virtual PatientProfile GetProfile(string patientIdentifier, string authority)
+		{
+			Platform.CheckForEmptyString(patientIdentifier, "mrn");
+			Platform.CheckForEmptyString(authority, "assigningAuthority");
+
+			foreach (PatientProfile profile in this.Profiles)
+			{
+				if (profile.Mrn.Id == patientIdentifier && profile.Mrn.AssigningAuthority.Value == authority)
+					return profile;
+			}
+
+			return null;
+		}
 	}
 }

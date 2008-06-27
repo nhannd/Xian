@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             try
             {
-				IHL7Processor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
+				IHL7PeerProcessor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
 
 				if (null == processor)
 				{
@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             try
             {
-				IHL7Processor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
+				IHL7PeerProcessor processor = HL7ProcessorFactory.GetProcessor(queueItem.Message.Peer);
                 processor.Process(PersistenceContext, queueItem.Message);
                 PersistenceContext.Lock(queueItem);
                 queueItem.SetComplete();

@@ -55,7 +55,8 @@ namespace ClearCanvas.Healthcare.Tests
                 null,
                 false,
                 null,
-                null);
+                null,
+				null);
 
             return visit;
         }

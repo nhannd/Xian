@@ -46,7 +46,7 @@ namespace ClearCanvas.Server.ShredHost
         /// load them into the AppDomain. If no extensions are found, null is returned.</returns>
         public ShredStartupInfoList ScanExtensions()
         {
-            Platform.Log(LogLevel.Info, this.GetType().ToString() + ":" + this.GetType().Name + " in AppDomain [" + AppDomain.CurrentDomain.FriendlyName + "]");
+            Platform.Log(LogLevel.Debug, this.GetType().ToString() + ":" + this.GetType().Name + " in AppDomain [" + AppDomain.CurrentDomain.FriendlyName + "]");
 
             ShredStartupInfoList shredInfoList = new ShredStartupInfoList();
             ShredExtensionPoint xp = new ShredExtensionPoint();

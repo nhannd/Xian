@@ -36,6 +36,7 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
             ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(args.ChannelFactoryClass, binding,
                 new EndpointAddress(args.ServiceUri));
             channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
+			channelFactory.Credentials.ServiceCertificate.Authentication.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck;
             
             return channelFactory;
         }
