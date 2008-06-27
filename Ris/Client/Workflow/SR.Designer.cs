@@ -736,6 +736,24 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reporting from the &quot;{0}&quot; worklist.
+        /// </summary>
+        internal static string FormatReportingFolderName {
+            get {
+                return ResourceManager.GetString("FormatReportingFolderName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to - {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped.
+        /// </summary>
+        internal static string FormatReportingStatusText {
+            get {
+                return ResourceManager.GetString("FormatReportingStatusText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You must choose a radiologist to dictate for..
         /// </summary>
         internal static string MessageChooseRadiologist {

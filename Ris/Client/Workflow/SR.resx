@@ -342,6 +342,12 @@
   <data name="FormatProtocolStatusText" xml:space="preserve">
     <value>- {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped</value>
   </data>
+  <data name="FormatReportingFolderName" xml:space="preserve">
+    <value>Reporting from the "{0}" worklist</value>
+  </data>
+  <data name="FormatReportingStatusText" xml:space="preserve">
+    <value>- {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped</value>
+  </data>
   <data name="MessageChooseRadiologist" xml:space="preserve">
     <value>You must choose a radiologist to dictate for.</value>
   </data>

@@ -142,33 +142,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	/// <summary>
-	/// Dictates the mode the mode of operation <see cref="ReportingComponent"/>.  The mode impacts availability of "Report Next Order" checkbox
-	/// and indicates if the worklist item needs to be "unclaimed"
-	/// </summary>
-	public enum ReportingComponentMode
-	{
-		/// <summary>
-		/// "Report Next Order" checkbox enabled.  Worklist item attempted to be claimed.
-		/// </summary>
-		Create,
-
-		/// <summary>
-		/// "Report Next Order" checkbox disabled.  Worklist item not claimed.
-		/// </summary>
-		Edit,
-
-		/// <summary>
-		/// Read-only: "Report Next Order" checkbox disabled.  Worklist item not claimed.
-		/// </summary>
-		Review,
-
-		/// <summary>
-		/// "Report Next Order" checkbox enabled.  Worklist item is not unclaimed.
-		/// </summary>
-		Verify
-	}
-
-	/// <summary>
 	/// Defines an interface to a custom report editor.
 	/// </summary>
 	public interface IReportEditor
@@ -229,7 +202,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			public ReportingWorklistItem WorklistItem
 			{
-				get { return _owner._worklistItem; }
+				get { return _owner.WorklistItem; }
 			}
 
 			public ReportDetail Report
@@ -286,7 +259,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		private ReportingWorklistItem _worklistItem;
+		private readonly ReportingComponentWorklistItemManager _worklistItemManager;
 
 		private IReportEditor _reportEditor;
 		private ChildComponentHost _reportEditorHost;
@@ -307,31 +280,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private Dictionary<string, string> _orderExtendedProperties;
 		private Dictionary<string, string> _reportPartExtendedProperties;
 
-		private readonly ReportingComponentMode _componentMode;
-		private readonly string _folderName;
-		private readonly EntityRef _worklistRef;
-		private int _completedItems = 0;
-		private bool _isInitialItem = true;
-
-		private readonly List<ReportingWorklistItem> _skippedItems;
-		private readonly Stack<ReportingWorklistItem> _worklistCache;
-
-		private bool _reportNextItem;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReportingComponent(ReportingWorklistItem worklistItem, ReportingComponentMode mode, string folderName, EntityRef worklistRef)
+		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef)
 		{
-			_worklistItem = worklistItem;
-			_componentMode = mode;
-			_folderName = folderName;
-			_worklistRef = worklistRef;
-
-			_reportNextItem = _componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.Verify;
-
-			_skippedItems = new List<ReportingWorklistItem>();
-			_worklistCache = new Stack<ReportingWorklistItem>();
+			_worklistItemManager = new ReportingComponentWorklistItemManager(worklistItem, folderName, worklistRef);
+			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
 		}
 
 		#region ApplicationComponent overrides
@@ -340,13 +295,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			StartReportingWorklistItem();
 
-			_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+			_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 			_bannerHost.StartComponent();
 
-			_priorReportHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
+			_priorReportHost = new ChildComponentHost(this.Host, new PriorReportComponent(this.WorklistItem));
 			_priorReportHost.StartComponent();
 
-			_orderDetailHost = new ChildComponentHost(this.Host, new OrderDetailViewComponent(_worklistItem.OrderRef));
+			_orderDetailHost = new ChildComponentHost(this.Host, new OrderDetailViewComponent(this.WorklistItem.OrderRef));
 			_orderDetailHost.StartComponent();
 
 			_orderAdditionalInfoHost = new ChildComponentHost(this.Host, new OrderAdditionalInfoSummaryComponent());
@@ -389,6 +344,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		private ReportingWorklistItem WorklistItem
+		{
+			get { return _worklistItemManager.WorklistItem; }
+		}
+
 		#region Presentation Model
 
 		public ApplicationComponentHost BannerHost
@@ -418,40 +378,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string StatusText
 		{
-			get
-			{
-				string status = string.Format(SR.FormatProtocolFolderName, _folderName);
-
-				if (!_isInitialItem)
-				{
-					status = status + string.Format(SR.FormatProtocolStatusText, _worklistCache.Count, _completedItems, _skippedItems.Count);
-				}
-
-				return status;
-			}
+			get { return _worklistItemManager.StatusText; }
 		}
 
 		public bool StatusTextVisible
 		{
-			get { return _componentMode == ReportingComponentMode.Create; }
+			get { return _worklistItemManager.StatusTextVisible; }
 		}
 
-		/// <summary>
-		/// Specifies if the next <see cref="ReportingWorklistItem"/> should be reported
-		/// </summary>
 		public bool ReportNextItem
 		{
-			get { return _reportNextItem; }
-			set { _reportNextItem = value; }
+			get { return _worklistItemManager.ReportNextItem; }
+			set { _worklistItemManager.ReportNextItem = value; }
 		}
 
 		public bool ReportNextItemEnabled
 		{
-			get
-			{
-				return _componentMode == ReportingComponentMode.Create
-					|| _componentMode == ReportingComponentMode.Verify;
-			}
+			get { return _worklistItemManager.ReportNextItemEnabled; }
 		}
 
 		public string ReportContent
@@ -519,9 +462,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 
                 // check for a prelim diagnosis
-                if (PreliminaryDiagnosis.ConversationExists(_worklistItem.OrderRef))
+                if (PreliminaryDiagnosis.ConversationExists(this.WorklistItem.OrderRef))
                 {
-                    if (PreliminaryDiagnosis.ShowConversationDialog(_worklistItem.OrderRef, this.Host.DesktopWindow)
+                    if (PreliminaryDiagnosis.ShowConversationDialog(this.WorklistItem.OrderRef, this.Host.DesktopWindow)
                         == ApplicationComponentExitCode.None)
                         return;   // user cancelled out
                 }
@@ -533,7 +476,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						{
 							service.CompleteInterpretationAndVerify(
 								new CompleteInterpretationAndVerifyRequest(
-								_worklistItem.ProcedureStepRef,
+								this.WorklistItem.ProcedureStepRef,
 								_reportPartExtendedProperties,
 								_supervisor == null ? null : _supervisor.StaffRef));
 						});
@@ -543,18 +486,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							service.CompleteVerification(new CompleteVerificationRequest(_worklistItem.ProcedureStepRef, _reportPartExtendedProperties));
+							service.CompleteVerification(new CompleteVerificationRequest(this.WorklistItem.ProcedureStepRef, _reportPartExtendedProperties));
 						});
 				}
 
 				// Source Folders
-				//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.VerifiedFolder));
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception ex)
 			{
@@ -598,9 +541,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						service.CompleteInterpretationForVerification(
 							new CompleteInterpretationForVerificationRequest(
-							_worklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties,
-							_supervisor == null ? null : _supervisor.StaffRef));
+								_worklistItemManager.WorklistItem.ProcedureStepRef,
+								_reportPartExtendedProperties,
+								_supervisor == null ? null : _supervisor.StaffRef));
 					});
 
 				// Source Folders
@@ -609,7 +552,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception ex)
 			{
@@ -642,18 +585,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						service.CompleteInterpretationForTranscription(
 							new CompleteInterpretationForTranscriptionRequest(
-							_worklistItem.ProcedureStepRef,
+							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
 							_supervisor == null ? null : _supervisor.StaffRef));
 					});
 
 				// Source Folders
-				//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.InTranscriptionFolder));
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception ex)
 			{
@@ -691,19 +634,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						service.SaveReport(
 							new SaveReportRequest(
-							_worklistItem.ProcedureStepRef,
+							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
 							_supervisor == null ? null : _supervisor.StaffRef));
 					});
 
 				// Source Folders
-				//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
+				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.VerifiedFolder));
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception ex)
 			{
@@ -723,16 +666,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (_componentMode == ReportingComponentMode.Create)
+				if (_worklistItemManager.ShouldUnclaim)
 				{
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							service.CancelReportingStep(new CancelReportingStepRequest(_worklistItem.ProcedureStepRef));
+							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef));
 						});
 				}
-
-				SkipCurrentItemAndBeginNextItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
 			}
 			catch (Exception e)
 			{
@@ -742,7 +684,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SkipEnabled
 		{
-			get { return _reportNextItem && this.ReportNextItemEnabled; }
+			get { return _worklistItemManager.CanSkipItem; }
 		}
 
 		#endregion
@@ -753,12 +695,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if (_componentMode == ReportingComponentMode.Create)
+				if (_worklistItemManager.ShouldUnclaim)
 				{
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							service.CancelReportingStep(new CancelReportingStepRequest(_worklistItem.ProcedureStepRef));
+							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef));
 						});
 				}
 
@@ -832,12 +774,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		private void BeginNextWorklistItemOrExit()
+		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
-			if (this.ReportNextItem)
+			if (this.WorklistItem != null)
 			{
-				_completedItems++;
-				LoadNextWorklistItem();
+				StartReportingWorklistItem();
+				UpdateChildComponents();
+				OpenImages();
 			}
 			else
 			{
@@ -845,56 +788,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		private void SkipCurrentItemAndBeginNextItemOrExit()
-		{
-			//// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
-			//// discontinued with a new scheduled one replacing it
-			//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
-
-			_skippedItems.Add(_worklistItem);
-			LoadNextWorklistItem();
-		}
-
-		private void LoadNextWorklistItem()
-		{
-			try
-			{
-				_worklistItem = GetNextWorklistItem();
-
-				if (_worklistItem != null)
-				{
-					_isInitialItem = false;
-
-					StartReportingWorklistItem();
-					UpdateChildComponents();
-					OpenImages();
-				}
-				else
-				{
-					// TODO : Dialog "No more"
-					this.Exit(ApplicationComponentExitCode.None);
-				}
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
-
 		private void StartReportingWorklistItem()
 		{
-			ClaimAndLinkWorklistItem(_worklistItem);
+			bool result = ClaimAndLinkWorklistItem(this.WorklistItem);
 
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
-					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest<ReportingWorklistItem>(_worklistItem));
+					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest<ReportingWorklistItem>(this.WorklistItem));
 					_canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
 					_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
 					_canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
 					_canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
 
-					LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem.ProcedureStepRef));
+					LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(this.WorklistItem.ProcedureStepRef));
 					_report = response.Report;
 					_activeReportPartIndex = response.ReportPartIndex;
 					_orderExtendedProperties = response.OrderExtendedProperties;
@@ -924,15 +831,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void UpdateChildComponents()
 		{
-			((BannerComponent)_bannerHost.Component).HealthcareContext = _worklistItem;
-			((PriorReportComponent)_priorReportHost.Component).WorklistItem = _worklistItem;
-			((OrderDetailViewComponent)_orderDetailHost.Component).Context = new OrderDetailViewComponent.OrderContext(_worklistItem.OrderRef);
+			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
+			((PriorReportComponent)_priorReportHost.Component).WorklistItem = this.WorklistItem;
+			((OrderDetailViewComponent)_orderDetailHost.Component).Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
 			((OrderAdditionalInfoSummaryComponent)_orderAdditionalInfoHost.Component).OrderExtendedProperties = _orderExtendedProperties;
 
 			((IReportEditor)_reportEditorHost.Component).SetContext(new ReportingContext(this));
 
-			// Update title
-			this.Host.Title = ReportDocument.GetTitle(_worklistItem);
+			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
 		}
@@ -943,74 +849,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
 				if (viewerIntegration != null)
-					viewerIntegration.OpenStudy(_worklistItem.AccessionNumber);
+					viewerIntegration.OpenStudy(this.WorklistItem.AccessionNumber);
 			}
 			catch (NotSupportedException)
 			{
 				Platform.Log(LogLevel.Info, "No viewer integration extension found.");
 			}
-		}
-
-		private ReportingWorklistItem GetNextWorklistItem()
-		{
-			if (_worklistCache.Count == 0)
-			{
-				RefreshWorklistItemCache();
-			}
-
-			return _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
-		}
-
-		private void RefreshWorklistItemCache()
-		{
-			try
-			{
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						QueryWorklistRequest request;
-						if (_worklistRef != null)
-						{
-							request = new QueryWorklistRequest(_worklistRef, true, true);
-						}
-						else
-						{
-							switch(_componentMode)
-							{
-								case ReportingComponentMode.Verify:
-									request = new QueryWorklistRequest(WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist, true, true);
-									break;
-								case ReportingComponentMode.Create:
-								default:
-									request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeReportedWorklist, true, true);
-									break;
-							}
-						}
-
-						QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
-
-						foreach (ReportingWorklistItem item in response.WorklistItems)
-						{
-							if (WorklistItemWasPreviouslySkipped(item) == false)
-							{
-								_worklistCache.Push(item);
-							}
-						}
-					});
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
-
-		private bool WorklistItemWasPreviouslySkipped(ReportingWorklistItem item)
-		{
-			return CollectionUtils.Contains(_skippedItems,
-				delegate(ReportingWorklistItem skippedItem)
-				{
-					return skippedItem.AccessionNumber == item.AccessionNumber;
-				});
 		}
 
 		#endregion
@@ -1058,7 +902,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (candidates.Count > 0)
 			{
 				LinkedInterpretationComponent component = new LinkedInterpretationComponent(candidates);
-				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
@@ -1074,7 +918,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Verify)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
 		private EntityRef StartVerification(ReportingWorklistItem item)
 		{
 			EntityRef result = null;
@@ -1088,7 +932,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return result;
 		}
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 		private EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations)
 		{
 			List<EntityRef> linkedInterpretationRefs = linkedInterpretations.ConvertAll<EntityRef>(

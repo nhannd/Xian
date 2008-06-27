@@ -39,15 +39,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class ReportDocument : Document
 	{
 		private readonly ReportingWorklistItem _worklistItem;
-		private readonly ReportingComponentMode _mode;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 
-		public ReportDocument(ReportingWorklistItem worklistItem, ReportingComponentMode mode, IReportingWorkflowItemToolContext context)
+		public ReportDocument(ReportingWorklistItem worklistItem, IReportingWorkflowItemToolContext context)
 			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
 		{
 			_worklistItem = worklistItem;
-			_mode = mode;
 			_folderName = context.SelectedFolder.Name;
 			_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
 		}
@@ -59,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override IApplicationComponent GetComponent()
 		{
-			return new ReportingComponent(_worklistItem, _mode, _folderName, _worklistRef);
+			return new ReportingComponent(_worklistItem, _folderName, _worklistRef);
 		}
 
 		public static string GetTitle(ReportingWorklistItem item)

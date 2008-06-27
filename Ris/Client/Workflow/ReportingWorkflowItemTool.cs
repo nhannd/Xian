@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 
 				// open the report editor
-				ReportDocument doc = new ReportDocument(item, GetMode(item), this.Context);
+				ReportDocument doc = new ReportDocument(item, this.Context);
 				doc.Open();
 
 				// open the images
@@ -122,29 +122,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					Platform.Log(LogLevel.Info, "No viewer integration extension found.");
 				}
-			}
-		}
-
-		// Determine the ProtocollingComponentMode from the ReportingWorklistItem's ActivityStatus
-		private static ReportingComponentMode GetMode(ReportingWorklistItem item)
-		{
-			if (item == null)
-				return ReportingComponentMode.Review;
-
-			if (item.ProcedureStepName == StepType.Publication)
-				return ReportingComponentMode.Review;
-
-			if (item.ProcedureStepName == StepType.Verification)
-				return ReportingComponentMode.Verify;
-
-			switch (item.ActivityStatus.Code)
-			{
-				case StepState.Scheduled:
-					return ReportingComponentMode.Create;
-				case StepState.InProgress:
-					return ReportingComponentMode.Edit;
-				default:
-					return ReportingComponentMode.Review;
 			}
 		}
 

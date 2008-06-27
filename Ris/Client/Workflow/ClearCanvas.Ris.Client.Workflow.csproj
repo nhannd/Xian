@@ -96,6 +96,7 @@
     <Compile Include="ReportDocument.cs" />
     <Compile Include="ReportEditorComponent.cs" />
     <Compile Include="ReportingComponent.cs" />
+    <Compile Include="ReportingComponentWorklistItemManager.cs" />
     <Compile Include="ReportingPreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ReportingSettings.cs" />
     <Compile Include="ReportingSettings.Designer.cs">
