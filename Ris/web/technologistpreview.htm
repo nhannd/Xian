@@ -118,7 +118,7 @@
 	                        Field.setValue($("EndTime"), Ris.formatDateTime(selectedMps.EndTime));
 	                    }
 	                
-		                // build a list of items for the diagnostic service breakdown table
+		                // build a list of items for the Imaging Service breakdown table
 		                var breakdownItems = [];
 		                orderDetail.Procedures.each(
 		                    function(rp)
@@ -273,9 +273,9 @@
 	                </tr>
 	            </table>
 	            <table width="100%" border="0" id="dsBreakdownTable">
-		            <tr><td class="sectionheading" colspan="5">Diagnostic Service Breakdown</td></tr>
+		            <tr><td class="sectionheading" colspan="5">Imaging Service Breakdown</td></tr>
 		            <tr class="tableheading">
-			            <td>Diagnostic Service</td>
+			            <td>Imaging Service</td>
 			            <td>Procedure</td>
 			            <td>Procedure Step</td>
 			            <td>Status</td>

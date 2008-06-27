@@ -163,7 +163,7 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 {
 	var dsTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
-			{   label: "Diagnostic Service",
+			{   label: "Imaging Service",
 				cellType: "text",
 				getValue: function(item) { return item.DiagnosticService; }
 			},
