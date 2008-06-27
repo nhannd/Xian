@@ -5,8 +5,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Client.Adt;
-using ClearCanvas.Ris.Client.Adt.Folders;
+using ClearCanvas.Ris.Client.Workflow;
+using ClearCanvas.Ris.Client.Workflow.Folders;
 using ClearCanvas.Ris.Client.Emergency.Folders;
 using ClearCanvas.Common.Utilities;
 

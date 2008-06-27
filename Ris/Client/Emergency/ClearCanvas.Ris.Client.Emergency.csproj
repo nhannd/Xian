@@ -86,13 +86,13 @@
       <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
       <Name>ClearCanvas.Ris.Application.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Adt\ClearCanvas.Ris.Client.Adt.csproj">
-      <Project>{BDD8E195-78E8-4FC8-8219-20F884812B01}</Project>
-      <Name>ClearCanvas.Ris.Client.Adt</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ClearCanvas.Ris.Client.csproj">
       <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
       <Name>ClearCanvas.Ris.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Workflow\ClearCanvas.Ris.Client.Workflow.csproj">
+      <Project>{FFB85377-995C-47A6-BF22-26D264CA3225}</Project>
+      <Name>ClearCanvas.Ris.Client.Workflow</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -29,16 +29,83 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BookingWorkflowFolderSystem.cs" />
+    <Compile Include="CancelOrderComponent.cs" />
+    <Compile Include="CheckInOrderComponent.cs" />
+    <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="FolderSearchTool.cs" />
+    <Compile Include="Folders\FolderOptionComponent.cs" />
+    <Compile Include="Folders\RefreshTool.cs" />
+    <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
+    <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
+    <Compile Include="HL7QueueItemSummaryTable.cs" />
+    <Compile Include="HL7QueuePatientSearchTool.cs" />
+    <Compile Include="HL7QueuePreviewComponent.cs" />
+    <Compile Include="HL7QueuePreviewTool.cs" />
+    <Compile Include="HL7QueueProcessItemTool.cs" />
+    <Compile Include="ITechnologistDocumentationPage.cs" />
+    <Compile Include="JscriptComponent.cs" />
+    <Compile Include="JscriptTool.cs" />
+    <Compile Include="ModifyOrderTool.cs" />
+    <Compile Include="NewOrderTool.cs" />
+    <Compile Include="OrderEditorComponent.cs" />
+    <Compile Include="PatientAddTool.cs" />
+    <Compile Include="PatientBiographyTool.cs" />
+    <Compile Include="PatientEditTool.cs" />
+    <Compile Include="PatientProfileDiffComponent.cs" />
+    <Compile Include="PatientReconcileTool.cs" />
+    <Compile Include="PatientReconciliation.cs" />
+    <Compile Include="PerformedProcedureComponent.cs" />
+    <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomOrderTool.cs" />
+    <Compile Include="ReconciliationCandidateTable.cs" />
+    <Compile Include="ReconciliationCandidateTableEntry.cs" />
+    <Compile Include="ReconciliationComponent.cs" />
+    <Compile Include="ReconciliationConfirmComponent.cs" />
+    <Compile Include="RegistrationWorkflowFolder.cs" />
+    <Compile Include="RegistrationWorkflowFolderSystem.cs" />
+    <Compile Include="RegistrationWorkflowFolderSystemBase.cs" />
+    <Compile Include="RegistrationWorkflowTool.cs" />
+    <Compile Include="RegistrationWorklistTable.cs" />
+    <Compile Include="ReplaceOrderTool.cs" />
+    <Compile Include="ResubmitProtocolTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TechnologistDocumentationComponent.cs" />
+    <Compile Include="TechnologistDocumentationComponentSettings.cs" />
+    <Compile Include="TechnologistDocumentationComponentSettings.Designer.cs">
+      <DependentUpon>TechnologistDocumentationComponentSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TechnologistDocumentationDocument.cs" />
+    <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
+    <Compile Include="TechnologistDocumentationOrderDetailsComponent.cs" />
+    <Compile Include="TechnologistDocumentationTool.cs" />
+    <Compile Include="TechnologistWorkflowFolder.cs" />
+    <Compile Include="TechnologistWorkflowFolderSystem.cs" />
+    <Compile Include="TechnologistWorkflowFolderSystemBase.cs" />
+    <Compile Include="TechnologistWorkflowTool.cs" />
+    <Compile Include="TechnologistWorklistTable.cs" />
+    <Compile Include="VisitDetailsEditorComponent.cs" />
+    <Compile Include="VisitEditorComponent.cs" />
+    <Compile Include="VisitLocationsSummaryComponent.cs" />
+    <Compile Include="VisitLocationTable.cs" />
+    <Compile Include="VisitPractitionersSummaryComponent.cs" />
+    <Compile Include="VisitPractitionerTable.cs" />
+    <Compile Include="VisitSummaryComponent.cs" />
+    <Compile Include="VisitSummaryTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -56,6 +123,183 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
+      <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
+      <Name>ClearCanvas.Ris.Application.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClearCanvas.Ris.Client.csproj">
+      <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
+      <Name>ClearCanvas.Ris.Client</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TechnologistDocumentationComponentSettings.settings" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddPatientToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddPatientToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddPatientToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CheckInToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CheckInToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CheckInToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CheckSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CompleteToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CompleteToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\CompleteToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DoubleExclamation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditPatientToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditPatientToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditPatientToolToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NoteTestToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NoteTestToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NoteTestToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientDetailsToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientDetailsToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PatientDetailsToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ProcessMessageToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ProcessMessageToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ProcessMessageToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ReconcilePatientToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ReconcilePatientToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ReconcilePatientToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RegistrationHomeToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RegistrationHomeToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RegistrationHomeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ResumeToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ResumeToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ResumeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SingleExclamation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\StartToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\StartToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\StartToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SuspendToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SuspendToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SuspendToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\TechnologistHomeToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\TechnologistHomeToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\TechnologistHomeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\VisitSummaryToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\VisitSummaryToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\VisitSummaryToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

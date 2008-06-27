@@ -165,7 +165,7 @@ namespace ClearCanvas.Ris.Client
 
 #endregion
 
-		#region ClearCanvas.Ris.Client.Adt component settings
+		#region ClearCanvas.Ris.Client.Workflow component settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("bookingpreview.htm")]

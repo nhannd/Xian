@@ -30,7 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Ris.Client.Adt;
+using ClearCanvas.Ris.Client.Workflow;
 
 namespace ClearCanvas.Ris.Client.Emergency
 {

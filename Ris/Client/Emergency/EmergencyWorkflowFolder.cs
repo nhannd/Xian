@@ -4,7 +4,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Client.Adt;
+using ClearCanvas.Ris.Client.Workflow;
 
 namespace ClearCanvas.Ris.Client.Emergency
 {

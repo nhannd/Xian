@@ -14,7 +14,7 @@
   </PropertyGroup>
 	
 	<ItemGroup>
-		<ConfigFiles Include="$(SolutionDir)\Adt\actionmodels.xml" />
+		<ConfigFiles Include="$(SolutionDir)\Workflow\actionmodels.xml" />
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -53,8 +53,6 @@
     <ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
 	<ClientModuleFiles Include="$(SolutionDir)\Workflow\bin\$(Configuration)\ClearCanvas.Ris.Client.Workflow.dll" />

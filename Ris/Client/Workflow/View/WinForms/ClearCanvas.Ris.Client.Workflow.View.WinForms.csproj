@@ -35,7 +35,118 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CancelOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CancelOrderComponentControl.Designer.cs">
+      <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CancelOrderComponentView.cs" />
+    <Compile Include="CheckInOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CheckInOrderComponentControl.Designer.cs">
+      <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CheckInOrderComponentView.cs" />
+    <Compile Include="Folders\FolderOptionComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Folders\FolderOptionComponentControl.Designer.cs">
+      <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Folders\FolderOptionComponentView.cs" />
+    <Compile Include="HL7QueuePreviewComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HL7QueuePreviewComponentControl.Designer.cs">
+      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HL7QueuePreviewComponentView.cs" />
+    <Compile Include="JscriptComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="JscriptComponentControl.Designer.cs">
+      <DependentUpon>JscriptComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="JscriptComponentView.cs" />
+    <Compile Include="OrderEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="OrderEditorComponentControl.Designer.cs">
+      <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OrderEditorComponentView.cs" />
+    <Compile Include="PatientProfileDiffComponentView.cs" />
+    <Compile Include="PerformedProcedureComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PerformedProcedureComponentControl.Designer.cs">
+      <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PerformedProcedureComponentView.cs" />
+    <Compile Include="ProcedureEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProcedureEditorComponentControl.Designer.cs">
+      <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedureEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReconciliationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ReconciliationComponentControl.Designer.cs">
+      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReconciliationComponentView.cs" />
+    <Compile Include="ReconciliationConfirmComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ReconciliationConfirmComponentControl.Designer.cs">
+      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReconciliationConfirmComponentView.cs" />
+    <Compile Include="SR.Designer.cs">
+      <DependentUpon>SR.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="TechnologistDocumentationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TechnologistDocumentationComponentControl.Designer.cs">
+      <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TechnologistDocumentationComponentView.cs" />
+    <Compile Include="TechnologistDocumentationOrderDetailsComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TechnologistDocumentationOrderDetailsComponentControl.Designer.cs">
+      <DependentUpon>TechnologistDocumentationOrderDetailsComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TechnologistDocumentationOrderDetailsComponentView.cs" />
+    <Compile Include="VisitDetailsEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VisitDetailsEditorComponentControl.Designer.cs">
+      <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisitDetailsEditorComponentView.cs" />
+    <Compile Include="VisitLocationsSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VisitLocationsSummaryComponentControl.Designer.cs">
+      <DependentUpon>VisitLocationsSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisitLocationsSummaryComponentView.cs" />
+    <Compile Include="VisitPractitionersSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VisitPractitionersSummaryComponentControl.Designer.cs">
+      <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VisitPractitionersSummaryComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -51,6 +162,91 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\ClearCanvas.Ris.Client.csproj">
+      <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
+      <Name>ClearCanvas.Ris.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\View\WinForms\ClearCanvas.Ris.Client.View.WinForms.csproj">
+      <Project>{7932D8CA-34CF-47E6-A425-9B8DA4F60341}</Project>
+      <Name>ClearCanvas.Ris.Client.View.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.Ris.Client.Workflow.csproj">
+      <Project>{FFB85377-995C-47A6-BF22-26D264CA3225}</Project>
+      <Name>ClearCanvas.Ris.Client.Workflow</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CancelOrderComponentControl.resx">
+      <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CheckInOrderComponentControl.resx">
+      <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Folders\FolderOptionComponentControl.resx">
+      <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HL7QueuePreviewComponentControl.resx">
+      <DependentUpon>HL7QueuePreviewComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="JscriptComponentControl.resx">
+      <DependentUpon>JscriptComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OrderEditorComponentControl.resx">
+      <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PerformedProcedureComponentControl.resx">
+      <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProcedureEditorComponentControl.resx">
+      <DependentUpon>ProcedureEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReconciliationComponentControl.resx">
+      <DependentUpon>ReconciliationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReconciliationConfirmComponentControl.resx">
+      <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TechnologistDocumentationComponentControl.resx">
+      <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TechnologistDocumentationOrderDetailsComponentControl.resx">
+      <DependentUpon>TechnologistDocumentationOrderDetailsComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VisitDetailsEditorComponentControl.resx">
+      <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VisitLocationsSummaryComponentControl.resx">
+      <DependentUpon>VisitLocationsSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VisitPractitionersSummaryComponentControl.resx">
+      <DependentUpon>VisitPractitionersSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\NextSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\PreviousSmall.PNG" />
+    <EmbeddedResource Include="SR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
