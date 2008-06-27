@@ -18,7 +18,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
     /// Auto-generated class.
     /// </remarks>
     public partial class AutoRouteWorkQueueDetailsView {
-              
+        
+        /// <summary>
+        /// AutoRouteInfoSectionPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.SectionPanel AutoRouteInfoSectionPanel;
+        
         /// <summary>
         /// AutoRouteDetailsView control.
         /// </summary>
@@ -26,17 +35,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected System.Web.UI.WebControls.DetailsView AutoRouteDetailsView;
-
+        protected global::System.Web.UI.WebControls.DetailsView AutoRouteDetailsView;
+        
         /// <summary>
-        /// AutoRouteDetailsView control.
+        /// GeneralInfoSectionPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected System.Web.UI.WebControls.DetailsView GeneralInfoDetailsView;
-
-    
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.SectionPanel GeneralInfoSectionPanel;
+        
+        /// <summary>
+        /// GeneralInfoDetailsView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DetailsView GeneralInfoDetailsView;
     }
 }

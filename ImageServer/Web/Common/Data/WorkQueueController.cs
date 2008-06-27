@@ -50,42 +50,42 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         
         #endregion
 
-        #region Protected Methods
+		#region Static Public Methods
 
-        /// <summary>
+		/// <summary>
         /// Gets the <see cref="StudyStorageLocation"/> for the study associated with the specified <see cref="WorkQueue"/> item.
         /// </summary>
-        /// <param name="uctx">The update context for current operation</param>
         /// <param name="item"></param>
         /// <returns></returns>
-        static protected StudyStorageLocation GetLoadStorageLocation(IUpdateContext uctx, WorkQueue item)
+		static public StudyStorageLocation GetLoadStorageLocation(WorkQueue item)
         {
-            IQueryStudyStorageLocation select = uctx.GetBroker<IQueryStudyStorageLocation>();
+        	using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+        	{
+				IQueryStudyStorageLocation select = ctx.GetBroker<IQueryStudyStorageLocation>();
 
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-            parms.StudyStorageKey = item.StudyStorageKey;
+        		StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+        		parms.StudyStorageKey = item.StudyStorageKey;
 
-            IList<StudyStorageLocation> storages = select.Execute(parms);
+        		IList<StudyStorageLocation> storages = select.Execute(parms);
 
-            if (storages == null || storages.Count == 0)
-            {
-                Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}", item.GetKey().ToString());
-                throw new ApplicationException("Unable to find storage location for WorkQueue item.");
-            }
+        		if (storages == null || storages.Count == 0)
+        		{
+        			Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}",
+        			             item.GetKey().ToString());
+        			throw new ApplicationException("Unable to find storage location for WorkQueue item.");
+        		}
 
-            if (storages.Count > 1)
-            {
-                Platform.Log(LogLevel.Warn,
-                             "WorkQueueController:LoadStorageLocation: multiple study storage found for work queue item {0}",
-                             item.GetKey().Key);
-            }
+        		if (storages.Count > 1)
+        		{
+        			Platform.Log(LogLevel.Warn,
+        			             "WorkQueueController:LoadStorageLocation: multiple study storage found for work queue item {0}",
+        			             item.GetKey().Key);
+        		}
 
-            return storages[0];
+        		return storages[0];
+        	}
         }
 
-        #endregion Protected Methods
-
-        #region Public Methods
 
         /// <summary>
         /// Returns a value indicating whether the specified <see cref="WorkQueue"/> can be manually rescheduled.
@@ -167,14 +167,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 ||
                 (item.WorkQueueStatusEnum != WorkQueueStatusEnum.InProgress &&
                  item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy);
-        }
+		}
 
+		#endregion Static Public Methods
 
+		#region Public Methods
 
-
-        
-
-        /// <summary>
+		/// <summary>
         /// Gets a list of <see cref="WorkQueue"/> items with specified criteria
         /// </summary>
         /// <param name="parameters"></param>

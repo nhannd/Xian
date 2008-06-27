@@ -81,7 +81,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             detail.Priority = item.WorkQueuePriorityEnum;
             detail.FailureDescription = item.FailureDescription;
             detail.ServerDescription = item.ProcessorID;
-            
+
+			StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+        	detail.StorageLocationPath = storage.GetStudyPath();
+			
             // Fetch UIDs
             WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
             WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
@@ -140,6 +143,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             detail.ServerDescription = item.ProcessorID;
             detail.FailureDescription = item.FailureDescription;
 
+			StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+			detail.StorageLocationPath = storage.GetStudyPath();
+
             // Fetch UIDs
             WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();
             uidCriteria.WorkQueueKey.EqualTo(item.GetKey());
@@ -182,7 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             WorkQueueUidAdaptor wqUidsAdaptor = new WorkQueueUidAdaptor();
             StudyAdaptor studyAdaptor = new StudyAdaptor();
             Device dest = deviceAdaptor.Get(item.DeviceKey);
-            
+
             WebMoveStudyWorkQueueDetails detail = new WebMoveStudyWorkQueueDetails();
             detail.GUID = item.GetKey();
 
@@ -196,6 +202,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             detail.Priority = item.WorkQueuePriorityEnum;
             detail.ServerDescription = item.ProcessorID;
             detail.FailureDescription = item.FailureDescription;
+
+			StudyStorageLocation storage = WorkQueueController.GetLoadStorageLocation(item);
+			detail.StorageLocationPath = storage.GetStudyPath();
 
             // Fetch UIDs
             WorkQueueUidSelectCriteria uidCriteria = new WorkQueueUidSelectCriteria();

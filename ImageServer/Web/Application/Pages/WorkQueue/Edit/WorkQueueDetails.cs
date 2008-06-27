@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         private WorkQueueStatusEnum _status;
         private WorkQueuePriorityEnum _priority;
         private string _failureDescription;
+    	private string _storageLocationPath;
 
         private string _serverDescription;
         private int _numSeriesPending;
@@ -134,6 +135,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             get { return _failureDescription; }
             set { _failureDescription = value; }
         }
+
+    	public string StorageLocationPath
+    	{
+			get { return _storageLocationPath; }
+			set { _storageLocationPath = value; }
+    		
+    	}
         #endregion Public Properties
     }
 }
