@@ -288,7 +288,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                if (_handler != null)
+                if (_handler != null && base._state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
                     _handler.OnNetworkError(this, this._assoc as ServerAssociationParameters, e);
             }
             catch (Exception x) 

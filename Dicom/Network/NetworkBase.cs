@@ -168,7 +168,7 @@ namespace ClearCanvas.Dicom.Network
         private DcmDimseInfo _dimse;
         private Thread _thread;
         private bool _stop;
-        private DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
+        internal DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
         private int _timeout = 30;
 
         internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
