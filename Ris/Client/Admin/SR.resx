@@ -144,11 +144,17 @@
   <data name="ColumnCode" xml:space="preserve">
     <value>Code</value>
   </data>
+  <data name="ColumnCreatedOn" xml:space="preserve">
+    <value>Created On</value>
+  </data>
   <data name="ColumnDegree" xml:space="preserve">
     <value>Degree</value>
   </data>
   <data name="ColumnDescription" xml:space="preserve">
     <value>Description</value>
+  </data>
+  <data name="ColumnDirection" xml:space="preserve">
+    <value>Direction</value>
   </data>
   <data name="ColumnFacility" xml:space="preserve">
     <value>Facility</value>
@@ -180,6 +186,9 @@
   <data name="ColumnName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="ColumnPeer" xml:space="preserve">
+    <value>Peer</value>
+  </data>
   <data name="ColumnPointOfCare" xml:space="preserve">
     <value>Point Of Care</value>
   </data>
@@ -192,8 +201,20 @@
   <data name="ColumnSeverity" xml:space="preserve">
     <value>Severity</value>
   </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnStatusDescription" xml:space="preserve">
+    <value>Status Description</value>
+  </data>
   <data name="ColumnSuffix" xml:space="preserve">
     <value>Suffix</value>
+  </data>
+  <data name="ColumnType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ColumnUpdatedOn" xml:space="preserve">
+    <value>Updated On</value>
   </data>
   <data name="ColumnUserId" xml:space="preserve">
     <value>User ID</value>
@@ -398,6 +419,9 @@
   </data>
   <data name="TitleFacilities" xml:space="preserve">
     <value>Facilities</value>
+  </data>
+  <data name="TitleHL7Queue" xml:space="preserve">
+    <value>HL7 Queue</value>
   </data>
   <data name="TitleImportData" xml:space="preserve">
     <value>Import Data</value>

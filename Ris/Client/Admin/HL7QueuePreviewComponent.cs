@@ -43,7 +43,7 @@ using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 using ClearCanvas.Ris.Client;
 
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Admin
 {
     [ExtensionPoint]
     public class HL7QueueToolExtensionPoint : ExtensionPoint<ITool>

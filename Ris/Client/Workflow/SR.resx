@@ -141,9 +141,6 @@
   <data name="ColumnCheckIn" xml:space="preserve">
     <value>Check In</value>
   </data>
-  <data name="ColumnCreatedOn" xml:space="preserve">
-    <value>Created On</value>
-  </data>
   <data name="ColumnCurrentLocation" xml:space="preserve">
     <value>Current Location</value>
   </data>
@@ -155,9 +152,6 @@
   </data>
   <data name="ColumnDiagnosticService" xml:space="preserve">
     <value>Diagnostic Service</value>
-  </data>
-  <data name="ColumnDirection" xml:space="preserve">
-    <value>Direction</value>
   </data>
   <data name="ColumnDischargeDateTime" xml:space="preserve">
     <value>Discharge Date/Time</value>
@@ -222,9 +216,6 @@
   <data name="ColumnPatientType" xml:space="preserve">
     <value>Patient Type</value>
   </data>
-  <data name="ColumnPeer" xml:space="preserve">
-    <value>Peer</value>
-  </data>
   <data name="ColumnPerformingFacility" xml:space="preserve">
     <value>Performing Facility</value>
   </data>
@@ -267,17 +258,8 @@
   <data name="ColumnStatus" xml:space="preserve">
     <value>Status</value>
   </data>
-  <data name="ColumnStatusDescription" xml:space="preserve">
-    <value>Status Description</value>
-  </data>
   <data name="ColumnTime" xml:space="preserve">
     <value>Time</value>
-  </data>
-  <data name="ColumnType" xml:space="preserve">
-    <value>Type</value>
-  </data>
-  <data name="ColumnUpdatedOn" xml:space="preserve">
-    <value>Updated On</value>
   </data>
   <data name="ColumnVisitNumber" xml:space="preserve">
     <value>Visit #</value>
@@ -431,9 +413,6 @@
   </data>
   <data name="TitleFolderSearchResults" xml:space="preserve">
     <value>Search Results</value>
-  </data>
-  <data name="TitleHL7Queue" xml:space="preserve">
-    <value>HL7 Queue</value>
   </data>
   <data name="TitleJScriptWindow" xml:space="preserve">
     <value>JScript Window</value>

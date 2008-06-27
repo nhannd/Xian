@@ -37,7 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     [ExtensionOf(typeof(HL7QueuePreviewComponentViewExtensionPoint))]
     public class HL7QueuePreviewComponentView : WinFormsView, IApplicationComponentView

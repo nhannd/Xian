@@ -37,7 +37,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Admin
 {
     public class HL7QueueItemSummaryTable : Table<HL7QueueItemSummary>
     {

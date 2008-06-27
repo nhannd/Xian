@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
     partial class HL7QueuePreviewComponentControl
     {

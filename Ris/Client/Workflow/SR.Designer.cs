@@ -133,15 +133,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Created On.
-        /// </summary>
-        internal static string ColumnCreatedOn {
-            get {
-                return ResourceManager.GetString("ColumnCreatedOn", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Current Location.
         /// </summary>
         internal static string ColumnCurrentLocation {
@@ -174,15 +165,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string ColumnDiagnosticService {
             get {
                 return ResourceManager.GetString("ColumnDiagnosticService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Direction.
-        /// </summary>
-        internal static string ColumnDirection {
-            get {
-                return ResourceManager.GetString("ColumnDirection", resourceCulture);
             }
         }
         
@@ -376,15 +358,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Peer.
-        /// </summary>
-        internal static string ColumnPeer {
-            get {
-                return ResourceManager.GetString("ColumnPeer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Performing Facility.
         /// </summary>
         internal static string ColumnPerformingFacility {
@@ -511,38 +484,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Status Description.
-        /// </summary>
-        internal static string ColumnStatusDescription {
-            get {
-                return ResourceManager.GetString("ColumnStatusDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Time.
         /// </summary>
         internal static string ColumnTime {
             get {
                 return ResourceManager.GetString("ColumnTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Type.
-        /// </summary>
-        internal static string ColumnType {
-            get {
-                return ResourceManager.GetString("ColumnType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Updated On.
-        /// </summary>
-        internal static string ColumnUpdatedOn {
-            get {
-                return ResourceManager.GetString("ColumnUpdatedOn", resourceCulture);
             }
         }
         
@@ -1002,15 +948,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitleFolderSearchResults {
             get {
                 return ResourceManager.GetString("TitleFolderSearchResults", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to HL7 Queue.
-        /// </summary>
-        internal static string TitleHL7Queue {
-            get {
-                return ResourceManager.GetString("TitleHL7Queue", resourceCulture);
             }
         }
         

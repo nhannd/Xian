@@ -47,11 +47,6 @@
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
-    <Compile Include="HL7QueueItemSummaryTable.cs" />
-    <Compile Include="HL7QueuePatientSearchTool.cs" />
-    <Compile Include="HL7QueuePreviewComponent.cs" />
-    <Compile Include="HL7QueuePreviewTool.cs" />
-    <Compile Include="HL7QueueProcessItemTool.cs" />
     <Compile Include="ITechnologistDocumentationPage.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />

@@ -40,7 +40,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("view1", "global-menus/Patient/View Details...", "View")]
     //[ButtonAction("view1", "global-toolbars/Patient/ViewPatient", "View")]
