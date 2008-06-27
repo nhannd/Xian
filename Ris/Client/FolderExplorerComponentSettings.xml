@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <folder-systems>
-	<folder-system id="ClearCanvas.Ris.Client.TechnologistWorkflowFolderSystem">
+	<folder-system id="ClearCanvas.Ris.Client.Workflow.TechnologistWorkflowFolderSystem">
 		<folder id="ScheduledTechnologistWorkflowFolder" />
 		<folder id="CheckedInTechnologistWorkflowFolder" />
 		<folder id="InProgressTechnologistWorkflowFolder" />
@@ -9,7 +9,7 @@
 		<folder id="CompletedTechnologistWorkflowFolder" />
 		<folder id="TechnologistSearchFolder" />
 	</folder-system>
-	<folder-system id="ClearCanvas.Ris.Client.RegistrationWorkflowFolderSystem">
+	<folder-system id="ClearCanvas.Ris.Client.Workflow.RegistrationWorkflowFolderSystem">
 		<folder id="ScheduledFolder" />
 		<folder id="CheckedInFolder" />
 		<folder id="InProgressFolder" />
@@ -17,7 +17,7 @@
 		<folder id="CancelledFolder" />
 		<folder id="RegistrationSearchFolder" />
 	</folder-system>
-	<folder-system id="ClearCanvas.Ris.Client.BookingWorkflowFolderSystem">
+	<folder-system id="ClearCanvas.Ris.Client.Workflow.BookingWorkflowFolderSystem">
 		<folder id="CompletedProtocolFolder" />
 		<folder id="SuspendedProtocolFolder" />
 		<folder id="RejectedProtocolFolder" />
@@ -25,7 +25,7 @@
 		<folder id="ToBeScheduledFolder" />
 		<folder id="BookingSearchFolder" />
 	</folder-system>
-	<folder-system id="ClearCanvas.Ris.Client.Reporting.ReportingWorkflowFolderSystem">
+	<folder-system id="ClearCanvas.Ris.Client.Workflow.ReportingWorkflowFolderSystem">
 		<folder id="ToBeReportedFolder" />
 		<folder id="AssignedFolder" />
 		<folder id="DraftFolder" />
@@ -35,7 +35,7 @@
 		<folder id="VerifiedFolder" />
 		<folder id="ReportingSearchFolder" />
 	</folder-system>
-	<folder-system id="ClearCanvas.Ris.Client.Reporting.ProtocolWorkflowFolderSystem">
+	<folder-system id="ClearCanvas.Ris.Client.Workflow.ProtocolWorkflowFolderSystem">
 		<folder id="ToBeProtocolledFolder" />
     <folder id="ToBeApprovedFolder" />
     <folder id="DraftProtocolFolder" />
