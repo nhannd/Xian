@@ -15,7 +15,8 @@
             </asp:Panel>
             <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
             <ccAsp:MessageBox ID="deleteConfirmBox" runat="server" />       
-            <ccAsp:MessageBox ID="MessageBox" runat="server" />             
+            <ccAsp:MessageBox ID="MessageBox" runat="server" />     
+            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />        
         </ContentTemplate>
     </asp:UpdatePanel>
 </asp:Content>

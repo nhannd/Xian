@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #endregion
 
         #region Private Members
-        private readonly ServerPartition _partition;
+        private ServerPartition _partition;
         private readonly FilesystemMonitor _montor;
         private readonly FilesystemSelector _selector;
         #endregion
@@ -58,6 +58,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         public ServerPartition Partition
         {
             get { return _partition; }
+			set { _partition = value; }
         }
         public FilesystemMonitor FilesystemMonitor
         {

@@ -99,11 +99,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 if (_controller.UpdatePartition(partition))
                 {
                     UpdateUI();
-                    MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                    MessageBox.Message =
-                        String.Format("Server partition {0} has been updated. Please restart the Image Server.",
-                                      partition.AeTitle);
-                    MessageBox.Show();
                 }
             }
             else
@@ -112,11 +107,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 if (_controller.AddPartition(partition))
                 {
                     UpdateUI();
-                    MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                    MessageBox.Message =
-                        String.Format("New server partition {0} has been added. Please restart the Image Server.",
-                                      partition.AeTitle);
-                    MessageBox.Show();
                 }
             }
         }
@@ -145,14 +135,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                             String.Format(
                                 "Server partition {0} has been removed.<P>At least one server partition is required. Please add a new server partition.",
                                 partition.AeTitle);
-                        MessageBox.Show();
-                    }
-                    else
-                    {
-                        MessageBox.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                        MessageBox.Message =
-                            String.Format("Server partition {0} has been removed. Please restart the Image Server.",
-                                          partition.AeTitle);
                         MessageBox.Show();
                     }
                 }

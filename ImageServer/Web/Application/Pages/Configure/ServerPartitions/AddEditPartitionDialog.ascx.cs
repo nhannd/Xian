@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
 
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
 
-                DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.ToString();
+                DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.Lookup;
 
             }
         }
