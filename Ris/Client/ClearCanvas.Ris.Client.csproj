@@ -64,6 +64,7 @@
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderAdditionalInfoSummaryComponent.cs" />
+    <Compile Include="OrderEditorComponent.cs" />
     <Compile Include="OrderListTable.cs" />
     <Compile Include="OrderNoteboxConfigurationComponent.cs" />
     <Compile Include="OrderNoteboxFolderSystemSettings.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="OrderNoteConversationTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
+    <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="RefreshTool.cs" />
     <Compile Include="RepublishReportComponent.cs" />
     <Compile Include="SearchResultsFolder.cs" />
@@ -124,8 +126,16 @@
     <Compile Include="StaffGroupSummaryComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
+    <Compile Include="VisitDetailsEditorComponent.cs" />
     <Compile Include="VisitDetailViewComponent.cs" />
+    <Compile Include="VisitEditorComponent.cs" />
     <Compile Include="VisitListTable.cs" />
+    <Compile Include="VisitLocationsSummaryComponent.cs" />
+    <Compile Include="VisitLocationTable.cs" />
+    <Compile Include="VisitPractitionersSummaryComponent.cs" />
+    <Compile Include="VisitPractitionerTable.cs" />
+    <Compile Include="VisitSummaryComponent.cs" />
+    <Compile Include="VisitSummaryTable.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="WorklistItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />

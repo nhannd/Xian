@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client
 {
     public class VisitLocationTable : Table<VisitLocationDetail>
     {

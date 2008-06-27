@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Client {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Text substited for the \'%L\' placeholder in an Accession number format string")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("A#:")]
+        [global::System.Configuration.DefaultSettingValueAttribute("A#")]
         public string AccessionNumberLabel {
             get {
                 return ((string)(this["AccessionNumberLabel"]));

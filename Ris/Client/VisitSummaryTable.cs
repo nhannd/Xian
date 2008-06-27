@@ -39,7 +39,7 @@ using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using System.Text;
 using ClearCanvas.Ris.Client.Formatting;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client
 {
     public class VisitSummaryTable : Table<VisitSummary>
     {

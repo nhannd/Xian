@@ -40,7 +40,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 using System.Collections;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="VisitDetailsEditorComponent"/>

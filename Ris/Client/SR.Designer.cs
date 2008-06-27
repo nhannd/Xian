@@ -1087,6 +1087,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A cancellation reason is required to replace an order..
+        /// </summary>
+        internal static string MessageMissingCancellationReason {
+            get {
+                return ResourceManager.GetString("MessageMissingCancellationReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No results were found using the specified criteria..
         /// </summary>
         internal static string MessageResultsNotFound {
@@ -1497,6 +1506,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitlePatientProfile {
             get {
                 return ResourceManager.GetString("TitlePatientProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Visits.
+        /// </summary>
+        internal static string TitlePatientVisits {
+            get {
+                return ResourceManager.GetString("TitlePatientVisits", resourceCulture);
             }
         }
         

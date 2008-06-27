@@ -46,7 +46,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Defines an interface for providing custom editing pages to be displayed in the order editor.
@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         class OrderEditorContext : IOrderEditorContext
         {
-            private OrderEditorComponent _owner;
+            private readonly OrderEditorComponent _owner;
 
             public OrderEditorContext(OrderEditorComponent owner)
             {
@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         private readonly Mode _mode;
         private EntityRef _patientRef;
-        private EntityRef _profileRef;
+        private readonly EntityRef _profileRef;
         private EntityRef _orderRef;
 
         private List<VisitSummary> _activeVisits;
@@ -232,8 +232,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         private event EventHandler _changeCommitted;
 
-        private MimeDocumentPreviewComponent _attachmentSummaryComponent;
-        private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
+        private readonly MimeDocumentPreviewComponent _attachmentSummaryComponent;
+        private readonly OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
         private TabComponentContainer _rightHandComponentContainer;
         private ChildComponentHost _rightHandComponentContainerHost;
@@ -442,7 +442,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             get { return _selectedVisit; }
             set
             {
-                if(!object.Equals(value, _selectedVisit))
+                if(!Equals(value, _selectedVisit))
                 {
                     _selectedVisit = value;
                     NotifyPropertyChanged("SelectedVisit");
@@ -482,7 +482,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             	ApplicationComponentExitCode exitCode = LaunchAsDialog(
             		this.Host.DesktopWindow,
             		component,
-            		SR.TitlePatientVisits);
+					SR.TitlePatientVisits);
 
 
 				// remember the previous selection before updating the list
@@ -604,7 +604,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public string FormatFacility(object facility)
         {
-            return (facility as FacilitySummary).Name;
+            return ((FacilitySummary) facility).Name;
         }
 
         public ILookupHandler OrderingPractitionerLookupHandler
@@ -670,7 +670,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             get { return new Selection(_selectedRecipient); }
             set
             {
-                if(!object.Equals(value, _selectedRecipient))
+                if(!Equals(value, _selectedRecipient))
                 {
                     _selectedRecipient = (ResultRecipientDetail)value.Item;
                     UpdateRecipientsActionModel();
@@ -689,7 +689,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             get { return _recipientToAdd; }
             set
             {
-                if (!object.Equals(value, _recipientToAdd))
+                if (!Equals(value, _recipientToAdd))
                 {
                     _recipientToAdd = value;
                     NotifyPropertyChanged("RecipientToAdd");

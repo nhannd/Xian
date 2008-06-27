@@ -40,7 +40,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Desktop.Validation;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="ProcedureEditorComponent"/>

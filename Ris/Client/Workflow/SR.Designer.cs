@@ -700,15 +700,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A cancellation reason is required to replace an order..
-        /// </summary>
-        internal static string MessageMissingCancellationReason {
-            get {
-                return ResourceManager.GetString("MessageMissingCancellationReason", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to There are no reconciliation candidates for this patient..
         /// </summary>
         internal static string MessageNoReconciliationCandidate {
@@ -1011,15 +1002,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitlePatientReconciliation {
             get {
                 return ResourceManager.GetString("TitlePatientReconciliation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient Visits.
-        /// </summary>
-        internal static string TitlePatientVisits {
-            get {
-                return ResourceManager.GetString("TitlePatientVisits", resourceCulture);
             }
         }
         

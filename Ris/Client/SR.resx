@@ -459,6 +459,9 @@
   <data name="MessageMergeIdenticalItems" xml:space="preserve">
     <value>You cannot merge two identical items.</value>
   </data>
+  <data name="MessageMissingCancellationReason" xml:space="preserve">
+    <value>A cancellation reason is required to replace an order.</value>
+  </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
   </data>
@@ -596,6 +599,9 @@
   </data>
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
+  </data>
+  <data name="TitlePatientVisits" xml:space="preserve">
+    <value>Patient Visits</value>
   </data>
   <data name="TitlePhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
