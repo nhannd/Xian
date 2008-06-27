@@ -29,113 +29,114 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
-    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationScheduledWorklist)]
-    [FolderPath("Scheduled", true)]
-    public class ScheduledFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationCheckedInWorklist)]
-    [FolderPath("Checked In")]
-    public class CheckedInFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationInProgressWorklist)]
-    [FolderPath("In Progress")]
-    public class InProgressFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationCompletedWorklist)]
-    [FolderPath("Completed")]
-    public class CompletedFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationCancelledWorklist)]
-    [FolderPath("Cancelled")]
-    public class CancelledFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
-    [FolderPath("Completed Protocol", true)]
-    public class CompletedProtocolFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationSuspendedProtocolWorklist)]
-    [FolderPath("Suspended Protocol")]
-    public class SuspendedProtocolFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
-    [FolderPath("Rejected Protocol")]
-    public class RejectedProtocolFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
-    [FolderPath("Pending Protocol")]
-    public class PendingProtocolFolder : RegistrationWorkflowFolder
-    {
-    }
-
-    [ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
-    [FolderPath("To Be Scheduled")]
-    public class ToBeScheduledFolder : RegistrationWorkflowFolder
-    {
-    }
-
-	[FolderPath("Search Results")]
-    public class RegistrationSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
-    {
-		public RegistrationSearchFolder()
-            : base(new RegistrationWorklistTable())
-        {
-        }
-
-        protected override string ProcedureStepClassName
-        {
-            get { return null; }
-        }
-    }
-
-	[FolderPath("Search Results")]
-    public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+	public abstract class Registration
 	{
-		public BookingSearchFolder()
-			: base(new RegistrationWorklistTable())
+		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationScheduledWorklist)]
+		[FolderPath("Scheduled", true)]
+		public class ScheduledFolder : RegistrationWorkflowFolder
 		{
 		}
 
+		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationCheckedInWorklist)]
+		[FolderPath("Checked In")]
+		public class CheckedInFolder : RegistrationWorkflowFolder
+		{
+		}
 
-        //TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-        //it is the only way to get things working right now
-        protected override string ProcedureStepClassName
-        {
-            get { return "ProtocolResolutionStep"; }
-        }
+		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationInProgressWorklist)]
+		[FolderPath("In Progress")]
+		public class InProgressFolder : RegistrationWorkflowFolder
+		{
+		}
 
+		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedWorklist)]
+		[FolderPath("Completed")]
+		public class CompletedFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationCancelledWorklist)]
+		[FolderPath("Cancelled")]
+		public class CancelledFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
+		[FolderPath("Completed Protocol", true)]
+		public class CompletedProtocolFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationSuspendedProtocolWorklist)]
+		[FolderPath("Suspended Protocol")]
+		public class SuspendedProtocolFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
+		[FolderPath("Rejected Protocol")]
+		public class RejectedProtocolFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
+		[FolderPath("Pending Protocol")]
+		public class PendingProtocolFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.RegistrationToBeScheduledWorklist)]
+		[FolderPath("To Be Scheduled")]
+		public class ToBeScheduledFolder : RegistrationWorkflowFolder
+		{
+		}
+
+		[FolderPath("Search Results")]
+		public class RegistrationSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+		{
+			public RegistrationSearchFolder()
+				: base(new RegistrationWorklistTable())
+			{
+			}
+
+			protected override string ProcedureStepClassName
+			{
+				get { return null; }
+			}
+		}
+
+		[FolderPath("Search Results")]
+		public class BookingSearchFolder : WorklistSearchResultsFolder<RegistrationWorklistItem, IRegistrationWorkflowService>
+		{
+			public BookingSearchFolder()
+				: base(new RegistrationWorklistTable())
+			{
+			}
+
+
+			//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+			//it is the only way to get things working right now
+			protected override string ProcedureStepClassName
+			{
+				get { return "ProtocolResolutionStep"; }
+			}
+
+		}
 	}
 }

@@ -29,13 +29,12 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -76,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					service.ResubmitProtocol(new ResubmitProtocolRequest(item.OrderRef));
 				});
 
-			this.Context.InvalidateFolders(typeof(Folders.SuspendedProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.Registration.SuspendedProtocolFolder));
 
 			return true;
 		}
@@ -103,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					service.CancelProtocolAndOrder(new CancelProtocolAndOrderRequest(item.OrderRef));
 				});
 
-			this.Context.InvalidateFolders(typeof(Folders.RejectedProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.Registration.RejectedProtocolFolder));
 			return true;
 		}
     }

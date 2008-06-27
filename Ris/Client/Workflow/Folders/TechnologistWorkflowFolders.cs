@@ -29,70 +29,70 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
-    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistScheduledWorklist)]
-    [FolderPath("Scheduled", true)]
-    public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-    }
+	public abstract class Technologist
+	{
+		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.TechnologistScheduledWorklist)]
+		[FolderPath("Scheduled", true)]
+		public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
+		{
+		}
 
-    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistCheckedInWorklist)]
-    [FolderPath("Checked In")]
-    public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-    }
+		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.TechnologistCheckedInWorklist)]
+		[FolderPath("Checked In")]
+		public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
+		{
+		}
 
-    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistInProgressWorklist)]
-    [FolderPath("In Progress")]
-    public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-    }
+		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.TechnologistInProgressWorklist)]
+		[FolderPath("In Progress")]
+		public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolder
+		{
+		}
 
-    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistCompletedWorklist)]
-    [FolderPath("Completed")]
-    public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-    }
+		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.TechnologistCompletedWorklist)]
+		[FolderPath("Completed")]
+		public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolder
+		{
+		}
 
-    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistUndocumentedWorklist)]
-    [FolderPath("Incomplete Documentation")]
-    public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-    }
+		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.TechnologistUndocumentedWorklist)]
+		[FolderPath("Incomplete Documentation")]
+		public class UndocumentedTechnologistWorkflowFolder : TechnologistWorkflowFolder
+		{
+		}
 
-    [ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
-    [FolderForWorklistClass(WorklistClassNames.TechnologistCancelledWorklist)]
-    [FolderPath("Cancelled")]
-    public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolder
-    {
-    }
+		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.TechnologistCancelledWorklist)]
+		[FolderPath("Cancelled")]
+		public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolder
+		{
+		}
 
-	[FolderPath("Search Results")]
-    public class TechnologistSearchFolder : WorklistSearchResultsFolder<ModalityWorklistItem, IModalityWorkflowService>
-    {
-		public TechnologistSearchFolder()
-			: base(new ModalityWorklistTable())
-        {
-        }
+		[FolderPath("Search Results")]
+		public class SearchFolder : WorklistSearchResultsFolder<ModalityWorklistItem, IModalityWorkflowService>
+		{
+			public SearchFolder()
+				: base(new ModalityWorklistTable())
+			{
+			}
 
-        //TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
-        //it is the only way to get things working right now
-        protected override string ProcedureStepClassName
-        {
-            get { return "ModalityProcedureStep"; }
-        }
-    }
+			//TODO: (JR may 2008) having the client specify the class name isn't a terribly good idea, but
+			//it is the only way to get things working right now
+			protected override string ProcedureStepClassName
+			{
+				get { return "ModalityProcedureStep"; }
+			}
+		}
+	}
 }

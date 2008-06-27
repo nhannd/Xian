@@ -36,7 +36,9 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
     [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowFolderToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistWorkflowFolderToolExtensionPoint))]
-    public class RefreshTool : RefreshTool<IWorkflowFolderToolContext>
+	[ExtensionOf(typeof(ReportingWorkflowFolderToolExtensionPoint))]
+	[ExtensionOf(typeof(ProtocolWorkflowFolderToolExtensionPoint))]
+	public class RefreshTool : RefreshTool<IWorkflowFolderToolContext>
     {
     }
 }

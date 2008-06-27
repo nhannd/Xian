@@ -1,14 +1,10 @@
-using System;
 using System.Security.Permissions;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Workflow;
 using ClearCanvas.Ris.Client.Workflow.Folders;
-using ClearCanvas.Ris.Client.Emergency.Folders;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Emergency
 {
@@ -45,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Emergency
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new RegistrationSearchFolder();
+            return new Registration.RegistrationSearchFolder();
         }
     }
 }

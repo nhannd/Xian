@@ -30,16 +30,12 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -76,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			base.Initialize();
 
-			this.Context.RegisterDropHandler(typeof(Folders.CheckedInFolder), this);
+			this.Context.RegisterDropHandler(typeof(Folders.Registration.CheckedInFolder), this);
 		}
 
 		protected override bool Execute(RegistrationWorklistItem item)
@@ -95,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedProcedures));
 					});
 
-				this.Context.InvalidateFolders(typeof(Folders.CheckedInFolder));
+				this.Context.InvalidateFolders(typeof(Folders.Registration.CheckedInFolder));
 				return true;
 			}
 			else
@@ -122,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			base.Initialize();
 
-			this.Context.RegisterDropHandler(typeof(Folders.CancelledFolder), this);
+			this.Context.RegisterDropHandler(typeof(Folders.Registration.CancelledFolder), this);
 		}
 
 		protected override bool Execute(RegistrationWorklistItem item)
@@ -141,7 +137,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
 					});
 
-				this.Context.InvalidateFolders(typeof(Folders.CancelledFolder));
+				this.Context.InvalidateFolders(typeof(Folders.Registration.CancelledFolder));
 				return true;
 			}
 			else

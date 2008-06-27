@@ -39,7 +39,8 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -58,7 +59,9 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PreviewToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
     {
         private bool _enabled;
@@ -84,7 +87,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 ((IRegistrationWorkflowItemToolContext)this.ContextBase).RegisterDoubleClickHandler(View);
             }
-            else if (this.ContextBase is IPreviewToolContext)
+			else if (this.ContextBase is IReportingWorkflowItemToolContext)
+			{
+				((IReportingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
+				{
+					this.Enabled = DetermineEnablement();
+				};
+			}
+			else if (this.ContextBase is IPreviewToolContext)
             {
                 this.Enabled = DetermineEnablement();
             }
@@ -95,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     this.Enabled = DetermineEnablement();
                 };
             }
-        }
+		}
 
         private bool DetermineEnablement()
         {
@@ -109,6 +119,11 @@ namespace ClearCanvas.Ris.Client.Workflow
                 return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                     && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
             }
+			else if (this.ContextBase is IReportingWorkflowItemToolContext)
+			{
+				return (((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+					&& ((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+			}
             else if (this.ContextBase is IPreviewToolContext)
             {
                 IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
@@ -154,13 +169,19 @@ namespace ClearCanvas.Ris.Client.Workflow
                 ModalityWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
             }
-            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
             }
-            else if (this.ContextBase is IPreviewToolContext)
+			else if (this.ContextBase is IReportingWorkflowItemToolContext)
+			{
+				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
+				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
+				OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
+			}
+			else if (this.ContextBase is IPreviewToolContext)
             {
                 IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
                 OpenPatient(context.WorklistItem.PatientRef, context.WorklistItem.PatientProfileRef, context.DesktopWindow);

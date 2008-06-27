@@ -35,56 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LinkedInterpretationComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="LinkedInterpretationComponentControl.Designer.cs">
-      <DependentUpon>LinkedInterpretationComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LinkedInterpretationComponentView.cs" />
-    <Compile Include="PriorReportComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PriorReportComponentControl.Designer.cs">
-      <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PriorReportComponentView.cs" />
-    <Compile Include="ProtocolEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolEditorComponentControl.Designer.cs">
-      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolEditorComponentView.cs" />
-    <Compile Include="ProtocollingComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocollingComponentControl.Designer.cs">
-      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocollingComponentView.cs" />
-    <Compile Include="ProtocolReasonComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ProtocolReasonComponentControl.Designer.cs">
-      <DependentUpon>ProtocolReasonComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ProtocolReasonComponentView.cs" />
-    <Compile Include="ReportEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReportEditorComponentControl.Designer.cs">
-      <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ReportEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReportingComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReportingComponentControl.Designer.cs">
-      <DependentUpon>ReportingComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ReportingComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -108,40 +59,6 @@
       <Project>{7932D8CA-34CF-47E6-A425-9B8DA4F60341}</Project>
       <Name>ClearCanvas.Ris.Client.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.Ris.Client.Reporting.csproj">
-      <Project>{EB579705-2821-45B8-AE5E-EE397BE73ED9}</Project>
-      <Name>ClearCanvas.Ris.Client.Reporting</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="LinkedInterpretationComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>LinkedInterpretationComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PriorReportComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProtocolEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocollingComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolReasonComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ProtocolReasonComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReportEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReportingComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ReportingComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

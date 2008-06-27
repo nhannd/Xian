@@ -1,0 +1,702 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
+using System;
+using System.Collections.Generic;
+using System.Security.Permissions;
+using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+
+namespace ClearCanvas.Ris.Client.Workflow
+{
+	public class ProtocollingOrderDetailViewComponent : DHtmlComponent
+	{
+		private WorklistItemSummaryBase _worklistItem;
+
+		public ProtocollingOrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
+		{
+			_worklistItem = worklistItem;
+		}
+
+		public override void Start()
+		{
+			SetUrl(WebResourcesSettings.Default.ProtocollingOrderDetailPageUrl);
+			base.Start();
+		}
+
+		public WorklistItemSummaryBase WorklistItem
+		{
+			get { return _worklistItem; }
+			set
+			{
+				_worklistItem = value;
+				Refresh();
+			}
+		}
+
+		public void Refresh()
+		{
+			NotifyAllPropertiesChanged();
+		}
+
+		protected override DataContractBase GetHealthcareContext()
+		{
+			return _worklistItem;
+		}
+	}
+
+	/// <summary>
+	/// Extension point for views onto <see cref="ProtocollingComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class ProtocollingComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
+
+	/// <summary>
+	/// ProtocollingComponent class
+	/// </summary>
+	[AssociateView(typeof(ProtocollingComponentViewExtensionPoint))]
+	public class ProtocollingComponent : ApplicationComponent
+	{
+		#region Private Fields
+
+		private readonly ProtocollingComponentMode _componentMode;
+		private readonly string _folderName;
+		private readonly EntityRef _worklistRef;
+		private int _completedItems = 0;
+		private bool _isInitialItem = true;
+
+		private ReportingWorklistItem _worklistItem;
+		private EntityRef _orderRef;
+		private List<OrderNoteDetail> _notes;
+
+		private readonly List<ReportingWorklistItem> _skippedItems;
+		private readonly Stack<ReportingWorklistItem> _worklistCache;
+
+		private ChildComponentHost _bannerComponentHost;
+		private ChildComponentHost _protocolEditorComponentHost;
+		private ChildComponentHost _orderDetailViewComponentHost;
+		private ChildComponentHost _priorReportsComponentHost;
+		private ChildComponentHost _orderNotesComponentHost;
+
+		private bool _protocolNextItem;
+
+		private bool _acceptEnabled;
+		private bool _submitForApprovalEnabled;
+		private bool _rejectEnabled;
+		private bool _suspendEnabled;
+		private bool _saveEnabled;
+
+		#endregion
+
+		#region Constructor
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode, string folderName, EntityRef worklistRef)
+		{
+			_worklistItem = worklistItem;
+			_componentMode = mode;
+			_folderName = folderName;
+			_worklistRef = worklistRef;
+
+			_protocolNextItem = _componentMode == ProtocollingComponentMode.Assign;
+
+			_skippedItems = new List<ReportingWorklistItem>();
+			_worklistCache = new Stack<ReportingWorklistItem>();
+		}
+
+		#endregion
+
+		#region ApplicationComponent overrides
+
+		public override void Start()
+		{
+			StartProtocollingWorklistItem();
+
+			this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+
+			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+			_bannerComponentHost.StartComponent();
+
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.Protocol));
+			_orderNotesComponentHost.StartComponent();
+			((OrderNoteSummaryComponent) _orderNotesComponentHost.Component).Notes = _notes;
+
+			_protocolEditorComponentHost = new ChildComponentHost(this.Host, new ProtocolEditorComponent(_worklistItem));
+			_protocolEditorComponentHost.StartComponent();
+			((ProtocolEditorComponent) _protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
+
+			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
+			_priorReportsComponentHost.StartComponent();
+
+			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem));
+			_orderDetailViewComponentHost.StartComponent();
+
+			base.Start();
+		}
+
+		#endregion
+
+		#region Public members
+
+		public ApplicationComponentHost BannerComponentHost
+		{
+			get { return _bannerComponentHost; }
+		}
+
+		public ApplicationComponentHost ProtocolEditorComponentHost
+		{
+			get { return _protocolEditorComponentHost; }
+		}
+
+		public ApplicationComponentHost OrderNotesComponentHost
+		{
+			get { return _orderNotesComponentHost; }
+		}
+
+		public ApplicationComponentHost OrderDetailViewComponentHost
+		{
+			get { return _orderDetailViewComponentHost; }
+		}
+
+		public ApplicationComponentHost PriorReportsComponentHost
+		{
+			get { return _priorReportsComponentHost; }
+		}
+
+		public string StatusText
+		{
+			get
+			{
+				string status = string.Format(SR.FormatProtocolFolderName, _folderName);
+
+				if (!_isInitialItem)
+				{
+					status = status + string.Format(SR.FormatProtocolStatusText, _worklistCache.Count, _completedItems, _skippedItems.Count);
+				}
+
+				return status;
+			}
+		}
+
+		public bool ShowStatusText
+		{
+			get { return _componentMode == ProtocollingComponentMode.Assign; }
+		}
+
+		/// <summary>
+		/// Specifies if the next <see cref="ReportingWorklistItem"/> should be protocolled
+		/// </summary>
+		public bool ProtocolNextItem
+		{
+			get { return _protocolNextItem; }
+			set { _protocolNextItem = value; }
+		}
+
+		public bool ProtocolNextItemEnabled
+		{
+			get { return _componentMode == ProtocollingComponentMode.Assign; }
+		}
+
+		#region Accept
+
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
+		public void Accept()
+		{
+			// don't allow accept if there are validation errors
+			if (HasValidationErrors)
+			{
+				ShowValidation(true);
+				return;
+			}
+
+			try
+			{
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(_orderRef, this.ProtocolDetails, _notes));
+					});
+
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.CompletedProtocolFolder));
+				InvalidateSourceFolders();
+
+				BeginNextWorklistItemOrExit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool AcceptVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
+			}
+		}
+
+		public bool AcceptEnabled
+		{
+			get { return _acceptEnabled; }
+		}
+
+		#endregion
+
+		#region Submit For Approval
+
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForApproval)]
+		public void SubmitForApproval()
+		{
+			// don't allow accept if there are validation errors
+			if (HasValidationErrors)
+			{
+				ShowValidation(true);
+				return;
+			}
+
+			try
+			{
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						service.SubmitProtocolForApproval(new SubmitProtocolForApprovalRequest(_orderRef, this.ProtocolDetails, _notes));
+					});
+
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.AwaitingApprovalProtocolFolder));
+				InvalidateSourceFolders();
+
+				BeginNextWorklistItemOrExit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool SubmitForApprovalVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval);
+			}
+		}
+
+		public bool SubmitForApprovalEnabled
+		{
+			get { return _submitForApprovalEnabled; }
+		}
+
+		#endregion
+
+		#region Reject
+
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public void Reject()
+		{
+			try
+			{
+				EnumValueInfo reason;
+				string additionalComments;
+
+				bool result = GetRejectOrSuspendReason("Reject Reason", out reason, out additionalComments);
+
+				if (!result || reason == null)
+					return;
+
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						service.RejectOrderProtocol(new RejectOrderProtocolRequest(
+							_orderRef,
+							this.ProtocolDetails,
+							_notes,
+							reason,
+							CreateAdditionalCommentsNote(additionalComments)));
+					});
+
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.RejectedProtocolFolder));
+				InvalidateSourceFolders();
+
+				BeginNextWorklistItemOrExit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool RejectEnabled
+		{
+			get { return _rejectEnabled; }
+		}
+
+		#endregion
+
+		#region Suspend
+
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public void Suspend()
+		{
+			try
+			{
+				EnumValueInfo reason;
+				string additionalComments;
+
+				bool result = GetRejectOrSuspendReason("Suspend Reason", out reason, out additionalComments);
+
+				if (!result || reason == null)
+					return;
+
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(
+							_orderRef,
+							this.ProtocolDetails,
+							_notes,
+							reason,
+							CreateAdditionalCommentsNote(additionalComments)));
+					});
+
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.SuspendedProtocolFolder));
+				InvalidateSourceFolders();
+
+				BeginNextWorklistItemOrExit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool SuspendEnabled
+		{
+			get { return _suspendEnabled; }
+		}
+
+		#endregion
+
+		#region Save
+
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public void Save()
+		{
+			try
+			{
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						service.SaveOrderProtocol(new SaveProtocolRequest(_orderRef, this.ProtocolDetails, _notes));
+					});
+
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftProtocolFolder));
+
+				BeginNextWorklistItemOrExit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool SaveEnabled
+		{
+			get { return _saveEnabled; }
+		}
+
+		#endregion
+
+		#region Skip
+
+		public void Skip()
+		{
+			try
+			{
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
+						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim));
+					});
+
+				SkipCurrentItemAndBeginNextItemOrExit();
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		public bool SkipEnabled
+		{
+			get { return _protocolNextItem && this.ProtocolNextItemEnabled; }
+		}
+
+		#endregion
+
+		#region Close
+
+		public void Close()
+		{
+			try
+			{
+				Platform.GetService<IProtocollingWorkflowService>(
+					delegate(IProtocollingWorkflowService service)
+					{
+						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
+						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim));
+					});
+
+				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+				// discontinued with a new scheduled one replacing it
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+
+				this.Exit(ApplicationComponentExitCode.None);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Private methods
+
+		/// <summary>
+		/// Invalidates source folders appropriate to current <see cref="ProtocollingComponentMode"/>
+		/// </summary>
+		private void InvalidateSourceFolders()
+		{
+			if (_componentMode == ProtocollingComponentMode.Assign)
+			{
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeApprovedFolder));
+			}
+			else if (_componentMode == ProtocollingComponentMode.Edit)
+			{
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
+			}
+		}
+
+		private void BeginNextWorklistItemOrExit()
+		{
+			if (this.ProtocolNextItem)
+			{
+				_completedItems++;
+				LoadNextWorklistItem();
+			}
+			else
+			{
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+		}
+
+		private void SkipCurrentItemAndBeginNextItemOrExit()
+		{
+			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
+			// discontinued with a new scheduled one replacing it
+			DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
+
+			_skippedItems.Add(_worklistItem);
+			LoadNextWorklistItem();
+		}
+
+		private void LoadNextWorklistItem()
+		{
+			try
+			{
+				_worklistItem = GetNextWorklistItem();
+
+				if (_worklistItem != null)
+				{
+					_isInitialItem = false;
+
+					StartProtocollingWorklistItem();
+					UpdateChildComponents();
+				}
+				else
+				{
+					// TODO : Dialog "No more"
+					this.Exit(ApplicationComponentExitCode.None);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		private ReportingWorklistItem GetNextWorklistItem()
+		{
+			if (_worklistCache.Count == 0)
+			{
+				RefreshWorklistItemCache();
+			}
+
+			return _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+		}
+
+		private void RefreshWorklistItemCache()
+		{
+			try
+			{
+				Platform.GetService<IReportingWorkflowService>(
+					delegate(IReportingWorkflowService service)
+					{
+						QueryWorklistRequest request = _worklistRef != null
+							? new QueryWorklistRequest(_worklistRef, true, true)
+							: new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, true, true);
+
+						QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
+
+						foreach (ReportingWorklistItem item in response.WorklistItems)
+						{
+							if (WorklistItemWasPreviouslySkipped(item) == false)
+							{
+								_worklistCache.Push(item);
+							}
+						}
+					});
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		private bool WorklistItemWasPreviouslySkipped(ReportingWorklistItem item)
+		{
+			return CollectionUtils.Contains(_skippedItems,
+				delegate(ReportingWorklistItem skippedItem)
+				{
+					return skippedItem.AccessionNumber == item.AccessionNumber;
+				});
+		}
+
+		private void StartProtocollingWorklistItem()
+		{
+			// begin with validation turned off
+			ShowValidation(false);
+
+			Platform.GetService<IProtocollingWorkflowService>(
+				delegate(IProtocollingWorkflowService service)
+				{
+					bool shouldClaim = _componentMode == ProtocollingComponentMode.Assign;
+
+					StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef, shouldClaim, OrderNoteCategory.Protocol.Key));
+					_orderRef = response.OrderRef;
+
+					_notes = response.ProtocolNotes;
+
+					if (response.ProtocolClaimed == shouldClaim)
+					{
+						GetOperationEnablementResponse enablementResponse =
+							service.GetOperationEnablement(new GetOperationEnablementRequest<WorklistItemSummaryBase>(_worklistItem));
+
+						_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptOrderProtocol"];
+						_suspendEnabled = enablementResponse.OperationEnablementDictionary["SuspendOrderProtocol"];
+						_rejectEnabled = enablementResponse.OperationEnablementDictionary["RejectOrderProtocol"];
+						_submitForApprovalEnabled = enablementResponse.OperationEnablementDictionary["SubmitProtocolForApproval"];
+						_saveEnabled = enablementResponse.OperationEnablementDictionary["SaveOrderProtocol"];
+					}
+					else
+					{
+						SkipCurrentItemAndBeginNextItemOrExit();
+					}
+				});
+		}
+
+		private void UpdateChildComponents()
+		{
+			((BannerComponent)_bannerComponentHost.Component).HealthcareContext = _worklistItem;
+			((PriorReportComponent)_priorReportsComponentHost.Component).WorklistItem = _worklistItem;
+			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
+			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
+			((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).WorklistItem = _worklistItem;
+
+			// Load notes for new current item.
+			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
+
+			// Update title
+			this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+
+			NotifyPropertyChanged("StatusText");
+		}
+
+		private bool GetRejectOrSuspendReason(string title, out EnumValueInfo reason, out string additionalComments)
+		{
+			ProtocolReasonComponent component = new ProtocolReasonComponent();
+
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, component, title);
+
+			reason = component.Reason;
+			additionalComments = component.OtherReason;
+
+			return exitCode == ApplicationComponentExitCode.Accepted;
+		}
+
+		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
+		{
+			if (!string.IsNullOrEmpty(additionalComments))
+				return new OrderNoteDetail(OrderNoteCategory.Protocol.Key, additionalComments, null, null, null);
+			else
+				return null;
+		}
+
+		private List<ProtocolDetail> ProtocolDetails
+		{
+			get
+			{
+				return CollectionUtils.Map<ProtocolEditorProcedurePlanSummaryTableItem, ProtocolDetail>(
+					((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProcedurePlanSummaryTable.Items,
+					delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.ProtocolDetail; });
+			}
+		}
+
+		#endregion
+	}
+}

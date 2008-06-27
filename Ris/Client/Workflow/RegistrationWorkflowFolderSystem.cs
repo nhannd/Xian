@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new Folders.RegistrationSearchFolder();
+            return new Folders.Registration.RegistrationSearchFolder();
         }
     }
 }

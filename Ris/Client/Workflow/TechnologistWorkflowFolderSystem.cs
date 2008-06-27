@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-            return new Folders.TechnologistSearchFolder();
+            return new Folders.Technologist.SearchFolder();
         }
 	}
 }
