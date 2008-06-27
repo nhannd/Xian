@@ -484,7 +484,7 @@
     <value>General</value>
   </data>
   <data name="OrderNoteCategoryPrelimDiagnosis" xml:space="preserve">
-    <value>Prelim. Diagnosis</value>
+    <value>Preliminary Diagnosis</value>
   </data>
   <data name="OrderNoteCategoryProtocol" xml:space="preserve">
     <value>Protocol</value>

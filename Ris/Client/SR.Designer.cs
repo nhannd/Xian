@@ -1159,7 +1159,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Prelim. Diagnosis.
+        ///   Looks up a localized string similar to Preliminary Diagnosis.
         /// </summary>
         internal static string OrderNoteCategoryPrelimDiagnosis {
             get {
