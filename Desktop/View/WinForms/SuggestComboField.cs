@@ -92,7 +92,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// Gets the current query text (the text that is in the edit portion of the control).
         /// </summary>
         [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         public string QueryText
         {
             get { return _comboBox.Text; }
