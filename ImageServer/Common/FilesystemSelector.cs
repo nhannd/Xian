@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
@@ -51,16 +52,22 @@ namespace ClearCanvas.ImageServer.Common
         public Filesystem SelectFilesystem(DicomMessageBase msg)
         {
             ServerFilesystemInfo selectedFilesystem = null;
-            float selectedFreeBytes = 0;
 
             List<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>();
             list.AddRange(_monitor.GetFilesystems());
 
+            // sort, descending in freespace
             list.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
                            {
                                if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
                                {
-                                   return fs1.FreeBytes.CompareTo(fs2.FreeBytes);
+                                   if (fs1.HighwaterMarkMargin < fs2.HighwaterMarkMargin)
+                                       return 1;
+                                   else if (fs1.HighwaterMarkMargin > fs2.HighwaterMarkMargin)
+                                       return -1;
+                                   else
+                                       return 0;
+
                                }
                                else
                                {

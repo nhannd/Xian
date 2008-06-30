@@ -90,6 +90,16 @@ namespace ClearCanvas.ImageServer.Common
         {
             get { return _freeBytes; }
         }
+
+        public float HighwaterMarkMargin
+        {
+            get
+            {
+                return (_totalBytes*(float) _filesystem.HighWatermark) - (_totalBytes*UsedSpacePercentage);
+            }
+        }
+
+
         public float TotalBytes
         {
             get { return _totalBytes; }

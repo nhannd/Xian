@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageServer.Common
         #region Private Members
         private string _src;
         private string _dest;
-        private bool _created = false;
         #endregion
 
         public CopyDirectoryCommand(string src, string dest)

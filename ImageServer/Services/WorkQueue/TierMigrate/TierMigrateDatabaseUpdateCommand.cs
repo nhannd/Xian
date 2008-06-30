@@ -36,7 +36,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
-        static bool delay = false;
         protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
         {
             // update StorageFilesystem

@@ -51,7 +51,13 @@ namespace ClearCanvas.ImageServer.Common
     public class FilesystemMonitor : IDisposable
     {
         #region Private Members
+        private List<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
+
         private readonly Dictionary<ServerEntityKey, ServerFilesystemInfo> _filesystemList = new Dictionary<ServerEntityKey,ServerFilesystemInfo>();
+
+        // tier mapping table, sorted by tier order
+        private Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> _tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+
         private readonly IPersistentStore _store;
         private Thread _theThread = null;
         private bool _stop = false;
@@ -74,6 +80,23 @@ namespace ClearCanvas.ImageServer.Common
                 return _filesystemList.Values;
             }
         }
+
+        public IEnumerable<ServerFilesystemInfo> GetFilesystems(FilesystemTierEnum tier)
+        {
+            lock (_lock)
+            {
+                return _tierMap[tier];
+            }
+        }
+
+        public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> GetTierMap()
+        {
+            lock (_lock)
+            {
+                return _tierMap;
+            }
+        }
+
         public ServerFilesystemInfo GetFilesystemInfo(ServerEntityKey filesystemKey)
         {
             lock(_lock)
@@ -159,28 +182,105 @@ namespace ClearCanvas.ImageServer.Common
         {
             lock (_lock)
             {
-                using (IReadContext read = _store.OpenReadContext())
-                {
-                    IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
-                    FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
-                    IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
-
-                    foreach (Filesystem filesystem in filesystemList)
-                    {
-                        ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-                        _filesystemList.Add(filesystem.GetKey(), info);
-
-                        info.LoadFreeSpace();
-                    }
-                }
+                LoadFilesystems();
 
                 StartThread();
             }
         }
+
         public void ReLoad()
+        {
+            LoadFilesystems();
+        }
+        
+        public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
+        {
+            lock(_lock)
+            {
+                
+                Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> map =
+                    new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+
+                foreach(FilesystemTierEnum tier in _tiers)
+                {
+                    if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
+                        map.Add(tier, _tierMap[tier]);
+                }
+
+                return map;
+            }
+        }
+
+        /// <summary>
+        /// Gets the first filesystem in lower tier for storage purpose.
+        /// </summary>
+        /// <param name="filesystem">The current filesystem</param>
+        /// <returns></returns>
+        public ServerFilesystemInfo GetLowerTierFilesystemForStorage(ServerFilesystemInfo filesystem)
+        {
+            Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> lowerTier = FindLowerTierFilesystems(filesystem);
+            if (lowerTier == null || lowerTier.Count == 0)
+                return null;
+
+            foreach (List<ServerFilesystemInfo> listFS in lowerTier.Values)
+            {
+                // sort by free space size (descending)
+                listFS.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
+                               {
+                                   if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
+                                   {
+                                       if (fs1.HighwaterMarkMargin < fs2.HighwaterMarkMargin)
+                                           return 1;
+                                       else if (fs1.HighwaterMarkMargin > fs2.HighwaterMarkMargin)
+                                           return -1;
+                                       else
+                                           return 0;
+
+                                   }
+                                   else
+                                   {
+                                       return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
+                                   }
+                               });
+
+                // first one that's writable
+                ServerFilesystemInfo newFilesystem = listFS.Find(delegate(ServerFilesystemInfo fs)
+                                              {
+                                                  return fs.Writeable;
+                                              });
+
+                if (newFilesystem != null)
+                {
+                    return newFilesystem;
+                }
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region Private Methods
+
+
+        private void LoadFilesystems()
         {
             lock (_lock)
             {
+                _tiers = FilesystemTierEnum.GetAll();
+                
+                // sorted by enum values
+                _tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
+                           {
+                               return tier1.Enum.CompareTo(tier2.Enum);
+                           });
+
+                _tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+                foreach (FilesystemTierEnum tier in _tiers)
+                {
+                    _tierMap.Add(tier, new List<ServerFilesystemInfo>());
+                }
+
                 using (IReadContext read = _store.OpenReadContext())
                 {
                     IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
@@ -190,60 +290,24 @@ namespace ClearCanvas.ImageServer.Common
                     foreach (Filesystem filesystem in filesystemList)
                     {
                         if (_filesystemList.ContainsKey(filesystem.GetKey()))
+                        {
                             _filesystemList[filesystem.GetKey()].Filesystem = filesystem;
+                            _tierMap[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.GetKey()]);
+                        }
                         else
                         {
                             ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
                             _filesystemList.Add(filesystem.GetKey(), info);
-
+                            _tierMap[filesystem.FilesystemTierEnum].Add(info);
                             info.LoadFreeSpace();
                         }
+
+
                     }
                 }
+
             }
         }
-
-        public List<ServerFilesystemInfo> FindNextTierFilesystems(ServerFilesystemInfo filesystem)
-        {
-            FilesystemTierEnum currTier = filesystem.Filesystem.FilesystemTierEnum;
-            FilesystemTierEnum newTier = currTier;
-
-            List<FilesystemTierEnum> listTiers = FilesystemTierEnum.GetAll();
-            FilesystemTierEnum[] tiers = new FilesystemTierEnum[listTiers.Count];
-            listTiers.CopyTo(tiers);
-            Array.Sort(tiers, delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
-                           {
-                               return tier1.Enum.CompareTo(tier2.Enum);
-                           });
-
-            foreach (FilesystemTierEnum tier in tiers)
-            {
-                if (tier.Enum > newTier.Enum)
-                {
-                    newTier = tier;
-                    break;
-                }
-            }
-
-            List<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>();
-
-            if (newTier != currTier)
-            {
-                foreach (ServerFilesystemInfo fs in GetFilesystems())
-                {
-                    if (fs.Filesystem.FilesystemTierEnum == newTier)
-                    {
-                        list.Add(fs);
-                    }
-                }
-            }
-
-            return list;
-        }
-
-        #endregion
-
-        #region Private Methods
 
 
         private void StartThread()
