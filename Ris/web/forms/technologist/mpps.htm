@@ -43,36 +43,39 @@
 		}
 		function selectPage(mpps)
 		{
-				var modalityName = mpps.ModalityProcedureSteps[0].Modality.Name;
-				
-				if(modalityName == "CT")
-					return "ct-mpps.htm";
+			if(mpps.Description.indexOf("Ultrasound Obstetrical") > -1)
+				return "ob-us-mpps.htm";
+	
+			var modalityName = mpps.ModalityProcedureSteps[0].Modality.Name;
+			
+			if(modalityName == "CT")
+				return "ct-mpps.htm";
 
-				if(modalityName == "MRI")
-					return "mri-mpps.htm";
+			if(modalityName == "MRI")
+				return "mri-mpps.htm";
 
-				if(modalityName == "PET")
-					return "petct-mpps.htm";
+			if(modalityName == "PET")
+				return "petct-mpps.htm";
 
-				if(modalityName == "Angiography" || modalityName == "Interventional" || modalityName == "Neuro Angiography")
-					return "angio-interv-mpps.htm";
+			if(modalityName == "Angiography" || modalityName == "Interventional" || modalityName == "Neuro Angiography")
+				return "angio-interv-mpps.htm";
 
-				if(modalityName == "General Radiography" || modalityName == "GI/GU")
-					return "cr-mpps.htm";
+			if(modalityName == "General Radiography" || modalityName == "GI/GU")
+				return "cr-mpps.htm";
 
-				if(modalityName == "Breast Imaging")
-					return "mammo-mpps.htm";
+			if(modalityName == "Breast Imaging")
+				return "mammo-mpps.htm";
 
-				if(modalityName == "Ultrasound" || modalityName == "Prostate Centre")
-					return "ultrasound-mpps.htm";
+			if(modalityName == "Ultrasound" || modalityName == "Prostate Centre")
+				return "ultrasound-mpps.htm";
 
-				if(modalityName == "CEOU OB" || modalityName == "Hydro Gyn")
-					return "ob-us-mpps.htm";
+			if(modalityName == "CEOU OB" || modalityName == "Hydro Gyn")
+				return "ob-us-mpps.htm";
 
-				if(modalityName == "Nuclear Medicine")
-					return "nucmed-mpps.htm";
+			if(modalityName == "Nuclear Medicine")
+				return "nucmed-mpps.htm";
 
-				return "about:blank";
+			return "about:blank";
 		}
 		</script>
 	</head>
