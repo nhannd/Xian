@@ -14,6 +14,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		Skipped
 	}
 
+	/// <summary>
+	/// Manages retrieval of worklist items for the <see cref="ReportingComponent"/>
+	/// </summary>
 	public class ReportingComponentWorklistItemManager
 	{
 		/// <summary>
@@ -63,6 +66,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Constructor
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="worklistItem">The initial worklist item for the <see cref="ReportingComponent"/></param>
+		/// <param name="folderName">Folder system name, displayed in status text</param>
+		/// <param name="worklistRef">An <see cref="EntityRef"/> for the folder from which additional worklist items should be loaded.</param>
 		public ReportingComponentWorklistItemManager(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef)
 		{
 			_worklistItem = worklistItem;
@@ -78,11 +87,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		/// <summary>
+		/// The current <see cref="ReportingWorklistItem"/>
+		/// </summary>
 		public ReportingWorklistItem WorklistItem
 		{
 			get { return _worklistItem; }
 		}
 
+		/// <summary>
+		/// Used to request the next <see cref="ReportingWorklistItem"/> to be loaded.
+		/// </summary>
+		/// <param name="result">Indicates whether previous item was completed or skipped.</param>
 		public void ProceedToNextWorklistItem(WorklistItemCompletedResult result)
 		{
 			if (result == WorklistItemCompletedResult.Completed)
@@ -101,6 +117,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Fired when the next worklist item is available.
+		/// </summary>
 		public event EventHandler WorklistItemChanged
 		{
 			add { _worklistItemChanged += value; }
@@ -119,6 +138,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Presentation Model
 
+		/// <summary>
+		/// A string indicating the name of the source folder system and counts of available, completed and skipped items.
+		/// </summary>
 		public string StatusText
 		{
 			get
