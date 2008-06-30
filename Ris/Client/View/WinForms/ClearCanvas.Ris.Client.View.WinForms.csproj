@@ -341,6 +341,11 @@
     <Compile Include="SmartTimeField.Designer.cs">
       <DependentUpon>SmartTimeField.cs</DependentUpon>
     </Compile>
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StaffDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -597,6 +602,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\LogoLarge.PNG" />
+    <EmbeddedResource Include="Resources\Splash.png" />
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
