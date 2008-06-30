@@ -65,14 +65,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._userName = new System.Windows.Forms.TextBox();
 			this._password = new System.Windows.Forms.TextBox();
 			this._facility = new System.Windows.Forms.ComboBox();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
+			this.pictureBox1 = new System.Windows.Forms.PictureBox();
+			this.pictureBox2 = new System.Windows.Forms.PictureBox();
+			this.pictureBox3 = new System.Windows.Forms.PictureBox();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(587, 352);
+			this._cancelButton.Location = new System.Drawing.Point(577, 317);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -84,7 +87,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _loginButton
 			// 
 			this._loginButton.Enabled = false;
-			this._loginButton.Location = new System.Drawing.Point(587, 312);
+			this._loginButton.Location = new System.Drawing.Point(577, 291);
 			this._loginButton.Margin = new System.Windows.Forms.Padding(2);
 			this._loginButton.Name = "_loginButton";
 			this._loginButton.Size = new System.Drawing.Size(75, 23);
@@ -95,7 +98,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _userName
 			// 
-			this._userName.Location = new System.Drawing.Point(391, 314);
+			this._userName.Location = new System.Drawing.Point(446, 292);
 			this._userName.Name = "_userName";
 			this._userName.Size = new System.Drawing.Size(115, 20);
 			this._userName.TabIndex = 1;
@@ -103,7 +106,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _password
 			// 
-			this._password.Location = new System.Drawing.Point(391, 354);
+			this._password.Location = new System.Drawing.Point(446, 318);
 			this._password.Name = "_password";
 			this._password.PasswordChar = '*';
 			this._password.Size = new System.Drawing.Size(115, 20);
@@ -114,44 +117,44 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._facility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._facility.FormattingEnabled = true;
-			this._facility.Location = new System.Drawing.Point(511, 353);
+			this._facility.Location = new System.Drawing.Point(446, 344);
 			this._facility.Name = "_facility";
 			this._facility.Size = new System.Drawing.Size(47, 21);
 			this._facility.TabIndex = 5;
 			this._facility.SelectedValueChanged += new System.EventHandler(this._facility_SelectedValueChanged);
 			// 
-			// label1
+			// pictureBox1
 			// 
-			this.label1.AutoSize = true;
-			this.label1.BackColor = System.Drawing.Color.Transparent;
-			this.label1.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.label1.Location = new System.Drawing.Point(388, 298);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(29, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "User";
+			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
+			this.pictureBox1.BackgroundImage = global::ClearCanvas.Ris.Client.View.WinForms.SR.UserText;
+			this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pictureBox1.Location = new System.Drawing.Point(406, 291);
+			this.pictureBox1.Name = "pictureBox1";
+			this.pictureBox1.Size = new System.Drawing.Size(37, 21);
+			this.pictureBox1.TabIndex = 8;
+			this.pictureBox1.TabStop = false;
 			// 
-			// label2
+			// pictureBox2
 			// 
-			this.label2.AutoSize = true;
-			this.label2.BackColor = System.Drawing.Color.Transparent;
-			this.label2.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.label2.Location = new System.Drawing.Point(508, 337);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(39, 13);
-			this.label2.TabIndex = 4;
-			this.label2.Text = "Facility";
+			this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
+			this.pictureBox2.BackgroundImage = global::ClearCanvas.Ris.Client.View.WinForms.SR.PasswordText;
+			this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pictureBox2.Location = new System.Drawing.Point(367, 319);
+			this.pictureBox2.Name = "pictureBox2";
+			this.pictureBox2.Size = new System.Drawing.Size(76, 18);
+			this.pictureBox2.TabIndex = 9;
+			this.pictureBox2.TabStop = false;
 			// 
-			// label3
+			// pictureBox3
 			// 
-			this.label3.AutoSize = true;
-			this.label3.BackColor = System.Drawing.Color.Transparent;
-			this.label3.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.label3.Location = new System.Drawing.Point(388, 338);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(53, 13);
-			this.label3.TabIndex = 2;
-			this.label3.Text = "Password";
+			this.pictureBox3.BackColor = System.Drawing.Color.Transparent;
+			this.pictureBox3.BackgroundImage = global::ClearCanvas.Ris.Client.View.WinForms.SR.FacilityText;
+			this.pictureBox3.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this.pictureBox3.Location = new System.Drawing.Point(393, 346);
+			this.pictureBox3.Name = "pictureBox3";
+			this.pictureBox3.Size = new System.Drawing.Size(50, 18);
+			this.pictureBox3.TabIndex = 10;
+			this.pictureBox3.TabStop = false;
 			// 
 			// LoginForm
 			// 
@@ -160,9 +163,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::ClearCanvas.Ris.Client.View.WinForms.SR.Splash;
 			this.ClientSize = new System.Drawing.Size(673, 385);
-			this.Controls.Add(this.label3);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.pictureBox3);
+			this.Controls.Add(this.pictureBox2);
+			this.Controls.Add(this.pictureBox1);
 			this.Controls.Add(this._facility);
 			this.Controls.Add(this._password);
 			this.Controls.Add(this._userName);
@@ -176,6 +179,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ClearCanvas Login";
 			this.Load += new System.EventHandler(this.LoginForm_Load);
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -187,9 +193,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.Button _loginButton;
         private System.Windows.Forms.TextBox _userName;
         private System.Windows.Forms.TextBox _password;
-        private System.Windows.Forms.ComboBox _facility;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.ComboBox _facility;
+		private System.Windows.Forms.PictureBox pictureBox1;
+		private System.Windows.Forms.PictureBox pictureBox2;
+		private System.Windows.Forms.PictureBox pictureBox3;
     }
 }
