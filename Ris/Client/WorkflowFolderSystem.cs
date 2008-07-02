@@ -206,12 +206,13 @@ namespace ClearCanvas.Ris.Client
 		public void SetContext(IFolderSystemContext context)
 		{
 			_context = context;
-		}
-
-		public void Initialize()
-		{
 			_context.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 			_context.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
+		}
+
+		public virtual void Initialize()
+		{
+			// nothing to do
 		}
 
 		public IDesktopWindow DesktopWindow

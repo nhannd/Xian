@@ -33,6 +33,18 @@ namespace ClearCanvas.Ris.Client
 		protected WorklistFolderSystem(string title)
 			: base(title)
 		{
+		}
+
+		///<summary>
+		///Initialize the folder system.
+		///</summary>
+		///<remarks>
+		/// This method will be called after <see cref="M:ClearCanvas.Ris.Client.IFolderSystem.SetContext(ClearCanvas.Ris.Client.IFolderSystemContext)" /> has been called. 
+		///</remarks>
+		public override void Initialize()
+		{
+			base.Initialize();
+
 			InitializeFolders(new TFolderExtensionPoint());
 		}
 
