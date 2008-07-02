@@ -140,10 +140,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			if (_toolbarModel != null)
 			{
-				ToolStripBuilder.BuildToolbar(
-					_toolStrip.Items,
-					_toolbarModel.ChildNodes,
-					ToolStripItemDisplayStyle.Image);
+				ToolStripBuilder.BuildToolbar(_toolStrip.Items,_toolbarModel.ChildNodes);
 			}
 		}
 
