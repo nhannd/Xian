@@ -216,6 +216,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 					// no previously associated staff
 				}
 
+				user.AuthorityGroups.Clear();
+
 				broker.Delete(user);
 				PersistenceContext.SynchState();
 				return new DeleteUserResponse();
