@@ -66,10 +66,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._visitPage = new System.Windows.Forms.TabPage();
 			this._reportPage = new System.Windows.Forms.TabPage();
 			this._documentPage = new System.Windows.Forms.TabPage();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._diagnosticService = new System.Windows.Forms.Label();
+			this._accessionNumber = new System.Windows.Forms.Label();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
 			this.tabControl1.SuspendLayout();
+			this.flowLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _orderList
@@ -96,22 +100,26 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.AutoScroll = true;
+			this.splitContainer1.Panel2.Controls.Add(this.flowLayoutPanel1);
 			this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
 			this.splitContainer1.Size = new System.Drawing.Size(982, 586);
 			this.splitContainer1.SplitterDistance = 465;
 			this.splitContainer1.TabIndex = 1;
+			this.splitContainer1.TabStop = false;
 			// 
 			// tabControl1
 			// 
+			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.tabControl1.Controls.Add(this._orderPage);
 			this.tabControl1.Controls.Add(this._visitPage);
 			this.tabControl1.Controls.Add(this._reportPage);
 			this.tabControl1.Controls.Add(this._documentPage);
-			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tabControl1.Location = new System.Drawing.Point(0, 0);
+			this.tabControl1.Location = new System.Drawing.Point(0, 68);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(513, 586);
+			this.tabControl1.Size = new System.Drawing.Size(513, 518);
 			this.tabControl1.TabIndex = 0;
 			// 
 			// _orderPage
@@ -119,7 +127,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderPage.Location = new System.Drawing.Point(4, 22);
 			this._orderPage.Name = "_orderPage";
 			this._orderPage.Padding = new System.Windows.Forms.Padding(3);
-			this._orderPage.Size = new System.Drawing.Size(505, 560);
+			this._orderPage.Size = new System.Drawing.Size(505, 492);
 			this._orderPage.TabIndex = 0;
 			this._orderPage.Text = "Order Details";
 			this._orderPage.UseVisualStyleBackColor = true;
@@ -154,6 +162,39 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._documentPage.Text = "Attachments";
 			this._documentPage.UseVisualStyleBackColor = true;
 			// 
+			// flowLayoutPanel1
+			// 
+			this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.flowLayoutPanel1.BackColor = System.Drawing.SystemColors.Control;
+			this.flowLayoutPanel1.Controls.Add(this._diagnosticService);
+			this.flowLayoutPanel1.Controls.Add(this._accessionNumber);
+			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 4);
+			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(505, 58);
+			this.flowLayoutPanel1.TabIndex = 1;
+			// 
+			// _diagnosticService
+			// 
+			this._diagnosticService.AutoSize = true;
+			this._diagnosticService.Font = new System.Drawing.Font("Arial", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._diagnosticService.Location = new System.Drawing.Point(3, 0);
+			this._diagnosticService.Name = "_diagnosticService";
+			this._diagnosticService.Size = new System.Drawing.Size(227, 29);
+			this._diagnosticService.TabIndex = 0;
+			this._diagnosticService.Text = "Diagnostic Service";
+			// 
+			// _accessionNumber
+			// 
+			this._accessionNumber.AutoSize = true;
+			this._accessionNumber.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._accessionNumber.Location = new System.Drawing.Point(3, 29);
+			this._accessionNumber.Name = "_accessionNumber";
+			this._accessionNumber.Size = new System.Drawing.Size(154, 19);
+			this._accessionNumber.TabIndex = 1;
+			this._accessionNumber.Text = "Accession Number";
+			// 
 			// BiographyOrderHistoryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -165,6 +206,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
+			this.flowLayoutPanel1.ResumeLayout(false);
+			this.flowLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -178,5 +221,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TabPage _visitPage;
 		private System.Windows.Forms.TabPage _documentPage;
 		private System.Windows.Forms.TabPage _reportPage;
+		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.Label _diagnosticService;
+		private System.Windows.Forms.Label _accessionNumber;
     }
 }

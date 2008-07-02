@@ -160,6 +160,16 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderDocumentComponentHost; }
 		}
 
+		public string DiagnosticService
+		{
+			get { return _selectedOrder == null ? null : _selectedOrder.DiagnosticService.Name; }
+		}
+
+		public string AccessionNumber
+		{
+			get { return _selectedOrder == null ? null : _selectedOrder.AccessionNumber; }
+		}
+
 		#endregion
 
 		private void OrderSelectionChanged()
