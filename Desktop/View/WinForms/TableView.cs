@@ -137,7 +137,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-		[Obsolete("Toolstrip item display style is controlled ToolStripBuilder.")]
+		[Obsolete("Toolstrip item display style is controlled by ToolStripBuilder.")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
 		{
@@ -188,7 +188,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Public Properties and Events
 
-		[Obsolete("Toolstrip item alignment is controlled ToolStripBuilder.")]
+		[Obsolete("Toolstrip item alignment is controlled by ToolStripBuilder.")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public RightToLeft ToolStripRightToLeft
         {

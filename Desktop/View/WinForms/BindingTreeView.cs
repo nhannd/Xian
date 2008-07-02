@@ -136,7 +136,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-		[Obsolete("Toolstrip item display style is controlled ToolStripBuilder.")]
+		[Obsolete("Toolstrip item display style is controlled by ToolStripBuilder.")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public RightToLeft ToolStripRightToLeft
         {
@@ -278,7 +278,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _treeCtrl.LineColor = value; }
 		}
 
-		[Obsolete("Toolstrip item display style is controlled ToolStripBuilder.")]
+		[Obsolete("Toolstrip item display style is controlled by ToolStripBuilder.")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
