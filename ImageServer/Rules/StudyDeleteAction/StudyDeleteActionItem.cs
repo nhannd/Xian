@@ -67,16 +67,7 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
             scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
 
-            DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
-            if (scheduledTime < preferredScheduledTime)
-            {
-                Platform.Log(LogLevel.Warn,
-                             "Study Delete: calculated scheduled delete time is {0}. ==> preferred time is {1}",
-                             scheduledTime, preferredScheduledTime);
-                scheduledTime = preferredScheduledTime;
-            }
-
-            Platform.Log(LogLevel.Debug, "Study Delete: This study will be deleted on {0}", scheduledTime);
+            Platform.Log(LogLevel.Debug, "Study Delete Rule: This study will be eligible for deletion on {0}", scheduledTime);
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
                                                  scheduledTime, null));

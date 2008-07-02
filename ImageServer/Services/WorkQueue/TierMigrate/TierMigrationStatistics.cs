@@ -35,6 +35,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
     internal class TierMigrationAverageStatistics : StatisticsSet
     {
+        public TierMigrationAverageStatistics()
+            :base("TierMigration", "Tier Migration Moving Average")
+        {
+            
+        }
+
+        public AverageByteCountStatistics AverageStudySize
+        {
+            get
+            {
+                if (this["AverageStudySize"] == null)
+                    this["AverageStudySize"] = new AverageByteCountStatistics("AverageStudySize");
+
+                return (this["AverageStudySize"] as AverageByteCountStatistics);
+            }
+            set { this["AverageStudySize"] = value; }
+        }
         public AverageRateStatistics AverageProcessSpeed
         {
             get
@@ -45,6 +62,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 return (this["AverageProcessSpeed"] as AverageRateStatistics);
             }
             set { this["AverageProcessSpeed"] = value; }
+        }
+
+        public AverageTimeSpanStatistics AverageFileMoveTime
+        {
+            get
+            {
+                if (this["AverageFileMoveTime"] == null)
+                    this["AverageFileMoveTime"] = new AverageTimeSpanStatistics("AverageFileMoveTime");
+
+                return (this["AverageFileMoveTime"] as AverageTimeSpanStatistics);
+            }
+            set { this["AverageFileMoveTime"] = value; }
         }
 
         public AverageTimeSpanStatistics AverageDBUpdateTime

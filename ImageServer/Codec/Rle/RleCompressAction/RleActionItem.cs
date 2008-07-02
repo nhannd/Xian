@@ -72,16 +72,7 @@ namespace ClearCanvas.ImageServer.Codec.Rle.RleCompressAction
 			}
 
 			scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
-			DateTime preferredScheduledTime = GetPreferredScheduledTime();
-
-			if (scheduledTime < preferredScheduledTime)
-			{
-				Platform.Log(LogLevel.Warn,
-							 "RLE Compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
-							 scheduledTime, preferredScheduledTime);
-				scheduledTime = preferredScheduledTime;
-			}
-
+			
 			XmlDocument doc = new XmlDocument();
 
 			XmlElement element = doc.CreateElement("compress");

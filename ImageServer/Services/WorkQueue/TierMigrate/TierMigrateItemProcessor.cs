@@ -16,12 +16,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
     {
         #region Private static members
         private static int _sessionStudiesMigrate = 0;
-        private static readonly TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
+        private static TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
         private static readonly FilesystemMonitor _monitor = new FilesystemMonitor();
         #endregion
 
         #region Private Members
-        private readonly StatisticsSet _statistics = new StatisticsSet("TierMigration");
+        private StatisticsSet _statistics = new StatisticsSet("TierMigration");
         #endregion
 
         static TierMigrateItemProcessor()
@@ -121,6 +121,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
             ServerCommandProcessor _processor;
             TimeSpanStatistics dbUpdateTime;
+            TimeSpanStatistics fileCopyTime;
+
             using (_processor = new ServerCommandProcessor("Migrate Study"))
             {
                 TierMigrationContext context = new TierMigrationContext();
@@ -140,7 +142,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 {
                     throw new ApplicationException(_processor.FailureReason);
                 }
-
+                fileCopyTime = moveStudyFolderCommand.Statistics;
                 dbUpdateTime = updateDBCommand.Statistics;
             }
 
@@ -152,10 +154,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
            
             _averageStatisics.AverageProcessSpeed.AddSample(stat.ProcessSpeed);
             _averageStatisics.AverageDBUpdateTime.AddSample(dbUpdateTime);
+            _averageStatisics.AverageFileMoveTime.AddSample(fileCopyTime);
+            _averageStatisics.AverageStudySize.AddSample(size);
             _statistics.AddSubStats(stat);
 
             _sessionStudiesMigrate++;
 
+            if (_sessionStudiesMigrate%5==0)
+            {
+                StatisticsLogger.Log(LogLevel.Info, _averageStatisics);
+                _averageStatisics = new TierMigrationAverageStatistics();
+            }
+            
                 
         }
 

@@ -146,7 +146,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         /// <param name="candidateList">The list of candidate studies for deleting.</param>
         private void ProcessStudyMigrateCandidates(IList<FilesystemQueue> candidateList)
         {
-            Platform.Log(LogLevel.Debug, "Scheduling tier-migration for {0} studies...", candidateList.Count);
+            Platform.CheckForNullReference(candidateList, "candidateList");
+
+            if (candidateList.Count>0)
+                Platform.Log(LogLevel.Debug, "Scheduling tier-migration for {0} studies...", candidateList.Count);
         
             foreach (FilesystemQueue queueItem in candidateList)
             {
@@ -198,7 +201,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                         if (_studiesMigrated % 10 == 0)
                         {
                             _scheduledMigrateTime.Value.AddSeconds(15);
-                            Thread.Sleep(200); // Since they are potentially let other processes have a chance to talk to the database
+                            Thread.Sleep(200); // The list may be long, let other processes have a chance to talk to the database
                         }
                             
                         

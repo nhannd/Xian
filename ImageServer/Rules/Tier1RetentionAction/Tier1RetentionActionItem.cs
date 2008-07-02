@@ -68,16 +68,7 @@ namespace ClearCanvas.ImageServer.Rules.Tier1RetentionAction
 
             scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
 
-            DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
-            if (scheduledTime < preferredScheduledTime)
-            {
-                Platform.Log(LogLevel.Warn,
-                             "Tier1 Retention: calculated scheduled migration time is {0}. ==> preferred time is {1}",
-                             scheduledTime, preferredScheduledTime);
-                scheduledTime = preferredScheduledTime;
-            }
-
-            Platform.Log(LogLevel.Debug, "Tier1 Retention: This study will be migrated off Tier 1 on {0}",
+            Platform.Log(LogLevel.Debug, "Tier1 Retention Rule: This study will be eligible for tier-migration on {0}",
                          scheduledTime);
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,

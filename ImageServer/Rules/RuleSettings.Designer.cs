@@ -8,38 +8,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System.CodeDom.Compiler;
-using System.Configuration;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-
-namespace ClearCanvas.ImageServer.Rules
-{
-    [CompilerGenerated()]
-    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class RuleSettings : ApplicationSettingsBase
-    {
-        private static RuleSettings defaultInstance = ((RuleSettings) (Synchronized(new RuleSettings())));
-
-        public static RuleSettings Default
-        {
-            get { return defaultInstance; }
-        }
-
-        [ApplicationScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("5")]
-        public int MIN_RETENTION_MINUTES
-        {
-            get { return ((int) (this["MIN_RETENTION_MINUTES"])); }
-        }
-
-        [ApplicationScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("5")]
-        public int MIN_COMPRESSION_DELAY_MINUTES
-        {
-            get { return ((int) (this["MIN_COMPRESSION_DELAY_MINUTES"])); }
+namespace ClearCanvas.ImageServer.Rules {
+    
+    
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    internal sealed partial class RuleSettings : global::System.Configuration.ApplicationSettingsBase {
+        
+        private static RuleSettings defaultInstance = ((RuleSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new RuleSettings())));
+        
+        public static RuleSettings Default {
+            get {
+                return defaultInstance;
+            }
         }
     }
 }

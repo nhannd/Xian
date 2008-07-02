@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
         }
 
         public OnlineRetentionActionItem(int time, TimeUnit unit, Expression exprScheduledTime)
-            : base("Study Delete action")
+            : base("Online Retention action")
         {
             _offsetTime = time;
             _units = unit;
@@ -67,17 +67,8 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
             }
 
             scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
-            DateTime preferredScheduledTime = Platform.Time.AddMinutes(RuleSettings.Default.MIN_RETENTION_MINUTES);
-
-            if (scheduledTime < preferredScheduledTime)
-            {
-                Platform.Log(LogLevel.Warn,
-                             "Online Retention: calculated scheduled delete time is {0}. ==> preferred time is {1}",
-                             scheduledTime, preferredScheduledTime);
-                scheduledTime = preferredScheduledTime;
-            }
-
-            Platform.Log(LogLevel.Debug, "Online Retention: This study will be purged on {0}", scheduledTime);
+            
+            Platform.Log(LogLevel.Debug, "Online Retention Rule: This study will be eligible for purge on {0}", scheduledTime);
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
                                                  scheduledTime, null));

@@ -75,16 +75,6 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
 			}
 
 			scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
-			DateTime preferredScheduledTime = GetPreferredScheduledTime();
-
-			if (scheduledTime < preferredScheduledTime)
-			{
-				Platform.Log(LogLevel.Warn,
-							 "Jpeg 2000 Lossy compression Scheduling: calculated scheduled compression time is {0}. ==> preferred time is {1}",
-							 scheduledTime, preferredScheduledTime);
-				scheduledTime = preferredScheduledTime;
-			}
-
 			XmlDocument doc = new XmlDocument();
 
 			XmlElement element = doc.CreateElement("compress");
