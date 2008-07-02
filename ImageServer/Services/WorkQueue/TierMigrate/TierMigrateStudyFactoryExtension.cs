@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -13,8 +10,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
     public class TierMigrateStudyFactoryExtension  : IWorkQueueProcessorFactory
     {
         #region Constructors
-        public TierMigrateStudyFactoryExtension()
-        { }
         #endregion
 
         #region IWorkQueueProcessorFactory Members

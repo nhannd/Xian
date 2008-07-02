@@ -1,9 +1,5 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -36,7 +32,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
-        protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
+        protected override void OnExecute(IUpdateContext updateContext)
         {
             // update StorageFilesystem
             if (Context != null)

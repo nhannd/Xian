@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
@@ -10,7 +7,6 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
@@ -18,13 +14,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
     
     class TierMigrateItemProcessor : BaseItemProcessor
     {
-        private static int _SessionStudiesMigrate = 0;
-        private static TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
-        private StatisticsSet _statistics = new StatisticsSet("TierMigration");
+        #region Private static members
+        private static int _sessionStudiesMigrate = 0;
+        private static readonly TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
+        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor();
+        #endregion
 
-        static FilesystemMonitor _monitor = new FilesystemMonitor();
+        #region Private Members
+        private readonly StatisticsSet _statistics = new StatisticsSet("TierMigration");
+        #endregion
 
-        
         static TierMigrateItemProcessor()
         {
             _monitor.Load();
@@ -52,7 +51,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                         parms.FailureCount = item.FailureCount + 1;
                         parms.FailureDescription = failureDescription;
 
-                        WorkQueueSettings settings = WorkQueueSettings.Default;
                         Platform.Log(LogLevel.Error,
                                      "Failing {0} WorkQueue entry ({1}): {2}", 
                                      item.WorkQueueTypeEnum, 
@@ -74,9 +72,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
 
         }
-
-
-        
 
         protected override void ProcessItem(Model.WorkQueue item)
         {
@@ -125,7 +120,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
 
             ServerCommandProcessor _processor;
-            TimeSpanStatistics copyFileTime;
             TimeSpanStatistics dbUpdateTime;
             using (_processor = new ServerCommandProcessor("Migrate Study"))
             {
@@ -147,7 +141,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     throw new ApplicationException(_processor.FailureReason);
                 }
 
-                copyFileTime = moveStudyFolderCommand.Statistics;
                 dbUpdateTime = updateDBCommand.Statistics;
             }
 
@@ -161,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             _averageStatisics.AverageDBUpdateTime.AddSample(dbUpdateTime);
             _statistics.AddSubStats(stat);
 
-            _SessionStudiesMigrate++;
+            _sessionStudiesMigrate++;
 
                 
         }
