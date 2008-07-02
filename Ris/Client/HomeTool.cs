@@ -70,26 +70,25 @@ namespace ClearCanvas.Ris.Client
 	public abstract class WorklistPreviewHomeTool<TFolderSystemToolExtensionPoint> : HomeTool
 		where TFolderSystemToolExtensionPoint : ExtensionPoint<IFolderSystem>, new()
 	{
-		private readonly List<IFolderSystem> _folderSystems;
-
-		public WorklistPreviewHomeTool()
-		{
-			// Find all the folder systems
-			_folderSystems = CollectionUtils.Cast<IFolderSystem>(new TFolderSystemToolExtensionPoint().CreateExtensions());
-		}
-
 		protected override IApplicationComponent  CreateComponent()
 		{
-			if (!this.HasFolderSystems)
+			List<IFolderSystem> folderSystems = GetFolderSystems();
+			if (folderSystems.Count == 0)
 				return null;
 
+			// Find all the folder systems
 			WorklistItemPreviewComponent previewComponent = new WorklistItemPreviewComponent();
-			return new HomePageContainer(_folderSystems, previewComponent);
+			return new HomePageContainer(folderSystems, previewComponent);
 		}
 
 		protected bool HasFolderSystems
 		{
-			get { return _folderSystems.Count > 0; }
+			get { return GetFolderSystems().Count > 0; }
+		}
+
+		private List<IFolderSystem> GetFolderSystems()
+		{
+			return CollectionUtils.Cast<IFolderSystem>(new TFolderSystemToolExtensionPoint().CreateExtensions());
 		}
 	}
 }

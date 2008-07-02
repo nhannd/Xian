@@ -98,6 +98,14 @@ namespace ClearCanvas.Ris.Client
 		void SetContext(IFolderSystemContext context);
 
 		/// <summary>
+		/// Initialize the folder system.
+		/// </summary>
+		/// <remarks>
+		/// This method will be called after <see cref="SetContext"/> has been called, 
+		/// </remarks>
+		void Initialize();
+
+		/// <summary>
 		/// Invalidates all folders in this folder system.
 		/// </summary>
 		void InvalidateFolders();

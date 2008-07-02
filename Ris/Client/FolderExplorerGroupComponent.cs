@@ -182,6 +182,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
 					folderSystem.SetContext(new FolderSystemContext(this, explorer, contentComponent));
+					folderSystem.Initialize();
 					_folderExplorerComponents.Add(folderSystem, explorer);
 
 					StackTabPage thisPage = new StackTabPage(
