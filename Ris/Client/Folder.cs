@@ -300,15 +300,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets the menu model for the context menu that should be displayed when the user right-clicks on the folder.
-		/// </summary>
-		public ActionModelNode MenuModel
-		{
-			get { return _menuModel; }
-			protected set { _menuModel = value; }
-		}
-
-		/// <summary>
 		/// Gets the open/close state of the current folder
 		/// </summary>
 		public bool IsOpen

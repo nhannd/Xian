@@ -9,6 +9,17 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
+	public interface IFolderExplorerGroupToolContext : IToolContext
+	{
+		IDesktopWindow DesktopWindow { get; }
+		IFolderSystem SelectedFolderSystem { get; }
+	}
+
+	[ExtensionPoint]
+	public class FolderExplorerGroupToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
 	/// <summary>
 	/// Extension point for views onto <see cref="FolderExplorerGroupComponent"/>
 	/// </summary>
@@ -109,6 +120,34 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		#region FolderExplorerGroupToolContext
+
+		class FolderExplorerGroupToolContext : IFolderExplorerGroupToolContext
+		{
+			private readonly FolderExplorerGroupComponent _owner;
+
+			public FolderExplorerGroupToolContext(FolderExplorerGroupComponent owner)
+			{
+				_owner = owner;
+			}
+
+			#region IFolderExplorerGroupToolContext Members
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _owner.Host.DesktopWindow; }
+			}
+
+			public IFolderSystem SelectedFolderSystem
+			{
+				get { return _owner._selectedFolderExplorer.FolderSystem; }
+			}
+
+			#endregion
+		}
+
+		#endregion
+
 		private readonly StackTabComponentContainer _stackTabComponent;
 		private ChildComponentHost _stackTabComponentContainerHost;
 
@@ -118,6 +157,8 @@ namespace ClearCanvas.Ris.Client
 
 		private event EventHandler _selectedFolderSystemChanged;
 		private event EventHandler _selectedFolderChanged;
+
+		private ToolSet _toolSet;
 
 		/// <summary>
 		/// Constructor
@@ -174,11 +215,20 @@ namespace ClearCanvas.Ris.Client
 					_folderExplorerComponents[folderSystem].SelectedFolderChanged += OnSelectedFolderChanged;
 				});
 
+
+			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
+
 			base.Start();
 		}
 
 		public override void Stop()
 		{
+			if (_toolSet != null)
+			{
+				_toolSet.Dispose();
+				_toolSet = null;
+			}
+
 			_stackTabComponent.CurrentPageChanged -= OnCurrentPageChanged;
 			_stackTabComponentContainerHost.StopComponent();
 
@@ -203,7 +253,15 @@ namespace ClearCanvas.Ris.Client
 
 		public ActionModelNode ToolbarModel
 		{
-			get { return _selectedFolderExplorer.FoldersToolbarModel; }
+			get
+			{
+				ActionModelNode root = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorergroup-toolbar", _toolSet.Actions);
+				ActionModelNode selectedExplorerModel = _selectedFolderExplorer.FoldersToolbarModel;
+				if(selectedExplorerModel != null)
+					root.Merge(selectedExplorerModel);
+				
+				return root;
+			}
 		}
 
 		public event EventHandler SelectedFolderSystemChanged

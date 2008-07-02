@@ -43,9 +43,7 @@
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="EditReportTool.cs" />
-    <Compile Include="FolderSearchTool.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
-    <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
@@ -112,7 +110,6 @@
     <Compile Include="ReportingWorklistTable.cs" />
     <Compile Include="ResubmitProtocolTool.cs" />
     <Compile Include="ReviseReportTool.cs" />
-    <Compile Include="SearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -81,11 +81,6 @@ namespace ClearCanvas.Ris.Client
 		string Tooltip { get; }
 
 		/// <summary>
-		/// Gets the menu model for the context menu that should be displayed when the user right-clicks on the folder
-		/// </summary>
-		ActionModelNode MenuModel { get; }
-
-		/// <summary>
 		/// Gets the open/close state of the current folder
 		/// </summary>
 		bool IsOpen { get; }

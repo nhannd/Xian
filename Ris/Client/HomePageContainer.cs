@@ -36,9 +36,18 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Defines additional interface to an application component that acts as a preview page for
+	/// selected worklist items.
+	/// </summary>
 	public interface IPreviewComponent : IApplicationComponent
 	{
-		void SetPreviewItem(string url, DataContractBase item);
+		/// <summary>
+		/// Sets the URL of the preview page to display, and the item(s) that are being previewed.
+		/// </summary>
+		/// <param name="url"></param>
+		/// <param name="items"></param>
+		void SetPreviewItems(string url, object[] items);
 	}
 
 	/// <summary>
@@ -100,7 +109,8 @@ namespace ClearCanvas.Ris.Client
 			// update the preview component url whenever the selected items change,
 			// regardless of whether the folder system has changed or not
 			// this should help to guarantee that the correct preview page is always displayed
-			_previewComponent.SetPreviewItem(_folderSystemGroup.SelectedFolderSystem.PreviewUrl, _folderContentComponent.SelectedItems.Item as DataContractBase);
+			string url = _folderSystemGroup.SelectedFolderSystem.GetPreviewUrl(_folderSystemGroup.SelectedFolder, _folderContentComponent.SelectedItems.Items);
+			_previewComponent.SetPreviewItems(url, _folderContentComponent.SelectedItems.Items);
 		}
 
 		private void OnSelectedFolderSystemChanged(object sender, System.EventArgs e)

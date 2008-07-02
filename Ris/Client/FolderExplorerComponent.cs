@@ -167,10 +167,7 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderSystem.FolderTools.Actions);
-                if (_selectedTreeNode != null && _selectedTreeNode.Folder.MenuModel != null)
-                    amr.Merge(_selectedTreeNode.Folder.MenuModel);
-                return amr;
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderSystem.FolderTools.Actions);
             }
         }
 
@@ -178,10 +175,7 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                ActionModelRoot amr = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
-                if (_selectedTreeNode != null && _selectedTreeNode.Folder.MenuModel != null)
-					amr.Merge(_selectedTreeNode.Folder.MenuModel);
-                return amr;
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
             }
         }
 

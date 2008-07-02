@@ -43,7 +43,6 @@
     <Compile Include="EmergencyWorkflowItemTools.cs" />
     <Compile Include="Folders\EmergencyPhysicianWorkflowFolders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EmergencyWorkflowFolderTools.cs" />
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
       <AutoGen>True</AutoGen>

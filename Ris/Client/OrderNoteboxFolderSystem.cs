@@ -37,11 +37,6 @@ namespace ClearCanvas.Ris.Client
 		void RebuildGroupFolders();
 	}
 
-	[ExtensionOf(typeof(OrderNoteboxFolderToolExtensionPoint))]
-	public class OrderNoteboxRefreshTool : RefreshTool<IOrderNoteboxFolderToolContext>
-	{
-	}
-
 
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
@@ -93,6 +88,17 @@ namespace ClearCanvas.Ris.Client
 			RebuildGroupFolders();
 		}
 
+		public override bool SearchEnabled
+		{
+			// searching not currently supported
+			get { return false; }
+		}
+
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<OrderNoteboxItemSummary> items)
+		{
+			return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl;
+		}
+
 		protected override IWorkflowFolderToolContext CreateFolderToolContext()
 		{
 			return new OrderNoteboxFolderToolContext(this);
@@ -103,22 +109,11 @@ namespace ClearCanvas.Ris.Client
 			return new OrderNoteboxItemToolContext(this);
 		}
 
-		public override bool SearchEnabled
-		{
-			// searching not currently supported
-			get { return false; }
-		}
-
-        protected override SearchResultsFolder CreateSearchResultsFolder()
+		protected override SearchResultsFolder CreateSearchResultsFolder()
         {
             // searching not currently supported
             return null;
         }
-
-		protected override string GetPreviewUrl()
-		{
-			return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl;
-		}
 
 		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
 		{

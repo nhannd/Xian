@@ -54,9 +54,9 @@ namespace ClearCanvas.Ris.Client
 		IToolSet ItemTools { get; }
 
 		/// <summary>
-		/// Gets the Url of the preview when an item is selected
+		/// Gets the URL of the preview page as a function of the specified folder and items.
 		/// </summary>
-		string PreviewUrl { get; }
+		string GetPreviewUrl(IFolder folder, object[] items);
 
 		#endregion
 

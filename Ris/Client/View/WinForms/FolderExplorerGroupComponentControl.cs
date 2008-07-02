@@ -13,15 +13,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 	public partial class FolderExplorerGroupComponentControl : ApplicationComponentUserControl
     {
         private readonly FolderExplorerGroupComponent _component;
-
-		private readonly ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
-		private readonly ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Left;
-		private readonly TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
-
 		private bool _isLoaded = false;
 
-		private ActionModelNode _toolbarModel;
-		private ActionModelNode _menuModel;
 
         /// <summary>
         /// Constructor
@@ -47,37 +40,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		#region Properties
 
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ActionModelNode ToolbarModel
-		{
-			get { return _toolbarModel; }
-			set
-			{
-				_toolbarModel = value;
-
-				// Defer initialization of ToolStrip until after Load() has been called
-				// so that parameters from application settings are initialized properly
-				if (_isLoaded)
-					InitializeToolStrip();
-			}
-		}
-
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public ActionModelNode MenuModel
-		{
-			get { return _menuModel; }
-			set
-			{
-				_menuModel = value;
-				ToolStripBuilder.Clear(_contextMenu.Items);
-				if (_menuModel != null)
-				{
-					ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
-				}
-			}
-		}
-
-		// used by databinding within this control only
+    	// used by databinding within this control only
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool SearchTextBoxEnabled
 		{
@@ -100,6 +63,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private void FolderExplorerGroupComponentControl_Load(object sender, EventArgs e)
 		{
 			InitializeToolStrip();
+
 			_isLoaded = true;
 		}
 
@@ -129,23 +93,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private void InitializeToolStrip()
 		{
 			ToolStripBuilder.Clear(_toolStrip.Items);
-
-			_toolbarModel = _component.ToolbarModel;
-
-			if (_toolbarModel != null)
+			if (_component.ToolbarModel != null)
 			{
-				if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
-				{
-					_toolbarModel.ChildNodes.Reverse();
-				}
-
-				ToolStripBuilder.BuildToolbar(
-					_toolStrip.Items,
-					_toolbarModel.ChildNodes,
-					new ToolStripBuilder.ToolStripBuilderStyle(
-						_toolStripItemDisplayStyle, 
-						_toolStripItemAlignment, 
-						_textImageRelation));
+				ToolStripBuilder.BuildToolbar(_toolStrip.Items, _component.ToolbarModel.ChildNodes);
 			}
 		}
 	}

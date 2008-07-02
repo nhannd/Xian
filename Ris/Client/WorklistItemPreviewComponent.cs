@@ -35,6 +35,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -102,9 +103,9 @@ namespace ClearCanvas.Ris.Client
 
 		#region IPreviewComponent Members
 
-		void IPreviewComponent.SetPreviewItem(string url, DataContractBase item)
+		void IPreviewComponent.SetPreviewItems(string url, object[] items)
 		{
-			_folderSystemItem = item;
+			_folderSystemItem = CollectionUtils.FirstElement<DataContractBase>(items);
 			SetUrl(url);
 		}
 

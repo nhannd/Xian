@@ -29,12 +29,14 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -76,8 +78,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				this.Folders.Add(new Folders.Reporting.ReviewResidentReportFolder());
         }
 
-		protected override string GetPreviewUrl()
-        {
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItem> items)
+		{
             return WebResourcesSettings.Default.RadiologistFolderSystemUrl;
         }
 

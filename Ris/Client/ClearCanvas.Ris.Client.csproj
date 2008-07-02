@@ -116,7 +116,7 @@
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
-    <Compile Include="RefreshTool.cs" />
+    <Compile Include="FolderRefreshTool.cs" />
     <Compile Include="RepublishReportComponent.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />

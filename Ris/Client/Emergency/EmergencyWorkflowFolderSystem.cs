@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Client.Workflow;
 using ClearCanvas.Ris.Client.Workflow.Folders;
@@ -34,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Emergency
 		{
 		}
 
-		protected override string GetPreviewUrl()
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<RegistrationWorklistItem> items)
 		{
 			return WebResourcesSettings.Default.EmergencyPhysicianFolderSystemUrl;
 		}

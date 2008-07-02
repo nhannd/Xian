@@ -29,12 +29,14 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using System.Threading;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -64,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 		}
 
-		protected override string GetPreviewUrl()
+		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<RegistrationWorklistItem> items)
 		{
 			return WebResourcesSettings.Default.RegistrationFolderSystemUrl;
 		}

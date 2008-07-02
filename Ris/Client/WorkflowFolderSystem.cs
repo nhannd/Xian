@@ -271,10 +271,8 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public string PreviewUrl
-		{
-			get { return GetPreviewUrl(); }
-		}
+		public abstract string GetPreviewUrl(IFolder folder, object[] items);
+
 
 		public event EventHandler TitleChanged
 		{
@@ -387,12 +385,6 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <returns></returns>
         protected abstract SearchResultsFolder CreateSearchResultsFolder();
-
-		/// <summary>
-		/// Called to obtain the URL of the preview page.
-		/// </summary>
-		/// <returns></returns>
-		protected abstract string GetPreviewUrl();
 
 		/// <summary>
 		/// Called whenever the selection changes, to obtain the operation enablement for a given selection.
@@ -746,7 +738,12 @@ namespace ClearCanvas.Ris.Client
 		{
 		}
 
-		#region Protected overrides
+		#region Overrides
+
+		public override string GetPreviewUrl(IFolder folder, object[] items)
+		{
+			return GetPreviewUrl((WorkflowFolder)folder, CollectionUtils.Cast<TItem>(items));
+		}
 
 		/// <summary>
 		/// Called to instantiate the tool set for tools that operate on items.
@@ -836,6 +833,14 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 
 		#region Protected API
+
+		/// <summary>
+		/// Called to obtain the preview URL for the specified folder and items.
+		/// </summary>
+		/// <param name="folder"></param>
+		/// <param name="items"></param>
+		/// <returns></returns>
+		protected abstract string GetPreviewUrl(WorkflowFolder folder, ICollection<TItem> items);
 
 		/// <summary>
 		/// Called once to instantiate the item tool context.

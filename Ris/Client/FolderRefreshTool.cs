@@ -6,16 +6,18 @@ using System;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("apply", "folderexplorer-folders-contextmenu/Refresh", "Refresh")]
-	[ButtonAction("apply", "folderexplorer-folders-toolbar/Refresh", "Refresh")]
+	[ButtonAction("apply", "folderexplorergroup-toolbar/Refresh", "Refresh")]
 	[Tooltip("apply", "Refresh Folders")]
 	[IconSet("apply", IconScheme.Colour, "Icons.RefreshToolSmall.png", "Icons.RefreshToolMedium.png", "Icons.RefreshToolLarge.png")]
-	public abstract class RefreshTool<TWorkflowFolderToolContext> : Tool<TWorkflowFolderToolContext>
-		where TWorkflowFolderToolContext : IWorkflowFolderToolContext
+	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
+	public class FolderRefreshTool : Tool<IFolderExplorerGroupToolContext>
 	{
 		public void Refresh()
 		{
-			this.Context.InvalidateFolders();
+			if(this.Context.SelectedFolderSystem != null)
+			{
+				this.Context.SelectedFolderSystem.InvalidateFolders();
+			}
 		}
 	}
 }
