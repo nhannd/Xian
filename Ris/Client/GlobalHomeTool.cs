@@ -1,8 +1,7 @@
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -14,6 +13,7 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("launch", "global-menus/Go/Home", "Launch")]
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
+	[VisibleStateObserver("launch", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class GlobalHomeTool : WorklistPreviewHomeTool<FolderSystemExtensionPoint>
 	{
@@ -28,6 +28,17 @@ namespace ClearCanvas.Ris.Client
 		public override string Title
 		{
 			get { return "Home"; }
+		}
+
+		public bool Visible
+		{
+			get { return this.HasFolderSystems; }
+		}
+
+		public event EventHandler VisibleChanged
+		{
+			add { }
+			remove { }
 		}
 	}
 }

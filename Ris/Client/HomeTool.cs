@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -39,11 +39,16 @@ namespace ClearCanvas.Ris.Client
 			{
 				try
 				{
-					_workspace = ApplicationComponent.LaunchAsWorkspace(
-						this.Context.DesktopWindow,
-						CreateComponent(),
-						this.Title);
-					_workspace.Closed += delegate { _workspace = null; };
+					IApplicationComponent component = CreateComponent();
+
+					if (component != null)
+					{
+						_workspace = ApplicationComponent.LaunchAsWorkspace(
+							this.Context.DesktopWindow,
+							CreateComponent(),
+							this.Title);
+						_workspace.Closed += delegate { _workspace = null; };
+					}
 				}
 				catch (Exception e)
 				{
@@ -65,10 +70,26 @@ namespace ClearCanvas.Ris.Client
 	public abstract class WorklistPreviewHomeTool<TFolderSystemToolExtensionPoint> : HomeTool
 		where TFolderSystemToolExtensionPoint : ExtensionPoint<IFolderSystem>, new()
 	{
+		private readonly List<IFolderSystem> _folderSystems;
+
+		public WorklistPreviewHomeTool()
+		{
+			// Find all the folder systems
+			_folderSystems = CollectionUtils.Cast<IFolderSystem>(new TFolderSystemToolExtensionPoint().CreateExtensions());
+		}
+
 		protected override IApplicationComponent  CreateComponent()
 		{
+			if (!this.HasFolderSystems)
+				return null;
+
 			WorklistItemPreviewComponent previewComponent = new WorklistItemPreviewComponent();
-			return new HomePageContainer(new TFolderSystemToolExtensionPoint(), previewComponent);
+			return new HomePageContainer(_folderSystems, previewComponent);
+		}
+
+		protected bool HasFolderSystems
+		{
+			get { return _folderSystems.Count > 0; }
 		}
 	}
 }

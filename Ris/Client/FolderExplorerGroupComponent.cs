@@ -122,15 +122,11 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public FolderExplorerGroupComponent(ExtensionPoint<IFolderSystem> folderSystemExtensionPoint, FolderContentsComponent contentComponent)
+		public FolderExplorerGroupComponent(List<IFolderSystem> folderSystems, FolderContentsComponent contentComponent)
 		{
 			_stackTabComponent = new StackTabComponentContainer(StackStyle.ShowOneOnly, false);
 
 			_folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
-
-			// Find all the folder systems
-			List<IFolderSystem> folderSystems =
-				CollectionUtils.Cast<IFolderSystem>(folderSystemExtensionPoint.CreateExtensions());
 
 			// Order the Folder Systems
 			List<IFolderSystem> remainder;

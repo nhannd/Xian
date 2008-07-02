@@ -32,6 +32,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -50,12 +51,12 @@ namespace ClearCanvas.Ris.Client
 		private readonly FolderContentsComponent _folderContentComponent;
 		private readonly IPreviewComponent _previewComponent;
 
-		public HomePageContainer(ExtensionPoint<IFolderSystem> folderSystemExtensionPoint, IPreviewComponent preview)
+		public HomePageContainer(List<IFolderSystem> folderSystems, IPreviewComponent preview)
 			: base(Desktop.SplitOrientation.Vertical)
 		{
 			_folderContentComponent = new FolderContentsComponent();
 			_previewComponent = preview;
-			_folderSystemGroup = new FolderExplorerGroupComponent(folderSystemExtensionPoint, _folderContentComponent);
+			_folderSystemGroup = new FolderExplorerGroupComponent(folderSystems, _folderContentComponent);
 
 			// Construct the home page
 			SplitComponentContainer contentAndPreview = new SplitComponentContainer(
