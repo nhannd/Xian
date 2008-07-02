@@ -80,12 +80,13 @@ namespace ClearCanvas.Ris.Client
 			}
     	}
 
-
-		internal void UpdateAllFolders()
+		/// <summary>
+		/// Invalidates all folders.
+		/// </summary>
+		internal void InvalidateFolders()
 		{
 			// invalidate all folders, and update starting at the root
 			_folderSystem.InvalidateFolders();
-			_folderTreeRoot.Update();
 		}
 
 		#region Application Component overrides
@@ -102,8 +103,7 @@ namespace ClearCanvas.Ris.Client
 			BuildFolderTree();
 
 			// invalidate all folders and update the entire tree
-			_folderSystem.InvalidateFolders();
-			_folderTreeRoot.Update();
+			InvalidateFolders();
 
 			// this timer is responsible for monitoring the auto-invalidation of all folders
 			// in the folder system, and performing the appropriate invalidations

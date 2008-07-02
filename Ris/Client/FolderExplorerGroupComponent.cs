@@ -334,7 +334,8 @@ namespace ClearCanvas.Ris.Client
 					_selectedFolderExplorer = value;
 					EventsHelper.Fire(_selectedFolderSystemChanged, this, EventArgs.Empty);
 
-					_selectedFolderExplorer.UpdateAllFolders();
+					// refresh folders in newly selected folder explorer
+					_selectedFolderExplorer.InvalidateFolders();
 				}
 			}
 		}

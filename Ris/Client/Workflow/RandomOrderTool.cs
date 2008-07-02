@@ -101,7 +101,8 @@ namespace ClearCanvas.Ris.Client.Workflow
                     PlaceRandomOrderForPatient(item.PatientRef, item.PatientProfileRef, item.Mrn.AssigningAuthority);
                 }
 
-                context.InvalidateFolders();
+				// invalidate the scheduled worklist folders
+                context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
             }
             catch (Exception e)
             {

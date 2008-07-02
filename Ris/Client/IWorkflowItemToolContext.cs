@@ -66,7 +66,8 @@ namespace ClearCanvas.Ris.Client
 		event EventHandler SelectionChanged;
 
 		/// <summary>
-		/// Invalidates all folders.
+		/// Invalidates all folders. Use this method judiciously,
+		/// as invalidating all folders will increase load on the system.
 		/// </summary>
 		void InvalidateFolders();
 

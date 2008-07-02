@@ -68,29 +68,24 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void Open()
 		{
-			IWorkflowItemToolContext context = (IWorkflowItemToolContext) this.ContextBase;
-			Open(this.OrderRef, GetTitle(), this.OrderNoteCategories, context.DesktopWindow);
-			OnOpenCompleted();
-		}
-
-		protected virtual void OnOpenCompleted()
-		{
-		}
-
-		private static void Open(EntityRef orderRef, string title, IEnumerable<string> orderNoteCategories, IDesktopWindow desktopWindow)
-		{
-			Platform.CheckForNullReference(orderRef, "orderRef");
+			if(this.OrderRef == null)
+				return;
 
 			try
 			{
-				ApplicationComponent.LaunchAsDialog(desktopWindow,
-					new OrderNoteConversationComponent(orderRef, orderNoteCategories),
-					title);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
+					new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories),
+					GetTitle());
+				OnDialogClosed(exitCode);
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, desktopWindow);
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
+		}
+
+		protected virtual void OnDialogClosed(ApplicationComponentExitCode exitCode)
+		{
 		}
 
 		private string GetTitle()
@@ -152,12 +147,12 @@ namespace ClearCanvas.Ris.Client
 			get { return new string[] { this.SummaryItem.Category }; }
 		}
 
-		protected override void OnOpenCompleted()
+		protected override void OnDialogClosed(ApplicationComponentExitCode exitCode)
 		{
-			this.Context.InvalidateFolders(typeof(PersonalInboxFolder));
-			this.Context.InvalidateFolders(typeof(GroupInboxFolder));
+			// invalidate the sent items folder in case any notes were posted
 			this.Context.InvalidateFolders(typeof(SentItemsFolder));
-			base.OnOpenCompleted();
+
+			base.OnDialogClosed(exitCode);
 		}
 	}
 }
