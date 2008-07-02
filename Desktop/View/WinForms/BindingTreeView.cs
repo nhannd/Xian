@@ -58,9 +58,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
-        private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
-        private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Right;
-        private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
         private bool _selectionDisabled = false;
 
         private bool _isLoaded = false;
@@ -139,8 +136,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Obsolete("Toolstrip item display style is controlled ToolStripBuilder.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public RightToLeft ToolStripRightToLeft
         {
             get { return RightToLeft.No; }
@@ -165,12 +162,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _menuModel = value;
-                ToolStripBuilder.Clear(_contextMenu.Items);
-                if (_menuModel != null)
-                {
-                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
-                }
-            }
+				if (_isLoaded) InitializeMenu();
+			}
         }
 
         /// <summary>
@@ -285,10 +278,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _treeCtrl.LineColor = value; }
 		}
 
+		[Obsolete("Toolstrip item display style is controlled ToolStripBuilder.")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
         {
-            get { return _toolStripItemDisplayStyle; }
-            set { _toolStripItemDisplayStyle = value; }
+			get { return ToolStripItemDisplayStyle.Image; }
+			set {  }
         }
 
         public Size IconSize
@@ -382,17 +377,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             ToolStripBuilder.Clear(_toolStrip.Items);
             if (_toolbarModel != null)
             {
-                if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
-                {
-                    _toolbarModel.ChildNodes.Reverse();
-                }
-
-                ToolStripBuilder.BuildToolbar(
-                    _toolStrip.Items,
-                    _toolbarModel.ChildNodes,
-                    new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
+                ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
             }
         }
+		private void InitializeMenu()
+		{
+			ToolStripBuilder.Clear(_contextMenu.Items);
+			if (_menuModel != null)
+			{
+				ToolStripBuilder.BuildToolbar(_contextMenu.Items, _menuModel.ChildNodes);
+			}
+		}
 
         private void _contextMenu_Opening(object sender, CancelEventArgs e)
         {
@@ -421,18 +416,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void BindingTreeView_Load(object sender, EventArgs e)
         {
-            if (this.DesignMode == false)
-            {
-                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
-                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
-            }
-            else
-            {
-                _toolStripItemAlignment = ToolStripItemAlignment.Left;
-                _textImageRelation = TextImageRelation.ImageBeforeText;
-            }
-
-            InitializeToolStrip();
+			InitializeMenu();
+			InitializeToolStrip();
             _isLoaded = true;
         }
 

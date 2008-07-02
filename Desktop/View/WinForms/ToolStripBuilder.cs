@@ -33,22 +33,40 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public static class ToolStripBuilder
-    {
-        public enum ToolStripKind
+	{
+		#region ToolStripKind
+
+		public enum ToolStripKind
         {
             Menu,
             Toolbar
-        }
+		}
 
-        public class ToolStripBuilderStyle
+		#endregion
+
+		#region ToolStripBuilderStyle
+
+		public class ToolStripBuilderStyle
         {
-            private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
-            private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Left;
-            private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
+			/// <summary>
+			/// Gets an object representing the default style defined by <see cref="DesktopViewSettings"/>.
+			/// </summary>
+        	public static ToolStripBuilderStyle GetDefault()
+        	{
+				return new ToolStripBuilderStyle(ToolStripItemDisplayStyle.Image,
+											  DesktopViewSettings.Default.LocalToolStripItemAlignment,
+											  DesktopViewSettings.Default.LocalToolStripItemTextImageRelation);
+        	}
+
+
+            private readonly ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+            private readonly ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Left;
+            private readonly TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
 
             public ToolStripBuilderStyle(ToolStripItemDisplayStyle toolStripItemDisplayStyle, ToolStripItemAlignment toolStripItemAlignment, TextImageRelation textImageRelation)
             {
@@ -57,7 +75,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _textImageRelation = textImageRelation;
             }
 
-            public ToolStripBuilderStyle(ToolStripItemDisplayStyle toolStripItemDisplayStyle)
+			[Obsolete("This overload will be removed in a future version of the framework.")]
+			public ToolStripBuilderStyle(ToolStripItemDisplayStyle toolStripItemDisplayStyle)
             {
                 _toolStripItemDisplayStyle = toolStripItemDisplayStyle;
             }
@@ -80,13 +99,30 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 get { return _textImageRelation; }
             }
-        }
+		}
 
-        public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
+		#endregion
+
+		#region Public API
+
+		/// <summary>
+		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the default style.
+		/// </summary>
+		/// <param name="kind"></param>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
+		public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
-            BuildToolStrip(kind, parentItemCollection, nodes, new ToolStripBuilderStyle());
+            BuildToolStrip(kind, parentItemCollection, nodes, ToolStripBuilderStyle.GetDefault());
         }
 
+		/// <summary>
+		/// Builds a toolstrip of the specified kind, from the specified action model nodes, using the specified style.
+		/// </summary>
+		/// <param name="kind"></param>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
+		/// <param name="builderStyle"></param>
         public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
         {
             switch (kind)
@@ -102,13 +138,35 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+		/// <summary>
+		/// Builds a toolbar from the specified action model nodes, using the default style.
+		/// </summary>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
+        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
+        {
+        	BuildToolbar(parentItemCollection, nodes, ToolStripBuilderStyle.GetDefault());
+        }
+
+		/// <summary>
+		/// Builds a toolbar from the specified action model nodes, using the specified style.
+		/// </summary>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
+		/// <param name="builderStyle"></param>
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
         {
-            foreach (ActionModelNode node in nodes)
+			List<ActionModelNode> nodeList = new List<ActionModelNode>(nodes);
+			
+			// reverse nodes if alignment is right
+			if (builderStyle.ToolStripAlignment == ToolStripItemAlignment.Right)
+				nodeList.Reverse();
+
+			foreach (ActionModelNode node in nodeList)
             {
                 if (node.IsLeaf)
                 {
-                    IAction action = (IAction)node.Action;
+                    IAction action = node.Action;
                     ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar);
                     button.Tag = node;
 
@@ -126,11 +184,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+		[Obsolete("This overload will be removed in a future version of the framework.")]
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle toolStripItemDisplayStyle)
         {
             BuildToolbar(parentItemCollection, nodes, new ToolStripBuilderStyle(toolStripItemDisplayStyle));
         }
 
+		/// <summary>
+		/// Builds a menu from the specified action model nodes.
+		/// </summary>
+		/// <param name="parentItemCollection"></param>
+		/// <param name="nodes"></param>
         public static void BuildMenu(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
             foreach (ActionModelNode node in nodes)
@@ -176,31 +240,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private static void SetParentAvailability(ToolStripMenuItem parent)
-        {
-            bool parentIsAvailable = false;
-            foreach (ToolStripMenuItem item in parent.DropDownItems)
-            {
-                if (item.Available)
-                    parentIsAvailable = true;
-            }
-
-            if (parent.Available != parentIsAvailable)
-                parent.Available = parentIsAvailable;
-        }
-
-        private static void CheckParentItems(ToolStripItem menuItem)
-        {
-            ToolStripMenuItem parentItem = menuItem.OwnerItem as ToolStripMenuItem;
-
-            if (parentItem != null)
-            {
-                parentItem.Checked = true;
-                CheckParentItems(parentItem);
-            }
-
-            return;
-        }
 
         public static void Clear(ToolStripItemCollection parentItemCollection)
         {
@@ -224,9 +263,39 @@ namespace ClearCanvas.Desktop.View.WinForms
                     item.Dispose();
                 }
             }
-        }
+		}
 
-        private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind)
+		#endregion
+
+		#region Private Helpers
+
+		private static void SetParentAvailability(ToolStripMenuItem parent)
+		{
+			bool parentIsAvailable = false;
+			foreach (ToolStripMenuItem item in parent.DropDownItems)
+			{
+				if (item.Available)
+					parentIsAvailable = true;
+			}
+
+			if (parent.Available != parentIsAvailable)
+				parent.Available = parentIsAvailable;
+		}
+
+		private static void CheckParentItems(ToolStripItem menuItem)
+		{
+			ToolStripMenuItem parentItem = menuItem.OwnerItem as ToolStripMenuItem;
+
+			if (parentItem != null)
+			{
+				parentItem.Checked = true;
+				CheckParentItems(parentItem);
+			}
+
+			return;
+		}
+
+		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind)
         {
             // optimization: for framework-provided actions, we can just create the controls
             // directly rather than use the associated view, which is slower;
@@ -257,6 +326,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             IActionView view = (IActionView)ViewFactory.CreateAssociatedView(action.GetType());
             view.SetAction(action);
             return (ToolStripItem)view.GuiElement;
-        }
-    }
+		}
+
+		#endregion
+	}
 }
