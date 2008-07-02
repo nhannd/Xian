@@ -42,6 +42,8 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -139,6 +141,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			{
 				IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
 				Staff item = broker.Load(request.StaffRef, EntityLoadFlags.Proxy);
+
+				User affectedUser = FindUserByName(item.UserName);
+				if (affectedUser != null)
+					affectedUser.DisplayName = null;
+
 				broker.Delete(item);
 				PersistenceContext.SynchState();
 				return new DeleteStaffResponse();
@@ -229,6 +236,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 						criterion.Type.In(typeFilters);
 					}
 				}
+			}
+		}
+
+		private User FindUserByName(string name)
+		{
+			if (String.IsNullOrEmpty(name))
+				return null;
+
+			try
+			{
+				UserSearchCriteria where = new UserSearchCriteria();
+				where.UserName.EqualTo(name);
+
+				return PersistenceContext.GetBroker<IUserBroker>().FindOne(where);
+			}
+			catch (EntityNotFoundException)
+			{
+				return null;
 			}
 		}
 	}
