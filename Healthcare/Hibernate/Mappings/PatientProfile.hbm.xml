@@ -39,7 +39,7 @@
 			<property name="Suffix" column="Suffix_" type="String" length="10" not-null="false"/>
 			<property name="Degree" column="Degree_" type="String" length="10" not-null="false"/>
 		</component>
-		<property name="DateOfBirth" column="DateOfBirth_" type="DateTime" not-null="false"/>
+		<property name="DateOfBirth" column="DateOfBirth_" type="DateTime" not-null="false" access="field.camelcase-underscore"/>
 		<property name="Sex" column="Sex_" type="ClearCanvas.Healthcare.Hibernate.SexEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 		<many-to-one name="PrimaryLanguage" class="SpokenLanguageEnum" column="PrimaryLanguage_"/>
 		<many-to-one name="Religion" class="ReligionEnum" column="Religion_"/>

@@ -52,6 +52,12 @@ namespace ClearCanvas.Healthcare {
         {
         }
 
+        public virtual DateTime? DateOfBirth 
+        {
+            get { return _dateOfBirth == null ? _dateOfBirth : _dateOfBirth.Value.Date; }
+			set { _dateOfBirth = value == null ? value : value.Value.Date; } 
+        }
+
         public virtual Address CurrentHomeAddress
         {
             get
