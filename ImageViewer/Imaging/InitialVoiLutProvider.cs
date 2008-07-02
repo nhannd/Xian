@@ -31,10 +31,14 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class InitialVoiLutProvider : IInitialVoiLutProvider
+	/// <summary>
+	/// A factory that provides the initial voi lut for a given <see cref="IPresentationImage"/>.
+	/// </summary>
+	public sealed class InitialVoiLutProvider : IInitialVoiLutProvider
 	{
 		#region Private Fields
 
@@ -62,6 +66,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Public Members
 
+		/// <summary>
+		/// The single instance of the provider/factory.
+		/// </summary>
 		public static InitialVoiLutProvider Instance
 		{
 			get { return _instance; }
@@ -69,6 +76,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IInitialVoiLutProvider Members
 
+		/// <summary>
+		/// Determines and returns the initial Voi Lut that should be applied to the input <see cref="IPresentationImage"/>.
+		/// </summary>
+		/// <param name="presentationImage">The <see cref="IPresentationImage"/> whose intial Lut is to be determined.</param>
+		/// <returns>The Voi Lut as an <see cref="IComposableLut"/>.</returns>
 		public IComposableLut GetLut(IPresentationImage presentationImage)
 		{
 			IComposableLut lut = null;

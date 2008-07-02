@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Allows <see cref="IComposableLut"/> objects to be composed together in a pipeline.
 	/// </summary>
-	internal class LutComposer : IComposedLut, IDisposable
+	public class LutComposer : IComposedLut, IDisposable
 	{
 		#region Private Fields
 
@@ -270,7 +270,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#region IComposedLut Members
 
 		/// <summary>
-		/// Gets the lut's data.
+		/// Gets the composed lut data.
 		/// </summary>
 		/// <remarks>
 		/// This property should be considered readonly and is only 

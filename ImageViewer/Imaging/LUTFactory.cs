@@ -36,7 +36,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class LutFactory : IDisposable
+	/// <summary>
+	/// A singleton factory for modality luts and color maps.
+	/// </summary>
+	public sealed class LutFactory : IDisposable
 	{
 		#region Cached Color Map
 
@@ -286,6 +289,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets a new factory instance.
+		/// </summary>
+		/// <remarks>
+		/// You must dispose of the returned instance when you are done with it.
+		/// </remarks>
 		public static LutFactory NewInstance
 		{
 			get
@@ -296,6 +305,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				
 				return _instance;
+			}
+		}
+
+		/// <summary>
+		/// Gets <see cref="ColorMapDescriptor"/>s that describe all the available color maps.
+		/// </summary>
+		public IEnumerable<ColorMapDescriptor> AvailableColorMaps
+		{
+			get
+			{
+				//If there's only the default grayscale one, then don't return any (no point).
+				if (this.ColorMapFactories.Count == 1)
+				{
+					yield break;
+				}
+				else
+				{
+					foreach (IColorMapFactory factory in this.ColorMapFactories)
+					{
+						yield return ColorMapDescriptor.FromFactory(factory);
+					}
+				}
 			}
 		}
 
@@ -318,30 +349,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _colorMaps; }
 		}
 
-		internal IEnumerable<ColorMapDescriptor> AvailableColorMaps
-		{
-			get
-			{
-				//If there's only the default grayscale one, then don't return any (no point).
-				if (this.ColorMapFactories.Count == 1)
-				{
-					yield break;
-				}
-				else
-				{
-					foreach (IColorMapFactory factory in this.ColorMapFactories)
-					{
-						yield return ColorMapDescriptor.FromFactory(factory);
-					}
-				}
-			}
-		}
-
 		#endregion
 
-		#region Internal Methods
+		#region Public Methods
 
-		internal IComposableLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		/// <summary>
+		/// Factory method for linear modality luts.
+		/// </summary>
+		public IComposableLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 		{
 			ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 
@@ -358,12 +373,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		internal IDataLut GetGrayscaleColorMap()
+		/// <summary>
+		/// Factory method for grayscale color maps.
+		/// </summary>
+		public IDataLut GetGrayscaleColorMap()
 		{
 			return this.GetColorMap(GrayscaleColorMapFactory.FactoryName);
 		}
-		
-		internal IDataLut GetColorMap(string name)
+
+		/// <summary>
+		/// Factory method that returns a new color map given the name of a <see cref="IColorMapFactory"/>.
+		/// </summary>
+		public IDataLut GetColorMap(string name)
 		{
 			if (this.ColorMapFactories.Find(delegate(IColorMapFactory factory) { return factory.Name == name; }) == null)
 				throw new ArgumentException(String.Format("No Color Map factory extension exists with the name {0}.", name));
@@ -427,6 +448,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Disposes the factory.
+		/// </summary>
 		public void Dispose()
 		{
 			try

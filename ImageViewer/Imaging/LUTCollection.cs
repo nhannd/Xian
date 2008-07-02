@@ -36,12 +36,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// A collection of <see cref="IComposableLut"/> objects.
 	/// </summary>
-	internal class LutCollection : ObservableList<IComposableLut>
+	public class LutCollection : ObservableList<IComposableLut>
 	{
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public LutCollection()
+		internal LutCollection()
 		{
 		}
 	}

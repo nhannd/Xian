@@ -16,12 +16,11 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			private static readonly int _iconWidth = 100;
 			private static readonly int _iconHeight = 100;
 
-			private volatile IPresentationImage _image;
+			private readonly IDisplaySet _displaySet;
 
-			private readonly string _description;
+			private volatile IPresentationImage _image;
 			private volatile Image _icon;
 
-			//not volatile as it is always accessed on ui thread.
 			private volatile SynchronizationContext _uiThreadContext;
 			private volatile bool _loading = false;
 			private volatile bool _disposed = false;
@@ -30,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 			public Thumbnail(IDisplaySet displaySet, ThumbnailLoadedCallback loadedCallback)
 			{
-				_description = displaySet.Name;	
+				_displaySet = displaySet;
 
 				_image = GetMiddlePresentationImage(displaySet);
 				if (_image != null)
@@ -58,12 +57,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 			public string Description
 			{
-				get { return _description; }
+				get { return _displaySet.Name; }
 			}
 
 			public object Item
 			{
-				get { return _image; }
+				get { return _displaySet; }
 			}
 
 			#endregion
