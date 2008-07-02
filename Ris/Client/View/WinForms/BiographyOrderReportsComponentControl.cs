@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_reports.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatReportListItem(e.ListItem); };
 
 			_toolbarActionModel = _component.ActionModel;
-			ToolStripBuilder.BuildToolbar(_toolstrip.Items, _toolbarActionModel.ChildNodes, ToolStripItemDisplayStyle.Image);
+			ToolStripBuilder.BuildToolbar(_toolstrip.Items, _toolbarActionModel.ChildNodes);
 
 			_component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
 		}
