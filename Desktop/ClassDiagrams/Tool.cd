@@ -7,6 +7,9 @@
       <FileName>Tools\Tool.cs</FileName>
       <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
+    <Members>
+      <Method Name="Tool" Hidden="true" />
+    </Members>
   </Class>
   <Class Name="ClearCanvas.Desktop.Tools.ToolBase" Collapsed="true">
     <Position X="5.25" Y="1.75" Width="1.5" />

@@ -5,7 +5,7 @@
     <Position X="3.5" Y="3.25" Width="2" />
     <TypeIdentifier>
       <FileName>PresentationImage.cs</FileName>
-      <HashCode>UEMVACAgICBAAgAAABACAABAFACADgEIAABAAIAAASI=</HashCode>
+      <HashCode>UEMVACAgICBAAgAAABACAABAFACADgEIAABAAIAAATI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="ImageViewer" />
@@ -40,9 +40,9 @@
     </AssociationLine>
     <AssociationLine Name="SceneGraph" Type="ClearCanvas.ImageViewer.Graphics.CompositeGraphic" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5" Y="3.806" />
-        <Point X="5" Y="4.347" />
-        <Point X="7" Y="4.347" />
+        <Point X="5.188" Y="3.759" />
+        <Point X="5.188" Y="4.315" />
+        <Point X="7" Y="4.315" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="FocussedGraphic" Type="ClearCanvas.ImageViewer.Graphics.IFocussableGraphic" FixedFromPoint="true" FixedToPoint="true">
@@ -54,8 +54,8 @@
     </AssociationLine>
     <AssociationLine Name="ImageRenderer" Type="ClearCanvas.ImageViewer.Rendering.IRenderer" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="4.5" Y="3.806" />
-        <Point X="4.5" Y="5.315" />
+        <Point X="4.75" Y="3.759" />
+        <Point X="4.75" Y="5.315" />
         <Point X="7" Y="5.315" />
       </Path>
     </AssociationLine>
@@ -65,7 +65,7 @@
     <Position X="7" Y="4" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\CompositeGraphic.cs</FileName>
-      <HashCode>CAKAAIAAAKBAAAAAAgAAAAAACAAAAAIKAAAAAAAAAAA=</HashCode>
+      <HashCode>CAKAAIAAAKBAAQAAAgAAAAAACAAAAAIKAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Interface Name="ClearCanvas.ImageViewer.Graphics.IFocussableGraphic" Collapsed="true">
@@ -93,7 +93,7 @@
     <Position X="0.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>IDisplaySet.cs</FileName>
-      <HashCode>AACIAAAAAAAAAAAAABACAAQAAAIABgAIAAAAAAAEAAI=</HashCode>
+      <HashCode>AACIAAAAAAAAAAAAABACAAQAAAIABgAIAAAAAAAEABI=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IImageViewer" Collapsed="true">
