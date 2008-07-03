@@ -82,7 +82,6 @@
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
     <Compile Include="CannedText.cs" />
     <Compile Include="EmergencyWorklists.cs" />
-    <Compile Include="ExpiredPatientIdentifiers.cs" />
     <Compile Include="GroupNotePosting.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
     <Compile Include="NoteboxFactory.cs" />
