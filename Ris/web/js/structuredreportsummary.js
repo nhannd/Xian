@@ -259,14 +259,14 @@ var BiometryPreview = {
 
 		var biometryPreviewTable = Table.createTable($("biometryPreviewTable"+fetus), { editInPlace: true, flow: true, checkBoxes: false},
 		[
-			new readOnlyBiometryCell("CRL", "crl", function(item) { return item.crl ? "CALC" : ""; }),
-			new readOnlyBiometryCell("BPD", "bpd", function(item) { return item.bpd ? "CALC" : ""; }),
-			new readOnlyBiometryCell("OFD", "ofd", function(item) { return item.ofd ? "CALC" : ""; }),
-			new readOnlyBiometryCell("Corrected BPD", "correctedBPD", function(item) { return item.correctedBPD ? "CALC" : ""; }),
-			new readOnlyBiometryCell("HC", "hc", function(item) { return item.hc ? "CALC" : ""; }),
-			new readOnlyBiometryCell("ABPD", "", function(item) { return "TODO"; }),// ABPD
-			new readOnlyBiometryCell("FL", "fl", function(item) { return item.fl ? "CALC" : ""; }),
-			new readOnlyBiometryCell("Average Size", "", function(item) { return "CALC"; }),
+			new readOnlyBiometryCell("CRL", "crl", "crlWks"),
+			new readOnlyBiometryCell("BPD", "bpd", "bpdWks"),
+			new readOnlyBiometryCell("OFD", "ofd", ""),
+			new readOnlyBiometryCell("Corrected BPD", "correctedBpd", "correctedBpdWks"),
+			new readOnlyBiometryCell("ABPD", "abdCircumference", "abdCircumferenceWks"),// ABPD
+			new readOnlyBiometryCell("FL", "fl", "flWks"),
+			new readOnlyBiometryCell("Average Size", "", "avgWks"),
+			new readOnlyBiometryCell("HC", "hc", "hcWks"),
 			new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", function(item) { return ""; })
 		]);
 			
@@ -735,7 +735,7 @@ function readOnlyBiometryCell(label, prop, calcProp)
 	{ 
 		var value = "";
 		value += (item[prop] != null && item[prop] != "") ? item[prop] + " mm" : "";
-		value += (this.calc(item) != null && this.calc(item) != "") ? (value != "" ? " = " + this.calc(item) + " wks" : this.calc(item) + " wks") : "";
+		value += (item[calcProp] != null && item[calcProp] != "") ? (value != "" ? " = " + item[calcProp].toFixed(1) + " wks" : item[calcProp].toFixed(1) + " wks") : "";
 		return value; 
 	}
 	this.getVisible = function(item) { return this.getValue(item) != ""; }

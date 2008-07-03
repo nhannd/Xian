@@ -251,21 +251,12 @@ var StructuredReportForm = {
 		html+= 	"			<table id=\"biometryAssessedTable\">";
 		html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 		html+= 	"			</table>";
-		html+= 	"			<div style=\"{float:left;width:48%;}\">";
+		html+= 	"			<div style=\"{float:left;width:42%;}\">";
 		html+= 	"				<table id=\"crlTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">CRL</td></tr>";
 		html+= 	"				</table>";
 		html+= 	"				<table id=\"bpdTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">BPD</td></tr>";
-		html+= 	"				</table>";
-		html+= 	"				<table id=\"ofdTable\">";
-		html+= 	"					<tr><td class=\"tableheading\">OFD</td></tr>";
-		html+= 	"				</table>";
-		html+= 	"				<table id=\"correctedBpdTable\">";
-		html+= 	"					<tr><td class=\"tableheading\">Corrected BPD</td></tr>";
-		html+= 	"				</table>";
-		html+= 	"				<table id=\"hcTable\">";
-		html+= 	"					<tr><td class=\"tableheading\">HC</td></tr>";
 		html+= 	"				</table>";
 		html+= 	"				<table id=\"abdTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">ABD</td></tr>";
@@ -273,11 +264,19 @@ var StructuredReportForm = {
 		html+= 	"				<table id=\"flTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">FL</td></tr>";
 		html+= 	"				</table>";
+		html+= 	"				<table id=\"hcTable\">";
+		html+= 	"					<tr><td class=\"tableheading\">HC</td></tr>";
+		html+= 	"				</table>";
+		html+= 	"			</div>";
+		html+= 	"			<div style=\"{float:left;width:28%;}\">";
 		html+= 	"				<table id=\"averageSizeTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">Average Size</td></tr>";
 		html+= 	"				</table>";
+		html+= 	"				<table id=\"efwTable\">";
+		html+= 	"					<tr><td class=\"tableheading\">EFW</td></tr>";
+		html+= 	"				</table>";
 		html+= 	"			</div>";
-		html+= 	"			<div style=\"{float:right;width:48%;}\">";
+		html+= 	"			<div style=\"{float:right;width:28%;}\">";
 		html+= 	"				<table id=\"nuchalTransparencyTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">Nuchal Transparency</td></tr>";
 		html+= 	"				</table>";
@@ -671,12 +670,107 @@ var GeneralForm = {
 	}
 }
 
+var BiometryCalculations = {
+
+	crlWeeks : function(crl)
+	{
+		if(!crl) return 0;
+		return (40.447+1.125*crl-0.0058*Math.pow(crl,2))/7;
+	},
+
+	bpdWeeks : function(bpd)
+	{
+		if(!bpd) return 0;		
+		return 6.8954+0.26345*bpd+0.00000877*Math.pow(bpd, 3);
+	},
+
+	correctedBpd : function(bpd, ofd)
+	{
+		if(!bpd) return 0;
+		if(!ofd) return bpd*1;
+		return Math.sqrt(bpd*ofd/1.265);
+	},
+	
+	abdomenCircumference : function(a1, a2)
+	{
+		return (a1+a2)*1.57;
+	},
+	
+	abdomenCircumferenceWeeks : function(ac)
+	{
+		if(!ac) return 0;
+		return 7.607+0.07645*ac+0.0000393*Math.pow(ac, 2);
+	},
+	
+	femurWeeks : function(fl)
+	{
+		if(!fl) return 0;
+		return 9.54+0.2977*fl+0.001039*Math.pow(fl, 2);
+	},
+	
+	hcWeeks : function(hc)
+	{
+		if(!hc) return 0;
+		return 0;
+	},
+	
+	efw : function(useBpdcHc, useFl, Bpdc, Fl)
+	{
+		// TODO: compare RIS values with spreadsheet values to determine correct formula for different useX combinations
+		return 0;
+	},
+	
+	averageWeeks : function(corrBpdWks, acWks, flWks)
+	{
+		var numOfMeasurements = 3;
+		
+		if(!corrBpdWks)
+		{
+			corrBpdWks = 0;
+			numOfMeasurements--;
+		}
+		if(!acWks)
+		{
+			acWks = 0;
+			numOfMeasurements--;
+		}
+		if(!flWks)
+		{
+			flWks = 0;
+			numOfMeasurements--;
+		}
+
+		if(!numOfMeasurements)
+			return 0;
+		
+		return (corrBpdWks + acWks + flWks) / numOfMeasurements;
+	}
+}
+
+function CalculatedBiometryCell(label, prop, precision, getVisible)
+{
+	this.label = label;
+	this.prop = prop;
+	this.cellType = "readonly";
+	this.precision = precision;
+	this.getValue = function(item) { return item[prop] ? item[prop].toFixed(precision) : ""; };
+	this.getError = function(item) { return null; };
+	this.setValue = function(item, value) { return; };  // required for hidden readonly fields
+	if (getVisible) this.getVisible = getVisible;
+}
+
 var BiometryForm = {
+
+	UpdateAvgSize : function()
+	{
+		averageSizeTable.bindItems([this._data[this._fetus]]);
+	},
 
 	initialize : function(data, fetus)
 	{
 		this._data = data.biometry;
 		this._reportType = data.obusReportType;
+		this._fetus = fetus;
 		var _me = this;
 
 		var biometryAssessedTable = Table.createTable($("biometryAssessedTable"),{ editInPlace: true, flow: true, checkBoxes: false},
@@ -700,18 +794,14 @@ var BiometryForm = {
 				size: 13,
 				cellType: "text",
 				getValue: function(item) { return item.crl; },
-				setValue: function(item, value) { item.crl = value; },
-				getVisible: function(item) { return _me._reportType == reportTypes[0]; },
+				setValue: function(item, value) 
+				{ 
+					item.crl = parseInt(value);
+					item.crlWks = BiometryCalculations.crlWeeks(item.crl);
+				},
 				getError: function(item) { return null; }
 			},
-			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[0]; },
-				getError: function(item) { return null; }
-			}
+			new CalculatedBiometryCell("wks", "crlWks", 1)
 		]);
 		
 		crlTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -719,169 +809,167 @@ var BiometryForm = {
 		var bpdTable = Table.createTable($("bpdTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
-				label: "mm", 
+				// biparietal diameter
+				label: "BPD mm", 
 				cellType: "text",
-				size: 13,
+				size: 5,
 				getValue: function(item) { return item.bpd; },
-				setValue: function(item, value) { item.bpd = value; },
+				setValue: function(item, value) 
+				{ 
+					item.bpd = parseInt(value);
+					item.bpdWks = BiometryCalculations.bpdWeeks(item.bpd);
+					item.correctedBpd = BiometryCalculations.correctedBpd(item.bpd, item.ofd);
+					item.correctedBpdWks = BiometryCalculations.bpdWeeks(item.correctedBpd);
+					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					BiometryForm.UpdateAvgSize();
+				},
 				getError: function(item) { return null; }
 			},
+			new CalculatedBiometryCell("wks", "bpdWks", 1),
 			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getError: function(item) { return null; }					
-			}
-		]);
-
-		bpdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-		var ofdTable = Table.createTable($("ofdTable"),{ editInPlace: true, flow: true, checkBoxes: false},
-		[			
-			{
-				label: "mm", 
+				label: "OFD mm", 
 				cellType: "text",
-				size: 13,
+				size: 5,
 				getValue: function(item) { return item.ofd; },
-				setValue: function(item, value) { item.ofd = value; },
+				setValue: function(item, value) 
+				{ 
+					item.ofd = parseInt(value);
+					item.correctedBpd = BiometryCalculations.correctedBpd(item.bpd, item.ofd);
+					item.correctedBpdWks = BiometryCalculations.bpdWeeks(item.correctedBpd);
+					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					BiometryForm.UpdateAvgSize();
+				},
 				getError: function(item) { return null; },
 				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			}
+			},
+			new CalculatedBiometryCell("Corrected BPD mm", "correctedBpd", 0, function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }),
+			new CalculatedBiometryCell("wks", "correctedBpdWks", 1, function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; })
 		]);
+		
+		bpdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
-		ofdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-		var correctedBpdTable = Table.createTable($("correctedBpdTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		var abdTable = Table.createTable($("abdTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
-				label: "mm", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; },
+				label: "A1 mm", 
+				cellType: "text",
+				size: 5,
+				getValue: function(item) { return item.abdX; },
+				setValue: function(item, value) 
+				{ 
+					item.abdX = parseInt(value); 
+					item.abdCircumference = BiometryCalculations.abdomenCircumference(item.abdX, item.abdY);
+					item.abdCircumferenceWks = BiometryCalculations.abdomenCircumferenceWeeks(item.abdCircumference);
+					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					BiometryForm.UpdateAvgSize();
+				},
 				getError: function(item) { return null; }
 			},
 			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; },
+				label: "A2 mm", 
+				cellType: "text",
+				size: 5,
+				getValue: function(item) { return item.abdY; },
+				setValue: function(item, value) 
+				{ 
+					item.abdY = parseInt(value); 
+					item.abdCircumference = BiometryCalculations.abdomenCircumference(item.abdX, item.abdY);
+					item.abdCircumferenceWks = BiometryCalculations.abdomenCircumferenceWeeks(item.abdCircumference);
+					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					BiometryForm.UpdateAvgSize();
+
+				},
 				getError: function(item) { return null; }
-			}
+			},
+			new CalculatedBiometryCell("AC mm", "abdCircumference", 0),
+			new CalculatedBiometryCell("wks", "abdCircumferenceWks", 1)
+		]);
+		
+		abdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+
+		var flTable = Table.createTable($("flTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		[			
+			{
+				label: "FL mm", 
+				cellType: "text",
+				size: 5,
+				getValue: function(item) { return item.fl; },
+				setValue: function(item, value) 
+				{ 
+					item.fl = parseInt(value); 
+					item.flWks = BiometryCalculations.femurWeeks(item.fl);
+					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					BiometryForm.UpdateAvgSize();
+				},
+				getError: function(item) { return null; }
+			},
+			new CalculatedBiometryCell("wks", "flWks", 1)
+		]);
+		
+		flTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+
+		var averageSizeTable = Table.createTable($("averageSizeTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		[			
+			new CalculatedBiometryCell("wks", "avgWks", 1)
 		]);
 
-		correctedBpdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		averageSizeTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 		var hcTable = Table.createTable($("hcTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
 				label: "mm", 
 				cellType: "text",
-				size: 13,
+				size: 5,
 				getValue: function(item) { return item.hc; },
-				setValue: function(item, value) { item.hc = value; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			},
-			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC	"; },
-				setValue: function(item, value) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; },
+				setValue: function(item, value) 
+				{ 
+					item.hc = parseInt(value); 
+					item.hcWks = BiometryCalculations.hcWeeks(item.hc);
+				},
 				getError: function(item) { return null; }
-			}
+			},
+			new CalculatedBiometryCell("wks", "hcWks", 1)
 		]);
 
 		hcTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
-		var abdTable = Table.createTable($("abdTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		var efwTable = Table.createTable($("efwTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
-				label: "", 
+				label: "Use BPDc/HC", 
+				cellType: "bool",
+				getValue: function(item) { return item.useBpdcHc; },
+				setValue: function(item, value) 
+				{ 
+					item.useBpdcHc = value; 
+					item.efw = BiometryCalculations.efw(item.useBpdcHc, item.useFl);
+				},
+				getError: function(item) { return null; }
+			},
+			{
+				label: "Use FL", 
+				cellType: "bool",
+				getValue: function(item) { return item.useFl; },
+				setValue: function(item, value) 
+				{ 
+					item.useFl = value; 
+					item.efw = BiometryCalculations.efw(item.useBpdcHc, item.useFl);
+				},
+				getError: function(item) { return null; }
+			},
+			new CalculatedBiometryCell("gm", "efw", 1),
+			{
+				label: "Percentile", 
 				cellType: "text",
-				size: 4,
-				getValue: function(item) { return item.abdX; },
-				setValue: function(item, value) { item.abdX = value; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			},
-			{
-				label: "", 
-				cellType: "readonly",
-				getValue: function(item) { return "+"; },
-				setValue: function(item, value) { return null; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			},
-			{
-				label: "", 
-				cellType: "text",
-				size: 4,
-				getValue: function(item) { return item.abdY; },
-				setValue: function(item, value) { item.abdY = value; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			},
-			{
-				label: "mm", 
-				cellType: "text",
-				size: 13,
-				getValue: function(item) { return item.abdAC; },
-				setValue: function(item, value) { item.abdAC = value; },
-				getError: function(item) { return item.abdAC; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			},
-			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			}
-		]);
-
-		abdTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-		var flTable = Table.createTable($("flTable"),{ editInPlace: true, flow: true, checkBoxes: false},
-		[			
-			{
-				label: "mm", 
-				cellType: "text",
-				size: 13,
-				getValue: function(item) { return item.fl; },
-				setValue: function(item, value) { item.fl = value; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			},
-			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getError: function(item) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
-			}
-		]);
-
-		flTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-
-		var averageSizeTable = Table.createTable($("averageSizeTable"),{ editInPlace: true, flow: true, checkBoxes: false},
-		[			
-			{
-				label: "wks", 
-				cellType: "readonly",
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return null; },
-				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; },
+				size: 5,
+				getValue: function(item) { return item.efwPercentile; },
+				setValue: function(item, value) { item.efwPercentile = parseInt(value); },
 				getError: function(item) { return null; }
 			}
 		]);
 
-		averageSizeTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		efwTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
 		var nuchalTransparencyTable = Table.createTable($("nuchalTransparencyTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
@@ -909,12 +997,11 @@ var BiometryForm = {
 		
 		crlTable.bindItems([this._data[fetus]]);
 		bpdTable.bindItems([this._data[fetus]]);
-		ofdTable.bindItems([this._data[fetus]]);
-		correctedBpdTable.bindItems([this._data[fetus]]);
-		hcTable.bindItems([this._data[fetus]]);
 		abdTable.bindItems([this._data[fetus]]);
 		flTable.bindItems([this._data[fetus]]);
 		averageSizeTable.bindItems([this._data[fetus]]);
+		hcTable.bindItems([this._data[fetus]]);
+		efwTable.bindItems([this._data[fetus]]);
 		nuchalTransparencyTable.bindItems([this._data[fetus]]);
 	},
 
@@ -922,12 +1009,11 @@ var BiometryForm = {
 	{
 		document.getElementById("crlTable").style.display = (show && this._reportType == reportTypes[0]) ? "block" : "none";
 		document.getElementById("bpdTable").style.display = (show) ? "block" : "none";
-		document.getElementById("ofdTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
-		document.getElementById("correctedBpdTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
-		document.getElementById("hcTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
 		document.getElementById("abdTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
 		document.getElementById("flTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
 		document.getElementById("averageSizeTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
+		document.getElementById("efwTable").style.display = (show && (this._reportType == reportTypes[2])) ? "block" : "none";
+		document.getElementById("hcTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
 		document.getElementById("nuchalTransparencyTable").style.display = (show && this._reportType == reportTypes[1]) ? "block" : "none";
 	}
 }
