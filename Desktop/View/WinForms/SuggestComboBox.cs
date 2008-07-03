@@ -67,7 +67,13 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (_suggestionProvider != null)
                 {
                     _suggestionProvider.SuggestionsProvided += ItemsProvidedEventHandler;
-                    _suggestionProvider.SetQuery(this.Text);
+
+					// Bug #2222: only call SetQuery if this is a "simple" dropdown, in which case
+					// we need to populate the list immediately
+					// calling it for other styles causes behaviour described in #2222,
+					// and there is really no need to get suggestions until user actually types
+					if (this.DropDownStyle == ComboBoxStyle.Simple)
+						_suggestionProvider.SetQuery(this.Text);
                 }
             }
         }
@@ -91,7 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     {
                         items.Add(value);
                     }
-                    //this.DataSource = items;
+
                     UpdateListItems(items);
                     this.SelectedItem = value;
 
@@ -227,9 +233,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 // at least 1 suggestion exists
 
                 // open the dropdown menu
-                // Bug #2222: only if curText is non empty, otherwise we might get flickering
-                // and there is really no point in showing the list if there is no query string
-                this.DroppedDown = string.IsNullOrEmpty(curText);
+                this.DroppedDown = true;
 
                 // update list
                 UpdateListItems(e.Items);
