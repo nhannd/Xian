@@ -86,12 +86,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._windows.Location = new System.Drawing.Point(48, 40);
 			this._windows.Margin = new System.Windows.Forms.Padding(4);
+			this._windows.MultiSelect = false;
 			this._windows.Name = "_windows";
 			this._windows.ReadOnly = false;
 			this._windows.ShowToolbar = false;
 			this._windows.Size = new System.Drawing.Size(662, 106);
 			this._windows.TabIndex = 0;
-			this._windows.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _openWindow
 			// 
@@ -207,12 +207,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._shelves.Location = new System.Drawing.Point(7, 186);
 			this._shelves.Margin = new System.Windows.Forms.Padding(4);
+			this._shelves.MultiSelect = false;
 			this._shelves.Name = "_shelves";
 			this._shelves.ReadOnly = false;
 			this._shelves.ShowToolbar = false;
 			this._shelves.Size = new System.Drawing.Size(662, 137);
 			this._shelves.TabIndex = 4;
-			this._shelves.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// label2
 			// 
@@ -257,12 +257,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._workspaces.Location = new System.Drawing.Point(7, 44);
 			this._workspaces.Margin = new System.Windows.Forms.Padding(4);
+			this._workspaces.MultiSelect = false;
 			this._workspaces.Name = "_workspaces";
 			this._workspaces.ReadOnly = false;
 			this._workspaces.ShowToolbar = false;
 			this._workspaces.Size = new System.Drawing.Size(662, 105);
 			this._workspaces.TabIndex = 0;
-			this._workspaces.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// label1
 			// 
@@ -287,12 +287,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._events.Location = new System.Drawing.Point(9, 22);
 			this._events.Margin = new System.Windows.Forms.Padding(4);
+			this._events.MultiSelect = false;
 			this._events.Name = "_events";
 			this._events.ReadOnly = false;
 			this._events.ShowToolbar = false;
 			this._events.Size = new System.Drawing.Size(753, 182);
 			this._events.TabIndex = 0;
-			this._events.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// DesktopMonitorComponentControl
 			// 

@@ -59,33 +59,33 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._noteList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.SuspendLayout();
-            // 
-            // _noteList
-            // 
-            this._noteList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._noteList.AutoSize = true;
-            this._noteList.Location = new System.Drawing.Point(0, 0);
-            this._noteList.Name = "_noteList";
-            this._noteList.ReadOnly = false;
-            this._noteList.Size = new System.Drawing.Size(305, 204);
-            this._noteList.TabIndex = 0;
-            this._noteList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
-            // 
-            // PatientNoteSummaryComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.Controls.Add(this._noteList);
-            this.Name = "PatientNoteSummaryComponentControl";
-            this.Size = new System.Drawing.Size(303, 204);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			this._noteList = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this.SuspendLayout();
+			// 
+			// _noteList
+			// 
+			this._noteList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._noteList.AutoSize = true;
+			this._noteList.Location = new System.Drawing.Point(0, 0);
+			this._noteList.MultiSelect = false;
+			this._noteList.Name = "_noteList";
+			this._noteList.ReadOnly = false;
+			this._noteList.Size = new System.Drawing.Size(305, 204);
+			this._noteList.TabIndex = 0;
+			this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
+			// 
+			// PatientNoteSummaryComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoSize = true;
+			this.Controls.Add(this._noteList);
+			this.Name = "PatientNoteSummaryComponentControl";
+			this.Size = new System.Drawing.Size(303, 204);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 

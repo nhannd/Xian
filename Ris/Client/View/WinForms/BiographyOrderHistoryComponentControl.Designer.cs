@@ -61,30 +61,30 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
 			this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._diagnosticService = new System.Windows.Forms.Label();
+			this._accessionNumber = new System.Windows.Forms.Label();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this._orderPage = new System.Windows.Forms.TabPage();
 			this._visitPage = new System.Windows.Forms.TabPage();
 			this._reportPage = new System.Windows.Forms.TabPage();
 			this._documentPage = new System.Windows.Forms.TabPage();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-			this._diagnosticService = new System.Windows.Forms.Label();
-			this._accessionNumber = new System.Windows.Forms.Label();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
-			this.tabControl1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
+			this.tabControl1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _orderList
 			// 
 			this._orderList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._orderList.Location = new System.Drawing.Point(0, 0);
+			this._orderList.MultiSelect = false;
 			this._orderList.Name = "_orderList";
 			this._orderList.ReadOnly = false;
 			this._orderList.Size = new System.Drawing.Size(465, 586);
 			this._orderList.TabIndex = 0;
-			this._orderList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// splitContainer1
 			// 
@@ -106,61 +106,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.splitContainer1.SplitterDistance = 465;
 			this.splitContainer1.TabIndex = 1;
 			this.splitContainer1.TabStop = false;
-			// 
-			// tabControl1
-			// 
-			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tabControl1.Controls.Add(this._orderPage);
-			this.tabControl1.Controls.Add(this._visitPage);
-			this.tabControl1.Controls.Add(this._reportPage);
-			this.tabControl1.Controls.Add(this._documentPage);
-			this.tabControl1.Location = new System.Drawing.Point(0, 68);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(513, 518);
-			this.tabControl1.TabIndex = 0;
-			// 
-			// _orderPage
-			// 
-			this._orderPage.Location = new System.Drawing.Point(4, 22);
-			this._orderPage.Name = "_orderPage";
-			this._orderPage.Padding = new System.Windows.Forms.Padding(3);
-			this._orderPage.Size = new System.Drawing.Size(505, 492);
-			this._orderPage.TabIndex = 0;
-			this._orderPage.Text = "Order Details";
-			this._orderPage.UseVisualStyleBackColor = true;
-			// 
-			// _visitPage
-			// 
-			this._visitPage.Location = new System.Drawing.Point(4, 22);
-			this._visitPage.Name = "_visitPage";
-			this._visitPage.Padding = new System.Windows.Forms.Padding(3);
-			this._visitPage.Size = new System.Drawing.Size(505, 560);
-			this._visitPage.TabIndex = 1;
-			this._visitPage.Text = "Visit Details";
-			this._visitPage.UseVisualStyleBackColor = true;
-			// 
-			// _reportPage
-			// 
-			this._reportPage.Location = new System.Drawing.Point(4, 22);
-			this._reportPage.Name = "_reportPage";
-			this._reportPage.Padding = new System.Windows.Forms.Padding(3);
-			this._reportPage.Size = new System.Drawing.Size(505, 560);
-			this._reportPage.TabIndex = 4;
-			this._reportPage.Text = "Reports";
-			this._reportPage.UseVisualStyleBackColor = true;
-			// 
-			// _documentPage
-			// 
-			this._documentPage.Location = new System.Drawing.Point(4, 22);
-			this._documentPage.Name = "_documentPage";
-			this._documentPage.Padding = new System.Windows.Forms.Padding(3);
-			this._documentPage.Size = new System.Drawing.Size(505, 560);
-			this._documentPage.TabIndex = 3;
-			this._documentPage.Text = "Attachments";
-			this._documentPage.UseVisualStyleBackColor = true;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -195,6 +140,61 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._accessionNumber.TabIndex = 1;
 			this._accessionNumber.Text = "Accession Number";
 			// 
+			// tabControl1
+			// 
+			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.tabControl1.Controls.Add(this._orderPage);
+			this.tabControl1.Controls.Add(this._visitPage);
+			this.tabControl1.Controls.Add(this._reportPage);
+			this.tabControl1.Controls.Add(this._documentPage);
+			this.tabControl1.Location = new System.Drawing.Point(0, 68);
+			this.tabControl1.Name = "tabControl1";
+			this.tabControl1.SelectedIndex = 0;
+			this.tabControl1.Size = new System.Drawing.Size(513, 518);
+			this.tabControl1.TabIndex = 0;
+			// 
+			// _orderPage
+			// 
+			this._orderPage.Location = new System.Drawing.Point(4, 22);
+			this._orderPage.Name = "_orderPage";
+			this._orderPage.Padding = new System.Windows.Forms.Padding(3);
+			this._orderPage.Size = new System.Drawing.Size(505, 492);
+			this._orderPage.TabIndex = 0;
+			this._orderPage.Text = "Order Details";
+			this._orderPage.UseVisualStyleBackColor = true;
+			// 
+			// _visitPage
+			// 
+			this._visitPage.Location = new System.Drawing.Point(4, 22);
+			this._visitPage.Name = "_visitPage";
+			this._visitPage.Padding = new System.Windows.Forms.Padding(3);
+			this._visitPage.Size = new System.Drawing.Size(505, 492);
+			this._visitPage.TabIndex = 1;
+			this._visitPage.Text = "Visit Details";
+			this._visitPage.UseVisualStyleBackColor = true;
+			// 
+			// _reportPage
+			// 
+			this._reportPage.Location = new System.Drawing.Point(4, 22);
+			this._reportPage.Name = "_reportPage";
+			this._reportPage.Padding = new System.Windows.Forms.Padding(3);
+			this._reportPage.Size = new System.Drawing.Size(505, 492);
+			this._reportPage.TabIndex = 4;
+			this._reportPage.Text = "Reports";
+			this._reportPage.UseVisualStyleBackColor = true;
+			// 
+			// _documentPage
+			// 
+			this._documentPage.Location = new System.Drawing.Point(4, 22);
+			this._documentPage.Name = "_documentPage";
+			this._documentPage.Padding = new System.Windows.Forms.Padding(3);
+			this._documentPage.Size = new System.Drawing.Size(505, 492);
+			this._documentPage.TabIndex = 3;
+			this._documentPage.Text = "Attachments";
+			this._documentPage.UseVisualStyleBackColor = true;
+			// 
 			// BiographyOrderHistoryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -205,9 +205,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.splitContainer1.Panel1.ResumeLayout(false);
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.ResumeLayout(false);
-			this.tabControl1.ResumeLayout(false);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
+			this.tabControl1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }

@@ -67,11 +67,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._attachments.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._attachments.Location = new System.Drawing.Point(0, 0);
+			this._attachments.MultiSelect = false;
 			this._attachments.Name = "_attachments";
 			this._attachments.ReadOnly = false;
 			this._attachments.Size = new System.Drawing.Size(415, 76);
 			this._attachments.TabIndex = 0;
-			this._attachments.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			// 
 			// MimeDocumentPreviewComponentControl
 			// 

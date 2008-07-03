@@ -61,11 +61,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _propertiesTableView
 			// 
 			this._propertiesTableView.Location = new System.Drawing.Point(16, 12);
+			this._propertiesTableView.MultiSelect = false;
 			this._propertiesTableView.Name = "_propertiesTableView";
 			this._propertiesTableView.ReadOnly = false;
 			this._propertiesTableView.Size = new System.Drawing.Size(521, 159);
 			this._propertiesTableView.TabIndex = 0;
-			this._propertiesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _testButton
 			// 

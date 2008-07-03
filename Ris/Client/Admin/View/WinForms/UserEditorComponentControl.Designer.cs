@@ -80,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			this._authorityGroups.Location = new System.Drawing.Point(10, 245);
 			this._authorityGroups.Margin = new System.Windows.Forms.Padding(4);
+			this._authorityGroups.MultiSelect = false;
 			this._authorityGroups.Name = "_authorityGroups";
 			this._authorityGroups.ReadOnly = false;
 			this._authorityGroups.ShowToolbar = false;

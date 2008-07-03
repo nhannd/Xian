@@ -107,12 +107,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._reportList.Location = new System.Drawing.Point(3, 51);
+			this._reportList.MultiSelect = false;
 			this._reportList.Name = "_reportList";
 			this._reportList.ReadOnly = false;
 			this._reportList.ShowToolbar = false;
 			this._reportList.Size = new System.Drawing.Size(437, 127);
 			this._reportList.TabIndex = 1;
-			this._reportList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// groupBox1
 			// 

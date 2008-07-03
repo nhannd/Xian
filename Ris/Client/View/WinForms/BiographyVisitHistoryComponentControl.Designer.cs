@@ -71,11 +71,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this._visitList.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._visitList.Location = new System.Drawing.Point(0, 0);
+			this._visitList.MultiSelect = false;
 			this._visitList.Name = "_visitList";
 			this._visitList.ReadOnly = false;
 			this._visitList.Size = new System.Drawing.Size(465, 586);
 			this._visitList.TabIndex = 0;
-			this._visitList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// splitContainer1
 			// 

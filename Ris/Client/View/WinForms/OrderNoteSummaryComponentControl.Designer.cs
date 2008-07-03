@@ -28,27 +28,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._noteList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.SuspendLayout();
-            // 
-            // _noteList
-            // 
-            this._noteList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._noteList.Location = new System.Drawing.Point(0, 0);
-            this._noteList.Name = "_noteList";
-            this._noteList.ReadOnly = false;
-            this._noteList.Size = new System.Drawing.Size(150, 150);
-            this._noteList.TabIndex = 1;
-            this._noteList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
-            this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
-            // 
-            // OrderNoteSummaryComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._noteList);
-            this.Name = "OrderNoteSummaryComponentControl";
-            this.ResumeLayout(false);
+			this._noteList = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this.SuspendLayout();
+			// 
+			// _noteList
+			// 
+			this._noteList.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._noteList.Location = new System.Drawing.Point(0, 0);
+			this._noteList.MultiSelect = false;
+			this._noteList.Name = "_noteList";
+			this._noteList.ReadOnly = false;
+			this._noteList.Size = new System.Drawing.Size(150, 150);
+			this._noteList.TabIndex = 1;
+			this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
+			// 
+			// OrderNoteSummaryComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._noteList);
+			this.Name = "OrderNoteSummaryComponentControl";
+			this.ResumeLayout(false);
 
         }
 

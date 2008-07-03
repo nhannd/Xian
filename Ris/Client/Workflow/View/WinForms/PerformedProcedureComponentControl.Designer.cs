@@ -112,11 +112,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mppsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._mppsTableView.Location = new System.Drawing.Point(384, 4);
 			this._mppsTableView.Margin = new System.Windows.Forms.Padding(4);
+			this._mppsTableView.MultiSelect = false;
 			this._mppsTableView.Name = "_mppsTableView";
 			this._mppsTableView.ReadOnly = false;
 			this._mppsTableView.Size = new System.Drawing.Size(372, 164);
 			this._mppsTableView.TabIndex = 1;
-			this._mppsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _procedurePlanSummary
 			// 
@@ -129,7 +129,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._procedurePlanSummary.ReadOnly = false;
 			this._procedurePlanSummary.Size = new System.Drawing.Size(374, 166);
 			this._procedurePlanSummary.TabIndex = 0;
-			this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _mppsDetailsPanel
 			// 
