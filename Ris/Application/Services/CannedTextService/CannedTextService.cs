@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 					throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
 
 				if (string.IsNullOrEmpty(request.Detail.Category))
-					throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
+					throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
 
 				CannedTextAssembler assembler = new CannedTextAssembler();
 				CannedText cannedText = assembler.CreateCannedText(request.Detail, this.PersistenceContext);
