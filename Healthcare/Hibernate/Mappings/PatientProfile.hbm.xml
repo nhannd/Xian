@@ -13,18 +13,16 @@
 				<column name="MrnAssigningAuthority_" unique-key="Mrn" not-null="true"/>
 			</many-to-one>
 		</component>
-		<idbag name="ExpiredMrns" lazy="true" table="ExpiredPatientIdentifiers_" access="nosetter.camelcase-underscore">
+		<idbag name="ExpiredMrns" lazy="true" table="PatientExpiredMrn_">
 			<collection-id column="OID_" type="Guid">
 				<generator class="guid.comb"/>
 			</collection-id>
 			<key column="PatientProfileOID_"/>
-			<composite-element class="ExpiredPatientIdentifiers">
-				<property name="ExpiredMrn" column="MrnId_" type="String" length="25" not-null="true"/>
-				<many-to-one name="AssigningAuthority" class="InformationAuthorityEnum">
-					<column name="MrnAssigningAuthority_" unique-key="ExpiredMrn" not-null="true"/>
-				</many-to-one>
+			<composite-element class="PatientIdentifier">
+				<property name="Id" column="MrnId_" type="String" not-null="true"/>
+				<many-to-one name="AssigningAuthority" class="InformationAuthorityEnum" column="MrnAssigningAuthority_" not-null="true"/>
 			</composite-element>
-		</idbag>		
+		</idbag>
 		<component name="Healthcard" class="HealthcardNumber">
 			<property name="Id" column="HealthcardId_" type="String" length="30" not-null="false"/>
 			<many-to-one name="AssigningAuthority" class="InsuranceAuthorityEnum" column="HealthcardAssigningAuthority_" not-null="false"/>

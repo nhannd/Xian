@@ -110,8 +110,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             IList<TEntity> results = Find(criteria, new SearchResultPage(0, 1));
 
-            if (results.Count == 0)
-                throw new EntityNotFoundException(null);
+			if (results.Count == 0)
+			{
+				throw new EntityNotFoundException(null);
+			}
 
             return results[0];
         }
