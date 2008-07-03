@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			OrderNoteboxConfigurationComponent component = new OrderNoteboxConfigurationComponent();
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Context.DesktopWindow, component, "Notebox Groups Configuration");
+				this.Context.DesktopWindow, component, "Group Notebox Folder Configuration");
 
 			if(exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -110,11 +110,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			// create table
 			_staffGroupTable = new Table<TableItem>();
-			_staffGroupTable.Columns.Add(new TableColumn<TableItem, bool>("Show",
+			_staffGroupTable.Columns.Add(new TableColumn<TableItem, bool>("Show Folder",
 				delegate(TableItem item) { return item.IsChecked; },
 				delegate(TableItem item, bool value) { item.IsChecked = value; }));
 
-			_staffGroupTable.Columns.Add(new TableColumn<TableItem, string>("Name",
+			_staffGroupTable.Columns.Add(new TableColumn<TableItem, string>("Group Name",
 				delegate(TableItem item) { return item.Item.Name; }));
 			_staffGroupTable.Columns.Add(new TableColumn<TableItem, string>("Description",
 				delegate(TableItem item) { return item.Item.Description; }));
