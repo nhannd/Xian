@@ -365,7 +365,9 @@ namespace ClearCanvas.Desktop.Actions
 				try
 				{
 					this.ActionModelsXml = _actionModelXmlDoc;
-					this.Save();
+
+					//Ticket #1551: temporarily disabled this until there is a UI for editing the action model (JR)
+					//this.Save();
 				}
 				catch (Exception e)
 				{
