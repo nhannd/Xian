@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchField.PasswordChar = '\0';
 			this._searchField.Size = new System.Drawing.Size(333, 41);
 			this._searchField.TabIndex = 0;
-			this._searchField.ToolTip = "Enter search criteria (MRN#, Name, Healthcard ID, or A#)";
+			this._searchField.ToolTip = "Enter search criteria (MRN#, Name, or Healthcard ID)";
 			this._searchField.Value = null;
 			// 
 			// _searchResults
