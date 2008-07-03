@@ -113,13 +113,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #endregion
 
+        #region Overrides and Helpers
 
         protected virtual void OnValueChanged(EventArgs args)
         {
             EventsHelper.Fire(_valueChanged, this, EventArgs.Empty);
         }
-
-        #region Overrides and Helpers
 
         protected override void OnCreateControl()
         {
@@ -177,12 +176,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             switch (e.KeyCode)
             {
-                // When an user deletes some text, the suggestions may no longer be valid.  
-                // We may want to handle the suggestions differently in the future
-                //case Keys.Delete:
-                //case Keys.Back:
-                //    _textDeleted = true;
-                //    break;
 				case Keys.Escape:
 					this.Text = null;
             		OnSelectionChangeCommitted(e);
@@ -213,58 +206,32 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void ItemsProvidedEventHandler(object sender, SuggestionsProvidedEventArgs e)
         {
-            // Remember the current text as it exist
+            // Remember the current text and selection start,
+            // as they exists prior to modifying the items collection
             string curText = this.Text;
             int cursorPosition = this.SelectionStart;
 
-            // Get new suggestions
-            // Setting the datasource will automatically change this.Text
-            //this.DataSource = e.Items;
-
             if (e.Items.Count == 0)
             {
+                // there are no suggestions, so clear the items list
                 this.Items.Clear();
 
-                // No suggestion, reset text back to original text
+                // reset text back to original text
                 // and return the cursor to the original position
                 this.Text = curText;
                 this.SelectionStart = cursorPosition;
                 this.SelectionLength = 0;
             }
-
-            // Auto-complete the textbox when matching only one item
-            // It is commented out to make this control simpler.
-
-            //else if (this.Items.Count == 1)
-            //{
-            //    // Close the dropdown
-            //    if (this.DroppedDown)
-            //        this.DroppedDown = false;
-
-            //    string itemText = this.GetItemText(this.Items[0]);
-
-            //    if (curText == itemText)
-            //    {
-            //        // current text is already the item text, no text to append
-            //        // set cursor to the end
-            //        this.SelectionStart = itemText.Length;
-            //        this.SelectionLength = 0;
-            //    }
-            //    else
-            //    {
-            //        // set current text to item text and highlight the the appended text
-            //        this.Text = itemText;
-            //        string appendText = this.Text.Substring(curText.Length);
-            //        this.SelectionStart = curText.Length;
-            //        this.SelectionLength = appendText.Length;
-            //    }
-            //}
-            else // more than 1 suggestion
+            else
             {
-                // open the dropdown menu
-                if (!this.DroppedDown)
-                    this.DroppedDown = true;
+                // at least 1 suggestion exists
 
+                // open the dropdown menu
+                // Bug #2222: only if curText is non empty, otherwise we might get flickering
+                // and there is really no point in showing the list if there is no query string
+                this.DroppedDown = string.IsNullOrEmpty(curText);
+
+                // update list
                 UpdateListItems(e.Items);
 
                 // set cursor to the end
