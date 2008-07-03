@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -64,16 +65,6 @@ namespace ClearCanvas.Ris.Client
             base.Start();
         }
 
-        /// <summary>
-        /// Sets the subject upon which the editor acts
-        /// Not for use by the view
-        /// </summary>
-        public TelephoneDetail PhoneNumber
-        {
-            get { return _phoneNumber; }
-            set { _phoneNumber = value; }
-        }
-
         public string PhoneNumberMask
         {
             get { return TextFieldMasks.TelephoneNumberLocalMask; }
@@ -89,6 +80,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        [ValidateNotNull]
         public string AreaCode
         {
             get { return _phoneNumber.AreaCode; }
@@ -99,6 +91,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        [ValidateNotNull]
         public string Number
         {
             get { return _phoneNumber.Number; }
@@ -124,6 +117,7 @@ namespace ClearCanvas.Ris.Client
             get { return _phoneTypeEnabled; }
         }
 
+        [ValidateNotNull]
         public string PhoneType
         {
             get { return _phoneNumber.Type.Value; }

@@ -40,6 +40,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
 using System.Collections;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -90,6 +91,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string FamilyName
         {
             get { return _practitionerDetail.Name.FamilyName; }
@@ -100,6 +102,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        [ValidateNotNull]
         public string GivenName
         {
             get { return _practitionerDetail.Name.GivenName; }

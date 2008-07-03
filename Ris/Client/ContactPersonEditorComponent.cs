@@ -87,12 +87,6 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public ContactPersonDetail ContactPerson
-        {
-            get { return _contactPerson; }
-            set { _contactPerson = value; }
-        }
-
         [ValidateNotNull]
         public string Name
         {

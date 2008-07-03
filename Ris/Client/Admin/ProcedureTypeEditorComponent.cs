@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
 using System.Collections;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -62,6 +63,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		private readonly bool _isNew;
 
 		private ProcedureTypeSummary _procedureTypeSummary;
+        private List<ProcedureTypeSummary> _baseTypeChoices;
 
 		private ChildComponentHost _xmlEditorHost;
 
@@ -87,30 +89,26 @@ namespace ClearCanvas.Ris.Client.Admin
 			get { return _procedureTypeSummary; }
 		}
 
-		public ProcedureTypeDetail ProcedureTypeDetail
-		{
-			get { return _procedureTypeDetail; }
-			set { _procedureTypeDetail = value; }
-		}
-
 		/// <summary>
 		/// Called by the host to initialize the application component.
 		/// </summary>
 		public override void Start()
 		{
-			if (_isNew)
-			{
-				_procedureTypeDetail = new ProcedureTypeDetail();
-			}
-			else
-			{
-				Platform.GetService<IProcedureTypeAdminService>(
-					delegate(IProcedureTypeAdminService service)
-					{
-						LoadProcedureTypeForEditResponse response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
-						_procedureTypeDetail = response.ProcedureType;
-					});
-			}
+			Platform.GetService<IProcedureTypeAdminService>(
+				delegate(IProcedureTypeAdminService service)
+				{
+                    _baseTypeChoices =
+                        service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest()).BaseProcedureTypeChoices;
+                    if (_isNew)
+                    {
+                        _procedureTypeDetail = new ProcedureTypeDetail();
+                    }
+                    else
+                    {
+                        LoadProcedureTypeForEditResponse response = service.LoadProcedureTypeForEdit(new LoadProcedureTypeForEditRequest(_procedureTypeRef));
+                        _procedureTypeDetail = response.ProcedureType;
+                    }
+				});
 
 			ICodeEditor editor = CodeEditorFactory.CreateCodeEditor();
 			editor.Language = "xml";
@@ -144,7 +142,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			get { return _xmlEditorHost; }
 		}
 
-		public string ID
+        [ValidateNotNull]
+        public string ID
 		{
 			get { return _procedureTypeDetail.Id; }
 			set
@@ -154,7 +153,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 		}
 
-		public string Name
+        [ValidateNotNull]
+        public string Name
 		{
 			get { return _procedureTypeDetail.Name; }
 			set
@@ -174,47 +174,29 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 		}
 
-		public IList BaseTypeList
+		public IList BaseTypeChoices
 		{
-			get
-			{
-				LoadProcedureTypeEditorFormDataResponse response = null;
-				Platform.GetService<IProcedureTypeAdminService>(
-					delegate(IProcedureTypeAdminService service)
-					{
-						response = service.LoadProcedureTypeEditorFormData(new LoadProcedureTypeEditorFormDataRequest());
-					});
-				return response.BaseProcedureTypeChoices;
-			}
-		}
-
-		public string BaseTypeName
-		{
-			get { return _procedureTypeDetail.BaseType.Name; }
-			set
-			{
-				_procedureTypeDetail.BaseType.Name = value;
-				this.Modified = true;
-			}
-		}
-
-		public string PlanXml
-		{
-			get { return _procedureTypeDetail.PlanXml; }
-			set
-			{
-				_procedureTypeDetail.PlanXml = value;
-				this.Modified = true;
-			}
+            get { return _baseTypeChoices; }
 		}
 
 		public string FormatBaseTypeItem(object item)
 		{
 			ProcedureTypeSummary summary = (ProcedureTypeSummary)item;
-			return "("+summary.Id+")" + " " + summary.Name;
+			return string.Format("{0} - {1}", summary.Id, summary.Name);
 		}
 
-		public void Accept()
+        public bool AcceptEnabled
+        {
+            get { return this.Modified; }
+        }
+
+        public event EventHandler AcceptEnabledChanged
+        {
+            add { this.ModifiedChanged += value; }
+            remove { this.ModifiedChanged -= value; }
+        }
+
+        public void Accept()
 		{
 			_procedureTypeDetail.PlanXml = ((ICodeEditor)_xmlEditorHost.Component).Text; 
 
@@ -234,8 +216,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					ExceptionHandler.Report(e, "Unable to save procedure type", this.Host.DesktopWindow,
 						delegate()
 						{
-							this.ExitCode = ApplicationComponentExitCode.Error;
-							this.Host.Exit();
+							this.Exit(ApplicationComponentExitCode.Error);
 						});
 				}
 			}
@@ -243,14 +224,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			Host.Exit();
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
-		public bool AcceptEnabled
-		{
-			get { return this.Modified; }
-		}
 
 		#endregion
 
@@ -272,11 +248,6 @@ namespace ClearCanvas.Ris.Client.Admin
 				});
 		}
 
-		public event EventHandler AcceptEnabledChanged
-		{
-			add { this.ModifiedChanged += value; }
-			remove { this.ModifiedChanged -= value; }
-		}
 
 	}
 }

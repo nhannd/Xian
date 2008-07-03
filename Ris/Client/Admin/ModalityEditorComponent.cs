@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -119,6 +120,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string ID
         {
             get { return _modalityDetail.Id; }
@@ -129,6 +131,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        [ValidateNotNull]
         public string Name
         {
             get { return _modalityDetail.Name; }

@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -69,6 +70,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _protocolCodeDetail; }
         }
 
+        [ValidateNotNull]
         public string Name
         {
             get { return _name; }

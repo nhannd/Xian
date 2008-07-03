@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using System.Collections;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -81,6 +82,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string ContactPointName
         {
             get { return _contactPointDetail.Name; }
@@ -116,6 +118,7 @@ namespace ClearCanvas.Ris.Client
             get { return (IList)_resultCommunicationModeChoices; }
         }
 
+        [ValidateNotNull]
         public EnumValueInfo SelectedResultCommunicationMode
         {
             get { return _contactPointDetail.PreferredResultCommunicationMode; }

@@ -41,6 +41,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -131,7 +132,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
-		public string Id
+        [ValidateNotNull]
+        public string Id
 		{
 			get { return _locationDetail.Id; }
 			set
@@ -141,7 +143,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 		}
 
-		public string Name
+        [ValidateNotNull]
+        public string Name
 		{
 			get { return _locationDetail.Name; }
 			set
@@ -166,6 +169,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _facilityChoices; }
         }
 
+        [ValidateNotNull]
         public FacilitySummary Facility
         {
             get { return _locationDetail.Facility; }

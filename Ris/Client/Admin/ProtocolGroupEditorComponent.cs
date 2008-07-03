@@ -38,6 +38,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -170,6 +171,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string Name
         {
             get { return _protocolGroupDetail.Name; }

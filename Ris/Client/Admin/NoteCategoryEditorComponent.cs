@@ -41,6 +41,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -135,6 +136,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return EnumValueUtils.GetDisplayValues(_severityChoices); }
         }
 
+        [ValidateNotNull]
         public string Severity
         {
             get { return _noteCategoryDetail.Severity == null ? "" : _noteCategoryDetail.Severity.Value; }
@@ -148,6 +150,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        [ValidateNotNull]
         public string Category
         {
             get { return _noteCategoryDetail.Category; }

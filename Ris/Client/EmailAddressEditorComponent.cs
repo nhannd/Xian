@@ -76,12 +76,6 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public EmailAddressDetail EmailAddress
-        {
-            get { return _emailAddress; }
-            set { _emailAddress = value; }
-        }
-
         [ValidateNotNull]
         [ValidateRegex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*", AllowNull = true)]
         public string Address

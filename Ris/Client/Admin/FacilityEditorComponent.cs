@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -117,6 +118,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _informationAuthorityChoices; }    
         }
 
+        [ValidateNotNull]
         public string Name
         {
             get { return _facilityDetail.Name; }
@@ -127,6 +129,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        [ValidateNotNull]
         public string Code
         {
             get { return _facilityDetail.Code; }
@@ -137,6 +140,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        [ValidateNotNull]
         public EnumValueInfo InformationAuthority
         {
             get { return _facilityDetail.InformationAuthority; }

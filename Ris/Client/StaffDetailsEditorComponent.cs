@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -85,7 +86,8 @@ namespace ClearCanvas.Ris.Client
 
 		#region Presentation Model
 
-		public string StaffType
+        [ValidateNotNull]
+        public string StaffType
 		{
 			get { return _staffDetail.StaffType.Value; }
 			set
@@ -101,7 +103,8 @@ namespace ClearCanvas.Ris.Client
 			get { return EnumValueUtils.GetDisplayValues(_staffTypeChoices); }
 		}
 
-		public string StaffId
+        [ValidateNotNull]
+        public string StaffId
 		{
 			get { return _staffDetail.StaffId; }
 			set
@@ -111,7 +114,8 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public string FamilyName
+        [ValidateNotNull]
+        public string FamilyName
 		{
 			get { return _staffDetail.Name.FamilyName; }
 			set
@@ -121,7 +125,8 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public string GivenName
+        [ValidateNotNull]
+        public string GivenName
 		{
 			get { return _staffDetail.Name.GivenName; }
 			set
@@ -171,7 +176,8 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public string Sex
+        [ValidateNotNull]
+        public string Sex
 		{
 			get { return _staffDetail.Sex.Value; }
 			set

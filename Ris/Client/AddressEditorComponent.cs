@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -72,6 +73,7 @@ namespace ClearCanvas.Ris.Client
             base.Start();
         }
 
+        [ValidateNotNull]
         public string Street
         {
             get { return _address.Street; }
@@ -92,6 +94,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        [ValidateNotNull]
         public string City
         {
             get { return _address.City; }
@@ -102,6 +105,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        [ValidateNotNull]
         public string Province
         {
             get { return _address.Province; }
@@ -117,6 +121,7 @@ namespace ClearCanvas.Ris.Client
             get { return AddressEditorComponentSettings.Default.ProvinceChoices; }
         }
 
+        [ValidateNotNull]
         public string Country
         {
             get { return _address.Country; }
@@ -132,6 +137,7 @@ namespace ClearCanvas.Ris.Client
             get { return AddressEditorComponentSettings.Default.CountryChoices; }
         }
 
+        [ValidateNotNull]
         public string PostalCode
         {
             get { return _address.PostalCode; }

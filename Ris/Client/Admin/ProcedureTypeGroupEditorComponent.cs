@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -143,6 +144,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string Name
         {
             get { return _editedItemDetail.Name; }
@@ -163,6 +165,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        [ValidateNotNull]
         public string Category
         {
             get { return _editedItemDetail.Category == null ? string.Empty : _editedItemDetail.Category.Value; }

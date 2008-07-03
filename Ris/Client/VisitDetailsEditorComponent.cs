@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 using System.Collections;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -114,6 +115,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
+        [ValidateNotNull]
         public string VisitNumber
         {
             get { return _visit.VisitNumber.Id; }
@@ -124,6 +126,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        [ValidateNotNull]
         public EnumValueInfo VisitNumberAssigningAuthority
         {
             get { return _visit.VisitNumber.AssigningAuthority; }
@@ -243,7 +246,8 @@ namespace ClearCanvas.Ris.Client
             get { return _admissionTypeChoices; }
         }
 
-		public EnumValueInfo VisitStatus
+        [ValidateNotNull]
+        public EnumValueInfo VisitStatus
         {
             get { return _visit.Status; }
             set
@@ -266,7 +270,8 @@ namespace ClearCanvas.Ris.Client
 			get { return _facilityChoices; }
     	}
 
-    	public FacilitySummary Facility
+        [ValidateNotNull]
+        public FacilitySummary Facility
     	{
 			get { return _visit.Facility; }
 			set
