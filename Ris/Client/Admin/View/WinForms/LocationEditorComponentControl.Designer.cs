@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(392, 191);
+			this._cancelButton.Location = new System.Drawing.Point(368, 191);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 10;
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _acceptButton
 			// 
 			this._acceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._acceptButton.Location = new System.Drawing.Point(311, 191);
+			this._acceptButton.Location = new System.Drawing.Point(287, 191);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 9;
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._building.Mask = "";
 			this._building.Name = "_building";
 			this._building.PasswordChar = '\0';
-			this._building.Size = new System.Drawing.Size(229, 41);
+			this._building.Size = new System.Drawing.Size(184, 41);
 			this._building.TabIndex = 4;
 			this._building.ToolTip = null;
 			this._building.Value = null;
@@ -123,12 +123,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _floor
 			// 
 			this._floor.LabelText = "Floor";
-			this._floor.Location = new System.Drawing.Point(396, 98);
+			this._floor.Location = new System.Drawing.Point(351, 98);
 			this._floor.Margin = new System.Windows.Forms.Padding(2);
 			this._floor.Mask = "";
 			this._floor.Name = "_floor";
 			this._floor.PasswordChar = '\0';
-			this._floor.Size = new System.Drawing.Size(71, 41);
+			this._floor.Size = new System.Drawing.Size(92, 41);
 			this._floor.TabIndex = 5;
 			this._floor.ToolTip = null;
 			this._floor.Value = null;
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._room.Mask = "";
 			this._room.Name = "_room";
 			this._room.PasswordChar = '\0';
-			this._room.Size = new System.Drawing.Size(229, 41);
+			this._room.Size = new System.Drawing.Size(184, 41);
 			this._room.TabIndex = 7;
 			this._room.ToolTip = null;
 			this._room.Value = null;
@@ -162,12 +162,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _bed
 			// 
 			this._bed.LabelText = "Bed";
-			this._bed.Location = new System.Drawing.Point(396, 143);
+			this._bed.Location = new System.Drawing.Point(351, 143);
 			this._bed.Margin = new System.Windows.Forms.Padding(2);
 			this._bed.Mask = "";
 			this._bed.Name = "_bed";
 			this._bed.PasswordChar = '\0';
-			this._bed.Size = new System.Drawing.Size(71, 41);
+			this._bed.Size = new System.Drawing.Size(92, 41);
 			this._bed.TabIndex = 8;
 			this._bed.ToolTip = null;
 			this._bed.Value = null;
@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._id.Mask = "";
 			this._id.Name = "_id";
 			this._id.PasswordChar = '\0';
-			this._id.Size = new System.Drawing.Size(150, 41);
+			this._id.Size = new System.Drawing.Size(134, 41);
 			this._id.TabIndex = 0;
 			this._id.ToolTip = null;
 			this._id.Value = null;
@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(304, 41);
+			this._name.Size = new System.Drawing.Size(280, 41);
 			this._name.TabIndex = 1;
 			this._name.ToolTip = null;
 			this._name.Value = null;
@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._description.Mask = "";
 			this._description.Name = "_description";
 			this._description.PasswordChar = '\0';
-			this._description.Size = new System.Drawing.Size(458, 41);
+			this._description.Size = new System.Drawing.Size(434, 41);
 			this._description.TabIndex = 2;
 			this._description.ToolTip = null;
 			this._description.Value = null;

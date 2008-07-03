@@ -222,7 +222,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        [ValidateNotNull]
         public string DefaultWorklistName
         {
             get { return _defaultWorklistName; }

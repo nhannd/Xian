@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -52,13 +53,13 @@ namespace ClearCanvas.Ris.Client
 	public class StaffDetailsEditorComponent : ApplicationComponent
 	{
 		private StaffDetail _staffDetail;
-		private readonly IList<EnumValueInfo> _staffTypeChoices;
-		private readonly IList<EnumValueInfo> _sexChoices;
+		private readonly List<EnumValueInfo> _staffTypeChoices;
+		private readonly List<EnumValueInfo> _sexChoices;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public StaffDetailsEditorComponent(IList<EnumValueInfo> staffTypeChoices, IList<EnumValueInfo> sexChoices)
+		public StaffDetailsEditorComponent(List<EnumValueInfo> staffTypeChoices, List<EnumValueInfo> sexChoices)
 		{
 			_staffDetail = new StaffDetail();
 			_staffTypeChoices = staffTypeChoices;
@@ -177,20 +178,19 @@ namespace ClearCanvas.Ris.Client
 		}
 
         [ValidateNotNull]
-        public string Sex
+        public EnumValueInfo Sex
 		{
-			get { return _staffDetail.Sex.Value; }
+			get { return _staffDetail.Sex; }
 			set
 			{
-				_staffDetail.Sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
-
+				_staffDetail.Sex = value;
 				this.Modified = true;
 			}
 		}
 
-		public List<string> SexChoices
+		public IList SexChoices
 		{
-			get { return EnumValueUtils.GetDisplayValues(_sexChoices); }
+			get { return _sexChoices; }
 		}
 
 		public string Title

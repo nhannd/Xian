@@ -67,7 +67,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._xmlEditorPanel = new System.Windows.Forms.Panel();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
-
 			// 
 			// _acceptButton
 			// 
@@ -100,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._baseType.Location = new System.Drawing.Point(11, 52);
 			this._baseType.Margin = new System.Windows.Forms.Padding(2);
 			this._baseType.Name = "_baseType";
-			this._baseType.Size = new System.Drawing.Size(757, 41);
+			this._baseType.Size = new System.Drawing.Size(740, 41);
 			this._baseType.TabIndex = 10;
 			this._baseType.Value = null;
 			// 
@@ -125,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(569, 41);
+			this._name.Size = new System.Drawing.Size(552, 41);
 			this._name.TabIndex = 12;
 			this._name.ToolTip = null;
 			this._name.Value = null;

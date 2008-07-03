@@ -201,11 +201,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._name.LabelText = "Name";
 			this._name.Location = new System.Drawing.Point(2, 2);
-			this._name.Margin = new System.Windows.Forms.Padding(2);
+			this._name.Margin = new System.Windows.Forms.Padding(2, 2, 30, 2);
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(654, 40);
+			this._name.Size = new System.Drawing.Size(626, 40);
 			this._name.TabIndex = 0;
 			this._name.ToolTip = null;
 			this._name.Value = null;
@@ -217,9 +217,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._description.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._description.LabelText = "Description";
 			this._description.Location = new System.Drawing.Point(2, 46);
-			this._description.Margin = new System.Windows.Forms.Padding(2);
+			this._description.Margin = new System.Windows.Forms.Padding(2, 2, 30, 2);
 			this._description.Name = "_description";
-			this._description.Size = new System.Drawing.Size(654, 69);
+			this._description.Size = new System.Drawing.Size(626, 69);
 			this._description.TabIndex = 1;
 			this._description.Value = null;
 			// 

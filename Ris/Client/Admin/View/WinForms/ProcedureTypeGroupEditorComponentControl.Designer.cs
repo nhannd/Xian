@@ -176,11 +176,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._name.LabelText = "Name";
 			this._name.Location = new System.Drawing.Point(2, 2);
-			this._name.Margin = new System.Windows.Forms.Padding(2);
+			this._name.Margin = new System.Windows.Forms.Padding(2, 2, 20, 2);
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(323, 41);
+			this._name.Size = new System.Drawing.Size(305, 41);
 			this._name.TabIndex = 0;
 			this._name.ToolTip = null;
 			this._name.Value = null;
@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._category.DisplayMember = "";
 			this._category.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._category.LabelText = "Category";
+			this._category.LabelText = "Class";
 			this._category.Location = new System.Drawing.Point(329, 2);
 			this._category.Margin = new System.Windows.Forms.Padding(2);
 			this._category.Name = "_category";
