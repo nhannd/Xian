@@ -125,7 +125,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 		    bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text);
 			_loginButton.Enabled = ok;
-			this.AcceptButton = ok ? _loginButton : _cancelButton;
 		}
 	}
 }

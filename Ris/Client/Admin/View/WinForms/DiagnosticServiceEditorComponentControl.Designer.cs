@@ -124,8 +124,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// DiagnosticServiceEditorComponentControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);
 			this.Controls.Add(this._nameBox);

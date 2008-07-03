@@ -217,8 +217,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// ProcedureTypeGroupEditorComponentControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "ProcedureTypeGroupEditorComponentControl";
 			this.Size = new System.Drawing.Size(660, 566);

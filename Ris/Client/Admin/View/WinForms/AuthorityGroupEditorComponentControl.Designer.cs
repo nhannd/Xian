@@ -149,9 +149,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// AuthorityGroupEditorComponentControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._description);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._tokenTreeView);

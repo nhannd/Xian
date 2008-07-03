@@ -85,7 +85,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._authorityGroups.ShowToolbar = false;
 			this._authorityGroups.Size = new System.Drawing.Size(545, 197);
 			this._authorityGroups.TabIndex = 3;
-			this._authorityGroups.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _userId
 			// 
@@ -230,8 +229,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// UserEditorComponentControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);

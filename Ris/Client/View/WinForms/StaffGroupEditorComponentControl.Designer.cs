@@ -134,8 +134,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// StaffGroupEditorComponentControl
 			// 
+			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._electiveCheckbox);
 			this.Controls.Add(this._staffMemberSelector);
 			this.Controls.Add(this._cancelButton);
