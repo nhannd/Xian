@@ -50,7 +50,7 @@
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					if (orderDetail)
 					{
-						Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
+						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 						Field.setValue($("PlacerNumber"), orderDetail.PlacerNumber);
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
@@ -60,7 +60,7 @@
 						Field.setValue($("EnteredDateTime"), Ris.formatDateTime(orderDetail.EnteredTime));
 						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 						if (orderDetail.CancelReason)
-							Field.setValue($("CancelReason"), orderDetail.CancelReason);
+							Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
 						else
 							Field.show($("CancelReasonSection"), false);
 

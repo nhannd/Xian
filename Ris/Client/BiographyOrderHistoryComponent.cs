@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -167,7 +168,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string AccessionNumber
 		{
-			get { return _selectedOrder == null ? null : _selectedOrder.AccessionNumber; }
+			get { return _selectedOrder == null ? null : AccessionFormat.Format(_selectedOrder.AccessionNumber); }
 		}
 
 		#endregion
