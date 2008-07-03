@@ -108,7 +108,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				CannedTextSummary item = CollectionUtils.FirstElement(this.SelectedItems);
 				IList<CannedTextSummary> addedItems = new List<CannedTextSummary>();
-				CannedTextEditorComponent editor = new CannedTextEditorComponent(item.CannedTextRef, true);
+				CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef, true);
 
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleDuplicateCannedText);
@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Client
 		protected override bool AddItems(out IList<CannedTextSummary> addedItems)
 		{
 			addedItems = new List<CannedTextSummary>();
-			CannedTextEditorComponent editor = new CannedTextEditorComponent();
+			CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices());
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleAddCannedText);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -223,7 +223,7 @@ namespace ClearCanvas.Ris.Client
 			editedItems = new List<CannedTextSummary>();
 			CannedTextSummary item = CollectionUtils.FirstElement(items);
 
-			CannedTextEditorComponent editor = new CannedTextEditorComponent(item.CannedTextRef);
+			CannedTextEditorComponent editor = new CannedTextEditorComponent(GetCategoryChoices(), item.CannedTextRef);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleUpdateCannedText);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -328,6 +328,21 @@ namespace ClearCanvas.Ris.Client
 		private static bool HasGroupAdminAuthority
 		{
 			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+		}
+
+		private List<string> GetCategoryChoices()
+		{
+			List<string> categoryChoices = new List<string>();
+			CollectionUtils.ForEach<CannedTextSummary>(this.SummaryTable.Items,
+				delegate(CannedTextSummary c)
+				{
+					if (!categoryChoices.Contains(c.Category))
+						categoryChoices.Add(c.Category);
+				});
+
+			categoryChoices.Sort();
+
+			return categoryChoices;
 		}
 	}
 }

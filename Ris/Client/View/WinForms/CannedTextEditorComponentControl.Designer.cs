@@ -31,7 +31,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._editorTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._text = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._category = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._buttonFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._acceptButton = new System.Windows.Forms.Button();
@@ -39,6 +38,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._radioGroup = new System.Windows.Forms.RadioButton();
 			this._radioPersonal = new System.Windows.Forms.RadioButton();
 			this._groups = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._editorTableLayoutPanel.SuspendLayout();
 			this._buttonFlowLayoutPanel.SuspendLayout();
 			this._typeGroupBox.SuspendLayout();
@@ -50,10 +50,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._editorTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._editorTableLayoutPanel.Controls.Add(this._text, 0, 4);
 			this._editorTableLayoutPanel.Controls.Add(this._name, 0, 2);
-			this._editorTableLayoutPanel.Controls.Add(this._category, 0, 3);
 			this._editorTableLayoutPanel.Controls.Add(this._buttonFlowLayoutPanel, 0, 5);
 			this._editorTableLayoutPanel.Controls.Add(this._typeGroupBox, 0, 0);
 			this._editorTableLayoutPanel.Controls.Add(this._groups, 0, 1);
+			this._editorTableLayoutPanel.Controls.Add(this._category, 0, 3);
 			this._editorTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._editorTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
 			this._editorTableLayoutPanel.Name = "_editorTableLayoutPanel";
@@ -92,20 +92,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name.TabIndex = 2;
 			this._name.ToolTip = null;
 			this._name.Value = null;
-			// 
-			// _category
-			// 
-			this._category.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._category.LabelText = "Category";
-			this._category.Location = new System.Drawing.Point(2, 146);
-			this._category.Margin = new System.Windows.Forms.Padding(2);
-			this._category.Mask = "";
-			this._category.Name = "_category";
-			this._category.PasswordChar = '\0';
-			this._category.Size = new System.Drawing.Size(282, 41);
-			this._category.TabIndex = 3;
-			this._category.ToolTip = null;
-			this._category.Value = null;
 			// 
 			// _buttonFlowLayoutPanel
 			// 
@@ -186,6 +172,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._groups.TabIndex = 1;
 			this._groups.Value = null;
 			// 
+			// _category
+			// 
+			this._category.DataSource = null;
+			this._category.DisplayMember = "";
+			this._category.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDown;
+			this._category.LabelText = "Category";
+			this._category.Location = new System.Drawing.Point(2, 146);
+			this._category.Margin = new System.Windows.Forms.Padding(2);
+			this._category.Name = "_category";
+			this._category.Size = new System.Drawing.Size(282, 41);
+			this._category.TabIndex = 3;
+			this._category.Value = null;
+			// 
 			// CannedTextEditorComponentControl
 			// 
 			this.AcceptButton = this._acceptButton;
@@ -208,7 +208,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.TableLayoutPanel _editorTableLayoutPanel;
 		private ClearCanvas.Desktop.View.WinForms.TextAreaField _text;
 		private ClearCanvas.Desktop.View.WinForms.TextField _name;
-		private ClearCanvas.Desktop.View.WinForms.TextField _category;
 		private System.Windows.Forms.FlowLayoutPanel _buttonFlowLayoutPanel;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _acceptButton;
@@ -216,5 +215,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.RadioButton _radioGroup;
 		private System.Windows.Forms.RadioButton _radioPersonal;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _groups;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
     }
 }

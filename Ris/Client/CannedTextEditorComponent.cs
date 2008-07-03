@@ -44,6 +44,8 @@ namespace ClearCanvas.Ris.Client
 		private static readonly object _nullFilterItem = new DummyItem(SR.DummyItemNone);
 
 		private readonly EntityRef _cannedTextRef;
+		private readonly List<string> _categoryChoices;
+
 		private CannedTextDetail _cannedTextDetail;
 		private CannedTextSummary _cannedTextSummary;
 
@@ -58,19 +60,21 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for creating a new canned text.
 		/// </summary>
-		public CannedTextEditorComponent()
+		public CannedTextEditorComponent(List<string> categoryChoices)
 		{
 			_isNew = true;
 			_canChangeType = HasGroupAdminAuthority;
+			_categoryChoices = categoryChoices;
 		}
 
 		/// <summary>
 		/// Constructor for editing an existing canned text.
 		/// </summary>
-		public CannedTextEditorComponent(EntityRef cannedTextRef)
+		public CannedTextEditorComponent(List<string> categoryChoices, EntityRef cannedTextRef)
 		{
 			_isNew = false;
 			_cannedTextRef = cannedTextRef;
+			_categoryChoices = categoryChoices;
 
 			_canChangeType = false;
 		}
@@ -78,18 +82,21 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor for duplicating an existing canned text.
 		/// </summary>
-		public CannedTextEditorComponent(EntityRef cannedTextRef, bool duplicate)
+		public CannedTextEditorComponent(List<string> categoryChoices, EntityRef cannedTextRef, bool duplicate)
 		{
 			_isNew = true;
 			_cannedTextRef = cannedTextRef;
+			_categoryChoices = categoryChoices;
 
 			_canChangeType = HasGroupAdminAuthority;
 			_isDuplicate = duplicate;
 		}
 
-
 		public override void Start()
 		{
+			// Insert a blank choice as the first element
+			_categoryChoices.Insert(0, "");
+
 			Platform.GetService<ICannedTextService>(
 				delegate(ICannedTextService service)
 					{
@@ -169,8 +176,8 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsEditingGroup
 		{
-			get { return !_isEditingPersonal; }
-			set { _isEditingPersonal = !value; }
+			get { return !this.IsEditingPersonal; }
+			set { this.IsEditingPersonal = !value; }
 		}
 
 		public bool AcceptEnabled
@@ -234,6 +241,11 @@ namespace ClearCanvas.Ris.Client
 		public IList StaffGroupChoices
 		{
 			get { return _staffGroupChoices; }
+		}
+
+		public IList CategoryChoices
+		{
+			get { return _categoryChoices; }
 		}
 
 		public void Accept()

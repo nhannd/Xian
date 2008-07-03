@@ -100,6 +100,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             remove { _comboBox.SelectedIndexChanged -= value; }
         }
 
+		public new string Text
+		{
+			get { return _comboBox.Text; }
+			set { _comboBox.Text = value; }
+		}
+
+		public new event EventHandler TextChanged
+		{
+			add { _comboBox.TextChanged += value; }
+			remove { _comboBox.TextChanged -= value; }
+		}
+
         public object DataSource
         {
             get { return _comboBox.DataSource; }

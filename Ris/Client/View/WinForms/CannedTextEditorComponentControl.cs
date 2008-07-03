@@ -34,8 +34,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_groups.DataBindings.Add("Value", _component, "StaffGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 			_groups.DataBindings.Add("Enabled", _component, "IsEditingGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_category.DataSource = _component.CategoryChoices;
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
-			_category.DataBindings.Add("Value", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
+			_category.DataBindings.Add("Text", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
 			_text.DataBindings.Add("Value", _component, "Text", true, DataSourceUpdateMode.OnPropertyChanged);
 			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
