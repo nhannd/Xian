@@ -263,8 +263,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			try
 			{
-				if (_selectedCategory != _filterNone)
-					_listRequest.CategoryFilter = _selectedCategory;
+				_listRequest.CategoryFilter = (_selectedCategory == _filterNone) ? null : _selectedCategory;
 
 				this.Table.Items.Clear();
 				this.Table.Items.AddRange(this.PagingController.GetFirst());

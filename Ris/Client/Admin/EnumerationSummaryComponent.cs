@@ -308,7 +308,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 			else
 			{
-				this.ActionModel.Add.Enabled = this.ActionModel.Add.Enabled && _selectedEnumeration.CanAddRemoveValues;
+				this.ActionModel.Add.Enabled = _selectedEnumeration.CanAddRemoveValues;
 				this.ActionModel.Delete.Enabled = this.ActionModel.Delete.Enabled && _selectedEnumeration.CanAddRemoveValues;
 			}
 
