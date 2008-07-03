@@ -40,41 +40,25 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientNoteAssembler
     {
-        class PatientNoteSynchronizeHelper : CollectionSynchronizeHelper<PatientNote, PatientNoteDetail>
+		public void Synchronize(Patient patient, ICollection<PatientNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
         {
-            private readonly PatientNoteAssembler _assembler;
-            private readonly Staff _currentUserStaff;
-            private readonly IPersistenceContext _context;
+			foreach (PatientNoteDetail noteDetail in sourceList)
+			{
+				if(noteDetail.PatientNoteRef == null)
+				{
+					patient.AddNote(CreateNote(noteDetail, currentUserStaff, context));
+				}
+				else
+				{
+					PatientNote note = CollectionUtils.SelectFirst(patient.Notes,
+						delegate(PatientNote n) { return n.GetRef().Equals(noteDetail.PatientNoteRef, true); });
 
-            public PatientNoteSynchronizeHelper(PatientNoteAssembler assembler, Staff currentUserStaff, IPersistenceContext context)
-                :base(true, false)
-            {
-                _assembler = assembler;
-                _currentUserStaff = currentUserStaff;
-                _context = context;
-            }
-
-            protected override bool CompareItems(PatientNote domainItem, PatientNoteDetail sourceItem)
-            {
-                return Equals(domainItem.CreationTime, sourceItem.CreationTime) &&
-                       Equals(domainItem.Author.GetRef(), sourceItem.Author.StaffRef);
-            }
-
-            protected override void AddItem(PatientNoteDetail sourceItem, ICollection<PatientNote> notes)
-            {
-                notes.Add(_assembler.CreateNote(sourceItem, _currentUserStaff, _context));
-            }
-
-            protected override void UpdateItem(PatientNote destItem, PatientNoteDetail sourceItem, ICollection<PatientNote> dest)
-            {
-                _assembler.UpdateNote(destItem, sourceItem);
-            }
-        }
-
-        public void Synchronize(IList<PatientNote> domainList, IList<PatientNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
-        {
-            PatientNoteSynchronizeHelper synchronizer = new PatientNoteSynchronizeHelper(this, currentUserStaff, context);
-            synchronizer.Synchronize(domainList, sourceList);
+					if(note != null)
+					{
+						UpdateNote(note, noteDetail);
+					}
+				}
+			}
         }
 
         public PatientNoteDetail CreateNoteDetail(PatientNote note, IPersistenceContext context)
@@ -82,21 +66,18 @@ namespace ClearCanvas.Ris.Application.Services
             if (note == null)
                 return null;
 
-            PatientNoteDetail detail = new PatientNoteDetail();
+			PatientNoteCategoryAssembler categoryAssembler = new PatientNoteCategoryAssembler();
+			StaffAssembler staffAssembler = new StaffAssembler();
 
-            detail.Comment = note.Comment;
-            detail.CreationTime = note.CreationTime;
-            detail.ValidRangeFrom = note.ValidRange.From;
-            detail.ValidRangeUntil = note.ValidRange.Until;
-            detail.IsExpired = note.IsExpired;
-
-            PatientNoteCategoryAssembler categoryAssembler = new PatientNoteCategoryAssembler();
-            detail.Category = categoryAssembler.CreateNoteCategorySummary(note.Category, context);
-
-            StaffAssembler staffAssembler = new StaffAssembler();
-            detail.Author = staffAssembler.CreateStaffSummary(note.Author, context);
-
-            return detail;
+			return new PatientNoteDetail(
+        		note.GetRef(),
+        		note.Comment,
+        		categoryAssembler.CreateNoteCategorySummary(note.Category, context),
+        		staffAssembler.CreateStaffSummary(note.Author, context),
+        		note.CreationTime,
+        		note.ValidRange.From,
+        		note.ValidRange.Until,
+        		note.IsExpired);
         }
 
         public PatientNote CreateNote(PatientNoteDetail detail, Staff author, IPersistenceContext context)

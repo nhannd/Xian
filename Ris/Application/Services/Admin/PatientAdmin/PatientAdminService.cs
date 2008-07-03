@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                 Patient patient = profile.Patient;
 
                 PatientNoteAssembler noteAssembler = new PatientNoteAssembler();
-                noteAssembler.Synchronize(patient.Notes, detail.Notes, CurrentUserStaff, PersistenceContext);
+                noteAssembler.Synchronize(patient, detail.Notes, CurrentUserStaff, PersistenceContext);
 
                 PatientAttachmentAssembler attachmentAssembler = new PatientAttachmentAssembler();
                 attachmentAssembler.Synchronize(patient.Attachments, detail.Attachments, PersistenceContext);

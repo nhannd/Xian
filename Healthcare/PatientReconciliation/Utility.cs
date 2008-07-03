@@ -39,7 +39,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 
 			foreach (PatientNote note in otherPatient.Notes)
 			{
-				thisPatient.Notes.Add((PatientNote)note.Clone());
+				thisPatient.AddNote(note);
 			}
 
 			OrderSearchCriteria orderCriteria = new OrderSearchCriteria();

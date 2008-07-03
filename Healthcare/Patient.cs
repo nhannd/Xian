@@ -55,7 +55,7 @@ namespace ClearCanvas.Healthcare {
         /// Adds a <see cref="PatientProfile"/> to this patient.
         /// </summary>
         /// <remarks>
-        /// Use this method rather than adding to the <see cref="Patient.Notes"/>
+        /// Use this method rather than adding to the <see cref="Profiles"/>
         /// collection directly.
         /// </remarks>
         /// <param name="profile"></param>
@@ -68,8 +68,28 @@ namespace ClearCanvas.Healthcare {
                 //profile.Patient.Profiles.Remove(profile);
             }
             profile.Patient = this;
-            this.Profiles.Add(profile);
+            _profiles.Add(profile);
         }
+
+		/// <summary>
+		/// Adds a <see cref="PatientNote"/> to this patient.
+		/// </summary>
+		/// <remarks>
+		/// Use this method rather than adding to the <see cref="Patient.Notes"/>
+		/// collection directly.
+		/// </remarks>
+		/// <param name="note"></param>
+		public virtual void AddNote(PatientNote note)
+		{
+			if (note.Patient != null)
+			{
+				//NB: technically we should remove the profile from the other patient's collection, but there
+				//seems to be a bug with NHibernate where it deletes the profile if we do this
+				//profile.Patient.Profiles.Remove(profile);
+			}
+			note.Patient = this;
+			_notes.Add(note);
+		}
 
 		/// <summary>
 		/// Allows getting at a particular PatientProfile

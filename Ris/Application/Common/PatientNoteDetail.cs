@@ -40,7 +40,9 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class PatientNoteDetail : DataContractBase, ICloneable
     {
-        public PatientNoteDetail(string comment, 
+        public PatientNoteDetail(
+			EntityRef patientNoteRef,
+			string comment, 
             PatientNoteCategorySummary category, 
             StaffSummary createdBy, 
             DateTime? creationTime,
@@ -48,6 +50,7 @@ namespace ClearCanvas.Ris.Application.Common
             DateTime? validRangeUntil,
             bool isExpired)
         {
+        	this.PatientNoteRef = patientNoteRef;
             this.Comment = comment;
             this.Category = category;
             this.Author = createdBy;
@@ -60,6 +63,9 @@ namespace ClearCanvas.Ris.Application.Common
         public PatientNoteDetail()
         {
         }
+
+		[DataMember]
+    	public EntityRef PatientNoteRef;
 
         [DataMember]
         public string Comment;
@@ -87,6 +93,7 @@ namespace ClearCanvas.Ris.Application.Common
         public object Clone()
         {
             PatientNoteDetail clone = new PatientNoteDetail();
+        	clone.PatientNoteRef = this.PatientNoteRef;
             clone.Comment = this.Comment;
             clone.Category = (PatientNoteCategorySummary)this.Category.Clone();
             clone.Author = this.Author == null ? null : (StaffSummary)this.Author.Clone();
