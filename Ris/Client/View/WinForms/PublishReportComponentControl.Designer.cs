@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class RepublishReportComponentControl
+    partial class PublishReportComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -184,7 +184,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._browserPanel.Size = new System.Drawing.Size(701, 506);
 			this._browserPanel.TabIndex = 12;
 			// 
-			// RepublishReportComponentControl
+			// PublishReportComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -192,7 +192,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnOk);
 			this.Controls.Add(this._groupBoxRecipients);
-			this.Name = "RepublishReportComponentControl";
+			this.Name = "PublishReportComponentControl";
 			this.Size = new System.Drawing.Size(701, 712);
 			this._groupBoxRecipients.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);

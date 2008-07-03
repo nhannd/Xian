@@ -36,17 +36,18 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="RepublishReportComponent"/>.
+    /// Provides a Windows Forms view onto <see cref="PublishReportComponent"/>.
     /// </summary>
-    [ExtensionOf(typeof(RepublishReportComponentViewExtensionPoint))]
-    public class RepublishReportComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(ReportPublishComponentViewExtensionPoint))]
+    public class PublishReportComponentView : WinFormsView, IApplicationComponentView
     {
-        private RepublishReportComponent _component;
-        private RepublishReportComponentControl _control;
+        private PublishReportComponent _component;
+        private PublishReportComponentControl _control;
 
         #region IApplicationComponentView Members
 
@@ -55,7 +56,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (RepublishReportComponent)component;
+            _component = (PublishReportComponent)component;
         }
 
         #endregion
@@ -69,7 +70,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new RepublishReportComponentControl(_component);
+                    _control = new PublishReportComponentControl(_component);
                 }
                 return _control;
             }

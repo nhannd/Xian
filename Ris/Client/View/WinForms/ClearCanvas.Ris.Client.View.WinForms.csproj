@@ -321,13 +321,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RepublishReportComponentControl.cs">
+    <Compile Include="PublishReportComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RepublishReportComponentControl.Designer.cs">
-      <DependentUpon>RepublishReportComponentControl.cs</DependentUpon>
+    <Compile Include="PublishReportComponentControl.Designer.cs">
+      <DependentUpon>PublishReportComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="RepublishReportComponentView.cs" />
+    <Compile Include="PublishReportComponentView.cs" />
     <Compile Include="SearchComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -567,9 +567,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="RepublishReportComponentControl.resx">
+    <EmbeddedResource Include="PublishReportComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>RepublishReportComponentControl.cs</DependentUpon>
+      <DependentUpon>PublishReportComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchComponentControl.resx">
       <DependentUpon>SearchComponentControl.cs</DependentUpon>

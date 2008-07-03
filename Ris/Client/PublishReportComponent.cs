@@ -47,25 +47,25 @@ using ClearCanvas.Ris.Client.Formatting;
 namespace ClearCanvas.Ris.Client
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="RepublishReportComponent"/>.
+	/// Extension point for views onto <see cref="PublishReportComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public sealed class RepublishReportComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ReportPublishComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
-	/// RepublishReportComponent class.
+	/// PublishReportComponent class.
 	/// </summary>
-	[AssociateView(typeof(RepublishReportComponentViewExtensionPoint))]
-	public abstract class RepublishReportComponent : ApplicationComponent
+	[AssociateView(typeof(ReportPublishComponentViewExtensionPoint))]
+	public abstract class PublishReportComponent : ApplicationComponent
 	{
-		public class RepublishReportPreviewComponent : DHtmlComponent
+		public class PublishReportPreviewComponent : DHtmlComponent
 		{
 			[DataContract]
-			public class RepublishReportPreviewContext : DataContractBase
+			public class PublishReportPreviewContext : DataContractBase
 			{
-				public RepublishReportPreviewContext(
+				public PublishReportPreviewContext(
 					EntityRef patientProfileRef,
 					EntityRef orderRef,
 					EntityRef reportRef,
@@ -90,15 +90,15 @@ namespace ClearCanvas.Ris.Client
 				public ResultRecipientDetail SelectedResultRecipient;
 			}
 
-			private RepublishReportPreviewContext _context;
+			private PublishReportPreviewContext _context;
 
-			public RepublishReportPreviewComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
+			public PublishReportPreviewComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
 			{
 				Platform.CheckForNullReference(patientProfileRef, "patientProfileRef");
 				Platform.CheckForNullReference(orderRef, "orderRef");
 				Platform.CheckForNullReference(reportRef, "reportRef");
 
-				_context = new RepublishReportPreviewContext(patientProfileRef, orderRef, reportRef, null);
+				_context = new PublishReportPreviewContext(patientProfileRef, orderRef, reportRef, null);
 			}
 
 			public override void Start()
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client
 				return this.Context;
 			}
 
-			public RepublishReportPreviewContext Context
+			public PublishReportPreviewContext Context
 			{
 				get { return _context; }
 				set
@@ -145,15 +145,15 @@ namespace ClearCanvas.Ris.Client
 		private ExternalPractitionerContactPointDetail _recipientContactPointToAdd;
 		private List<ExternalPractitionerContactPointDetail> _recipientContactPointChoices;
 
-		private RepublishReportPreviewComponent _republishReportPreviewComponent;
-		private ChildComponentHost _republishReportPreviewComponentHost;
+		private PublishReportPreviewComponent _publishReportPreviewComponent;
+		private ChildComponentHost _publishReportPreviewComponentHost;
 
 		#region Constructor
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public RepublishReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
+		public PublishReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
 		{
 			Platform.CheckForNullReference(patientProfileRef, "patientProfileRef");
 			Platform.CheckForNullReference(orderRef, "orderRef");
@@ -190,9 +190,9 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public override void Start()
 		{
-			_republishReportPreviewComponent = new RepublishReportPreviewComponent(_patientProfileRef, _orderRef, _reportRef);
-			_republishReportPreviewComponentHost = new ChildComponentHost(this.Host, _republishReportPreviewComponent);
-			_republishReportPreviewComponentHost.StartComponent();
+			_publishReportPreviewComponent = new PublishReportPreviewComponent(_patientProfileRef, _orderRef, _reportRef);
+			_publishReportPreviewComponentHost = new ChildComponentHost(this.Host, _publishReportPreviewComponent);
+			_publishReportPreviewComponentHost.StartComponent();
 
 			_recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 
@@ -244,17 +244,17 @@ namespace ClearCanvas.Ris.Client
 			get { return _patientProfileRef; }
 		}
 
-		protected RepublishReportPreviewComponent PreviewComponent
+		protected PublishReportPreviewComponent PreviewComponent
 		{
-			get { return _republishReportPreviewComponent; }
+			get { return _publishReportPreviewComponent; }
 		}
 
 
 		#region Presentation model
 
-		public ApplicationComponentHost RepublishReportPreviewComponentHost
+		public ApplicationComponentHost PublishReportPreviewComponentHost
 		{
-			get { return _republishReportPreviewComponentHost; }
+			get { return _publishReportPreviewComponentHost; }
 		}
 
 		public string FormatContactPoint(object cp)
@@ -370,7 +370,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void UpdatePreview()
 		{
-			_republishReportPreviewComponent.Context = new RepublishReportPreviewComponent.RepublishReportPreviewContext(
+			_publishReportPreviewComponent.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
 				_patientProfileRef,
 				_orderRef,
 				_reportRef,
@@ -401,7 +401,7 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 	}
 
-	public class PrintReportComponent : RepublishReportComponent
+	public class PrintReportComponent : PublishReportComponent
 	{
 		public PrintReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
 			: base(patientProfileRef, orderRef, reportRef)
@@ -418,12 +418,12 @@ namespace ClearCanvas.Ris.Client
 					{
 						ResultRecipientDetail detail = checkable.Item;
 
-						RepublishReportPreviewComponent component = new RepublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ReportRef);
+						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ReportRef);
 						ChildComponentHost host = new ChildComponentHost(this.Host, component);
 						host.StartComponent();
 						object view = host.ComponentView.GuiElement;
 
-						component.Context = new RepublishReportPreviewComponent.RepublishReportPreviewContext(
+						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
 							this.PatientProfileRef,
 							this.OrderRef,
 							this.ReportRef,
@@ -439,12 +439,12 @@ namespace ClearCanvas.Ris.Client
 
 		private void PrintDocument(object sender, EventArgs e)
 		{
-			RepublishReportPreviewComponent component = (RepublishReportPreviewComponent)sender;
+			PublishReportPreviewComponent component = (PublishReportPreviewComponent)sender;
 			component.PrintDocument();
 		}
 	}
 
-	public class FaxReportComponent : RepublishReportComponent
+	public class FaxReportComponent : PublishReportComponent
 	{
 		public FaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
 			: base(patientProfileRef, orderRef, reportRef)

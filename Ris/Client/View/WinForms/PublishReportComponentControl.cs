@@ -33,26 +33,27 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="RepublishReportComponent"/>.
+	/// Provides a Windows Forms user-interface for <see cref="PublishReportComponent"/>.
 	/// </summary>
-	public partial class RepublishReportComponentControl : ApplicationComponentUserControl
+	public partial class PublishReportComponentControl : ApplicationComponentUserControl
 	{
-		private readonly RepublishReportComponent _component;
+		private readonly PublishReportComponent _component;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public RepublishReportComponentControl(RepublishReportComponent component)
+		public PublishReportComponentControl(PublishReportComponent component)
 			: base(component)
 		{
 			_component = component;
 			InitializeComponent();
 
-			Control browser = (Control) _component.RepublishReportPreviewComponentHost.ComponentView.GuiElement;
+			Control browser = (Control) _component.PublishReportPreviewComponentHost.ComponentView.GuiElement;
 			_browserPanel.Controls.Add(browser);
 			browser.Dock = DockStyle.Fill;
 
