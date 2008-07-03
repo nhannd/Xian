@@ -29,8 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
@@ -96,18 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
         {
-            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
-            Order order = orderBroker.Load(request.OrderRef, EntityLoadFlags.Proxy);
-
-            IProcedureBroker rpBroker = PersistenceContext.GetBroker<IProcedureBroker>();
-            ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
-            criteria.Order.EqualTo(order);
-            criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            IList<Procedure> proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
-                delegate(Procedure rp)
-                {
-                    return rp.ProcedureCheckIn.IsNotCheckIn;
-                });
+        	List<Procedure> proceduresNotCheckedIn = GetProcedureNotCheckedIn(request.OrderRef);
 
             ProcedureAssembler assembler = new ProcedureAssembler();
             return new GetDataForCheckInTableResponse(
@@ -172,23 +159,35 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             if(itemKey.OrderRef == null)
                 return false;
 
-            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
-            Order order = orderBroker.Load(itemKey.OrderRef, EntityLoadFlags.Proxy);
-
-            IProcedureBroker rpBroker = PersistenceContext.GetBroker<IProcedureBroker>();
-            ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
-            criteria.Order.EqualTo(order);
-            criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            IList<Procedure> proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
-                delegate(Procedure rp)
-                {
-                    return rp.ProcedureCheckIn.IsNotCheckIn;
-                });
-
-            return proceduresNotCheckedIn.Count > 0;
+			return GetProcedureNotCheckedIn(itemKey.OrderRef).Count > 0;
         }
 
-        public bool CanCancelOrder(WorklistItemKey itemKey)
+		private List<Procedure> GetProcedureNotCheckedIn(EntityRef orderRef)
+		{
+			IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
+			Order order = orderBroker.Load(orderRef, EntityLoadFlags.Proxy);
+			List<Procedure> proceduresNotCheckedIn = new List<Procedure>();
+
+			if (order.IsTerminated == false)
+			{
+				IProcedureBroker rpBroker = PersistenceContext.GetBroker<IProcedureBroker>();
+				ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
+				criteria.Order.EqualTo(order);
+				criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+				proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
+					delegate(Procedure rp)
+					{
+						if (rp.IsTerminated)
+							return false;
+						else
+							return rp.ProcedureCheckIn.IsNotCheckIn;
+					});
+			}
+
+			return proceduresNotCheckedIn;
+		}
+
+    	public bool CanCancelOrder(WorklistItemKey itemKey)
         {
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Cancel))
 				return false;
