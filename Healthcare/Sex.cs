@@ -65,18 +65,6 @@ namespace ClearCanvas.Healthcare {
         /// Other
         /// </summary>
         [EnumValue("Other")]
-        O,
-
-        /// <summary>
-        /// Ambiguous
-        /// </summary>
-        [EnumValue("Ambiguous")]
-        A,
-
-        /// <summary>
-        /// Not applicable
-        /// </summary>
-        [EnumValue("Not Applicable")]
-        N
+        O
 	}
 }
