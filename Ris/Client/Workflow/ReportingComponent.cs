@@ -845,16 +845,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void OpenImages()
 		{
-			try
-			{
-				IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
-				if (viewerIntegration != null)
-					viewerIntegration.OpenStudy(this.WorklistItem.AccessionNumber);
-			}
-			catch (NotSupportedException)
-			{
-				Platform.Log(LogLevel.Info, "No viewer integration extension found.");
-			}
+			if (ViewImagesHelper.IsSupported)
+				ViewImagesHelper.OpenStudy(this.WorklistItem.AccessionNumber);
 		}
 
 		#endregion

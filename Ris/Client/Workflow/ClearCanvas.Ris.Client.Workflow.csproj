@@ -43,6 +43,7 @@
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="EditReportTool.cs" />
+    <Compile Include="ViewImagesTool.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />

@@ -132,6 +132,7 @@
     <Compile Include="StaffGroupSummaryComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
+    <Compile Include="ViewImagesHelper.cs" />
     <Compile Include="VisitDetailsEditorComponent.cs" />
     <Compile Include="VisitDetailViewComponent.cs" />
     <Compile Include="VisitEditorComponent.cs" />
@@ -171,7 +172,6 @@
     <Compile Include="ExternalPractitionerSummaryComponent.cs" />
     <Compile Include="MimeDocumentPreviewComponent.cs" />
     <Compile Include="ILookupHandler.cs" />
-    <Compile Include="IViewerIntegration.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="DocumentManager.cs" />
     <Compile Include="ExceptionPolicies.cs" />
