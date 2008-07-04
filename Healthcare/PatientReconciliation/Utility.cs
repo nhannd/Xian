@@ -11,7 +11,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 {
 	public class Utility
 	{
-		static public bool PatientIdentifierConflictsFound(Patient thisPatient, Patient otherPatient)
+		static public bool PatientIdentifiersFromIdenticalInformationAuthority(Patient thisPatient, Patient otherPatient)
 		{
 			foreach (PatientProfile x in thisPatient.Profiles)
 				foreach (PatientProfile y in otherPatient.Profiles)
@@ -21,22 +21,31 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 			return false;
 		}
 
+		static public void ReconcileBetweenInformationAuthorities(Patient thisPatient, Patient otherPatient, IPersistenceContext context)
+		{
+			if (Utility.PatientIdentifiersFromIdenticalInformationAuthority(thisPatient, otherPatient))
+				throw new PatientReconciliationException("assigning authorities not identical conflict - cannot reconcile");
+
+			// copy patient profiles over
+			foreach (PatientProfile profile in otherPatient.Profiles)
+				thisPatient.AddProfile(profile);
+
+			ReconnectRelatedPatientInformation(thisPatient, otherPatient, context);
+		}
+
+		static public void ReconcileWithinInformationAuthority(Patient thisPatient, Patient otherPatient, IPersistenceContext context)
+		{
+			ReconnectRelatedPatientInformation(thisPatient, otherPatient, context);
+		}
+
 		/// <summary>
-		/// All pertinent data gets copied from otherPatient to thisPatient
+		/// All pertinent data other than the Profiles gets copied from otherPatient to thisPatient
 		/// </summary>
 		/// <param name="thisPatient"></param>
 		/// <param name="otherPatient"></param>
 		/// <param name="context"></param>
-		static public void Reconcile(Patient thisPatient, Patient otherPatient, IPersistenceContext context)
+		static private void ReconnectRelatedPatientInformation(Patient thisPatient, Patient otherPatient, IPersistenceContext context)
 		{
-			if (Utility.PatientIdentifierConflictsFound(thisPatient, otherPatient))
-				throw new PatientReconciliationException("assigning authority conflict - cannot reconcile");
-
-			foreach (PatientProfile profile in otherPatient.Profiles)
-			{
-				thisPatient.AddProfile(profile);
-			}
-
 			foreach (PatientNote note in otherPatient.Notes)
 			{
 				thisPatient.AddNote(note);
@@ -60,5 +69,6 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 
 			// TODO: delete the otherPatient
 		}
+
 	}
 }
