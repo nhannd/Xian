@@ -146,6 +146,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
                 delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
 
+			bool hasProcedureNotCheckedIn = CollectionUtils.Contains(modalitySteps,
+				delegate(ModalityProcedureStep mps) { return mps.Procedure.ProcedureCheckIn.IsNotCheckIn; });
+			if (hasProcedureNotCheckedIn)
+				throw new RequestValidationException(SR.ExceptionProcedureNotCheckedIn);
+
             StartModalityProcedureStepsOperation op = new StartModalityProcedureStepsOperation();
             ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext), PersistenceContext);
 

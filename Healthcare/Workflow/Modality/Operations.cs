@@ -40,24 +40,34 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 	{
 		protected void UpdateCheckInStep(Procedure rp, bool procedureAborted, IWorkflow workflow)
 		{
+			// Note: auto check-in is disabled
+			//AutoCheckIn(rp);
+
+			// Note: auto check-out behaviour may need to be disabled in future - ideally it should be done explicitly by the user
+			AutoCheckOut(rp);
+		}
+
+		private static void AutoCheckIn(Procedure rp)
+		{
 			bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
 				delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
 
+			if (!allMpsScheduled)
+			{
+				// check-in this procedure, since some mps has started
+				rp.ProcedureCheckIn.CheckIn();
+			}
+		}
+
+		private static void AutoCheckOut(Procedure rp)
+		{
 			bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
 				delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
 
-			// auto- check-in/check-out
-			// Note: this behaviour may need to be disabled in future - ideally check-in/check-out should be done
-			// explicitly by the user
 			if (allMpsTerminated)
 			{
 				// auto check-out
 				rp.ProcedureCheckIn.CheckOut();
-			}
-			else if (!allMpsScheduled)
-			{
-				// check-in this procedure, since some mps has started
-				rp.ProcedureCheckIn.CheckIn();
 			}
 		}
 	}

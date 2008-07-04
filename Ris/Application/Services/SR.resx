@@ -207,4 +207,7 @@
   <data name="ExceptionUnableToDeleteHardEnumeration" xml:space="preserve">
     <value>Hard enumeration cannot be deleted.</value>
   </data>
+  <data name="ExceptionProcedureNotCheckedIn" xml:space="preserve">
+    <value>Please check in the patient for this procedure and try again.</value>
+  </data>
 </root>

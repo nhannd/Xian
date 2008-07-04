@@ -232,6 +232,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please check in the patient for this procedure and try again..
+        /// </summary>
+        internal static string ExceptionProcedureNotCheckedIn {
+            get {
+                return ResourceManager.GetString("ExceptionProcedureNotCheckedIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A procedure type group with the name {0} already exists.
         /// </summary>
         internal static string ExceptionProcedureTypeGroupNameAlreadyExists {
