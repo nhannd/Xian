@@ -53,11 +53,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _orderList.DataBindings.Add("Selection", _component, "SelectedOrder", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			// Load initial value
-        	_diagnosticService.Text = _component.DiagnosticService;
-        	_accessionNumber.Text = _component.AccessionNumber;
-
-			_diagnosticService.DataBindings.Add("Text", _component, "DiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
-			_accessionNumber.DataBindings.Add("Text", _component, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+			_banner.Text = _component.BannerText;
+			_banner.DataBindings.Add("Text", _component, "BannerText", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			Control order = (Control)_component.OrderDetailComponentHost.ComponentView.GuiElement;
 			order.Dock = DockStyle.Fill;

@@ -161,14 +161,14 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderDocumentComponentHost; }
 		}
 
-		public string DiagnosticService
+		public string BannerText
 		{
-			get { return _selectedOrder == null ? null : _selectedOrder.DiagnosticService.Name; }
-		}
-
-		public string AccessionNumber
-		{
-			get { return _selectedOrder == null ? null : AccessionFormat.Format(_selectedOrder.AccessionNumber); }
+			get
+			{
+				return _selectedOrder == null ? null :
+					string.Format("{0} - {1}", AccessionFormat.Format(_selectedOrder.AccessionNumber),
+					_selectedOrder.DiagnosticService.Name);
+			}
 		}
 
 		#endregion
