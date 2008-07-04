@@ -113,6 +113,12 @@
     <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="OrderNoteConversationComponent.cs" />
     <Compile Include="OrderNoteConversationTool.cs" />
+    <Compile Include="PatientSearchComponentSettings.cs" />
+    <Compile Include="PatientSearchComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PatientSearchComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
@@ -316,6 +322,10 @@
     <None Include="OrderNoteConversationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>OrderNoteConversationComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PatientSearchComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PatientSearchComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

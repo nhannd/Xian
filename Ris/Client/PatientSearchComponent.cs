@@ -135,9 +135,12 @@ namespace ClearCanvas.Ris.Client
                             request.TextQuery = _searchString;
                             request.Page.FirstRow = firstRow;
                             request.Page.MaxRows = maxRows;
+							request.SpecificityThreshold = PatientSearchComponentSettings.Default.SearchCriteriaSpecificityThreshold;
                             response = service.ProfileTextQuery(request);
                         });
 
+					if (response.TooManyMatches)
+						throw new WeakSearchCriteriaException();
 
                     return response.Matches;
                 }
