@@ -99,9 +99,6 @@ namespace ClearCanvas.Ris.Client
         private PatientProfileSummary _selectedProfile;
         private event EventHandler _selectedProfileChanged;
 
-        private PagingController<PatientProfileSummary> _pagingController;
-        private PagingActionModel<PatientProfileSummary> _pagingActionHandler;
-
         private ToolSet _toolSet;
 
         public override void Start()
@@ -109,8 +106,6 @@ namespace ClearCanvas.Ris.Client
             _profileTable = new PatientProfileTable();
             _toolSet = new ToolSet(new PatientSearchToolExtensionPoint(), new PatientSearchToolContext(this));
 
-            InitialisePaging();
-            
             base.Start();
         }
 
@@ -119,34 +114,6 @@ namespace ClearCanvas.Ris.Client
             _toolSet.Dispose();
 
             base.Stop();
-        }
-
-        private void InitialisePaging()
-        {
-            _pagingController = new PagingController<PatientProfileSummary>(
-                delegate(int firstRow, int maxRows)
-                {
-                    TextQueryResponse<PatientProfileSummary> response = null;
-
-                    Platform.GetService<IRegistrationWorkflowService>(
-                        delegate(IRegistrationWorkflowService service)
-                        {
-                            TextQueryRequest request = new TextQueryRequest();
-                            request.TextQuery = _searchString;
-                            request.Page.FirstRow = firstRow;
-                            request.Page.MaxRows = maxRows;
-							request.SpecificityThreshold = PatientSearchComponentSettings.Default.SearchCriteriaSpecificityThreshold;
-                            response = service.ProfileTextQuery(request);
-                        });
-
-					if (response.TooManyMatches)
-						throw new WeakSearchCriteriaException();
-
-                    return response.Matches;
-                }
-            );
-
-            _pagingActionHandler = new PagingActionModel<PatientProfileSummary>(_pagingController, _profileTable, Host.DesktopWindow);
         }
 
         #region Presentation Model
@@ -169,22 +136,12 @@ namespace ClearCanvas.Ris.Client
 
         public ActionModelNode ItemsContextMenuModel
         {
-            get
-            {
-                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-contextmenu", _toolSet.Actions);
-                model.Merge(_pagingActionHandler);
-                return model;
-            }
+            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-contextmenu", _toolSet.Actions); }
         }
 
         public ActionModelNode ItemsToolbarModel
         {
-            get
-            {
-                ActionModelRoot model = ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-toolbar", _toolSet.Actions);
-                model.Merge(_pagingActionHandler);
-                return model;
-            }
+            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "patientsearch-items-toolbar", _toolSet.Actions); }
         }
 
         public override IActionSet ExportedActions
@@ -216,7 +173,22 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 _profileTable.Items.Clear();
-                _profileTable.Items.AddRange(_pagingController.GetFirst());
+
+				TextQueryResponse<PatientProfileSummary> response = null;
+
+				Platform.GetService<IRegistrationWorkflowService>(
+					delegate(IRegistrationWorkflowService service)
+					{
+						TextQueryRequest request = new TextQueryRequest();
+						request.TextQuery = _searchString;
+						request.SpecificityThreshold = PatientSearchComponentSettings.Default.SearchCriteriaSpecificityThreshold;
+						response = service.ProfileTextQuery(request);
+					});
+
+				if (response.TooManyMatches)
+					throw new WeakSearchCriteriaException();
+
+				_profileTable.Items.AddRange(response.Matches);
                 this.SelectedProfile = new Selection(_profileTable.Items.Count > 0 ? _profileTable.Items[0] : null);
 
                 if (_profileTable.Items.Count == 0)
