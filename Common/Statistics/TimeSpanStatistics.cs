@@ -249,6 +249,18 @@ namespace ClearCanvas.Common.Statistics
             Value = _stopWatch.Elapsed;
         }
 
+        public override TimeSpan Value
+        {
+            get
+            {
+                return _stopWatch.Elapsed;
+            }
+            set
+            {
+                base.Value = value;
+            }
+        }
+
         #endregion
 
         #region Overridden Public Methods

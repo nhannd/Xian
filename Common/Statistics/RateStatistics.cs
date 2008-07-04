@@ -131,6 +131,21 @@ namespace ClearCanvas.Common.Statistics
 
         #endregion Constructors
 
+        public override double Value
+        {
+            get
+            {
+                if (_stopWatch.ElapsedTicks > 0)
+                    return _data / ((double)_stopWatch.ElapsedTicks / Stopwatch.Frequency);
+                else
+                    return 0;
+            }
+            set
+            {
+                base.Value = value;
+            }
+        }
+
         #region Public methods
 
         /// <summary>
@@ -167,7 +182,6 @@ namespace ClearCanvas.Common.Statistics
 
             _stopWatch.Stop();
             Debug.Assert(_stopWatch.ElapsedTicks > 0);
-            Value = _data/((double) _stopWatch.ElapsedTicks/Stopwatch.Frequency);
         }
 
         #endregion

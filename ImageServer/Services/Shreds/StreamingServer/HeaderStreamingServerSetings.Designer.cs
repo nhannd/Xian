@@ -13,11 +13,11 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class StreamingServer : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class HeaderStreamingServerSetings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static StreamingServer defaultInstance = ((StreamingServer)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new StreamingServer())));
+        private static HeaderStreamingServerSetings defaultInstance = ((HeaderStreamingServerSetings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new HeaderStreamingServerSetings())));
         
-        public static StreamingServer Default {
+        public static HeaderStreamingServerSetings Default {
             get {
                 return defaultInstance;
             }

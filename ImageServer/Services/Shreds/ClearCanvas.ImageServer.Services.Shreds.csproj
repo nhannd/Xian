@@ -53,12 +53,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StreamingServer\StreamingServer.Designer.cs">
+    <Compile Include="StreamingServer\HeaderStreamingServerSetings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>StreamingServer.settings</DependentUpon>
+      <DependentUpon>HeaderStreamingServerSetings.settings</DependentUpon>
     </Compile>
-    <Compile Include="StreamingServer\StreamingServerExtension.cs" />
+    <Compile Include="StreamingServer\HeaderStreamingServer.cs" />
+    <Compile Include="StreamingServer\ImageStreamingServer.cs" />
+    <Compile Include="StreamingServer\ImageStreamingServerSettings.Designer.cs">
+      <DependentUpon>ImageStreamingServerSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="WorkQueueServer\WorkQueueServerExtension.cs" />
     <Compile Include="WorkQueueServer\WorkQueueServerManager.cs" />
   </ItemGroup>
@@ -125,9 +131,13 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ImageServerServicesShredSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="StreamingServer\StreamingServer.settings">
+    <None Include="StreamingServer\HeaderStreamingServerSetings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>StreamingServer.Designer.cs</LastGenOutput>
+      <LastGenOutput>HeaderStreamingServerSetings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="StreamingServer\ImageStreamingServerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImageStreamingServerSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

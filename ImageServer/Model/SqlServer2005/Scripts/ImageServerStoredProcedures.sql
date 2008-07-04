@@ -235,6 +235,10 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: 7/30/2007
 -- Description:	
+-- History:
+--		7/4/2008 :	Modify to return storage location based on the study instance uid 
+--					when StudyStorageGUID and ServerPartitionGUID aren''t provided. Used for image streaming service.
+--				
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryStudyStorageLocation] 
 	-- Add the parameters for the stored procedure here
@@ -246,7 +250,18 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	if @StudyStorageGUID is null
+	IF @StudyStorageGUID is null and @ServerPartitionGUID is null
+	BEGIN
+		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
+				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
+				Filesystem.FilesystemTierEnum
+		FROM StudyStorage
+			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
+			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID
+			JOIN Filesystem on StorageFilesystem.FilesystemGUID = Filesystem.GUID
+		WHERE StudyStorage.StudyInstanceUid = @StudyInstanceUid
+	END
+	ELSE IF @StudyStorageGUID is null
 	BEGIN
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,

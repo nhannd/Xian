@@ -169,7 +169,7 @@ namespace ClearCanvas.Common.Statistics
 
         public virtual string FormattedValue
         {
-            get { return FormatValue(_value); }
+            get { return FormatValue(Value); }
         }
 
         public IStatisticsContext Context

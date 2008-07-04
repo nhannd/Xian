@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
     /// Plugin to handle streaming request for the ImageServer.
     /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class StreamingServerExtension : WcfShred
+    public class HeaderStreamingServer : WcfShred
     {
         #region Private Members
 
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
         #region Constructors
 
-        public StreamingServerExtension()
+        public HeaderStreamingServer()
         {
             _className = GetType().ToString();
         }
@@ -64,25 +64,25 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
         public override void Start()
         {
             Platform.Log(LogLevel.Debug, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+
+            HeaderStreamingServerSetings settings = HeaderStreamingServerSetings.Default;
+
             try
             {
-                if (StreamingServer.Default.BindingType == "wshttp")
+                if (settings.BindingType == "wshttp")
                 {
                     Platform.Log(LogLevel.Info, "Starting {0} using WS Http binding", GetDisplayName());
-                    StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
-                                                                                   SR.HeaderRetrievalStreamingServiceDescription);
+                    StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", GetDescription());
                 }
-                else if (StreamingServer.Default.BindingType == "http")
+                else if (settings.BindingType == "http")
                 {
                     Platform.Log(LogLevel.Info, "Starting {0} using basic Http binding", GetDisplayName()); 
-                    StartBasicHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
-                                                                                   SR.HeaderRetrievalStreamingServiceDescription);
+                    StartBasicHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", GetDescription());
                 }
                 else
                 {
                     Platform.Log(LogLevel.Info, "Starting {0} using NET TCP binding", GetDisplayName()); 
-                    StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval",
-                                                                                     SR.HeaderRetrievalStreamingServiceDescription);
+                    StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", GetDescription());
                 }
             }
             catch (Exception e)
@@ -100,12 +100,12 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
         public override string GetDisplayName()
         {
-            return SR.StreamingServer;
+            return SR.HeaderStreamingServerDisplayName;
         }
 
         public override string GetDescription()
         {
-            return SR.StreamingServerDescription;
+            return SR.HeaderStreamingServerDescription;
         }
 
         #endregion

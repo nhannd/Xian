@@ -81,9 +81,36 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         /// <summary>
         ///   Looks up a localized string similar to Provide DICOM header streaming service.
         /// </summary>
-        internal static string HeaderRetrievalStreamingServiceDescription {
+        internal static string HeaderStreamingServerDescription {
             get {
-                return ResourceManager.GetString("HeaderRetrievalStreamingServiceDescription", resourceCulture);
+                return ResourceManager.GetString("HeaderStreamingServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study header Streaming Server.
+        /// </summary>
+        internal static string HeaderStreamingServerDisplayName {
+            get {
+                return ResourceManager.GetString("HeaderStreamingServerDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Streaming Server.
+        /// </summary>
+        internal static string ImageStreamingServerDescription {
+            get {
+                return ResourceManager.GetString("ImageStreamingServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Streaming Server.
+        /// </summary>
+        internal static string ImageStreamingServerDisplayName {
+            get {
+                return ResourceManager.GetString("ImageStreamingServerDisplayName", resourceCulture);
             }
         }
         
@@ -102,24 +129,6 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         internal static string ServiceLockServerDescription {
             get {
                 return ResourceManager.GetString("ServiceLockServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Streaming Server.
-        /// </summary>
-        internal static string StreamingServer {
-            get {
-                return ResourceManager.GetString("StreamingServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Provide DICOM header and image streaming services.
-        /// </summary>
-        internal static string StreamingServerDescription {
-            get {
-                return ResourceManager.GetString("StreamingServerDescription", resourceCulture);
             }
         }
         

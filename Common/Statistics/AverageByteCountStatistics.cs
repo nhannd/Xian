@@ -87,12 +87,12 @@ namespace ClearCanvas.Common.Statistics
             }
             else if (sample is long)
             {
-                Samples.Add((ulong) (object) sample);
+                Samples.Add( (ulong) (long) (object) sample);
                 NewSamepleAdded = true;
             }
             else if (sample is int)
             {
-                Samples.Add((ulong) (object) sample);
+                Samples.Add((ulong) (int) (object) sample);
                 NewSamepleAdded = true;
             }
             else if (sample is uint)

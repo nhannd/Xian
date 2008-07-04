@@ -123,20 +123,23 @@
   <data name="DicomServerDescription" xml:space="preserve">
     <value>Dicom Server</value>
   </data>
-  <data name="HeaderRetrievalStreamingServiceDescription" xml:space="preserve">
+  <data name="HeaderStreamingServerDescription" xml:space="preserve">
     <value>Provide DICOM header streaming service</value>
+  </data>
+  <data name="HeaderStreamingServerDisplayName" xml:space="preserve">
+    <value>Study header Streaming Server</value>
+  </data>
+  <data name="ImageStreamingServerDescription" xml:space="preserve">
+    <value>Image Streaming Server</value>
+  </data>
+  <data name="ImageStreamingServerDisplayName" xml:space="preserve">
+    <value>Image Streaming Server</value>
   </data>
   <data name="ServiceLockServer" xml:space="preserve">
     <value>ServiceLock Server</value>
   </data>
   <data name="ServiceLockServerDescription" xml:space="preserve">
     <value>ServiceLock Server</value>
-  </data>
-  <data name="StreamingServer" xml:space="preserve">
-    <value>Streaming Server</value>
-  </data>
-  <data name="StreamingServerDescription" xml:space="preserve">
-    <value>Provide DICOM header and image streaming services</value>
   </data>
   <data name="WorkQueueServer" xml:space="preserve">
     <value>Work Queue Server</value>

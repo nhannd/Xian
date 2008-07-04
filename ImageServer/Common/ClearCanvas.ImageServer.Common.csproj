@@ -41,6 +41,7 @@
     <Compile Include="FileDeleteCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />
+    <Compile Include="HttpServer.cs" />
     <Compile Include="IImageServerXmlCodecParameters.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
