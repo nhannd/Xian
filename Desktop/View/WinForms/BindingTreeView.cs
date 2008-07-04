@@ -385,7 +385,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			ToolStripBuilder.Clear(_contextMenu.Items);
 			if (_menuModel != null)
 			{
-				ToolStripBuilder.BuildToolbar(_contextMenu.Items, _menuModel.ChildNodes);
+				ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
 			}
 		}
 
