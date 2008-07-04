@@ -4,7 +4,10 @@ var StructuredReportPreview = {
 
 	create : function(source, element)
 	{
-		var data = source || { general : { fetalNumber: 1}};
+		var data = source;
+		data.general = data.general || { fetalNumber :1 };
+		data.general.fetalNumber = data.general.fetalNumber || 1;
+
 		var fetusCount = data.general.fetalNumber;
 
 		element.innerHTML = this._html(fetusCount);

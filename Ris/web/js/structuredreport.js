@@ -90,6 +90,9 @@ var StructuredReportForm = {
 		document.getElementById("TypeSelection").style.display = 'block';
 		document.getElementById("ObsrForm").style.display = 'none';
 		document.getElementById("fetusSelect").style.display = 'none';
+		
+		errorProvider.setError($("TypeSelection"), "Please confirm report type.");
+		
 		this._initTypeSelectionTable();
 	},
 	
@@ -119,6 +122,9 @@ var StructuredReportForm = {
 		if(document.getElementById("ObsrForm")) document.getElementById("ObsrForm").style.display = 'block';
 		if(document.getElementById("fetusSelect")) document.getElementById("fetusSelect").style.display = 'block';
 		if(document.getElementById("reportType")) document.getElementById("reportType").innerHTML = this._data.obusReportType;
+		
+		errorProvider.setError($("TypeSelection"), null);
+		
 		this._initTabs();
 	},
 
