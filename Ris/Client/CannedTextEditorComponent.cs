@@ -207,6 +207,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[ValidateNotNull]
 		public string Category
 		{
 			get { return _cannedTextDetail.Category; }
