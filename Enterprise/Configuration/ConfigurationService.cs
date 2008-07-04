@@ -175,7 +175,7 @@ namespace ClearCanvas.Enterprise.Configuration
                 instanceKey = null;
 
             return new ConfigurationDocument(name,
-                VersionUtils.ToPaddedVersionString(version),
+                VersionUtils.ToPaddedVersionString(version, false, false),
                 StringUtilities.NullIfEmpty(user),
                 StringUtilities.NullIfEmpty(instanceKey));
         }
@@ -183,14 +183,14 @@ namespace ClearCanvas.Enterprise.Configuration
         private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string name, Version version, string user, string instanceKey)
         {
             ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(name, user, instanceKey);
-            criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(version));
+            criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(version, false, false));
             return criteria;
         }
 
         private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(string name, Version version, string user, string instanceKey)
         {
             ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(name, user, instanceKey);
-            criteria.DocumentVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(version));
+            criteria.DocumentVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(version, false, false));
             return criteria;
         }
 
