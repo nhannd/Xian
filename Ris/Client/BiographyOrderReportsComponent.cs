@@ -64,6 +64,7 @@ namespace ClearCanvas.Ris.Client
 		EntityRef OrderRef { get; }
 		EntityRef ReportRef { get; }
 		IDesktopWindow DesktopWindow { get; }
+		event EventHandler ContextChanged;
 	}
 
 	/// <summary>
@@ -106,6 +107,12 @@ namespace ClearCanvas.Ris.Client
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
+			}
+
+			public event EventHandler ContextChanged
+			{
+				add { _component.ReportSelectionChanged += value; }
+				remove { _component.ReportSelectionChanged -= value; }
 			}
 
 			#endregion
@@ -229,6 +236,8 @@ namespace ClearCanvas.Ris.Client
 		private ChildComponentHost _reportPreviewComponentHost;
 		private EntityRef _patientProfileRef;
 
+		private event EventHandler _reportSelectionChanged;
+
 		#region Constructor
 
 		/// <summary>
@@ -249,11 +258,11 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public override void Start()
 		{
-			RefreshOrderReports();
-
 			_reportPreviewComponent = new ReportPreviewComponent(null);
 			_reportPreviewComponentHost = new ChildComponentHost(this.Host, _reportPreviewComponent);
 			_reportPreviewComponentHost.StartComponent();
+
+			RefreshComponent();
 
 			_toolSet = new ToolSet(new BiographyOrderReportsToolExtensionPoint(), new BiographyOrderReportsToolContext(this));
 
@@ -287,9 +296,15 @@ namespace ClearCanvas.Ris.Client
 				if(!Equals(_selectedReport, value))
 				{
 					_selectedReport = value;
-					ReportSelectionChanged();
+					OnReportSelectionChanged();
 				}
 			}
+		}
+
+		public event EventHandler ReportSelectionChanged
+		{
+			add { _reportSelectionChanged += value; }
+			remove { _reportSelectionChanged -= value; }
 		}
 
 		public ActionModelNode ActionModel
@@ -319,13 +334,13 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_context = value;
-				RefreshOrderReports();
+				RefreshComponent();
 			}
 		}
 
 		public EntityRef PatientRef
 		{
-			get { return this.Context.PatientRef; }
+			get { return this.Context != null ? this.Context.PatientRef : null; }
 		}
 
 		public EntityRef PatientProfileRef
@@ -335,77 +350,97 @@ namespace ClearCanvas.Ris.Client
 
 		public EntityRef OrderRef
 		{
-			get { return this.Context.OrderRef; }
+			get { return this.Context != null ? this.Context.OrderRef : null; }
 		}
 
 		public EntityRef ReportRef
 		{
-			get { return this._selectedReport.ReportRef; }
+			get { return this._selectedReport != null ? this._selectedReport.ReportRef : null; }
 		}
 
-		private void RefreshOrderReports()
+		private void RefreshComponent()
 		{
 			if (_context == null)
-				return;
+			{
+				_reports = new List<CommonReportListItem>();
+				_selectedReport = null;
+			}
+			else
+			{
+				LoadReports();
+			}
 
-			Platform.GetService<IBrowsePatientDataService>(
-				delegate(IBrowsePatientDataService service)
-				{
-					GetDataRequest request = new GetDataRequest();
-					request.ListReportsRequest = new ListReportsRequest(_context.PatientRef, _context.OrderRef);
-					request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_context.PatientRef);
-					request.GetOrderDetailRequest = new GetOrderDetailRequest(_context.OrderRef, true, true, false, false, false, false);
-
-					GetDataResponse response = service.GetData(request);
-
-					ProcedureDetail procedure = response.GetOrderDetailResponse.Order.Procedures[0];
-					if (procedure != null)
-					{
-						string facilityCode = procedure.PerformingFacility.InformationAuthority.Code;
-						PatientProfileSummary matchingProfile = CollectionUtils.SelectFirst(
-							response.ListPatientProfilesResponse.Profiles,
-							delegate(PatientProfileSummary summary)
-							{
-								return summary.Mrn.AssigningAuthority.Code == facilityCode;
-							});
-						_patientProfileRef = matchingProfile != null ? matchingProfile.PatientProfileRef : null;
-					}
-
-
-					List<CommonReportListItem> reports = new List<CommonReportListItem>();
-
-					CollectionUtils.ForEach<ReportListItem>(
-						response.ListReportsResponse.Reports,
-						delegate(ReportListItem item)
-						{
-							CommonReportListItem existingItem = CollectionUtils.SelectFirst(
-								reports,
-								delegate (CommonReportListItem crli)
-								{
-									return Equals(crli.ReportRef, item.ReportRef);
-								});
-
-							if(existingItem != null)
-							{
-								existingItem.AddReportListItem(item);
-							}
-							else
-							{
-								reports.Add(new CommonReportListItem(item.ReportRef, item));
-							}
-						});
-
-					_reports = reports;
-					_selectedReport = CollectionUtils.FirstElement(_reports);
-					ReportSelectionChanged();
-
-					NotifyAllPropertiesChanged();
-				});
+			OnReportSelectionChanged();
+			NotifyAllPropertiesChanged();
 		}
 
-		private void ReportSelectionChanged()
+		private void LoadReports()
+		{
+			try
+			{
+				Platform.GetService<IBrowsePatientDataService>(
+					delegate(IBrowsePatientDataService service)
+					{
+						GetDataRequest request = new GetDataRequest();
+						request.ListReportsRequest = new ListReportsRequest(_context.PatientRef, _context.OrderRef);
+						request.ListPatientProfilesRequest = new ListPatientProfilesRequest(_context.PatientRef);
+						request.GetOrderDetailRequest = new GetOrderDetailRequest(_context.OrderRef, true, true, false, false, false, false);
+
+						GetDataResponse response = service.GetData(request);
+
+						ProcedureDetail procedure = response.GetOrderDetailResponse.Order.Procedures[0];
+						if (procedure != null)
+						{
+							string facilityCode = procedure.PerformingFacility.InformationAuthority.Code;
+							PatientProfileSummary matchingProfile = CollectionUtils.SelectFirst(
+								response.ListPatientProfilesResponse.Profiles,
+								delegate(PatientProfileSummary summary)
+								{
+									return summary.Mrn.AssigningAuthority.Code == facilityCode;
+								});
+							_patientProfileRef = matchingProfile != null ? matchingProfile.PatientProfileRef : null;
+						}
+
+
+						List<CommonReportListItem> reports = new List<CommonReportListItem>();
+
+						CollectionUtils.ForEach<ReportListItem>(
+							response.ListReportsResponse.Reports,
+							delegate(ReportListItem item)
+							{
+								CommonReportListItem existingItem = CollectionUtils.SelectFirst(
+									reports,
+									delegate(CommonReportListItem crli)
+									{
+										return Equals(crli.ReportRef, item.ReportRef);
+									});
+
+								if (existingItem != null)
+								{
+									existingItem.AddReportListItem(item);
+								}
+								else
+								{
+									reports.Add(new CommonReportListItem(item.ReportRef, item));
+								}
+							});
+
+						_reports = reports;
+						_selectedReport = CollectionUtils.FirstElement(_reports);
+					});
+			}
+			catch (Exception e)
+			{
+				_reports = new List<CommonReportListItem>();
+				_selectedReport = null;
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
+
+		private void OnReportSelectionChanged()
 		{
 			_reportPreviewComponent.PreviewContext = _selectedReport != null ? new ReportPreviewComponent.ReportPreviewContext(_selectedReport.ReportRef) : null;
+			EventsHelper.Fire(_reportSelectionChanged, this, EventArgs.Empty);
 		}
 	}
 }
