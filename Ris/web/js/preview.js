@@ -359,7 +359,10 @@ function createReportPreview(element, report)
 	formattedReport += "Main Report";
 	formattedReport += " (" + statusMap[statusCode] + ")";
 	formattedReport += "</h3>";
-	formattedReport += "<div id=\"structuredReport\" style=\"{margin-bottom:1em;}\"></div>";
+	formattedReport += "<div id=\"structuredReport\" style=\"{color:black;margin-bottom:1em;}\"></div>";
+	formattedReport += "<div class=\"sectionheading\" id=\"radiologistsCommentsHeader\" style=\"{"; 
+	formattedReport += (['D', 'P'].indexOf(statusCode) > -1) ? "color:red;border-color:red;" : "";
+	formattedReport += "display:none;margin-bottom:1em;}\">Radiologist's Comments</div>";
 	if(mainReportText)
 	{
 		formattedReport += mainReportText.replaceLineBreak();
@@ -383,6 +386,7 @@ function createStructuredReportPreview(structuredReport)
 	if(!structuredReport)
 		return;
 
+	Field.show($("radiologistsCommentsHeader"), true);
 	StructuredReportPreview.create(structuredReport, $("structuredReport"));
 }
 
