@@ -126,6 +126,19 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+		/// <summary>
+		/// Gets the associated <see cref="Protocol"/> or null if no protocol has been created for this procedure.
+		/// </summary>
+    	public virtual Protocol Protocol
+    	{
+    		get
+    		{
+				// there will only ever be 0 or 1 elements in the protocols collection
+				// it is mapped as a collection due to an NHibernate bug (see #2354)
+    			return CollectionUtils.FirstElement(_protocols);
+    		}
+    	}
+
         #endregion
 
         #region Public Operations
@@ -353,9 +366,9 @@ namespace ClearCanvas.Healthcare {
 				_procedureCheckIn.TimeShift(minutes);
 			}
 
-			if (_protocol != null)
+			foreach (Protocol protocol in _protocols)
 			{
-				_protocol.TimeShift(minutes);
+				protocol.TimeShift(minutes);
 			}
 
 			foreach (ProcedureStep step in _procedureSteps)
