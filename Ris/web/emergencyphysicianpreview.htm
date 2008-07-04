@@ -91,7 +91,7 @@
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 
 				// update Imaging Consultation Overview
-				Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
+				Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 				Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 				Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 				Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);

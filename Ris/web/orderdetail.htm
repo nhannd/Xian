@@ -47,7 +47,7 @@
 
 					var orderDetail = data.GetOrderDetailResponse.Order;
 
-					Field.setValue($("AccessionNumber"), orderDetail.AccessionNumber);
+					Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 					Field.setValue($("PlacerNumber"), orderDetail.PlacerNumber);
 					Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 					Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));

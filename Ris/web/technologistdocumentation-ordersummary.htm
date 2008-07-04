@@ -43,7 +43,7 @@
 
                   var orderData = data.GetModalityProcedureStepResponse.PatientOrderData;
                   
-                  Field.setValue($("accessionNumber"), orderData.AccessionNumber);
+                  Field.setValue($("accessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
                   var patientName = Ris.formatPersonName(orderData.PatientName);
                   Field.setValue($("name"), patientName);
                   Field.setValue($("mrn"), Ris.formatMrn(worklistItem.Mrn));
