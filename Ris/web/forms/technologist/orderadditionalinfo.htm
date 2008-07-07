@@ -12,13 +12,16 @@
 		<script type="text/javascript" src="../../js/jsml.js"></script>
 		<script type="text/javascript" src="../../js/ui.js"></script>
 		<script type="text/javascript" src="../../js/ris.js"></script>
+		<script type="text/javascript" src="../../js/preview.js"></script>
 		<script type="text/javascript" src="../../js/layout.js"></script>
 		<script type="text/javascript" src="../../js/collapse.js"></script>
 		<script type="text/javascript" src="../../js/tabs.js"></script>
 		<script type="text/javascript" >
 			var data = {};
 			var errorProvider = new ErrorProvider();
-
+			var _creatinineSex = "";
+			var _creatinineAge = "";
+			
 			function onBodyLoad()
 			{
 				try
@@ -27,6 +30,37 @@
 
 					if(Ris)
 					{
+						var worklistItem = Ris.getHealthcareContext();
+						if (worklistItem == null)
+						{
+							Field.setValue($("myForm"), "");
+							return;
+						}
+
+						var request = {
+							GetPatientProfileDetailRequest: 
+								{
+									PatientProfileRef: worklistItem.PatientProfileRef, 
+									IncludeAlerts: true 
+								}
+						};
+						
+						var service = Ris.getPatientDataService();
+						var serviceData = service.getData(request);
+						if (serviceData == null || serviceData.length == 0)
+						{
+							Field.setValue($("myForm"), "");
+							return;
+						}
+
+						// update patient demography
+						var patientProfile = serviceData.GetPatientProfileDetailResponse.PatientProfile;
+						if (patientProfile)
+						{
+							_creatinineAge = getPatientAgeInYears(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath);
+							_creatinineSex = patientProfile.Sex.Value; 
+						}
+						
 						data = JSML.parse(Ris.getTag("PreExamDetails")) || {};
 					}
 
@@ -70,7 +104,10 @@
 						{	label: "Weight",
 							cellType: "text",
 							getValue: function(item) { return item.weightValue; },
-							setValue: function(item, value) { item.weightValue = parseFloat(value); },
+							setValue: function(item, value) 
+							{ 
+								item.weightValue = parseFloat(value); 
+							},
 							getError: function(item) { return null; }
 						},
 						{	label: "lbs/kg",
@@ -394,13 +431,56 @@
 				creatinineStatusTable.bindItems([data.patientScreening]);
 				Field.show($("creatinineLevelSection"), data.patientScreening.creatinineStatus == "Yes");
 
+				var creatinineStandardFactors = 
+				{
+					"Male": {a:140, b:1.2, c:1.0}, 
+					"Female": {a:140, b:1.2, c:0.85},
+					"Unknown": {a:0, b:0, c:0},
+					"Other": {a:0, b:0, c:0}
+				}
+				
 				var creatinineLevelTable = Table.createTable($("creatinineLevelTable"), { editInPlace: true, flow: true, checkBoxes: true },
 					[
 						{	label: "Level",
 							cellType: "text",
 							getValue: function(item) { return item.level; },
-							setValue: function(item, value) { item.level = value; },
+							setValue: function(item, value) { item.level = parseFloat(value); },
 							getError: function(item) { return null; }
+						},
+						{
+							label:"Sex",
+							cellType: "readonly",
+							getValue: function(item) { return item.sex = item.sex || _creatinineSex; },
+							getError: function(item) { return null; }
+						},
+						{	label: "Age (yrs)",
+							cellType: "readonly",
+							getValue: function(item) 
+							{ 
+								item.age = item.age || _creatinineAge; 
+								return item.age.toFixed(0); 
+							},
+							getError: function(item) { return null; }
+						},
+						{	label: "Weight (kg)",
+							cellType: "readonly",
+							getValue: function(item) 
+							{ 
+								item.weight = item.weight || 
+									((data.vitals.weightUnit == "kg") ? parseFloat(data.vitals.weightValue) : parseFloat(data.vitals.weightValue) * 0.45359237) || 0; 
+								return item.weight.toFixed(0); 
+							}
+						},
+						{	label: "Clearance",
+							cellType: "readonly",
+							getValue: function(item) 
+							{ 
+								if (!item.level)
+									item.clearance = 0;
+								else
+									item.clearance = ((creatinineStandardFactors[item.sex]["a"] - item.age) * creatinineStandardFactors[item.sex]["b"] * item.weight) / item.level * creatinineStandardFactors[item.sex]["c"];
+								return item.clearance.toFixed(2);
+							}
 						},
 						{	label: "Staff",
 							cellType: "lookup",
@@ -834,7 +914,7 @@
 				</table>
 				<div id="creatinineLevelSection">
 					<div class="addDeleteButtons">
-						<input type="button" value="Add" onclick="javascript: onAddCreatinineLevel()" />
+						<input id="addCreatinineButton" type="button" value="Add" onclick="javascript: onAddCreatinineLevel()" />
 						<input type="button" value="Delete" onclick="javascript: onDeleteCreatinineLevel()" />
 					</div>
 					<table id="creatinineLevelTable" border="1" width="100%">

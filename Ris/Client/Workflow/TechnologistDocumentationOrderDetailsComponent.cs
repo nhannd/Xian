@@ -64,13 +64,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
 
 		private readonly ITechnologistDocumentationContext _context;
+		private readonly DataContractBase _worklistItem;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public TechnologistDocumentationOrderDetailsComponent(ITechnologistDocumentationContext context)
+		public TechnologistDocumentationOrderDetailsComponent(ITechnologistDocumentationContext context, DataContractBase worklistItem)
 		{
 			_context = context;
+			_worklistItem = worklistItem;
 		}
 
 		public override void Start()
@@ -85,6 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent();
 			_orderAdditionalInfoComponent.OrderExtendedProperties = _context.OrderExtendedProperties;
+			_orderAdditionalInfoComponent.HealthcareContext = _worklistItem;
 			_additionalInfoComponentHost = new ChildComponentHost(this.Host, _orderAdditionalInfoComponent);
 			_additionalInfoComponentHost.StartComponent();
 

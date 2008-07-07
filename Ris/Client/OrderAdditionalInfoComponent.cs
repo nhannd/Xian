@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
 	public class OrderAdditionalInfoComponent : DHtmlComponent
 	{
 		private IDictionary<string, string> _orderExtendedProperties;
+		private DataContractBase _healthcareContext;
 
 		public OrderAdditionalInfoComponent(IDictionary<string, string> orderExtendedProperties)
 		{
@@ -40,5 +42,18 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		protected override DataContractBase GetHealthcareContext()
+		{
+			return _healthcareContext;
+		}
+
+		public DataContractBase HealthcareContext
+		{
+			get { return _healthcareContext; }
+			set
+			{
+				_healthcareContext = value;
+			}
+		}
 	}
 }

@@ -487,6 +487,27 @@ function getPatientAge(dateOfBirth, deathIndicator, timeOfDeath)
 	return ageString;
 }
 
+function getPatientAgeInYears(dateOfBirth, deathIndicator, timeOfDeath)
+{
+	if (dateOfBirth == null)
+		return 0;
+		
+	var endDate = (deathIndicator == true ? timeOfDeath : new Date());
+
+	//Define a variable to hold the anniversary of theBirthdate in the endDate year
+	var theBirthdateThisYear = new Date(endDate);
+	theBirthdateThisYear.setDate(dateOfBirth.getDate());
+	theBirthdateThisYear.setMonth(dateOfBirth.getMonth());
+
+	// calculate the age at endDate
+	var age = endDate.getFullYear() - dateOfBirth.getFullYear();
+	if (endDate < theBirthdateThisYear) 
+		age--;
+
+	return age;
+}
+
+
 function isProcedureStatusActive(procedureStatus)
 {
 	return procedureStatus.Code == "SC" || 

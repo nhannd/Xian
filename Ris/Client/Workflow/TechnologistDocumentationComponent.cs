@@ -509,7 +509,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             _documentationTabContainer = new TabComponentContainer();
             _documentationTabContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
-            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(context);
+            _orderDetailsComponent = new TechnologistDocumentationOrderDetailsComponent(context, _worklistItem);
             _documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
             _ppsComponent = new PerformedProcedureComponent(_procedurePlan.OrderRef, this);

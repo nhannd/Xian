@@ -345,6 +345,7 @@ namespace ClearCanvas.Ris.Client
             _bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(new HealthcareContext(_patientRef, _profileRef, _orderRef)));
             _bannerComponentHost.StartComponent();
 
+        	_orderAdditionalInfoComponent.HealthcareContext = new HealthcareContext(_patientRef, _profileRef, _orderRef);
 
             _recipientLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
             _diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
