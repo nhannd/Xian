@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(OrderNoteboxItemToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	public class ViewImagesTool : Tool<IToolContext>
 	{
 		private bool _enabled;
