@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void ShowReport()
 		{
-			this.MergeReport = _selectedDuplicate == null || _selectedOriginal == null 
+			this.MergeReport = _selectedDuplicate == null || _selectedOriginal == null || IsSameItem(_selectedDuplicate, _selectedOriginal)
 				? string.Empty
 				: GenerateReport(_selectedDuplicate, _selectedOriginal);
 		}
