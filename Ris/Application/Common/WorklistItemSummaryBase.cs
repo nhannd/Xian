@@ -39,7 +39,7 @@ using System.Reflection;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class WorklistItemSummaryBase : DataContractBase
+    public class WorklistItemSummaryBase : DataContractBase, IEquatable<WorklistItemSummaryBase>
     {
         public WorklistItemSummaryBase(
             EntityRef procedureStepRef,
@@ -115,46 +115,45 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public DateTime? Time;
 
-        /// <summary>
-        /// Convenience method to support dynamic access to properties and fields of this class.
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        public object GetProperty(string property)
-        {
-            FieldInfo field = this.GetType().GetField(property);
-            if (field != null)
-                return field.GetValue(this);
+		/// <summary>
+		/// Implements equality based on all entity-refs.
+		/// </summary>
+		/// <param name="worklistItemSummaryBase"></param>
+		/// <returns></returns>
+    	public bool Equals(WorklistItemSummaryBase worklistItemSummaryBase)
+    	{
+    		if (worklistItemSummaryBase == null) return false;
+    		if (!Equals(ProcedureStepRef, worklistItemSummaryBase.ProcedureStepRef)) return false;
+    		if (!Equals(ProcedureRef, worklistItemSummaryBase.ProcedureRef)) return false;
+    		if (!Equals(OrderRef, worklistItemSummaryBase.OrderRef)) return false;
+    		if (!Equals(PatientRef, worklistItemSummaryBase.PatientRef)) return false;
+    		if (!Equals(PatientProfileRef, worklistItemSummaryBase.PatientProfileRef)) return false;
+    		return true;
+    	}
 
-            PropertyInfo prop = this.GetType().GetProperty(property);
-            if (prop != null)
-                return prop.GetValue(this, null);
+		/// <summary>
+		/// Overridden to provide equality based on all entity-refs.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+    	public override bool Equals(object obj)
+    	{
+    		if (ReferenceEquals(this, obj)) return true;
+    		return Equals(obj as WorklistItemSummaryBase);
+    	}
 
-            throw new MissingMemberException(this.GetType().Name, property);
-        }
-
-        /// <summary>
-        /// Convenience method to support dynamic access to properties and fields of this class.
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        public T GetProperty<T>(string property)
-        {
-            return (T)GetProperty(property);
-        }
-
-        public override bool Equals(object obj)
-        {
-            WorklistItemSummaryBase that = obj as WorklistItemSummaryBase;
-            if (that != null)
-                return Equals(this.ProcedureStepRef, that.ProcedureStepRef);
-
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ProcedureStepRef.GetHashCode();
-        }
+		/// <summary>
+		/// Overridden to provide hash-code based on all entity refs.
+		/// </summary>
+		/// <returns></returns>
+    	public override int GetHashCode()
+    	{
+    		int result = ProcedureStepRef != null ? ProcedureStepRef.GetHashCode() : 0;
+    		result = 29*result + (ProcedureRef != null ? ProcedureRef.GetHashCode() : 0);
+    		result = 29*result + (OrderRef != null ? OrderRef.GetHashCode() : 0);
+    		result = 29*result + PatientRef.GetHashCode();
+    		result = 29*result + PatientProfileRef.GetHashCode();
+    		return result;
+    	}
     }
 }

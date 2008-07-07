@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Application.Common
         public bool Equals(ProtocolCodeDetail protocolCodeDetail)
         {
             if (protocolCodeDetail == null) return false;
-            return Equals(Name, protocolCodeDetail.Name) && Equals(Description, protocolCodeDetail.Description);
+            return Equals(this.EntityRef, protocolCodeDetail.EntityRef);
         }
 
         public override bool Equals(object obj)
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode() + 29*(Description != null ? Description.GetHashCode() : 0);
+			return EntityRef.GetHashCode();
         }
     }
 }

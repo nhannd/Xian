@@ -79,8 +79,6 @@ namespace ClearCanvas.Ris.Application.Common
             if (ReferenceEquals(this, enumValueInfo)) return true;
             if (enumValueInfo == null) return false;
             if (!Equals(Code, enumValueInfo.Code)) return false;
-            if (!Equals(Value, enumValueInfo.Value)) return false;
-            if (!Equals(Description, enumValueInfo.Description)) return false;
             return true;
         }
 
@@ -95,10 +93,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public override int GetHashCode()
         {
-            int result = Code.GetHashCode();
-            result = 29 * result + Value.GetHashCode();
-            result = 29 * result + (Description != null ? Description.GetHashCode() : 0);
-            return result;
+            return Code.GetHashCode();
         }
 
         /// <summary>

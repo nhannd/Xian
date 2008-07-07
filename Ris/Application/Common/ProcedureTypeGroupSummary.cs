@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Common
         public bool Equals(ProcedureTypeGroupSummary procedureTypeGroupSummary)
         {
             if (procedureTypeGroupSummary == null) return false;
-            return Equals(Name, procedureTypeGroupSummary.Name) && Equals(Category, procedureTypeGroupSummary.Category);
+            return Equals(this.ProcedureTypeGroupRef, procedureTypeGroupSummary.ProcedureTypeGroupRef);
         }
 
         public override bool Equals(object obj)
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode() + 29*Category.GetHashCode();
+        	return ProcedureTypeGroupRef.GetHashCode();
         }
     }
 }

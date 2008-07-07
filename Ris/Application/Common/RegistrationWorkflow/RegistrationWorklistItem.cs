@@ -84,34 +84,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [DataMember]
         public EnumValueInfo Sex;
 
-        /// <summary>
-        /// Overridden to use OrderRef or PatientRef.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            RegistrationWorklistItem that = obj as RegistrationWorklistItem;
-            if (that != null)
-            {
-                // include PatientRef in the comparison for the case where OrderRef is null
-                return Equals(this.PatientRef, that.PatientRef) && Equals(this.OrderRef, that.OrderRef);
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Overridden to use OrderRef or PatientRef.
-        /// </summary>
-        /// <returns></returns>
-        public override int GetHashCode()
-        {
-            if (this.OrderRef != null)
-                return this.OrderRef.GetHashCode();
-            if (this.PatientRef != null)
-                return this.PatientRef.GetHashCode();
-            return 0;
-        }
     }
 }
