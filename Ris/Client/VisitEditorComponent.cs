@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -123,6 +124,8 @@ namespace ClearCanvas.Ris.Client
 			//_visitPractionersSummary.Visit = _visit;
 			//_visitLocationsSummary.Visit = _visit;
 
+			this.ValidationStrategy = new AllComponentsValidationStrategy();
+
             base.Start();
         }
 
@@ -138,7 +141,13 @@ namespace ClearCanvas.Ris.Client
 
         public override void Accept()
         {
-            try
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
+			try
             {
                 Platform.GetService<IVisitAdminService>(
                     delegate(IVisitAdminService service)

@@ -40,11 +40,12 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class AddressEditorControl : CustomUserControl
+    public partial class AddressEditorControl : ApplicationComponentUserControl
     {
         private AddressEditorComponent _component;
 
         public AddressEditorControl(AddressEditorComponent component)
+			:base(component)
         {
             InitializeComponent();
             _component = component;

@@ -40,11 +40,12 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class PhoneNumberEditorControl : CustomUserControl
+    public partial class PhoneNumberEditorControl : ApplicationComponentUserControl
     {
         private PhoneNumberEditorComponent _component;
 
         public PhoneNumberEditorControl(PhoneNumberEditorComponent component)
+			: base(component)
         {
             InitializeComponent();
             _component = component;

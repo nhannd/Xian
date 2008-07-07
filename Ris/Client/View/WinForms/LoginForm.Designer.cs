@@ -134,17 +134,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.pictureBox1.Size = new System.Drawing.Size(37, 21);
 			this.pictureBox1.TabIndex = 8;
 			this.pictureBox1.TabStop = false;
+			this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
+			this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
 			// 
 			// pictureBox2
 			// 
 			this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
 			this.pictureBox2.BackgroundImage = global::ClearCanvas.Ris.Client.View.WinForms.SR.PasswordText;
 			this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-			this.pictureBox2.Location = new System.Drawing.Point(367, 319);
+			this.pictureBox2.Location = new System.Drawing.Point(370, 319);
 			this.pictureBox2.Name = "pictureBox2";
-			this.pictureBox2.Size = new System.Drawing.Size(76, 18);
+			this.pictureBox2.Size = new System.Drawing.Size(73, 18);
 			this.pictureBox2.TabIndex = 9;
 			this.pictureBox2.TabStop = false;
+			this.pictureBox2.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
+			this.pictureBox2.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
 			// 
 			// pictureBox3
 			// 
@@ -156,6 +160,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.pictureBox3.Size = new System.Drawing.Size(50, 18);
 			this.pictureBox3.TabIndex = 10;
 			this.pictureBox3.TabStop = false;
+			this.pictureBox3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
+			this.pictureBox3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
 			// 
 			// LoginForm
 			// 
@@ -164,6 +170,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackgroundImage = global::ClearCanvas.Ris.Client.View.WinForms.SR.Splash;
 			this.CancelButton = this._cancelButton;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.Controls.Add(this.pictureBox3);
 			this.Controls.Add(this.pictureBox2);
@@ -181,6 +188,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ClearCanvas Login";
 			this.Load += new System.EventHandler(this.LoginForm_Load);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseDown);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.LoginForm_MouseMove);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();

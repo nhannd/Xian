@@ -32,12 +32,14 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using System.Drawing;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	public partial class LoginForm : Form
 	{
 		private string[] _facilityChoices;
+		private Point _refPoint;
 
 		public LoginForm()
 		{
@@ -125,6 +127,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 		    bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text);
 			_loginButton.Enabled = ok;
+		}
+
+		private void LoginForm_MouseDown(object sender, MouseEventArgs e)
+		{
+			_refPoint = new Point(e.X, e.Y);
+		}
+
+		private void LoginForm_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				this.Left += (e.X - _refPoint.X);
+				this.Top += (e.Y - _refPoint.Y);
+			}
 		}
 	}
 }

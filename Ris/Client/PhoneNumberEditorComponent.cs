@@ -155,6 +155,12 @@ namespace ClearCanvas.Ris.Client
         }
         public void Accept()
         {
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
             this.ExitCode = ApplicationComponentExitCode.Accepted;
             Host.Exit();
         }

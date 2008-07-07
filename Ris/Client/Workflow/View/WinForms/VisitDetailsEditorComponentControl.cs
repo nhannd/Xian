@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="VisitDetailsEditorComponent"/>
     /// </summary>
-    public partial class VisitDetailsEditorComponentControl : CustomUserControl
+    public partial class VisitDetailsEditorComponentControl : ApplicationComponentUserControl
     {
         private VisitDetailsEditorComponent _component;
 
@@ -52,6 +52,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         /// Constructor
         /// </summary>
         public VisitDetailsEditorComponentControl(VisitDetailsEditorComponent component)
+			:base(component)
         {
             InitializeComponent();
 

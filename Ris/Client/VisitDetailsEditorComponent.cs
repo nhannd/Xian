@@ -110,6 +110,11 @@ namespace ClearCanvas.Ris.Client
 
         public override void Stop()
         {
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
             base.Stop();
         }
 

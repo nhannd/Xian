@@ -148,6 +148,11 @@ namespace ClearCanvas.Desktop
 		/// </remarks>
         public virtual void Accept()
         {
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
             this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
