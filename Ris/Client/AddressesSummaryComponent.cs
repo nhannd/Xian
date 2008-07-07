@@ -29,48 +29,23 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Common.Utilities;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class AddressesSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    [AssociateView(typeof(AddressesSummaryComponentViewExtensionPoint))]
-    public class AddressesSummaryComponent : ApplicationComponent
+	public class AddressesSummaryComponent : SummaryComponentBase<AddressDetail, AddressTable>
     {
         private IList<AddressDetail> _addressList;
-        private AddressTable _addresses;
-        private AddressDetail _currentAddressSelection;
-        private CrudActionModel _addressActionHandler;
-        private IList<EnumValueInfo> _addressTypes;
+        private readonly IList<EnumValueInfo> _addressTypes;
 
         public AddressesSummaryComponent(IList<EnumValueInfo> addressTypes)
+			: base(false)
         {
-            _addresses = new AddressTable();
-
-            _addressActionHandler = new CrudActionModel();
-            _addressActionHandler.Add.SetClickHandler(AddAddress);
-            _addressActionHandler.Edit.SetClickHandler(UpdateSelectedAddress);
-            _addressActionHandler.Delete.SetClickHandler(DeleteSelectedAddress);
-
-            _addressActionHandler.Add.Enabled = true;
-            _addressActionHandler.Edit.Enabled = false;
-            _addressActionHandler.Delete.Enabled = false;
-
+        	_addressList = new List<AddressDetail>();
             _addressTypes = addressTypes;
         }
 
@@ -80,114 +55,145 @@ namespace ClearCanvas.Ris.Client
             set { _addressList = value; }
         }
 
-        public override void Start()
-        {
-            if (_addressList != null)
-            {
-                foreach (AddressDetail address in _addressList)
-                {
-                    _addresses.Items.Add(address);
-                }
-            }
-            base.Start();
-        }
+		#region Overrides
 
-        #region Presentation Model
+		/// <summary>
+		/// Gets a value indicating whether this component supports deletion.  The default is false.
+		/// Override this method to support deletion.
+		/// </summary>
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
 
-        public ITable Addresses
-        {
-            get { return _addresses; }
-        }
+		/// <summary>
+		/// Gets a value indicating whether this component supports paging.  The default is true.
+		/// Override this method to change support for paging.
+		/// </summary>
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
 
-        public ActionModelNode AddressListActionModel
-        {
-            get { return _addressActionHandler; }
-        }
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        public ISelection SelectedAddress
-        {
-            get { return new Selection(_currentAddressSelection); }
-            set
-            {
-                _currentAddressSelection = (AddressDetail)value.Item;
-                AddressSelectionChanged();
-            }
-        }
+			model.Add.Enabled = true;
+			model.Edit.Enabled = false;
+			model.Delete.Enabled = false;
+		}
 
-        public void AddAddress()
-        {
-            try
-            {
-                AddressDetail address = new AddressDetail();
-                address.Province = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.ProvinceChoices);
-                address.Country = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.CountryChoices);
-                address.Type = _addressTypes[0];
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<AddressDetail> ListItems(int firstItem, int maxItems)
+		{
+			return _addressList;
+		}
 
-                AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _addresses.Items.Add(address);
-                    _addressList.Add(address);
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to obtain country/province choices, or failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<AddressDetail> addedItems)
+		{
+			addedItems = new List<AddressDetail>();
 
-        public void UpdateSelectedAddress()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_currentAddressSelection == null) return;
+			AddressDetail address = new AddressDetail();
+			address.Province = CollectionUtils.FirstElement(AddressEditorComponentSettings.Default.ProvinceChoices);
+			address.Country = CollectionUtils.FirstElement(AddressEditorComponentSettings.Default.CountryChoices);
+			address.Type = _addressTypes[0];
 
-                AddressDetail address = (AddressDetail)_currentAddressSelection.Clone();
-                AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // delete and re-insert to ensure that TableView updates correctly
-                    AddressDetail toBeRemoved = _currentAddressSelection;
-                    _addresses.Items.Remove(toBeRemoved);
-                    _addressList.Remove(toBeRemoved);
+			AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddAddress);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(address);
+				_addressList.Add(address);
+				return true;
+			}
 
-                    _addresses.Items.Add(address);
-                    _addressList.Add(address);
+			return false;
+		}
 
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<AddressDetail> items, out IList<AddressDetail> editedItems)
+		{
+			editedItems = new List<AddressDetail>();
+			AddressDetail oldItem = CollectionUtils.FirstElement(items);
+			AddressDetail newItem = (AddressDetail)oldItem.Clone();
 
-        public void DeleteSelectedAddress()
-        {
-            if (this.Host.ShowMessageBox( SR.MessageConfirmDeleteSelectedAddress, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-            {
-                //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong Address being removed from the PatientProfile
-                AddressDetail toBeRemoved = _currentAddressSelection;
-                _addresses.Items.Remove(toBeRemoved);
-                _addressList.Remove(toBeRemoved);
-                this.Modified = true;
-            }
-        }
+			AddressEditorComponent editor = new AddressEditorComponent(newItem, _addressTypes);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(newItem);
 
-        #endregion
+				// Since there is no way to use IsSameItem to identify the address before and after are the same
+				// We must manually remove the old and add the new item
+				this.Table.Items.Replace(
+					delegate(AddressDetail x) { return IsSameItem(oldItem, x); },
+					newItem);
 
-        private void AddressSelectionChanged()
-        {
-            _addressActionHandler.Edit.Enabled =
-                _addressActionHandler.Delete.Enabled = (_currentAddressSelection != null);
-        }
-    }
+				// Preserve the order of the items
+				int index = _addressList.IndexOf(oldItem);
+				_addressList.Insert(index, newItem);
+				_addressList.Remove(oldItem);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<AddressDetail> items, out IList<AddressDetail> deletedItems, out string failureMessage)
+		{
+			failureMessage = null;
+			deletedItems = new List<AddressDetail>();
+
+			foreach (AddressDetail item in items)
+			{
+				deletedItems.Add(item);
+				_addressList.Remove(item);
+			}
+
+			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(AddressDetail x, AddressDetail y)
+		{
+			return Equals(x, y);
+		}
+
+		#endregion
+
+	}
 }

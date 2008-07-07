@@ -29,53 +29,21 @@
 
 #endregion
 
-using System;
-using System.Collections;
-
-using ClearCanvas.Common;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="EmailAddressSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class EmailAddressSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
-    /// EmailAddressSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(EmailAddressSummaryComponentViewExtensionPoint))]
-    public class EmailAddressesSummaryComponent : ApplicationComponent
+	public class EmailAddressesSummaryComponent : SummaryComponentBase<EmailAddressDetail, EmailAddressTable>
     {
         private IList<EmailAddressDetail> _emailAddressList;
-        private EmailAddressTable _emailAddresses;
-        private EmailAddressDetail _currentEmailAddressSelection;
-        private CrudActionModel _emailAddressActionHandler;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public EmailAddressesSummaryComponent()
+			: base(false)
         {
-            _emailAddresses = new EmailAddressTable();
-
-            _emailAddressActionHandler = new CrudActionModel();
-            _emailAddressActionHandler.Add.SetClickHandler(AddEmailAddress);
-            _emailAddressActionHandler.Edit.SetClickHandler(UpdateSelectedEmailAddress);
-            _emailAddressActionHandler.Delete.SetClickHandler(DeleteSelectedEmailAddress);
-
-            _emailAddressActionHandler.Add.Enabled = true;
-            _emailAddressActionHandler.Edit.Enabled = false;
-            _emailAddressActionHandler.Delete.Enabled = false;
-
         }
 
         public IList<EmailAddressDetail> Subject
@@ -84,118 +52,141 @@ namespace ClearCanvas.Ris.Client
             set { _emailAddressList = value; }
         }
 
-        public override void Start()
-        {
-            if (_emailAddressList != null)
-            {
-                foreach (EmailAddressDetail emailAddress in _emailAddressList)
-                {
-                    _emailAddresses.Items.Add(emailAddress);
-                }
-            }
-            base.Start();
-        }
+		#region Overrides
 
-        public override void Stop()
-        {
-            base.Stop();
-        }
+		/// <summary>
+		/// Gets a value indicating whether this component supports deletion.  The default is false.
+		/// Override this method to support deletion.
+		/// </summary>
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
 
-        #region Presentation Model
+		/// <summary>
+		/// Gets a value indicating whether this component supports paging.  The default is true.
+		/// Override this method to change support for paging.
+		/// </summary>
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
 
-        public ITable EmailAddresses
-        {
-            get { return _emailAddresses; }
-        }
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        public ActionModelNode EmailAddressListActionModel
-        {
-            get { return _emailAddressActionHandler; }
-        }
+			model.Add.Enabled = true;
+			model.Edit.Enabled = false;
+			model.Delete.Enabled = false;
+		}
 
-        public ISelection SelectedEmailAddress
-        {
-            get { return _currentEmailAddressSelection == null ? Selection.Empty : new Selection(_currentEmailAddressSelection); }
-            set
-            {
-                _currentEmailAddressSelection = (EmailAddressDetail)value.Item;
-                EmailAddressSelectionChanged();
-            }
-        }
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<EmailAddressDetail> ListItems(int firstItem, int maxItems)
+		{
+			return _emailAddressList;
+		}
 
-        public void AddEmailAddress()
-        {
-            try
-            {
-                EmailAddressDetail emailAddress = new EmailAddressDetail();
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<EmailAddressDetail> addedItems)
+		{
+			addedItems = new List<EmailAddressDetail>();
 
-                EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddEmailAddress);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _emailAddresses.Items.Add(emailAddress);
-                    _emailAddressList.Add(emailAddress);
-                    this.Modified = true;
-                }
+			EmailAddressDetail emailAddress = new EmailAddressDetail();
 
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddEmailAddress);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(emailAddress);
+				_emailAddressList.Add(emailAddress);
+				return true;
+			}
 
-        public void UpdateSelectedEmailAddress()
-        {
-            // can occur if user double clicks while holding control
-            if (_currentEmailAddressSelection == null) return;
+			return false;
+		}
 
-            EmailAddressDetail emailAddress = (EmailAddressDetail)_currentEmailAddressSelection.Clone();
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<EmailAddressDetail> items, out IList<EmailAddressDetail> editedItems)
+		{
+			editedItems = new List<EmailAddressDetail>();
+			EmailAddressDetail oldItem = CollectionUtils.FirstElement(items);
+			EmailAddressDetail newItem = (EmailAddressDetail)oldItem.Clone();
 
-            try
-            {
-                EmailAddressEditorComponent editor = new EmailAddressEditorComponent(emailAddress);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateEmailAddress);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // delete and re-insert to ensure that TableView updates correctly
-                    EmailAddressDetail toBeRemoved = _currentEmailAddressSelection;
-                    _emailAddresses.Items.Remove(toBeRemoved);
-                    _emailAddressList.Remove(toBeRemoved);
+			EmailAddressEditorComponent editor = new EmailAddressEditorComponent(newItem);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateEmailAddress);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(newItem);
 
-                    _emailAddresses.Items.Add(emailAddress);
-                    _emailAddressList.Add(emailAddress);
+				// Since there is no way to use IsSameItem to identify the address before and after are the same
+				// We must manually remove the old and add the new item
+				this.Table.Items.Replace(
+					delegate(EmailAddressDetail x) { return IsSameItem(oldItem, x); },
+					newItem);
 
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+				// Preserve the order of the items
+				int index = _emailAddressList.IndexOf(oldItem);
+				_emailAddressList.Insert(index, newItem);
+				_emailAddressList.Remove(oldItem);
 
-        public void DeleteSelectedEmailAddress()
-        {
-            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedAddress, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-            {
-                //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong Address being removed from the PatientProfile
-                EmailAddressDetail toBeRemoved = _currentEmailAddressSelection;
-                _emailAddresses.Items.Remove(toBeRemoved);
-                _emailAddressList.Remove(toBeRemoved);
-                this.Modified = true;
-            }
-        }
+				return true;
+			}
 
-        #endregion
+			return false;
+		}
 
-        private void EmailAddressSelectionChanged()
-        {
-            _emailAddressActionHandler.Edit.Enabled =
-                _emailAddressActionHandler.Delete.Enabled = (_currentEmailAddressSelection != null);
-        }
-    }
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<EmailAddressDetail> items, out IList<EmailAddressDetail> deletedItems, out string failureMessage)
+		{
+			failureMessage = null;
+			deletedItems = new List<EmailAddressDetail>();
+
+			foreach (EmailAddressDetail item in items)
+			{
+				deletedItems.Add(item);
+				_emailAddressList.Remove(item);
+			}
+
+			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(EmailAddressDetail x, EmailAddressDetail y)
+		{
+			return Equals(x, y);
+		}
+
+		#endregion
+	}
 }

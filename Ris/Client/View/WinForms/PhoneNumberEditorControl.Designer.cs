@@ -115,6 +115,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._countryCode.PasswordChar = '\0';
 			this._countryCode.Size = new System.Drawing.Size(75, 43);
 			this._countryCode.TabIndex = 12;
+			this._countryCode.ToolTip = null;
 			this._countryCode.Value = null;
 			// 
 			// _validFrom
@@ -140,6 +141,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._number.PasswordChar = '\0';
 			this._number.Size = new System.Drawing.Size(95, 41);
 			this._number.TabIndex = 14;
+			this._number.ToolTip = null;
 			this._number.Value = null;
 			// 
 			// _extension
@@ -152,6 +154,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._extension.PasswordChar = '\0';
 			this._extension.Size = new System.Drawing.Size(77, 43);
 			this._extension.TabIndex = 15;
+			this._extension.ToolTip = null;
 			this._extension.Value = null;
 			// 
 			// _areaCode
@@ -164,6 +167,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._areaCode.PasswordChar = '\0';
 			this._areaCode.Size = new System.Drawing.Size(56, 43);
 			this._areaCode.TabIndex = 13;
+			this._areaCode.ToolTip = null;
 			this._areaCode.Value = null;
 			// 
 			// _validUntil
@@ -181,8 +185,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// PhoneNumberEditorControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._phoneType);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._acceptButton);

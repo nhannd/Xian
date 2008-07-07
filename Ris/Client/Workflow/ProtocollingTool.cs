@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// </summary>
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Protocol", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Protocol", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.ProtocolEditorToolSmall.png", "Icons.ProtocolEditorToolMedium.png", "Icons.ProtocolEditorToolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Create)]

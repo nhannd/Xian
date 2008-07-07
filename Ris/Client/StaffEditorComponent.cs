@@ -180,6 +180,10 @@ namespace ClearCanvas.Ris.Client
 					this.Pages.Add(new NavigatorPage("Staff/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
 					this.Pages.Add(new NavigatorPage("Staff/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
 
+					_addressesSummary.SetModifiedOnListChange = true;
+					_phoneNumbersSummary.SetModifiedOnListChange = true;
+					_emailAddressesSummary.SetModifiedOnListChange = true;
+
 					_detailsEditor.StaffDetail = _staffDetail;
 					_phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
 					_addressesSummary.Subject = _staffDetail.Addresses;

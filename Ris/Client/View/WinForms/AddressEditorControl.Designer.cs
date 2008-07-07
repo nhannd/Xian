@@ -211,8 +211,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// AddressEditorControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._type);
 			this.Controls.Add(this._acceptButton);
 			this.Controls.Add(this._cancelButton);

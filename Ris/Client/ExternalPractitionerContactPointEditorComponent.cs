@@ -75,6 +75,9 @@ namespace ClearCanvas.Ris.Client
             this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(_addressTypeChoices)));
             this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(_phoneTypeChoices)));
 
+        	_addressesSummary.SetModifiedOnListChange = true;
+        	_phoneNumbersSummary.SetModifiedOnListChange = true;
+
             this.ValidationStrategy = new AllComponentsValidationStrategy();
 
             _addressesSummary.Subject = _contactPointDetail.Addresses;

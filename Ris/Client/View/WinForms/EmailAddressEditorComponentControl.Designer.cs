@@ -169,8 +169,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// EmailAddressEditorComponentControl
 			// 
+			this.AcceptButton = this._acceptButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "EmailAddressEditorComponentControl";
 			this.Size = new System.Drawing.Size(346, 160);

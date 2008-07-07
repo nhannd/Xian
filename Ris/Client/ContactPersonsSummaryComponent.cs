@@ -29,56 +29,23 @@
 
 #endregion
 
-using System;
-using System.Collections;
-
-using ClearCanvas.Common;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="ContactPersonsSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class ContactPersonsSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
-    /// ContactPersonsSummaryComponent class
-    /// </summary>
-    [AssociateView(typeof(ContactPersonsSummaryComponentViewExtensionPoint))]
-    public class ContactPersonsSummaryComponent : ApplicationComponent
+	public class ContactPersonsSummaryComponent : SummaryComponentBase<ContactPersonDetail, ContactPersonTable>
     {
         private IList<ContactPersonDetail> _contactPersonList;
-        private ContactPersonTable _contactPersons;
-        private ContactPersonDetail _currentContactPersonSelection;
-        private CrudActionModel _contactPersonActionHandler;
-
-        private IList<EnumValueInfo> _contactTypeChoices;
-        private IList<EnumValueInfo> _contactRelationshipChoices;
+        private readonly IList<EnumValueInfo> _contactTypeChoices;
+        private readonly IList<EnumValueInfo> _contactRelationshipChoices;
         
-        /// <summary>
-        /// Constructor
-        /// </summary>
         public ContactPersonsSummaryComponent(IList<EnumValueInfo> contactTypeChoices, IList<EnumValueInfo> contactRelationshipChoices)
+			: base(false)
         {
-            _contactPersons = new ContactPersonTable();
-
-            _contactPersonActionHandler = new CrudActionModel();
-            _contactPersonActionHandler.Add.SetClickHandler(AddContactPerson);
-            _contactPersonActionHandler.Edit.SetClickHandler(UpdateSelectedContactPerson);
-            _contactPersonActionHandler.Delete.SetClickHandler(DeleteSelectedContactPerson);
-
-            _contactPersonActionHandler.Add.Enabled = true;
-            _contactPersonActionHandler.Edit.Enabled = false;
-            _contactPersonActionHandler.Delete.Enabled = false;
-
             _contactTypeChoices = contactTypeChoices;
             _contactRelationshipChoices = contactRelationshipChoices;
         }
@@ -89,121 +56,141 @@ namespace ClearCanvas.Ris.Client
             set { _contactPersonList = value; }
         }
 
-        public override void Start()
-        {
-            if (_contactPersonList != null)
-            {
-                foreach (ContactPersonDetail contactPerson in _contactPersonList)
-                {
-                    _contactPersons.Items.Add(contactPerson);
-                }
-            }
-            base.Start();
-        }
+		#region Overrides
 
-        public override void Stop()
-        {
-            base.Stop();
-        }
+		/// <summary>
+		/// Gets a value indicating whether this component supports deletion.  The default is false.
+		/// Override this method to support deletion.
+		/// </summary>
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
 
-        #region Presentation Model
+		/// <summary>
+		/// Gets a value indicating whether this component supports paging.  The default is true.
+		/// Override this method to change support for paging.
+		/// </summary>
+		protected override bool SupportsPaging
+		{
+			get { return false; }
+		}
 
-        public ITable ContactPersons
-        {
-            get { return _contactPersons; }
-        }
+		/// <summary>
+		/// Override this method to perform custom initialization of the action model,
+		/// such as adding permissions or adding custom actions.
+		/// </summary>
+		/// <param name="model"></param>
+		protected override void InitializeActionModel(CrudActionModel model)
+		{
+			base.InitializeActionModel(model);
 
-        public ActionModelNode ContactPersonListActionModel
-        {
-            get { return _contactPersonActionHandler; }
-        }
+			model.Add.Enabled = true;
+			model.Edit.Enabled = false;
+			model.Delete.Enabled = false;
+		}
 
-        public ISelection SelectedContactPerson
-        {
-            get 
-            { 
-                return new Selection(_currentContactPersonSelection); 
-            }
-            set
-            {
-                _currentContactPersonSelection = (ContactPersonDetail)value.Item;
-                ContactPersonSelectionChanged();
-            }
-        }
+		/// <summary>
+		/// Gets the list of items to show in the table, according to the specifed first and max items.
+		/// </summary>
+		/// <param name="firstItem"></param>
+		/// <param name="maxItems"></param>
+		/// <returns></returns>
+		protected override IList<ContactPersonDetail> ListItems(int firstItem, int maxItems)
+		{
+			return _contactPersonList;
+		}
 
-        public void AddContactPerson()
-        {
-            try
-            {
-                ContactPersonDetail contactPerson = new ContactPersonDetail();
+		/// <summary>
+		/// Called to handle the "add" action.
+		/// </summary>
+		/// <param name="addedItems"></param>
+		/// <returns>True if items were added, false otherwise.</returns>
+		protected override bool AddItems(out IList<ContactPersonDetail> addedItems)
+		{
+			addedItems = new List<ContactPersonDetail>();
 
-                ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddContactPerson);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    _contactPersons.Items.Add(contactPerson);
-                    _contactPersonList.Add(contactPerson);
-                    this.Modified = true;
-                }
+			ContactPersonDetail contactPerson = new ContactPersonDetail();
 
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+			ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddContactPerson);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				addedItems.Add(contactPerson);
+				_contactPersonList.Add(contactPerson);
+				return true;
+			}
 
-        public void UpdateSelectedContactPerson()
-        {
-            try
-            {
-                // can occur if user double clicks while holding control
-                if (_currentContactPersonSelection == null) return;
+			return false;
+		}
 
-                ContactPersonDetail contactPerson = (ContactPersonDetail)_currentContactPersonSelection.Clone();
+		/// <summary>
+		/// Called to handle the "edit" action.
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool EditItems(IList<ContactPersonDetail> items, out IList<ContactPersonDetail> editedItems)
+		{
+			editedItems = new List<ContactPersonDetail>();
+			ContactPersonDetail oldItem = CollectionUtils.FirstElement(items);
+			ContactPersonDetail newItem = (ContactPersonDetail)oldItem.Clone();
 
-                ContactPersonEditorComponent editor = new ContactPersonEditorComponent(contactPerson, _contactTypeChoices, _contactRelationshipChoices);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateContactPerson);
-                if (exitCode == ApplicationComponentExitCode.Accepted)
-                {
-                    // delete and re-insert to ensure that TableView updates correctly
-                    ContactPersonDetail toBeRemoved = _currentContactPersonSelection;
-                    _contactPersons.Items.Remove(toBeRemoved);
-                    _contactPersonList.Remove(toBeRemoved);
+			ContactPersonEditorComponent editor = new ContactPersonEditorComponent(newItem, _contactTypeChoices, _contactRelationshipChoices);
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateContactPerson);
+			if (exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				editedItems.Add(newItem);
 
-                    _contactPersons.Items.Add(contactPerson);
-                    _contactPersonList.Add(contactPerson);
+				// Since there is no way to use IsSameItem to identify the address before and after are the same
+				// We must manually remove the old and add the new item
+				this.Table.Items.Replace(
+					delegate(ContactPersonDetail x) { return IsSameItem(oldItem, x); },
+					newItem);
 
-                    this.Modified = true;
-                }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
+				// Preserve the order of the items
+				int index = _contactPersonList.IndexOf(oldItem);
+				_contactPersonList.Insert(index, newItem);
+				_contactPersonList.Remove(oldItem);
 
-        public void DeleteSelectedContactPerson()
-        {
-            if (this.Host.ShowMessageBox(SR.MessageConfirmDeleteSelectedAddress, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-            {
-                //  Must use temporary Address otherwise as a side effect TableDate.Remove() will change the current selection 
-                //  resulting in the wrong Address being removed from the PatientProfile
-                ContactPersonDetail toBeRemoved = _currentContactPersonSelection;
-                _contactPersons.Items.Remove(toBeRemoved);
-                _contactPersonList.Remove(toBeRemoved);
-                this.Modified = true;
-            }
-        }
+				return true;
+			}
 
-        #endregion
+			return false;
+		}
 
-        private void ContactPersonSelectionChanged()
-        {
-            _contactPersonActionHandler.Edit.Enabled =
-                _contactPersonActionHandler.Delete.Enabled = (_currentContactPersonSelection != null);
-        }
-    }
+		/// <summary>
+		/// Called to handle the "delete" action, if supported.
+		/// </summary>
+		/// <param name="items"></param>
+		/// <param name="deletedItems">The list of items that were deleted.</param>
+		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
+		/// <returns>True if items were deleted, false otherwise.</returns>
+		protected override bool DeleteItems(IList<ContactPersonDetail> items, out IList<ContactPersonDetail> deletedItems, out string failureMessage)
+		{
+			failureMessage = null;
+			deletedItems = new List<ContactPersonDetail>();
+
+			foreach (ContactPersonDetail item in items)
+			{
+				deletedItems.Add(item);
+				_contactPersonList.Remove(item);
+			}
+
+			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Compares two items to see if they represent the same item.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		protected override bool IsSameItem(ContactPersonDetail x, ContactPersonDetail y)
+		{
+			return Equals(x, y);
+		}
+
+		#endregion
+	}
 }

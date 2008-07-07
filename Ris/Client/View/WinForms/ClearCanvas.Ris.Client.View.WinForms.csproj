@@ -43,13 +43,6 @@
     <Compile Include="AddressEditorControl.designer.cs">
       <DependentUpon>AddressEditorControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddressesSummaryComponentView.cs" />
-    <Compile Include="AddressesSummaryControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AddressesSummaryControl.designer.cs">
-      <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="BiographyDemographicComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -120,13 +113,6 @@
       <DependentUpon>ContactPersonEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ContactPersonEditorComponentView.cs" />
-    <Compile Include="ContactPersonsSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ContactPersonsSummaryComponentControl.Designer.cs">
-      <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ContactPersonsSummaryComponentView.cs" />
     <Compile Include="ChangePasswordForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,13 +183,6 @@
       <DependentUpon>EmailAddressEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="EmailAddressEditorComponentView.cs" />
-    <Compile Include="EmailAddressesSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="EmailAddressesSummaryComponentControl.Designer.cs">
-      <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="EmailAddressesSummaryComponentView.cs" />
     <Compile Include="DHtmlComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -300,13 +279,6 @@
     </Compile>
     <Compile Include="PhoneNumberEditorControl.designer.cs">
       <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PhoneNumbersSummaryComponentView.cs" />
-    <Compile Include="PhoneNumbersSummaryControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PhoneNumbersSummaryControl.designer.cs">
-      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderNoteConversationComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -406,10 +378,6 @@
       <DependentUpon>AddressEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddressesSummaryControl.resx">
-      <DependentUpon>AddressesSummaryControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="BiographyDemographicComponentControl.resx">
       <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -450,10 +418,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>ContactPersonEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ContactPersonsSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ChangePasswordForm.resx">
       <DependentUpon>ChangePasswordForm.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -493,10 +457,6 @@
     <EmbeddedResource Include="EmailAddressEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EmailAddressEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="EmailAddressesSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FolderExplorerGroupComponentControl.resx">
       <SubType>Designer</SubType>
@@ -552,10 +512,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PhoneNumberEditorControl.resx">
       <DependentUpon>PhoneNumberEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PhoneNumbersSummaryControl.resx">
-      <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="OrderNoteConversationComponentControl.resx">

@@ -146,7 +146,12 @@ namespace ClearCanvas.Ris.Client
                         this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
                         this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
-                        
+
+						_addressesSummary.SetModifiedOnListChange = true;
+						_phoneNumbersSummary.SetModifiedOnListChange = true;
+						_emailAddressesSummary.SetModifiedOnListChange = true;
+						_contactPersonsSummary.SetModifiedOnListChange = true;
+
                         _patientEditor.Subject = _profile;
                         _addressesSummary.Subject = _profile.Addresses;
                         _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
