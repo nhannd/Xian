@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this.splitContainerDocumentationDetails.Panel2.Controls.Add(this._mppsDetailsPanel);
 			this.splitContainerDocumentationDetails.Size = new System.Drawing.Size(760, 509);
-			this.splitContainerDocumentationDetails.SplitterDistance = 116;
+			this.splitContainerDocumentationDetails.SplitterDistance = 115;
 			this.splitContainerDocumentationDetails.TabIndex = 1;
 			// 
 			// tableLayoutPanel1
@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 1;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(760, 116);
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(760, 115);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
 			// _mppsTableView
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mppsTableView.MultiSelect = false;
 			this._mppsTableView.Name = "_mppsTableView";
 			this._mppsTableView.ReadOnly = false;
-			this._mppsTableView.Size = new System.Drawing.Size(372, 108);
+			this._mppsTableView.Size = new System.Drawing.Size(372, 107);
 			this._mppsTableView.TabIndex = 1;
 			// 
 			// _procedurePlanSummary
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._procedurePlanSummary.Location = new System.Drawing.Point(3, 3);
 			this._procedurePlanSummary.Name = "_procedurePlanSummary";
 			this._procedurePlanSummary.ReadOnly = false;
-			this._procedurePlanSummary.Size = new System.Drawing.Size(374, 110);
+			this._procedurePlanSummary.Size = new System.Drawing.Size(374, 109);
 			this._procedurePlanSummary.TabIndex = 0;
 			// 
 			// _mppsDetailsPanel
@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._mppsDetailsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._mppsDetailsPanel.Location = new System.Drawing.Point(0, 0);
 			this._mppsDetailsPanel.Name = "_mppsDetailsPanel";
-			this._mppsDetailsPanel.Size = new System.Drawing.Size(760, 389);
+			this._mppsDetailsPanel.Size = new System.Drawing.Size(760, 390);
 			this._mppsDetailsPanel.TabIndex = 0;
 			// 
 			// PerformedProcedureComponentControl
