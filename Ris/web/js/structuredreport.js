@@ -212,13 +212,17 @@ var StructuredReportForm = {
 		var html = "";
 		
 		html+= 	"<div id=\"TypeSelection\">";
-		html+= 	"		<p class=\"sectionheading\">Report Type</p>";
-		html+= 	"		<table id=\"typeSelectionTable\">";
-		html+= 	"			<tr><td class=\"tableheading\"></td></tr>";
-		html+= 	"		</table>";
-		html+= 	"		<input type=\"button\" value=\"Confirm\" onclick=\"javascript: StructuredReportForm.onTypeSelected()\" style=\"margin-left:1.5em;\"/>";
-		html+= 	"	</div>";
-		html+= 	"	<div id=\"ObsrForm\" class=\"TabControl\">";
+		html+= 	"	<p class=\"sectionheading\">Report Type</p>";
+		html+= 	"	<table id=\"typeSelectionTable\">";
+		html+= 	"		<tr><td class=\"tableheading\"></td></tr>";
+		html+= 	"	</table>";
+		html+= 	"	<input type=\"button\" value=\"Confirm\" onclick=\"javascript: StructuredReportForm.onTypeSelected()\" style=\"margin-left:1.5em;\"/>";
+		html+= 	"</div>";
+		html+= 	"<div id=\"ObsrForm\" class=\"TabControl\">";
+		html+= 	"	<div class=\"TabHeader\">";
+		html+= 	"		<input type=\"button\" value=\"Start Over\" onclick=\"javascript: StructuredReportForm.startOver()\" style=\"{float:right;vertical-align:top;}\" />";
+		html+= 	"		<select id=\"fetusSelect\" onChange=\"javascript: StructuredReportForm.selectFetus(this.options[this.selectedIndex].value)\" style=\"{float:right; vertical-align:top;}\"></select>";
+		html+= 	"		<h3>Report Type:&nbsp;<span id=\"reportType\"></span></h3>";
 		html+= 	"		<div class=\"TabList\">";
 		html+= 	"			<label for=\"IndicationsAndDates\" class=\"Tab\">Indications & Dates</label>";
 		html+= 	"			<label for=\"General\" class=\"Tab\">General</label>";
@@ -228,11 +232,6 @@ var StructuredReportForm = {
 		html+= 	"			<label for=\"WellBeing\" class=\"Tab\">Well-being</label>";
 		html+= 	"			<label for=\"CommentsConclusion\" class=\"Tab\">Comments/Conclusion</label>";
 		html+= 	"			<label for=\"Preview\" class=\"Tab\" onclick=\"javascript: StructuredReportForm.refreshPreview();\">Report Preview</label>";
-		html+= 	"		</div>";
-		html+= 	"		<div class=\"TabHeader\">";
-		html+= 	"			<input type=\"button\" value=\"Start Over\" onclick=\"javascript: StructuredReportForm.startOver()\" style=\"{float:right;vertical-align:top;}\" />";
-		html+= 	"			<select id=\"fetusSelect\" onChange=\"javascript: StructuredReportForm.selectFetus(this.options[this.selectedIndex].value)\" style=\"{float:right; vertical-align:top;}\"></select>";
-		html+= 	"			Report Type:&nbsp;<span id=\"reportType\"></span>";
 		html+= 	"		</div>";
 		html+= 	"		<div id=\"IndicationsAndDates\" class=\"TabPage\">";
 		html+= 	"			<table id=\"indicationsAndDatesTable\" width=\"95%\">";
@@ -380,6 +379,7 @@ var StructuredReportForm = {
 		html+= 	"		<div id=\"Preview\" class=\"TabPage\">";
 		html+= 	"		</div>";
 		html+= 	"	</div>";
+		html+= 	"</div>";
 		
 		return html;
 	}
