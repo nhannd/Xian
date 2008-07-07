@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client
 		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
-		where TWorklistService : IWorklistService<TItem>, IWorkflowService<TItem>
+		where TWorklistService : IWorklistService<TItem>
 	{
 		/// <summary>
 		/// Constructor.

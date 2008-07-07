@@ -795,7 +795,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
-					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest<ReportingWorklistItem>(this.WorklistItem));
+					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
 					_canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
 					_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
 					_canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];

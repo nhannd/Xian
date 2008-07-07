@@ -40,7 +40,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     /// </summary>
     [RisServiceProvider]
     [ServiceContract]
-	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>, IWorkflowService<RegistrationWorklistItem>
+	[ServiceKnownType(typeof(RegistrationWorklistItem))]
+	public interface IRegistrationWorkflowService : IWorklistService<RegistrationWorklistItem>, IWorkflowService
     {
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services
 	}
 
 
-	public abstract class WorkflowServiceBase<TItemSummary> : ApplicationServiceBase, IWorkflowService<TItemSummary>
+	public abstract class WorkflowServiceBase<TItemSummary> : ApplicationServiceBase, IWorkflowService
 		where TItemSummary : DataContractBase
     {
 
@@ -111,9 +111,15 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 		[ReadOperation]
-		public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest<TItemSummary> request)
+		public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
 		{
-			return new GetOperationEnablementResponse(GetOperationEnablement(GetWorkItemKey(request.WorkItem)));
+			TItemSummary item = request.WorkItem as TItemSummary;
+
+			//TODO: is this appropriate? or should we throw an exception?
+			if(item == null)
+				return new GetOperationEnablementResponse(new Dictionary<string, bool>());
+
+			return new GetOperationEnablementResponse(GetOperationEnablement(GetWorkItemKey(item)));
 		}
 
 

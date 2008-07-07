@@ -7,10 +7,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
 	[ServiceContract]
-	public interface IWorkflowService<TItemSummary>
-		where TItemSummary : DataContractBase
+	public interface IWorkflowService
 	{
 		[OperationContract]
-		GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest<TItemSummary> request);
+		GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 	}
 }

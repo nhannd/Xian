@@ -635,7 +635,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					if (response.ProtocolClaimed == shouldClaim)
 					{
 						GetOperationEnablementResponse enablementResponse =
-							service.GetOperationEnablement(new GetOperationEnablementRequest<WorklistItemSummaryBase>(_worklistItem));
+							service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
 
 						_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptOrderProtocol"];
 						_suspendEnabled = enablementResponse.OperationEnablementDictionary["SuspendOrderProtocol"];

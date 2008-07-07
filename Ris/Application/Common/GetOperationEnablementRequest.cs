@@ -7,15 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common
 {
 	[DataContract]
-	public class GetOperationEnablementRequest<TItemSummary> : DataContractBase
-		where TItemSummary : DataContractBase
+	public class GetOperationEnablementRequest : DataContractBase
 	{
-		public GetOperationEnablementRequest(TItemSummary workItem)
+		public GetOperationEnablementRequest(object workItem)
 		{
 			WorkItem = workItem;
 		}
 
 		[DataMember]
-		public TItemSummary WorkItem;
+		public object WorkItem;
 	}
 }

@@ -802,17 +802,16 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected override IDictionary<string, bool> QueryOperationEnablement(ISelection selection)
 		{
-			TItem item = (TItem)selection.Item;
 			Dictionary<string, bool> enablement = new Dictionary<string, bool>();
 
 			// query all registered workflow service for operation enablement
 			foreach (Type serviceContract in GetRegisteredWorkflowServices())
 			{
-				if (typeof(IWorkflowService<TItem>).IsAssignableFrom(serviceContract))
+				if (typeof(IWorkflowService).IsAssignableFrom(serviceContract))
 				{
-					IWorkflowService<TItem> service = (IWorkflowService<TItem>)Platform.GetService(serviceContract);
+					IWorkflowService service = (IWorkflowService)Platform.GetService(serviceContract);
 					GetOperationEnablementResponse response = service.GetOperationEnablement(
-						new GetOperationEnablementRequest<TItem>(item));
+						new GetOperationEnablementRequest(selection.Item));
 
 					// add fully qualified operation name to dictionary
 					CollectionUtils.ForEach(response.OperationEnablementDictionary,
@@ -827,8 +826,8 @@ namespace ClearCanvas.Ris.Client
 				}
 				else
 				{
-					Platform.Log(LogLevel.Error, "Can not use service {0} to obtain operation enablement because its does not extend {1}",
-						serviceContract.FullName, typeof(IWorkflowService<TItem>).FullName);
+					Platform.Log(LogLevel.Error, "Can not use service {0} to obtain operation enablement because its does not implement {1}",
+						serviceContract.FullName, typeof(IWorkflowService).FullName);
 				}
 			}
 

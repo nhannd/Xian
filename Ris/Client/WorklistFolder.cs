@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client
 	/// <typeparam name="TWorklistService"></typeparam>
 	public abstract class WorklistFolder<TItem, TWorklistService> : WorkflowFolder<TItem>, IInitializeWorklistFolder, IWorklistFolder
 		where TItem : DataContractBase
-		where TWorklistService : IWorklistService<TItem>, IWorkflowService<TItem>
+		where TWorklistService : IWorklistService<TItem>
 	{
 		private EntityRef _worklistRef;
 

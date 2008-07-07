@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 
 	[RisServiceProvider]
 	[ServiceContract]
-	public interface IProtocollingWorkflowService : IWorkflowService<WorklistItemSummaryBase>
+	public interface IProtocollingWorkflowService : IWorkflowService
 	{
 		[OperationContract]
 		GetProtocolFormDataResponse GetProtocolFormData(GetProtocolFormDataRequest request);

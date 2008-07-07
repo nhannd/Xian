@@ -35,7 +35,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [RisServiceProvider]
     [ServiceContract]
-	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>, IWorkflowService<ModalityWorklistItem>
+	[ServiceKnownType(typeof(ModalityWorklistItem))]
+	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>, IWorkflowService
     {
         /// <summary>
         /// Returns a summary of the procedure plan for a specified order.
