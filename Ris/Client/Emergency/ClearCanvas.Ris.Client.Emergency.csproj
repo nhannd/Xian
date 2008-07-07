@@ -38,25 +38,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EmergencyWorkflowFolderSystem.cs" />
-    <Compile Include="EmergencyWorkflowFolder.cs" />
-    <Compile Include="EmergencyWorkflowItemTools.cs" />
-    <Compile Include="Folders\EmergencyPhysicianWorkflowFolders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\SingleExclamation.png" />
@@ -93,6 +80,9 @@
       <Project>{FFB85377-995C-47A6-BF22-26D264CA3225}</Project>
       <Name>ClearCanvas.Ris.Client.Workflow</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Folders\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

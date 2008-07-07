@@ -1,10 +1,7 @@
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Client.Workflow;
-using ClearCanvas.Ris.Client.Emergency;
 
-namespace ClearCanvas.Ris.Client.Emergency.Folders
+namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
 	[ExtensionOf(typeof(EmergencyWorkflowFolderExtensionPoint))]
 	[FolderForWorklistClass(WorklistClassNames.EmergencyOrdersWorklist)]

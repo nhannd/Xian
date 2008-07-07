@@ -1024,6 +1024,24 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emergency.
+        /// </summary>
+        internal static string TitleEmergencyFolderSystem {
+            get {
+                return ResourceManager.GetString("TitleEmergencyFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Emergency Home.
+        /// </summary>
+        internal static string TitleEmergencyHome {
+            get {
+                return ResourceManager.GetString("TitleEmergencyHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CancelledToday.
         /// </summary>
         internal static string TitleFolderCancelledToday {

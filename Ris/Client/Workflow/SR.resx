@@ -438,6 +438,12 @@
   <data name="TitleEmailAddresses" xml:space="preserve">
     <value>Email Addresses</value>
   </data>
+  <data name="TitleEmergencyFolderSystem" xml:space="preserve">
+    <value>Emergency</value>
+  </data>
+  <data name="TitleEmergencyHome" xml:space="preserve">
+    <value>Emergency Home</value>
+  </data>
   <data name="TitleFolderCancelledToday" xml:space="preserve">
     <value>CancelledToday</value>
   </data>

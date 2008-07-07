@@ -44,6 +44,10 @@
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="ViewImagesTool.cs" />
+    <Compile Include="EmergencyWorkflowFolder.cs" />
+    <Compile Include="EmergencyWorkflowFolderSystem.cs" />
+    <Compile Include="EmergencyWorkflowItemTools.cs" />
+    <Compile Include="Folders\EmergencyPhysicianWorkflowFolders.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
@@ -351,6 +355,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolMedium.png" />
+    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolSmall.png" />
+    <EmbeddedResource Include="Icons\EmergencyPhysicianHomeToolLarge.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
