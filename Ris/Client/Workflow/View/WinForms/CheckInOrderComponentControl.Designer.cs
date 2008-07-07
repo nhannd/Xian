@@ -59,20 +59,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._orderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
+			this._orderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
-			// 
-			// _orderTableView
-			// 
-			this._orderTableView.Location = new System.Drawing.Point(7, 11);
-			this._orderTableView.Name = "_orderTableView";
-			this._orderTableView.ReadOnly = false;
-			this._orderTableView.ShowToolbar = false;
-			this._orderTableView.Size = new System.Drawing.Size(469, 219);
-			this._orderTableView.TabIndex = 0;
-			this._orderTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _okButton
 			// 
@@ -94,15 +84,27 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
+			// _orderTableView
+			// 
+			this._orderTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._orderTableView.Location = new System.Drawing.Point(4, 4);
+			this._orderTableView.Name = "_orderTableView";
+			this._orderTableView.ReadOnly = false;
+			this._orderTableView.ShowToolbar = false;
+			this._orderTableView.Size = new System.Drawing.Size(477, 231);
+			this._orderTableView.TabIndex = 3;
+			// 
 			// CheckInOrderComponentControl
 			// 
 			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._orderTableView);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
-			this.Controls.Add(this._orderTableView);
 			this.Name = "CheckInOrderComponentControl";
 			this.Size = new System.Drawing.Size(484, 272);
 			this.ResumeLayout(false);
@@ -111,8 +113,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.TableView _orderTableView;
-        private System.Windows.Forms.Button _okButton;
+		private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
+		private ClearCanvas.Desktop.View.WinForms.TableView _orderTableView;
     }
 }

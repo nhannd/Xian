@@ -30,11 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
@@ -46,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
     /// </summary>
     public partial class CheckInOrderComponentControl : ApplicationComponentUserControl
     {
-        private CheckInOrderComponent _component;
+        private readonly CheckInOrderComponent _component;
 
         /// <summary>
         /// Constructor
@@ -57,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _orderTableView.Table = _component.OrderTable;
+			_orderTableView.Table = _component.OrderTable;
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 
