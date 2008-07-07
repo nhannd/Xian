@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client
 		public abstract string Title { get; }
 
 		/// <summary>
-		/// Creates the preview component.
+		/// Creates the homepage component.
 		/// </summary>
 		/// <returns></returns>
 		protected abstract IApplicationComponent CreateComponent();
@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						_workspace = ApplicationComponent.LaunchAsWorkspace(
 							this.Context.DesktopWindow,
-							CreateComponent(),
+							component,
 							this.Title);
 						_workspace.Closed += delegate { _workspace = null; };
 					}

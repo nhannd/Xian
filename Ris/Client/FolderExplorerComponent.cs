@@ -93,24 +93,42 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-			// subscribe to events
-			_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
-			_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
-			_folderSystem.FoldersChanged += FoldersChangedEventHandler;
-			_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
+			// initialize the folder system on a background task
+			// in case it takes a long time
+			BackgroundTask task = new BackgroundTask(
+				delegate
+				{
+					_folderSystem.Initialize();
+				}, false);
+        	task.Terminated += 
+				delegate(object sender, BackgroundTaskTerminatedEventArgs args)
+				{
+					if (args.Reason == BackgroundTaskTerminatedReason.Exception)
+					{
+						Platform.Log(LogLevel.Error, args.Exception);
+						return;
+					}
 
-			// build the initial folder tree
-			BuildFolderTree();
+					// subscribe to events
+					_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
+					_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
+					_folderSystem.FoldersChanged += FoldersChangedEventHandler;
+					_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
 
-			// invalidate all folders and update the entire tree
-			InvalidateFolders();
+					// build the initial folder tree
+					BuildFolderTree();
 
-			// this timer is responsible for monitoring the auto-invalidation of all folders
-			// in the folder system, and performing the appropriate invalidations
-        	_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); });
-			_folderInvalidateTimer.IntervalMilliseconds = 1000;		// resolution of 1 second
-			_folderInvalidateTimer.Start();
+					// invalidate all folders and update the entire tree
+					InvalidateFolders();
 
+					// this timer is responsible for monitoring the auto-invalidation of all folders
+					// in the folder system, and performing the appropriate invalidations
+					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); });
+					_folderInvalidateTimer.IntervalMilliseconds = 1000; // resolution of 1 second
+					_folderInvalidateTimer.Start();
+				};
+
+			task.Run();
 
 			base.Start();
 		}

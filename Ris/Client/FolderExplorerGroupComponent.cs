@@ -182,7 +182,6 @@ namespace ClearCanvas.Ris.Client
 				{
 					FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
 					folderSystem.SetContext(new FolderSystemContext(this, explorer, contentComponent));
-					folderSystem.Initialize();
 					_folderExplorerComponents.Add(folderSystem, explorer);
 
 					StackTabPage thisPage = new StackTabPage(
@@ -191,6 +190,9 @@ namespace ClearCanvas.Ris.Client
 						folderSystem.Title,
 						folderSystem.TitleIcon,
 						folderSystem.ResourceResolver);
+
+					// start folder explorers immediately, so that they can update the title bar if needed
+					thisPage.LazyStart = false;
 
 					_stackTabComponent.Pages.Add(thisPage);
 

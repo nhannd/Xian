@@ -84,14 +84,19 @@ namespace ClearCanvas.Ris.Client
 			_inboxFolder.TotalItemCountChanged += FolderItemCountChangedEventHandler;
 			this.Folders.Add(_inboxFolder);
 			this.Folders.Add(new SentItemsFolder(this));
-
-			RebuildGroupFolders();
 		}
 
 		public override bool SearchEnabled
 		{
 			// searching not currently supported
 			get { return false; }
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			RebuildGroupFolders();
 		}
 
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<OrderNoteboxItemSummary> items)

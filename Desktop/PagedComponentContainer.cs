@@ -40,7 +40,8 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public abstract class ContainerPage
     {
-        private IApplicationComponent _component;
+        private readonly IApplicationComponent _component;
+    	private bool _lazyStart = true;
 
 		/// <summary>
 		/// Constructor.
@@ -59,6 +60,20 @@ namespace ClearCanvas.Desktop
         {
             get { return _component; }
         }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the component will be started lazily.
+		/// </summary>
+		/// <remarks>
+		/// This property is true by default, meaning the component will not be started
+		/// until the containing page is accessed.  Changing this to false will cause
+		/// the component to start when the container is started.
+		/// </remarks>
+    	public bool LazyStart
+    	{
+			get { return _lazyStart; }
+			set { _lazyStart = value; }
+    	}
     }
 
     /// <summary>
@@ -163,11 +178,17 @@ namespace ClearCanvas.Desktop
     	/// </remarks>
     	public override void Start()
         {
-            base.Start();
+    		foreach (TPage page in _pages)
+    		{
+    			if(!page.LazyStart)
+					EnsureStarted(page);
+    		}
 
             if (_current < 0)
 				MoveTo(0);
-        }
+
+			base.Start();
+		}
 
     	/// <summary>
     	/// Called by the host when the application component is being terminated.
