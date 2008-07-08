@@ -57,6 +57,9 @@ namespace ClearCanvas.Ris.Application.Services
             summary.AdmitTime = visit.AdmitTime;
             summary.DischargeTime = visit.DischargeTime;
 
+			FacilityAssembler facilityAssembler = new FacilityAssembler();
+        	summary.Facility = visit.Facility == null ? null : facilityAssembler.CreateFacilitySummary(visit.Facility);
+
             return summary;
         }
 

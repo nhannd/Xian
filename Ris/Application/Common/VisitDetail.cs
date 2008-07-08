@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Application.Common
         {
             return new VisitSummary(this.VisitRef, this.PatientRef, this.VisitNumber,
                 this.PatientClass.Value, this.PatientType.Value, this.AdmissionType.Value,
-                this.Status.Value, this.AdmitTime, this.DischargeTime);
+                this.Status.Value, this.AdmitTime, this.DischargeTime, this.Facility);
         }
     }
 }
