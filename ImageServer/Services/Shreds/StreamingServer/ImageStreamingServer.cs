@@ -42,10 +42,8 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
             try
             {
-                using (WADORequestProcessor processor = new WADORequestProcessor())
-                {
-                    processor.Process(context);
-                }
+                WADORequestProcessor processor = new WADORequestProcessor();
+                processor.Process(context);
             }
             catch (WADOException e)
             {

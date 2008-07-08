@@ -254,7 +254,7 @@ BEGIN
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID
@@ -265,7 +265,7 @@ BEGIN
 	BEGIN
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID
@@ -276,7 +276,7 @@ BEGIN
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID

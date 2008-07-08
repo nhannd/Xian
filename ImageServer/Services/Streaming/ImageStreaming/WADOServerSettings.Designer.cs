@@ -34,10 +34,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("65536")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int StreamBufferSize {
             get {
-                return ((int)(this["ReadBufferSize"]));
+                return ((int)(this["StreamBufferSize"]));
             }
         }
     }

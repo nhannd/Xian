@@ -51,11 +51,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ImageStreaming\WADORequestTypeExtensionPoint.cs" />
     <Compile Include="ImageStreaming\WADORequestProcessorStatistics.cs" />
     <Compile Include="ImageStreaming\WADOMimeTypeExtensionPoint.cs" />
     <Compile Include="ImageStreaming\Mimes\DefaultMimeHandler.cs" />
     <Compile Include="ImageStreaming\WADORequestTypeHandlerManager.cs" />
-    <Compile Include="ImageStreaming\IWADORequestTypeHandler.cs" />
     <Compile Include="ImageStreaming\WADOException.cs" />
     <Compile Include="ImageStreaming\WADOResponse.cs" />
     <Compile Include="ImageStreaming\WADORequestProcessor.cs" />

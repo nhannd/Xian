@@ -59,6 +59,30 @@ namespace WADOClient
            
         }
 
+        static private int OptimizeBufferSize(long contentSize)
+        {
+            int readBufferSize;
+            
+            const int KILOBYTES = 1024;
+            const int MEGABYTES = 1024 * KILOBYTES;
+
+
+            // This is very simple optimization algorithm: the buffer size is set according to the content size
+            // Other factors may be considered in the future: disk access speed, available physical memory, network speed, cpu usage
+            if (contentSize > 3 * MEGABYTES)
+                readBufferSize = 3 * MEGABYTES;
+            else if (contentSize > 1 * MEGABYTES)
+                readBufferSize = 1 * MEGABYTES;
+            else if (contentSize > 500 * KILOBYTES)
+                readBufferSize = 256 * KILOBYTES;
+            else if (contentSize > 100 * KILOBYTES)
+                readBufferSize = 128 * KILOBYTES;
+            else
+                readBufferSize = 64 * KILOBYTES;
+
+            return readBufferSize;
+        }
+
         private static void RetrieveImages(string studypath)
         {
             DirectoryInfo dirinfo = new DirectoryInfo(studypath);
@@ -69,13 +93,16 @@ namespace WADOClient
             total.Start();
             AverageTimeSpanStatistics average = new AverageTimeSpanStatistics();
             AverageRateStatistics averageSpeed = new AverageRateStatistics(RateType.BYTES);
-
+            AverageByteCountStatistics averageBuffer = new AverageByteCountStatistics();
             string[] seriesDirs = Directory.GetDirectories(studypath);
+            int readCount = 0;
+                
             foreach(string seriesPath in seriesDirs)
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(seriesPath);
                 string seriesuid = dirInfo.Name;
                 string[] objectuidPath = Directory.GetFiles(seriesPath, "*.dcm");
+                        
                 foreach (string uidPath in objectuidPath)
                 {
                     FileInfo fileinfo = new FileInfo(uidPath);
@@ -93,12 +120,13 @@ namespace WADOClient
                     //request.Accept = "application/jpeg";
                     
                     HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-                    
+
+                    int count = 0;
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         Stream stream = response.GetResponseStream();
-                        byte[] buffer = new byte[256*1024];
-                        int count = 0;
+                        int bufferSize = 30*1024*1024;// OptimizeBufferSize(response.ContentLength);
+                        byte[] buffer = new byte[bufferSize];
                         long size = 0;
 
                             do
@@ -106,6 +134,7 @@ namespace WADOClient
                                 count = stream.Read(buffer, 0, buffer.Length);
                                 if (count > 0)
                                 {
+                                    readCount++;
                                     size += count;
                                     speed.SetData(size);
                                     //Console.Write(message, uid, size / 1024.0f / 1024.0f, speed.FormattedValue, elapse.FormattedValue);
@@ -116,8 +145,7 @@ namespace WADOClient
                         
                         stream.Close();
                         studysize += size;
-
-
+                        averageBuffer.AddSample(bufferSize);
 
                         speed.End();
                         elapse.End();
@@ -148,6 +176,8 @@ namespace WADOClient
                                     total.FormattedValue,
                                     sopcount/total.Value.TotalSeconds
                                     );
+
+                Console.WriteLine("Buffer: {0}, Read={1}",averageBuffer.FormattedValue, readCount / sopcount);
                 Console.Out.Flush();
             }
                 

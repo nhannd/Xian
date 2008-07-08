@@ -29,37 +29,37 @@
 
 #endregion
 
-
+using System;
 using System.Net;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
     /// <summary>
-    /// Defines the interface of different mime-type handlers
+    /// Defines the interface of handler for different WADO request types.
     /// </summary>
-    public interface IWADOMimeTypeHandler
+    /// <remarks>
+    /// Dicom standard says "WADO" is the only valid request type value currently defined, but additional ones may be added in the future.
+    /// </remarks>
+    public interface IWADORequestTypeHandler : IDisposable
     {
         /// <summary>
-        /// Gets the list of mime-types that can be handled by the handler.
+        /// Gets the request type that can be handled by the handler.
         /// </summary>
-        string[] SupportedRequestedMimeTypes { get; }
+        string RequestType { get;}
 
         /// <summary>
-        /// Generates the response for the specifies request.
+        /// Processes a WADO request.
         /// </summary>
         /// <param name="request"></param>
-        /// <returns></returns>
-        WADOResponse GetResponseContent(HttpListenerRequest request);
+        WADOResponse Process(HttpListenerRequest request);
     }
 
-
     /// <summary>
-    /// Plugin extensions point for different mime-type handlers.
+    /// Extension point to allow adding plugins for handling requests with different RequestType parameter
     /// </summary>
-    [ExtensionPoint]
-    public class WADOMimeTypeExtensionPoint : ExtensionPoint<IWADOMimeTypeHandler>
+    [ExtensionPoint()]
+    public class WADORequestTypeExtensionPoint : ExtensionPoint<IWADORequestTypeHandler>
     {
-
     }
 }

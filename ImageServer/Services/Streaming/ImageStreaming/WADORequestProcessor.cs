@@ -1,10 +1,40 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
+
 using System;
-using System.Diagnostics;
 using System.Net;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
@@ -12,19 +42,18 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     /// <summary>
     /// Represents a Dicom WADO request processor.
     /// </summary>
-    public class WADORequestProcessor : IDisposable
+    public class WADORequestProcessor
     {
         #region Private Members
         private int _readBufferSize = 0;
         private WADORequestProcessorStatistics _statistics;
-        private readonly WADORequestTypeHandlerManager _handlerManager = new WADORequestTypeHandlerManager();
-
+        
         #endregion
 
         #region Public Properties
 
         /// <summary>
-        /// Gets or sets the buffer used by the processor for reading.
+        /// Gets or sets the read buffer size used by the processor.
         /// </summary>
         public int ReadBufferSize
         {
@@ -42,10 +71,22 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         #endregion
 
-        
+        #region Constructors
+        public WADORequestProcessor()
+        {
+            ReadBufferSize = WADOServerSettings.Default.StreamBufferSize;
+        }
+
+        #endregion
+
 
         #region Private Methods
 
+        /// <summary>
+        /// Gets a string that represents the mime-types acceptable by the client for the specified context. The mime-types are separated by commas (,).
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         private string GetClientAcceptTypes(HttpListenerContext context)
         {
             Platform.CheckForNullReference(context, "context");
@@ -63,6 +104,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
             return mimes.ToString();
         }
 
+        /// <summary>
+        /// Logs information about the request.
+        /// </summary>
+        /// <param name="context"></param>
         private void LogRequest(HttpListenerContext context)
         {
             Platform.CheckForNullReference(context, "context");
@@ -80,10 +125,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         }
 
-
+        /// <summary>
+        /// Generates a http response based on the specified <see cref="response"/> object and send it to the client
+        /// </summary>
+        /// <param name="response"></param>
+        /// <param name="context"></param>
         private void SendWADOResponse(WADOResponse response, HttpListenerContext context)
         {
-            SetResponseStatus(context, (int)HttpStatusCode.OK); //TODO: what does the protocol say about how error that occurs after OK status has been sent should  be handled?
+            context.Response.StatusCode = (int) HttpStatusCode.OK; // TODO: what does http protocol say about how error that occurs after OK status has been sent should  be handled?
 
             context.Response.ContentType = response.ContentType;
 
@@ -100,7 +149,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
                 Platform.Log(LogLevel.Debug, "Starting streaming image...");
 
-                int count = 0;
+                int count;
                 byte[] buffer = new byte[ReadBufferSize];
                 do
                 {
@@ -111,6 +160,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                         Statistics.TransmissionTime.Start();
                         context.Response.OutputStream.Write(buffer, 0, count);
                         Statistics.TransmissionTime.End();
+                        Statistics.NetworkWriteCount++;
                     }
                 } while (count > 0);
 
@@ -150,27 +200,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
             Statistics.BufferSize = (ulong)ReadBufferSize;
         }
 
-        private static void SetResponseStatus(HttpListenerContext context, int statusCode)
-        {
-            context.Response.StatusCode = statusCode;
-        }
-
-        private IWADORequestTypeHandler GetHandler(HttpListenerContext context)
-        {
-
-            string requestType = context.Request.QueryString["requestType"];
-
-            if (String.IsNullOrEmpty(requestType))
-            {
-                throw new WADOException((int)HttpStatusCode.BadRequest, "RequestType parameter is required");
-            }
-            else
-            {
-                return _handlerManager.GetHandler(requestType);
-            }
-        }
-
-
+       
         #endregion
 
         #region Public Methods
@@ -179,21 +209,29 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         {
             Platform.CheckForNullReference(context, "context");
 
-            _statistics = new WADORequestProcessorStatistics(context.Request.RemoteEndPoint.Address.ToString());
+            string requestType = context.Request.QueryString["requestType"];
+            if (String.IsNullOrEmpty(requestType))
+            {
+                throw new WADOException((int)HttpStatusCode.BadRequest, "RequestType parameter is required");
+            }
 
-            Statistics.TotalProcessTime.Add(delegate()
+                        
+            _statistics = new WADORequestProcessorStatistics(context.Request.RemoteEndPoint.Address.ToString());
+            _statistics.TotalProcessTime.Add(delegate()
                 {
                     LogRequest(context);
 
-                    using(IWADORequestTypeHandler typeHandler = GetHandler(context))
+                    using(WADORequestTypeHandlerManager handlerManager = new WADORequestTypeHandlerManager())
                     {
-                        WADOResponse response = typeHandler.Process(context.Request);
-                        if (response!=null)
+                        IWADORequestTypeHandler typeHandler = handlerManager.GetHandler(requestType);
+                        using(WADOResponse response = typeHandler.Process(context.Request))
                         {
-                            SendWADOResponse(response, context);
-                            response.Dispose();
+                            if (response != null)
+                            {
+                                SendWADOResponse(response, context);
+                            }    
                         }
-                            
+                        
                     }
                 });
 
@@ -202,12 +240,5 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-        }
-
-        #endregion
     }
 }
