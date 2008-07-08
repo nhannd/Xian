@@ -322,29 +322,20 @@ namespace ClearCanvas.Ris.Client
 
 		#region Event Handlers
 
-		//TODO what is the purpose of this?
-		private FolderExplorerComponent SelectedFolderExplorer
-		{
-			get { return _selectedFolderExplorer; }
-			set
-			{
-				if (_selectedFolderExplorer != value)
-				{
-					// Must set the previous folder explorer folder selection to null before changing folder exploer
-					this.SelectedFolder = null;
-
-					_selectedFolderExplorer = value;
-					EventsHelper.Fire(_selectedFolderSystemChanged, this, EventArgs.Empty);
-
-					// refresh folders in newly selected folder explorer
-					_selectedFolderExplorer.InvalidateFolders();
-				}
-			}
-		}
-
 		private void OnCurrentPageChanged(object sender, EventArgs e)
 		{
-			this.SelectedFolderExplorer = (FolderExplorerComponent)_stackTabComponent.CurrentPage.Component;
+			FolderExplorerComponent explorer = (FolderExplorerComponent)_stackTabComponent.CurrentPage.Component;
+			if (_selectedFolderExplorer != explorer)
+			{
+				// Must set the previous folder explorer folder selection to null before changing folder exploer
+				this.SelectedFolder = null;
+
+				_selectedFolderExplorer = explorer;
+				EventsHelper.Fire(_selectedFolderSystemChanged, this, EventArgs.Empty);
+
+				// refresh folders in newly selected folder explorer
+				_selectedFolderExplorer.InvalidateFolders();
+			}
 		}
 
 		private void OnSelectedFolderChanged(object sender, EventArgs e)
