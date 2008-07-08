@@ -705,13 +705,18 @@ function ErrorProvider(visible)
 		{
 			provider = { 
 				element: htmlElement,
-				img:document.createElement("div"),
+				img:document.createElement("span"),
 				hasError: function() { return (this.img.title && this.img.title.length) ? true : false; },
-				showError: function(visible) { this.img.style.display = (this.hasError() && visible) ? "block" : "none"; } 
-				};
+				showError: function(visible) 
+				{ 
+					this.img.style.display = (this.hasError() && visible) ? "inline" : "none"; 
+					this.img.innerText = "    ";
+					this.img.visiblity = "hidden";
+				} 
+			};
 			this._providers.add( provider );
 			
-			htmlElement.parentNode.insertBefore(provider.img, htmlElement.parentNode.firstChild);
+			insertAfter(provider.img, htmlElement);
 		}
 		provider.img.title = message || "";
 		provider.img.className = "errorProvider";
@@ -741,6 +746,23 @@ function ErrorProvider(visible)
 			});
 	}
 }
+
+function insertAfter(newElement,targetElement)
+{
+	//target is what you want it to go after. Look for this elements parent.
+	var parent = targetElement.parentNode;
+
+	//if the parents lastchild is the targetElement...
+	if(parent.lastchild == targetElement) {
+		//add the newElement after the target element.
+		parent.appendChild(newElement);
+	} else {
+		// else the target has siblings, insert the new element between the target and it's next sibling.
+		parent.insertBefore(newElement, targetElement.nextSibling);
+	}
+}
+
+
 
 var Field = 
 {
