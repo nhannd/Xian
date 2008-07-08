@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.Locations = new List<VisitLocationDetail>();
             this.Practitioners = new List<VisitPractitionerDetail>();
             this.AmbulatoryStatuses = new List<EnumValueInfo>();
+			this.ExtendedProperties = new Dictionary<string, string>();
         }
 
         [DataMember]
@@ -98,6 +99,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public List<EnumValueInfo> AmbulatoryStatuses;
+
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
 
         public VisitSummary GetSummary()
         {

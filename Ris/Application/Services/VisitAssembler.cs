@@ -101,7 +101,9 @@ namespace ClearCanvas.Ris.Application.Services
             detail.PreadmitNumber = visit.PreadmitNumber;
             detail.VipIndicator = visit.VipIndicator;
 
-            return detail;
+        	detail.ExtendedProperties = new Dictionary<string, string>(visit.ExtendedProperties);
+
+			return detail;
         }
 
         public CompositeIdentifierDetail CreateVisitNumberDetail(VisitNumber vn)
@@ -156,7 +158,13 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));   
             }
-        }
+
+			// explicitly copy each pair, so that we don't remove any properties that the client may have removed
+			foreach (KeyValuePair<string, string> pair in detail.ExtendedProperties)
+			{
+				visit.ExtendedProperties[pair.Key] = pair.Value;
+			}
+		}
 
         private VisitLocationDetail CreateVisitLocationDetail(VisitLocation vl, IPersistenceContext context)
         {

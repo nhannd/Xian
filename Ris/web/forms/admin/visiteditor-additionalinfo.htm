@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Visit - Additional Details</title>
+<link href="../../css/default.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../js/jsx.js"></script>
+<script type="text/javascript" src="../../js/jsml.js"></script>
+<script type="text/javascript" src="../../js/ui.js"></script>
+<script type="text/javascript" src="../../js/ris.js"></script>
+<script type="text/javascript" src="../../js/layout.js"></script>
+<script type="text/javascript" >
+
+	var errorProvider = new ErrorProvider();
+
+	function onBodyLoad()
+	{
+		try
+		{
+			scaleWidth();
+
+			if(Ris)
+			{
+				$("attendMD").value = Ris.getTag("AttendingMD") || "";
+			}
+		}
+		catch(e)
+		{
+			var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+			Field.setValue($("myForm"), message);
+		}
+	}
+
+	function onAttendMDChanged()
+	{
+		Ris.setModified(true); // notify ris that data may have been modified
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// RIS integration API
+	function hasValidationErrors()
+	{
+		return errorProvider.hasErrors();
+	}
+
+	function showValidation(show)
+	{
+		errorProvider.setVisible(show);
+	}
+
+	function saveData()
+	{
+		Ris.setTag("AttendingMD", $("attendMD").value);
+	}
+	//////////////////////////////////////////////////////////////////////////
+</script>
+</head>
+<body onload="onBodyLoad()" onresize="scaleWidth()">
+	<form id="myForm">
+		<label for="attendMD">Attending MD</label>
+		<input id="attendMD" type="text" onkeyup="onAttendMDChanged()" onchange="onAttendMDChanged()" />
+	</form>
+</body>
+</html>

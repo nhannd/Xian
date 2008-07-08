@@ -30,18 +30,80 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
-using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Defines an interface for providing custom editing pages to be displayed in the visit editor.
+	/// </summary>
+	public interface IVisitEditorPageProvider
+	{
+		IVisitEditorPage[] GetEditorPages(IVisitEditorContext context);
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom editor page with access to the editor
+	/// context.
+	/// </summary>
+	public interface IVisitEditorContext
+	{
+		EntityRef VisitRef { get; }
+
+		IDictionary<string, string> VisitExtendedProperties { get; }
+	}
+
+	/// <summary>
+	/// Defines an interface to a custom visit editor page.
+	/// </summary>
+	public interface IVisitEditorPage
+	{
+		Path Path { get; }
+		IApplicationComponent GetComponent();
+
+		void Save();
+	}
+
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the visit editor.
+	/// </summary>
+	public class VisitEditorPageProviderExtensionPoint : ExtensionPoint<IVisitEditorPageProvider>
+	{
+	}
+
     public class VisitEditorComponent : NavigatorComponentContainer
     {
+		#region VisitEditorContext
+
+		class EditorContext : IVisitEditorContext
+		{
+			private readonly VisitEditorComponent _owner;
+
+			public EditorContext(VisitEditorComponent owner)
+			{
+				_owner = owner;
+			}
+
+			public EntityRef VisitRef
+			{
+				get { return _owner._visitRef; }
+			}
+
+			public IDictionary<string, string> VisitExtendedProperties
+			{
+				get { return _owner._visit.ExtendedProperties; }
+			}
+		}
+
+		#endregion
+
         private EntityRef _patientRef;
         private EntityRef _visitRef;
         private VisitDetail _visit;
@@ -51,7 +113,9 @@ namespace ClearCanvas.Ris.Client
 
         private readonly bool _isNew;
 
-        /// <summary>
+		private List<IVisitEditorPage> _extensionPages;
+		
+		/// <summary>
         /// Constructor
         /// </summary>
         public VisitEditorComponent(EntityRef patientRef)
@@ -124,6 +188,20 @@ namespace ClearCanvas.Ris.Client
 			//_visitPractionersSummary.Visit = _visit;
 			//_visitLocationsSummary.Visit = _visit;
 
+			// instantiate all extension pages
+			_extensionPages = new List<IVisitEditorPage>();
+			foreach (IVisitEditorPageProvider pageProvider in new VisitEditorPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
+			}
+
+			// add extension pages to navigator
+			// the navigator will start those components if the user goes to that page
+			foreach (IVisitEditorPage page in _extensionPages)
+			{
+				this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
+			}
+
 			this.ValidationStrategy = new AllComponentsValidationStrategy();
 
             base.Start();
@@ -149,6 +227,9 @@ namespace ClearCanvas.Ris.Client
 
 			try
             {
+				// give extension pages a chance to save data prior to commit
+				_extensionPages.ForEach(delegate(IVisitEditorPage page) { page.Save(); });
+
                 Platform.GetService<IVisitAdminService>(
                     delegate(IVisitAdminService service)
                     {
