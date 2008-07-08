@@ -150,11 +150,6 @@
 		{
 			var table = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
-				{
-					label: "Start Date/Time",
-					cellType: "readonly",
-					getValue: function(item) { return Ris.formatDateTime(item.startTime); }
-				},
 				{  label: "Equipment/Device ID/Location",
 					cellType: "choice",
 					choices: examLocations[facility],

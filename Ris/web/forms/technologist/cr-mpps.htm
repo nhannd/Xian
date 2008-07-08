@@ -178,25 +178,6 @@
 		{
 			var acquisitionTable = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
-				{  label: "Valid",
-					cellType: "choice",
-					choices: ["Yes", "No"],
-					getValue: function(item) { return item.valid; },
-					setValue: function(item, value) { item.valid = value; },
-					getError: function(item) { return item.valid == "Yes" ? null : "Invalid"; }
-				},
-				{
-					label: "Start Date/Time",
-					cellType: "readonly",
-					getValue: function(item) { return Ris.formatDateTime(item.startTime); }
-				},
-				{  label: "Equipment/Device ID/Location",
-					cellType: "choice",
-					choices: examLocations[modality][facility],
-					getValue: function(item) { return item.equipment; },
-					setValue: function(item, value) { item.equipment = value; },
-					getError: function(item) { return null; }
-				},
 				{  label: "Radiation Dose",
 					cellType: "text",
 					size: 10,
