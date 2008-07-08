@@ -41,22 +41,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._diagnosticServiceTree.IconColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
 			this._diagnosticServiceTree.IconSize = new System.Drawing.Size(16, 16);
 			this._diagnosticServiceTree.Location = new System.Drawing.Point(2, 2);
-			this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(2);
 			this._diagnosticServiceTree.Name = "_diagnosticServiceTree";
 			this._diagnosticServiceTree.ShowToolbar = false;
 			this._diagnosticServiceTree.Size = new System.Drawing.Size(385, 261);
 			this._diagnosticServiceTree.TabIndex = 0;
-			this._diagnosticServiceTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._diagnosticServiceTree.TreeBackColor = System.Drawing.SystemColors.Window;
 			this._diagnosticServiceTree.TreeForeColor = System.Drawing.SystemColors.WindowText;
 			this._diagnosticServiceTree.TreeLineColor = System.Drawing.Color.Black;
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(262, 370);
-			this._okButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._okButton.Location = new System.Drawing.Point(234, 371);
+			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
-			this._okButton.Size = new System.Drawing.Size(56, 19);
+			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 3;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
@@ -64,10 +63,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(322, 370);
-			this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._cancelButton.Location = new System.Drawing.Point(311, 371);
+			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(56, 19);
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 4;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
@@ -81,7 +80,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._procedures.ShowToolbar = false;
 			this._procedures.Size = new System.Drawing.Size(383, 77);
 			this._procedures.TabIndex = 2;
-			this._procedures.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// label1
 			// 
@@ -102,9 +100,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._diagnosticServiceTree);
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "DiagnosticServiceTreeComponentControl";
-			this.Size = new System.Drawing.Size(389, 396);
+			this.Size = new System.Drawing.Size(391, 399);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

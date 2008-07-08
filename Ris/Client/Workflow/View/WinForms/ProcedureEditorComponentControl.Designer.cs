@@ -40,10 +40,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(198, 265);
+			this._okButton.Location = new System.Drawing.Point(161, 265);
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
-			this._okButton.Size = new System.Drawing.Size(56, 19);
+			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 6;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
@@ -51,10 +51,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(259, 265);
+			this._cancelButton.Location = new System.Drawing.Point(238, 265);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(56, 19);
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 7;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;

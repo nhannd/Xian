@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._script.AcceptsReturn = true;
 			this._script.Location = new System.Drawing.Point(15, 21);
-			this._script.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._script.Margin = new System.Windows.Forms.Padding(2);
 			this._script.Multiline = true;
 			this._script.Name = "_script";
 			this._script.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _result
 			// 
 			this._result.Location = new System.Drawing.Point(15, 167);
-			this._result.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._result.Margin = new System.Windows.Forms.Padding(2);
 			this._result.Multiline = true;
 			this._result.Name = "_result";
 			this._result.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -89,10 +89,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _runButton
 			// 
-			this._runButton.Location = new System.Drawing.Point(206, 144);
-			this._runButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this._runButton.Location = new System.Drawing.Point(188, 295);
+			this._runButton.Margin = new System.Windows.Forms.Padding(2);
 			this._runButton.Name = "_runButton";
-			this._runButton.Size = new System.Drawing.Size(56, 19);
+			this._runButton.Size = new System.Drawing.Size(75, 23);
 			this._runButton.TabIndex = 2;
 			this._runButton.Text = "Run";
 			this._runButton.UseVisualStyleBackColor = true;
@@ -128,9 +128,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Controls.Add(this._runButton);
 			this.Controls.Add(this._result);
 			this.Controls.Add(this._script);
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "JscriptComponentControl";
-			this.Size = new System.Drawing.Size(278, 300);
+			this.Size = new System.Drawing.Size(279, 327);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

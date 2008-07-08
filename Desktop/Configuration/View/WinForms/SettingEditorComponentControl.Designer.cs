@@ -178,7 +178,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this._cancelButton.Location = new System.Drawing.Point(576, 2);
             this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(56, 19);
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 1;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
@@ -189,7 +189,7 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
             this._okButton.Location = new System.Drawing.Point(516, 2);
             this._okButton.Margin = new System.Windows.Forms.Padding(2);
             this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(56, 19);
+			this._okButton.Size = new System.Drawing.Size(75, 23);
             this._okButton.TabIndex = 1;
             this._okButton.Text = "OK";
             this._okButton.UseVisualStyleBackColor = true;

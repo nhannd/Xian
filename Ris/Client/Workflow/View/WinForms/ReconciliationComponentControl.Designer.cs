@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reconcileButton.Location = new System.Drawing.Point(346, 2);
 			this._reconcileButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this._reconcileButton.Name = "_reconcileButton";
-			this._reconcileButton.Size = new System.Drawing.Size(85, 19);
+			this._reconcileButton.Size = new System.Drawing.Size(85, 23);
 			this._reconcileButton.TabIndex = 0;
 			this._reconcileButton.Text = "Reconcile";
 			this._reconcileButton.UseVisualStyleBackColor = true;
@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(435, 2);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
 			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(56, 19);
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 1;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;

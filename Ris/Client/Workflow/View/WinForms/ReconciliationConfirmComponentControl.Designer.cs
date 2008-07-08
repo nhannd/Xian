@@ -76,7 +76,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._sourceTable.ShowToolbar = false;
 			this._sourceTable.Size = new System.Drawing.Size(540, 170);
 			this._sourceTable.TabIndex = 1;
-			this._sourceTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _targetTable
 			// 
@@ -87,14 +86,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._targetTable.ShowToolbar = false;
 			this._targetTable.Size = new System.Drawing.Size(540, 174);
 			this._targetTable.TabIndex = 3;
-			this._targetTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(496, 430);
+			this._cancelButton.Location = new System.Drawing.Point(478, 430);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(57, 19);
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 5;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
@@ -102,10 +100,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _continueButton
 			// 
-			this._continueButton.Location = new System.Drawing.Point(435, 430);
+			this._continueButton.Location = new System.Drawing.Point(400, 430);
 			this._continueButton.Margin = new System.Windows.Forms.Padding(2);
 			this._continueButton.Name = "_continueButton";
-			this._continueButton.Size = new System.Drawing.Size(57, 19);
+			this._continueButton.Size = new System.Drawing.Size(75, 23);
 			this._continueButton.TabIndex = 4;
 			this._continueButton.Text = "Continue";
 			this._continueButton.UseVisualStyleBackColor = true;
