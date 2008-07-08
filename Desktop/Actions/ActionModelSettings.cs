@@ -87,6 +87,15 @@ namespace ClearCanvas.Desktop.Actions
 			return modelRoot;
 		}
 
+		public void Export(XmlWriter writer)
+		{
+			// do one time initialization
+			if (_actionModelXmlDoc == null)
+				Initialize();
+
+			_actionModelXmlDoc.Save(writer);
+		}
+
 		#endregion
 
 		#region Private Methods

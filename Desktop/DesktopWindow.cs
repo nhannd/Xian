@@ -200,7 +200,31 @@ namespace ClearCanvas.Desktop
             return dialog.RunModal();
         }
 
-        /// <summary>
+    	/// <summary>
+    	/// Shows a 'Save File' common dialog.
+    	/// </summary>
+    	/// <param name="args"></param>
+    	/// <returns></returns>
+    	public FileDialogResult ShowSaveFileDialogBox(FileDialogCreationArgs args)
+    	{
+			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+
+			return this.DesktopWindowView.ShowSaveFileDialogBox(args);
+		}
+
+    	/// <summary>
+    	/// Shows an 'Open File' common dialog.
+    	/// </summary>
+    	/// <param name="args"></param>
+    	/// <returns></returns>
+    	public FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args)
+    	{
+			AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+
+			return this.DesktopWindowView.ShowOpenFileDialogBox(args);
+		}
+
+    	/// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
         /// <param name="component">The application component to be hosted in the dialog.</param>

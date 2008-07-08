@@ -67,6 +67,7 @@
     <Compile Include="Actions\DropDownButtonAction.cs" />
     <Compile Include="Actions\DropDownButtonActionAttribute.cs" />
     <Compile Include="Actions\DynamicObservablePropertyBinding.cs" />
+    <Compile Include="Actions\ExportActionModelTool.cs" />
     <Compile Include="Actions\GroupHint.cs" />
     <Compile Include="Actions\GroupHintAttribute.cs" />
     <Compile Include="Actions\IActionView.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="DialogBoxCreationArgs.cs" />
     <Compile Include="Actions\DropDownAction.cs" />
     <Compile Include="Factories.cs" />
+    <Compile Include="FileDialogCreationArgs.cs" />
     <Compile Include="IApplicationView.cs" />
     <Compile Include="IDesktopObject.cs" />
     <Compile Include="IDesktopObjectView.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="IShelfHost.cs" />
     <Compile Include="ISuggestionProvider.cs" />
     <Compile Include="IWorkspaceHost.cs" />
+    <Compile Include="FileDialogResult.cs" />
     <Compile Include="StackTabPage.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="SuggestionProviderBase.cs" />

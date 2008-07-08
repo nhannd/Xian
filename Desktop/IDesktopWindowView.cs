@@ -72,5 +72,19 @@ namespace ClearCanvas.Desktop
 		/// <param name="buttons">The buttons to display on the message box.</param>
 		/// <returns>The result of the user dismissing the message box.</returns>
 		DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
-    }
+
+		/// <summary>
+		/// Shows a 'Save file' dialog in front of this window.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		FileDialogResult ShowSaveFileDialogBox(FileDialogCreationArgs args);
+
+		/// <summary>
+		/// Shows a 'Open file' dialog in front of this window.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args);
+	}
 }

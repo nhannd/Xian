@@ -40,6 +40,7 @@ using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
 using System.IO;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -593,7 +594,49 @@ namespace ClearCanvas.Desktop.View.WinForms
             return mb.Show(message, title, buttons, _form);
         }
 
-        #endregion
+    	/// <summary>
+    	/// Shows a 'Save file' dialog in front of this window.
+    	/// </summary>
+    	/// <param name="args"></param>
+    	/// <returns></returns>
+    	public virtual FileDialogResult ShowSaveFileDialogBox(FileDialogCreationArgs args)
+    	{
+			SaveFileDialog dialog = new SaveFileDialog();
+			PrepareFileDialog(dialog, args);
+			dialog.OverwritePrompt = true;
+
+			DialogResult dr = dialog.ShowDialog(_form);
+			if(dr == DialogResult.OK)
+			{
+				return new FileDialogResult(DialogBoxAction.Ok, dialog.FileName);
+			}
+			else 
+				return new FileDialogResult(DialogBoxAction.Cancel, null);
+    	}
+
+    	/// <summary>
+    	/// Shows a 'Open file' dialog in front of this window.
+    	/// </summary>
+    	/// <param name="args"></param>
+    	/// <returns></returns>
+    	public virtual FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args)
+    	{
+			OpenFileDialog dialog = new OpenFileDialog();
+			PrepareFileDialog(dialog, args);
+    		dialog.CheckFileExists = true;
+    		dialog.ShowReadOnly = false;
+    		dialog.Multiselect = false; //could add support in future if necessary
+
+			DialogResult dr = dialog.ShowDialog(_form);
+			if (dr == DialogResult.OK)
+			{
+				return new FileDialogResult(DialogBoxAction.Ok, dialog.FileName);
+			}
+			else
+				return new FileDialogResult(DialogBoxAction.Cancel, null);
+		}
+
+    	#endregion
 
         #region DesktopObjectView overrides
 
@@ -773,5 +816,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			DesktopViewSettings.Default.SaveDesktopWindowState(_desktopWindow.Name, windowRectangle, windowState);
 		}
-    }
+
+		private void PrepareFileDialog(FileDialog dialog, FileDialogCreationArgs args)
+		{
+			dialog.AddExtension = !string.IsNullOrEmpty(args.FileExtension);
+			dialog.DefaultExt = args.FileExtension;
+			dialog.FileName = args.FileName;
+			dialog.InitialDirectory = args.Directory;
+			dialog.RestoreDirectory = true;
+			dialog.Title = args.Title;
+
+			dialog.Filter = StringUtilities.Combine(args.Filters, "|",
+				delegate(FileExtensionFilter f) { return f.Description + "|" + f.Filter; });
+		}
+	}
 }

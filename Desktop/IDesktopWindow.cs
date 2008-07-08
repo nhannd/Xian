@@ -88,5 +88,19 @@ namespace ClearCanvas.Desktop
         /// <param name="args">Arguments used to create the dialog box.</param>
         /// <returns>The result of the user dismissing the dialog box.</returns>
         DialogBoxAction ShowDialogBox(DialogBoxCreationArgs args);
-    }
+
+		/// <summary>
+		/// Shows a 'Save File' common dialog.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+    	FileDialogResult ShowSaveFileDialogBox(FileDialogCreationArgs args);
+
+		/// <summary>
+		/// Shows an 'Open File' common dialog.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+		FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args);
+	}
 }
