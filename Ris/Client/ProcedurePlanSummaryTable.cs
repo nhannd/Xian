@@ -90,7 +90,10 @@ namespace ClearCanvas.Ris.Client
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
                                  "Status",
-                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.State.Value; },
+                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
+                                 {
+                                 	return FormatStatus(checkable.Item);
+                                 },
                                  0.5f));
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
@@ -115,7 +118,17 @@ namespace ClearCanvas.Ris.Client
             this.Sort(new TableSortParams(sortColumn, true));
         }
 
-        public event EventHandler CheckedRowsChanged
+    	private static string FormatStatus(ProcedurePlanSummaryTableItem item)
+    	{
+			if(item.mpsDetail.State.Code == "SC")
+				return item.rpDetail.CheckInTime.HasValue
+					? string.Format("{0} (Checked-in)", item.mpsDetail.State.Value)
+					: item.mpsDetail.State.Value;
+			else
+	    		return item.mpsDetail.State.Value;
+    	}
+
+    	public event EventHandler CheckedRowsChanged
         {
             add { _checkedRowsChanged += value; }
             remove { _checkedRowsChanged -= value; }
