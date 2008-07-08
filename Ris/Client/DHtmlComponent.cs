@@ -260,7 +260,8 @@ namespace ClearCanvas.Ris.Client
 
         public virtual void SaveData()
         {
-            EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
+			if (_htmlPageUrl != null)
+	            EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
         }
 
         public override void Start()
