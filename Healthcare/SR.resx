@@ -256,13 +256,13 @@
     <value>Cancelled</value>
   </data>
   <data name="RegistrationCancelledWorklistDescription" xml:space="preserve">
-    <value>Lists orders that have been cancelled.</value>
+    <value>Lists procedures that have been cancelled.</value>
   </data>
   <data name="RegistrationCheckedInWorklist" xml:space="preserve">
     <value>Checked In</value>
   </data>
   <data name="RegistrationCheckedInWorklistDescription" xml:space="preserve">
-    <value>Lists orders where the patient has checked in.</value>
+    <value>Lists procedures where the patient has checked in.</value>
   </data>
   <data name="RegistrationCompletedProtocolWorklist" xml:space="preserve">
     <value>Complete Protocol</value>
@@ -274,13 +274,13 @@
     <value>Completed</value>
   </data>
   <data name="RegistrationCompletedWorklistDescription" xml:space="preserve">
-    <value>Lists orders where the exam has been completed.</value>
+    <value>Lists procedures where the exam has been completed.</value>
   </data>
   <data name="RegistrationInProgressWorklist" xml:space="preserve">
     <value>In Progress</value>
   </data>
   <data name="RegistrationInProgressWorklistDescription" xml:space="preserve">
-    <value>Lists orders where the exam is in progress.</value>
+    <value>Lists procedures that are currently being performed.</value>
   </data>
   <data name="RegistrationPendingProtocolWorklist" xml:space="preserve">
     <value>Pending Protocol</value>
@@ -298,7 +298,7 @@
     <value>Scheduled</value>
   </data>
   <data name="RegistrationScheduledWorklistDescription" xml:space="preserve">
-    <value>Lists scheduled orders.</value>
+    <value>Lists scheduled procedures.</value>
   </data>
   <data name="RegistrationSuspendedProtocolWorklist" xml:space="preserve">
     <value>Suspended Protocol</value>
@@ -310,7 +310,7 @@
     <value>To be Scheduled</value>
   </data>
   <data name="RegistrationToBeScheduledWorklistDescription" xml:space="preserve">
-    <value>Lists orders that need to be scheduled.</value>
+    <value>Lists procedures that need to be scheduled.</value>
   </data>
   <data name="RelevanceGroup" xml:space="preserve">
     <value>Relevance Group</value>

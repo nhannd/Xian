@@ -168,8 +168,8 @@ namespace ClearCanvas.Enterprise.Hibernate
                                 }
 
                                 // no need to keep reading, since we already know the file contains classes
-                                if (fileContainsClasses)
-                                    break;
+								//if (fileContainsClasses)
+								//    break;
                             }
                         }
                         finally
@@ -243,7 +243,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 					{
 						// This class extends nothing, or is derived from one of the classes that were already processed.
 						// Append it to the list since it's safe to process now.
-						sortedList.Add(ce);
+						// but only if the list doesn't already contain an entry for this file (each file should only appear once in the list)
+						if (!CollectionUtils.Contains(sortedList,
+							delegate(object entry) { return ((ClassEntry)entry).FileName == ce.FileName; }))
+						{
+							sortedList.Add(ce);
+						}
 						processedClassNames.Add(ce.FullClassName);
 						processedInThisIteration.Add(ce);
 					}

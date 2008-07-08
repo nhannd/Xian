@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
-	public abstract class Registration
+	public class Registration
 	{
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationScheduledWorklist)]
