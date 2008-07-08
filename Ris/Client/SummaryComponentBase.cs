@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
         private PagingController<TSummary> _pagingController;
 
     	private readonly bool _dialogMode;
-    	private bool _supportModified;
+		private bool _setModifiedOnListChange;
 
 
 		public SummaryComponentBase()
@@ -117,8 +117,8 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public bool SetModifiedOnListChange
 		{
-			get { return _supportModified; }
-			set { _supportModified = value; }
+			get { return _setModifiedOnListChange; }
+			set { _setModifiedOnListChange = value; }
 		}
 
 		#region ApplicationComponent overrides
@@ -220,7 +220,7 @@ namespace ClearCanvas.Ris.Client
                 {
                     _summaryTable.Items.AddRange(addedItems);
                     this.SummarySelection = new Selection(addedItems);
-					if (_supportModified)
+					if (_setModifiedOnListChange)
 						this.Modified = true;
                 }
             }
@@ -251,7 +251,7 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     this.SummarySelection = new Selection(editedItems);
-					if (_supportModified)
+					if (_setModifiedOnListChange)
 						this.Modified = true;
 				}
             }
@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client
 
                         // clear selection
 						this.SummarySelection = new Selection(notDeletedItems);
-						if (_supportModified)
+						if (_setModifiedOnListChange)
 							this.Modified = true;
 					}
 

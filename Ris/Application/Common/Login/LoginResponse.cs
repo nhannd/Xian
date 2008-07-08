@@ -40,11 +40,12 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LoginResponse : DataContractBase
     {
-        public LoginResponse(string sessionToken, string[] userAuthorityTokens, PersonNameDetail fullName)
+        public LoginResponse(string sessionToken, string[] userAuthorityTokens, PersonNameDetail fullName, bool isStaff)
         {
             this.SessionToken = sessionToken;
             this.UserAuthorityTokens = userAuthorityTokens;
             this.FullName = fullName;
+        	this.IsStaff = isStaff;
         }
 
         /// <summary>
@@ -53,6 +54,12 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// </summary>
         [DataMember]
         public PersonNameDetail FullName;
+
+		/// <summary>
+		/// True if the user is associated with a RIS staff person
+		/// </summary>
+		[DataMember]
+		public bool IsStaff;
 
         /// <summary>
         /// Set of authority tokens granted to the user

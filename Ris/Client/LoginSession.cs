@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client
                             new GenericIdentity(userName), response.UserAuthorityTokens);
 
                         // set the current session before attempting to access other services, as these will require authentication
-                        _current = new LoginSession(userName, response.SessionToken, response.FullName, facility);
+                        _current = new LoginSession(userName, response.SessionToken, response.FullName, facility, response.IsStaff);
                     });
 
                 Platform.Log(LogLevel.Debug, "Login attempt was successful.");
@@ -130,13 +130,15 @@ namespace ClearCanvas.Ris.Client
         private readonly string _sessionToken;
         private readonly PersonNameDetail _fullName;
         private readonly FacilitySummary _workingFacility;
+    	private readonly bool _isStaff;
 
-        private LoginSession(string userName, string sessionToken, PersonNameDetail fullName, FacilitySummary workingFacility)
+        private LoginSession(string userName, string sessionToken, PersonNameDetail fullName, FacilitySummary workingFacility, bool isStaff)
         {
             _userName = userName;
             _sessionToken = sessionToken;
             _fullName = fullName;
             _workingFacility = workingFacility;
+        	_isStaff = isStaff;
         }
 
         /// <summary>
@@ -173,6 +175,14 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _fullName; }
         }
+
+		/// <summary>
+		/// Gets if the user is associated with a RIS staff person.
+		/// </summary>
+    	public bool IsStaff
+    	{
+			get { return _isStaff; }
+    	}
 
         /// <summary>
         /// Gets the current working facility.

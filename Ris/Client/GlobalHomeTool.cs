@@ -22,6 +22,9 @@ namespace ClearCanvas.Ris.Client
 			base.Initialize();
 
 			// automatically launch home page on startup
+			if (!LoginSession.Current.IsStaff)
+				return;
+
 			Launch();
 		}
 
@@ -32,7 +35,7 @@ namespace ClearCanvas.Ris.Client
 
 		public bool Visible
 		{
-			get { return this.HasFolderSystems; }
+			get { return LoginSession.Current.IsStaff && this.HasFolderSystems; }
 		}
 
 		public event EventHandler VisibleChanged

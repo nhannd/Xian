@@ -126,6 +126,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
 
             // obtain full name information for the user
             PersonNameDetail fullName = null;
+        	bool isStaff = false;
             try 
 	        {	
                 StaffSearchCriteria where = new StaffSearchCriteria();
@@ -135,6 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 {
                     PersonNameAssembler nameAssembler = new PersonNameAssembler();
                     fullName = nameAssembler.CreatePersonNameDetail(staff.Name);
+                	isStaff = true;
                 }
 
 	        }
@@ -143,7 +145,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 // no staff associated to user - can't return full name details to client
 	        }
 
-            return new LoginResponse(token.Id, authorityTokens, fullName);
+			return new LoginResponse(token.Id, authorityTokens, fullName, isStaff);
         }
 
         [UpdateOperation]
