@@ -226,6 +226,28 @@ a.collapsibleHeading {
 	width:20px;
 }
 
+.lookupButton {
+	margin-left:0.1em;
+	font-size:24px;
+	width:24px;
+	height:24px;
+	padding:0px 0px 0px 0px;
+	cursor:pointer;
+	background-image:url(../images/PractitionerDetail.png);
+	background-repeat:no-repeat; 
+}
+
+.datePickerButton {
+	margin-left:0.1em;
+	font-size:24px;
+	width:24px;
+	height:24px;
+	padding:0px 0px 0px 0px;
+	cursor:pointer;
+	background-image:url(../images/DatePicker.png);
+	background-repeat:no-repeat; 
+}
+
 img {
 	background-image: expression(
 		this.runtimeStyle.backgroundImage = "none",

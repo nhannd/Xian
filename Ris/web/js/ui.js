@@ -393,9 +393,9 @@ var Table = {
 					inputDate.readOnly = "readonly";
 
 					// launch calendar on click
-					var findButtonDate = document.createElement("input");
-					findButtonDate.type = "button";
-					findButtonDate.value = "...";
+					var findButtonDate = document.createElement("span");
+					findButtonDate.innerText = "     ";
+					findButtonDate.className = "datePickerButton";
 					td.appendChild(findButtonDate);
 					findButtonDate.onclick = function() 
 					{
@@ -596,15 +596,16 @@ var Table = {
 					{
 						// any manual edit clears the underlying item
 						column.setValue(obj, null);
-						table._onCellUpdate(row, col);
+						table._onCeljlUpdate(row, col);
 					}
-				}
-
-				var findButton = document.createElement("input");
-				findButton.type = "button";
-				findButton.value = "...";
-				td.appendChild(findButton);
+				}				
+				
+				var findButton = document.createElement("span");
+				findButton.className = "lookupButton";
+				findButton.innerText = "    ";
+				findButton.visibility = "hidden";
 				findButton.onclick = doLookup;
+				td.appendChild(findButton);
 
 				// consider the edit complete when focus is lost
 				// JR: actually this doesn't work because it blanks the text box when focus moves to the find button

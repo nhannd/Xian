@@ -139,6 +139,12 @@ if(window.external)
 			return telephone ? window.external.FormatTelephone(JSML.create(telephone, "Telephone")) : "";
 		},
 		
+		// obtains base URL from RIS application settings
+		getBaseUrl: function()
+		{
+			return BaseUrl ? window.external.WebResourcesSettings.BaseUrl : "";
+		},
+		
 		// obtains a proxy to a RIS web-service
 		getService: function(serviceContractName)
 		{
