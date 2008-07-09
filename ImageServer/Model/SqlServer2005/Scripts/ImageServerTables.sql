@@ -867,6 +867,169 @@ CREATE TABLE [dbo].[PartitionTransferSyntax](
 ) ON [PRIMARY]
 END
 GO
+/****** Object:  Table [dbo].[ArchiveTypeEnum]    Script Date: 07/08/2008 18:10:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ArchiveTypeEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ArchiveTypeEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ArchiveTypeEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_ArchiveTypeEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[ArchiveQueueStatusEnum]    Script Date: 07/08/2008 18:10:21 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ArchiveQueueStatusEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ArchiveQueueStatusEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ArchiveQueueStatusEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_ArchiveQueueStatusEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[RestoreQueueStatusEnum]    Script Date: 07/08/2008 18:10:31 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RestoreQueueStatusEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[RestoreQueueStatusEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_RestoreQueueStatusEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_RestoreQueueStatusEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[PartitionArchive]    Script Date: 07/08/2008 18:10:28 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[PartitionArchive]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[PartitionArchive](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_PartitionArchive_GUID]  DEFAULT (newid()),
+	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[ArchiveTypeEnum] [smallint] NOT NULL,
+	[Description] [nvarchar](128) NOT NULL,
+	[Enabled] [bit] NOT NULL,
+	[ReadOnly] [bit] NOT NULL,
+	[ArchiveDelayHours] [int] NOT NULL,
+	[ConfigurationXml] [xml] NULL,
+ CONSTRAINT [PK_PartitionArchive] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+/****** Object:  Table [dbo].[RestoreQueue]    Script Date: 07/08/2008 18:10:33 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[RestoreQueue]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[RestoreQueue](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_RestoreQueue_GUID]  DEFAULT (newid()),
+	[ArchiveStudyStorageGUID] [uniqueidentifier] NOT NULL,
+	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
+	[ScheduledTime] [datetime] NOT NULL,
+	[RestoreQueueStatusEnum] [smallint] NOT NULL,
+	[ProcessorId] [varchar](256) NULL,
+ CONSTRAINT [PK_RestoreQueue] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+) ON [QUEUES]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+/****** Object:  Table [dbo].[ArchiveStudyStorage]    Script Date: 07/08/2008 18:10:25 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ArchiveStudyStorage]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ArchiveStudyStorage](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StorageArchive_GUID]  DEFAULT (newid()),
+	[PartitionArchiveGUID] [uniqueidentifier] NOT NULL,
+	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
+	[ArchiveTime] [datetime] NOT NULL,
+	[ArchiveXml] [xml] NULL,
+ CONSTRAINT [PK_StorageArchive] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+) ON [PRIMARY]
+END
+GO
+/****** Object:  Table [dbo].[ArchiveQueue]    Script Date: 07/08/2008 18:10:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ArchiveQueue](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ArchiveQueue_GUID]  DEFAULT (newid()),
+	[PartitionArchiveGUID] [uniqueidentifier] NOT NULL,
+	[ScheduledTime] [datetime] NOT NULL,
+	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
+	[ArchiveQueueStatusEnum] [smallint] NOT NULL,
+	[ProcessorId] [varchar](256) NOT NULL,
+ CONSTRAINT [PK_ArchiveQueue] PRIMARY KEY NONCLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+) ON [QUEUES]
+END
+GO
 
 
 /****** Object:  ForeignKey [FK_Device_ServerPartition]    Script Date: 01/09/2008 15:03:26 ******/
@@ -1128,4 +1291,69 @@ ALTER TABLE [dbo].[PartitionTransferSyntax]  WITH CHECK ADD  CONSTRAINT [FK_Part
 REFERENCES [dbo].[ServerTransferSyntax] ([GUID])
 GO
 ALTER TABLE [dbo].[PartitionTransferSyntax] CHECK CONSTRAINT [FK_PartitionTransferSyntax_ServerTransferSyntax]
+GO
+
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]') AND name = N'IXC_ArchiveQueue')
+CREATE CLUSTERED INDEX [IXC_ArchiveQueue] ON [dbo].[ArchiveQueue] 
+(
+	[PartitionArchiveGUID] ASC,
+	[ScheduledTime] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+GO
+/****** Object:  ForeignKey [FK_ArchiveQueue_PartitionArchive]    Script Date: 07/08/2008 18:10:24 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_PartitionArchive]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
+ALTER TABLE [dbo].[ArchiveQueue]  WITH CHECK ADD  CONSTRAINT [FK_ArchiveQueue_PartitionArchive] FOREIGN KEY([PartitionArchiveGUID])
+REFERENCES [dbo].[PartitionArchive] ([GUID])
+GO
+ALTER TABLE [dbo].[ArchiveQueue] CHECK CONSTRAINT [FK_ArchiveQueue_PartitionArchive]
+GO
+/****** Object:  ForeignKey [FK_StorageArchive_PartitionArchive]    Script Date: 07/08/2008 18:10:25 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StorageArchive_PartitionArchive]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveStudyStorage]'))
+ALTER TABLE [dbo].[ArchiveStudyStorage]  WITH CHECK ADD  CONSTRAINT [FK_StorageArchive_PartitionArchive] FOREIGN KEY([PartitionArchiveGUID])
+REFERENCES [dbo].[PartitionArchive] ([GUID])
+GO
+ALTER TABLE [dbo].[ArchiveStudyStorage] CHECK CONSTRAINT [FK_StorageArchive_PartitionArchive]
+GO
+/****** Object:  ForeignKey [FK_StorageArchive_StudyStorage]    Script Date: 07/08/2008 18:10:26 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StorageArchive_StudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveStudyStorage]'))
+ALTER TABLE [dbo].[ArchiveStudyStorage]  WITH CHECK ADD  CONSTRAINT [FK_StorageArchive_StudyStorage] FOREIGN KEY([StudyStorageGUID])
+REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
+ALTER TABLE [dbo].[ArchiveStudyStorage] CHECK CONSTRAINT [FK_StorageArchive_StudyStorage]
+GO
+/****** Object:  ForeignKey [FK_PartitionArchive_ArchiveTypeEnum]    Script Date: 07/08/2008 18:10:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_PartitionArchive_ArchiveTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[PartitionArchive]'))
+ALTER TABLE [dbo].[PartitionArchive]  WITH CHECK ADD  CONSTRAINT [FK_PartitionArchive_ArchiveTypeEnum] FOREIGN KEY([ArchiveTypeEnum])
+REFERENCES [dbo].[ArchiveTypeEnum] ([Enum])
+GO
+ALTER TABLE [dbo].[PartitionArchive] CHECK CONSTRAINT [FK_PartitionArchive_ArchiveTypeEnum]
+GO
+/****** Object:  ForeignKey [FK_PartitionArchive_ServerPartition]    Script Date: 07/08/2008 18:10:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_PartitionArchive_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[PartitionArchive]'))
+ALTER TABLE [dbo].[PartitionArchive]  WITH CHECK ADD  CONSTRAINT [FK_PartitionArchive_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
+REFERENCES [dbo].[ServerPartition] ([GUID])
+GO
+ALTER TABLE [dbo].[PartitionArchive] CHECK CONSTRAINT [FK_PartitionArchive_ServerPartition]
+GO
+/****** Object:  ForeignKey [FK_RestoreQueue_ArchiveStudyStorage]    Script Date: 07/08/2008 18:10:33 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_RestoreQueue_ArchiveStudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[RestoreQueue]'))
+ALTER TABLE [dbo].[RestoreQueue]  WITH CHECK ADD  CONSTRAINT [FK_RestoreQueue_ArchiveStudyStorage] FOREIGN KEY([ArchiveStudyStorageGUID])
+REFERENCES [dbo].[ArchiveStudyStorage] ([GUID])
+GO
+ALTER TABLE [dbo].[RestoreQueue] CHECK CONSTRAINT [FK_RestoreQueue_ArchiveStudyStorage]
+GO
+/****** Object:  ForeignKey [FK_RestoreQueue_RestoreQueueStatusEnum]    Script Date: 07/08/2008 18:10:33 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_RestoreQueue_RestoreQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[RestoreQueue]'))
+ALTER TABLE [dbo].[RestoreQueue]  WITH CHECK ADD  CONSTRAINT [FK_RestoreQueue_RestoreQueueStatusEnum] FOREIGN KEY([RestoreQueueStatusEnum])
+REFERENCES [dbo].[RestoreQueueStatusEnum] ([Enum])
+GO
+ALTER TABLE [dbo].[RestoreQueue] CHECK CONSTRAINT [FK_RestoreQueue_RestoreQueueStatusEnum]
+GO
+/****** Object:  ForeignKey [FK_RestoreQueue_StudyStorage]    Script Date: 07/08/2008 18:10:33 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_RestoreQueue_StudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[RestoreQueue]'))
+ALTER TABLE [dbo].[RestoreQueue]  WITH CHECK ADD  CONSTRAINT [FK_RestoreQueue_StudyStorage] FOREIGN KEY([ArchiveStudyStorageGUID])
+REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
+ALTER TABLE [dbo].[RestoreQueue] CHECK CONSTRAINT [FK_RestoreQueue_StudyStorage]
 GO

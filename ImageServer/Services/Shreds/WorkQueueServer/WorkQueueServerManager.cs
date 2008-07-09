@@ -31,6 +31,7 @@
 
 using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.WorkQueue;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
     /// <summary>
     /// Shreds namespace manager of processing threads for the WorkQueue.
     /// </summary>
-    public class WorkQueueServerManager : ServiceManagerBase
+    public class WorkQueueServerManager : ThreadedService
     {
         #region Private Members
         private static WorkQueueServerManager _instance;

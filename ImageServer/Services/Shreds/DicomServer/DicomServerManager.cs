@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
     /// <summary>
     /// This class manages the DICOM SCP Shred for the ImageServer.
     /// </summary>
-	public class DicomServerManager : ServiceManagerBase
+	public class DicomServerManager : ThreadedService
     {
         #region Private Members
         private readonly List<DicomScp<DicomScpContext>> _listenerList = new List<DicomScp<DicomScpContext>>();
@@ -228,18 +228,11 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
                 }
             }
 
-			while (!_stop)
+			while (!CheckStop(60000))
 			{
-				// Wait two minutes
-				ThreadStop.WaitOne(60000, false);
-				ThreadStop.Reset();
+				LoadPartitions();
 
-				if (!_stop)
-				{
-					LoadPartitions();
-
-					CheckPartitions(monitor);
-				}
+				CheckPartitions(monitor);
 			}
         }
 

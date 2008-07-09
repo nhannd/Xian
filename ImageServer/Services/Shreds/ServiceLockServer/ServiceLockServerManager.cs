@@ -30,11 +30,12 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.ServiceLock;
 
 namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 {
-    public class ServiceLockServerManager : ServiceManagerBase
+    public class ServiceLockServerManager : ThreadedService
     {
         #region Private Members
         private static ServiceLockServerManager _instance;

@@ -112,7 +112,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
           get { return _CompressStudy; }
       }
       /// <summary>
-      /// Migrate study to different filesystem tiers
+      /// Migrate studies between tiers.
       /// </summary>
       public static WorkQueueTypeEnum MigrateStudy
       {

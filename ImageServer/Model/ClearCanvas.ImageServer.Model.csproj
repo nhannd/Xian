@@ -39,6 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveQueue.gen.cs" />
+    <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
+    <Compile Include="ArchiveStudyStorage.gen.cs" />
+    <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\IInsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
@@ -58,6 +62,10 @@
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.gen.cs" />
     <Compile Include="DuplicateSopPolicyEnum.gen.cs" />
+    <Compile Include="EntityBrokers\ArchiveQueueSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\ArchiveQueueUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\ArchiveStudyStorageSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\ArchiveStudyStorageUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DeviceSelectCriteria.gen.cs" />
@@ -66,6 +74,10 @@
     <Compile Include="EntityBrokers\FilesystemQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\IArchiveQueueEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IArchiveQueueStatusEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IArchiveStudyStorageEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IArchiveTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDevicePreferredTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDuplicateSopPolicyEnumBroker.gen.cs" />
@@ -73,10 +85,13 @@
     <Compile Include="EntityBrokers\IFilesystemQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemQueueTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemTierEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IPartitionArchiveEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPartitionSopClassEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IRestoreQueueEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IRestoreQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ISeriesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerPartitionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServerRuleApplyTimeEnumBroker.gen.cs" />
@@ -95,6 +110,8 @@
     <Compile Include="EntityBrokers\IWorkQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueUidEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\PartitionArchiveSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\PartitionArchiveUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\PartitionSopClassSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PartitionSopClassUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\PartitionTransferSyntaxSelectCriteria.gen.cs" />
@@ -103,6 +120,8 @@
     <Compile Include="EntityBrokers\PatientUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\RestoreQueueSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\RestoreQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\SeriesSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\SeriesUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ServerInformationSelectCriteria.gen.cs" />
@@ -140,12 +159,15 @@
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueCompressStudyInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
+    <Compile Include="PartitionArchive.gen.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />
     <Compile Include="PartitionTransferSyntax.cs" />
     <Compile Include="PartitionTransferSyntax.gen.cs" />
     <Compile Include="Patient.gen.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
+    <Compile Include="RestoreQueue.gen.cs" />
+    <Compile Include="RestoreQueueStatusEnum.gen.cs" />
     <Compile Include="Series.gen.cs" />
     <Compile Include="ServerPartition.gen.cs" />
     <Compile Include="ServerRule.gen.cs" />
