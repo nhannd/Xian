@@ -35,7 +35,20 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	public partial class RichTextField : UserControl
+	public interface IRichTextBoxOwner
+	{
+		/// <summary>
+		/// Get the RichTextBox control
+		/// </summary>
+		RichTextBox GetRichTextBox();
+
+		/// <summary>
+		/// Gets whether the rich text box currently allows edit or not.  This would normally be the ReadOnly field.
+		/// </summary>
+		bool AllowEdit { get; }
+	}
+
+	public partial class RichTextField : UserControl, IRichTextBoxOwner
 	{
 		public RichTextField()
 		{
@@ -125,5 +138,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 					_richTextBox.Text.Substring(currentIndex));
 			}
 		}
+
+		#region IRichTextBoxOwner Members
+
+		public RichTextBox GetRichTextBox()
+		{
+			return _richTextBox;
+		}
+
+		public bool AllowEdit
+		{
+			get { return !this.ReadOnly; }
+		}
+
+		#endregion
 	}
 }

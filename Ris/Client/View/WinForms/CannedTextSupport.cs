@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
 using System.Drawing;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -13,14 +10,43 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 	/// </summary>
     public class CannedTextSupport : IDisposable
     {
-        private RichTextBox _textEditor;
-        private ICannedTextLookupHandler _lookupHandler;
+		class RichTextBoxOwner : IRichTextBoxOwner
+		{
+			private readonly RichTextBox _richTextBox;
+
+			public RichTextBoxOwner(RichTextBox richTextBox)
+			{
+				_richTextBox = richTextBox;
+			}
+
+			#region IRichTextBoxOwner Members
+
+			public RichTextBox GetRichTextBox()
+			{
+				return _richTextBox;
+			}
+
+			public bool AllowEdit
+			{
+				get { return !_richTextBox.ReadOnly; }
+			}
+
+			#endregion
+		}
+
+		private readonly IRichTextBoxOwner _textEditor;
+        private readonly ICannedTextLookupHandler _lookupHandler;
         private PopupForm _popup;
         private CannedTextInplaceLookupControl _lookup;
 
-        public CannedTextSupport(RichTextBox textEditor, ICannedTextLookupHandler lookupHandler)
+		public CannedTextSupport(RichTextBox control, ICannedTextLookupHandler lookupHandler)
+			: this(new RichTextBoxOwner(control), lookupHandler)
+		{
+		}
+
+		public CannedTextSupport(IRichTextBoxOwner control, ICannedTextLookupHandler lookupHandler)
         {
-            _textEditor = textEditor;
+			_textEditor = control;
             _lookupHandler = lookupHandler;
 
             Initialize();
@@ -30,27 +56,27 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         public void Dispose()
         {
-            _textEditor.KeyDown -= _textEditor_KeyDown;
+            _textEditor.GetRichTextBox().KeyDown -= _textEditor_KeyDown;
         }
 
         #endregion
 
         private void Initialize()
         {
-            _textEditor.KeyDown += _textEditor_KeyDown;
+			_textEditor.GetRichTextBox().KeyDown += _textEditor_KeyDown;
         }
 
         private void _textEditor_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.OemPeriod)
+			if (_textEditor.AllowEdit && e.Control && e.KeyCode == Keys.OemPeriod)
             {
-                Point pt = _textEditor.GetPositionFromCharIndex(_textEditor.SelectionStart);
+				Point pt = _textEditor.GetRichTextBox().GetPositionFromCharIndex(_textEditor.GetRichTextBox().SelectionStart);
 
                 _lookup = new CannedTextInplaceLookupControl(_lookupHandler);
-                _lookup.Cancelled += new EventHandler(_lookup_Cancelled);
-                _lookup.Committed += new EventHandler(_lookup_Committed);
+                _lookup.Cancelled += _lookup_Cancelled;
+                _lookup.Committed += _lookup_Committed;
 
-                _popup = new PopupForm(_lookup, _textEditor, _textEditor.PointToScreen(pt));
+				_popup = new PopupForm(_lookup, _textEditor.GetRichTextBox(), _textEditor.GetRichTextBox().PointToScreen(pt));
                 _popup.ShowPopup();
             }
         }
@@ -65,9 +91,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             if (cannedText != null)
             {
 				if (cannedText.IsSnippet)
-					_textEditor.SelectedText = _lookupHandler.GetFullText(cannedText);
+					_textEditor.GetRichTextBox().SelectedText = _lookupHandler.GetFullText(cannedText);
 				else
-	                _textEditor.SelectedText = cannedText.Text;
+					_textEditor.GetRichTextBox().SelectedText = cannedText.Text;
             }
         }
 

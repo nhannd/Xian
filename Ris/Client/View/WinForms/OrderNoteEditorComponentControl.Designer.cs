@@ -29,10 +29,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this._comment = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
 			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._acceptButton = new System.Windows.Forms.Button();
+			this._comment = new ClearCanvas.Desktop.View.WinForms.RichTextField();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.flowLayoutPanel3.SuspendLayout();
 			this.SuspendLayout();
@@ -41,8 +41,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._comment, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._comment, 0, 0);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -51,17 +51,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(324, 189);
 			this.tableLayoutPanel1.TabIndex = 0;
-			// 
-			// _comment
-			// 
-			this._comment.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._comment.LabelText = "Comment";
-			this._comment.Location = new System.Drawing.Point(2, 2);
-			this._comment.Margin = new System.Windows.Forms.Padding(2);
-			this._comment.Name = "_comment";
-			this._comment.Size = new System.Drawing.Size(320, 150);
-			this._comment.TabIndex = 0;
-			this._comment.Value = null;
 			// 
 			// flowLayoutPanel3
 			// 
@@ -96,6 +85,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
 			// 
+			// _comment
+			// 
+			this._comment.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._comment.LabelText = "Comment";
+			this._comment.Location = new System.Drawing.Point(2, 2);
+			this._comment.Margin = new System.Windows.Forms.Padding(2);
+			this._comment.MaximumLength = 2147483647;
+			this._comment.Name = "_comment";
+			this._comment.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
+			this._comment.Size = new System.Drawing.Size(320, 150);
+			this._comment.TabIndex = 0;
+			this._comment.Value = null;
+			// 
 			// OrderNoteEditorComponentControl
 			// 
 			this.AcceptButton = this._acceptButton;
@@ -117,7 +119,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
         private System.Windows.Forms.Button _cancelButton;
-        private System.Windows.Forms.Button _acceptButton;
-        private ClearCanvas.Desktop.View.WinForms.TextAreaField _comment;
+		private System.Windows.Forms.Button _acceptButton;
+		private ClearCanvas.Desktop.View.WinForms.RichTextField _comment;
     }
 }

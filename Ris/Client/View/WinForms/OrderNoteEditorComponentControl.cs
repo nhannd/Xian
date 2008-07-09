@@ -42,6 +42,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
     public partial class OrderNoteEditorComponentControl : ApplicationComponentUserControl
     {
         private readonly OrderNoteEditorComponent _component;
+		private readonly CannedTextSupport _cannedTextSupport;
 
         /// <summary>
         /// Constructor
@@ -53,7 +54,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component = component;
 
             _comment.DataBindings.Add("Value", _component, "Comment", true, DataSourceUpdateMode.OnPropertyChanged);
-            _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_cannedTextSupport = new CannedTextSupport(_comment, _component.CannedTextLookupHandler);
+
+			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _comment.ReadOnly = !_component.IsNewItem;
         }
 

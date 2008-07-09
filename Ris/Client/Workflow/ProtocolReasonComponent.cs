@@ -55,9 +55,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private EnumValueInfo _selectedReason;
 		private List<EnumValueInfo> _availableReasons;
 		private string _otherReason;
+		private ICannedTextLookupHandler _cannedTextLookupHandler;
 
 		public override void Start()
 		{
+			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
+
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
@@ -71,6 +74,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		#region PresentationModel
+
+		public ICannedTextLookupHandler CannedTextLookupHandler
+		{
+			get { return _cannedTextLookupHandler; }
+		}
 
 		public EnumValueInfo Reason
 		{

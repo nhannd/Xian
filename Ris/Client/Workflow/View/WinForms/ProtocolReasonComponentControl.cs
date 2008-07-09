@@ -32,6 +32,7 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
@@ -41,6 +42,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 	public partial class ProtocolReasonComponentControl : ApplicationComponentUserControl
 	{
 		private ProtocolReasonComponent _component;
+		private readonly CannedTextSupport _cannedTextSupport;
 
 		/// <summary>
 		/// Constructor
@@ -56,6 +58,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_reason.DataBindings.Add("Value", _component, "SelectedReasonChoice", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_otherReason.DataBindings.Add("Value", _component, "OtherReason", true, DataSourceUpdateMode.OnPropertyChanged);
+			_cannedTextSupport = new CannedTextSupport(_otherReason, _component.CannedTextLookupHandler);
 
 			_btnOK.DataBindings.Add("Enabled", _component, "OkayEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}

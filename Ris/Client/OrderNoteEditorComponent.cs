@@ -45,15 +45,28 @@ namespace ClearCanvas.Ris.Client
     public class OrderNoteEditorComponent : ApplicationComponent
     {
         private readonly OrderNoteDetail _note;
+		private ICannedTextLookupHandler _cannedTextLookupHandler;
 
         public OrderNoteEditorComponent(OrderNoteDetail noteDetail)
         {
             _note = noteDetail;
         }
 
+		public override void Start()
+		{
+			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
+
+			base.Start();
+		}
+
         #region Presentation Model
 
-        public string Comment
+		public ICannedTextLookupHandler CannedTextLookupHandler
+		{
+			get { return _cannedTextLookupHandler; }
+		}
+		
+		public string Comment
         {
             get { return _note.NoteBody; }
             set
