@@ -455,21 +455,24 @@ namespace ClearCanvas.Ris.Client
         {
             VisitSummary v = (VisitSummary)visit;
 
+			StringBuilder visitIdentity = new StringBuilder();
+			if (v.Facility != null)
+			{
+				visitIdentity.Append(v.Facility.Code);
+				visitIdentity.Append(" ");
+			}
+			visitIdentity.Append(v.VisitNumber.Id);
+
             StringBuilder visitType = new StringBuilder();
             visitType.Append(v.PatientClass);
-            if (!string.IsNullOrEmpty(v.PatientType))
+            if (!string.IsNullOrEmpty(v.Status))
             {
                 visitType.Append(" - ");
-                visitType.Append(v.PatientType);
-            }
-            if (!string.IsNullOrEmpty(v.AdmissionType))
-            {
-                visitType.Append(" - ");
-                visitType.Append(v.AdmissionType);
+                visitType.Append(v.Status);
             }
 
             return string.Format("{0} {1} {2}",
-                VisitNumberFormat.Format(v.VisitNumber),
+                visitIdentity,
                 visitType,
                 Format.DateTime(v.AdmitTime)
                 );
