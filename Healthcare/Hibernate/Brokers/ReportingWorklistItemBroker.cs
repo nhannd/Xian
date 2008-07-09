@@ -51,6 +51,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		#region HQL Constants
 
 		private static readonly HqlSelect SelectReport = new HqlSelect("r");
+		private static readonly HqlSelect SelectReportPart = new HqlSelect("rpp");
 		private static readonly HqlJoin JoinReportPart = new HqlJoin("ps.ReportPart", "rpp", HqlJoinMode.Left);
 		private static readonly HqlJoin JoinReport = new HqlJoin("rpp.Report", "r", HqlJoinMode.Left);
 
@@ -193,7 +194,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					query.Conditions.Add(ConditionMostRecentPublicationStep);
 
 				if (!isCountQuery)
+				{
 					query.Selects.Add(SelectReport);
+					query.Selects.Add(SelectReportPart);
+				}
 			}
 		}
 

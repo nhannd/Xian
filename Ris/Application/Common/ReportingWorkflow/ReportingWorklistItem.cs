@@ -56,7 +56,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             string procedureName,
             string procedureStepName,
             DateTime? time,
-            EnumValueInfo activityStatus)
+            EnumValueInfo activityStatus,
+			int reportPartIndex)
             : base(
                 procedureStepRef,
                 procedureRef,
@@ -76,6 +77,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         {
             this.ReportRef = reportRef;
             this.ActivityStatus = activityStatus;
+        	this.ReportPartIndex = reportPartIndex;
         }
 
         [DataMember]
@@ -84,5 +86,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [DataMember]
         public EnumValueInfo ActivityStatus;
 
-    }
+		[DataMember]
+		public int ReportPartIndex;
+
+		/// <summary>
+		/// Gets a value indicating if this worklist item refers to an addendum.
+		/// </summary>
+    	public bool IsAddendumStep
+    	{
+			get { return this.ReportPartIndex > 0; }
+    	}
+	}
 }

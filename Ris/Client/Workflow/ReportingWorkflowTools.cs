@@ -39,7 +39,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To Transcription", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Send to Transcription", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To be Verified", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Send to be Verified", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
@@ -119,9 +119,10 @@ namespace ClearCanvas.Ris.Client.Workflow
         }
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Send/To be Reported", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Report", "Apply")]
     [IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Report.Cancel)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
     public class CancelReportingStepTool : ReportingWorkflowItemTool
@@ -131,9 +132,27 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
         }
 
+		public string Label
+		{
+			get
+			{
+				ReportingWorklistItem item = GetSelectedItem();
+				return (item != null && item.IsAddendumStep) ? "Cancel Addendum" : "Cancel Report";
+			}
+		}
+
+		public event EventHandler LabelChanged
+		{
+			add { this.Context.SelectionChanged += value; }
+			remove { this.Context.SelectionChanged -= value; }
+		}
+
 		protected override bool Execute(ReportingWorklistItem item)
         {
-            if (this.Context.DesktopWindow.ShowMessageBox("This action will discard the existing report. Continue?", MessageBoxActions.OkCancel)
+			string msg = item.IsAddendumStep ? "Discard the selected addendum?" : "Discard the selected report?";
+
+
+            if (this.Context.DesktopWindow.ShowMessageBox(msg, MessageBoxActions.OkCancel)
                 == DialogBoxAction.Cancel)
                 return false;
 

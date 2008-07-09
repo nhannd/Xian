@@ -61,6 +61,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     {
         private readonly ActivityStatus _activityStatus;
         private readonly EntityRef _reportRef;
+    	private readonly int _reportPartIndex = -1;
 
 
 
@@ -119,7 +120,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             string procedureName,
             DateTime? scheduledStartTime,
             ActivityStatus activityStatus,
-            Report report)
+            Report report,
+			ReportPart reportPart)
             : base(
                 procedureStep,
                 procedure,
@@ -138,6 +140,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             _reportRef = report == null ? null : report.GetRef();
             _activityStatus = activityStatus;
+        	_reportPartIndex = reportPart == null ? -1 : reportPart.Index;
         }
 
 		/// <summary>
@@ -214,6 +217,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             get { return _activityStatus; }
         }
+
+		/// <summary>
+		/// Gets the report part index, or -1 if there is no report part.
+		/// </summary>
+    	public int ReportPartIndex
+    	{
+			get { return _reportPartIndex; }
+    	}
 
         #endregion
     }
