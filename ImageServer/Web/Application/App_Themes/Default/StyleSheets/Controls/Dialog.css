@@ -55,8 +55,8 @@
 
 .DefaultModalDialogButtonPanel
 {
-    padding-top: 6px;
-    padding-bottom: 5px;
+    padding-top: 8px;
+    padding-bottom: 8px;
 }
 
 .ConfirmationButtonPanel
@@ -79,6 +79,12 @@
     margin-left: 3px;
 	margin-right: 3px;
 	color: #16425D;
+}
+
+.DialogLabelBackground
+{
+    background-color: #dfdfdf;
+    border: solid 1px #cccccc;
 }
 
 .DialogTextBox
@@ -110,6 +116,14 @@
 	border: solid 1px #618FAD;
 }
 
+.DialogLinkButton
+{
+    color: #D13D4D;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 0px 4px 1px 4px;
+}
+
 .DialogLabel
 {
     font-size: 12px;
@@ -117,7 +131,7 @@
 
 .DialogPanelContent
 {
-    background: #ffffff url(../../images/Controls/Dialog/DialogTabContentBottom.png) repeat-x bottom; 
+    background: #ffffff;
     border: #618FAD 1px solid;
 }
 
@@ -144,23 +158,21 @@
 .DialogTabControl .ajax__tab_outer
 {
 	background: url(../../images/Controls/Dialog/DialogInactiveTabRight.png) no-repeat right;
-	height: 20px;
 	margin-right: 1px;
 }
 .DialogTabControl .ajax__tab_inner
 {
 	background: url(../../images/Controls/Dialog/DialogInactiveTabLeft.png) no-repeat;
 	padding-left: 3px;
-	height: 20px;
 }
 .DialogTabControl .ajax__tab_tab
 {
 	background: url(../../images/Controls/Dialog/DialogInactiveTabMiddle.png) repeat-x;
 	padding-left: 3px;
 	padding-right: 2px;
-	height: 20px;
-	padding-top: 3px;
+	padding-top:4px;
 	color: #16425D;
+	font-size: 12px;
 }
 .DialogTabControl .ajax__tab_hover .ajax__tab_outer
 {
@@ -178,7 +190,6 @@
 .DialogTabControl .ajax__tab_active .ajax__tab_outer
 {
 	background: url(../../images/Controls/Dialog/DialogActiveTabRight.png) no-repeat right;
-
 }
 .DialogTabControl .ajax__tab_active .ajax__tab_inner
 {
@@ -189,7 +200,7 @@
 	background: url(../../images/Controls/Dialog/DialogActiveTabMiddle.png) repeat-x;
 	color: #205F87;
     font-weight: bold;
-    padding-top: 2px;
+    font-size: 14px;
 }
 
 /*************************************************************************************************
@@ -199,7 +210,7 @@
 .DialogTabControl .ajax__tab_body
 {
 	margin: 0px;
-	padding: 5px;
-	background: #ffffff url(../../images/Controls/Dialog/DialogTabContentBottom.png) repeat-x bottom;
+	padding: 6px;
+	background: #ffffff;
 	border: #618FAD 1px solid;
 }

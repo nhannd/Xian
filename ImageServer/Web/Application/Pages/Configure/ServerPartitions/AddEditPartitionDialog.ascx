@@ -17,9 +17,8 @@
                                                     <asp:TextBox ID="AETitleTextBox" runat="server" MaxLength="16" ValidationGroup="vg1" CssClass="DialogTextBox"
                                                         ToolTip="The DICOM Application Entity Title for the partition."></asp:TextBox>
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
-                                                    
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp" />
@@ -52,23 +51,23 @@
                                 </tr>
                                 <tr id="Tr2" runat="server" align="left">
                                     <td id="Td3" runat="server">
-                                        <table width="100%">
+                                        <table>
                                             <tr align="left">
-                                                <td>
+                                                <td >
                                                     <asp:Label ID="Label2" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                         ErrorMessage="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td id="Td4" runat="server">
-                                        <table width="100%">
+                                        <table>
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="DialogTextBoxLabel" /><br />
@@ -79,7 +78,7 @@
                                                         ErrorMessage="Folder Name is required" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="FolderHelp"></ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="FolderHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                 </td>
                                             </tr>
@@ -112,7 +111,6 @@
                                     </td>
                                 </tr>
                             </table>
-                        </asp:Panel>
                     </ContentTemplate>
                     <HeaderTemplate>
                         General
@@ -156,7 +154,7 @@
                                             <tr>
                                                 <td>
                                                     <asp:Label ID="Label5" runat="server" Text="Default Remote Port" CssClass="DialogTextBoxLabel" /><asp:TextBox ID="DefaultRemotePortTextBox" CssClass="DialogTextBox" runat="server"></asp:TextBox>
-                                                    <td>
+                                                    <td valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
                                                             ControlToValidate="DefaultRemotePortTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
@@ -183,9 +181,8 @@
                             <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="AddButton" OnClick="OKButton_Click" ValidationGroup="vg1" />
                             <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                         </asp:Panel>
-
                     </td>
                 </tr>
-            </table>
+            </table>                                                        
     </ContentTemplate>
 </ccAsp:ModalDialog>

@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             float usage = GetFilesystemUsedPercentage(fs);
             if (img != null)
             {
-                img.ImageUrl = string.Format("~/Common/Pages/BarChart.aspx?pct={0}&high={1}&low={2}",
+                img.ImageUrl = string.Format(App_GlobalResources.ImageServerPageURLs.BarChartPage,
                                              usage,
                                              fs.HighWatermark,
                                              fs.LowWatermark);
@@ -370,16 +370,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
             switch (e.CommandArgument.ToString().ToLower())
             {
-                case "first":
+                case ImageServerConstants.First:
                     GridView1.PageIndex = 0;
                     break;
-                case "prev":
+                case ImageServerConstants.Prev:
                     GridView1.PageIndex = intCurIndex - 1;
                     break;
-                case "next":
+                case ImageServerConstants.Next:
                     GridView1.PageIndex = intCurIndex + 1;
                     break;
-                case "last":
+                case ImageServerConstants.Last:
                     GridView1.PageIndex = GridView1.PageCount;
                     break;
             }

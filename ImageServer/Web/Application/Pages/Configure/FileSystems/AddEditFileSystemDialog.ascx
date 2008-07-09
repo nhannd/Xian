@@ -22,7 +22,7 @@
                                                     <asp:TextBox ID="DescriptionTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
                                                         BorderWidth="1px" MaxLength="128" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="DescriptionTextBox" InvalidInputColor="#FAFFB5"
@@ -53,7 +53,7 @@
                                                     <asp:TextBox ID="PathTextBox" runat="server" Width="220px" BorderColor="LightSteelBlue"
                                                         BorderWidth="1px" ValidationGroup="vg1" MaxLength="256" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="InvalidPathHint" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:FilesystemPathValidator runat="server" ID="PathValidator" ControlToValidate="PathTextBox"
                                                         InputName="Filesystem Path" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidPathHint"

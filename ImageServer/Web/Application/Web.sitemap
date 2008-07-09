@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
 	<siteMapNode url="" title="Root"  description="">
-		<siteMapNode url="~/Pages/Search/SearchPage.aspx" title="Search"  />
+		<siteMapNode url="~/Pages/Search/Default.aspx" title="Search"  />
 		<siteMapNode url="~/Pages/WorkQueue/SearchPage.aspx" title="Work Queue"  />
 	
 		<siteMapNode url="" title="Configure">

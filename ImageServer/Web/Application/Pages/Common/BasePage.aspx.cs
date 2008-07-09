@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
     {
         protected void Page_PreInit(object sender, EventArgs e)
         {
-            Page.Theme = App_GlobalResources.Constants.Default;
+            Page.Theme = ImageServerConstants.Default;
         }
     }
 }

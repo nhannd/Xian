@@ -167,7 +167,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
                 {
                     var urlCount = 1;
                     
-                    var url = string.Empty;
+                    var url = "";
                     
                     for(i=0; i<rows.length; i++)
                     {

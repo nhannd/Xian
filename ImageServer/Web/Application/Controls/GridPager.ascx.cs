@@ -136,16 +136,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             switch (e.CommandArgument.ToString().ToLower())
             {
-                case "first":
+                case ImageServerConstants.First:
                     Target.PageIndex = 0;
                     break;
-                case "prev":
+                case ImageServerConstants.Prev:
                     Target.PageIndex = intCurIndex - 1;
                     break;
-                case "next":
+                case ImageServerConstants.Next:
                     Target.PageIndex = intCurIndex + 1;
                     break;
-                case "last":
+                case ImageServerConstants.Last:
                     Target.PageIndex = Target.PageCount;
                     break;
             }

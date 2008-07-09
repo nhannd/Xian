@@ -57,10 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\ImageServerConstants.cs" />
-    <Compile Include="App_GlobalResources\Constants.Designer.cs">
+    <Compile Include="App_GlobalResources\ErrorMessages.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>Constants.resx</DependentUpon>
+      <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
     <Compile Include="App_GlobalResources\ImageFileLocation.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -69,6 +69,21 @@
     </Compile>
     <Compile Include="App_Code\KeyedCollectionBase.cs" />
     <Compile Include="App_Code\EntityCollection.cs" />
+    <Compile Include="App_GlobalResources\ImageServerPageURLs.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ImageServerPageURLs.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Labels.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Labels.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Titles.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Titles.resx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CheckJavascript.ascx.cs">
       <DependentUpon>CheckJavascript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -330,11 +345,18 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Help\Documentation.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Documentation.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Help\Documentation.aspx.designer.cs">
       <DependentUpon>Documentation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Search\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Search\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Search\Move\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
@@ -343,12 +365,12 @@
     <Compile Include="Pages\Search\Move\DeviceGridView.ascx.designer.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\Move\MovePage.aspx.cs">
-      <DependentUpon>MovePage.aspx</DependentUpon>
+    <Compile Include="Pages\Search\Move\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Search\Move\MovePage.aspx.designer.cs">
-      <DependentUpon>MovePage.aspx</DependentUpon>
+    <Compile Include="Pages\Search\Move\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Search\Move\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
@@ -363,13 +385,6 @@
     </Compile>
     <Compile Include="Pages\Search\Move\StudyGridView.ascx.designer.cs">
       <DependentUpon>StudyGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Search\SearchPage.aspx.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Search\SearchPage.aspx.designer.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Search\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -426,43 +441,58 @@
     <Compile Include="Pages\SeriesDetails\StudySummaryPanel.ascx.designer.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\PatientSummary.cs" />
-    <Compile Include="Pages\StudyDetails\PatientSummaryAssembler.cs" />
-    <Compile Include="Pages\StudyDetails\PatientSummaryPanel.ascx.cs">
+    <Compile Include="Pages\StudyDetails\Code\PatientSummary.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Code\PatientSummaryAssembler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Code\StudyDetails.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Code\StudyDetailsAssembler.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx.cs">
+      <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx.designer.cs">
+      <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx.cs">
       <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\PatientSummaryPanel.ascx.designer.cs">
+    <Compile Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx.designer.cs">
       <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\SeriesGridView.ascx.cs">
+    <Compile Include="Pages\StudyDetails\Controls\SeriesGridView.ascx.cs">
       <DependentUpon>SeriesGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\SeriesGridView.ascx.designer.cs">
+    <Compile Include="Pages\StudyDetails\Controls\SeriesGridView.ascx.designer.cs">
       <DependentUpon>SeriesGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\StudyDetails.cs" />
-    <Compile Include="Pages\StudyDetails\StudyDetailsAssembler.cs" />
-    <Compile Include="Pages\StudyDetails\StudyDetailsPage.aspx.cs">
-      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\StudyDetailsPage.aspx.designer.cs">
-      <DependentUpon>StudyDetailsPage.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\StudyDetailsPanel.ascx.cs">
+    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx.cs">
       <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\StudyDetailsPanel.ascx.designer.cs">
+    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx.designer.cs">
       <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\StudyDetailsView.ascx.cs">
+    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\StudyDetailsView.ascx.designer.cs">
+    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
@@ -622,6 +652,7 @@
     <Content Include="App_Themes\Default\images\Controls\Calendar\calendar-arrow-left.gif" />
     <Content Include="App_Themes\Default\images\Controls\Calendar\calendar-arrow-right.gif" />
     <Content Include="App_Themes\Default\images\Controls\Calendar\TitleBackground.gif" />
+    <Content Include="App_Themes\Default\images\Controls\Dialog\LinkButtonBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogActiveTabLeft.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogActiveTabMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogActiveTabRight.png" />
@@ -661,7 +692,7 @@
     <Content Include="App_Themes\Default\images\MainContent\SearchPanelBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
-    <Content Include="App_Themes\Default\images\Watermark.gif" />
+    <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />
     <Content Include="App_Themes\Default\StyleSheets\Error.css" />
@@ -674,10 +705,10 @@
     <Content Include="App_Themes\Default\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Dialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Tabs.css" />
-    <EmbeddedResource Include="App_GlobalResources\Constants.resx">
+    <EmbeddedResource Include="App_GlobalResources\ErrorMessages.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Constants.Designer.cs</LastGenOutput>
+      <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\ImageFileLocation.resx">
       <SubType>Designer</SubType>
@@ -706,6 +737,21 @@
     <Content Include="Pages\Configure\Devices\DevicePage.aspx" />
     <Content Include="Pages\Configure\Devices\DevicePanel.ascx" />
     <Content Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
+    <EmbeddedResource Include="App_GlobalResources\ImageServerPageURLs.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ImageServerPageURLs.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Titles.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Titles.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="App_GlobalResources\Labels.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Labels.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pages\Configure\FileSystems\Filesystem.js" />
     <Content Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx" />
     <Content Include="Pages\Configure\FileSystems\FileSystemsPage.aspx" />
@@ -726,11 +772,11 @@
     <Content Include="Pages\Error\ErrorPage.aspx" />
     <Content Include="Pages\Help\About.aspx" />
     <Content Include="Pages\Help\Documentation.aspx" />
+    <Content Include="Pages\Search\Default.aspx" />
     <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
-    <Content Include="Pages\Search\Move\MovePage.aspx" />
+    <Content Include="Pages\Search\Move\Default.aspx" />
     <Content Include="Pages\Search\Move\MovePanel.ascx" />
     <Content Include="Pages\Search\Move\StudyGridView.ascx" />
-    <Content Include="Pages\Search\SearchPage.aspx" />
     <Content Include="Pages\Search\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Search\SearchPanel.js" />
     <Content Include="Pages\Search\StudyListGridView.ascx" />
@@ -739,13 +785,11 @@
     <Content Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx" />
     <Content Include="Pages\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\SeriesDetails\StudySummaryPanel.ascx" />
-    <Content Include="Pages\StudyDetails\PatientSummaryPanel.ascx" />
-    <Content Include="Pages\StudyDetails\SeriesGridView.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\SeriesGridView.js" />
-    <Content Include="Pages\StudyDetails\StudyDetailsPage.aspx" />
-    <Content Include="Pages\StudyDetails\StudyDetailsPanel.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\StudyDetailsPanel.js" />
-    <Content Include="Pages\StudyDetails\StudyDetailsView.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
+    <Content Include="Pages\StudyDetails\Default.aspx" />
+    <Content Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\SeriesGridView.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx" />
     <Content Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
     <Content Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
     <Content Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
@@ -757,8 +801,25 @@
     <Content Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
     <Content Include="Pages\WorkQueue\SearchPage.aspx" />
     <Content Include="Pages\WorkQueue\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\SeriesGridView.js" />
+    <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsPanel.js" />
     <EmbeddedResource Include="Pages\WorkQueue\SearchPanel.js" />
     <Content Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx" />
+    <Content Include="Scripts\CodeMirror\css\docs.css" />
+    <Content Include="Scripts\CodeMirror\css\jscolors.css" />
+    <Content Include="Scripts\CodeMirror\css\xmlcolors.css" />
+    <Content Include="Scripts\CodeMirror\js\codemirror.js" />
+    <Content Include="Scripts\CodeMirror\js\editor.js" />
+    <Content Include="Scripts\CodeMirror\js\mirrorframe.js" />
+    <Content Include="Scripts\CodeMirror\js\parsejavascript.js" />
+    <Content Include="Scripts\CodeMirror\js\parsexml.js" />
+    <Content Include="Scripts\CodeMirror\js\select.js" />
+    <Content Include="Scripts\CodeMirror\js\stringstream.js" />
+    <Content Include="Scripts\CodeMirror\js\tokenizejavascript.js" />
+    <Content Include="Scripts\CodeMirror\js\undo.js" />
+    <Content Include="Scripts\CodeMirror\js\util.js" />
+    <Content Include="Scripts\CodeMirror\LICENSE.txt" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\Default\Global.skin" />

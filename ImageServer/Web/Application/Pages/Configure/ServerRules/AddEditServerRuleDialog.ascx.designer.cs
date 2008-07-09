@@ -8,9 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using InvalidInputIndicator=ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator;
-using ModalDialog=ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog;
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
     
     
@@ -29,7 +26,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected ModalDialog ModalDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
         
         /// <summary>
         /// ServerPartitionTabContainer control.
@@ -83,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected InvalidInputIndicator RuleNameHelp;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator RuleNameHelp;
         
         /// <summary>
         /// RuleNameValidator control.
@@ -200,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected InvalidInputIndicator InvalidRuleHint;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidRuleHint;
         
         /// <summary>
         /// ServerRuleValidator control.

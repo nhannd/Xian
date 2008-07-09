@@ -6,7 +6,7 @@
 		<asp:ServiceReference Path="ServerRuleSamples.asmx" />
 	</Services>
 </asp:ScriptManagerProxy>
-<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="700px">
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="500px">
 	<ContentTemplate>
 			<aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0"
 				CssClass="DialogTabControl">
@@ -16,13 +16,13 @@
 							<table id="Table1" runat="server" width="100%">
 								<tr>
 									<td colspan="5">
-										<table width="100%">
+										<table width="300">
 											<tr>
-												<td colspan="4">
-													<asp:Label ID="RuleNameLabel" runat="server" Text="Name" CssClass="DialogTextBoxLabel"></asp:Label><br />
-													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="100%" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
-												</td>
 												<td>
+													<asp:Label ID="RuleNameLabel" runat="server" Text="Name" CssClass="DialogTextBoxLabel"></asp:Label><br />
+													<asp:TextBox ID="RuleNameTextBox" runat="server" Width="285" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
+												</td>
+												<td valign="bottom" align="center">
 													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" SkinID="InvalidInputIndicator"/>
 													<ccValidator:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
 														ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
@@ -38,7 +38,7 @@
 											<tr>
 												<td>
 													<asp:Label ID="RuleTypeLabel" runat="server" Text="Type" CssClass="DialogTextBoxLabel"/><br />
-													<asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="100%" CssClass="DialogDropDownList"/>
+													<asp:DropDownList ID="RuleTypeDropDownList" runat="server" Width="125" CssClass="DialogDropDownList"/>
 												</td>
 											</tr>
 										</table>

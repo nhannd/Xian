@@ -9,13 +9,13 @@
                             <table id="Table2" runat="server">
                                 <tr id="Tr1" runat="server" align="left">
                                     <td id="Td1" runat="server" valign="bottom">
-                                        <table width="100%">
+                                        <table >
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="AETitleTextBox" runat="server" ValidationGroup="vg1" MaxLength="16" CssClass="DialogTextBox"></asp:TextBox>
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
@@ -44,7 +44,7 @@
                                 </tr>
                                 <tr id="Tr2" runat="server" align="left" valign="bottom">
                                     <td id="Td4" valign="bottom">
-                                        <table width="100%">
+                                        <table>
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label3" runat="server" Text="IP Address" CssClass="DialogTextBoxLabel" />
@@ -52,7 +52,7 @@
                                                     <asp:TextBox ID="IPAddressTextBox" runat="server" ValidationGroup="vg1" CssClass="DialogTextBox">
                                                     </asp:TextBox>
                                                 </td>
-                                                <td align="left">
+                                                <td align="left" valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="IPAddressHelp" runat="server" SkinID="InvalidInputIndicator">
                                                     </ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
@@ -84,18 +84,18 @@
                                 </tr>
                                 <tr id="Tr3" runat="server" align="left" valign="bottom">
                                     <td id="Td7" runat="server" valign="bottom">
-                                        <table width="100%">
+                                        <table>
                                             <tr align="left">
                                                 <td>
                                                     <asp:Label ID="Label5" runat="server" Text="Port" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox" />
                                                 </td>
-                                                <td>
+                                                <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
                                                         ErrorMessage="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
-                                                        Display="None"></ccValidator:RangeValidator>
+                                                        Display="None"></ccValidator:RangeValidator>                                                    
                                                 </td>
                                             </tr>
                                         </table>

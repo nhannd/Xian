@@ -39,6 +39,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="YesButton" EnabledImageURL="images/Buttons/YesEnabled.png" DisabledImageURL="images/Buttons/YesDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="NoButton" EnabledImageURL="images/Buttons/NoEnabled.png" DisabledImageURL="images/Buttons/NoDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="ApplyButton" EnabledImageURL="images/Buttons/ApplyEnabled.png" DisabledImageURL="images/Buttons/ApplyDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="UpdateButton" EnabledImageURL="images/Buttons/UpdateEnabled.png" DisabledImageURL="images/Buttons/UpdateDisabled.png" />
 <asp:LinkButton runat="server" SkinId="CloseButton" Text="Close" CssClass="CloseButton" />
 
 <%-- Tables --%>
@@ -49,6 +50,7 @@
 <%-- Images --%>
 <asp:Image runat="server" SkinID="Unchecked" ImageUrl="images/Indicators/unchecked.png" />
 <asp:Image runat="server" SkinID="Checked" ImageUrl="images/Indicators/checked.png" />
+<asp:Image runat="server" SkinID="Watermark" ImageUrl="images/Indicators/Watermark.gif" />
 
 <%-- Custom Controls --%>
-<ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="images/Indicators/HelpSmall.png" Visible="true" />
+<ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />

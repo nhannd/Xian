@@ -8,8 +8,6 @@
 </head>
 <body id="MasterBody" class="GlobalBody">
 
-
-
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
 
     <!-- this is special code that web service validation needs -->

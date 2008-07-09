@@ -133,8 +133,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string s1 = WorkQueueTypeEnum.AutoRoute.ToString();
-
             if (!Page.IsPostBack)
             {
                 // first time load

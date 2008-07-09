@@ -62,16 +62,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
         protected void Page_Load(object sender, EventArgs e)
         {
             // Read the input from the query string
-            _percentage = float.Parse(App_GlobalResources.Constants.percentage);
-            _high = float.Parse(Request.QueryString[App_GlobalResources.Constants.high]);
-            _low = float.Parse(Request.QueryString[App_GlobalResources.Constants.low]);
+            _percentage = float.Parse(Request.QueryString[ImageServerConstants.Pct]);
+            _high = float.Parse(Request.QueryString[ImageServerConstants.High]);
+            _low = float.Parse(Request.QueryString[ImageServerConstants.Low]);
 
 
             // set the ContentType appropriately, we are creating PNG image
-            Response.ContentType = App_GlobalResources.Constants.image_PNG;
+            Response.ContentType = ImageServerConstants.ImagePng;
 
             // Load the background image
-            Image bmp = Image.FromFile(App_GlobalResources.ImageFileLocation.UsageBar);
+            Image bmp = Image.FromFile(Server.MapPath(App_GlobalResources.ImageFileLocation.UsageBar));
             Graphics graphics = Graphics.FromImage(bmp);
             graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
 
                 // add watermark icons
                 graphics.CompositingMode = CompositingMode.SourceOver;
-                Image watermark = Image.FromFile(App_GlobalResources.ImageFileLocation.Watermark);
+                Image watermark = Image.FromFile(Server.MapPath(App_GlobalResources.ImageFileLocation.Watermark));
 
 
                 graphics.DrawImageUnscaled(watermark, (int)(_width * _high / 100f) - watermark.Width / 2 + leftoffset, 12);
