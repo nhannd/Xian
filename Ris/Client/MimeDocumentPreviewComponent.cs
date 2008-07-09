@@ -242,7 +242,7 @@ namespace ClearCanvas.Ris.Client
 
         public ActionModelRoot AttachmentActionModel
         {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "mimeDocument-items-tools", _toolSet.Actions); }
+            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "mimedocument-items", _toolSet.Actions); }
         }
 
         public override IActionSet ExportedActions

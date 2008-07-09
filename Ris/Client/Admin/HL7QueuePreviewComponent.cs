@@ -184,11 +184,11 @@ namespace ClearCanvas.Ris.Client.Admin
                     _typeChoices = formResponse.MessageTypeChoices;
                 });
 
-            _direction = _directionChoices[0];
-            _peer = _peerChoices[0];
-            _status = _statusChoices[0];
-            _type = _typeChoices[0];
-        }
+			_direction = CollectionUtils.FirstElement(_directionChoices);
+			_peer = CollectionUtils.FirstElement(_peerChoices);
+			_status = CollectionUtils.FirstElement(_statusChoices);
+			_type = CollectionUtils.FirstElement(_typeChoices);
+		}
 
         private void InitialisePaging()
         {
@@ -371,7 +371,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get
             {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "hl7Queue-contextmenu", _toolSet.Actions);
+                return ActionModelRoot.CreateModel(this.GetType().FullName, "hl7queue-contextmenu", _toolSet.Actions);
             }
         }
 
@@ -379,7 +379,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get
             {
-                ActionModelNode node = ActionModelRoot.CreateModel(this.GetType().FullName, "hl7Queue-toolbar", _toolSet.Actions);
+                ActionModelNode node = ActionModelRoot.CreateModel(this.GetType().FullName, "hl7queue-toolbar", _toolSet.Actions);
                 node.Merge(_pagingActionHandler);
                 return node;
             }

@@ -258,12 +258,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				ActionModelNode root = ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorergroup-toolbar", _toolSet.Actions);
-				ActionModelNode selectedExplorerModel = _selectedFolderExplorer.FoldersToolbarModel;
-				if(selectedExplorerModel != null)
-					root.Merge(selectedExplorerModel);
-				
-				return root;
+				IActionSet allActions = _toolSet.Actions.Union(_selectedFolderExplorer.ExportedActions);
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", allActions);
 			}
 		}
 

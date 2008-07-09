@@ -48,8 +48,8 @@ namespace ClearCanvas.Ris.Client.Admin
     [Tooltip("view1", "Open patient details")]
 	[IconSet("view1", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 
-    [MenuAction("view2", "hl7Queue-contextmenu/View Details", "View")]
-    [ButtonAction("view2", "hl7Queue-toolbar/Details", "View")]
+    [MenuAction("view2", "hl7queue-contextmenu/View Details", "View")]
+    [ButtonAction("view2", "hl7queue-toolbar/Details", "View")]
     [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
     [Tooltip("view2", "Open patient details")]
 	[IconSet("view2", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png")]

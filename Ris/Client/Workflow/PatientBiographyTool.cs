@@ -45,10 +45,8 @@ using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("view", "global-menus/Patient/View Biography...", "View")]
-    //[ButtonAction("view", "global-toolbars/Patient/ViewPatient", "View")]
     [ButtonAction("view", "folderexplorer-items-toolbar/Patient Biography", "View")]
     [MenuAction("view", "folderexplorer-items-contextmenu/Patient Biography", "View")]
-    [MenuAction("view", "WorklistPreview-menu/Details", "View")] // This action is used by the registration preview script object
     [ButtonAction("view", "patientsearch-items-toolbar/Patient Biography", "View")]
     [MenuAction("view", "patientsearch-items-contextmenu/Patient Biography", "View")]
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]

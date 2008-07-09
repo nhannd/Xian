@@ -311,7 +311,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			get 
 			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "biographyorderreports-toolbar", _toolSet.Actions);
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "biography-reports-toolbar", _toolSet.Actions);
 			}
 		}
 

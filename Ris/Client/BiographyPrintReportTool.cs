@@ -7,7 +7,7 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ButtonAction("apply", "biographyorderreports-toolbar/Print Report", "Apply")]
+	[ButtonAction("apply", "biography-reports-toolbar/Print Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]

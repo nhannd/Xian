@@ -91,11 +91,6 @@ namespace ClearCanvas.Ris.Client
 			base.Stop();
 		}
 
-		protected override ActionModelNode GetActionModel()
-		{
-			return ActionModelRoot.CreateModel(this.GetType().FullName, "WorklistPreview-menu", _toolSet.Actions);
-		}
-
 		protected override DataContractBase GetHealthcareContext()
 		{
 			return _folderSystemItem;
