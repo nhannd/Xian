@@ -20,7 +20,7 @@
 
 			if(Ris)
 			{
-				$("attendMD").value = Ris.getTag("AttendingMD") || "";
+				$("attendingPhysician").value = Ris.getTag("AttendingPhysician") || "";
 			}
 		}
 		catch(e)
@@ -30,7 +30,7 @@
 		}
 	}
 
-	function onAttendMDChanged()
+	function onAttendPhysicianChanged()
 	{
 		Ris.setModified(true); // notify ris that data may have been modified
 	}
@@ -49,15 +49,15 @@
 
 	function saveData()
 	{
-		Ris.setTag("AttendingMD", $("attendMD").value);
+		Ris.setTag("AttendingPhysician", $("attendingPhysician").value);
 	}
 	//////////////////////////////////////////////////////////////////////////
 </script>
 </head>
 <body onload="onBodyLoad()" onresize="scaleWidth()">
 	<form id="myForm">
-		<label for="attendMD">Attending MD</label>
-		<input id="attendMD" type="text" onkeyup="onAttendMDChanged()" onchange="onAttendMDChanged()" />
+		<label for="attendingPhysician">Attending Physician</label>
+		<input id="attendingPhysician" type="text" onkeyup="onAttendPhysicianChanged()" onchange="onAttendPhysicianChanged()" />
 	</form>
 </body>
 </html>

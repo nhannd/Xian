@@ -152,7 +152,7 @@ var JSML = {
         {
             var subElements = getChildNodes(xmlNode).select(function(n) { return n.nodeType == 1; });   // select element nodes
             var arrayAttr = xmlNode.attributes.getNamedItem("array");
-            
+           
             if(arrayAttr && arrayAttr.text == "true")
             {
                 // collect sub-elements in an array
@@ -175,7 +175,7 @@ var JSML = {
                     // find the first non-empty text node
                     var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
                     var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
-                    return value ? parseValue(value) : null;
+                    return value ? parseValue(value) : [];
                 }
             }
         }

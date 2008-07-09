@@ -176,15 +176,13 @@ namespace ClearCanvas.Enterprise.Common
                 // jscript will not be able to distinguish that it was originally a dictionary
                 // note that if the dictionary contains non-string keys, unpredictable behaviour may result
                 IDictionary dic = (IDictionary) dataObject;
-                if (dic.Count > 0 || includeEmptyTags)
+
+				writer.WriteStartElement(objectName);
+                foreach (DictionaryEntry entry in dic)
                 {
-                    writer.WriteStartElement(objectName);
-                    foreach (DictionaryEntry entry in dic)
-                    {
-                        SerializeHelper(entry.Value, entry.Key.ToString(), writer, includeEmptyTags);
-                    }
-                    writer.WriteEndElement();
+                    SerializeHelper(entry.Value, entry.Key.ToString(), writer, includeEmptyTags);
                 }
+                writer.WriteEndElement();
             }
             else if (dataObject is Enum)
             {
