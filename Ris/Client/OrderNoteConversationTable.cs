@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
 				delegate(Checkable<OrderNoteDetail> item)
 					{
 						StringBuilder sb = new StringBuilder();
-						sb.Append(PersonNameFormat.Format(item.Item.Author.Name));
+						sb.Append(StaffNameAndRoleFormat.Format(item.Item.Author));
 						if (item.Item.OnBehalfOfGroup != null)
 							sb.Append(string.Format(SR.FormatOnBehalfOf, item.Item.OnBehalfOfGroup.Name));
 						return sb.ToString();
@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client
 				}
 				else
 				{
-					sb.Append(PersonNameFormat.Format(staffRecipientDetail.Staff.Name));
+					sb.Append(StaffNameAndRoleFormat.Format(staffRecipientDetail.Staff));
 					sb.Append(itemSeparator);
 				}
 			}

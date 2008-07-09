@@ -229,7 +229,7 @@ function createOrderNotesTable(htmlTable, notes)
 				cellType: "text",
 				getValue: function(item) 
 				{ 
-					var from = Ris.formatPersonName(item.Author.Name);
+					var from = Ris.formatStaffNameAndRole(item.Author);
 					
 					if(item.OnBehalfOfGroup != null)
 						from = from + " on behalf of " + item.OnBehalfOfGroup.Name;

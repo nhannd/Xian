@@ -51,9 +51,9 @@ namespace ClearCanvas.Ris.Client
 				delegate(OrderNoteboxItemSummary item)
 				{
 					if (item.OnBehalfOfGroup != null)
-						return String.Format(SR.FormatFromOnBehalf, PersonNameFormat.Format(item.Author.Name), item.OnBehalfOfGroup.Name, item.PostTime);
+						return String.Format(SR.FormatFromOnBehalf, StaffNameAndRoleFormat.Format(item.Author), item.OnBehalfOfGroup.Name, item.PostTime);
 					else
-						return String.Format(SR.FormatFrom, PersonNameFormat.Format(item.Author.Name), item.PostTime);
+						return String.Format(SR.FormatFrom, StaffNameAndRoleFormat.Format(item.Author), item.PostTime);
 				},
 				1.0f, 2));
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.Ris.Client
 				}
 				else
 				{
-					sb.Append(PersonNameFormat.Format(staffSummary.Name));
+					sb.Append(StaffNameAndRoleFormat.Format(staffSummary));
 					sb.Append(itemSeparator);
 				}
 			}

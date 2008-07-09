@@ -179,6 +179,20 @@ namespace ClearCanvas.Ris.Client
                 return detail == null ? "" : PersonNameFormat.Format(detail);
             }
 
+            public string FormatStaffNameAndRole(string jsml)
+            {
+                try
+                {
+                    StaffSummary summary = JsmlSerializer.Deserialize<StaffSummary>(jsml);
+                    return summary == null ? "" : StaffNameAndRoleFormat.Format(summary);
+                }
+                catch (InvalidCastException)
+                {
+                    StaffDetail detail = JsmlSerializer.Deserialize<StaffDetail>(jsml);
+                    return detail == null ? "" : StaffNameAndRoleFormat.Format(detail);
+                }
+            }
+
             public string FormatTelephone(string jsml)
             {
                 TelephoneDetail detail = JsmlSerializer.Deserialize<TelephoneDetail>(jsml);

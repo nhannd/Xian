@@ -133,6 +133,11 @@ if(window.external)
 			return personName ? window.external.FormatPersonName(JSML.create(personName, "PersonName")) : "";
 		},
 		
+		formatStaffNameAndRole: function(staffSummaryOrDetail)
+		{
+			return staffSummaryOrDetail ? window.external.FormatStaffNameAndRole(JSML.create(staffSummaryOrDetail, "Staff")) :"";
+		},
+		
 		// formats the specified telephone object
 		formatTelephone: function(telephone)
 		{
