@@ -57,7 +57,7 @@
 						Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation);
 						Field.setValue($("PreAdmitNumber"), visitDetail.PreadmitNumber);
 						Field.setValue($("VipFlag"), visitDetail.VipIndicator ? "Yes" : "No");
-						Field.setValue($("AttendingMD"), visitDetail.ExtendedProperties.AttendingMD);
+						Field.setValue($("AttendingMD"), visitDetail.ExtendedProperties ? visitDetail.ExtendedProperties.AttendingMD : null);
 						
 						var ambulatoryStatuses = String.combine(visitDetail.AmbulatoryStatuses.map(function(status) { return status.Value; }), ", ");
 						Field.setValue($("AmbulatoryStatuses"), ambulatoryStatuses);
