@@ -44,10 +44,8 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("apply", "global-menus/Patient/Reconcile", "Reconcile")]
-    //[ButtonAction("apply", "global-toolbars/Patient/Reconcile", "Reconcile")]
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Reconcile", "Reconcile")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Reconcile", "Reconcile")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Reconcile Patients", "Reconcile")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Reconcile Patients", "Reconcile")]
     [Tooltip("apply", "Reconcile patient profiles")]
 	[IconSet("apply", IconScheme.Colour, "Icons.ReconcilePatientToolSmall.png", "Icons.ReconcilePatientToolMedium.png", "Icons.ReconcilePatientToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]

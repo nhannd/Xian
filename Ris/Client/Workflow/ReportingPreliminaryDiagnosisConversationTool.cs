@@ -5,7 +5,7 @@ using ClearCanvas.Ris.Client.Workflow.Folders;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class ReportingMainWorkflowConversationTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
+	public class ReportingPreliminaryDiagnosisTool : PreliminaryDiagnosisConversationTool<ReportingWorklistItem, IReportingWorkflowItemToolContext>
 	{
 	}
 }

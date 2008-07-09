@@ -54,8 +54,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Resubmit", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Resolve Protocol - Resubmit", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Re-submit for Protocol", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Re-submit for Protocol", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
@@ -81,8 +81,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
     }
 
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Resolve Protocol - Cancel Order", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Resolve Protocol - Cancel Order", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/REMOVE ME", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/REMOVE ME", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]

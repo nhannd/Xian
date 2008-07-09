@@ -44,7 +44,6 @@ using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("view", "global-menus/Patient/View Biography...", "View")]
     [ButtonAction("view", "folderexplorer-items-toolbar/Patient Biography", "View")]
     [MenuAction("view", "folderexplorer-items-contextmenu/Patient Biography", "View")]
     [ButtonAction("view", "patientsearch-items-toolbar/Patient Biography", "View")]

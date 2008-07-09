@@ -44,7 +44,8 @@ using ClearCanvas.Ris.Application.Common.Remoting;
 
 namespace RemotingClient
 {
-	[MenuAction("apply", "global-menus/Test/Remoting Service", "Apply")]
+	//JR: this tool was only used to test a potential .NET remoting solution
+	//[MenuAction("apply", "global-menus/Test/Remoting Service", "Apply")]
 	[Tooltip("apply", "Place tooltip text here")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EchoToolSmall.png", "Icons.EchoToolMedium.png", "Icons.EchoToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]

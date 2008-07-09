@@ -12,7 +12,8 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/UI Validation", "Launch")]
+	//JR: don't really need this because you can access validation from the live component directly
+    //[MenuAction("launch", "global-menus/Admin/UI Validation", "Launch")]
 	[ActionPermission("launch", AuthorityTokens.Admin.System.UIValidationRules)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ValidationManagementTool : Tool<IDesktopToolContext>

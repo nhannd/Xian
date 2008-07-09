@@ -44,7 +44,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("neworder", "folderexplorer-items-contextmenu/New Order", "NewOrder")]
     [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order", "NewOrder")]
-    [MenuAction("neworder", "global-menus/Orders/New", "NewOrder")]
     [ButtonAction("neworder", "patientsearch-items-toolbar/New Order", "NewOrder")]
     [MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
     [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]

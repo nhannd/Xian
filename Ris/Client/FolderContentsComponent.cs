@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client
             get
             {
                 return _folderSystem == null || _folderSystem.ItemTools == null ? null
-                    : ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
+					: ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-contextmenu", _folderSystem.ItemTools.Actions);
             }
         }
 
@@ -220,7 +220,7 @@ namespace ClearCanvas.Ris.Client
             get
             {
                 return _folderSystem == null || _folderSystem.ItemTools == null ? null
-                    : ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-toolbar", _folderSystem.ItemTools.Actions);
+					: ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-items-toolbar", _folderSystem.ItemTools.Actions);
             }
         }
 

@@ -39,8 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("launch", "global-menus/Patient/Search Patient", "Launch")]
-	//[ButtonAction("launch", "global-toolbars/Patient/Search Patient", "Launch")]
+	[MenuAction("launch", "global-menus/Go/Patient Search", "Launch")]
 	[Tooltip("launch", "Search Patient")]
 	[IconSet("launch", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]

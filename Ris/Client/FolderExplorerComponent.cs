@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
+				return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
             }
         }
 
