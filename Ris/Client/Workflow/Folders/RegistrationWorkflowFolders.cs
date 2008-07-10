@@ -80,13 +80,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.RegistrationSuspendedProtocolWorklist)]
-		[FolderPath("Suspended Protocol")]
-		public class SuspendedProtocolFolder : RegistrationWorkflowFolder
-		{
-		}
-
-		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
 		[FolderPath("Rejected Protocol")]
 		public class RejectedProtocolFolder : RegistrationWorkflowFolder

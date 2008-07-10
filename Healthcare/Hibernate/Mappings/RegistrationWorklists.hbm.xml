@@ -13,7 +13,6 @@
   <subclass name="RegistrationCompletedWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_COMPLETED"/>
   <subclass name="RegistrationToBeScheduledWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_UNSCHEDULED"/>
   <subclass name="RegistrationCompletedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_COMPLETED"/>
-  <subclass name="RegistrationSuspendedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_SUSPENDED"/>
   <subclass name="RegistrationRejectedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_REJECTED"/>
   <subclass name="RegistrationPendingProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_PENDING"/>
   <subclass name="RegistrationAsapPendingProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_ASAP_PENDING"/>

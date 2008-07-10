@@ -52,6 +52,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_component = component;
 
+			_procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
+			_procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
+			_component.SelectedProcedureChanged += RefreshTables;
+
 			_urgency.DataSource = _component.UrgencyChoices;
 			_urgency.DataBindings.Add("Value", _component, "Urgency", true, DataSourceUpdateMode.OnPropertyChanged);
 			_urgency.DataBindings.Add("Enabled", _component, "CanEdit", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -63,10 +67,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_protocolGroup.DataBindings.Add("Value", _component, "ProtocolGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSetDefault.DataBindings.Add("Enabled", _component, "SetDefaultProtocolGroupEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_component.PropertyChanged += _component_PropertyChanged;
-
-			_procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
-			_procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
-			_component.SelectedProcedureChanged += RefreshTables;
 
 			_protocolCodesSelector.ShowToolbars = false;
 			_protocolCodesSelector.ShowColumnHeading = false;

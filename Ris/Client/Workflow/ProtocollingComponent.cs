@@ -120,7 +120,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _acceptEnabled;
 		private bool _submitForApprovalEnabled;
 		private bool _rejectEnabled;
-		private bool _suspendEnabled;
 		private bool _saveEnabled;
 
 		#endregion
@@ -338,7 +337,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				EnumValueInfo reason;
 				string additionalComments;
 
-				bool result = GetRejectOrSuspendReason("Reject Reason", out reason, out additionalComments);
+				bool result = GetSuspendReason("Reject Reason", out reason, out additionalComments);
 
 				if (!result || reason == null)
 					return;
@@ -368,50 +367,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool RejectEnabled
 		{
 			get { return _rejectEnabled; }
-		}
-
-		#endregion
-
-		#region Suspend
-
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
-		public void Suspend()
-		{
-			try
-			{
-				EnumValueInfo reason;
-				string additionalComments;
-
-				bool result = GetRejectOrSuspendReason("Suspend Reason", out reason, out additionalComments);
-
-				if (!result || reason == null)
-					return;
-
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.SuspendOrderProtocol(new SuspendOrderProtocolRequest(
-							_orderRef,
-							this.ProtocolDetails,
-							_notes,
-							reason,
-							CreateAdditionalCommentsNote(additionalComments)));
-					});
-
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.SuspendedProtocolFolder));
-				InvalidateSourceFolders();
-
-				BeginNextWorklistItemOrExit();
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
-
-		public bool SuspendEnabled
-		{
-			get { return _suspendEnabled; }
 		}
 
 		#endregion
@@ -638,7 +593,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 							service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
 
 						_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptOrderProtocol"];
-						_suspendEnabled = enablementResponse.OperationEnablementDictionary["SuspendOrderProtocol"];
 						_rejectEnabled = enablementResponse.OperationEnablementDictionary["RejectOrderProtocol"];
 						_submitForApprovalEnabled = enablementResponse.OperationEnablementDictionary["SubmitProtocolForApproval"];
 						_saveEnabled = enablementResponse.OperationEnablementDictionary["SaveOrderProtocol"];
@@ -667,7 +621,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			NotifyPropertyChanged("StatusText");
 		}
 
-		private bool GetRejectOrSuspendReason(string title, out EnumValueInfo reason, out string additionalComments)
+		private bool GetSuspendReason(string title, out EnumValueInfo reason, out string additionalComments)
 		{
 			ProtocolReasonComponent component = new ProtocolReasonComponent();
 

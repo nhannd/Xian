@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Procedure.CheckIn,
                         AuthorityTokens.Workflow.Protocol.Accept,
                         AuthorityTokens.Workflow.Protocol.Create,
-                        AuthorityTokens.Workflow.Protocol.Resolve,
+                        AuthorityTokens.Workflow.Protocol.Resubmit,
                         AuthorityTokens.Workflow.Documentation.Create,
                         AuthorityTokens.Workflow.Documentation.Accept,
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Order.Cancel,
                         AuthorityTokens.Workflow.Order.Replace,
                         AuthorityTokens.Workflow.Procedure.CheckIn,
-                        AuthorityTokens.Workflow.Protocol.Resolve,
+                        AuthorityTokens.Workflow.Protocol.Resubmit,
                         AuthorityTokens.Workflow.ExternalPractitioner.Create,
                         AuthorityTokens.Workflow.ExternalPractitioner.Update,
 

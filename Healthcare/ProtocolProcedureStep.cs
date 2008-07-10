@@ -29,8 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Workflow;
-
 namespace ClearCanvas.Healthcare
 {
     public class ProtocolProcedureStep : ProcedureStep
@@ -76,15 +74,5 @@ namespace ClearCanvas.Healthcare
         }
 
         #endregion
-
-        public override void Suspend()
-        {
-            if(this.State == ActivityStatus.SU && this.Protocol.Status == ProtocolStatus.SU)
-            {
-                // Assume Suspended to Rejected transition, which is okay
-                return;
-            }
-            base.Suspend();
-        }
     }
 }

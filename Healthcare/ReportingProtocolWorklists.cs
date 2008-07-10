@@ -100,23 +100,23 @@ namespace ClearCanvas.Healthcare
 		}
 	}
 
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(false)]
-	[StaticWorklist(true)]
-	[WorklistClassDescription("ReportingSuspendedProtocolWorklistDescription")]
-	public class ReportingSuspendedProtocolWorklist : ProtocolingWorklist
-	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
-		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
-			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-			criteria.Protocol.Author.EqualTo(wqc.Staff);
-			criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems);
-			return new WorklistItemSearchCriteria[] { criteria };
-		}
-	}
+	//[ExtensionOf(typeof(WorklistExtensionPoint))]
+	//[WorklistSupportsTimeFilter(false)]
+	//[StaticWorklist(true)]
+	//[WorklistClassDescription("ReportingSuspendedProtocolWorklistDescription")]
+	//public class ReportingSuspendedProtocolWorklist : ProtocolingWorklist
+	//{
+	//    public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+	//    {
+	//        ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+	//        criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
+	//        criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
+	//        criteria.Protocol.Author.EqualTo(wqc.Staff);
+	//        criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
+	//        ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems);
+	//        return new WorklistItemSearchCriteria[] { criteria };
+	//    }
+	//}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
 	[WorklistSupportsTimeFilter(false)]

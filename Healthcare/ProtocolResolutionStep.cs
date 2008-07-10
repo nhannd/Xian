@@ -52,10 +52,5 @@ namespace ClearCanvas.Healthcare {
         {
             get { return this.Protocol.Status == ProtocolStatus.RJ; }
         }
-
-        public bool ShouldResubmit
-        {
-            get { return this.Protocol.Status == ProtocolStatus.SU; }
-        }
 	}
 }

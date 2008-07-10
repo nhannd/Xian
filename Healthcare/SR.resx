@@ -300,12 +300,6 @@
   <data name="RegistrationScheduledWorklistDescription" xml:space="preserve">
     <value>Lists scheduled procedures.</value>
   </data>
-  <data name="RegistrationSuspendedProtocolWorklist" xml:space="preserve">
-    <value>Suspended Protocol</value>
-  </data>
-  <data name="RegistrationSuspendedProtocolWorklistDescription" xml:space="preserve">
-    <value>Lists procedures that have been suspended by the protocoling radiologist.</value>
-  </data>
   <data name="RegistrationToBeScheduledWorklist" xml:space="preserve">
     <value>To be Scheduled</value>
   </data>

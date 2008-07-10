@@ -214,32 +214,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 			}
 		}
 
-		public class SuspendProtocolOperation : ProtocollingOperation
-		{
-			public void Execute(Order order, ProtocolSuspendRejectReasonEnum reason)
-			{
-				foreach (Procedure rp in order.Procedures)
-				{
-					ProtocolAssignmentStep assignmentStep = InprogressProcedureStep<ProtocolAssignmentStep>(rp);
-
-					if (assignmentStep != null)
-					{
-						assignmentStep.Discontinue();
-						assignmentStep.Protocol.Suspend(reason);
-
-						ProtocolResolutionStep resolutionStep = new ProtocolResolutionStep(assignmentStep.Protocol);
-						rp.AddProcedureStep(resolutionStep);
-					}
-				}
-			}
-
-			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
-			{
-				return step.State == ActivityStatus.IP;
-			}
-		}
-
-		public class ResolveProtocolOperation : ProtocollingOperation
+		public class ResubmitProtocolOperation : ProtocollingOperation
 		{
 			public void Execute(Order order, Staff resolvingStaff)
 			{
@@ -265,48 +240,12 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 					if (resolutionStep != null)
 					{
-						if (resolutionStep.State == ActivityStatus.SC && resolutionStep.Protocol.Status == ProtocolStatus.SU)
+						if (resolutionStep.State == ActivityStatus.SC)
 							return true;
 					}
 				}
 
 				return false;
-				//return step.State == ActivityStatus.SC && step.Protocol.Status == ProtocolStatus.SU;
-			}
-		}
-
-		public class ResolveAsCancelledProtocolOperation : ProtocollingOperation
-		{
-			public void Execute(Order order, Staff cancellingStaff, OrderCancelReasonEnum reason)
-			{
-				foreach (Procedure rp in order.Procedures)
-				{
-					ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
-
-					if (resolutionStep != null)
-					{
-						resolutionStep.Complete(cancellingStaff);
-					}
-				}
-
-				order.Cancel(new OrderCancelInfo(reason, cancellingStaff));
-			}
-
-			public override bool CanExecute(Order order, Staff currentUserStaff)
-			{
-				foreach (Procedure rp in order.Procedures)
-				{
-					ProtocolResolutionStep resolutionStep = ScheduledProcedureStep<ProtocolResolutionStep>(rp);
-
-					if (resolutionStep != null)
-					{
-						if (resolutionStep.State == ActivityStatus.SC && resolutionStep.Protocol.Status == ProtocolStatus.RJ)
-							return true;
-					}
-				}
-
-				return false;
-				//return step.State == ActivityStatus.SU && step.Protocol.Status == ProtocolStatus.RJ;
 			}
 		}
 

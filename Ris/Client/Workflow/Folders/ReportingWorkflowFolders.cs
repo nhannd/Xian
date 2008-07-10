@@ -141,12 +141,6 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingSuspendedProtocolWorklist)]
-		[FolderPath("Suspended")]
-		public class SuspendedProtocolFolder : ReportingWorkflowFolder
-		{
-		}
-
 		[FolderForWorklistClass(WorklistClassNames.ReportingRejectedProtocolWorklist)]
 		[FolderPath("Rejected")]
 		public class RejectedProtocolFolder : ReportingWorkflowFolder

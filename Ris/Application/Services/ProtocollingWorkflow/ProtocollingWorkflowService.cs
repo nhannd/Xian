@@ -30,7 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
@@ -42,8 +41,6 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Protocolling;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
@@ -242,27 +239,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
-		[OperationEnablement("CanSuspendOrderProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
-		public SuspendOrderProtocolResponse SuspendOrderProtocol(SuspendOrderProtocolRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			ProtocolSuspendRejectReasonEnum reason =
-				EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.SuspendReason, this.PersistenceContext);
-
-			ProtocollingOperations.SuspendProtocolOperation op = new ProtocollingOperations.SuspendProtocolOperation();
-			op.Execute(order, reason);
-
-			UpdateProtocols(request.Protocols);
-			UpdateOrderNotes(order, request.OrderNotes);
-			AddAdditionalCommentsNote(request.AdditionalCommentsNote, order);
-
-			this.PersistenceContext.SynchState();
-
-			return new SuspendOrderProtocolResponse();
-		}
-
-		[UpdateOperation]
 		[OperationEnablement("CanSaveProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SaveProtocolResponse SaveOrderProtocol(SaveProtocolRequest request)
@@ -277,35 +253,17 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanResubmitProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resolve)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resubmit)]
 		public ResubmitProtocolResponse ResubmitProtocol(ResubmitProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
-			ProtocollingOperations.ResolveProtocolOperation op = new ProtocollingOperations.ResolveProtocolOperation();
+			ProtocollingOperations.ResubmitProtocolOperation op = new ProtocollingOperations.ResubmitProtocolOperation();
 			op.Execute(order, this.CurrentUserStaff);
 
 			this.PersistenceContext.SynchState();
 
 			return new ResubmitProtocolResponse();
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanCancelOrderAndProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Resolve)]
-		public CancelProtocolAndOrderResponse CancelProtocolAndOrder(CancelProtocolAndOrderRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			EnumValueInfo reasonInfo =
-				CollectionUtils.FirstElement<EnumValueInfo>(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(this.PersistenceContext));
-			OrderCancelReasonEnum reason = reasonInfo == null ? null : EnumUtils.GetEnumValue<OrderCancelReasonEnum>(reasonInfo, this.PersistenceContext);
-
-			ProtocollingOperations.ResolveAsCancelledProtocolOperation op = new ProtocollingOperations.ResolveAsCancelledProtocolOperation();
-			op.Execute(order, this.CurrentUserStaff, reason);
-
-			this.PersistenceContext.SynchState();
-			
-			return new CancelProtocolAndOrderResponse();
 		}
 
 		[UpdateOperation]
@@ -358,13 +316,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.RejectProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
-		public bool CanSuspendOrderProtocol(ProtocolOperationEnablementContext enablementContext)
-		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
-				return false;
-			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.SuspendProtocolOperation(), enablementContext.ProcedureStepRef);
-		}
-
 		public bool CanSaveProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
@@ -383,16 +334,9 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		public bool CanResubmitProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Resolve))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Resubmit))
 				return false;
-			return CanExecuteOperation(new ProtocollingOperations.ResolveProtocolOperation(), enablementContext.OrderRef);
-		}
-
-		public bool CanCancelOrderAndProtocol(ProtocolOperationEnablementContext enablementContext)
-		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Resolve))
-				return false;
-			return CanExecuteOperation(new ProtocollingOperations.ResolveAsCancelledProtocolOperation(), enablementContext.OrderRef);
+			return CanExecuteOperation(new ProtocollingOperations.ResubmitProtocolOperation(), enablementContext.OrderRef);
 		}
 
 		public bool CanSubmitProtocolForApproval(ProtocolOperationEnablementContext enablementContext)

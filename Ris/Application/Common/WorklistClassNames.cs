@@ -56,9 +56,6 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string RegistrationCompletedProtocolWorklist = "RegistrationCompletedProtocolWorklist";
 
 		[WorklistClassName]
-		public const string RegistrationSuspendedProtocolWorklist = "RegistrationSuspendedProtocolWorklist";
-
-		[WorklistClassName]
 		public const string RegistrationRejectedProtocolWorklist = "RegistrationRejectedProtocolWorklist";
 
 		[WorklistClassName]
@@ -134,9 +131,6 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[WorklistClassName]
 		public const string ReportingCompletedProtocolWorklist = "ReportingCompletedProtocolWorklist";
-
-		[WorklistClassName]
-		public const string ReportingSuspendedProtocolWorklist = "ReportingSuspendedProtocolWorklist";
 
 		[WorklistClassName]
 		public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";

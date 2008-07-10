@@ -191,7 +191,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string Author
 		{
-			get { return PersonNameFormat.Format(_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Author.Name); }
+			get
+			{
+				return _selectedProcodurePlanSummaryTableItem != null 
+					? PersonNameFormat.Format(_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Author.Name)
+					: string.Empty;
+			}
 		}
 
 		public bool ShowAuthor
@@ -253,7 +258,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SetDefaultProtocolGroupEnabled
 		{
-			get { return _defaultProtocolGroupName != _protocolGroup.Name; }
+			get
+			{
+				if (_protocolGroup == null) return false;
+
+				return _defaultProtocolGroupName != _protocolGroup.Name;
+			}
 		}
 
 		public void SetDefaultProtocolGroup()

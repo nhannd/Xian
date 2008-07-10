@@ -86,7 +86,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_btnSubmitForApproval.DataBindings.Add("Visible", _component, "SubmitForApprovalVisible", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnSuspend.DataBindings.Add("Enabled", _component, "SuspendEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
@@ -122,14 +121,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_component.Reject();
-			}
-		}
-
-		private void _btnSuspend_Click(object sender, EventArgs e)
-		{
-			using (new CursorManager(this, Cursors.WaitCursor))
-			{
-				_component.Suspend();
 			}
 		}
 

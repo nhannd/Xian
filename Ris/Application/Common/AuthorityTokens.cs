@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Application.Common
 				public const string Accept = "Workflow/Protocol/Accept";
 
 				[AuthorityToken(Description = "Allow orders that were rejected/suspended by the protocolling radiologist to be cancelled, or re-submitted for protocoling.")]
-				public const string Resolve = "Workflow/Protocol/Resolve";
+				public const string Resubmit = "Workflow/Protocol/Resolve";
 
 				[AuthorityToken(Description = "Allow submission of procedure Protocols to another party.")]
 				public const string SubmitForApproval = "Workflow/Protocol/Submit For Approval";

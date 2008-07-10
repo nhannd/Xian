@@ -71,7 +71,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				this.Folders.Add(new Folders.Reporting.AwaitingApprovalProtocolFolder());
 			}
-			this.Folders.Add(new Folders.Reporting.SuspendedProtocolFolder());
 			this.Folders.Add(new Folders.Reporting.RejectedProtocolFolder());
 		}
 

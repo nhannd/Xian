@@ -36,7 +36,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._btnAccept = new System.Windows.Forms.Button();
 			this._btnSubmitForApproval = new System.Windows.Forms.Button();
 			this._btnReject = new System.Windows.Forms.Button();
-			this._btnSuspend = new System.Windows.Forms.Button();
 			this._btnSave = new System.Windows.Forms.Button();
 			this._btnSkip = new System.Windows.Forms.Button();
 			this._protocolNextItem = new System.Windows.Forms.CheckBox();
@@ -129,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 0);
 			this._protocolEditorPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._protocolEditorPanel.Name = "_protocolEditorPanel";
-			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 549);
+			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 555);
 			this._protocolEditorPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel2
@@ -139,14 +138,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.flowLayoutPanel2.Controls.Add(this._btnAccept);
 			this.flowLayoutPanel2.Controls.Add(this._btnSubmitForApproval);
 			this.flowLayoutPanel2.Controls.Add(this._btnReject);
-			this.flowLayoutPanel2.Controls.Add(this._btnSuspend);
 			this.flowLayoutPanel2.Controls.Add(this._btnSave);
 			this.flowLayoutPanel2.Controls.Add(this._btnSkip);
 			this.flowLayoutPanel2.Controls.Add(this._protocolNextItem);
 			this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 552);
+			this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 558);
 			this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-			this.flowLayoutPanel2.Size = new System.Drawing.Size(469, 58);
+			this.flowLayoutPanel2.Size = new System.Drawing.Size(469, 52);
 			this.flowLayoutPanel2.TabIndex = 1;
 			// 
 			// _btnAccept
@@ -180,19 +178,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._btnReject.UseVisualStyleBackColor = true;
 			this._btnReject.Click += new System.EventHandler(this._btnReject_Click);
 			// 
-			// _btnSuspend
-			// 
-			this._btnSuspend.Location = new System.Drawing.Point(280, 3);
-			this._btnSuspend.Name = "_btnSuspend";
-			this._btnSuspend.Size = new System.Drawing.Size(75, 23);
-			this._btnSuspend.TabIndex = 3;
-			this._btnSuspend.Text = "Suspend";
-			this._btnSuspend.UseVisualStyleBackColor = true;
-			this._btnSuspend.Click += new System.EventHandler(this._btnSuspend_Click);
-			// 
 			// _btnSave
 			// 
-			this._btnSave.Location = new System.Drawing.Point(361, 3);
+			this._btnSave.Location = new System.Drawing.Point(280, 3);
 			this._btnSave.Name = "_btnSave";
 			this._btnSave.Size = new System.Drawing.Size(75, 23);
 			this._btnSave.TabIndex = 4;
@@ -202,7 +190,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _btnSkip
 			// 
-			this._btnSkip.Location = new System.Drawing.Point(3, 32);
+			this._btnSkip.Location = new System.Drawing.Point(361, 3);
 			this._btnSkip.Name = "_btnSkip";
 			this._btnSkip.Size = new System.Drawing.Size(75, 23);
 			this._btnSkip.TabIndex = 5;
@@ -214,9 +202,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._protocolNextItem.AutoSize = true;
 			this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._protocolNextItem.Location = new System.Drawing.Point(84, 32);
+			this._protocolNextItem.Location = new System.Drawing.Point(3, 32);
 			this._protocolNextItem.Name = "_protocolNextItem";
-			this._protocolNextItem.Size = new System.Drawing.Size(119, 23);
+			this._protocolNextItem.Size = new System.Drawing.Size(119, 17);
 			this._protocolNextItem.TabIndex = 6;
 			this._protocolNextItem.Text = "Protocol Next Order";
 			this._protocolNextItem.UseVisualStyleBackColor = true;
@@ -227,9 +215,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel3.Controls.Add(this._btnClose);
 			this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel3.Location = new System.Drawing.Point(478, 552);
+			this.flowLayoutPanel3.Location = new System.Drawing.Point(478, 558);
 			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-			this.flowLayoutPanel3.Size = new System.Drawing.Size(81, 58);
+			this.flowLayoutPanel3.Size = new System.Drawing.Size(81, 52);
 			this.flowLayoutPanel3.TabIndex = 2;
 			// 
 			// _btnClose
@@ -394,7 +382,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _btnAccept;
 		private System.Windows.Forms.Button _btnSubmitForApproval;
 		private System.Windows.Forms.Button _btnReject;
-		private System.Windows.Forms.Button _btnSuspend;
 		private System.Windows.Forms.Button _btnSave;
 		private System.Windows.Forms.Button _btnSkip;
 		private System.Windows.Forms.CheckBox _protocolNextItem;

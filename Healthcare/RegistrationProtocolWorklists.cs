@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Text;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
 
@@ -65,26 +60,6 @@ namespace ClearCanvas.Healthcare
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-            criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
-            return new WorklistItemSearchCriteria[] { criteria };
-        }
-    }
-
-    /// <summary>
-    /// RegistrationSuspendedProtocolWorklist entity
-    /// </summary>
-    [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(false)]
-    [WorklistClassDescription("RegistrationSuspendedProtocolWorklistDescription")]
-    public class RegistrationSuspendedProtocolWorklist : RegistrationProtocolWorklist
-    {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
-        {
-            RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-            criteria.ProcedureStepClass = typeof(ProtocolResolutionStep);
-            criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
-            criteria.Protocol.Status.EqualTo(ProtocolStatus.SU);
             ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
             return new WorklistItemSearchCriteria[] { criteria };
         }

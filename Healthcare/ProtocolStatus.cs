@@ -58,12 +58,6 @@ namespace ClearCanvas.Healthcare {
         RJ,
 
         /// <summary>
-        /// Suspended
-        /// </summary>
-        [EnumValue("Suspended", Description = "Protocol suspended pending further order information")]
-        SU,
-
-        /// <summary>
         /// Awaiting Approval
         /// </summary>
         [EnumValue("Awaiting Approval", Description = "Protocol submitted for approval by resident")]

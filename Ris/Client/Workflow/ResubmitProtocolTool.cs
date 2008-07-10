@@ -38,10 +38,16 @@ using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public abstract class BookingProtocolWorkflowTool : WorkflowItemTool<RegistrationWorklistItem, IWorkflowItemToolContext<RegistrationWorklistItem>>
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Re-submit for Protocol", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Re-submit for Protocol", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resubmit)]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+	public class ResubmitProtocolTool : WorkflowItemTool<RegistrationWorklistItem, IWorkflowItemToolContext<RegistrationWorklistItem>>
 	{
-		protected BookingProtocolWorkflowTool(string operationName)
-			: base(operationName)
+		public ResubmitProtocolTool()
+			: base("ResubmitProtocol")
 		{
 		}
 
@@ -50,21 +56,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 
 			this.Context.RegisterWorkflowService(typeof(IProtocollingWorkflowService));
-		}
-	}
-
-
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Re-submit for Protocol", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Re-submit for Protocol", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class ResubmitProtocolTool : BookingProtocolWorkflowTool
-    {
-		public ResubmitProtocolTool()
-			: base("ResubmitProtocol")
-		{
 		}
 
 		protected override bool Execute(RegistrationWorklistItem item)
@@ -75,35 +66,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					service.ResubmitProtocol(new ResubmitProtocolRequest(item.OrderRef));
 				});
 
-			this.Context.InvalidateFolders(typeof(Folders.Registration.SuspendedProtocolFolder));
-
-			return true;
-		}
-    }
-
-	[MenuAction("apply", "folderexplorer-items-contextmenu/REMOVE ME", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/REMOVE ME", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resolve)]
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-	public class CancelProtocolTool : BookingProtocolWorkflowTool
-    {
-		public CancelProtocolTool()
-			: base("CancelProtocolAndOrder")
-		{
-		}
-
-		protected override bool Execute(RegistrationWorklistItem item)
-		{
-			Platform.GetService<IProtocollingWorkflowService>(
-				delegate(IProtocollingWorkflowService service)
-				{
-					service.CancelProtocolAndOrder(new CancelProtocolAndOrderRequest(item.OrderRef));
-				});
-
 			this.Context.InvalidateFolders(typeof(Folders.Registration.RejectedProtocolFolder));
+
 			return true;
 		}
-    }
+	}
 }

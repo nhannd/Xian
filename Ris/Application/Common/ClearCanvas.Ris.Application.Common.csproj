@@ -488,8 +488,6 @@
     <Compile Include="ProtocollingWorkflow\RejectOrderProtocolResponse.cs" />
     <Compile Include="ProtocollingWorkflow\ResubmitProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\ResubmitProtocolResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\SuspendOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\SuspendOrderProtocolResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
