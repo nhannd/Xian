@@ -16,6 +16,7 @@
 		<script type="text/javascript" src="../../js/layout.js"></script>
 		<script type="text/javascript" src="../../js/collapse.js"></script>
 		<script type="text/javascript" src="../../js/tabs.js"></script>
+		<script type="text/javascript" src="../../js/creatininecalculator.js"></script>
 		<script type="text/javascript" >
 			var data = {};
 			var errorProvider = new ErrorProvider();
@@ -431,27 +432,15 @@
 				creatinineStatusTable.bindItems([data.patientScreening]);
 				Field.show($("creatinineLevelSection"), data.patientScreening.creatinineStatus == "Yes");
 
-				var creatinineStandardFactors = 
-				{
-					"Male": {a:140, b:1.2, c:1.0}, 
-					"Female": {a:140, b:1.2, c:0.85},
-					"Unknown": {a:0, b:0, c:0},
-					"Other": {a:0, b:0, c:0}
-				}
-				
 				var creatinineLevelTable = Table.createTable($("creatinineLevelTable"), { editInPlace: true, flow: true, checkBoxes: true },
 					[
-						{	label: "Level",
-							cellType: "text",
-							getValue: function(item) { return item.level; },
-							setValue: function(item, value) { item.level = parseFloat(value); },
-							getError: function(item) { return null; }
-						},
 						{
 							label:"Sex",
 							cellType: "readonly",
 							getValue: function(item) { return item.sex = item.sex || _creatinineSex; },
-							getError: function(item) { return null; }
+							getError: function(item) { return null; },
+							setValue: function(item) { return; },
+							getVisible: function(item) { return false; }
 						},
 						{	label: "Age (yrs)",
 							cellType: "readonly",
@@ -460,7 +449,10 @@
 								item.age = item.age || _creatinineAge; 
 								return item.age.toFixed(0); 
 							},
-							getError: function(item) { return null; }
+							getError: function(item) { return null; },
+							setValue: function(item) { return; },
+							getVisible: function(item) { return false; }
+
 						},
 						{	label: "Weight (kg)",
 							cellType: "readonly",
@@ -469,18 +461,17 @@
 								item.weight = item.weight || 
 									((data.vitals.weightUnit == "kg") ? parseFloat(data.vitals.weightValue) : parseFloat(data.vitals.weightValue) * 0.45359237) || 0; 
 								return item.weight.toFixed(0); 
-							}
+							},
+							getError: function(item) { return null; },
+							setValue: function(item) { return; },
+							getVisible: function(item) { return false; }
+
 						},
-						{	label: "Clearance",
-							cellType: "readonly",
-							getValue: function(item) 
-							{ 
-								if (!item.level)
-									item.clearance = 0;
-								else
-									item.clearance = ((creatinineStandardFactors[item.sex]["a"] - item.age) * creatinineStandardFactors[item.sex]["b"] * item.weight) / item.level * creatinineStandardFactors[item.sex]["c"];
-								return item.clearance.toFixed(2);
-							}
+						{	label: "Level",
+							cellType: "text",
+							getValue: function(item) { return item.level; },
+							setValue: function(item, value) { item.level = parseFloat(value); },
+							getError: function(item) { return null; }
 						},
 						{	label: "Staff",
 							cellType: "lookup",
@@ -494,6 +485,29 @@
 							 getValue: function(item) { return item.date; },
 							 setValue: function(item, value) { item.date = value; },
 							 getError: function(item) { return null; }
+						},
+						{	label: "Clearance",
+							cellType: "readonly",
+							getValue: function(item) 
+							{ 
+								try
+								{
+									item.clearance = CreatinineCalculator.calculateClearance(item.age, item.weight, item.sex, item.level);
+									return item.clearance.toFixed(2);
+								}
+								catch(e)
+								{
+									return e;
+								}
+							}
+						},
+						{	label:"Parameters",
+							cellType: "readonly",
+							getValue: function(item)
+							{
+								return item.sex + ", " + item.age + "-year-old , " + item.weight + " kg";
+							}
+							
 						}
 					]);
 				creatinineLevelTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
