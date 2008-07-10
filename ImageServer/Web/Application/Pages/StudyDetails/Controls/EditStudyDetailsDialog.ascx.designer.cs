@@ -308,6 +308,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         protected global::System.Web.UI.WebControls.LinkButton ClearPatientBirthDateButton;
         
         /// <summary>
+        /// PatientBirthDateHelp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator PatientBirthDateHelp;
+        
+        /// <summary>
+        /// RegularExpressionFieldValidator19 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator19;
+        
+        /// <summary>
         /// Label3 control.
         /// </summary>
         /// <remarks>

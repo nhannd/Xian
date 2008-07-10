@@ -86,6 +86,7 @@
     </Compile>
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
+    <Compile Include="WebControls\Validators\DateValidator.cs" />
     <Compile Include="WebControls\Validators\RangeComparisonValidator.cs" />
     <Compile Include="WebControls\Validators\FilesystemPathValidator.cs" />
     <Compile Include="WebControls\Validators\IInvalidInputIndicator.cs" />
@@ -170,6 +171,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="WebControls\UI\ToolbarButton.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="WebControls\Validators\DateValidator.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
