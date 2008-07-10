@@ -90,9 +90,9 @@ function getDescriptiveTime(dateTime)
 	}
 }
 
-function createImagingRequestsTable(htmlTable)
+function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccessionNumber)
 {
-	var ordersTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
 			{   label: "Procedure",
 				cellType: "text",
@@ -154,12 +154,17 @@ function createImagingRequestsTable(htmlTable)
 			}
 		 ]);
 		 
-	ordersTable.rowCycleClassNames = ["row1", "row0"];
-	
-	return ordersTable;
+	htmlTable.renderRow = function(sender, args)
+	{
+		if(args.item.AccessionNumber == highlightAccessionNumber)
+			args.htmlRow.className = "highlight";
+	};
+		 
+	htmlTable.rowCycleClassNames = ["row1", "row0"];
+	htmlTable.bindItems(patientOrderData);
 }
 
-function createDiagnosticServiceBreakdownTable(htmlTable)
+function createDiagnosticServiceBreakdownTable(htmlTable, breakdownItems)
 {
 	var dsTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
@@ -188,7 +193,7 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 			args.htmlRow.className = "highlight";
 	};
 	
-	return dsTable;
+	dsTable.bindItems(breakdownItems);
 }
 
 function createProceduresTable(htmlTable, procedures)

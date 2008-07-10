@@ -84,37 +84,14 @@
 						var currentAccession = worklistItem.AccessionNumber;
 						
                         if (activeProcedures.length == 0)
-                        {
                             Field.show($("activeProceduresTable"), false);
-                        }
                         else
-                        {
-                            var activeProceduresTable = createImagingRequestsTable($("activeProceduresTable"));
-                            activeProceduresTable.renderRow = function(sender, args)
-                            {
-                                if(args.item.AccessionNumber == currentAccession)
-                                    args.htmlRow.className = "highlight";
-                            };
-							
-                            activeProceduresTable.bindItems(activeProcedures);
-    	                }
+                            createImagingRequestsTable($("activeProceduresTable"), activeProcedures, currentAccession);
 	                
                         if (pastProcedures.length == 0)
-                        {
                             Field.show($("pastProceduresTable"), false);
-                        }
                         else
-                        {
-                            var pastProceduresTable = createImagingRequestsTable($("pastProceduresTable"));
-
-                            pastProceduresTable.renderRow = function(sender, args)
-                            {
-                                if(args.item.AccessionNumber == currentAccession)
-                                    args.htmlRow.className = "highlight";
-                            };
-
-                            pastProceduresTable.bindItems(pastProcedures);
-    	                }
+                            createImagingRequestsTable($("pastProceduresTable"), pastProcedures, currentAccession);
 		            }
 	            }
 	            catch(e)
