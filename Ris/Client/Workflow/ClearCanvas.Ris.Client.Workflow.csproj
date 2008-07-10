@@ -54,7 +54,6 @@
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="ITechnologistDocumentationPage.cs" />
-    <Compile Include="JscriptComponent.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="ModifyOrderTool.cs" />
     <Compile Include="NewOrderTool.cs" />

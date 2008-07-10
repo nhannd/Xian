@@ -56,13 +56,6 @@
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentView.cs" />
-    <Compile Include="JscriptComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="JscriptComponentControl.Designer.cs">
-      <DependentUpon>JscriptComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="JscriptComponentView.cs" />
     <Compile Include="LinkedInterpretationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -228,10 +221,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Folders\FolderOptionComponentControl.resx">
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="JscriptComponentControl.resx">
-      <DependentUpon>JscriptComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="OrderEditorComponentControl.resx">
