@@ -306,7 +306,8 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         protected override void CloseNetwork()
         {
-            lock (this)
+			ShutdownNetworkThread();
+			lock (this)
             {
                 if (_network != null)
                 {
@@ -325,7 +326,6 @@ namespace ClearCanvas.Dicom.Network
                     _closedEvent.Set();
                 }
             }
-            ShutdownNetworkThread();
         }
 
         private void OnClientConnected()
