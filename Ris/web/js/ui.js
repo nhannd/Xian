@@ -596,7 +596,7 @@ var Table = {
 					{
 						// any manual edit clears the underlying item
 						column.setValue(obj, null);
-						table._onCeljlUpdate(row, col);
+						table._onCellUpdate(row, col);
 					}
 				}				
 				
