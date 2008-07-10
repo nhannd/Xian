@@ -331,7 +331,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ProtocolSuspendRejectReasonEnum.enum.xml" />
+    <EmbeddedResource Include="ProtocolRejectReasonEnum.enum.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="InsuranceAuthorityEnum.enum.xml" />

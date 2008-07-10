@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public EnumValueInfo Urgency;
 
 		[DataMember]
-		public EnumValueInfo SuspendRejectReason;
+		public EnumValueInfo RejectReason;
 
 		[DataMember]
 		public List<ProtocolCodeDetail> Codes;

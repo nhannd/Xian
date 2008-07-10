@@ -191,7 +191,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class RejectProtocolOperation : ProtocollingOperation
 		{
-			public void Execute(Order order, ProtocolSuspendRejectReasonEnum reason)
+			public void Execute(Order order, ProtocolRejectReasonEnum reason)
 			{
 				foreach (Procedure rp in order.Procedures)
 				{

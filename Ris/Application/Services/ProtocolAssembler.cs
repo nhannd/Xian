@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -49,6 +47,7 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.Author = protocol.Author != null ? new StaffAssembler().CreateStaffSummary(protocol.Author, context) : null;
 			detail.Status = EnumUtils.GetEnumValueInfo(protocol.Status, context);
 			detail.Urgency = EnumUtils.GetEnumValueInfo(protocol.Urgency);
+			detail.RejectReason = EnumUtils.GetEnumValueInfo(protocol.RejectReason);
 
 			detail.Codes = protocol.Codes == null
 				? new List<ProtocolCodeDetail>()

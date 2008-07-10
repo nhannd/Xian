@@ -206,7 +206,17 @@ function createProceduresTable(htmlTable, procedures)
 			},
 			{   label: "Protocol Status",
 				cellType: "html",
-				getValue: function(item) { return item.Protocol ? item.Protocol.Status.Value : "Not Protocolled"; }
+				getValue: function(item) 
+				{ 
+					if(!item.Protocol) return "Not Protocolled";
+					
+					var status = item.Protocol.Status.Value;
+					if(item.Protocol.Status.Code == "RJ")
+					{
+						status = status + " - "+ item.Protocol.RejectReason.Value;
+					}
+					return status; 
+				}
 			},
 			{   label: "Protocol Codes",
 				cellType: "html",

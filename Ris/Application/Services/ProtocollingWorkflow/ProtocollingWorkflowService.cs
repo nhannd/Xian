@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[ReadOperation]
 		public GetSuspendRejectReasonChoicesResponse GetSuspendRejectReasonChoices(GetSuspendRejectReasonChoicesRequest request)
 		{
-			List<EnumValueInfo> choices = EnumUtils.GetEnumValueList<ProtocolSuspendRejectReasonEnum>(this.PersistenceContext);
+			List<EnumValueInfo> choices = EnumUtils.GetEnumValueList<ProtocolRejectReasonEnum>(this.PersistenceContext);
 			return new GetSuspendRejectReasonChoicesResponse(choices);
 		}
 
@@ -223,8 +223,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		public RejectOrderProtocolResponse RejectOrderProtocol(RejectOrderProtocolRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			ProtocolSuspendRejectReasonEnum reason =
-				EnumUtils.GetEnumValue<ProtocolSuspendRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
+			ProtocolRejectReasonEnum reason =
+				EnumUtils.GetEnumValue<ProtocolRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
 
 			ProtocollingOperations.RejectProtocolOperation op = new ProtocollingOperations.RejectProtocolOperation();
 			op.Execute(order, reason);

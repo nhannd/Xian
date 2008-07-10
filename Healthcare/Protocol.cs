@@ -54,15 +54,16 @@ namespace ClearCanvas.Healthcare
 			_status = ProtocolStatus.PR;
 		}
 
-		public virtual void Reject(ProtocolSuspendRejectReasonEnum reason)
+		public virtual void Reject(ProtocolRejectReasonEnum reason)
 		{
 			_status = ProtocolStatus.RJ;
-			_suspendRejectReason = reason;
+			_rejectReason = reason;
 		}
 
 		public virtual void Resolve()
 		{
 			_status = ProtocolStatus.PN;
+			_rejectReason = null;
 		}
 
 		public virtual void SubmitForApproval()
