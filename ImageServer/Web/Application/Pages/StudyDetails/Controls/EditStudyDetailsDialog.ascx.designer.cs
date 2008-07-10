@@ -317,13 +317,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator PatientBirthDateHelp;
         
         /// <summary>
-        /// RegularExpressionFieldValidator19 control.
+        /// DateValidator19 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator19;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DateValidator DateValidator19;
         
         /// <summary>
         /// Label3 control.
@@ -342,6 +342,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox PatientAge;
+        
+        /// <summary>
+        /// PatientAgeHelp control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator PatientAgeHelp;
+        
+        /// <summary>
+        /// PatientAgeValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator PatientAgeValidator;
         
         /// <summary>
         /// PatientBirthDateCalendarExtender control.

@@ -102,8 +102,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             }
             else
             {
-                PatientBirthDate.Text = App_GlobalResources.SR.Unknown;
-                PatientAge.Text = App_GlobalResources.SR.Unknown;
+                PatientBirthDate.Text = string.Empty;
+                PatientAge.Text = string.Empty;
             }
 
             PatientGender.SelectedIndex = PatientGender.Items.IndexOf(new ListItem(study.PatientsSex));

@@ -83,7 +83,7 @@
                                                 <asp:ListItem Text="Other" Value="O" />
                                             </asp:DropDownList>
                                         </td>
-                                        <td>
+                                        <td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientGenderHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator15" runat="server" ControlToValidate="PatientGender"
@@ -98,17 +98,35 @@
                             <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" Text="Date of Birth" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
-                                    <asp:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" ReadOnly="true" ></asp:TextBox><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
-                                    <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
+                                    <table cellpadding="0" cellspacing="0">
+                                        <tr><td>
+                                        <asp:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" ReadOnly="true" ></asp:TextBox><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                        </td><td valign="bottom">
+                                            <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:DateValidator
-                                                        ID="RegularExpressionFieldValidator19" runat="server" ControlToValidate="PatientBirthDate"
+                                                        ID="DateValidator19" runat="server" ControlToValidate="PatientBirthDate"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientBirthDateHelp"
                                                         ErrorMessage="The Patient Birth Date cannot be in the future." Display="None">
                                             </ccValidator:DateValidator>
+                                        </td></tr>
+                                    </table>
                                 </td>
                             <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" Text="Age" CssClass="DialogTextBoxLabel" ReadOnly="true"/></td>
-                                <td><asp:TextBox ID="PatientAge" runat="server" CausesValidation="true" CssClass="DialogTextBox"></asp:TextBox></td>
+                                <td>
+                                    <table cellpadding="0" cellspacing="0">
+                                        <tr><td>
+                                        <asp:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox"></asp:TextBox>
+                                        </td><td valign="bottom">
+                                            <ccAsp:InvalidInputIndicator ID="PatientAgeHelp" runat="server" SkinID="InvalidInputIndicator" />
+                                            <ccValidator:RegularExpressionFieldValidator
+                                                        ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientAgeHelp"
+                                                        ValidationExpression="^[^-]" ErrorMessage="Patient Age may not be negative" IgnoreEmptyValue="true" Display="None">
+                                            </ccValidator:RegularExpressionFieldValidator>
+                                        </td></tr>
+                                    </table>
+                                </td>
                             </tr>
                         </table>
                         <aspAjax:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" OnClientDateSelectionChanged="changeAge" 
@@ -216,7 +234,7 @@
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator16" runat="server" ControlToValidate="StudyTimeHours"
                                             InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
-                                            ValidationExpression="^([1-9]|1[0-2])$" IgnoreEmptyValue="true" ErrorMessage="Invalid Study Time" Display="None">
+                                            ValidationExpression="^(0*[1-9]|1[0-2])$" IgnoreEmptyValue="true" ErrorMessage="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator17" runat="server" ControlToValidate="StudyTimeMinutes"

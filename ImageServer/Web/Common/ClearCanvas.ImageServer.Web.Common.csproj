@@ -173,7 +173,7 @@
     <EmbeddedResource Include="WebControls\UI\ToolbarButton.js" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebControls\Validators\DateValidator.js" />
+    <EmbeddedResource Include="WebControls\Validators\DateValidator.js" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

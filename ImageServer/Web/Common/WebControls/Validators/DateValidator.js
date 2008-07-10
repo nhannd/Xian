@@ -25,6 +25,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
 // This function is called to evaluate the input
 @@CLIENTID@@_ClientSideEvaluator.prototype.OnEvaluate = function()
 {
+        
         result = BaseClientValidator.prototype.OnEvaluate.call(this);
     
         if (result.OK==false)
@@ -39,8 +40,10 @@ function @@CLIENTID@@_ClientSideEvaluator()
         else 
         {
             var today = new Date();
+            
             var date = new Date(this.input.value);
-            if(today.getMilliseconds() - date.getMilliseconds() < 0)
+
+            if(today.getTime() - date.getTime() < 0)
                 result.OK = false;
         }
     
@@ -52,31 +55,8 @@ function @@CLIENTID@@_ClientSideEvaluator()
             }
             else
                 result.Message = '@@ERROR_MESSAGE@@';
-            
         }
         
         return  result;
-        
-
 };
-
-@@CLIENTID@@_ClientSideEvaluator.prototype.OnValidationPassed = function()
-{
-    //alert('Length validator: input is valid');
-    BaseClientValidator.prototype.OnValidationPassed.call(this);
-}
-
-@@CLIENTID@@_ClientSideEvaluator.prototype.OnValidationFailed = function(error)
-{
-    //alert('Length validator: input is valid : ' + error);
-    BaseClientValidator.prototype.OnValidationFailed.call(this, error);
-        
-}
-
-@@CLIENTID@@_ClientSideEvaluator.prototype.SetErrorMessage = function(result)
-{
-    BaseClientValidator.prototype.SetErrorMessage.call(this, result);
-    alert(result.Message);
-}
-
 

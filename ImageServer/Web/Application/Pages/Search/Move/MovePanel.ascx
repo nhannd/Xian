@@ -16,7 +16,7 @@
             <td align="right" valign="bottom">
                 <asp:Panel CssClass="ToolbarButtons" style="padding-right: 1px;" runat="server">
                     <ccUI:ToolbarButton runat="server" SkinID="MoveButton" ID="MoveButton" onClick="MoveButton_Click" />
-                    <ccUI:ToolbarButton runat="server" SkinID="DoneButton" ID="DoneButton" onClientClick="window.location = '../SearchPage.aspx';" />
+                    <ccUI:ToolbarButton runat="server" SkinID="DoneButton" ID="DoneButton" onClientClick="window.location = '../Default.aspx';" />
                 </asp:Panel>
             </td>
         </tr>
@@ -28,7 +28,7 @@
     </table>
   </tr>
 
-  <tr><td><asp:image runat="server" SkinID="Spacer" height="3px" /></td></tr>
+  <tr><td style="background-color: #8FC3E4; border-top: solid 1px #3d98d1; border-bottom: solid 1px #3d98d1;"><asp:image runat="server" SkinID="Spacer" height="5px" /></td></tr>
 
   <tr>
   <td class="SeriesDetailsContent">
