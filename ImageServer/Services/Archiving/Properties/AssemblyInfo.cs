@@ -2,14 +2,16 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+[assembly: ClearCanvas.Common.Plugin]
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Archiving")]
+[assembly: AssemblyTitle("ClearCanvas.ImageServer.Services.Archiving")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Archiving")]
+[assembly: AssemblyCompany("ClearCanvas Inc.")]
+[assembly: AssemblyProduct("ClearCanvas.ImageServer.Services.Archiving")]
 [assembly: AssemblyCopyright("Copyright ©  2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

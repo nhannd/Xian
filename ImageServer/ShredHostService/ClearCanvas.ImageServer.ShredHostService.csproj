@@ -61,6 +61,7 @@
     <None Include="InstallServerCert.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="PostBuild_dist.proj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="SetupCertificates.Readme.txt">
@@ -76,54 +77,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>mkdir $(TargetDir)common
-mkdir $(TargetDir)plugins
-
-rem copy ShredHost assembly
-copy $(ProjectDir)..\..\Server\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)common
-
-rem copy shred assemblies
-copy $(ProjectDir)..\..\ImageServer\Services\Shreds\$(Outdir)ClearCanvas.ImageServer.Services.Shreds.dll $(TargetDir)plugins
-
-copy $(ProjectDir)..\..\ImageServer\Web\Services\Shreds\$(Outdir)ClearCanvas.ImageServer.Web.Services.Shreds.dll $(TargetDir)plugins
-
-rem copy common assemblies
-copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Model\$(Outdir)ClearCanvas.ImageServer.Model.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Common\$(OutDir)ClearCanvas.ImageServer.Common.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Enterprise\$(OutDir)ClearCanvas.ImageServer.Enterprise.dll $(TargetDir)common
-copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
-copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
-copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
-copy $(ProjectDir)..\..\Dicom\Codec\Rle\$(OutDir)ClearCanvas.Dicom.Codec.Rle.dll $(TargetDir)common
-
-rem copy plugins
-copy $(ProjectDir)..\..\Enterprise\Core\$(OutDir)ClearCanvas.Enterprise.Core.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\Enterprise\Common\$(OutDir)ClearCanvas.Enterprise.Common.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Enterprise\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Model.SqlServer2005.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Services\Dicom\$(OutDir)ClearCanvas.ImageServer.Services.Dicom.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Services\WorkQueue\$(OutDir)ClearCanvas.ImageServer.Services.WorkQueue.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Services\Streaming\$(OutDir)ClearCanvas.ImageServer.Services.Streaming.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Services\ServiceLock\$(OutDir)ClearCanvas.ImageServer.Services.ServiceLock.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Rules\$(OutDir)ClearCanvas.ImageServer.Rules.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Codec\Rle\$(OutDir)ClearCanvas.ImageServer.Codec.Rle.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Codec\Jpeg\$(OutDir)ClearCanvas.ImageServer.Codec.Jpeg.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Codec\Jpeg2000\$(OutDir)ClearCanvas.ImageServer.Codec.Jpeg2000.dll $(TargetDir)plugins
-
-rem copy referenced assemblies
-copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll $(TargetDir)common
-
-rem copy Offis dlls
-copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)common
-copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)common
-
-rem copy config files
-copy $(ProjectDir)..\..\ImageServer\Executable\Logging.config $(TargetDir)</PostBuildEvent>
+    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);PlatformFolderPrefix=$(PlatformFolderPrefix);OutDir=$(OutDir);DistributionDir=$(DistributionDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>

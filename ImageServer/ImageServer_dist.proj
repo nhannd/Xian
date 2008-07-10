@@ -1,0 +1,110 @@
+<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- ImageServer specific postbuild step -->
+
+  <!--What files get copied depends on which project we are building.  -->
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.ShredHostService'">
+    <ShredHostBuild>true</ShredHostBuild>
+	<TestAppBuild>false</TestAppBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.TestApp'">
+	<ShredHostBuild>false</ShredHostBuild>
+	<TestAppBuild>true</TestAppBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\DicomServices\bin\$(Configuration)\ClearCanvas.DicomServices.dll" />
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+    <DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ShredHostService\app.config" />
+    <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Common\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Shreds\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\ServiceLock\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Shreds\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Iesi.Collections.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\log4net.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\nunit.framework.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Model\bin\$(Configuration)\ClearCanvas.ImageServer.Model.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
+  </ItemGroup>
+
+
+  <ItemGroup Condition="$(ShredHostBuild)">
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Shreds\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Shreds.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Dicom.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WorkQueue.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Streaming.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\ServiceLock\bin\$(Configuration)\ClearCanvas.ImageServer.Services.ServiceLock.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Rle.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg2000.dll"/>
+  </ItemGroup>
+  
+  <ItemGroup>
+	<ConfigFiles Include="$(SolutionDir)\..\ImageServer\Executable\Logging.config" />
+  </ItemGroup>
+
+  <!-- Setup build tasks for combining app config files -->
+  <Target Name="Build BuildTasks">
+	<MSBuild Projects="$(SolutionDir)\..\Utilities\BuildTasks\ClearCanvas.Utilities.BuildTasks.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(SolutionDir)\..\Utilities\BuildTasks\bin\$(Configuration)"/>
+  </Target>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(SolutionDir)\..\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(SolutionDir)\..\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
+
+  <!-- ShredHost App Config -->
+  <Target Name="Copy ShredHost App Config">
+	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.config"/>
+  </Target>
+
+  <Target Name="Copy Project Files" >
+
+    <!-- Copy Common files -->
+    <CreateItem Include="@(DicomAssemblyFiles);@(ImageServerCommonFiles)">
+      <Output ItemName="AllCommonFiles" TaskParameter="Include" />
+    </CreateItem>
+    <Copy SourceFiles="@(AllCommonFiles)" DestinationFolder="$(CommonDirectory)" />
+
+    <!-- Copy plugins -->
+    <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+	<!-- Copy logging.config -->
+	<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+
+  </Target>
+
+  <!-- The actual build task -->
+  <Target Name ="Copy Files" DependsOnTargets="Build BuildTasks">
+    
+    <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
+	<CallTarget Condition="$(TestAppBuild)" Targets="Copy Project Files" />
+
+  </Target>
+
+</Project>
