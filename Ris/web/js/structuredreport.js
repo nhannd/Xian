@@ -1,3 +1,5 @@
+
+
 var reportTypes = ["T1 - Dating/Nuchal", "T2 - Anatomy", "T3 - Growth for obstetrical ultrasounds"];
 
 var StructuredReportForm = {
@@ -676,82 +678,6 @@ var GeneralForm = {
 	}
 }
 
-var BiometryCalculations = {
-
-	crlWeeks : function(crl)
-	{
-		if(!crl) return 0;
-		return (40.447+1.125*crl-0.0058*Math.pow(crl,2))/7;
-	},
-
-	bpdWeeks : function(bpd)
-	{
-		if(!bpd) return 0;		
-		return 6.8954+0.26345*bpd+0.00000877*Math.pow(bpd, 3);
-	},
-
-	correctedBpd : function(bpd, ofd)
-	{
-		if(!bpd) return 0;
-		if(!ofd) return bpd*1;
-		return Math.sqrt(bpd*ofd/1.265);
-	},
-	
-	abdomenCircumference : function(a1, a2)
-	{
-		return (a1+a2)*1.57;
-	},
-	
-	abdomenCircumferenceWeeks : function(ac)
-	{
-		if(!ac) return 0;
-		return 7.607+0.07645*ac+0.0000393*Math.pow(ac, 2);
-	},
-	
-	femurWeeks : function(fl)
-	{
-		if(!fl) return 0;
-		return 9.54+0.2977*fl+0.001039*Math.pow(fl, 2);
-	},
-	
-	hcWeeks : function(hc)
-	{
-		if(!hc) return 0;
-		return 0;
-	},
-	
-	efw : function(useBpdcHc, useFl, Bpdc, Fl)
-	{
-		// TODO: compare RIS values with spreadsheet values to determine correct formula for different useX combinations
-		return 0;
-	},
-	
-	averageWeeks : function(corrBpdWks, acWks, flWks)
-	{
-		var numOfMeasurements = 3;
-		
-		if(!corrBpdWks)
-		{
-			corrBpdWks = 0;
-			numOfMeasurements--;
-		}
-		if(!acWks)
-		{
-			acWks = 0;
-			numOfMeasurements--;
-		}
-		if(!flWks)
-		{
-			flWks = 0;
-			numOfMeasurements--;
-		}
-
-		if(!numOfMeasurements)
-			return 0;
-		
-		return (corrBpdWks + acWks + flWks) / numOfMeasurements;
-	}
-}
 
 function CalculatedBiometryCell(label, prop, precision, getVisible)
 {
@@ -803,7 +729,7 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.crl = parseInt(value);
-					item.crlWks = BiometryCalculations.crlWeeks(item.crl);
+					item.crlWks = BiometryCalculator.crlWeeks(item.crl);
 				},
 				getError: function(item) { return null; }
 			},
@@ -823,10 +749,10 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.bpd = parseInt(value);
-					item.bpdWks = BiometryCalculations.bpdWeeks(item.bpd);
-					item.correctedBpd = BiometryCalculations.correctedBpd(item.bpd, item.ofd);
-					item.correctedBpdWks = BiometryCalculations.bpdWeeks(item.correctedBpd);
-					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					item.bpdWks = BiometryCalculator.bpdWeeks(item.bpd);
+					item.correctedBpd = BiometryCalculator.correctedBpd(item.bpd, item.ofd);
+					item.correctedBpdWks = BiometryCalculator.bpdWeeks(item.correctedBpd);
+					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
 				},
 				getError: function(item) { return null; }
@@ -840,9 +766,9 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.ofd = parseInt(value);
-					item.correctedBpd = BiometryCalculations.correctedBpd(item.bpd, item.ofd);
-					item.correctedBpdWks = BiometryCalculations.bpdWeeks(item.correctedBpd);
-					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					item.correctedBpd = BiometryCalculator.correctedBpd(item.bpd, item.ofd);
+					item.correctedBpdWks = BiometryCalculator.bpdWeeks(item.correctedBpd);
+					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
 				},
 				getError: function(item) { return null; },
@@ -864,9 +790,9 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.abdX = parseInt(value); 
-					item.abdCircumference = BiometryCalculations.abdomenCircumference(item.abdX, item.abdY);
-					item.abdCircumferenceWks = BiometryCalculations.abdomenCircumferenceWeeks(item.abdCircumference);
-					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					item.abdCircumference = BiometryCalculator.abdomenCircumference(item.abdX, item.abdY);
+					item.abdCircumferenceWks = BiometryCalculator.abdomenCircumferenceWeeks(item.abdCircumference);
+					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
 				},
 				getError: function(item) { return null; }
@@ -879,9 +805,9 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.abdY = parseInt(value); 
-					item.abdCircumference = BiometryCalculations.abdomenCircumference(item.abdX, item.abdY);
-					item.abdCircumferenceWks = BiometryCalculations.abdomenCircumferenceWeeks(item.abdCircumference);
-					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					item.abdCircumference = BiometryCalculator.abdomenCircumference(item.abdX, item.abdY);
+					item.abdCircumferenceWks = BiometryCalculator.abdomenCircumferenceWeeks(item.abdCircumference);
+					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
 
 				},
@@ -903,8 +829,8 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.fl = parseInt(value); 
-					item.flWks = BiometryCalculations.femurWeeks(item.fl);
-					item.avgWks = BiometryCalculations.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
+					item.flWks = BiometryCalculator.femurWeeks(item.fl);
+					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
 				},
 				getError: function(item) { return null; }
@@ -931,7 +857,7 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.hc = parseInt(value); 
-					item.hcWks = BiometryCalculations.hcWeeks(item.hc);
+					item.hcWks = BiometryCalculator.hcWeeks(item.hc);
 				},
 				getError: function(item) { return null; }
 			},
@@ -949,7 +875,7 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.useBpdcHc = value; 
-					item.efw = BiometryCalculations.efw(item.useBpdcHc, item.useFl);
+					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl);
 				},
 				getError: function(item) { return null; }
 			},
@@ -960,7 +886,7 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.useFl = value; 
-					item.efw = BiometryCalculations.efw(item.useBpdcHc, item.useFl);
+					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl);
 				},
 				getError: function(item) { return null; }
 			},
