@@ -29,6 +29,7 @@
 
 #endregion
 
+#if DEBUG
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -71,3 +72,4 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         }
     }
 }
+#endif
