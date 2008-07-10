@@ -152,31 +152,29 @@ var JSML = {
         {
             var subElements = getChildNodes(xmlNode).select(function(n) { return n.nodeType == 1; });   // select element nodes
             var arrayAttr = xmlNode.attributes.getNamedItem("array");
+            var hashAttr = xmlNode.attributes.getNamedItem("hash");
            
             if(arrayAttr && arrayAttr.text == "true")
             {
                 // collect sub-elements in an array
                 return subElements.reduce([], function(a, node) { a.push(toObj(node)); return a; });
             }
-            else
+			else if(hashAttr && hashAttr.text == "true")
+			{
+				// treat sub-elements as independent properties
+				return subElements.reduce({},
+					function(o, n)
+					{
+						o[n.nodeName] = JSML._parseFilter(n.nodeName, toObj(n));
+						return o;
+					});
+			}
+            else // node contains text
             {
-                if(subElements.length > 0)  // node contains elements
-                {
-                    // treat sub-elements as independent properties
-                    return subElements.reduce({},
-                        function(o, n)
-                        {
-                            o[n.nodeName] = JSML._parseFilter(n.nodeName, toObj(n));
-                            return o;
-                        });
-                }
-                else    // node contains text
-                {
-                    // find the first non-empty text node
-                    var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
-                    var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
-                    return value ? parseValue(value) : [];
-                }
+				// find the first non-empty text node
+				var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
+				var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
+				return value ? parseValue(value) : null;
             }
         }
         

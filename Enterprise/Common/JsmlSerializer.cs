@@ -161,7 +161,8 @@ namespace ClearCanvas.Enterprise.Common
                 if (dataMemberFields.Count > 0)
                 {
                     writer.WriteStartElement(objectName);
-                    foreach (FieldInfo info in dataMemberFields)
+					writer.WriteAttributeString("hash", "true");
+					foreach (FieldInfo info in dataMemberFields)
                     {
                         SerializeHelper(info.GetValue(dataObject), info.Name, writer, includeEmptyTags);
                     }
@@ -178,7 +179,8 @@ namespace ClearCanvas.Enterprise.Common
                 IDictionary dic = (IDictionary) dataObject;
 
 				writer.WriteStartElement(objectName);
-                foreach (DictionaryEntry entry in dic)
+				writer.WriteAttributeString("hash", "true");
+				foreach (DictionaryEntry entry in dic)
                 {
                     SerializeHelper(entry.Value, entry.Key.ToString(), writer, includeEmptyTags);
                 }
