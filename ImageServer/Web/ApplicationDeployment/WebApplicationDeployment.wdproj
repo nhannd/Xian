@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.51103</ProductVersion>
+    <ProductVersion>8.0.60403</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{77F5EB8A-9BC7-495C-B555-1DE6AF5AC83C}</ProjectGuid>
     <SourceWebPhysicalPath>..\Application</SourceWebPhysicalPath>
@@ -47,7 +47,7 @@
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.pdb" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\*.bak" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\bin\*.xml" />
-    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\obj\" />
+    <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\**\obj\**\*.*" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\*.csproj.*" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Old_App_Code" />
     <ExcludeFromBuild Include="$(SourceWebPhysicalPath)\Builds\**\*.*" />
