@@ -47,26 +47,27 @@ if(!Object.prototype.toJsml)
             if(this.hasOwnProperty(prop) && this[prop] && !(this[prop] instanceof Function))
                 xml += JSML.create(this[prop], prop);
         }
-        return xml;
+        return [xml, "hash"];
     }
     
     Array.prototype.toJsml = function()
     {
-        return this.reduce("", function(jsml, item) { return jsml + JSML.create(item, "item"); });
+        var xml = this.reduce("", function(jsml, item) { return jsml + JSML.create(item, "item"); });
+		return [xml, "array"];
     }
     
     Boolean.prototype.toJsml = function () {
-        return String(this);
+        return [String(this), null];
     };
 
 
     Date.prototype.toJsml = function () {
-        return this.toISOString();
+        return [this.toISOString(), null];
     };
 
     Number.prototype.toJsml = function () {
     // JSON numbers must be finite. Encode non-finite numbers as null.
-        return isFinite(this) ? String(this) : "null";
+        return [isFinite(this) ? String(this) : "null", null];
     };
     
     String.prototype.toJsml = function () {
@@ -89,7 +90,7 @@ if(!Object.prototype.toJsml)
             }) + '"';
         }
 */        
-        return this.escapeHTML();   // works for XML too
+        return [this.escapeHTML()/* works for XML too */, null];
     };
 };
 
@@ -223,9 +224,11 @@ var JSML = {
         // if it does not have an implementation of toJsml defined, then convert it to a string first
         // (this is a bit of hack to deal with window.location and other such DOM objects that essentially 
         // act as strings but are not technically Javascript string objects)
-        var objJsml = obj.toJsml ? obj.toJsml() : obj.toString().toJsml();
+        var r = obj.toJsml ? obj.toJsml() : obj.toString().toJsml();
+		var objJsml = r[0];
+		var typeAttr = r[1];
         
         // embed in tag
-        return '<'+tagName+(obj.isArray?' array="true"':'')+'>' + objJsml + '</'+tagName+'>';
+        return '<'+tagName+((typeAttr) ? (' '+typeAttr+'="true"'):'')+'>' + objJsml + '</'+tagName+'>';
     }    
 };

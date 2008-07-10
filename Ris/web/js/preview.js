@@ -90,6 +90,7 @@ function getDescriptiveTime(dateTime)
 	}
 }
 
+var gImagingRequestsTablePractitioners = [];	// hack: global array to hold practitioners that appear in the table, so that javascript callback can use the practitioner object
 function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccessionNumber)
 {
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
@@ -147,7 +148,9 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 				cellType: "html",
 				getValue: function(item)
 				{
-					return "<a href=\"javascript:Ris.openPractitionerDetails('" + JSML.create(item.OrderingPractitioner, "Practitioner") + "')\">" 
+					var i = gImagingRequestsTablePractitioners.length;
+					gImagingRequestsTablePractitioners.push(item.OrderingPractitioner);
+					return "<a href=\"javascript:Ris.openPractitionerDetails(gImagingRequestsTablePractitioners["+i+"])\">" 
 						+ "<img src='images/PractitionerDetail.png' border=\"0\"/>"
 						+ "</a>"; 
 				}

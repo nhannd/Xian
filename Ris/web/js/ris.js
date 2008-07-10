@@ -209,9 +209,9 @@ if(window.external)
 			window.external.SetTag(tag, data);
 		},
 
-		openPractitionerDetails: function(practitionerJsml)
+		openPractitionerDetails: function(practitioner)
 		{
-			window.external.OpenPractitionerDetail(practitionerJsml);
+			window.external.OpenPractitionerDetail(JSML.create(practitioner, "Practitioner"));
 		},
 		
 		notifyScriptCompleted: function()
