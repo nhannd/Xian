@@ -525,8 +525,8 @@ namespace ClearCanvas.Dicom
             readStat = dsr.Read(stopTag, options);
             if (readStat != DicomReadStatus.Success)
             {
-                DicomLogger.LogError("Unexpected error when reading file: {0}", Filename);
-                throw new DicomException("Unexpected failure reading file: " + Filename);
+                DicomLogger.LogError("Unexpected error ({0}) when reading file: {1}", readStat, Filename);
+                throw new DicomException("Unexpected failure (" + readStat + ") reading file: " + Filename);
             }
         }
     

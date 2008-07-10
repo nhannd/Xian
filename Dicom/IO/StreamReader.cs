@@ -76,9 +76,8 @@ namespace ClearCanvas.Dicom.IO
             public long _pos;
             public long _len;
             public DicomAttributeCollection _parent;
-            public uint _tag;
+            public DicomTag _tag;
             public DicomAttributeCollection _current;
-
             public long _curpos;
             public long _curlen;
         
@@ -260,41 +259,49 @@ namespace ClearCanvas.Dicom.IO
 
                     if (_vr == null)
                     {
-                        if (_syntax.ExplicitVr)
-                        {
-                            if (_tag == DicomTag.Item ||
-                                _tag == DicomTag.ItemDelimitationItem ||
-                                _tag == DicomTag.SequenceDelimitationItem)
-                            {
-                                _vr = DicomVr.NONE;
-                            }
-                            else
-                            {
-                                if (_remain >= 2)
-                                {
-                                    _vr = DicomVr.GetVR(new String(_reader.ReadChars(2)));
-                                    _remain -= 2;
-                                    _bytes += 2;
-                                    _read += 2;
-                                    if (_tag.VR.Equals(DicomVr.UNvr))
-                                        _tag = new DicomTag(_tag.TagValue, "Private Tag", "PrivateTag", _vr, false, 1, uint.MaxValue, false);
-                                    else if (!_tag.VR.Equals(_vr))
-                                    {
-                                        DicomTag tag = new DicomTag(_tag.TagValue,_tag.Name, _tag.VariableName, _vr,_tag.MultiVR,_tag.VMLow,_tag.VMHigh,_tag.Retired);
-                                        _tag = tag;
-                                        ; // TODO, log something
-                                    }
-                                }
-                                else
-                                {
-                                    return NeedMoreData(2);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _vr = _tag.VR;
-                        }
+						if (_syntax.ExplicitVr)
+						{
+							if (_tag == DicomTag.Item ||
+							    _tag == DicomTag.ItemDelimitationItem ||
+							    _tag == DicomTag.SequenceDelimitationItem)
+							{
+								_vr = DicomVr.NONE;
+							}
+							else
+							{
+								if (_remain >= 2)
+								{
+									string vr = new string(_reader.ReadChars(2));
+									_vr = DicomVr.GetVR(vr);
+									_remain -= 2;
+									_bytes += 2;
+									_read += 2;
+									if (_tag.VR.Equals(DicomVr.UNvr))
+										_tag = new DicomTag(_tag.TagValue, "Private Tag", "PrivateTag", _vr, false, 1, uint.MaxValue, false);
+									else if (!_tag.VR.Equals(_vr))
+									{
+										if (!vr.Equals("  "))
+										{
+											DicomTag tag =
+												new DicomTag(_tag.TagValue, _tag.Name, _tag.VariableName, _vr, _tag.MultiVR,
+												             _tag.VMLow, _tag.VMHigh,
+												             _tag.Retired);
+											_tag = tag;
+
+											; // TODO, log something
+										}
+									}
+								}
+								else
+								{
+									return NeedMoreData(2);
+								}
+							}
+						}
+						else
+						{
+							_vr = _tag.VR;
+						}
 
                         if (_vr == DicomVr.UNvr)
                         {
@@ -524,15 +531,15 @@ namespace ClearCanvas.Dicom.IO
                             DicomSequenceItem ds = new DicomSequenceItem();
 
                             rec._current = ds;
-
-                            // Do a lookup to see if the parent SQ attribute doesn't exist in the
-                            //dictionary, this prevents an exception being thrown by the _parent
-                            // indexer, and allows us to add the tag
-                            DicomTag dicomTag = DicomTagDictionary.GetDicomTag(rec._tag);
-                            if (dicomTag == null)
-                                dicomTag = new DicomTag(rec._tag, "Unknown SQ Attribute", "UnknownSq", DicomVr.SQvr, false, 0, uint.MaxValue, false);
-
-                            rec._parent[dicomTag].AddSequenceItem(ds);
+							if (rec._tag.VR.Equals(DicomVr.UNvr))
+							{
+								DicomTag tag = new DicomTag(rec._tag.TagValue, rec._tag.Name,
+								                            rec._tag.VariableName, DicomVr.SQvr, rec._tag.MultiVR, rec._tag.VMLow,
+								                            rec._tag.VMHigh, rec._tag.Retired);
+								rec._parent[tag].AddSequenceItem(ds);
+							}
+							else
+                        		rec._parent[rec._tag].AddSequenceItem(ds);
 
                             // Specific character set is inherited, save it.  It will be overwritten
                             // if a new value of the tag is encountered in the sequence.
@@ -554,15 +561,17 @@ namespace ClearCanvas.Dicom.IO
 
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
-                                idsr.TransferSyntax = _syntax;
+								if (rec._tag.VR.Equals(DicomVr.UNvr))
+									idsr.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
+								else
+									idsr.TransferSyntax = _syntax;
                                 idsr.Filename = Filename;
                                 DicomReadStatus stat = idsr.Read(null, options);
-                                if (stat == DicomReadStatus.UnknownError)
+                                if (stat != DicomReadStatus.Success)
                                 {
-                                    DicomLogger.LogError("Unexpected parsing error when reading sequence attribute: {0}.",dicomTag.ToString());
+                                    DicomLogger.LogError("Unexpected parsing error ({0}) when reading sequence attribute: {1}.",stat, rec._tag.ToString());
                                     return stat;
                                 }
-
                             }
                             else
                             {
@@ -602,7 +611,7 @@ namespace ClearCanvas.Dicom.IO
                                 else
                                     rec._parent = _dataset;
                                 rec._current = null;
-                                rec._tag = _tag.TagValue;
+                                rec._tag = _tag;
                                 rec._len = UndefinedLength;
                                 
                                 _sqrs.Push(rec);
@@ -641,7 +650,7 @@ namespace ClearCanvas.Dicom.IO
                                     SequenceRecord rec = new SequenceRecord();
                                     rec._len = _len;
                                     rec._pos = _pos;
-                                    rec._tag = _tag.TagValue;
+                                    rec._tag = _tag;
                                     if (_sqrs.Count > 0)
                                         rec._parent = _sqrs.Peek()._current;
                                     else
