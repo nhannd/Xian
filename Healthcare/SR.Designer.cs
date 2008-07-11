@@ -142,6 +142,69 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to family name is missing.
+        /// </summary>
+        internal static string AlertFamilyNameMissing {
+            get {
+                return ResourceManager.GetString("AlertFamilyNameMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to given name is missing.
+        /// </summary>
+        internal static string AlertGivenNameMissing {
+            get {
+                return ResourceManager.GetString("AlertGivenNameMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to healthcard assigning authority is missing.
+        /// </summary>
+        internal static string AlertHealthcardAssigningAuthorityMissing {
+            get {
+                return ResourceManager.GetString("AlertHealthcardAssigningAuthorityMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to healthcard ID is missing.
+        /// </summary>
+        internal static string AlertHealthcardIdMissing {
+            get {
+                return ResourceManager.GetString("AlertHealthcardIdMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to healthcard info is missing.
+        /// </summary>
+        internal static string AlertHealthcardMissing {
+            get {
+                return ResourceManager.GetString("AlertHealthcardMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a residential address is missing.
+        /// </summary>
+        internal static string AlertResidentialAddressMissing {
+            get {
+                return ResourceManager.GetString("AlertResidentialAddressMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to a residential telephone number is missing.
+        /// </summary>
+        internal static string AlertResidentialTelephoneNumberMissing {
+            get {
+                return ResourceManager.GetString("AlertResidentialTelephoneNumberMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ambulatory Status.
         /// </summary>
         internal static string AmbulatoryStatusEnum {

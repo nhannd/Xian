@@ -29,15 +29,9 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 
@@ -48,34 +42,12 @@ namespace ClearCanvas.Healthcare.Alerts
     {
         public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
-            IDictionary<string, ISpecification> specs;
+			List<string> reasons = new List<string>();
 
-            try
-            {
-                IncompleteDemographicDataAlertSettings settings = new IncompleteDemographicDataAlertSettings();
-                using (TextReader xml = new StringReader(settings.ValidationRules))
-                {
-                    SpecificationFactory specFactory = new SpecificationFactory(xml);
-                    specs = specFactory.GetAllSpecifications();
-                }
-            }
-            catch (Exception)
-            {
-                // no cfg file for this component
-                specs = new Dictionary<string, ISpecification>();
-            }
-            
-            List<string> reasons = new List<string>();
-            foreach (KeyValuePair<string, ISpecification> kvp in specs)
-            {
-                TestResult result = kvp.Value.Test(profile);
-                if (result.Success == false)
-                {
-                    List<string> failureMessages = new List<string>();
-                    ExtractFailureMessage(result.Reasons, failureMessages);
-                    reasons.AddRange(failureMessages);
-                }
-            }
+        	TestName(profile.Name, ref reasons);
+        	TestHealthcard(profile.Healthcard, ref reasons);
+			TestAddresses(profile.Addresses, ref reasons);
+			TestTelephoneNumbers(profile.TelephoneNumbers, ref reasons);
 
             if (reasons.Count > 0)
                 return new AlertNotification(this.GetType(), reasons);
@@ -83,20 +55,64 @@ namespace ClearCanvas.Healthcare.Alerts
             return null;
         }
 
-        #region Private Helpers
+		private static void TestName(PersonName name, ref List<string> reasons)
+		{
+			if (name == null)
+			{
+				reasons.Add(SR.AlertFamilyNameMissing);
+				return;
+			}
 
-        private void ExtractFailureMessage(TestResultReason[] reasons, List<string> failureMessages)
-        {
-            foreach (TestResultReason reason in reasons)
-            {
-                if (!string.IsNullOrEmpty(reason.Message))
-                    failureMessages.Add(reason.Message);
+			if (string.IsNullOrEmpty(name.FamilyName))
+				reasons.Add(SR.AlertFamilyNameMissing);
 
-                ExtractFailureMessage(reason.Reasons, failureMessages);
-            }
-        }
+			if (string.IsNullOrEmpty(name.GivenName))
+				reasons.Add(SR.AlertGivenNameMissing);
+		}
 
-        #endregion
+		private static void TestHealthcard(HealthcardNumber healthcard, ref List<string> reasons)
+		{
+			if (healthcard == null)
+			{
+				reasons.Add(SR.AlertHealthcardMissing);
+				return;
+			}
 
-    }
+			if (string.IsNullOrEmpty(healthcard.Id))
+				reasons.Add(SR.AlertHealthcardIdMissing);
+
+			if (healthcard.AssigningAuthority == null)
+				reasons.Add(SR.AlertHealthcardAssigningAuthorityMissing);
+		}
+
+		private static void TestAddresses(ICollection<Address> addresses, ref List<string> reasons)
+		{
+			if (addresses == null || addresses.Count == 0)
+			{
+				reasons.Add(SR.AlertResidentialAddressMissing);
+				return;
+			}
+
+			bool hasResidentialAddress = CollectionUtils.Contains(addresses,
+				delegate(Address a) { return a.Type == AddressType.R; });
+
+			if (!hasResidentialAddress)
+				reasons.Add(SR.AlertResidentialAddressMissing);
+		}
+
+		private static void TestTelephoneNumbers(ICollection<TelephoneNumber> phoneNumbers, ref List<string> reasons)
+		{
+			if (phoneNumbers == null || phoneNumbers.Count == 0)
+			{
+				reasons.Add(SR.AlertResidentialTelephoneNumberMissing);
+				return;
+			}
+
+			bool hasResidentialPhoneNumber = CollectionUtils.Contains(phoneNumbers,
+				delegate(TelephoneNumber tn) { return tn.Equipment == TelephoneEquipment.PH && tn.Use == TelephoneUse.PRN; });
+
+			if (!hasResidentialPhoneNumber)
+				reasons.Add(SR.AlertResidentialTelephoneNumberMissing);
+		}
+	}
 }

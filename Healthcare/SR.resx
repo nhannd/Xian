@@ -144,6 +144,27 @@
   <data name="AddressValidRange" xml:space="preserve">
     <value>Valid Date Range</value>
   </data>
+  <data name="AlertFamilyNameMissing" xml:space="preserve">
+    <value>family name is missing</value>
+  </data>
+  <data name="AlertGivenNameMissing" xml:space="preserve">
+    <value>given name is missing</value>
+  </data>
+  <data name="AlertHealthcardAssigningAuthorityMissing" xml:space="preserve">
+    <value>healthcard assigning authority is missing</value>
+  </data>
+  <data name="AlertHealthcardIdMissing" xml:space="preserve">
+    <value>healthcard ID is missing</value>
+  </data>
+  <data name="AlertHealthcardMissing" xml:space="preserve">
+    <value>healthcard info is missing</value>
+  </data>
+  <data name="AlertResidentialAddressMissing" xml:space="preserve">
+    <value>a residential address is missing</value>
+  </data>
+  <data name="AlertResidentialTelephoneNumberMissing" xml:space="preserve">
+    <value>a residential telephone number is missing</value>
+  </data>
   <data name="AmbulatoryStatusEnum" xml:space="preserve">
     <value>Ambulatory Status</value>
   </data>
