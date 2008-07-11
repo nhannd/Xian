@@ -162,9 +162,6 @@
   <data name="ColumnDescription" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="ColumnDiagnosticService" xml:space="preserve">
-    <value>Diagnostic Service</value>
-  </data>
   <data name="ColumnDirection" xml:space="preserve">
     <value>Direction</value>
   </data>
@@ -212,6 +209,9 @@
   </data>
   <data name="ColumnHomePhone" xml:space="preserve">
     <value>Home Phone</value>
+  </data>
+  <data name="ColumnImagingService" xml:space="preserve">
+    <value>Imaging Service</value>
   </data>
   <data name="ColumnLicenseNumber" xml:space="preserve">
     <value>License #</value>
@@ -349,10 +349,10 @@
     <value>Unable to add practitioner to visit</value>
   </data>
   <data name="ExceptionCannotExpandDiagnositicServiceTree" xml:space="preserve">
-    <value>Unable to retrieve diagnostic service tree</value>
+    <value>Unable to retrieve imaging service tree</value>
   </data>
   <data name="ExceptionCannotUpdateDiagnosticServiceBreakdown" xml:space="preserve">
-    <value>Unable to retrieve diagnostic service breakdown</value>
+    <value>Unable to retrieve imaging service breakdown</value>
   </data>
   <data name="ExceptionFailedToDisplayDocument" xml:space="preserve">
     <value>Failed to display document</value>
@@ -555,9 +555,6 @@
   <data name="TitleDemographicProfiles" xml:space="preserve">
     <value>Demographic Profiles</value>
   </data>
-  <data name="TitleDiagnosticServices" xml:space="preserve">
-    <value>Diagnostic Services</value>
-  </data>
   <data name="TitleDuplicate" xml:space="preserve">
     <value>Duplicate</value>
   </data>
@@ -572,6 +569,9 @@
   </data>
   <data name="TitleExternalPractitioner" xml:space="preserve">
     <value>External Practitioner</value>
+  </data>
+  <data name="TitleImagingServices" xml:space="preserve">
+    <value>Imaging Services</value>
   </data>
   <data name="TitleMergeContactPoints" xml:space="preserve">
     <value>Merge Contact Points</value>

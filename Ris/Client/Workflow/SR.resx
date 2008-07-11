@@ -150,9 +150,6 @@
   <data name="ColumnDescription" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="ColumnDiagnosticService" xml:space="preserve">
-    <value>Diagnostic Service</value>
-  </data>
   <data name="ColumnDischargeDateTime" xml:space="preserve">
     <value>Discharge Date/Time</value>
   </data>
@@ -185,6 +182,9 @@
   </data>
   <data name="ColumnID" xml:space="preserve">
     <value>ID</value>
+  </data>
+  <data name="ColumnImagingService" xml:space="preserve">
+    <value>Imaging Service</value>
   </data>
   <data name="ColumnInsurance" xml:space="preserve">
     <value>Insurance</value>

@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client
 			this.Columns.Add(new TableColumn<OrderListItem, string>("Scheduled For",
 				delegate(OrderListItem order) { return Format.DateTime(order.OrderScheduledStartTime); }, 0.5f));
 
-			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnDiagnosticService,
+			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnImagingService,
 				delegate(OrderListItem order) { return order.DiagnosticService.Name; }, 1.5f));
 			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnStatus,
 				delegate(OrderListItem order) { return order.OrderStatus.Value; }, 0.5f));

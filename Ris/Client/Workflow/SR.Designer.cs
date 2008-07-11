@@ -160,15 +160,6 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Diagnostic Service.
-        /// </summary>
-        internal static string ColumnDiagnosticService {
-            get {
-                return ResourceManager.GetString("ColumnDiagnosticService", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Discharge Date/Time.
         /// </summary>
         internal static string ColumnDischargeDateTime {
@@ -264,6 +255,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string ColumnID {
             get {
                 return ResourceManager.GetString("ColumnID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imaging Service.
+        /// </summary>
+        internal static string ColumnImagingService {
+            get {
+                return ResourceManager.GetString("ColumnImagingService", resourceCulture);
             }
         }
         

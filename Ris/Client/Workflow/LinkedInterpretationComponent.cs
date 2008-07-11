@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                 delegate(Checkable<ReportingWorklistItem> item, bool value) { item.IsChecked = value; }, 0.20f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnAccessionNumber,
 				delegate(Checkable<ReportingWorklistItem> item) { return AccessionFormat.Format(item.Item.AccessionNumber); }, 0.75f));
-            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnDiagnosticService,
+            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnImagingService,
                 delegate(Checkable<ReportingWorklistItem> item) { return item.Item.DiagnosticServiceName; }, 1.0f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
                 delegate(Checkable<ReportingWorklistItem> item) { return item.Item.ProcedureName; }, 1.0f));

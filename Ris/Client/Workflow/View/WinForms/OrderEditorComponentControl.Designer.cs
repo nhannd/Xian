@@ -455,7 +455,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._diagnosticService.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel3.SetColumnSpan(this._diagnosticService, 2);
 			this._diagnosticService.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._diagnosticService.LabelText = "Diagnostic Service";
+			this._diagnosticService.LabelText = "Imaging Service";
 			this._diagnosticService.Location = new System.Drawing.Point(2, 47);
 			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
 			this._diagnosticService.Name = "_diagnosticService";

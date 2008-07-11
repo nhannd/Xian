@@ -75,8 +75,8 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of Procedure Type Groups (such as Performing, Reading, and Relevance Groups.")]
 				public const string ProcedureTypeGroup = "Admin/Data/Procedure Type Group";
 
-				[AuthorityToken(Description = "Allow administration of Diagnostic Services and the Diagnostic Service Tree.")]
-				public const string DiagnosticService = "Admin/Data/Diagnostic Service";
+				[AuthorityToken(Description = "Allow administration of Imaging Services and the Imaging Service Tree.")]
+				public const string DiagnosticService = "Admin/Data/Imaging Service";
 
 				[AuthorityToken(Description = "Allow administration of Enumerations.")]
 				public const string Enumeration = "Admin/Data/Enumeration";

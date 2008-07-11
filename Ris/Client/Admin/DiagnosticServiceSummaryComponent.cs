@@ -15,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-	[MenuAction("launch", "global-menus/Admin/Diagnostic Services", "Launch")]
+	[MenuAction("launch", "global-menus/Admin/Imaging Services", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class DiagnosticServiceAdminTool : Tool<IDesktopToolContext>
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					_workspace = ApplicationComponent.LaunchAsWorkspace(
 						this.Context.DesktopWindow,
 						component,
-						"Diagnostic Services");
+						"Imaging Services");
 					_workspace.Closed += delegate { _workspace = null; };
 
 				}

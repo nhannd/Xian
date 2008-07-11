@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             accessionNumberColumn.Visible = false;
 
             TableColumn<ReportingWorklistItem, string> diagnosticServiceColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnDiagnosticService,
+                new TableColumn<ReportingWorklistItem, string>(SR.ColumnImagingService,
                 delegate(ReportingWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
             diagnosticServiceColumn.Visible = false;
 

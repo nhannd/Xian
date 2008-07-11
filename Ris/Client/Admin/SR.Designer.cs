@@ -466,7 +466,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to save Diagnostic Service.
+        ///   Looks up a localized string similar to Unable to save Imaging Service.
         /// </summary>
         internal static string ExceptionSaveDiagnosticService {
             get {
@@ -754,7 +754,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Diagnostic Service ....
+        ///   Looks up a localized string similar to Add Imaging Service ....
         /// </summary>
         internal static string TitleAddDiagnosticService {
             get {
@@ -862,7 +862,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Diagnostic Service.
+        ///   Looks up a localized string similar to Delete Imaging Service.
         /// </summary>
         internal static string TitleDeleteDiagnosticService {
             get {
@@ -903,15 +903,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleDeleteStaff {
             get {
                 return ResourceManager.GetString("TitleDeleteStaff", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Diagnostic Services.
-        /// </summary>
-        internal static string TitleDiagnosticServices {
-            get {
-                return ResourceManager.GetString("TitleDiagnosticServices", resourceCulture);
             }
         }
         
@@ -975,6 +966,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleHL7Queue {
             get {
                 return ResourceManager.GetString("TitleHL7Queue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Imaging Services.
+        /// </summary>
+        internal static string TitleImagingServices {
+            get {
+                return ResourceManager.GetString("TitleImagingServices", resourceCulture);
             }
         }
         
@@ -1078,7 +1078,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Diagnostic Service.
+        ///   Looks up a localized string similar to Update Imaging Service.
         /// </summary>
         internal static string TitleUpdateDiagnosticService {
             get {

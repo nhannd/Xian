@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client
 
             DiagnosticServiceTreeComponent component = new DiagnosticServiceTreeComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                _desktopWindow, component, SR.TitleDiagnosticServices);
+                _desktopWindow, component, SR.TitleImagingServices);
 
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {

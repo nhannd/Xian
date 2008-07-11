@@ -253,7 +253,7 @@
     <value>Unable to save Authority Group</value>
   </data>
   <data name="ExceptionSaveDiagnosticService" xml:space="preserve">
-    <value>Unable to save Diagnostic Service</value>
+    <value>Unable to save Imaging Service</value>
   </data>
   <data name="ExceptionSaveFacility" xml:space="preserve">
     <value>Unable to save Facility</value>
@@ -349,7 +349,7 @@
     <value>Add Authority Group</value>
   </data>
   <data name="TitleAddDiagnosticService" xml:space="preserve">
-    <value>Add Diagnostic Service ...</value>
+    <value>Add Imaging Service ...</value>
   </data>
   <data name="TitleAddFacility" xml:space="preserve">
     <value>Add Facility</value>
@@ -385,7 +385,7 @@
     <value>Authority Groups Admin</value>
   </data>
   <data name="TitleDeleteDiagnosticService" xml:space="preserve">
-    <value>Delete Diagnostic Service</value>
+    <value>Delete Imaging Service</value>
   </data>
   <data name="TitleDeleteFacility" xml:space="preserve">
     <value>Delete Facility</value>
@@ -398,9 +398,6 @@
   </data>
   <data name="TitleDeleteStaff" xml:space="preserve">
     <value>Delete Staff</value>
-  </data>
-  <data name="TitleDiagnosticServices" xml:space="preserve">
-    <value>Diagnostic Services</value>
   </data>
   <data name="TitleDuplicate" xml:space="preserve">
     <value>Duplicate</value>
@@ -422,6 +419,9 @@
   </data>
   <data name="TitleHL7Queue" xml:space="preserve">
     <value>HL7 Queue</value>
+  </data>
+  <data name="TitleImagingServices" xml:space="preserve">
+    <value>Imaging Services</value>
   </data>
   <data name="TitleImportData" xml:space="preserve">
     <value>Import Data</value>
@@ -457,7 +457,7 @@
     <value>Update Authority Group</value>
   </data>
   <data name="TitleUpdateDiagnosticService" xml:space="preserve">
-    <value>Update Diagnostic Service</value>
+    <value>Update Imaging Service</value>
   </data>
   <data name="TitleUpdateFacility" xml:space="preserve">
     <value>Update Facility</value>
