@@ -1,3 +1,5 @@
+using ClearCanvas.DicomServices.ServiceModel.Streaming;
+
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
     internal class HeaderRetrievalContext

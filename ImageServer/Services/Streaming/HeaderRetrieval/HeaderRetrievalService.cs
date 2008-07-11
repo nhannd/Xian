@@ -35,17 +35,10 @@ using System.IO;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 {
-    [ServiceContract]
-    public interface IHeaderRetrievalService
-    {
-        [OperationContract]
-        [FaultContract(typeof (String))]
-        Stream GetStudyHeader(string callingAETitle, HeaderRetrievalParameters parameters);
-    }
-
 
     [ServiceBehavior(IncludeExceptionDetailInFaults = true, InstanceContextMode=InstanceContextMode.PerCall)]
     public class HeaderRetrievalService : IHeaderRetrievalService
