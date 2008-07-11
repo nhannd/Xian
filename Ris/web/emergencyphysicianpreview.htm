@@ -109,8 +109,9 @@
 
 				if(orderDetail.Notes.length)
 				{
-					createOrderNotesTable($("orderNotesTable"));
-					orderNotesTable.bindItems(orderDetail.Notes);
+					createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+					createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+					createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
 				}
 				else
 					Field.show($("notesSection"), false);
@@ -195,10 +196,25 @@
 		</table>
 
 		<div id="notesSection">
-			<p class="sectionheading">
-				<a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">-</span> Preliminary Diagnosis</a>
-			</p>
-			<table border="0" id="orderNotesTable" class="collapsibleContent" style="{display:block}">
+			<p class="sectionheading">Order Notes</p>
+			<table id="generaNotesTable">
+				<tr><td class="sectionheading" colspan="3">General</td></tr>
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
+				</tr>
+			</table>
+			<table id="protocolNotesTable">
+				<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
+				</tr>
+			</table>
+			<table id="prelimNotesTable">
+				<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
 				<tr class="tableheading">
 					<td>Comment</td>
 					<td>Time</td>

@@ -24,8 +24,8 @@
 			try
 
 			{
-				var worklistItem = Ris.getHealthcareContext();
-				if (worklistItem == null)
+				var healchareContext = Ris.getHealthcareContext();
+				if (healchareContext == null)
 				{
 					Field.setValue($("myForm"), "");
 					return;
@@ -36,20 +36,20 @@
 				{
  					GetPatientProfileDetailRequest:
 						{
-							PatientProfileRef: worklistItem.PatientProfileRef,
+							PatientProfileRef: healchareContext.PatientProfileRef,
 							IncludeAlerts: true
 						},
 					GetOrderDetailRequest:
 						{
-							OrderRef: worklistItem.OrderRef,
+							OrderRef: healchareContext.OrderRef,
 							IncludeAlerts: true,
 							IncludeNotes: true,
 
 							// only include ordered procedures if report not yet created
-							IncludeProcedures: (worklistItem.ReportRef == null)
+							IncludeProcedures: (healchareContext.ReportRef == null)
 						},
 					// only request the report detail if there is a report     
-					GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
+					GetReportDetailRequest: healchareContext.ReportRef == null ? null : { ReportRef: healchareContext.ReportRef }
 				};
 
 				var service = Ris.getPatientDataService();
@@ -99,7 +99,7 @@
 
 				var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;
 
-				var selectedProcedure = procedures.find(function(rp) { return rp.ProcedureRef == worklistItem.ProcedureRef; });
+				var selectedProcedure = procedures.find(function(rp) { return rp.ProcedureRef == healchareContext.ProcedureRef; });
 				if (selectedProcedure)
 				{
 					Field.setValue($("procedure"), selectedProcedure.Type.Name);
@@ -107,18 +107,11 @@
 					Field.setValue($("ProcedureEndTime"), "TODO");
 				}
 
-				var currentNoteRef = worklistItem.OrderNoteRef;
 				if(orderDetail.Notes.length)
 				{
-					createOrderNotesTable($("orderNotesTable"));
-					orderNotesTable.renderRow = function(sender, args)
-					{
-						if(args.item.OrderNoteRef == currentNoteRef)
-						{
-							args.htmlRow.className = "highlight";
-						}
-					};
-					orderNotesTable.bindItems(orderDetail.Notes);
+					createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+					createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+					createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
 				}
 				else
 					Field.show($("notesSection"), false);
@@ -203,10 +196,25 @@
 		</table>
 
 		<div id="notesSection">
-			<p class="sectionheading">
-				<a href="javascript:void(0)" class="collapsibleHeading" onclick="toggleCollapsed(this)"><span class="plusMinus">-</span> Notes</a>
-			</p>
-			<table border="0" id="orderNotesTable" class="collapsibleContent" style="{display:block}">
+			<p class="sectionheading">Order Notes</p>
+			<table id="generaNotesTable">
+				<tr><td class="sectionheading" colspan="3">General</td></tr>
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
+				</tr>
+			</table>
+			<table id="protocolNotesTable">
+				<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+				<tr class="tableheading">
+					<td>Comment</td>
+					<td>Time</td>
+					<td>Author</td>
+				</tr>
+			</table>
+			<table id="prelimNotesTable">
+				<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
 				<tr class="tableheading">
 					<td>Comment</td>
 					<td>Time</td>

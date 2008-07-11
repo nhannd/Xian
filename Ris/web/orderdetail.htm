@@ -62,9 +62,13 @@
 						Field.show($("CancelReasonSection"), false);
 
 					if(orderDetail.Notes.length)
-						createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+					{
+						createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+						createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+						createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+					}
 					else
-						Field.show($("orderNotesTable"), false);
+						Field.show($("notesSection"), false);
 
 					if (orderDetail.Procedures.length)
 						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
@@ -128,14 +132,34 @@
 				</tr>
 			</table>
 
-			<table border="0" id="orderNotesTable">
-				<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
-				<tr class="tableheading">
-					<td>Comment</td>
-					<td>Time</td>
-					<td>Author</td>
-				</tr>
-			</table>
+			<div id="notesSection">
+				<p class="sectionheading">Order Notes</p>
+				<table id="generaNotesTable">
+					<tr><td class="sectionheading" colspan="3">General</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="protocolNotesTable">
+					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="prelimNotesTable">
+					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+			</div>
+
 		</form>
 	</body>
 </html>

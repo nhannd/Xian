@@ -157,11 +157,14 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 			}
 		 ]);
 		 
-	htmlTable.renderRow = function(sender, args)
-	{
-		if(args.item.AccessionNumber == highlightAccessionNumber)
-			args.htmlRow.className = "highlight";
-	};
+		if (highlightAccessionNumber)
+		{
+			htmlTable.renderRow = function(sender, args)
+			{
+				if(args.item.AccessionNumber == highlightAccessionNumber)
+					args.htmlRow.className = "highlight";
+			};
+		}
 		 
 	htmlTable.rowCycleClassNames = ["row1", "row0"];
 	htmlTable.bindItems(patientOrderData);
@@ -231,11 +234,18 @@ function createProceduresTable(htmlTable, procedures)
 	htmlTable.bindItems(procedures);
 }
 
-function createOrderNotesTable(htmlTable, notes)
+function createOrderNotesTable(htmlTable, notes, categoryFilter)
 {
+	var filteredNotes = notes.select(function(note) { return note.Category == categoryFilter; });
+
+	if (filteredNotes.length == 0)
+	{
+		Field.show(htmlTable, false);
+	}
+	
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
-			{   label: "Note",
+			{   label: "Comment",
 				cellType: "readonly",
 				getValue: function(item) { return item.NoteBody; }
 			},
@@ -256,9 +266,9 @@ function createOrderNotesTable(htmlTable, notes)
 				}
 			}
 		 ]);
-		 
-	htmlTable.rowCycleClassNames = ["row0", "row1"];
-	htmlTable.bindItems(notes);
+
+	htmlTable.rowCycleClassNames = ["row1", "row0"];
+	htmlTable.bindItems(filteredNotes);
 }
 
 

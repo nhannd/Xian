@@ -94,9 +94,13 @@
 					{
 						var orderDetail = data.GetOrderDetailResponse.Order;
 						if(orderDetail.Notes.length)
-							createOrderNotesTable($("orderNotesTable"), orderDetail.Notes);
+						{
+							createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+							createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+							createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+						}
 						else
-							Field.show($("orderNotesTable"), false);
+							Field.show($("notesSection"), false);
 
 						if (orderDetail.Procedures.length)
 							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
@@ -202,14 +206,33 @@
 			</table>
 			
 			<div id="orderDetailsSection">
-				<table border="0" id="orderNotesTable">
-					<tr><td class="sectionheading" colspan="6">Order Notes</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
+				<div id="notesSection">
+					<p class="sectionheading">Order Notes</p>
+					<table id="generaNotesTable">
+						<tr><td class="sectionheading" colspan="3">General</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+					<table id="protocolNotesTable">
+						<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+					<table id="prelimNotesTable">
+						<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+				</div>
 
 				<table border="0" id="proceduresTable">
 					<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
@@ -223,25 +246,25 @@
 
 			<table border="0" id="activeProceduresTable">
 			<tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Schedule</td>
-						<td>Status</td>
-						<td>Insurance</td>
-						<td>Ordering Facility</td>
-						<td>Ordering Physician</td>
-					</tr>
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Schedule</td>
+					<td>Status</td>
+					<td>Insurance</td>
+					<td>Ordering Facility</td>
+					<td>Ordering Physician</td>
+				</tr>
 			</table>
 			<table border="0" id="pastProceduresTable">
 					<tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Schedule</td>
-						<td>Status</td>
-						<td>Insurance</td>
-						<td>Ordering Facility</td>
-						<td>Ordering Physician</td>
-					</tr>
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Schedule</td>
+					<td>Status</td>
+					<td>Insurance</td>
+					<td>Ordering Facility</td>
+					<td>Ordering Physician</td>
+				</tr>
 			</table>
 		</form>
 	</body>
