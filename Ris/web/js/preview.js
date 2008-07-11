@@ -236,7 +236,7 @@ function createProceduresTable(htmlTable, procedures)
 
 function createOrderNotesTable(htmlTable, notes, categoryFilter)
 {
-	var filteredNotes = notes.select(function(note) { return note.Category == categoryFilter; });
+	var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
 
 	if (filteredNotes.length == 0)
 	{

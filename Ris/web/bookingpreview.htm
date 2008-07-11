@@ -150,12 +150,12 @@
 						var currentAccession = worklistItem.AccessionNumber;
 
 						if (activeProcedures.length == 0)
-							Field.show($("activeProceduresTable"), false);
+							Field.show($("activeProceduresSection"), false);
 						else
 							createImagingRequestsTable($("activeProceduresTable"), activeProcedures, currentAccession);
 
 						if (pastProcedures.length == 0)
-							Field.show($("pastProceduresTable"), false);
+							Field.show($("pastProceduresSection"), false);
 						else
 							createImagingRequestsTable($("pastProceduresTable"), pastProcedures, currentAccession);
 					}
@@ -234,8 +234,8 @@
 					</table>
 				</div>
 
+				<p class="sectionheading">Ordered Procedures</p>
 				<table border="0" id="proceduresTable">
-					<tr><td class="sectionheading" colspan="6">Ordered Procedures</td></tr>
 					<tr class="tableheading">
 						<td>Procedure</td>
 						<td>Protocol</td>
@@ -244,28 +244,33 @@
 				</table>
 			</div>
 
-			<table border="0" id="activeProceduresTable">
-			<tr><td class="sectionheading" colspan="6">Active Requests for Imaging Consultation</td></tr>
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Schedule</td>
-					<td>Status</td>
-					<td>Insurance</td>
-					<td>Ordering Facility</td>
-					<td>Ordering Physician</td>
-				</tr>
-			</table>
-			<table border="0" id="pastProceduresTable">
-					<tr><td class="sectionheading" colspan="6">Past Requests for Imaging Consultation</td></tr>
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Schedule</td>
-					<td>Status</td>
-					<td>Insurance</td>
-					<td>Ordering Facility</td>
-					<td>Ordering Physician</td>
-				</tr>
-			</table>
+			<div id="activeProceduresSection">
+				<p class="sectionheading">Active Requests for Imaging Consultation</p>
+				<table border="0" id="activeProceduresTable">
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Schedule</td>
+						<td>Status</td>
+						<td>Insurance</td>
+						<td>Ordering Facility</td>
+						<td>Ordering Physician</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="pastProceduresSection">
+				<p class="sectionheading">Past Requests for Imaging Consultation</p>
+				<table border="0" id="pastProceduresTable">
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Schedule</td>
+						<td>Status</td>
+						<td>Insurance</td>
+						<td>Ordering Facility</td>
+						<td>Ordering Physician</td>
+					</tr>
+				</table>
+			</div>
 		</form>
 	</body>
 </html>
