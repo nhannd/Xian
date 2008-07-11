@@ -131,11 +131,24 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-                ApplicationComponent.LaunchAsWorkspace(
+            	OrderEditorComponent component = new OrderEditorComponent(patientRef, profileRef);
+                IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
-                    new OrderEditorComponent(patientRef, profileRef),
+                    component,
                     title);
-            }
+
+				workspace.Closed += delegate
+					{
+						if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+						{
+							if (this.Context is IRegistrationWorkflowItemToolContext)
+							{
+								IRegistrationWorkflowItemToolContext context = ((IRegistrationWorkflowItemToolContext)this.ContextBase);
+								context.InvalidateFolders((typeof(Folders.Registration.ScheduledFolder)));
+							}
+						}
+					};
+			}
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, desktopWindow);

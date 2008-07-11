@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
 					});
 
+				this.Context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
 				this.Context.InvalidateFolders(typeof(Folders.Registration.CancelledFolder));
 				return true;
 			}

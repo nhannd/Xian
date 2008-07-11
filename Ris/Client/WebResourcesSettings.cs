@@ -312,16 +312,6 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("noteboxpreview.htm")]
-		public string ReportingOrderNoteboxFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingOrderNoteboxFolderSystemUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("printreportpreview.htm")]
 		public string PrintReportPreviewUrl
 		{

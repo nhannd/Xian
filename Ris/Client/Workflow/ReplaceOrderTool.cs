@@ -76,10 +76,25 @@ namespace ClearCanvas.Ris.Client.Workflow
             try
             {
                 WorklistItemSummaryBase item = (WorklistItemSummaryBase)this.Context.Selection.Item;
-                ApplicationComponent.LaunchAsWorkspace(
+            	OrderEditorComponent component = new OrderEditorComponent(
+					item.PatientRef, 
+					item.PatientProfileRef, 
+					item.OrderRef,
+					OrderEditorComponent.Mode.ReplaceOrder);
+
+				IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
-                    new OrderEditorComponent(item.PatientRef, item.PatientProfileRef, item.OrderRef, OrderEditorComponent.Mode.ReplaceOrder),
+                    component,
                     string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
+
+				workspace.Closed += delegate
+					{
+						if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+						{
+							this.Context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
+							this.Context.InvalidateFolders(typeof(Folders.Registration.CancelledFolder));
+						}
+					};
             }
             catch (Exception e)
             {

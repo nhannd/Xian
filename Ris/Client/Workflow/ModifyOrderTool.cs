@@ -95,11 +95,23 @@ namespace ClearCanvas.Ris.Client.Workflow
             string title = string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
             try
             {
-                ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    new OrderEditorComponent(item.PatientRef, item.PatientProfileRef, item.OrderRef, OrderEditorComponent.Mode.ModifyOrder),
-                    title);
-            }
+				OrderEditorComponent component = new OrderEditorComponent(
+					item.PatientRef, 
+					item.PatientProfileRef, 
+					item.OrderRef, 
+					OrderEditorComponent.Mode.ModifyOrder);
+
+				IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
+					this.Context.DesktopWindow,
+					component,
+					title);
+
+				workspace.Closed += delegate
+					{
+						if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+							this.Context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
+					};
+			}
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Context.DesktopWindow);

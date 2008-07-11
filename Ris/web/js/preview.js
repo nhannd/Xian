@@ -166,7 +166,7 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 			};
 		}
 		 
-	htmlTable.rowCycleClassNames = ["row1", "row0"];
+	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(patientOrderData);
 }
 
