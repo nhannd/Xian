@@ -71,8 +71,8 @@ namespace ClearCanvas.Ris.Client
         {
 			_diagnosticServiceBreakdown = new Table<ProcedureTypeSummary>();
             _diagnosticServiceBreakdown.Columns.Add(
-                new TableColumn<ProcedureTypeDetail, string>("Procedure Name",
-                           delegate(ProcedureTypeDetail rp) { return rp.Name; }));
+				new TableColumn<ProcedureTypeSummary, string>("Procedure Name",
+						   delegate(ProcedureTypeSummary rp) { return rp.Name; }));
         }
 
         public DiagnosticServiceDetail SelectedDiagnosticServiceDetail
@@ -82,12 +82,7 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            Platform.GetService<IOrderEntryService>(
-                delegate(IOrderEntryService service)
-                {
-                    _diagnosticServiceTree = ExpandDiagnosticServiceTree(null);
-                });
-
+            _diagnosticServiceTree = ExpandDiagnosticServiceTree(null);
 
             base.Start();
         }
