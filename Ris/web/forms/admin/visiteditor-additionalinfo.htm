@@ -20,7 +20,16 @@
 
 			if(Ris)
 			{
-				$("attendingPhysician").value = Ris.getTag("AttendingPhysician") || "";
+				$("AttendingPhysician").value = Ris.getTag("AttendingPhysician") || "";
+				$("ReferringPhysician").value = Ris.getTag("ReferringPhysician") || "";
+				$("ConsultingPhysician").value = Ris.getTag("ConsultingPhysician") || "";
+				$("AdmittingPhysician").value = Ris.getTag("AdmittingPhysician") || "";
+
+				$("InsurancePlanId").value = Ris.getTag("InsurancePlanId") || "";
+				$("InsuranceCompanyId").value = Ris.getTag("InsuranceCompanyId") || "";
+				$("NameOfInsured").value = Ris.getTag("NameOfInsured") || "";
+				$("InsuredsRelationshipToPatient").value = Ris.getTag("InsuredsRelationshipToPatient") || "";
+				$("PolicyNumber").value = Ris.getTag("PolicyNumber") || "";
 			}
 		}
 		catch(e)
@@ -30,7 +39,7 @@
 		}
 	}
 
-	function onAttendPhysicianChanged()
+	function onDetailChanged()
 	{
 		Ris.setModified(true); // notify ris that data may have been modified
 	}
@@ -49,15 +58,65 @@
 
 	function saveData()
 	{
-		Ris.setTag("AttendingPhysician", $("attendingPhysician").value);
+		Ris.setTag("AttendingPhysician", $("AttendingPhysician").value);
+		Ris.setTag("ReferringPhysician", $("ReferringPhysician").value);
+		Ris.setTag("ConsultingPhysician", $("ConsultingPhysician").value);
+		Ris.setTag("AdmittingPhysician", $("AdmittingPhysician").value);
+
+		Ris.setTag("InsurancePlanId", $("InsurancePlanId").value);
+		Ris.setTag("InsuranceCompanyId", $("InsuranceCompanyId").value);
+		Ris.setTag("NameOfInsured", $("NameOfInsured").value);
+		Ris.setTag("InsuredsRelationshipToPatient", $("InsuredsRelationshipToPatient").value);
+		Ris.setTag("PolicyNumber", $("PolicyNumber").value);
 	}
 	//////////////////////////////////////////////////////////////////////////
 </script>
 </head>
 <body onload="onBodyLoad()" onresize="scaleWidth()">
 	<form id="myForm">
-		<label for="attendingPhysician">Attending Physician</label>
-		<input id="attendingPhysician" type="text" onkeyup="onAttendPhysicianChanged()" onchange="onAttendPhysicianChanged()" />
+		<div class="sectionheading">Visit Physicians</div>
+		<table>
+			<tr>
+				<td>Attending Physician</td>
+				<td><input id="AttendingPhysician" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Referring Physician</td>
+				<td><input id="ReferringPhysician" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Consulting Physician</td>
+				<td><input id="ConsultingPhysician" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Admitting Physician</td>
+				<td><input id="AdmittingPhysician" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+		</table>
+		
+		<div class="sectionheading">Insurance</div>
+		<table>	
+			<tr>
+				<td>Plan Id</td>
+				<td><input id="InsurancePlanId" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Company Id</td>
+				<td><input id="InsuranceCompanyId" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Name of Insured</td>
+				<td><input id="NameOfInsured" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Relationship to patient</td>
+				<td><input id="InsuredsRelationshipToPatient" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+			<tr>
+				<td>Policy Number</td>
+				<td><input id="PolicyNumber" type="text" onkeyup="onDetailChanged()" onchange="onDetailChanged()" /></td>
+			</tr>
+		</table>
 	</form>
 </body>
 </html>
