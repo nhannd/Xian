@@ -29,23 +29,34 @@
 
 #endregion
 
+using System.Reflection;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Desktop
 {
     /// <summary>
     /// Represents a path.
     /// </summary>
+    /// <remarks>
+    /// Instances of this class are immutable.
+    /// </remarks>
     public class Path
     {
+		/// <summary>
+		/// Gets the empty <see cref="Path"/> object.
+		/// </summary>
+		public static Path Empty = new Path(new PathSegment[]{});
+
+
 		private const string SEPARATOR = "/";
     	private const string ESCAPED_SEPARATOR = "//";
 		private const string TEMP = "__$:$__";
 
-        private PathSegment[] _segments;
+        private readonly List<PathSegment> _segments;
 
         /// <summary>
         /// Creates a new <see cref="Path"/> from the specified path string, resolving
@@ -59,38 +70,38 @@ namespace ClearCanvas.Desktop
         /// <param name="pathString">The path string to parse.</param>
         /// <param name="resolver">The <see cref="IResourceResolver"/> to use for localization.</param>
         public Path(string pathString, IResourceResolver resolver)
+			:this(ParsePathString(pathString, resolver))
         {
-			// replace any escaped separators with some weird temporary string
-			pathString = pathString.Replace(ESCAPED_SEPARATOR, TEMP);
-
-			// split string by separator
-            string[] parts = pathString.Split(new string[] { SEPARATOR }, StringSplitOptions.None);
-            int n = parts.Length;
-            _segments = new PathSegment[n];
-            for (int i = 0; i < n; i++)
-            {
-				// replace the temp string with the unescaped separator
-				parts[i] = parts[i].Replace(TEMP, SEPARATOR);
-				_segments[i] = new PathSegment(parts[i], resolver != null ? resolver.LocalizeString(parts[i]) : parts[i]);
-            }
         }
+
+		/// <summary>
+		/// Creates a new <see cref="Path"/> from the specified path string, with no resource resolver.
+		/// </summary>
+		/// <remarks>
+		/// The path string must only contain literals, because there is no resource resolver to perform
+		/// localization.
+		/// </remarks>
+		/// <param name="pathString"></param>
+		public Path(string pathString)
+			:this(ParsePathString(pathString, new ResourceResolver(new Assembly[]{})))
+		{
+		}
 
         /// <summary>
         /// Internal constructor.
         /// </summary>
         /// <param name="segments"></param>
-        internal Path(PathSegment[] segments)
+        private Path(IEnumerable<PathSegment> segments)
         {
-            _segments = segments;
+            _segments = new List<PathSegment>(segments);
         }
 
         /// <summary>
-        /// The set of individual segments contained in this path.
+        /// Gets the individual segments contained in this path.
         /// </summary>
         public PathSegment[] Segments
         {
-            get { return _segments; }
-            set { _segments = value; }
+            get { return _segments.ToArray(); }
         }
 
         /// <summary>
@@ -98,24 +109,19 @@ namespace ClearCanvas.Desktop
         /// </summary>
         public PathSegment LastSegment
         {
-            get { return _segments.Length > 0 ? _segments[_segments.Length - 1] : null; }
+            get { return CollectionUtils.LastElement(_segments); }
         }
 
 		/// <summary>
-		/// Gets the path up to the specified depth.
+		/// Gets a new <see cref="Path"/> object representing the specified sub-path.
 		/// </summary>
-		public Path SubPath(int depth)
+		public Path SubPath(int start, int count)
 		{
-			Platform.CheckIndexRange(depth, 0, _segments.Length - 1, "depth");
-
-			PathSegment[] copy = new PathSegment[depth + 1];
-			Array.Copy(_segments, 0, copy, 0, depth + 1);
-
-			return new Path(copy);
+			return new Path(_segments.GetRange(start, count));
 		}
 
 		/// <summary>
-		/// Gets the full path, localized.
+		/// Gets the full path string, localized.
 		/// </summary>
 		public string LocalizedPath
 		{
@@ -126,6 +132,20 @@ namespace ClearCanvas.Desktop
 			}
 		}
 
+		/// <summary>
+		/// Returns a new <see cref="Path"/> object obtained by appending <paramref name="other"/> path
+		/// to this path.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public Path Append(Path other)
+		{
+			List<PathSegment> combined = new List<PathSegment>(_segments);
+			combined.AddRange(other.Segments);
+			
+			return new Path(combined);
+		}
+
         /// <summary>
         /// Converts this path back to a string.
         /// </summary>
@@ -134,5 +154,44 @@ namespace ClearCanvas.Desktop
 			return StringUtilities.Combine(_segments, SEPARATOR,
 				delegate(PathSegment s) { return s.ResourceKey.Replace(SEPARATOR, ESCAPED_SEPARATOR); }, false);
 		}
-    }
+
+		/// <summary>
+		/// Returns a new <see cref="Path"/> object representing the longest common path
+		/// between this object and <paramref name="other"/>.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns></returns>
+		public Path GetCommonPath(Path other)
+		{
+			List<PathSegment> commonPath = new List<PathSegment>();
+			for(int i = 0; i < Math.Min(_segments.Count, other.Segments.Length); i++)
+			{
+				if(_segments[i] == other.Segments[i])
+					commonPath.Add(_segments[i]);
+				else
+					break;	// must break as soon as paths differ
+			}
+
+			return new Path(commonPath);
+		}
+
+		private static PathSegment[] ParsePathString(string pathString, IResourceResolver resolver)
+		{
+			// replace any escaped separators with some weird temporary string
+			pathString = StringUtilities.EmptyIfNull(pathString).Replace(ESCAPED_SEPARATOR, TEMP);
+
+			// split string by separator
+			string[] parts = pathString.Split(new string[] { SEPARATOR }, StringSplitOptions.None);
+			int n = parts.Length;
+			PathSegment[] segments = new PathSegment[n];
+			for (int i = 0; i < n; i++)
+			{
+				// replace the temp string with the unescaped separator
+				parts[i] = parts[i].Replace(TEMP, SEPARATOR);
+				segments[i] = new PathSegment(parts[i], resolver != null ? resolver.LocalizeString(parts[i]) : parts[i]);
+			}
+			return segments;
+		}
+
+	}
 }

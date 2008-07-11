@@ -36,6 +36,7 @@ using System.Diagnostics;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -98,9 +99,52 @@ namespace ClearCanvas.Desktop.Actions
 
 		#endregion
 
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			// if this was not a 'temporary' model, save it
+			if (_actionModelXmlDoc != null && !_temporary)
+			{
+				try
+				{
+					this.ActionModelsXml = _actionModelXmlDoc;
+
+					//Ticket #1551: temporarily disabled this until there is a UI for editing the action model (JR)
+					//this.Save();
+				}
+				catch (Exception e)
+				{
+					// don't treat this as a serious error
+					// not much we can do but log it
+					Platform.Log(LogLevel.Error, e);
+				}
+
+				_actionModelXmlDoc = null;
+			}
+
+			// unregister from the registry
+			ApplicationSettingsRegistry.Instance.UnregisterInstance(this);
+		}
+
+		#endregion
+
+		#region Overrides
+
+		protected override void OnPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			// in the event settings are re-loaded, need to clear the cached document
+			if (e.PropertyName == "ActionModelsXml")
+			{
+				_actionModelXmlDoc = null;
+			}
+
+			base.OnPropertyChanged(sender, e);
+		}
+
+		#endregion
+
 		#region Private Methods
-		
-		#region Utility Methods
 
 		private void Initialize()
 		{
@@ -192,8 +236,6 @@ namespace ClearCanvas.Desktop.Actions
 		{
 			return (XmlElement)xmlActionModel.SelectSingleNode(String.Format("action[@id='{0}']", id));
 		}
-
-		#endregion
 
 		/// <summary>
 		/// Synchronizes persistent actions with the xml store.
@@ -288,31 +330,65 @@ namespace ClearCanvas.Desktop.Actions
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
 		private ActionModelRoot Build(string site, XmlElement xmlActionModel, IDictionary<string, IAction> actions)
         {
+        	int separatorCount = 0;
 			ActionModelRoot model = new ActionModelRoot(site);
-            
+        	List<XmlElement> actionNodes = CollectionUtils.Cast<XmlElement>(xmlActionModel.ChildNodes);
+
 			// process xml model, inserting actions in order
-			foreach (XmlElement xmlAction in xmlActionModel.GetElementsByTagName("action"))
-            {
-                string actionID = xmlAction.GetAttribute("id");
-				if (actions.ContainsKey(actionID))
+			for (int i = 0; i < actionNodes.Count; i++)
+			{
+				XmlElement xmlAction = actionNodes[i];
+				if (xmlAction.Name == "action")
 				{
-					IAction action = actions[actionID];
-					actions.Remove(actionID);
+					string actionID = xmlAction.GetAttribute("id");
+					if (actions.ContainsKey(actionID))
+					{
+						IAction action = actions[actionID];
 
-					// update the action path from the xml
-					string path = xmlAction.GetAttribute("path");
-					string grouphint = xmlAction.GetAttribute("group-hint");
+						// update the action path from the xml
+						string path = xmlAction.GetAttribute("path");
+						string grouphint = xmlAction.GetAttribute("group-hint");
 
-					action.Path = new ActionPath(path, action.ResourceResolver);
-					action.GroupHint = new GroupHint(grouphint);
+						action.Path = new ActionPath(path, action.ResourceResolver);
+						action.GroupHint = new GroupHint(grouphint);
 
-					// insert the action into the model
-					model.InsertAction(action);
+						// insert the action into the model
+						model.InsertAction(action);
+					}
 				}
-            }
+				else if (xmlAction.Name == "separator")
+				{
+					// a separator at the beginning or end of the list is not valid - ignore it
+					if(i == 0 || i == actionNodes.Count - 1)
+						continue;
 
-			if (actions.Count > 0)
-				Debug.Assert(false);
+					// get the actions appearing immediately before and after the separator
+					XmlElement preXmlAction = actionNodes[i - 1];
+					XmlElement postXmlAction = actionNodes[i + 1];
+
+					IAction preAction;
+					actions.TryGetValue(StringUtilities.EmptyIfNull(preXmlAction.GetAttribute("id")), out preAction);
+					IAction postAction;
+					actions.TryGetValue(StringUtilities.EmptyIfNull(postXmlAction.GetAttribute("id")), out postAction);
+
+					// if either action does not exist, the separator node is ambiguous and therefore must be ignored
+					// TODO: is there a more intelligent way to deal with this?? We could keep traversing the list,
+					// in both directions, until we find a valid pre and post action, but the downside of doing this
+					// is that the separator might end up in a completely different place from where it was intended
+					// to go... safer to ignore it
+					if(preAction == null || postAction == null)
+						continue;
+
+					// get the pre and post paths (from xml)
+					Path prePath = new Path(preXmlAction.GetAttribute("path"), preAction.ResourceResolver);
+					Path postPath = new Path(postXmlAction.GetAttribute("path"), postAction.ResourceResolver);
+
+					// create the path of the separator element, by using the common path between pre and post actions
+					// and appending a segment to represent the separator itself
+					Path separatorPath = prePath.GetCommonPath(postPath).Append(new Path(string.Format("_s{0}", separatorCount++)));
+					model.InsertSeparator(separatorPath);
+				}
+			}
 
 			return model;
 		}
@@ -364,34 +440,5 @@ namespace ClearCanvas.Desktop.Actions
 
 		#endregion
 
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			// if this was not a 'temporary' model, save it
-			if(_actionModelXmlDoc != null && !_temporary)
-			{
-				try
-				{
-					this.ActionModelsXml = _actionModelXmlDoc;
-
-					//Ticket #1551: temporarily disabled this until there is a UI for editing the action model (JR)
-					//this.Save();
-				}
-				catch (Exception e)
-				{
-					// don't treat this as a serious error
-					// not much we can do but log it
-					Platform.Log(LogLevel.Error, e);
-				}
-
-				_actionModelXmlDoc = null;
-			}
-
-			// unregister from the registry
-			ApplicationSettingsRegistry.Instance.UnregisterInstance(this);
-		}
-
-		#endregion
 	}
 }

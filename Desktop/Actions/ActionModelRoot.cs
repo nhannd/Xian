@@ -100,15 +100,32 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="action">The action to insert.</param>
         public void InsertAction(IAction action)
         {
-            InsertAction(action, 1);
-        }
+			Insert(action.Path, 1,
+				delegate(PathSegment segment)
+				{
+					return new ActionNode(segment, action);
+				});
+		}
 
-        /// <summary>
+		/// <summary>
+		/// Inserts a separator into the action model at the specified path.
+		/// </summary>
+		/// <param name="separatorPath"></param>
+		public void InsertSeparator(Path separatorPath)
+		{
+			Insert(separatorPath, 1,
+				delegate(PathSegment segment)
+				{
+					return new SeparatorNode(segment);
+				});
+		}
+
+		/// <summary>
         /// Used by the <see cref="ActionModelNode.CloneTree"/> method.
         /// </summary>
         /// <param name="pathSegment">The path segment which this node represents.</param>
         /// <returns>A new node of this type.</returns>
-        protected override ActionModelNode CreateNode(PathSegment pathSegment)
+        protected override ActionModelNode CloneNode(PathSegment pathSegment)
         {
             return new ActionModelRoot();
         }

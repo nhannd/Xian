@@ -51,6 +51,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region ToolStripBuilderStyle
 
+		/// <summary>
+		/// Specifies style charateristics for a tool strip.
+		/// </summary>
 		public class ToolStripBuilderStyle
         {
 			/// <summary>
@@ -164,9 +167,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			foreach (ActionModelNode node in nodeList)
             {
-                if (node.IsLeaf)
+                if (node is ActionNode)
                 {
-                    IAction action = node.Action;
+                    IAction action = ((ActionNode)node).Action;
                     ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar);
                     button.Tag = node;
 
@@ -177,6 +180,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                     parentItemCollection.Add(button);
                 }
+				else if(node is SeparatorNode)
+				{
+					ToolStripSeparator separator = new ToolStripSeparator();
+					separator.Tag = node;
+					parentItemCollection.Add(separator);
+				}
                 else
                 {
                     BuildToolbar(parentItemCollection, node.ChildNodes, builderStyle);
@@ -201,22 +210,29 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 ToolStripItem toolstripItem;
 
-                if (node.IsLeaf)
+                if (node is ActionNode)
                 {
                     // this is a leaf node (terminal menu item)
-                    IAction action = (IAction)node.Action;
+                	ActionNode actionNode = (ActionNode) node;
+					IAction action = actionNode.Action;
                     toolstripItem = CreateToolStripItemForAction(action, ToolStripKind.Menu);
 
                     toolstripItem.Tag = node;
                     parentItemCollection.Add(toolstripItem);
 
                     // Determine whether we should check the parent menu items too
-                    IClickAction clickAction = node.Action as IClickAction;
+					IClickAction clickAction = actionNode.Action as IClickAction;
 
                     if (clickAction != null && clickAction.CheckParents && clickAction.Checked)
                         CheckParentItems(toolstripItem);
                 }
-                else
+				else if (node is SeparatorNode)
+				{
+					toolstripItem = new ToolStripSeparator();
+					toolstripItem.Tag = node;
+					parentItemCollection.Add(toolstripItem);
+				}
+				else
                 {
                     // this menu item has a sub menu
                     toolstripItem = new ToolStripMenuItem(node.PathSegment.LocalizedText);

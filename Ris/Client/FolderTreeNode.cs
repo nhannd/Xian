@@ -217,7 +217,7 @@ namespace ClearCanvas.Ris.Client
 				// if not, create the node
 				if (node == null)
 				{
-					node = new FolderTreeNode(_explorer, this, folder.FolderPath.SubPath(depth));
+					node = new FolderTreeNode(_explorer, this, folder.FolderPath.SubPath(0, depth+1));
 					if(alphabetical)
 						InsertChildAlphabetical(node, depth);
 					else

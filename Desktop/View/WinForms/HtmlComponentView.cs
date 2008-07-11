@@ -128,11 +128,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                     ActionPath uriPath = new ActionPath(e.Url.LocalPath, null);
                     foreach(ActionModelNode child in embeddedActionModel.ChildNodes)
                     {
-                        if(child.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
-                        {
-                            ((IClickAction)child.Action).Click();
-                            break;
-                        }
+						// not currently used
+						//if(child.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
+						//{
+						//    ((IClickAction)child.Action).Click();
+						//    break;
+						//}
                     }
                 }
             }

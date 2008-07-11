@@ -323,11 +323,15 @@ namespace ClearCanvas.Ris.Client
                 ActionPath uriPath = new ActionPath(path, null);
                 foreach (ActionModelNode child in embeddedActionModel.ChildNodes)
                 {
-                    if (child.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
-                    {
-                        ((IClickAction)child.Action).Click();
-                        break;
-                    }
+					if(child is ActionNode)
+					{
+						ActionNode actionNode = (ActionNode) child;
+						if (actionNode.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
+						{
+							((IClickAction)actionNode.Action).Click();
+							break;
+						}
+					}
                 }
             }
         }
