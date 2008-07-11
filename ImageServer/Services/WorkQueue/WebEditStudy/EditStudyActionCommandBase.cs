@@ -1,5 +1,5 @@
 using System.IO;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {

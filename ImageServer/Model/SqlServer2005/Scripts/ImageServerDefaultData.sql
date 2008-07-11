@@ -661,3 +661,44 @@ GO
 INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
 VALUES(newid(),103,'CompareDuplicates','Compare Duplicates','Process duplicate objects received and compare them to originals flagging any differences as a failure.')
 GO
+
+-- ArchiveQueueStatusEnum inserts
+INSERT INTO [ImageServer].[dbo].[ArchiveQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),100,'Pending','Pending','Pending')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ArchiveQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),101,'In Progress','In Progress','In Progress')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ArchiveQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),102,'Completed','Completed','The Queue entry is completed.')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ArchiveQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),103,'Failed','Failed','The Queue entry has failed.')
+GO
+
+
+-- RestoreQueueStatusEnum inserts
+INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),100,'Pending','Pending','Pending')
+GO
+
+INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),101,'In Progress','In Progress','In Progress')
+GO
+
+INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),102,'Completed','Completed','The Queue entry is completed.')
+GO
+
+INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),103,'Failed','Failed','The Queue entry has failed.')
+GO
+
+
+-- ArchiveTypeEnum inserts
+INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),100,'HsmArchive','HSM Archive','Hierarchical storage management archive such as StorageTek QFS')
+GO

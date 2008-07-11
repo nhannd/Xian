@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\InsertArchiveQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\DeleteServerPartition.cs" />
     <Compile Include="Brokers\DeleteWorkQueue.cs" />
@@ -92,10 +93,8 @@
     <Compile Include="EntityBrokers\WorkQueueUidEntityBroker.gen.cs" />
     <Compile Include="Brokers\QueryModalitiesInStudy.cs" />
     <Compile Include="Brokers\QueryPartitionSopClasses.cs" />
-    <Compile Include="Brokers\QueryRequestAttributes.cs" />
     <Compile Include="Brokers\QueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\QueryWorkQueue.cs" />
-    <Compile Include="Brokers\QueryWorkQueueUids.cs" />
     <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

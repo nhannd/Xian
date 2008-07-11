@@ -29,42 +29,12 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    /// <summary>
-    /// <see cref="ServerDatabaseCommand"/> derived class for deleting <see cref="FilesystemQueue"/> entries for a
-    /// specific study from the database.
-    /// </summary>
-    public class DeleteFilesystemQueueCommand : ServerDatabaseCommand
-    {
-        private readonly ServerEntityKey _storageLocationKey;
-
-        public DeleteFilesystemQueueCommand(ServerEntityKey storageLocationKey)
-            : base("Delete FilesystemQueue", false)
-        {
-            _storageLocationKey = storageLocationKey;
-        }
-
-        protected override void OnExecute(IUpdateContext updateContext)
-        {
-            IFilesystemQueueEntityBroker select = updateContext.GetBroker<IFilesystemQueueEntityBroker>();
-
-            FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();
-
-            criteria.StudyStorageKey.EqualTo(_storageLocationKey);
-            IList<FilesystemQueue> list = select.Find(criteria);
-
-            foreach (FilesystemQueue queue in list)
-            {
-                select.Delete(queue.GetKey());
-            }
-        }
-    }
+	public interface IInsertArchiveQueue : IProcedureUpdateBroker<InsertArchiveQueueParameters>
+	{
+	}
 }

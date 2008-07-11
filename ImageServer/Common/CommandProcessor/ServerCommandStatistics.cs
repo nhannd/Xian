@@ -29,12 +29,19 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    public interface IQueryWorkQueueUids : IProcedureQueryBroker<WorkQueueUidQueryParameters, WorkQueueUid>
-    {
-    }
+	/// <summary>
+	/// Stores the statistics of a <see cref="ServerCommand"/>.
+	/// </summary>
+	public class ServerCommandStatistics:TimeSpanStatistics
+	{
+		public ServerCommandStatistics(ServerCommand cmd)
+			:base(cmd.Description)
+		{
+            
+		}
+	}
 }

@@ -1,5 +1,5 @@
 using System.IO;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate

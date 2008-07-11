@@ -28,9 +28,10 @@
 // OF SUCH DAMAGE.
 
 #endregion
+
 using System;
 using System.Xml;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
@@ -74,7 +75,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         }
 
         #endregion Public Properties
-
 
         #region Private Methods
 

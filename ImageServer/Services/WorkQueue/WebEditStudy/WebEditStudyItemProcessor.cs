@@ -31,16 +31,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
@@ -213,6 +212,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         }
 
         #endregion
-
     }
 }

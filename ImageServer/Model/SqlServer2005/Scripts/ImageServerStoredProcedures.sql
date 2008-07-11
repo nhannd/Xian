@@ -72,17 +72,9 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertInstance]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertInstance]
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 01/08/2008 16:04:34 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueueUids]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[QueryWorkQueueUids]
-GO
 /****** Object:  StoredProcedure [dbo].[InsertRequestAttributes]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertRequestAttributes]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertRequestAttributes]
-GO
-/****** Object:  StoredProcedure [dbo].[QueryRequestAttributes]    Script Date: 01/08/2008 16:04:34 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryRequestAttributes]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[QueryRequestAttributes]
 GO
 /****** Object:  StoredProcedure [dbo].[InsertStudyStorage]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertStudyStorage]') AND type in (N'P', N'PC'))
@@ -108,6 +100,12 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueCompressStudy]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertWorkQueueCompressStudy]
 GO
+/****** Object:  StoredProcedure [dbo].[InsertArchiveQueue]    Script Date: 07/11/2008 13:04:37 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertArchiveQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertArchiveQueue]
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
@@ -1501,34 +1499,6 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[QueryWorkQueueUids]    Script Date: 01/08/2008 16:04:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueueUids]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Steve Wranovsky
--- Create date: August 17, 2007
--- Description:	Seleect WorkQueueUid rows related to a WorkQueue instance
--- =============================================
-CREATE PROCEDURE [dbo].[QueryWorkQueueUids] 
-	-- Add the parameters for the stored procedure here
-	@WorkQueueGUID uniqueidentifier
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	SELECT *
-	FROM WorkQueueUid
-	WHERE WorkQueueGUID = @WorkQueueGUID
-END
-' 
-END
-GO
 /****** Object:  StoredProcedure [dbo].[InsertRequestAttributes]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
@@ -1566,35 +1536,6 @@ BEGIN
 		VALUES
 			(newid(), @SeriesGUID, @RequestedProcedureId, @ScheduledProcedureStepId)
 	END
-END
-' 
-END
-GO
-/****** Object:  StoredProcedure [dbo].[QueryRequestAttributes]    Script Date: 01/08/2008 16:04:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryRequestAttributes]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Steve Wranovsky
--- Create date: August 22, 2007
--- Description:	Select Requested attributes for a series
--- =============================================
-CREATE PROCEDURE [dbo].[QueryRequestAttributes] 
-	-- Add the parameters for the stored procedure here
-	@SeriesGUID uniqueidentifier
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-    -- Insert statements for procedure here
-	SELECT * 
-	FROM RequestAttributes
-	WHERE SeriesGUID = @SeriesGUID
 END
 ' 
 END
@@ -2187,3 +2128,105 @@ END
 GO
 
 
+/****** Object:  StoredProcedure [dbo].[InsertArchiveQueue]    Script Date: 07/11/2008 13:04:37 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertArchiveQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 11, 2008
+-- Description:	Insert and/or update the appropriate ArchiveQueue records
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertArchiveQueue] 
+	-- Add the parameters for the stored procedure here
+	@ServerPartitionGUID uniqueidentifier, 
+	@StudyStorageGUID uniqueidentifier,
+	@Update bit
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @StudyDeleteTypeEnum smallint
+	DECLARE @PendingArchiveQueueStatus smallint
+	DECLARE @StudyDeleteCount int
+	DECLARE @ArchiveStudyStorageCount int
+	DECLARE @ArchiveDelayHours int
+	DECLARE	@PartitionArchiveGUID uniqueidentifier
+
+	SELECT @StudyDeleteTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
+	SELECT @PendingArchiveQueueStatus = Enum from ArchiveQueueStatusEnum where Lookup = ''Pending''
+
+	BEGIN TRANSACTION
+
+	-- Check if there''s any DeleteStudy records in the db
+	SELECT @StudyDeleteCount=count(*) FROM FilesystemQueue 
+		WHERE FilesystemQueueTypeEnum=@StudyDeleteTypeEnum
+			AND StudyStorageGUID=@StudyStorageGUID
+
+
+	IF @StudyDeleteCount = 0
+	BEGIN
+		-- Use a cursor to find all the configured ArchiveQueue entries
+		DECLARE PartitionArchiveCursor Cursor FOR
+			SELECT GUID, ArchiveDelayHours from dbo.PartitionArchive WHERE ServerPartitionGUID=@ServerPartitionGUID AND Enabled=1 AND ReadOnly=0
+		Open PartitionArchiveCursor
+		Fetch NEXT FROM PartitionArchiveCursor INTO @PartitionArchiveGUID, @ArchiveDelayHours
+		While (@@FETCH_STATUS <> -1)
+		BEGIN
+			-- Check if the study''s been already archived
+			SELECT @ArchiveStudyStorageCount=count(*) FROM ArchiveStudyStorage 
+				WHERE StudyStorageGUID=@StudyStorageGUID
+				AND PartitionArchiveGUID = @PartitionArchiveGUID
+			
+			DECLARE @ArchiveQueueGUID uniqueidentifier
+			DECLARE @ScheduledTime datetime
+
+			set @ScheduledTime = getdate()
+			set @ScheduledTime = dateadd(hour, @ArchiveDelayHours, @ScheduledTime)
+
+			SELECT @ArchiveQueueGUID = GUID from ArchiveQueue 
+			WHERE StudyStorageGUID = @StudyStorageGUID
+				AND PartitionArchiveGUID = @PartitionArchiveGUID
+				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
+			if @@ROWCOUNT = 0
+			BEGIN
+				IF (@Update = 0 OR @ArchiveStudyStorageCount = 0)
+				BEGIN
+					SET @ArchiveQueueGUID = NEWID();
+
+					INSERT into ArchiveQueue (GUID, PartitionArchiveGUID, StudyStorageGUID, ArchiveQueueStatusEnum, ScheduledTime)
+					values  (@ArchiveQueueGUID, @PartitionArchiveGUID, @StudyStorageGUID, @PendingArchiveQueueStatus, @ScheduledTime)
+				END
+			END
+			ELSE
+			BEGIN
+				UPDATE ArchiveQueue SET ScheduledTime = @ScheduledTime
+				WHERE StudyStorageGUID = @StudyStorageGUID
+				AND PartitionArchiveGUID = @PartitionArchiveGUID
+				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
+			END
+
+			Fetch NEXT FROM PartitionArchiveCursor INTO @PartitionArchiveGUID, @ArchiveDelayHours
+		END
+		CLOSE PartitionArchiveCursor
+		DEALLOCATE PartitionArchiveCursor	
+	END
+	ELSE
+	BEGIN
+		-- Delete from the ArchiveQueue, the study is scheduled for deletion
+		-- In most cases this should delete no rows
+		DELETE FROM ArchiveQueue
+			WHERE StudyStorageGUID = @StudyStorageGUID
+				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
+	END
+
+	COMMIT TRANSACTION
+END
+' 
+END
+GO

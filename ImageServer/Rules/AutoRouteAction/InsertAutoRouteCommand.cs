@@ -29,12 +29,11 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -75,7 +74,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
             IDeviceEntityBroker selectDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
-            Device dev = CollectionUtils.FirstElement<Device>(selectDevice.Find(deviceSelectCriteria));
+            Device dev = CollectionUtils.FirstElement(selectDevice.Find(deviceSelectCriteria));
 			if (dev == null)
 			{
 				Platform.Log(LogLevel.Warn,

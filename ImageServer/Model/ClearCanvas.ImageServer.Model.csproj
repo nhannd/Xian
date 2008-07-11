@@ -43,6 +43,7 @@
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
+    <Compile Include="Brokers\IInsertArchiveQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="FilesystemQueue.gen.cs" />
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
+    <Compile Include="Parameters\InsertArchiveQueueParameters.cs" />
     <Compile Include="Parameters\WorkQueueMigrateStudyInsertParameters.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\PartitionTransferSyntaxQueryParameters.cs" />
@@ -194,10 +196,8 @@
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteStudyInsertParameters.cs" />
-    <Compile Include="Brokers\IQueryRequestAttributes.cs" />
     <Compile Include="Brokers\IQueryServerPartitionSopClasses.cs" />
     <Compile Include="Brokers\IQueryStudyStorageLocation.cs" />
-    <Compile Include="Brokers\IQueryWorkQueueUids.cs" />
     <Compile Include="Brokers\IUpdateWorkQueue.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
@@ -206,7 +206,6 @@
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
     <Compile Include="Parameters\ModalitiesInStudyQueryParameters.cs" />
     <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />
-    <Compile Include="Parameters\RequestAttributesQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueUpdateParameters.cs" />
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
@@ -222,7 +221,6 @@
     <Compile Include="Parameters\WorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueStudyProcessInsertParameters.cs" />
     <Compile Include="WorkQueueTypeEnum.gen.cs" />
-    <Compile Include="Parameters\WorkQueueUidQueryParameters.cs" />
     <Compile Include="WorkQueueUid.gen.cs" />
   </ItemGroup>
   <ItemGroup>

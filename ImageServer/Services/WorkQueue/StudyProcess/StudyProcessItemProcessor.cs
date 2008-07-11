@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -209,7 +209,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 // Run the rules engine against the object.
                 _sopProcessedRulesEngine.Execute(context);
-                
+
+				// Do insert into the archival queue.  Note that we re-run this with each object processed
+				// so that the scheduled time is pushed back each time.
+            	context.CommandProcessor.AddCommand(
+            		new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, false));
+
                 // Do the actual processing
                 if (!processor.Execute())
                 {
@@ -383,7 +388,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
         #endregion
 
-
         #region Protected Methods
 
         /// <summary>
@@ -450,7 +454,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
 
         #endregion
-
 
         #region Overridden Protected Method
 

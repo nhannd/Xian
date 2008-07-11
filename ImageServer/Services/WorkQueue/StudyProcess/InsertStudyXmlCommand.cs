@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -57,7 +58,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Private Static Members
         private static readonly StudyXmlOutputSettings _outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
         #endregion
-
 
         #region Constructors
 

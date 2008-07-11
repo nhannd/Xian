@@ -29,19 +29,49 @@
 
 #endregion
 
-using ClearCanvas.Common.Statistics;
+using System.IO;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    /// <summary>
-    /// Stores the statistics of a <see cref="ServerCommand"/>.
-    /// </summary>
-    public class ServerCommandStatistics:TimeSpanStatistics
-    {
-        public ServerCommandStatistics(ServerCommand cmd)
-            :base(cmd.Description)
-        {
-            
-        }
-    }
+	/// <summary>
+	/// A ServerCommand derived class for renaming a file.
+	/// </summary>
+	public class RenameFileCommand : ServerCommand
+	{
+		#region Private Members
+		private readonly string _sourceFile;
+		private readonly string _destinationFile;
+		#endregion
+
+		public RenameFileCommand(string sourceFile, string destinationFile)
+			: base("Rename File", true)
+		{
+			Platform.CheckForNullReference(sourceFile, "Source filename");
+			Platform.CheckForNullReference(destinationFile, "Destination filename");
+
+			_sourceFile = sourceFile;
+			_destinationFile = destinationFile;
+		}
+
+		protected override void OnExecute()
+		{
+			if (File.Exists(_destinationFile))
+			{
+				File.Delete(_destinationFile);
+				return;
+			}
+
+			File.Move(_sourceFile, _destinationFile);
+		}
+
+		protected override void OnUndo()
+		{
+			if (File.Exists(_sourceFile))
+				File.Delete(_sourceFile);
+
+			File.Move(_destinationFile, _sourceFile);
+		}
+	}
 }

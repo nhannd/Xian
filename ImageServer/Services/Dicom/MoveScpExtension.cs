@@ -331,50 +331,52 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     // set the preferred syntax lists
                     _theScu.LoadPreferredSyntaxes(read);
 
-                    _theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
-                                                       {
-                                                           StorageScu scu = (StorageScu) sender;
-                                                           DicomMessage msg = new DicomMessage();
-                                                           DicomStatus status;
+                	_theScu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
+                	                               	{
+                	                               		StorageScu scu = (StorageScu) sender;
+                	                               		DicomMessage msg = new DicomMessage();
+                	                               		DicomStatus status;
 
-                                                           if (scu.RemainingSubOperations == 0)
-                                                           {
-                                                               foreach (StorageInstance sop in _theScu.StorageInstanceList)
-                                                               {
-                                                                   if ((sop.SendStatus.Status != DicomState.Success)
-                                                                       && (sop.SendStatus.Status != DicomState.Warning))
-                                                                       msg.DataSet[DicomTags.FailedSopInstanceUidList].
-                                                                           AppendString(
-                                                                           sop.SopInstanceUid);
-                                                               }
-                                                               if (scu.Status == ScuOperationStatus.Canceled)
-                                                                   status = DicomStatuses.Cancel;
-                                                               else if (scu.FailureSubOperations > 0)
-                                                                   status =
-                                                                       DicomStatuses.
-                                                                           QueryRetrieveSubOpsOneOrMoreFailures;
-                                                               else
-                                                                   status = DicomStatuses.Success;
+                	                               		if (scu.RemainingSubOperations == 0)
+                	                               		{
+                	                               			foreach (StorageInstance sop in _theScu.StorageInstanceList)
+                	                               			{
+                	                               				if ((sop.SendStatus.Status != DicomState.Success)
+                	                               				    && (sop.SendStatus.Status != DicomState.Warning))
+                	                               					msg.DataSet[DicomTags.FailedSopInstanceUidList].
+                	                               						AppendString(
+                	                               						sop.SopInstanceUid);
+                	                               			}
+                	                               			if (scu.Status == ScuOperationStatus.Canceled)
+                	                               				status = DicomStatuses.Cancel;
+                	                               			else if (scu.Status == ScuOperationStatus.ConnectFailed)
+                	                               				status = DicomStatuses.QueryRetrieveMoveDestinationUnknown;
+                	                               			else if (scu.FailureSubOperations > 0)
+                	                               				status =
+                	                               					DicomStatuses.
+                	                               						QueryRetrieveSubOpsOneOrMoreFailures;
+                	                               			else
+                	                               				status = DicomStatuses.Success;
 
-                                                               _theScu = null;
-                                                           }
-                                                           else
-                                                           {
-                                                               status = DicomStatuses.Pending;
+                	                               			_theScu = null;
+                	                               		}
+                	                               		else
+                	                               		{
+                	                               			status = DicomStatuses.Pending;
 
-                                                               if ((scu.RemainingSubOperations%5) != 0)
-                                                                   return;
-                                                                       // Only send a RSP every 5 to reduce network load
-                                                           }
-                                                           server.SendCMoveResponse(presentationID, message.MessageId,
-                                                                                    msg, status,
-                                                                                    (ushort) scu.SuccessSubOperations,
-                                                                                    (ushort) scu.RemainingSubOperations,
-                                                                                    (ushort) scu.FailureSubOperations,
-                                                                                    (ushort) scu.WarningSubOperations);
-                                                           if (scu.RemainingSubOperations == 0)
-                                                               finalResponseSent = true;
-                                                       };
+                	                               			if ((scu.RemainingSubOperations%5) != 0)
+                	                               				return;
+                	                               			// Only send a RSP every 5 to reduce network load
+                	                               		}
+                	                               		server.SendCMoveResponse(presentationID, message.MessageId,
+                	                               		                         msg, status,
+                	                               		                         (ushort) scu.SuccessSubOperations,
+                	                               		                         (ushort) scu.RemainingSubOperations,
+                	                               		                         (ushort) scu.FailureSubOperations,
+                	                               		                         (ushort) scu.WarningSubOperations);
+                	                               		if (scu.RemainingSubOperations == 0)
+                	                               			finalResponseSent = true;
+                	                               	};
 
                     _theScu.BeginSend(
                         delegate(IAsyncResult result)

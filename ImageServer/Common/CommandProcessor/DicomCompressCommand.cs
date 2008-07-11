@@ -32,8 +32,11 @@
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
+	/// <summary>
+	/// Command for compressing a DICOM Sop Instance.
+	/// </summary>
 	public class DicomCompressCommand : ServerCommand
 	{
 		private readonly DicomMessageBase _file;

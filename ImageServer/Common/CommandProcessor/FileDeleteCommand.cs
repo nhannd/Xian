@@ -29,19 +29,32 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
+using System.IO;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class QueryWorkQueueUids : ProcedureQueryBroker<WorkQueueUidQueryParameters, WorkQueueUid>, IQueryWorkQueueUids
-    {
-        public QueryWorkQueueUids()
-            : base("QueryWorkQueueUids")
-        {
-        }
-    }
+	/// <summary>
+	/// <see cref="ServerCommand"/> for deleting a file, not that there is no rollback.  Rollback
+	/// should be accomplished by other means.  IE, do a rename of the file, then delete when everything
+	/// else is done.
+	/// </summary>
+	public class FileDeleteCommand : ServerCommand
+	{
+		private readonly string _path;
+
+		public FileDeleteCommand(string path, bool requiresRollback) : base("Delete File", requiresRollback)
+		{
+			_path = path;
+		}
+
+		protected override void OnExecute()
+		{
+			File.Delete(_path);
+		}
+
+		protected override void OnUndo()
+		{
+			
+		}
+	}
 }

@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.Codec;
 using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 

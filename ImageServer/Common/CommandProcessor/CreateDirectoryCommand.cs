@@ -29,41 +29,50 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-
-using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    public class SaveDicomFileCommand : ServerCommand
-    {
-        #region Private Members
-        private string _path;
-        private DicomFile _file;
-        #endregion
+	/// <summary>
+	/// A ServerCommand derived class for creating a directory.
+	/// </summary>
+	public class CreateDirectoryCommand : ServerCommand
+	{
+		#region Private Members
+		private readonly string _directory;
+		private bool _created = false;
+		#endregion
 
-        public SaveDicomFileCommand(string path, DicomFile file )
-            : base("Save DICOM Message", true)
-        {
-            Platform.CheckForNullReference(path, "File name");
-            Platform.CheckForNullReference(file, "Dicom File object");
+		public CreateDirectoryCommand(string directory)
+			: base("Create Directory", true)
+		{
+			Platform.CheckForNullReference(directory, "Directory name");
 
-            _path = path;
-            _file = file;
-        }
+			_directory = directory;
+		}
 
-        protected override void OnExecute()
-        {
-            _file.Save(DicomWriteOptions.Default);
-        }
+		protected override void OnExecute()
+		{
+			if (Directory.Exists(_directory))
+			{
+				_created = false;
+				return;
+			}
 
-        protected override void OnUndo()
-        {
-            File.Delete(_path);
-        }
-    }
+			Directory.CreateDirectory(_directory);
+
+			_created = true;
+		}
+
+		protected override void OnUndo()
+		{
+			if (_created)
+			{
+				DirectoryUtility.DeleteIfExists(_directory);
+				_created = false;
+			}
+		}
+	}
 }

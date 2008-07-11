@@ -29,44 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.IO;
-
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    /// <summary>
-    /// A ServerCommand derived class for creating a directory.
-    /// </summary>
-    public class CopyDirectoryCommand : ServerCommand
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class InsertArchiveQueue: ProcedureUpdateBroker<InsertArchiveQueueParameters>, IInsertArchiveQueue
     {
-        #region Private Members
-        private string _src;
-        private string _dest;
-        #endregion
-
-        public CopyDirectoryCommand(string src, string dest)
-            : base("Copy Directory", true)
+		public InsertArchiveQueue()
+			: base("InsertArchiveQueue")
         {
-            Platform.CheckForNullReference(src, "src");
-            Platform.CheckForNullReference(dest, "dest");
-
-            _src = src;
-            _dest = dest;
-        }
-
-        protected override void OnExecute()
-        {
-            DirectoryUtility.Copy(_src, _dest);
-        }
-
-        protected override void OnUndo()
-        {
-            DirectoryUtility.DeleteIfExists(_dest, true);
         }
     }
 }

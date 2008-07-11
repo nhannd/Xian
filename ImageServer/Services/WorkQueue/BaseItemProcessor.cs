@@ -168,12 +168,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             UidsLoadTime.Add(
                 delegate
                     {
-                        IQueryWorkQueueUids select = _readContext.GetBroker<IQueryWorkQueueUids>();
+						IWorkQueueUidEntityBroker select = _readContext.GetBroker<IWorkQueueUidEntityBroker>();
 
-                        WorkQueueUidQueryParameters parms = new WorkQueueUidQueryParameters();
+						WorkQueueUidSelectCriteria parms = new WorkQueueUidSelectCriteria();
 
-                        parms.WorkQueueKey = item.GetKey();
-                        _uidList = select.Execute(parms);
+                        parms.WorkQueueKey.EqualTo(item.GetKey());
+                        _uidList = select.Find(parms);
 
                         _uidList = TruncateList(item, _uidList);
                     }

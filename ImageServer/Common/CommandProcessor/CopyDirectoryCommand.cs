@@ -30,18 +30,38 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class QueryRequestAttributes : ProcedureQueryBroker<RequestAttributesQueryParameters,RequestAttributes>,IQueryRequestAttributes
-    {
-        public QueryRequestAttributes()
-            : base("QueryRequestAttributes")
-        {
-        }
-    }
+	/// <summary>
+	/// A ServerCommand derived class for creating a directory.
+	/// </summary>
+	public class CopyDirectoryCommand : ServerCommand
+	{
+		#region Private Members
+		private readonly string _src;
+		private readonly string _dest;
+		#endregion
+
+		public CopyDirectoryCommand(string src, string dest)
+			: base("Copy Directory", true)
+		{
+			Platform.CheckForNullReference(src, "src");
+			Platform.CheckForNullReference(dest, "dest");
+
+			_src = src;
+			_dest = dest;
+		}
+
+		protected override void OnExecute()
+		{
+			DirectoryUtility.Copy(_src, _dest);
+		}
+
+		protected override void OnUndo()
+		{
+			DirectoryUtility.DeleteIfExists(_dest, true);
+		}
+	}
 }

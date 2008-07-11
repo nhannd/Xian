@@ -29,32 +29,74 @@
 
 #endregion
 
-using System.IO;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
-	/// <see cref="ServerCommand"/> for deleting a file, not that there is no rollback.  Rollback
-	/// should be accomplished by other means.  IE, do a rename of the file, then delete when everything
-	/// else is done.
+	/// <see cref="ServerCommand"/> derived class for implementing commands that interact with the database.
 	/// </summary>
-	public class FileDeleteCommand : ServerCommand
+	public abstract class ServerDatabaseCommand : ServerCommand
 	{
-		private readonly string _path;
+		#region Private Members
+		private IUpdateContext _updateContext;
+		#endregion
 
-		public FileDeleteCommand(string path, bool requiresRollback) : base("Delete File", requiresRollback)
+		#region Properties
+		public IUpdateContext UpdateContext
 		{
-			_path = path;
+			get { return _updateContext; }
+			set { _updateContext = value; }
 		}
+		#endregion
 
+		#region Constructor
+		/// <summary>
+		/// Constructor for a ServerDatabaseCommand.
+		/// </summary>
+		/// <param name="description">A description of the command</param>
+		/// <param name="requiresRollback">bool telling if the command requires a rollback of the operation if it fails</param>
+		public ServerDatabaseCommand(string description, bool requiresRollback)
+			: base(description, requiresRollback)
+		{
+		}
+		#endregion
+
+		/// <summary>
+		/// Execute the ServerDatabaseCommand with the specified <see cref="IUpdateContext"/>.
+		/// </summary>
+		protected abstract void OnExecute(IUpdateContext updateContext);
+
+		/// <summary>
+		/// Execute the <see cref="ServerCommand"/> 
+		/// </summary>
+		/// <remarks>
+		/// </remarks>
 		protected override void OnExecute()
 		{
-			File.Delete(_path);
+			if (UpdateContext != null)
+			{
+				OnExecute(UpdateContext);
+				UpdateContext = null;
+			}
+			else
+			{
+				using (
+					IUpdateContext updateContext =
+						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					OnExecute(updateContext);
+					updateContext.Commit();
+				}
+			}
 		}
 
+		/// <summary>
+		/// Undo of database command, note that this is not called because the transaction is rolled back instead.
+		/// </summary>
 		protected override void OnUndo()
 		{
-			
+
 		}
 	}
 }

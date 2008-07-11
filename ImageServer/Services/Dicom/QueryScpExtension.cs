@@ -121,13 +121,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="row">The <see cref="Series"/> entity to load the related <see cref="RequestAttributes"/> entity for.</param>
         private static void LoadRequestAttributes(IReadContext read, DicomMessage response, Series row)
         {
-            IQueryRequestAttributes select = read.GetBroker<IQueryRequestAttributes>();
+			IRequestAttributesEntityBroker select = read.GetBroker<IRequestAttributesEntityBroker>();
 
-            RequestAttributesQueryParameters parms = new RequestAttributesQueryParameters();
+			RequestAttributesSelectCriteria criteria = new RequestAttributesSelectCriteria();
 
-            parms.SeriesKey = row.GetKey();
+            criteria.SeriesKey.EqualTo(row.GetKey());
 
-            IList<RequestAttributes> list = select.Execute(parms);
+            IList<RequestAttributes> list = select.Find(criteria);
 
             if (list.Count == 0)
             {

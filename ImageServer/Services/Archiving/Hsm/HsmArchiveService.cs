@@ -29,12 +29,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {

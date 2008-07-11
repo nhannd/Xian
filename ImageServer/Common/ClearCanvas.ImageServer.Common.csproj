@@ -35,23 +35,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CopyDirectoryCommand.cs" />
-    <Compile Include="CreateDirectoryCommand.cs" />
-    <Compile Include="DicomCompressCommand.cs" />
-    <Compile Include="FileDeleteCommand.cs" />
+    <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
+    <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
+    <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
+    <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
+    <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="IImageServerXmlCodecParameters.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenameFileCommand.cs" />
-    <Compile Include="SaveDicomFileCommand.cs" />
+    <Compile Include="CommandProcessor\RenameFileCommand.cs" />
+    <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
     <Compile Include="ServerAddress.cs" />
-    <Compile Include="ServerCommand.cs" />
-    <Compile Include="ServerCommandProcessor.cs" />
-    <Compile Include="ServerCommandStatistics.cs" />
-    <Compile Include="ServerDatabaseCommand.cs" />
+    <Compile Include="CommandProcessor\ServerCommand.cs" />
+    <Compile Include="CommandProcessor\ServerCommandProcessor.cs" />
+    <Compile Include="CommandProcessor\ServerCommandStatistics.cs" />
+    <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServiceTools.cs" />
     <Compile Include="FileStreamOpener.cs" />

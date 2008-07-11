@@ -29,12 +29,56 @@
 
 #endregion
 
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    public interface IQueryRequestAttributes : IProcedureQueryBroker<RequestAttributesQueryParameters,RequestAttributes>
-    {
-    }
+	/// <summary>
+	/// <see cref="ServerCommand"/> for inserting into the <see cref="ArchiveQueue"/>.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Note that This stored procedure checks to see if a study delete record has been 
+	/// inserted into the database, so it should be called after the rules engine has 
+	/// been run & appropriate records inserted into the database.
+	/// </para>
+	/// <para>
+	/// Note also that it can be called when we reprocess a study.
+	/// </para>
+	/// </remarks>
+	public class InsertArchiveQueueCommand : ServerDatabaseCommand
+	{
+		private readonly ServerEntityKey _serverPartitionKey;
+		private readonly ServerEntityKey _studyStorageKey;
+		private readonly bool _update;
+
+		public InsertArchiveQueueCommand(ServerEntityKey serverPartitionKey, ServerEntityKey studyStorageKey, bool update)
+			: base("Insert ArchiveQueue record", true)
+		{
+			_serverPartitionKey = serverPartitionKey;
+
+			_studyStorageKey = studyStorageKey;
+
+			_update = update;
+		}
+
+		protected override void OnExecute(IUpdateContext updateContext)
+		{
+			// Setup the insert parameters
+			InsertArchiveQueueParameters parms = new InsertArchiveQueueParameters();
+			parms.ServerPartitionKey = _serverPartitionKey;
+			parms.StudyStorageKey = _studyStorageKey;
+			parms.Update = _update;
+
+			// Get the Insert ArchiveQueue broker and do the insert
+			IInsertArchiveQueue insert = updateContext.GetBroker<IInsertArchiveQueue>();
+
+			// Do the insert
+			insert.Execute(parms);
+		}
+	}
 }

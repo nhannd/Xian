@@ -38,6 +38,7 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
@@ -117,13 +118,19 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
             // be reinserted by the rules engine.
             context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey()));
 
+			// Re-do insert into the archive queue.  Note the "update" flag must be set,
+			// so that we don't insert a new record if the study has been already archived
+        	context.CommandProcessor.AddCommand(
+        		new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey(), true));
+
             // Execute the rules engine, insert commands to update the database into the command processor.
             engine.Execute(context);
+
 
             // Do the actual database updates.
             if (false == context.CommandProcessor.Execute())
             {
-                Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules for study {0}", location.StudyInstanceUid);
+                Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", location.StudyInstanceUid);
             }
         }
 

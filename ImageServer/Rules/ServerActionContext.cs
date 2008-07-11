@@ -30,7 +30,7 @@
 #endregion
 
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
@@ -71,32 +71,50 @@ namespace ClearCanvas.ImageServer.Rules
         #endregion
 
         #region Public Properties
-
+		/// <summary>
+		/// The message being worked against.
+		/// </summary>
         public DicomMessageBase Message
         {
             get { return _msg; }
         }
 
+		/// <summary>
+		/// The command processor.
+		/// </summary>
         public ServerCommandProcessor CommandProcessor
         {
             get { return _commandProcessor; }
             set { _commandProcessor = value; }
         }
 
+		/// <summary>
+		/// The partition of the object.
+		/// </summary>
         public ServerEntityKey ServerPartitionKey
         {
             get { return _serverPartitionKey; }
         }
 
+		/// <summary>
+		/// The key of the filesystem being worked with..
+		/// </summary>
         public ServerEntityKey FilesystemKey
         {
             get { return _filesystemKey; }
         }
 
+		/// <summary>
+		/// The study location key.
+		/// </summary>
         public ServerEntityKey StudyLocationKey
         {
             get { return _studyLocationKey; }
         }
+
+		/// <summary>
+		/// The server partition itself.
+		/// </summary>
     	public ServerPartition ServerPartition
     	{
 			get { return _partition; }

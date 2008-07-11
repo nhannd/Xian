@@ -1022,7 +1022,7 @@ CREATE TABLE [dbo].[ArchiveQueue](
 	[ScheduledTime] [datetime] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[ArchiveQueueStatusEnum] [smallint] NOT NULL,
-	[ProcessorId] [varchar](256) NOT NULL,
+	[ProcessorId] [varchar](256) NULL,
  CONSTRAINT [PK_ArchiveQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
