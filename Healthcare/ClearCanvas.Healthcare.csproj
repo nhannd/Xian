@@ -83,6 +83,7 @@
     <Compile Include="CannedText.cs" />
     <Compile Include="EmergencyWorklists.cs" />
     <Compile Include="GroupNotePosting.cs" />
+    <Compile Include="Imex\LocationImex.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />
