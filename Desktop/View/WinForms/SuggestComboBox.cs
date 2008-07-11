@@ -35,6 +35,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using System.Reflection;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -219,14 +220,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             if (e.Items.Count == 0)
             {
-                // there are no suggestions, so clear the items list
-                this.Items.Clear();
+				try
+				{
+					// there are no suggestions, so clear the items list
+					this.Items.Clear();
 
-                // reset text back to original text
-                // and return the cursor to the original position
-                this.Text = curText;
-                this.SelectionStart = cursorPosition;
-                this.SelectionLength = 0;
+					// reset text back to original text
+					// and return the cursor to the original position
+					this.Text = curText;
+					this.SelectionStart = cursorPosition;
+					this.SelectionLength = 0;
+					this.DroppedDown = false;
+				}
+				catch (ArgumentOutOfRangeException)
+				{
+					// seems to throw this exception is the list is cleared
+					// revert the combobox anyways.
+					this.DroppedDown = false;
+				}
             }
             else
             {
