@@ -998,6 +998,10 @@ namespace ClearCanvas.Ris.Client
                         {
                             PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(requisition));
                             _orderRef = response.Order.OrderRef;
+
+                        	this.Host.ShowMessageBox(
+                        		string.Format("Order {0} placed successfully.",
+                        		              AccessionFormat.Format(response.Order.AccessionNumber)), MessageBoxActions.Ok);
                         }
                         else if (_mode == Mode.ModifyOrder)
                         {
@@ -1009,7 +1013,11 @@ namespace ClearCanvas.Ris.Client
                             ReplaceOrderRequest request = new ReplaceOrderRequest(_orderRef, _selectedCancelReason, requisition);
                             ReplaceOrderResponse response = service.ReplaceOrder(request);
                             _orderRef = response.Order.OrderRef;
-                        }
+
+							this.Host.ShowMessageBox(
+								string.Format("Order successfully replaced with new order {0}.",
+											  AccessionFormat.Format(response.Order.AccessionNumber)), MessageBoxActions.Ok);
+						}
                     });
 
                 EventsHelper.Fire(_changeCommitted, this, EventArgs.Empty);
