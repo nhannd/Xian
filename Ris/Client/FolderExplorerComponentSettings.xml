@@ -18,12 +18,11 @@
 		<folder id="RegistrationSearchFolder" />
 	</folder-system>
 	<folder-system id="ClearCanvas.Ris.Client.Workflow.BookingWorkflowFolderSystem">
-		<folder id="CompletedProtocolFolder" />
-		<folder id="SuspendedProtocolFolder" />
-		<folder id="RejectedProtocolFolder" />
-		<folder id="PendingProtocolFolder" />
-		<folder id="ToBeScheduledFolder" />
-		<folder id="BookingSearchFolder" />
+    <folder id="ToBeScheduledFolder" />
+    <folder id="PendingProtocolFolder" />
+    <folder id="CompletedProtocolFolder" />
+    <folder id="RejectedProtocolFolder" />
+    <folder id="BookingSearchFolder" />
 	</folder-system>
 	<folder-system id="ClearCanvas.Ris.Client.Workflow.ReportingWorkflowFolderSystem">
 		<folder id="ToBeReportedFolder" />
