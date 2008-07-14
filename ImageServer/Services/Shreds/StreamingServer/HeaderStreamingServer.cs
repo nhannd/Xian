@@ -33,6 +33,7 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using ClearCanvas.Common;
+using ClearCanvas.DicomServices.ServiceModel.Streaming;
 using ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval;
 using ClearCanvas.Server.ShredHost;
 
