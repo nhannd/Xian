@@ -239,9 +239,6 @@
     <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DoubleExclamation.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\EditPatientToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
@@ -312,9 +309,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ResumeToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SingleExclamation.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\StartToolLarge.png" />

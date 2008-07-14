@@ -9,8 +9,9 @@
 
 		<property name="Category" column="Category_" type="String" length ="1024"/>
 		<property name="Body" column="Body_" type="StringClob" length="65000"/>
-		
-		<property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
+    <property name="Urgent" column="Urgent_" type="Boolean" not-null="true"/>
+
+    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
     <many-to-one name="Author" class="Staff" column="AuthorOID_" not-null="true"/>
     <many-to-one name="OnBehalfOfGroup" class="StaffGroup" column="OnBehalfOfGroupOID_" not-null="false"/>
     <property name="PostTime" column="PostTime_" type="DateTime" not-null="false"/>

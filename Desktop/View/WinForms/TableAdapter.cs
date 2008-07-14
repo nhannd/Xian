@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -65,7 +66,19 @@ namespace ClearCanvas.Desktop.View.WinForms
             if (this.PropertyType == typeof(IconSet))
             {
                 IconSet iconSet = (IconSet)_column.GetValue(component);
-                return iconSet == null ? null : IconFactory.CreateIcon(iconSet.SmallIcon, _column.ResourceResolver);
+				if(iconSet == null)
+					return null;
+
+				try
+				{
+					// try to create the icon
+					return IconFactory.CreateIcon(iconSet.SmallIcon, _column.ResourceResolver);
+				}
+				catch(Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+					return null;
+				}
             }
             else
             {

@@ -132,12 +132,14 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="postTime"></param>
         /// <param name="author"></param>
         /// <param name="onBehalfOfGroup"></param>
+        /// <param name="urgent"></param>
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
         /// <param name="noteBody"></param>
         /// <param name="canAcknowledge"></param>
         public OrderNoteDetail(EntityRef orderNoteRef, string category, DateTime creationTime,
-			DateTime? postTime, StaffSummary author, StaffGroupSummary onBehalfOfGroup, List<StaffRecipientDetail> staffRecipients,
+			DateTime? postTime, StaffSummary author, StaffGroupSummary onBehalfOfGroup, bool urgent,
+			List<StaffRecipientDetail> staffRecipients,
 			List<GroupRecipientDetail> groupRecipients, string noteBody, bool canAcknowledge)
         {
             OrderNoteRef = orderNoteRef;
@@ -146,6 +148,7 @@ namespace ClearCanvas.Ris.Application.Common
             PostTime = postTime;
             Author = author;
         	OnBehalfOfGroup = onBehalfOfGroup;
+        	Urgent = urgent;
             StaffRecipients = staffRecipients;
             GroupRecipients = groupRecipients;
             NoteBody = noteBody;
@@ -158,13 +161,15 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="category"></param>
         /// <param name="noteBody"></param>
         /// <param name="onBehalfOfGroup"></param>
+        /// <param name="urgent"></param>
         /// <param name="staffRecipients"></param>
         /// <param name="groupRecipients"></param>
-		public OrderNoteDetail(string category, string noteBody, StaffGroupSummary onBehalfOfGroup, List<StaffSummary> staffRecipients, List<StaffGroupSummary> groupRecipients)
+		public OrderNoteDetail(string category, string noteBody, StaffGroupSummary onBehalfOfGroup, bool urgent, List<StaffSummary> staffRecipients, List<StaffGroupSummary> groupRecipients)
         {
             Category = category;
             NoteBody = noteBody;
         	OnBehalfOfGroup = onBehalfOfGroup;
+        	Urgent = urgent;
 
             StaffRecipients = staffRecipients == null ? null :
                 CollectionUtils.Map<StaffSummary, StaffRecipientDetail>(staffRecipients,
@@ -228,7 +233,13 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string NoteBody;
 
-        /// <summary>
+		/// <summary>
+		/// Gets a value indicating whether the note is urgent or not.
+		/// </summary>
+		[DataMember]
+		public bool Urgent;
+
+		/// <summary>
         /// Gets the list of staff recipients.
         /// </summary>
         [DataMember]

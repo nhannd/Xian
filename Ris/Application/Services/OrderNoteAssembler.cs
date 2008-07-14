@@ -140,6 +140,7 @@ namespace ClearCanvas.Ris.Application.Services
                 orderNote.PostTime,
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
 				orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
+				orderNote.Urgent,
                 staffRecipients, 
                 groupRecipients, 
                 orderNote.Body,
@@ -198,7 +199,7 @@ namespace ClearCanvas.Ris.Application.Services
 				context.Load<StaffGroup>(detail.OnBehalfOfGroup.StaffGroupRef, EntityLoadFlags.Proxy);
 
 
-            OrderNote note = new OrderNote(order, detail.Category, author, onBehalfOf, detail.NoteBody);
+            OrderNote note = new OrderNote(order, detail.Category, author, onBehalfOf, detail.NoteBody, detail.Urgent);
 
             if(post)
                 note.Post(staffRecipients, groupRecipients);

@@ -22,15 +22,31 @@ namespace ClearCanvas.Ris.Client
 		private OrderNoteboxTable(int cellRowCount)
 			: base(cellRowCount)
 		{
+			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
+			TableColumn<OrderNoteboxItemSummary, IconSet> urgentColumn =
+				new TableColumn<OrderNoteboxItemSummary, IconSet>(SR.ColumnUrgent,
+				delegate(OrderNoteboxItemSummary item)
+				{
+					return item.Urgent ? new IconSet("SingleExclamation.png") : null;
+				}, 0.3f);
+			urgentColumn.Comparison = delegate(OrderNoteboxItemSummary item1, OrderNoteboxItemSummary item2)
+										{
+											return item1.Urgent.CompareTo(item2.Urgent);
+										};
+			urgentColumn.ResourceResolver = resolver;
+			this.Columns.Add(urgentColumn);
+
+			/* JR: this isn't needed right now, because acknowledged notes are never shown.
 			TableColumn<OrderNoteboxItemSummary, IconSet> acknowledgedColumn =
 				new TableColumn<OrderNoteboxItemSummary, IconSet>(SR.ColumnStatus,
 					delegate(OrderNoteboxItemSummary item) { return GetIsAcknowledgedIcon(item.IsAcknowledged); },
 					0.3f);
 			acknowledgedColumn.Comparison = delegate(OrderNoteboxItemSummary item1, OrderNoteboxItemSummary item2)
 				{ return item1.IsAcknowledged.CompareTo(item2.IsAcknowledged); };
-			acknowledgedColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+			acknowledgedColumn.ResourceResolver = resolver;
 			this.Columns.Add(acknowledgedColumn);
+			 */
 
 			this.Columns.Add(new TableColumn<OrderNoteboxItemSummary, string>(SR.ColumnMRN,
 				delegate(OrderNoteboxItemSummary item) { return MrnFormat.Format(item.Mrn); },

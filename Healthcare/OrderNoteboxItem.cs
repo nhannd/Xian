@@ -17,6 +17,7 @@ namespace ClearCanvas.Healthcare
 		private readonly string _accessionNumber;
 		private readonly string _diagnosticServiceName;
 		private readonly string _category;
+		private readonly bool _urgent;
 		private readonly DateTime? _postTime;
 		private readonly Staff _author;
 		private readonly StaffGroup _onBehalfOfGroup;
@@ -44,6 +45,7 @@ namespace ClearCanvas.Healthcare
 			_accessionNumber = order.AccessionNumber;
 			_diagnosticServiceName = order.DiagnosticService.Name;
 			_category = note.Category;
+			_urgent = note.Urgent;
 			_postTime = note.PostTime;
 			_author = note.Author;
 			_onBehalfOfGroup = note.OnBehalfOfGroup;
@@ -100,6 +102,11 @@ namespace ClearCanvas.Healthcare
 		public string Category
 		{
 			get { return _category; }
+		}
+
+		public bool Urgent
+		{
+			get { return _urgent; }
 		}
 
 		public DateTime? PostTime

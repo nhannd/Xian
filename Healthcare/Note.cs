@@ -25,12 +25,14 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
-        public Note(string category, Staff author, StaffGroup onBehalfOf, string body)
+        /// <param name="urgent"></param>
+        public Note(string category, Staff author, StaffGroup onBehalfOf, string body, bool urgent)
         {
             _category = category;
             _author = author;
         	_onBehalfOfGroup = onBehalfOf;
             _body = body;
+        	_urgent = urgent;
             _postings = new HashedSet<NotePosting>();
 
             _creationTime = Platform.Time;

@@ -20,14 +20,27 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="accessionNumber"></param>
 		/// <param name="diagnosticServiceName"></param>
 		/// <param name="category"></param>
+		/// <param name="urgent"></param>
 		/// <param name="postTime"></param>
 		/// <param name="author"></param>
+		/// <param name="onBehalfOfGroup"></param>
 		/// <param name="isAcknowledged"></param>
 		/// <param name="staffRecipients"></param>
 		/// <param name="groupRecipients"></param>
-		public OrderNoteboxItemSummary(EntityRef orderRef, EntityRef patientRef, EntityRef patientProfileRef,
-			CompositeIdentifierDetail mrn, PersonNameDetail patientName, DateTime? dateOfBirth, string accessionNumber,
-			string diagnosticServiceName, string category, DateTime? postTime, StaffSummary author, StaffGroupSummary onBehalfOfGroup,
+		public OrderNoteboxItemSummary(
+			EntityRef orderRef,
+			EntityRef patientRef,
+			EntityRef patientProfileRef,
+			CompositeIdentifierDetail mrn,
+			PersonNameDetail patientName,
+			DateTime? dateOfBirth,
+			string accessionNumber,
+			string diagnosticServiceName,
+			string category,
+			bool urgent,
+			DateTime? postTime,
+			StaffSummary author,
+			StaffGroupSummary onBehalfOfGroup,
 			bool isAcknowledged,
 			List<StaffSummary> staffRecipients,
 			List<StaffGroupSummary> groupRecipients)
@@ -41,6 +54,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 			AccessionNumber = accessionNumber;
 			DiagnosticServiceName = diagnosticServiceName;
 			Category = category;
+			Urgent = urgent;
 			PostTime = postTime;
 			Author = author;
 			OnBehalfOfGroup = onBehalfOfGroup;
@@ -102,6 +116,12 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// </summary>
 		[DataMember]
 		public string Category;
+
+		/// <summary>
+		/// Gets a value indicating whether the note is considered urgent or not.
+		/// </summary>
+		[DataMember]
+		public bool Urgent;
 
 		/// <summary>
 		/// Gets the time the note was posted.

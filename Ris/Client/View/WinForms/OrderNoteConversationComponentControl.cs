@@ -60,6 +60,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cannedTextSupport = new CannedTextSupport(_replyBody, _component.CannedTextLookupHandler);
 
+			_urgent.DataBindings.Add("Checked", _component, "Urgent", true, DataSourceUpdateMode.OnPropertyChanged);
+
 			_onBehalf.DataSource = _component.OnBehalfOfGroupChoices;
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
 

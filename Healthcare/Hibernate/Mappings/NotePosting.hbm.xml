@@ -13,11 +13,13 @@
 			<many-to-one name="Staff" class="Staff" column="AcknowledgedByStaffOID_" not-null="false"/>
 			<property name="Time" column="AcknowledgedByTime_" type="DateTime" not-null="false"/>
 		</component>
-    <subclass name="StaffNotePosting" extends="NotePosting" discriminator-value="STAFF">
-      <many-to-one name="Recipient" column="RecipientStaffOID_" class="Staff" fetch="join" not-null="false"/>
-    </subclass>
-    <subclass name="GroupNotePosting" extends="NotePosting" discriminator-value="GROUP">
-      <many-to-one name="Recipient" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
-    </subclass>
   </class>
+  
+  <!-- subclasses -->
+  <subclass name="StaffNotePosting" extends="NotePosting" discriminator-value="STAFF">
+    <many-to-one name="Recipient" column="RecipientStaffOID_" class="Staff" fetch="join" not-null="false"/>
+  </subclass>
+  <subclass name="GroupNotePosting" extends="NotePosting" discriminator-value="GROUP">
+    <many-to-one name="Recipient" column="RecipientGroupOID_" class="StaffGroup" fetch="join" not-null="false"/>
+  </subclass>
 </hibernate-mapping>

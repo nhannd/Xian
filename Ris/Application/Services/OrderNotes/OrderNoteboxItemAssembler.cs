@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 				item.AccessionNumber,
 				item.DiagnosticServiceName,
 				item.Category,
+				item.Urgent,
 				item.PostTime,
 				staffAssembler.CreateStaffSummary(item.Author, context),
 				item.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(item.OnBehalfOfGroup),

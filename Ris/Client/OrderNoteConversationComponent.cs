@@ -212,6 +212,8 @@ namespace ClearCanvas.Ris.Client
 
 		private string _body;
 
+		private bool _urgent;
+
 		private IList<StaffGroupSummary> _onBehalfOfChoices;
 		private StaffGroupSummary _onBehalfOf;
 
@@ -327,6 +329,12 @@ namespace ClearCanvas.Ris.Client
 			{
 				_body = value;
 			}
+		}
+
+		public bool Urgent
+		{
+			get { return _urgent; }
+			set { _urgent = value; }
 		}
 
 		public ICannedTextLookupHandler CannedTextLookupHandler
@@ -557,7 +565,8 @@ namespace ClearCanvas.Ris.Client
 			OrderNoteDetail reply = new OrderNoteDetail(
 				OrderNoteCategory.PreliminaryDiagnosis.Key, 
 				_body, 
-				_onBehalfOf, 
+				_onBehalfOf,
+				_urgent,
 				_recipients.SelectedStaff, 
 				_recipients.SelectedStaffGroups);
 

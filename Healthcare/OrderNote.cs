@@ -53,8 +53,8 @@ namespace ClearCanvas.Healthcare {
         /// <param name="author"></param>
         /// <param name="onBehalfOf"></param>
         /// <param name="body"></param>
-        public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body)
-            :base(category, author, onBehalfOf, body)
+        public OrderNote(Order order, string category, Staff author, StaffGroup onBehalfOf, string body, bool urgent)
+            :base(category, author, onBehalfOf, body, urgent)
         {
             _order = order;
             _order.Notes.Add(this);

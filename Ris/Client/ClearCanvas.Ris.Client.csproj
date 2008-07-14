@@ -494,6 +494,12 @@
     <EmbeddedResource Include="Icons\FolderClosedRefreshMedium.gif" />
     <EmbeddedResource Include="Icons\FolderOpenRefreshMedium.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SingleExclamation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DoubleExclamation.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

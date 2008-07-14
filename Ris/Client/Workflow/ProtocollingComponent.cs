@@ -636,7 +636,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
 		{
 			if (!string.IsNullOrEmpty(additionalComments))
-				return new OrderNoteDetail(OrderNoteCategory.Protocol.Key, additionalComments, null, null, null);
+				return new OrderNoteDetail(OrderNoteCategory.Protocol.Key, additionalComments, null, false, null, null);
 			else
 				return null;
 		}

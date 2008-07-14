@@ -139,7 +139,7 @@
     <value>Author</value>
   </data>
   <data name="ColumnCanAcknowledge" xml:space="preserve">
-    <value>!</value>
+    <value>_</value>
   </data>
   <data name="ColumnCategory" xml:space="preserve">
     <value>Category</value>
@@ -317,6 +317,9 @@
   </data>
   <data name="ColumnUpdatedOn" xml:space="preserve">
     <value>Updated On</value>
+  </data>
+  <data name="ColumnUrgent" xml:space="preserve">
+    <value>Urgent</value>
   </data>
   <data name="ColumnVisitNumber" xml:space="preserve">
     <value>Visit #</value>

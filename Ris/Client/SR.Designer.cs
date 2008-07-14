@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to !.
+        ///   Looks up a localized string similar to _.
         /// </summary>
         internal static string ColumnCanAcknowledge {
             get {
@@ -660,6 +660,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnUpdatedOn {
             get {
                 return ResourceManager.GetString("ColumnUpdatedOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Urgent.
+        /// </summary>
+        internal static string ColumnUrgent {
+            get {
+                return ResourceManager.GetString("ColumnUrgent", resourceCulture);
             }
         }
         

@@ -15,12 +15,14 @@ namespace ClearCanvas.Ris.Client
 
 		public OrderNoteConversationTable()
 		{
+			IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+
 			TableColumn<Checkable<OrderNoteDetail>, IconSet> canAcknowledgeColumn = new TableColumn<Checkable<OrderNoteDetail>, IconSet>(
 				SR.ColumnCanAcknowledge,
 				delegate(Checkable<OrderNoteDetail> item) { return GetCanAcknowledgeIcon(item.Item.CanAcknowledge); },
 				0.2f);
 			canAcknowledgeColumn.Comparison = delegate(Checkable<OrderNoteDetail> item1, Checkable<OrderNoteDetail> item2) { return item1.Item.CanAcknowledge.CompareTo(item2.Item.CanAcknowledge); };
-			canAcknowledgeColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+			canAcknowledgeColumn.ResourceResolver = resolver;
 			this.Columns.Add(canAcknowledgeColumn);
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, bool>(
@@ -36,6 +38,19 @@ namespace ClearCanvas.Ris.Client
 					this.Items.NotifyItemUpdated(item);
 				},
 				0.4f));
+
+			TableColumn<Checkable<OrderNoteDetail>, IconSet> urgentColumn =
+				new TableColumn<Checkable<OrderNoteDetail>, IconSet>(SR.ColumnUrgent,
+				delegate(Checkable<OrderNoteDetail> item)
+				{
+					return item.Item.Urgent ? new IconSet("SingleExclamation.png") : null;
+				}, 0.5f);
+			urgentColumn.Comparison = delegate(Checkable<OrderNoteDetail> item1, Checkable<OrderNoteDetail> item2)
+				{
+					return item1.Item.Urgent.CompareTo(item2.Item.Urgent);
+				};
+			urgentColumn.ResourceResolver = resolver;
+			this.Columns.Add(urgentColumn);
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
 				SR.ColumnFrom,
