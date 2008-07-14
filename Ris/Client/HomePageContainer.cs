@@ -29,9 +29,7 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Client
@@ -88,7 +86,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			_folderSystemGroup.SelectedFolderSystemChanged += OnSelectedFolderSystemChanged;
+			_folderSystemGroup.SelectedFolderExplorerChanged += OnSelectedFolderSystemChanged;
 			_folderSystemGroup.SelectedFolderChanged += OnSelectedFolderChanged;
 			_folderContentComponent.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
@@ -97,7 +95,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-			_folderSystemGroup.SelectedFolderSystemChanged -= OnSelectedFolderSystemChanged;
+			_folderSystemGroup.SelectedFolderExplorerChanged -= OnSelectedFolderSystemChanged;
 			_folderSystemGroup.SelectedFolderChanged -= OnSelectedFolderChanged;
 			_folderContentComponent.SelectedItemsChanged -= SelectedItemsChangedEventHandler;
 
@@ -109,19 +107,22 @@ namespace ClearCanvas.Ris.Client
 			// update the preview component url whenever the selected items change,
 			// regardless of whether the folder system has changed or not
 			// this should help to guarantee that the correct preview page is always displayed
-			string url = _folderSystemGroup.SelectedFolderSystem.GetPreviewUrl(_folderSystemGroup.SelectedFolder, _folderContentComponent.SelectedItems.Items);
+			string url = _folderSystemGroup.SelectedFolderExplorer.FolderSystem.GetPreviewUrl(
+				_folderSystemGroup.SelectedFolderExplorer.SelectedFolder, 
+				_folderContentComponent.SelectedItems.Items);
+
 			_previewComponent.SetPreviewItems(url, _folderContentComponent.SelectedItems.Items);
 		}
 
 		private void OnSelectedFolderSystemChanged(object sender, System.EventArgs e)
 		{
-			_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderSystem;
-			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
+			_folderContentComponent.FolderSystem = _folderSystemGroup.SelectedFolderExplorer.FolderSystem;
+			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
 		}
 
 		private void OnSelectedFolderChanged(object sender, System.EventArgs e)
 		{
-			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolder;
+			_folderContentComponent.SelectedFolder = _folderSystemGroup.SelectedFolderExplorer.SelectedFolder;
 		}
 	}
 }

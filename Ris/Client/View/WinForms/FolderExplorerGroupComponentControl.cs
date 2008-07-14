@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -13,8 +12,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 	public partial class FolderExplorerGroupComponentControl : ApplicationComponentUserControl
     {
         private readonly FolderExplorerGroupComponent _component;
-		private bool _isLoaded = false;
-
 
         /// <summary>
         /// Constructor
@@ -25,7 +22,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-			_component.SelectedFolderSystemChanged += delegate
+			_component.SelectedFolderExplorerChanged += delegate
 				{
 					InitializeToolStrip();
 				};
@@ -63,8 +60,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private void FolderExplorerGroupComponentControl_Load(object sender, EventArgs e)
 		{
 			InitializeToolStrip();
-
-			_isLoaded = true;
 		}
 
 		private void _searchButton_Click(object sender, EventArgs e)

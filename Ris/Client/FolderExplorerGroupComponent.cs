@@ -153,9 +153,8 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly Dictionary<IFolderSystem, FolderExplorerComponent> _folderExplorerComponents;
 		private FolderExplorerComponent _selectedFolderExplorer;
-		private IFolder _selectedFolder;
 
-		private event EventHandler _selectedFolderSystemChanged;
+		private event EventHandler _selectedFolderExplorerChanged;
 		private event EventHandler _selectedFolderChanged;
 
 		private ToolSet _toolSet;
@@ -249,6 +248,27 @@ namespace ClearCanvas.Ris.Client
 
 		#region Properties
 
+		public event EventHandler SelectedFolderExplorerChanged
+		{
+			add { _selectedFolderExplorerChanged += value; }
+			remove { _selectedFolderExplorerChanged -= value; }
+		}
+
+		public event EventHandler SelectedFolderChanged
+		{
+			add { _selectedFolderChanged += value; }
+			remove { _selectedFolderChanged -= value; }
+		}
+
+		public FolderExplorerComponent SelectedFolderExplorer
+		{
+			get { return _selectedFolderExplorer; }
+		}
+
+		#endregion
+
+		#region Presentation Model
+
 		public ApplicationComponentHost StackTabComponentContainerHost
 		{
 			get { return _stackTabComponentContainerHost; }
@@ -263,34 +283,9 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public event EventHandler SelectedFolderSystemChanged
-		{
-			add { _selectedFolderSystemChanged += value; }
-			remove { _selectedFolderSystemChanged -= value; }
-		}
-
-		public event EventHandler SelectedFolderChanged
-		{
-			add { _selectedFolderChanged += value; }
-			remove { _selectedFolderChanged -= value; }
-		}
-
-		public event EventHandler SearchEnabledChanged
-		{
-			add { this.SelectedFolderSystemChanged += value; }
-			remove { this.SelectedFolderSystemChanged -= value; }
-		}
-
-
-		public IFolderSystem SelectedFolderSystem
-		{
-			get { return _selectedFolderExplorer == null ? null : _selectedFolderExplorer.FolderSystem; }
-		}
-
-
 		public bool SearchEnabled
 		{
-			get { return this.SelectedFolderSystem.SearchEnabled; }
+			get { return _selectedFolderExplorer == null ? false : this._selectedFolderExplorer.FolderSystem.SearchEnabled; }
 		}
 
 		public string SearchMessage
@@ -298,20 +293,10 @@ namespace ClearCanvas.Ris.Client
 			get { return SR.MessageSearchMessage; }
 		}
 
-		public IFolder SelectedFolder
+		public void Search(SearchData searchData)
 		{
-			get { return _selectedFolder; }
-			set
-			{
-				if (_selectedFolder != value)
-				{
-					if (_selectedFolderExplorer != null)
-						_selectedFolderExplorer.SelectedFolder = value;
-
-					_selectedFolder = value;
-					EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
-				}
-			}
+			if (this.SearchEnabled)
+				this.SelectedFolderExplorer.FolderSystem.ExecuteSearch(searchData);
 		}
 
 		#endregion
@@ -323,11 +308,8 @@ namespace ClearCanvas.Ris.Client
 			FolderExplorerComponent explorer = (FolderExplorerComponent)_stackTabComponent.CurrentPage.Component;
 			if (_selectedFolderExplorer != explorer)
 			{
-				// Must set the previous folder explorer folder selection to null before changing folder exploer
-				this.SelectedFolder = null;
-
 				_selectedFolderExplorer = explorer;
-				EventsHelper.Fire(_selectedFolderSystemChanged, this, EventArgs.Empty);
+				EventsHelper.Fire(_selectedFolderExplorerChanged, this, EventArgs.Empty);
 
 				// refresh folders in newly selected folder explorer
 				_selectedFolderExplorer.InvalidateFolders();
@@ -336,17 +318,9 @@ namespace ClearCanvas.Ris.Client
 
 		private void OnSelectedFolderChanged(object sender, EventArgs e)
 		{
-			FolderExplorerComponent selectedFolderExplorer = (FolderExplorerComponent)sender;
-			this.SelectedFolder = selectedFolderExplorer.SelectedFolder;
+			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
 		}
 
 		#endregion
-
-		public void Search(SearchData searchData)
-		{
-			if (this.SearchEnabled)
-				this.SelectedFolderSystem.ExecuteSearch(searchData);
-		}
-
 	}
 }
