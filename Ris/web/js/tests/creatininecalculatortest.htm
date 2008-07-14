@@ -1,0 +1,55 @@
+<html>
+ <head>
+  <title>Test Page for CreatinineCalculator</title>
+  <script language="javascript" src="../jsunit/app/jsUnitCore.js"></script>
+  <script language="javascript" src="../creatininecalculator.js"></script>
+ </head>
+ <body>
+  <script language="javascript">
+		function testInvalidSex() {
+			try {
+				CreatinineCalculator.calculateClearance(20, 90, "InvalidSex", 200);
+			}
+			catch(e)
+			{
+				assertNotNull("Invalid sex exception thrown", e);
+			}
+		}
+		
+		function testInvalidWeight()
+		{
+			try {
+				CreatinineCalculator.calculateClearance(20, 0, "Male", 200);
+			}
+			catch(e)
+			{
+				assertNotNull("Invalid sex exception thrown", e);
+			}
+		}
+		
+		function testInvalidAge()
+		{
+			try {
+				CreatinineCalculator.calculateClearance(0, 90, "Male", 200);
+			}
+			catch(e)
+			{
+				assertNotNull("Invalid sex exception thrown", e);
+			}
+		}
+		
+		function testValidInput()
+		{
+			assertEquals("Male", "64.80", CreatinineCalculator.calculateClearance(20, 90, "Male", 200).toFixed(2))
+			assertEquals("Female", "55.08", CreatinineCalculator.calculateClearance(20, 90, "Female", 200).toFixed(2))
+
+			assertEquals("Male", "24.00", CreatinineCalculator.calculateClearance(60, 50, "Male", 200).toFixed(2))
+			assertEquals("Female", "20.40", CreatinineCalculator.calculateClearance(60, 50, "Female", 200).toFixed(2))
+
+			assertEquals("Male", "12.00", CreatinineCalculator.calculateClearance(60, 50, "Male", 400).toFixed(2))
+			assertEquals("Female", "10.20", CreatinineCalculator.calculateClearance(60, 50, "Female", 400).toFixed(2))
+		}
+		
+  </script>
+ </body>
+</html>
