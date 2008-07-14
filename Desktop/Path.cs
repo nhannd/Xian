@@ -99,9 +99,9 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the individual segments contained in this path.
         /// </summary>
-        public PathSegment[] Segments
+        public IList<PathSegment> Segments
         {
-            get { return _segments.ToArray(); }
+            get { return _segments.AsReadOnly(); }
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace ClearCanvas.Desktop
 		public Path GetCommonPath(Path other)
 		{
 			List<PathSegment> commonPath = new List<PathSegment>();
-			for(int i = 0; i < Math.Min(_segments.Count, other.Segments.Length); i++)
+			for(int i = 0; i < Math.Min(_segments.Count, other.Segments.Count); i++)
 			{
 				if(_segments[i] == other.Segments[i])
 					commonPath.Add(_segments[i]);
@@ -175,7 +175,27 @@ namespace ClearCanvas.Desktop
 			return new Path(commonPath);
 		}
 
-		private static PathSegment[] ParsePathString(string pathString, IResourceResolver resolver)
+        /// <summary>
+        /// Returns true if this path starts with <paramref name="other"/>.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public bool StartsWith(Path other)
+        {
+            // if other path is longer, then this path can't possibly "start with" it
+            if (other.Segments.Count > _segments.Count)
+                return false;
+
+            // check that segments are equal up to length of other path
+            for (int i = 0; i < other.Segments.Count; i++)
+            {
+                if (!Equals(_segments[i], other.Segments[i]))
+                    return false;
+            }
+            return true;
+        }
+
+        private static PathSegment[] ParsePathString(string pathString, IResourceResolver resolver)
 		{
 			// replace any escaped separators with some weird temporary string
 			pathString = StringUtilities.EmptyIfNull(pathString).Replace(ESCAPED_SEPARATOR, TEMP);

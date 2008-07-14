@@ -358,40 +358,102 @@ namespace ClearCanvas.Desktop.Actions
 				}
 				else if (xmlAction.Name == "separator")
 				{
-					// a separator at the beginning or end of the list is not valid - ignore it
-					if(i == 0 || i == actionNodes.Count - 1)
-						continue;
-
-					// get the actions appearing immediately before and after the separator
-					XmlElement preXmlAction = actionNodes[i - 1];
-					XmlElement postXmlAction = actionNodes[i + 1];
-
-					IAction preAction;
-					actions.TryGetValue(StringUtilities.EmptyIfNull(preXmlAction.GetAttribute("id")), out preAction);
-					IAction postAction;
-					actions.TryGetValue(StringUtilities.EmptyIfNull(postXmlAction.GetAttribute("id")), out postAction);
-
-					// if either action does not exist, the separator node is ambiguous and therefore must be ignored
-					// TODO: is there a more intelligent way to deal with this?? We could keep traversing the list,
-					// in both directions, until we find a valid pre and post action, but the downside of doing this
-					// is that the separator might end up in a completely different place from where it was intended
-					// to go... safer to ignore it
-					if(preAction == null || postAction == null)
-						continue;
-
-					// get the pre and post paths (from xml)
-					Path prePath = new Path(preXmlAction.GetAttribute("path"), preAction.ResourceResolver);
-					Path postPath = new Path(postXmlAction.GetAttribute("path"), postAction.ResourceResolver);
-
-					// create the path of the separator element, by using the common path between pre and post actions
-					// and appending a segment to represent the separator itself
-					Path separatorPath = prePath.GetCommonPath(postPath).Append(new Path(string.Format("_s{0}", separatorCount++)));
-					model.InsertSeparator(separatorPath);
+                    ProcessSeparator(model, actionNodes, i, actions);
 				}
 			}
 
 			return model;
 		}
+
+        /// <summary>
+        /// Processes a separator node in the XML action model.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="actionNodes"></param>
+        /// <param name="i"></param>
+        /// <param name="actions"></param>
+        private void ProcessSeparator(ActionModelRoot model, IList<XmlElement> actionNodes, int i, IDictionary<string, IAction> actions)
+        {
+            // a separator at the beginning or end of the list is not valid - ignore it
+            if (i == 0 || i == actionNodes.Count - 1)
+                return;
+
+            // get the actions appearing immediately before and after the separator
+            XmlElement preXmlAction = actionNodes[i - 1];
+            XmlElement postXmlAction = actionNodes[i + 1];
+
+            // use these to determine the location of the separator, based on the longest common path
+            string commonPath = GetLongestCommonPath(preXmlAction.GetAttribute("path"), postXmlAction.GetAttribute("path"));
+
+            // in order to construct the separator's Path object, we need a valid resource resolver
+            // search both backward and forward through the model to find the first adjacent actions
+            // that exist in the dictionary, in order to "borrow" their resource resolvers
+
+            // get the first action before and after separator for which an IAction exists
+            preXmlAction = GetFirstExistingAdjacentAction(actionNodes, i, -1, actions);
+            postXmlAction = GetFirstExistingAdjacentAction(actionNodes, i, 1, actions);
+
+            // if either could not be found, the separator can be ignored,
+            // because it would be located at the edge of the menu/toolbar
+            if (preXmlAction == null || postXmlAction == null)
+                return;
+
+            // get the corresponding IActions, which are guaranteed to exist,
+            // so that we can use their Resource resolvers to localize paths
+            IAction preAction = actions[preXmlAction.GetAttribute("id")];
+            IAction postAction = actions[postXmlAction.GetAttribute("id")];
+
+            // if either of the adjacent existing actions do not start with the common path,
+            // then the separator can be ignored because it would be located at an edge
+            if (!(new Path(preXmlAction.GetAttribute("path"), preAction.ResourceResolver)).
+                StartsWith(new Path(commonPath, preAction.ResourceResolver)))
+                return;
+            if (!(new Path(postXmlAction.GetAttribute("path"), postAction.ResourceResolver)).
+                StartsWith(new Path(commonPath, postAction.ResourceResolver)))
+                return;
+
+            // given that we now have both the common path and an appropriate resource resolver,
+            // we can construct the separator path (using either the pre or post resource resolver),
+            // appending a segment to represent the separator itself
+            Random random = new Random();
+            Path separatorPath = (new Path(commonPath, preAction.ResourceResolver)).Append(new Path(string.Format("_s{0}", random.Next())));
+
+            // insert separator into model
+            model.InsertSeparator(separatorPath);
+        }
+
+        /// <summary>
+        /// Gets the longest common path between two paths.
+        /// </summary>
+        /// <param name="path1"></param>
+        /// <param name="path2"></param>
+        /// <returns></returns>
+        private string GetLongestCommonPath(string path1, string path2)
+        {
+            return (new Path(StringUtilities.EmptyIfNull(path1))).GetCommonPath(new Path(StringUtilities.EmptyIfNull(path2))).ToString();
+        }
+
+        /// <summary>
+        /// Finds the first XML action element adjacent to the start position for which an action exists. 
+        /// </summary>
+        /// <param name="actionNodes"></param>
+        /// <param name="start"></param>
+        /// <param name="increment"></param>
+        /// <param name="actions"></param>
+        /// <returns></returns>
+        private XmlElement GetFirstExistingAdjacentAction(IList<XmlElement> actionNodes, int start, int increment,
+            IDictionary<string, IAction> actions)
+        {
+            for (int i = start + increment; i >= 0 && i < actionNodes.Count; i += increment)
+            {
+                XmlElement actionNode = actionNodes[i];
+
+                IAction action;
+                if (actions.TryGetValue(actionNode.GetAttribute("id"), out action))
+                    return actionNode;
+            }
+            return null;
+        }
 
         /// <summary>
         /// Appends the specified action to the specified XML action model.  The "group-hint"

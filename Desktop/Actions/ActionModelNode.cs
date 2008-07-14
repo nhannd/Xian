@@ -210,7 +210,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// </summary>
 		protected void Insert(Path path, int pathDepth, Converter<PathSegment, ActionModelNode> leafNodeProvider)
 		{
-			int segmentCount = path.Segments.Length;
+			int segmentCount = path.Segments.Count;
 			if (segmentCount < 2)
 				throw new ArgumentException(SR.ExceptionInvalidActionPath);
 

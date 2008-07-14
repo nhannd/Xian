@@ -200,7 +200,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="alphabetical"></param>
 		protected void InsertFolder(IFolder folder, int depth, bool alphabetical)
 		{
-			if(depth == folder.FolderPath.Segments.Length)
+            if (depth == folder.FolderPath.Segments.Count)
 			{
 				SetFolder(folder);
 			}

@@ -111,7 +111,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             TreeNode treeNode = (matches.Length > 0) ? matches[0] :
                     treeNodes.Add(segment.LocalizedText, segment.LocalizedText);
 
-            if (depth < page.Path.Segments.Length - 1)
+            if (depth < page.Path.Segments.Count - 1)
             {
                 // recur on next path segment
                 AddTreeNode(page, treeNode.Nodes, depth + 1);

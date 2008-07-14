@@ -54,7 +54,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public string Site
         {
-            get { return this.Segments.Length > 0 ? this.Segments[0].ResourceKey : null; }
+            get { return this.Segments.Count > 0 ? this.Segments[0].ResourceKey : null; }
         }
     }
 }
