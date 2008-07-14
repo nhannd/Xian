@@ -146,8 +146,17 @@ namespace ClearCanvas.Ris.Application.Common
 		#region Emergency Worklist Class Names
 
 		[WorklistClassName]
-		public const string EmergencyOrdersWorklist = "EmergencyOrdersWorklist";
+		public const string EmergencyScheduledWorklist = "EmergencyScheduledWorklist";
 
+		[WorklistClassName]
+		public const string EmergencyInProgressWorklist = "EmergencyInProgressWorklist";
+
+		[WorklistClassName]
+		public const string EmergencyCompletedWorklist = "EmergencyCompletedWorklist";
+
+		[WorklistClassName]
+		public const string EmergencyCancelledWorklist = "EmergencyCancelledWorklist";
+		
 		#endregion
 	}
 }

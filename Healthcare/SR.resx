@@ -189,11 +189,29 @@
   <data name="EmailAddress" xml:space="preserve">
     <value>E-mail address</value>
   </data>
-  <data name="EmergencyOrdersWorklist" xml:space="preserve">
-    <value>Emergency Orders</value>
+  <data name="EmergencyCancelledWorklist" xml:space="preserve">
+    <value>Cancelled</value>
   </data>
-  <data name="EmergencyOrdersWorklistDescription" xml:space="preserve">
-    <value>Lists Emergency department orders regardless of status.</value>
+  <data name="EmergencyCancelledWorklistDescription" xml:space="preserve">
+    <value>List procedures that have been cancelled.</value>
+  </data>
+  <data name="EmergencyCompletedWorklist" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="EmergencyCompletedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been completed.</value>
+  </data>
+  <data name="EmergencyInProgressWorklist" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+  <data name="EmergencyInProgressWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that are in progress.</value>
+  </data>
+  <data name="EmergencyScheduledWorklist" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="EmergencyScheduledWorklistDescription" xml:space="preserve">
+    <value>Lists scheduled procedures.</value>
   </data>
   <data name="EnumValueValue" xml:space="preserve">
     <value>Display Value</value>

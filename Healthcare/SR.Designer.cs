@@ -277,20 +277,74 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Emergency Orders.
+        ///   Looks up a localized string similar to Cancelled.
         /// </summary>
-        internal static string EmergencyOrdersWorklist {
+        internal static string EmergencyCancelledWorklist {
             get {
-                return ResourceManager.GetString("EmergencyOrdersWorklist", resourceCulture);
+                return ResourceManager.GetString("EmergencyCancelledWorklist", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Lists Emergency department orders regardless of status..
+        ///   Looks up a localized string similar to List procedures that have been cancelled..
         /// </summary>
-        internal static string EmergencyOrdersWorklistDescription {
+        internal static string EmergencyCancelledWorklistDescription {
             get {
-                return ResourceManager.GetString("EmergencyOrdersWorklistDescription", resourceCulture);
+                return ResourceManager.GetString("EmergencyCancelledWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Completed.
+        /// </summary>
+        internal static string EmergencyCompletedWorklist {
+            get {
+                return ResourceManager.GetString("EmergencyCompletedWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that have been completed..
+        /// </summary>
+        internal static string EmergencyCompletedWorklistDescription {
+            get {
+                return ResourceManager.GetString("EmergencyCompletedWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to In Progress.
+        /// </summary>
+        internal static string EmergencyInProgressWorklist {
+            get {
+                return ResourceManager.GetString("EmergencyInProgressWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures that are in progress..
+        /// </summary>
+        internal static string EmergencyInProgressWorklistDescription {
+            get {
+                return ResourceManager.GetString("EmergencyInProgressWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scheduled.
+        /// </summary>
+        internal static string EmergencyScheduledWorklist {
+            get {
+                return ResourceManager.GetString("EmergencyScheduledWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists scheduled procedures..
+        /// </summary>
+        internal static string EmergencyScheduledWorklistDescription {
+            get {
+                return ResourceManager.GetString("EmergencyScheduledWorklistDescription", resourceCulture);
             }
         }
         

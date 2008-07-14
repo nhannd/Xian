@@ -2,23 +2,56 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
-	[WorklistCategory("WorklistCategoryEmergency")]
-	public abstract class EmergencyWorklist : RegistrationWorklist
-	{
-	}
-
+	/// <summary>
+	/// EmergencyScheduledWorklist entity
+	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
 	[WorklistSupportsTimeFilter(true)]
-	[WorklistClassDescription("EmergencyOrdersWorklistDescription")]
-	[WorklistProcedureTypeGroupClass(typeof(PerformingGroup))]
-	public class EmergencyOrdersWorklist : EmergencyWorklist
+	[WorklistCategory("WorklistCategoryEmergency")]
+	[WorklistClassDescription("EmergencyScheduledWorklistDescription")]
+	public class EmergencyScheduledWorklist : RegistrationWorklist
 	{
 		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
 		{
+			// this is slightly different than the registration scheduled worklist, because we include
+			// 'checked in' items here, rather than having a separate 'checked in' worklist
 			RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-
-			ApplyTimeCriteria(criteria, WorklistTimeField.OrderSchedulingRequestTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems);
+			criteria.Order.Status.EqualTo(OrderStatus.SC);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
+	}
+
+	/// <summary>
+	/// EmergencyInProgressWorklist entity
+	/// </summary>
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(true)]
+	[WorklistCategory("WorklistCategoryEmergency")]
+	[WorklistClassDescription("EmergencyInProgressWorklistDescription")]
+	public class EmergencyInProgressWorklist : RegistrationInProgressWorklist
+	{
+	}
+
+	/// <summary>
+	/// EmergencyCompletedWorklist entity
+	/// </summary>
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(true)]
+	[WorklistCategory("WorklistCategoryEmergency")]
+	[WorklistClassDescription("EmergencyCompletedWorklistDescription")]
+	public class EmergencyCompletedWorklist : RegistrationCompletedWorklist
+	{
+	}
+
+	/// <summary>
+	/// EmergencyCancelledWorklist entity
+	/// </summary>
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(true)]
+	[WorklistCategory("WorklistCategoryEmergency")]
+	[WorklistClassDescription("EmergencyCancelledWorklistDescription")]
+	public class EmergencyCancelledWorklist : RegistrationCancelledWorklist
+	{
 	}
 }
