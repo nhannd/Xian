@@ -253,10 +253,16 @@ namespace ClearCanvas.Common.Statistics
         {
             get
             {
-                return _stopWatch.Elapsed;
+                if (_stopWatch.IsRunning)
+                    return _stopWatch.Elapsed;
+                else
+                    return base.Value;
             }
             set
             {
+                if (_stopWatch.IsRunning)
+                    _stopWatch.Stop();
+
                 base.Value = value;
             }
         }

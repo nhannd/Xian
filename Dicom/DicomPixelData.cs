@@ -112,6 +112,39 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
+        #region Public Static Methods
+
+        /// <summary>
+        /// Creates an instance of <see cref="DicomPixelData"/> from specified image path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>
+        /// </returns>
+        public static DicomPixelData CreateFrom(string path)
+        {
+            DicomFile file = new DicomFile(path);
+            file.Load(DicomReadOptions.StorePixelDataReferences);
+            return CreateFrom(file);
+        }
+
+
+        /// <summary>
+        /// Creates an instance of <see cref="DicomPixelData"/> from specified dicom message
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>
+        /// </returns>
+        public static DicomPixelData CreateFrom(DicomMessageBase message)
+        {
+            if (message.TransferSyntax.LosslessCompressed || message.TransferSyntax.LossyCompressed)
+                return new DicomCompressedPixelData(message);
+            else
+                return new DicomUncompressedPixelData(message);
+        }
+        #endregion
+
+
+
         #region Constructors
 
         public DicomPixelData(DicomMessageBase message)
@@ -309,7 +342,7 @@ namespace ClearCanvas.Dicom
             get
             {
                 // ybr full 422 only stores 2/3 of the pixels
-                if (_photometricInterpretation.Equals("YBR_FULL_422"))
+                if (_photometricInterpretation!=null && _photometricInterpretation.Equals("YBR_FULL_422"))
                     return ImageWidth*ImageHeight*BytesAllocated*2;
 
                 return ImageWidth*ImageHeight*BytesAllocated*SamplesPerPixel;

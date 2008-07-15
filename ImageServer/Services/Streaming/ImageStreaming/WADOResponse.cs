@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         #region Private Members
         private string _contentType;
         private Stream _stream;
+        private bool _hasMore;
         #endregion
 
         #region Public Properties
@@ -62,6 +63,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         {
             get { return _stream; }
             set { _stream = value; }
+        }
+
+        public bool HasMoreFrame
+        {
+            get { return _hasMore; }
+            set { _hasMore = value; }
         }
 
         #endregion

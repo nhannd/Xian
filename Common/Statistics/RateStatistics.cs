@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Diagnostics;
 
 namespace ClearCanvas.Common.Statistics
@@ -45,7 +46,9 @@ namespace ClearCanvas.Common.Statistics
         /// <summary>
         /// Rate statistics in number of message within a period
         /// </summary>
-        MESSAGES
+        MESSAGES,
+
+        CUSTOM
     } ;
 
     /// <summary>
@@ -110,6 +113,17 @@ namespace ClearCanvas.Common.Statistics
             }
         }
 
+        public RateStatistics(string name, string unit)
+            : base(name)
+        {
+            Type = RateType.CUSTOM;
+
+            ValueFormatter = delegate(double rate)
+                                 {
+                                     return String.Format("{0:0.0} {1}/s", rate, unit);
+                                 };
+        }
+
         /// <summary>
         /// Creates a copy of the original <see cref="RateStatistics"/> object.
         /// </summary>
@@ -151,10 +165,19 @@ namespace ClearCanvas.Common.Statistics
         /// <summary>
         /// Gets the elapsed time being measured, in ticks.
         /// </summary>
-        public long ElapsedTime
+        public long ElapsedTicks
         {
             get { return _stopWatch.ElapsedTicks; }
         }
+
+        /// <summary>
+        /// Gets the elapsed time being measured, in ticks.
+        /// </summary>
+        public TimeSpan ElapsedTime
+        {
+            get { return _stopWatch.Elapsed; }
+        }
+
 
         /// <summary>
         /// Sets the value of the underlying data.

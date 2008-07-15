@@ -150,8 +150,38 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
             }
         }
 
-        #endregion
 
+        /// <summary>
+        /// Total transmission time.
+        /// </summary>
+        public AverageRateStatistics AverageDiskSpeed
+        {
+            get
+            {
+                if (this["AverageDiskSpeed"] == null)
+                    this["AverageDiskSpeed"] = new AverageRateStatistics("AverageDiskSpeed", RateType.BYTES);
+
+                return (this["AverageDiskSpeed"] as AverageRateStatistics);
+            }
+            set { this["AverageDiskSpeed"] = value; }
+        }
+
+
+        /// <summary>
+        /// Total transmission time.
+        /// </summary>
+        public AverageRateStatistics AverageTransmissionSpeed
+        {
+            get
+            {
+                if (this["AverageTransmissionSpeed"] == null)
+                    this["AverageTransmissionSpeed"] = new AverageRateStatistics("AverageTransmissionSpeed", RateType.BYTES);
+
+                return (this["AverageTransmissionSpeed"] as AverageRateStatistics);
+            }
+            set { this["AverageTransmissionSpeed"] = value; }
+        }
+        #endregion
     }
     
 }

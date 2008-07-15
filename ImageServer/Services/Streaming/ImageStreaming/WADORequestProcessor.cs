@@ -31,11 +31,14 @@
 
 
 using System;
+using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
+using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
@@ -74,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         #region Constructors
         public WADORequestProcessor()
         {
-            ReadBufferSize = WADOServerSettings.Default.StreamBufferSize;
+            ReadBufferSize = WADOServerSettings.Default.MaxBufferSize;
         }
 
         #endregion
@@ -136,6 +139,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
             context.Response.ContentType = response.ContentType;
 
+
             if (response.Stream == null)
             {
                 context.Response.ContentLength64 = 0;
@@ -146,24 +150,39 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                 context.Response.ContentLength64 = response.Stream.Length;
 
                 OptimizeBufferSize(context);
-
-                Platform.Log(LogLevel.Debug, "Starting streaming image...");
-
+                
                 int count;
+                //BufferedStream output = new BufferedStream(context.Response.OutputStream);
+                RateStatistics txSpeed = new RateStatistics("TransmissionSpeed", RateType.BYTES);
+                txSpeed.Start();
+                Stream output = context.Response.OutputStream;
                 byte[] buffer = new byte[ReadBufferSize];
                 do
                 {
+                    RateStatistics readSpeed = new RateStatistics("ReadSpeed", RateType.BYTES);
+                    readSpeed.Start();
                     count = response.Stream.Read(buffer, 0, buffer.Length);
-                    Statistics.DiskAccessCount++;
+                    readSpeed.End();
                     if (count > 0)
                     {
-                        Statistics.TransmissionTime.Start();
-                        context.Response.OutputStream.Write(buffer, 0, count);
-                        Statistics.TransmissionTime.End();
+                        readSpeed.SetData(count);
+                        Statistics.AverageDiskSpeed.AddSample(readSpeed);
+                        Statistics.DiskAccessCount++;
+
+                        output.Write(buffer, 0, count);
+                        txSpeed.SetData(count);
+                
+                        
+                        Statistics.AverageTransmissionSpeed.AddSample(txSpeed);
                         Statistics.NetworkWriteCount++;
+                        
+                        Statistics.TransmissionTime.Value = txSpeed.ElapsedTime;
                     }
                 } while (count > 0);
 
+                txSpeed.End();
+
+                //Platform.Log(LogLevel.Info, "Transfer Speed (Incl Disk I/O): {0}", txSpeed.FormattedValue);
             }
         }
 
@@ -180,22 +199,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
                 long contentSize = context.Response.ContentLength64;
 
-                // This is very simple optimization algorithm: the buffer size is set according to the content size
-                // Other factors may be considered in the future: disk access speed, available physical memory, network speed, cpu usage
-                if (contentSize > 3 * MEGABYTES)
-                    ReadBufferSize = 3 * MEGABYTES;
-                else if (contentSize > 1 * MEGABYTES)
-                    ReadBufferSize = 1 * MEGABYTES;
-                else if (contentSize > 500 * KILOBYTES)
-                    ReadBufferSize = 256 * KILOBYTES;
-                else if (contentSize > 100 * KILOBYTES)
-                    ReadBufferSize = 128 * KILOBYTES;
-                else
-                    ReadBufferSize = 64 * KILOBYTES;
-
+                ReadBufferSize = (int) Math.Min(10*MEGABYTES, contentSize);
 
             }
 
+            //Platform.Log(LogLevel.Info, "Buffer size= {0}", ByteCountFormatter.Format((ulong) ReadBufferSize));
             Statistics.ImageSize = (ulong)context.Response.ContentLength64;
             Statistics.BufferSize = (ulong)ReadBufferSize;
         }
@@ -209,13 +217,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         {
             Platform.CheckForNullReference(context, "context");
 
-            string requestType = context.Request.QueryString["requestType"];
-            if (String.IsNullOrEmpty(requestType))
-            {
-                throw new WADOException((int)HttpStatusCode.BadRequest, "RequestType parameter is required");
-            }
-
-                        
+            Validate(context);
             _statistics = new WADORequestProcessorStatistics(context.Request.RemoteEndPoint.Address.ToString());
             _statistics.TotalProcessTime.Add(delegate()
                 {
@@ -223,8 +225,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
                     using(WADORequestTypeHandlerManager handlerManager = new WADORequestTypeHandlerManager())
                     {
+                        string requestType = context.Request.QueryString["requestType"];
                         IWADORequestTypeHandler typeHandler = handlerManager.GetHandler(requestType);
-                        using(WADOResponse response = typeHandler.Process(context.Request))
+                        
+                        using (WADOResponse response = typeHandler.Process(context))
                         {
                             if (response != null)
                             {
@@ -235,7 +239,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                     }
                 });
 
-            StatisticsLogger.Log(LogLevel.Info, Statistics);
+            StatisticsLogger.Log(LogLevel.Debug, Statistics);
+        }
+
+        private void Validate(HttpListenerContext context)
+        {
+            string requestType = context.Request.QueryString["requestType"];
+            if (String.IsNullOrEmpty(requestType))
+            {
+                throw new WADOException((int)HttpStatusCode.BadRequest, "RequestType parameter is missing");
+            }
         }
 
         #endregion

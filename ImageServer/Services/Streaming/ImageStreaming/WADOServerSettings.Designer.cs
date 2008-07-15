@@ -35,9 +35,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int StreamBufferSize {
+        public int MaxBufferSize {
             get {
-                return ((int)(this["StreamBufferSize"]));
+                return ((int)(this["MaxBufferSize"]));
             }
         }
     }

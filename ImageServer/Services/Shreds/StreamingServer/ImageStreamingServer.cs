@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
@@ -48,7 +49,11 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
             catch (WADOException e)
             {
                 context.Response.StatusCode = e.HttpErrorCode;
-                context.Response.StatusDescription = e.Message;
+                if (e.InnerException!=null)
+                    context.Response.StatusDescription = HttpUtility.HtmlEncode(e.InnerException.Message);
+                else
+                    context.Response.StatusDescription =  HttpUtility.HtmlEncode(e.Message);
+                
             }
 
         }

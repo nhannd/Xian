@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Server.ShredHost;
@@ -115,8 +116,18 @@ namespace ClearCanvas.ImageServer.Common
 
                 if (context!=null)
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    context.Response.StatusDescription = e.Message;
+                    try
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        if (e.InnerException != null)
+                            context.Response.StatusDescription = HttpUtility.HtmlEncode(e.InnerException.Message);
+                        else
+                            context.Response.StatusDescription = HttpUtility.HtmlEncode(e.Message);
+                    }
+                    catch(Exception ex)
+                    {
+                        Platform.Log(LogLevel.Error, ex, "Unable to set response status description");
+                    }
                 }
                 
             }
@@ -127,7 +138,7 @@ namespace ClearCanvas.ImageServer.Common
                     if (context.Response.StatusCode == (int)HttpStatusCode.OK)
                         Platform.Log(LogLevel.Debug, "Request completed successfully");
                     else
-                        Platform.Log(LogLevel.Error, "{0}:{1}", context.Response.StatusCode, context.Response.StatusDescription);
+                        Platform.Log(LogLevel.Error, "{0}:{1}", context.Response.StatusCode, HttpUtility.HtmlDecode(context.Response.StatusDescription));
 
                     try
                     {
