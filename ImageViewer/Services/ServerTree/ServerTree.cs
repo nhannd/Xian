@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
                 // create default entries and save them to disk
                 _rootNode.ServerGroupNode = new ServerGroup(MyServersTitle);
 				_rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup));
-                _rootNode.ServerGroupNode.ChildServers.Add(new Server(SR.ExampleServer,"", "localhost", "SAMPLE", 104));
+                _rootNode.ServerGroupNode.ChildServers.Add(new Server(SR.ExampleServer,"", "localhost", "SAMPLE", 104, false));
             	Save();
             }
 
@@ -588,13 +588,14 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         {
         }
 
-        public Server(string name, string location, string host, string aeTitle, int port)
+        public Server(string name, string location, string host, string aeTitle, int port, bool isStreaming)
         {
 			NameOfServer = name;
             Location = location;
             Host = host;
             AETitle = aeTitle;
             Port = port;
+        	IsStreaming = isStreaming;
 		}
 
 		#region Public Fields
@@ -619,6 +620,8 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		/// Public field for serialization only; do not modify directly.
 		/// </summary>
 		public int Port;
+
+    	public bool IsStreaming;
 
 		#endregion
 

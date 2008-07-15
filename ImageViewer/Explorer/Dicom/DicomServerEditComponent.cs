@@ -115,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _serverAE;
 		private string _serverHost;
 		private int _serverPort;
+		private bool _isStreaming;
 
 		#endregion
 
@@ -130,6 +131,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverAE = server.AETitle;
 				_serverHost = server.Host;
 				_serverPort = server.Port;
+				_isStreaming = server.IsStreaming;
 			}
 			else
 			{
@@ -138,6 +140,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverAE = "";
 				_serverHost = "";
 				_serverPort = DefaultPort;
+				_isStreaming = false;
 			}
 		}
 
@@ -231,6 +234,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		public bool IsStreaming
+		{
+			get { return _isStreaming;  }
+			set
+			{
+				if (_isStreaming == value)
+					return;
+
+				_isStreaming = value;
+				AcceptEnabled = true;
+				NotifyPropertyChanged("IsStreaming");
+			}
+		}
+
 		public bool AcceptEnabled
 		{
 			get { return this.Modified; }
@@ -262,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else
 			{
-				Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, _serverPort);
+				Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, _serverPort, _isStreaming);
 
 				// edit current server
 				if (_serverTree.CurrentNode.IsServer)

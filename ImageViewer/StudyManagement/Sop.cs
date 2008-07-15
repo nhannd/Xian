@@ -108,12 +108,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </remarks>
 	public abstract class Sop : IDisposable
 	{
+		protected volatile DicomFile _dicomFile;
 		private readonly object _syncLock = new object();
 		private volatile int _referenceCount = 0;
 		private volatile bool _isDisposed = false;
 		private event EventHandler _disposing;
-
 		private volatile Series _parentSeries;
+		protected volatile bool _loaded;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="Sop"/>.
@@ -135,7 +136,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the DICOM toolkit representation of this <see cref="Sop"/>.
 		/// </summary>
-		public abstract DicomMessageBase NativeDicomObject { get; }
+		public virtual DicomMessageBase NativeDicomObject
+		{
+			get
+			{
+				Load();
+				return _dicomFile;
+			}
+		}
 
 		#region Meta info
 
@@ -679,7 +687,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		internal virtual void Load()
+		{
+			
+		}
+
 		#region Dicom Tag Retrieval Methods
+
+		//TODO: Later, add GetMultiValuedTag(T[])
+
+		private delegate void GetTagDelegate<T>(DicomAttribute attribute, uint position, out T value);
 
 		/// <summary>
 		/// Gets a DICOM tag (16 bit, unsigned).
@@ -694,7 +711,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out ushort value, out bool tagExists);
+		public virtual void GetTag(uint tag, out ushort value, out bool tagExists)
+		{
+			GetTag(tag, out value, 0, out tagExists);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (16 bit, unsigned).
@@ -709,7 +729,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out ushort value, uint position, out bool tagExists);
+		public virtual void GetTag(uint tag, out ushort value, uint position, out bool tagExists)
+		{
+			GetTag<ushort>(tag, out value, position, out tagExists, GetUint16FromAttribute);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag (integer).
@@ -723,7 +746,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out int value, out bool tagExists);
+		public virtual void GetTag(uint tag, out int value, out bool tagExists)
+		{
+			GetTag(tag, out value, 0, out tagExists);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (integer).
@@ -738,7 +764,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out int value, uint position, out bool tagExists);
+		public virtual void GetTag(uint tag, out int value, uint position, out bool tagExists)
+		{
+			GetTag<int>(tag, out value, position, out tagExists, GetInt32FromAttribute);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag (double).
@@ -752,7 +781,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out double value, out bool tagExists);
+		public virtual void GetTag(uint tag, out double value, out bool tagExists)
+		{
+			GetTag(tag, out value, 0, out tagExists);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (double).
@@ -767,7 +799,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out double value, uint position, out bool tagExists);
+		public virtual void GetTag(uint tag, out double value, uint position, out bool tagExists)
+		{
+			GetTag<double>(tag, out value, position, out tagExists, GetFloat64FromAttribute);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag (string).
@@ -781,7 +816,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out string value, out bool tagExists);
+		public virtual void GetTag(uint tag, out string value, out bool tagExists)
+		{
+			GetTag(tag, out value, 0, out tagExists);
+		}
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (string).
@@ -796,23 +834,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out string value, uint position, out bool tagExists);
-
-		/// <summary>
-		/// Gets an entire DICOM tag to a string, encoded as a Dicom array if VM > 1.
-		/// </summary>
-		/// <remarks>
-		/// GetTag methods should make no assumptions about what to return in the <paramref name="value"/> parameter
-		/// when a tag does not exist.  It should simply return the default value for <paramref name="value"/>'s Type,
-		/// which is either null, 0 or "" depending on whether it is a reference or value Type.  Similarly, no data validation
-		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
-		/// </remarks>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists);
-
-		//TODO: Later, add GetMultiValuedTag(T[])
+		public virtual void GetTag(uint tag, out string value, uint position, out bool tagExists)
+		{
+			GetTag<string>(tag, out value, position, out tagExists, GetStringFromAttribute);
+			value = value ?? "";
+		}
 
 		/// <summary>
 		/// Gets a DICOM OB or OW tag (byte[]), not including encapsulated pixel data.
@@ -826,7 +852,89 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(uint tag, out byte[] value, out bool tagExists);
+		public virtual void GetTag(uint tag, out byte[] value, out bool tagExists)
+		{
+			GetTag<byte[]>(tag, out value, 0, out tagExists, GetAttributeValueOBOW);
+		}
+
+		/// <summary>
+		/// Gets an entire DICOM tag to a string, encoded as a Dicom array if VM > 1.
+		/// </summary>
+		/// <remarks>
+		/// GetTag methods should make no assumptions about what to return in the <paramref name="value"/> parameter
+		/// when a tag does not exist.  It should simply return the default value for <paramref name="value"/>'s Type,
+		/// which is either null, 0 or "" depending on whether it is a reference or value Type.  Similarly, no data validation
+		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
+		/// </remarks>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
+		public virtual void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists)
+		{
+			GetTag<string>(tag, out value, 0, out tagExists, GetStringArrayFromAttribute);
+			value = value ?? "";
+		}
+
+		private static void GetUint16FromAttribute(DicomAttribute attribute, uint position, out ushort value)
+		{
+			attribute.TryGetUInt16((int)position, out value);
+		}
+
+		private static void GetInt32FromAttribute(DicomAttribute attribute, uint position, out int value)
+		{
+			attribute.TryGetInt32((int)position, out value);
+		}
+
+		private static void GetFloat64FromAttribute(DicomAttribute attribute, uint position, out double value)
+		{
+			attribute.TryGetFloat64((int)position, out value);
+		}
+
+		private static void GetStringFromAttribute(DicomAttribute attribute, uint position, out string value)
+		{
+			attribute.TryGetString((int)position, out value);
+		}
+
+		private static void GetStringArrayFromAttribute(DicomAttribute attribute, uint position, out string value)
+		{
+			value = attribute.ToString();
+		}
+
+		private static void GetAttributeValueOBOW(DicomAttribute attribute, uint position, out byte[] value)
+		{
+			if (attribute is DicomAttributeOW || attribute is DicomAttributeOB)
+				value = (byte[])attribute.Values;
+			else
+				value = null;
+		}
+
+		private void GetTag<T>(uint tag, out T value, uint position, out bool tagExists, GetTagDelegate<T> getter)
+		{
+			Load();
+
+			value = default(T);
+			tagExists = false;
+
+			DicomAttribute dicomAttribute;
+			if(_dicomFile.DataSet.Contains(tag))
+			{
+				dicomAttribute = _dicomFile.DataSet[tag];
+				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
+				if (tagExists)
+				{
+					getter(dicomAttribute, position, out value);
+					return;
+				}
+			}
+
+			if (_dicomFile.MetaInfo.Contains(tag))
+			{
+				dicomAttribute = _dicomFile.MetaInfo[tag];
+				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
+				if (tagExists)
+					getter(dicomAttribute, position, out value);
+			}
+		}
 
 		#endregion
 
@@ -868,6 +976,52 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+
+		/// <summary>
+		/// The <see cref="Sop"/> class (and derived classes) should not validate tag values from 
+		/// within its properties, but instead clients should call this method at an appropriate time
+		/// to determine whether or not the <see cref="Sop"/> should be used or discarded as invalid.
+		/// </summary>
+		/// <exception cref="SopValidationException">Thrown when validation fails.</exception>
+		public void Validate()
+		{
+			try
+			{
+				ValidateInternal();
+			}
+			catch (Exception e)
+			{
+				if (e is SopValidationException)
+					throw;
+
+				throw new SopValidationException(SR.ExceptionSopInstanceValidationFailed, e);
+			}
+		}
+
+		/// <summary>
+		/// Validates the <see cref="Sop"/> object.
+		/// </summary>
+		/// <remarks>
+		/// Derived classes should call the base class implementation first, and then do further validation.
+		/// The <see cref="Sop"/> class validates properties deemed vital to usage of the object.
+		/// </remarks>
+		/// <exception cref="SopValidationException">Thrown when validation fails.</exception>
+		protected virtual void ValidateInternal()
+		{ 
+			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUID);
+			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUID);
+			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUID);
+
+			ValidatePatientId();
+		}
+
+		private void ValidatePatientId()
+		{
+			//Patient ID is a Type 2 tag, so this is our own restriction, not a Dicom Restriction.
+			if (String.IsNullOrEmpty(this.PatientId) || this.PatientId.TrimEnd(' ').Length == 0)
+				throw new SopValidationException(SR.ExceptionInvalidPatientID);
+		}
+
 		#region Disposal
 
 		internal event EventHandler Disposing
@@ -900,6 +1054,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		protected virtual void Dispose(bool disposing)
 		{
+			lock (_syncLock)
+			{
+				_dicomFile = null;
+				_loaded = false;
+			}
 		}
 
 		#region IDisposable Members
@@ -948,49 +1107,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		/// <summary>
-		/// The <see cref="Sop"/> class (and derived classes) should not validate tag values from 
-		/// within its properties, but instead clients should call this method at an appropriate time
-		/// to determine whether or not the <see cref="Sop"/> should be used or discarded as invalid.
-		/// </summary>
-		/// <exception cref="SopValidationException">Thrown when validation fails.</exception>
-		public void Validate()
-		{
-			try
-			{
-				ValidateInternal();
-			}
-			catch (Exception e)
-			{
-				if (e is SopValidationException)
-					throw;
-
-				throw new SopValidationException(SR.ExceptionSopInstanceValidationFailed, e);
-			}
-		}
-
-		/// <summary>
-		/// Validates the <see cref="Sop"/> object.
-		/// </summary>
-		/// <remarks>
-		/// Derived classes should call the base class implementation first, and then do further validation.
-		/// The <see cref="Sop"/> class validates properties deemed vital to usage of the object.
-		/// </remarks>
-		/// <exception cref="SopValidationException">Thrown when validation fails.</exception>
-		protected virtual void ValidateInternal()
-		{ 
-			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUID);
-			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUID);
-			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUID);
-
-			ValidatePatientId();
-		}
-
-		private void ValidatePatientId()
-		{
-			//Patient ID is a Type 2 tag, so this is our own restriction, not a Dicom Restriction.
-			if (String.IsNullOrEmpty(this.PatientId) || this.PatientId.TrimEnd(' ').Length == 0)
-				throw new SopValidationException(SR.ExceptionInvalidPatientID);
-		}
 	}
 }

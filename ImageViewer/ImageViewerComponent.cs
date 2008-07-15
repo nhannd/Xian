@@ -517,17 +517,20 @@ namespace ClearCanvas.ImageViewer
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
 		/// </remarks>
 		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
+		[Obsolete("This method has been deprecated and will be removed in the future. Use LoadStudies method instead.")]
 		public void LoadStudy(string studyInstanceUID, string studyLoaderName)
 		{
-			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
-			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
+			LoadStudy(new LoadStudyArgs(studyInstanceUID, null, studyLoaderName));
+		}
 
-			IStudyLoader studyLoader = this.StudyLoaders[studyLoaderName];
+		public void LoadStudy(LoadStudyArgs loadStudyArgs)
+		{
+			IStudyLoader studyLoader = this.StudyLoaders[loadStudyArgs.StudyLoaderName];
 			int totalImages = 0;
 
 			try
 			{
-				totalImages = studyLoader.Start(studyInstanceUID);
+				totalImages = studyLoader.Start(new StudyLoaderArgs(loadStudyArgs.StudyInstanceUid, loadStudyArgs.Server));
 			}
 			catch (Exception e)
 			{
@@ -555,7 +558,6 @@ namespace ClearCanvas.ImageViewer
 				}
 
 				numberOfImages++;
-
 			}
 
 			int successfulImages = numberOfImages - failedImages;
@@ -563,7 +565,7 @@ namespace ClearCanvas.ImageViewer
 			// Only bother to tell someone if at least one image loaded
 			if (successfulImages > 0)
 			{
-				this.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(this.StudyTree.GetStudy(studyInstanceUID)));
+				this.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(this.StudyTree.GetStudy(loadStudyArgs.StudyInstanceUid)));
 			}
 
 			VerifyLoad(numberOfImages, failedImages);

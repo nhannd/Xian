@@ -32,17 +32,17 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
 using ClearCanvas.DicomServices;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
 	/// Represents the DICOM concept of a frame.
 	/// </summary>
-	public abstract class Frame : IDisposable
+	public class Frame : IDisposable
 	{
 		#region Private fields
 
@@ -50,6 +50,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly int _frameNumber;
 		private NormalizedPixelSpacing _normalizedPixelSpacing;
 		private ImagePlaneHelper _imagePlaneHelper;
+		protected volatile byte[] _pixelData;
+		protected readonly object _syncLock = new object();
 
 		#endregion
 
@@ -769,7 +771,53 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </para>
 		/// </remarks>
 		/// <seealso cref="ToArgb"/>
-		public abstract byte[] GetNormalizedPixelData();
+		public virtual byte[] GetNormalizedPixelData()
+		{
+			if (_pixelData == null)
+			{
+				lock (_syncLock)
+				{
+					if (_pixelData == null)
+					{
+						this.ParentImageSop.Load();
+
+						DicomMessageBase message = this.ParentImageSop.NativeDicomObject;
+						_pixelData = GetNormalizedPixelData(message);
+					}
+				}
+			}
+
+			return _pixelData;
+		}
+
+		protected byte[] GetNormalizedPixelData(DicomMessageBase message)
+		{
+			PhotometricInterpretation photometricInterpretation;
+			byte[] rawPixelData;
+
+			if (!message.TransferSyntax.Encapsulated)
+			{
+				DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
+				rawPixelData = pixelData.GetFrame(this.FrameNumber - 1);
+				photometricInterpretation = this.PhotometricInterpretation;
+			}
+			else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
+			{
+				DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
+				string pi;
+				rawPixelData = pixelData.GetFrame(this.FrameNumber - 1, out pi);
+				photometricInterpretation = PhotometricInterpretationHelper.FromString(pi);
+			}
+			else
+				throw new DicomCodecException("Unsupported transfer syntax");
+
+			// DICOM library uses zero-based frame numbers
+
+			if (this.IsColor)
+				rawPixelData = this.ToArgb(rawPixelData, photometricInterpretation);
+
+			return rawPixelData;
+		}
 
 		/// <summary>
 		/// Unloads the pixel data.
@@ -781,7 +829,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// garbage collector to free the memory.  Calling <see cref="GetNormalizedPixelData"/>
 		/// will reload the pixel data.
 		/// </remarks>
-		public abstract void UnloadPixelData();
+		public void UnloadPixelData()
+		{
+			lock (_syncLock)
+			{
+				_pixelData = null;
+			}
+		}
 
 		/// <summary>
 		/// Converts colour pixel data to ARGB.

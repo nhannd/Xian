@@ -36,11 +36,11 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-	public class LocalDataStoreFrame : LocalFrame
+	public class LocalDataStoreFrame : Frame
 	{
 		private readonly ImageSopInstance _dataStoreImageSopInstance;
-		private Dicom.DataStore.Study _dataStoreStudy;
-		private Dicom.DataStore.Series _dataStoreSeries;
+		private readonly Dicom.DataStore.Study _dataStoreStudy;
+		private readonly Dicom.DataStore.Series _dataStoreSeries;
 
 		public LocalDataStoreFrame(ImageSopInstance dbSop, LocalDataStoreImageSop parentImageSop, int frameNumber)
 			: base(parentImageSop, frameNumber)

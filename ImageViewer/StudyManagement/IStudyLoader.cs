@@ -31,6 +31,29 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	public class StudyLoaderArgs
+	{
+		private string _studyInstanceUid;
+		private object _server;
+
+		public StudyLoaderArgs(string studyInstanceUid, object server)
+		{
+			_studyInstanceUid = studyInstanceUid;
+			_server = server;
+		}
+
+
+		public string StudyInstanceUid
+		{
+			get { return _studyInstanceUid; }
+		}
+
+		public object Server
+		{
+			get { return _server; }
+		}
+	}
+
 	/// <summary>
 	/// Defines a study loader.
 	/// </summary>
@@ -52,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <param name="studyInstanceUID"></param>
 		/// <returns>Number of images in study.</returns>
-		int Start(string studyInstanceUID);
+		int Start(StudyLoaderArgs studyLoaderArgs);
 
 		/// <summary>
 		/// Loads the next image.
@@ -65,4 +88,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		ImageSop LoadNextImage();
     }
+
 }

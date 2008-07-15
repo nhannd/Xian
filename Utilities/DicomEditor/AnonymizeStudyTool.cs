@@ -131,7 +131,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
 
-				int numberOfSops = LocalStudyLoader.Start(this.Context.SelectedStudy.StudyInstanceUID);
+				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(this.Context.SelectedStudy.StudyInstanceUID, null));
 				if (numberOfSops <= 0)
 					return;
 

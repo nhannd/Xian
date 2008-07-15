@@ -60,11 +60,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
         }
 
-		public int Start(string studyInstanceUID)
+		public int Start(StudyLoaderArgs studyLoaderArgs)
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
-				IStudy study = reader.GetStudy(studyInstanceUID);
+				IStudy study = reader.GetStudy(studyLoaderArgs.StudyInstanceUid);
 				_sops = new List<ISopInstance>(study.GetSopInstances()).GetEnumerator();
 				_sops.Reset();
 

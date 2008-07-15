@@ -71,6 +71,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._location = new System.Windows.Forms.TextBox();
 			this._btnAccept = new System.Windows.Forms.Button();
 			this._btnCancel = new System.Windows.Forms.Button();
+			this._isStreaming = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// label1
@@ -155,7 +156,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _btnAccept
 			// 
-			this._btnAccept.Location = new System.Drawing.Point(97, 168);
+			this._btnAccept.Location = new System.Drawing.Point(97, 203);
 			this._btnAccept.Name = "_btnAccept";
 			this._btnAccept.Size = new System.Drawing.Size(75, 23);
 			this._btnAccept.TabIndex = 10;
@@ -164,17 +165,28 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _btnCancel
 			// 
-			this._btnCancel.Location = new System.Drawing.Point(178, 168);
+			this._btnCancel.Location = new System.Drawing.Point(178, 203);
 			this._btnCancel.Name = "_btnCancel";
 			this._btnCancel.Size = new System.Drawing.Size(75, 23);
 			this._btnCancel.TabIndex = 11;
 			this._btnCancel.Text = "Cancel";
 			this._btnCancel.UseVisualStyleBackColor = true;
 			// 
+			// _isStreaming
+			// 
+			this._isStreaming.AutoSize = true;
+			this._isStreaming.Location = new System.Drawing.Point(97, 169);
+			this._isStreaming.Name = "_isStreaming";
+			this._isStreaming.Size = new System.Drawing.Size(170, 17);
+			this._isStreaming.TabIndex = 12;
+			this._isStreaming.Text = "ClearCanvas Streaming Server";
+			this._isStreaming.UseVisualStyleBackColor = true;
+			// 
 			// DicomServerEditComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._isStreaming);
 			this.Controls.Add(this._btnCancel);
 			this.Controls.Add(this._btnAccept);
 			this.Controls.Add(this._location);
@@ -188,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
 			this.Name = "DicomServerEditComponentControl";
-			this.Size = new System.Drawing.Size(351, 214);
+			this.Size = new System.Drawing.Size(351, 249);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -207,6 +219,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private System.Windows.Forms.TextBox _port;
         private System.Windows.Forms.TextBox _location;
         private System.Windows.Forms.Button _btnAccept;
-        private System.Windows.Forms.Button _btnCancel;
+		private System.Windows.Forms.Button _btnCancel;
+		private System.Windows.Forms.CheckBox _isStreaming;
     }
 }

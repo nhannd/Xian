@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DB155C43-8966-4AB5-AE4F-40489FA33ABA}</ProjectGuid>
+    <ProjectGuid>{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.StudyLoaders.Streaming</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.StudyLoaders.Streaming</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,7 +18,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -27,41 +26,24 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LocalDataStoreFrame.cs" />
-    <Compile Include="LocalDataStoreImageSop.cs" />
-    <Compile Include="LocalDataStoreStudyLoader.cs" />
+    <Compile Include="HeaderRetrievalServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
-      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
-      <Name>ClearCanvas.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
-      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
-      <Name>ClearCanvas.Dicom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
-      <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
-      <Name>ClearCanvas.Dicom.DataStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
-      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.ImageViewer</Name>
-    </ProjectReference>
+    <Compile Include="StreamingFrame.cs" />
+    <Compile Include="StreamingImageSop.cs" />
+    <Compile Include="StreamingStudyLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -71,13 +53,24 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tests\" />
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DicomServices\ClearCanvas.DicomServices.csproj">
+      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
+      <Name>ClearCanvas.DicomServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
+      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
+      <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

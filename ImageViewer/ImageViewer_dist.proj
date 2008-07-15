@@ -114,6 +114,7 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />

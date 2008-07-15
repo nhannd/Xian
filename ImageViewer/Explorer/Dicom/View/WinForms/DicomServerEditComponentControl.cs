@@ -72,6 +72,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             this._serverName.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
             this._host.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
+
+        	this._isStreaming.DataBindings.Add("Checked", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
 		void OnPortBindingFormat(object sender, ConvertEventArgs e)
@@ -121,6 +123,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private void OnCancelClicked(object sender, EventArgs e)
         {
             _component.Cancel();
-        }
+		}
     }
 }

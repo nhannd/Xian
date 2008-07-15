@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -62,7 +63,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			try
 			{
-				OpenStudyHelper.OpenStudies("DICOM_LOCAL", GetStudyInstanceUids(), ViewerLaunchSettings.WindowBehaviour);
+				if (this.Context.SelectedServerGroup.IsLocalDatastore)
+					OpenStudyHelper.OpenStudies(new OpenStudyArgs(GetStudyInstanceUids(), null, "DICOM_LOCAL", ViewerLaunchSettings.WindowBehaviour));
+				else
+				{
+					OpenStudyHelper.OpenStudies(
+						new OpenStudyArgs(GetStudyInstanceUids(), this.Context.SelectedStudy.Server, "CC_STREAMING", ViewerLaunchSettings.WindowBehaviour));
+				}
 			}
 			catch (Exception e)
 			{
@@ -108,8 +115,35 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else
 			{
-				this.Enabled = false;
+				if (IsOnlyStreamingServers())
+				{
+					if (this.Context.SelectedStudy != null)
+						this.Enabled = true;
+					else
+						this.Enabled = false;
+				}
+				else
+					this.Enabled = false;
 			}
+		}
+
+		private bool IsOnlyStreamingServers()
+		{
+			if (this.Context.SelectedServerGroup.Servers.Count == 0)
+				return false;
+
+			foreach (IServerTreeNode node in this.Context.SelectedServerGroup.Servers)
+			{
+				if (node.IsServer)
+				{
+					Server server = node as Server;
+
+					if (!server.IsStreaming)
+						return false;
+				}
+			}
+
+			return true;
 		}
 	}
 }

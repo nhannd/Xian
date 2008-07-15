@@ -223,10 +223,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			_acquisitionDateTime = value;
 		}
 
-		public override void UnloadPixelData()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
 	}
 
 	// This mock IImageSop only implements the bare minimum of the overridden properties
@@ -270,11 +266,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		protected override void ValidateInternal()
 		{
 		}
-
-		public override DicomMessageBase NativeDicomObject
-        {
-            get { throw new Exception("The method or operation is not implemented."); }
-        }
 
 		public override string PatientId
 		{
@@ -565,56 +556,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override void GetTag(uint tag, out ushort val, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out ushort val, uint position, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out int val, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out int val, uint position, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out double val, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out double val, uint position, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out string val, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out string val, uint pos, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetMultiValuedTagRaw(uint tag, out string valueArray, out bool tagExists)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		public override void GetTag(uint tag, out byte[] value, out bool tagExists)
-		{
-			throw new NotImplementedException();
-		}
-
 		public override string TransferSyntaxUID
 		{
 			get
@@ -624,6 +565,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		}
 
 		#endregion
+
 	}
 }
 #endif

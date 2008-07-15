@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class ImageSop : Sop
 	{
-		private readonly object _syncLock = new object();		
+		private readonly object _syncLock = new object();
 		private volatile FrameCollection _frames;
 
 		static ImageSop()
@@ -66,6 +66,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		protected ImageSop()
 		{
+			_loaded = false;
 		}
 
 		/// <summary>
@@ -483,7 +484,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Factory method to create the frame at <paramref name="index"/>.
 		/// </summary>
 		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
-		protected abstract Frame CreateFrame(int index);
+		protected virtual Frame CreateFrame(int index)
+		{
+			return new Frame(this, index);
+		}
 
 		/// <summary>
 		/// Validates the <see cref="ImageSop"/> object.
@@ -546,5 +550,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUID));
 			}
 		}
+
 	}
 }

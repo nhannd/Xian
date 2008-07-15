@@ -39,12 +39,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class LocalImageSop : ImageSop
 	{
-		private delegate void GetTagDelegate<T>(DicomAttribute attribute, uint position, out T value);
- 
 		private readonly object _syncLock = new object();
-		private volatile bool _loaded;
-		private volatile DicomFile _dicomFile;
-
+		
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalImageSop"/> with
 		/// a specified filename.
@@ -53,22 +49,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public LocalImageSop(string filename)
 		{
 			_dicomFile = new DicomFile(filename);
-			_loaded = false;
-		}
-
-		/// <summary>
-		/// Implementation of the <see cref="IDisposable"/> pattern
-		/// </summary>
-		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
-		protected override void Dispose(bool disposing)
-		{
-			lock (_syncLock)
-			{
-				_dicomFile = null;
-				_loaded = false;
-			}
-			
-			base.Dispose(disposing);
 		}
 
 		/// <summary>
@@ -76,213 +56,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Filename
 		{
-			get	{ return _dicomFile.Filename; }
-		}
-
-		/// <summary>
-		/// Gets the DICOM toolkit representation of this <see cref="LocalImageSop"/>.
-		/// </summary>
-        public override DicomMessageBase NativeDicomObject
-        {
-            get
-            {
-				Load();
-            	return _dicomFile;
-            }
-        }
-
-		/// <summary>
-		/// This method overides <see cref="Sop.GetTag(uint, out ushort, out bool)"/>.
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out ushort value, out bool tagExists)
-		{
-			GetTag(tag, out value, 0, out tagExists);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out ushort, uint, out bool)"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out ushort value, uint position, out bool tagExists)
-		{
-			GetTag<ushort>(tag, out value, position, out tagExists, GetUint16FromAttribute);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out int, out bool)"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out int value, out bool tagExists)
-		{
-			GetTag(tag, out value, 0, out tagExists);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out int, uint, out bool)"/>.
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out int value, uint position, out bool tagExists)
-		{
-			GetTag<int>(tag, out value, position, out tagExists, GetInt32FromAttribute);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out double, out bool)"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out double value, out bool tagExists)
-		{
-			GetTag(tag, out value, 0, out tagExists);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out double, uint, out bool)"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out double value, uint position, out bool tagExists)
-		{
-			GetTag<double>(tag, out value, position, out tagExists, GetFloat64FromAttribute);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out string, out bool)"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out string value, out bool tagExists)
-		{
-			GetTag(tag, out value, 0, out tagExists);
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetTag(uint, out string, uint, out bool)"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out string value, uint position, out bool tagExists)
-		{
-			GetTag<string>(tag, out value, position, out tagExists, GetStringFromAttribute);
-			value = value ?? "";
-		}
-
-		/// <summary>
-		/// This method overrides <see cref="Sop.GetMultiValuedTagRaw"/>
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public override void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists)
-		{
-			GetTag<string>(tag, out value, 0, out tagExists, GetStringArrayFromAttribute);
-			value = value ?? "";
-		}
-
-		/// <summary>
-		/// Gets a DICOM OB or OW tag (byte[]), not including encapsulated pixel data.
-		/// </summary>
-		/// <remarks>
-		/// GetTag methods should make no assumptions about what to return in the <paramref name="value"/> parameter
-		/// when a tag does not exist.  It should simply return the default value for <paramref name="value"/>'s Type,
-		/// which is either null, 0 or "" depending on whether it is a reference or value Type.  Similarly, no data validation
-		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
-		/// </remarks>
-		/// <param name="tag"></param>
-		/// <param name="value"></param>
-		/// <param name="tagExists"></param>
-		public override void GetTag(uint tag, out byte[] value, out bool tagExists)
-		{
-			GetTag<byte[]>(tag, out value, 0, out tagExists, GetAttributeValueOBOW);
-		}
-
-		private static void GetUint16FromAttribute(DicomAttribute attribute, uint position, out ushort value)
-		{
-			attribute.TryGetUInt16((int)position, out value);
-		}
-
-		private static void GetInt32FromAttribute(DicomAttribute attribute, uint position, out int value)
-		{
-			attribute.TryGetInt32((int)position, out value);
-		}
-
-		private static void GetFloat64FromAttribute(DicomAttribute attribute, uint position, out double value)
-		{
-			attribute.TryGetFloat64((int)position, out value);
-		}
-
-		private static void GetStringFromAttribute(DicomAttribute attribute, uint position, out string value)
-		{
-			attribute.TryGetString((int)position, out value);
-		}
-
-		private static void GetStringArrayFromAttribute(DicomAttribute attribute, uint position, out string value)
-		{
-			value = attribute.ToString();
-		}
-
-		private static void GetAttributeValueOBOW(DicomAttribute attribute, uint position, out byte[] value)
-		{
-			if (attribute is DicomAttributeOW || attribute is DicomAttributeOB)
-				value = (byte[])attribute.Values;
-			else
-				value = null;
-		}
-
-		private void GetTag<T>(uint tag, out T value, uint position, out bool tagExists, GetTagDelegate<T> getter)
-		{
-			Load();
-			value = default(T);
-			tagExists = false;
-
-			DicomAttribute dicomAttribute;
-			if(_dicomFile.DataSet.Contains(tag))
+			get
 			{
-				dicomAttribute = _dicomFile.DataSet[tag];
-				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
-				if (tagExists)
-				{
-					getter(dicomAttribute, position, out value);
-					return;
-				}
-			}
-
-			if (_dicomFile.MetaInfo.Contains(tag))
-			{
-				dicomAttribute = _dicomFile.MetaInfo[tag];
-				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
-				if (tagExists)
-					getter(dicomAttribute, position, out value);
+				return _dicomFile.Filename;
 			}
 		}
 
-		/// <summary>
-		/// Factory method that creates a <see cref="LocalFrame"/>.
-		/// </summary>
-		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
-		protected override Frame CreateFrame(int index)
-		{
-			return new LocalFrame(this, index);
-		}
-
-		internal void Load()
+		internal override void Load()
 		{
 			if (_loaded)
 				return;
