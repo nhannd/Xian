@@ -358,8 +358,12 @@ namespace ClearCanvas.Dicom.IO
                                             ushort e = _reader.ReadUInt16();
                                             uint tempTagValue = DicomTag.GetTagValue(g, e);
 
-                                            if (tempTagValue == DicomTag.Item.TagValue || tempTagValue == DicomTag.SequenceDelimitationItem.TagValue)
-                                                _vr = DicomVr.SQvr;
+											// This code caused some problems reading some toshiba images that
+											// started a private tag w/ the sequence delimitation item, however, 
+											// the remainder of the private attribute was not encoded according to a 
+											// SQ.
+                                         //   if (tempTagValue == DicomTag.Item.TagValue || tempTagValue == DicomTag.SequenceDelimitationItem.TagValue)
+                                         //       _vr = DicomVr.SQvr;
                                         }
                                         else
                                         {
