@@ -34,10 +34,9 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.DicomServices.Scu;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -72,14 +71,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return;
 			}
 
-			ApplicationEntity myAE;
+			string myAE;
+			
 			try
 			{
-				myAE = new ApplicationEntity(new HostName(DicomServerConfigurationHelper.Host),
-												new AETitle(DicomServerConfigurationHelper.AETitle),
-												new ListeningPort(DicomServerConfigurationHelper.Port));
+				myAE = DicomServerConfigurationHelper.AETitle;
 			}
-			catch (Exception e)
+			catch(Exception	e)
 			{
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				return;
@@ -87,35 +85,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
-			using (DicomClient client = new DicomClient(myAE))
+			using (VerificationScu scu = new VerificationScu())
 			{
 				foreach (Server server in this.Context.SelectedServers.Servers)
 				{
-					bool succeeded = false;
-					try
-					{
-						succeeded = client.Verify(new ApplicationEntity(new HostName(server.Host), new AETitle(server.AETitle), new ListeningPort(server.Port)));
-					}
-					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Error, e);
-					}
-					finally
-					{
-						if (succeeded)
-							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
-						else
-							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
-					}
+					VerificationResult result = scu.Verify(myAE, server.AETitle, server.Host, server.Port);
+					if (result == VerificationResult.Success)
+						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
+					else
+						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
 				}
 			}
+
 			msgText.AppendFormat("\r\n");
 			this.Context.DesktopWindow.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
 		}
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-			this.Enabled = !this.Context.SelectedServers.IsLocalDatastore && !this.NoServersSelected();                            
+			this.Enabled = !this.Context.SelectedServers.IsLocalDatastore && !this.NoServersSelected();                 
         }
     }
 }

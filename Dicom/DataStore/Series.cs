@@ -179,9 +179,9 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region ISeries Members
 
-		public Uid GetSeriesInstanceUid()
+		public string GetSeriesInstanceUid()
 		{
-			return new Uid(this.SeriesInstanceUid);
+			return this.SeriesInstanceUid;
 		}
 
 		public IStudy GetParentStudy()

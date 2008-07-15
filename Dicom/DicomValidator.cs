@@ -36,6 +36,8 @@ using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: move this?
+
 	/// <summary>
 	/// Validation helper for Dicom data, including image data.
 	/// </summary>

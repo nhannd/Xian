@@ -110,17 +110,17 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public void RemoveStudy(Uid studyUid)
+			public void RemoveStudy(string studyUid)
 			{
-				RemoveStudies(new Uid[] { studyUid });
+				RemoveStudies(new string[] { studyUid });
 			}
 
-			public void RemoveStudies(IEnumerable<Uid> studyUids)
+			public void RemoveStudies(IEnumerable<string> studyUids)
 			{
 				try
 				{
 					base.SessionManager.BeginWriteTransaction();
-					foreach (Uid uid in studyUids)
+					foreach (string uid in studyUids)
 						Session.Delete("from Study where StudyInstanceUid_ = ?", uid.ToString(), NHibernateUtil.String);
 
 					base.SessionManager.Commit();

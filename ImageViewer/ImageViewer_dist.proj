@@ -68,8 +68,6 @@
   <ItemGroup>
     <DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
     <DicomAssemblyFiles Include="$(SolutionDir)\..\DicomServices\bin\$(Configuration)\ClearCanvas.DicomServices.dll" />
-    <DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll" />
-    <DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\OffisWrapper\cppwrapper\$(Configuration)\OffisDcm.dll" />
     <DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
   </ItemGroup>
 

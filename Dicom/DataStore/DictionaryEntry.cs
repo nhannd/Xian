@@ -33,8 +33,8 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public class DictionaryEntry
     {
-        private TagName _tagName;
-        private Path _path;
+		private string _tagName;
+        private DicomTagPath _path;
         private bool _isComputed;
 		private string _valueRepresentation;
 
@@ -42,13 +42,13 @@ namespace ClearCanvas.Dicom.DataStore
         {
         }
 
-        public virtual TagName TagName
+		public virtual string TagName
         {
             get { return _tagName; }
             set { _tagName = value; }
         }
 
-        public virtual Path Path
+		public virtual DicomTagPath Path
         {
             get { return _path; }
             set { _path = value; }

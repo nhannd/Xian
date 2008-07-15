@@ -124,7 +124,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (this.StudiesToUpdate.ContainsKey(studyInstanceUid))
 					return this.StudiesToUpdate[studyInstanceUid];
 
-				Study existingStudy = (Study)GetIDataStoreReader().GetStudy(new Uid(studyInstanceUid));
+				Study existingStudy = (Study)GetIDataStoreReader().GetStudy(studyInstanceUid);
 				if (existingStudy != null)
 				{
 					this.ExistingStudyCache[existingStudy.GetStudyInstanceUid()] = existingStudy;
@@ -143,7 +143,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (this.SeriesToUpdate.ContainsKey(seriesInstanceUid))
 					return this.SeriesToUpdate[seriesInstanceUid];
 
-				Series existingSeries = (Series)GetIDataStoreReader().GetSeries(new Uid(seriesInstanceUid));
+				Series existingSeries = (Series)GetIDataStoreReader().GetSeries(seriesInstanceUid);
 				if (existingSeries != null)
 					this.ExistingSeriesCache[seriesInstanceUid] = existingSeries;
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (this.SopInstancesToUpdate.ContainsKey(sopInstanceUid))
 					return this.SopInstancesToUpdate[sopInstanceUid];
 
-				return (SopInstance)GetIDataStoreReader().GetSopInstance(new Uid(sopInstanceUid));
+				return (SopInstance)GetIDataStoreReader().GetSopInstance(sopInstanceUid);
 			}
 
 			#region IDicomPersistentStore Members

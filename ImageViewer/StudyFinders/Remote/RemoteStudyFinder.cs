@@ -29,17 +29,16 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using ClearCanvas.DicomServices.Scu;
+using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
+
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using ClearCanvas.Common;
-    using ClearCanvas.ImageViewer.StudyManagement;
-    using ClearCanvas.Dicom;
-    using ClearCanvas.Dicom.OffisNetwork;
-	using ClearCanvas.ImageViewer.Configuration;
-
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]
     public class RemoteStudyFinder : IStudyFinder
 	{
@@ -58,56 +57,53 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
         public StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
-			_selectedServer = (ApplicationEntity)targetServer;
+			ApplicationEntity selectedServer = (ApplicationEntity)targetServer;
 
-			QueryKey queryKey = new QueryKey();
-            queryKey.Add(DicomTags.PatientId, queryParams["PatientId"]);
-            queryKey.Add(DicomTags.AccessionNumber, queryParams["AccessionNumber"]);
-            queryKey.Add(DicomTags.PatientsName, queryParams["PatientsName"]);
-            queryKey.Add(DicomTags.StudyDate, queryParams["StudyDate"]);
-            queryKey.Add(DicomTags.StudyDescription, queryParams["StudyDescription"]);
-            queryKey.Add(DicomTags.PatientsBirthDate, "");
-            queryKey.Add(DicomTags.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
-            queryKey.Add(DicomTags.SpecificCharacterSet, "");
+			DicomAttributeCollection requestCollection = new DicomAttributeCollection();
 
-            ReadOnlyQueryResultCollection results = Query(_selectedServer, queryKey);
-            if (null == results)
-                return null;
+			requestCollection[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
+			requestCollection[DicomTags.StudyInstanceUid].SetStringValue("");
 
-            StudyItemList studyItemList = new StudyItemList();
-            foreach (QueryResult result in results)
-            {
-                StudyItem item = new StudyItem();
-                item.SpecificCharacterSet = result.SpecificCharacterSet;
-                item.PatientsName = new PersonName(DicomImplementation.CharacterParser.DecodeFromIsomorphicString(result.PatientsName, result.SpecificCharacterSet));
-                item.StudyDescription = DicomImplementation.CharacterParser.DecodeFromIsomorphicString(result.StudyDescription, result.SpecificCharacterSet);
+			requestCollection[DicomTags.PatientId].SetStringValue(queryParams["PatientId"]);
+			requestCollection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
+			requestCollection[DicomTags.PatientsName].SetStringValue(queryParams["PatientsName"]);
+			requestCollection[DicomTags.StudyDate].SetStringValue(queryParams["StudyDate"]);
+			requestCollection[DicomTags.StudyDescription].SetStringValue(queryParams["StudyDescription"]);
+			requestCollection[DicomTags.PatientsBirthDate].SetStringValue("");
+			requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
+			requestCollection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
+			requestCollection[DicomTags.SpecificCharacterSet].SetStringValue("");
 
-                item.PatientId = result.PatientId.ToString();
-                item.PatientsBirthDate = result[DicomTags.PatientsBirthDate];
-                item.StudyDate = result.StudyDate;
-                item.ModalitiesInStudy = result.ModalitiesInStudy;
-                item.AccessionNumber = result.AccessionNumber;
-                item.StudyLoaderName = this.Name;
-                item.Server = _selectedServer;
-                item.StudyInstanceUID = result.StudyInstanceUid.ToString();
+			IList<DicomAttributeCollection> results = Query(selectedServer, requestCollection);
+			
+			StudyItemList studyItemList = new StudyItemList();
+			foreach (DicomAttributeCollection result in results)
+			{
+				StudyItem item = new StudyItem();
 
-                if (result.ContainsTag(DicomTags.NumberOfStudyRelatedInstances))
-                    item.NumberOfStudyRelatedInstances = result.NumberOfStudyRelatedInstances;
-                else
-                    item.NumberOfStudyRelatedInstances = 0;
+				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
+				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");
+				item.AccessionNumber = result[DicomTags.AccessionNumber].GetString(0, "");
+				item.StudyDescription = result[DicomTags.StudyDescription].GetString(0, "");
+				item.StudyDate = result[DicomTags.StudyDate].GetString(0, "");
+				item.PatientId = result[DicomTags.PatientId].GetString(0, "");
+				item.PatientsName = new PersonName(result[DicomTags.PatientsName].GetString(0, ""));
+				item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
+				item.StudyInstanceUID = result[DicomTags.StudyInstanceUid].GetString(0, "");
+				item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
+				item.SpecificCharacterSet = result.SpecificCharacterSet;
 
-                studyItemList.Add(item);
-            }
+				item.StudyLoaderName = this.Name;
+				item.Server = selectedServer;
 
-            return studyItemList;
+				studyItemList.Add(item);
+			}
+
+			return studyItemList;
         }
 
-        protected ReadOnlyQueryResultCollection Query(ApplicationEntity server, QueryKey queryKey)
-        {
-			ApplicationEntity me = new ApplicationEntity(	new HostName(DicomServerConfigurationHelper.Host), 
-															new AETitle(DicomServerConfigurationHelper.AETitle), 
-															new ListeningPort(DicomServerConfigurationHelper.Port));
-
+		protected IList<DicomAttributeCollection> Query(ApplicationEntity server, DicomAttributeCollection requestCollection)
+		{
 			//special case code for ModalitiesInStudy.  An IStudyFinder must accept a multi-valued
 			//string for ModalitiesInStudy (e.g. "MR\\CT") and process it appropriately for the 
 			//datasource that is being queried.  In this case (Dicom) does not allow multiple
@@ -115,9 +111,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			//ModalitiesInStudy query item.
 
 			List<string> modalityFilters = new List<string>();
-			if (queryKey.ContainsTag(DicomTags.ModalitiesInStudy))
+			if (requestCollection.Contains(DicomTags.ModalitiesInStudy))
 			{
-				string modalityFilterString = queryKey[DicomTags.ModalitiesInStudy].ToString();
+				string modalityFilterString = requestCollection[DicomTags.ModalitiesInStudy].ToString();
 				if (!String.IsNullOrEmpty(modalityFilterString))
 					modalityFilters.AddRange(modalityFilterString.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries));
 
@@ -125,19 +121,30 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					modalityFilters.Add(""); //make sure there is at least one filter, the default.
 			}
 
-			SortedList<string, QueryResult> resultsByStudy = new SortedList<string, QueryResult>();
+			SortedList<string, DicomAttributeCollection> resultsByStudy = new SortedList<string, DicomAttributeCollection>();
 
-			string combinedFilter = queryKey[DicomTags.ModalitiesInStudy];
+			string combinedFilter = requestCollection[DicomTags.ModalitiesInStudy];
 
 			try
 			{
-				foreach (string modalityFilter in modalityFilters)
+				using (StudyRootFindScu scu = new StudyRootFindScu())
 				{
-					queryKey[DicomTags.ModalitiesInStudy] = modalityFilter;
-
-					using (DicomClient client = new DicomClient(me))
+					foreach (string modalityFilter in modalityFilters)
 					{
-						ReadOnlyQueryResultCollection results = client.Query(server, queryKey);
+						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
+
+						IList<DicomAttributeCollection> results = scu.Find(DicomServerConfigurationHelper.AETitle,
+							server.AETitle, server.Host, server.Port,
+							requestCollection);
+
+						if(scu.Status == ScuOperationStatus.Canceled)
+							throw new DicomException(SR.MessageRemoteServerCancelledFind);
+						if (scu.Status == ScuOperationStatus.ConnectFailed)
+							throw new DicomException(SR.MessageConnectionFailed);
+						if (scu.Status == ScuOperationStatus.Failed)
+							throw new DicomException(SR.MessageQueryOperationFailed);
+						if (scu.Status == ScuOperationStatus.TimeoutExpired)
+							throw new DicomException(SR.MessageConnectTimeoutExpired);
 
 						//if this function returns true, it means that studies came back whose 
 						//modalities did not match the filter, meaning that filtering on
@@ -147,31 +154,27 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					}
 				}
 
-				return new ReadOnlyQueryResultCollection(resultsByStudy.Values);
-			}
-			catch
-			{
-				throw;
+				return new List<DicomAttributeCollection>(resultsByStudy.Values);
 			}
 			finally
 			{
 				//for consistencies sake, put the original filter back.
-				queryKey[DicomTags.ModalitiesInStudy] = combinedFilter;
+				requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(combinedFilter);
 			}
+		}
 
-        }
-
-		protected bool FilterResultsByModality(ReadOnlyQueryResultCollection results, IDictionary<string, QueryResult> resultsByStudy, string modalityFilter)
+		protected static bool FilterResultsByModality(IList<DicomAttributeCollection> results, IDictionary<string, DicomAttributeCollection> resultsByStudy, string modalityFilter)
 		{
 			//if this particular filter is a wildcard filter, we won't try to be smart about running extra queries.
-			bool isWildCardQuery = (modalityFilter.IndexOfAny(new char[] { '?', '*'}) >= 0);
+			bool isWildCardQuery = (modalityFilter.IndexOfAny(new char[] { '?', '*' }) >= 0);
 
 			//if the filter is "", then everything is a match.
 			bool everythingMatches = String.IsNullOrEmpty(modalityFilter);
-			
-			foreach (QueryResult result in results)
+
+			foreach (DicomAttributeCollection result in results)
 			{
-				if (resultsByStudy.ContainsKey(result.StudyInstanceUid))
+				string studyInstanceUid = result[DicomTags.StudyInstanceUid].ToString();
+				if (resultsByStudy.ContainsKey(studyInstanceUid))
 					continue;
 
 				bool matchesFilter = true;
@@ -179,13 +182,13 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				if (!everythingMatches)
 				{
 					//the server does not support this optional tag at all.
-					if (!result.ContainsTag(DicomTags.ModalitiesInStudy))
+					if (!result.Contains(DicomTags.ModalitiesInStudy))
 					{
 						everythingMatches = true;
 					}
 					else if (!isWildCardQuery)
 					{
-						string returnedModalities = result.ModalitiesInStudy;
+						string returnedModalities = result[DicomTags.ModalitiesInStudy].ToString();
 						string[] returnedModalitiesArray = returnedModalities.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
 						if (returnedModalitiesArray == null || returnedModalitiesArray.Length == 0)
@@ -212,19 +215,17 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 						}
 					}
 					else
-					{ 
+					{
 						//!!We don't actually use wildcard queries for modality, so this is not critical right now.  When C-FIND is written
 						//!!a method for post-filtering with wildcards will need to be determined.  At which point this can be completed as well.
 					}
 				}
 
 				if (matchesFilter)
-					resultsByStudy[result.StudyInstanceUid] = result;
+					resultsByStudy[studyInstanceUid] = result;
 			}
 
 			return everythingMatches;
 		}
-
-        private ApplicationEntity _selectedServer;
 	}
 }

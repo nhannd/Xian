@@ -40,7 +40,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
-using ClearCanvas.Dicom.OffisNetwork;
 using System.ServiceModel;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;

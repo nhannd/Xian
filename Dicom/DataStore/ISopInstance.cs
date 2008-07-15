@@ -33,9 +33,9 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface ISopInstance
     {
-		Uid GetSopInstanceUid();
-		Uid GetSopClassUid();
-		Uid GetTransferSyntaxUid();
+		string GetSopInstanceUid();
+		string GetSopClassUid();
+		string GetTransferSyntaxUid();
 
 		ISeries GetParentSeries();
 

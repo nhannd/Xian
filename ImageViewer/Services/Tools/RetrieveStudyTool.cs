@@ -31,17 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using System.ServiceModel;
-using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
@@ -99,13 +95,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				foreach (KeyValuePair<ApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
 					AEInformation aeInformation = new AEInformation();
-					aeInformation.AETitle = kvp.Key.AE;
+					aeInformation.AETitle = kvp.Key.AETitle;
 					aeInformation.HostName = kvp.Key.Host;
 					aeInformation.Port = kvp.Key.Port;
 
 					client.RetrieveStudies(aeInformation, kvp.Value);
 				}
-								
+
 				client.Close();
 
 				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);

@@ -31,8 +31,8 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -52,7 +52,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			try
 			{
+				LocalDataStorePublishHelper.Instance.Start();
+				DicomSendManager.Instance.Start();
+				DicomRetrieveManager.Instance.Start();
 				DicomServerManager.Instance.Start();
+
 				string message = String.Format(SR.FormatServiceStartedSuccessfully, SR.DicomServer);
 				Platform.Log(LogLevel.Info, message);
 				Console.WriteLine(message);
@@ -97,6 +101,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			try
 			{
 				DicomServerManager.Instance.Stop();
+				DicomSendManager.Instance.Stop();
+				DicomRetrieveManager.Instance.Stop();
+				LocalDataStorePublishHelper.Instance.Stop();
+
 				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.DicomServer));
 			}
 			catch(Exception e)

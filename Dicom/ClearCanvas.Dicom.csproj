@@ -52,7 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <DocumentationFile>
     </DocumentationFile>
-    <DebugSymbols>false</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <FileAlignment>4096</FileAlignment>
     <NoStdLib>false</NoStdLib>
     <NoWarn>1591, 0419, 1574, 1587</NoWarn>
@@ -61,14 +61,10 @@
     <RemoveIntegerChecks>false</RemoveIntegerChecks>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <DebugType>none</DebugType>
+    <DebugType>pdbonly</DebugType>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\nunit.framework.dll</HintPath>
@@ -88,8 +84,6 @@
   <ItemGroup>
     <Compile Include="DicomAttribute.cs" />
     <Compile Include="DicomMessageBase.cs" />
-    <Compile Include="Accession.cs" />
-    <Compile Include="AETitle.cs" />
     <Compile Include="DicomAttributeBinary.cs" />
     <Compile Include="DicomAttributeCollection.cs" />
     <Compile Include="DicomAttributeSingleValueText.cs" />
@@ -117,26 +111,12 @@
     <Compile Include="IO\Endian.cs" />
     <Compile Include="IO\StreamReader.cs" />
     <Compile Include="IO\StreamWriter.cs" />
-    <Compile Include="OffisNetwork\ApplicationEntity.cs" />
-    <Compile Include="OffisNetwork\DicomClient.cs" />
-    <Compile Include="OffisNetwork\DicomServer.cs" />
-    <Compile Include="OffisNetwork\DicomEventManager.cs" />
-    <Compile Include="OffisNetwork\HostName.cs" />
-    <Compile Include="OffisNetwork\ListeningPort.cs" />
-    <Compile Include="OffisNetwork\QueryCompletedEventArgs.cs" />
-    <Compile Include="OffisNetwork\QueryResultReceivedEventArgs.cs" />
-    <Compile Include="OffisNetwork\RetrieveProgressUpdatedEventArgs.cs" />
-    <Compile Include="OffisNetwork\SendProgressUpdatedEventArgs.cs" />
-    <Compile Include="OffisNetwork\SocketManager.cs" />
     <Compile Include="PatientOrientation.cs" />
     <Compile Include="PhotometricInterpretation.cs" />
     <Compile Include="PixelAspectRatio.cs" />
     <Compile Include="PixelSpacing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PatientID.cs" />
     <Compile Include="PersonName.cs" />
-    <Compile Include="QueryResult.cs" />
-    <Compile Include="QueryResultCollection.cs" />
     <Compile Include="SopClass.cs" />
     <Compile Include="SpecificCharacterSetParser.cs" />
     <Compile Include="SR.Designer.cs">
@@ -146,10 +126,8 @@
     </Compile>
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Tests\ImageOrientationPatientTests.cs" />
-    <Compile Include="Tests\TypeTests.cs" />
     <Compile Include="TimeParser.cs" />
     <Compile Include="TransferSyntax.cs" />
-    <Compile Include="Uid.cs" />
     <Compile Include="Window.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -185,8 +163,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="DicomStringHelper.cs" />
-    <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomValidationException.cs" />
     <Compile Include="DicomValidator.cs" />
     <Compile Include="IDicomCharacterSetParser.cs" />
@@ -201,16 +177,10 @@
     <Compile Include="Network\NetworkBase.cs" />
     <Compile Include="Network\PDataTFStream.cs" />
     <Compile Include="Network\PDU.cs" />
-    <Compile Include="OffisNetwork\Dcm.cs" />
-    <Compile Include="OffisNetwork\NetworkDicomException.cs" />
-    <Compile Include="OffisNetwork\OffisConditionParser.cs" />
-    <Compile Include="OffisNetwork\OffisDicomHelper.cs" />
-    <Compile Include="OffisNetwork\Tests\DcmNetTest.cs" />
     <Compile Include="Tests\AbstractTest.cs" />
     <Compile Include="Tests\AssociationTests.cs" />
     <Compile Include="Tests\AttributeTests.cs" />
     <Compile Include="Tests\DicomFieldTests.cs" />
-    <Compile Include="Tests\DicomStringHelperTests.cs" />
     <Compile Include="Tests\FileTest.cs" />
     <Compile Include="Validation\StringValueValidation.cs" />
   </ItemGroup>

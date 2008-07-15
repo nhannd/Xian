@@ -36,7 +36,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom
 {
-    public class PixelSpacing : IEquatable<PixelSpacing>
+	//TODO: move this?
+	
+	public class PixelSpacing : IEquatable<PixelSpacing>
     {
 		
 		#region Private Members

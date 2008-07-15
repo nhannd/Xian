@@ -259,15 +259,18 @@ namespace ClearCanvas.Dicom.Network
             // MSDN documentation  Only do the check when we know there's no data available
             try
             {
-                if (_socket.Poll(1000, SelectMode.SelectRead))
-                {
-                    if (_socket.Available > 0)
-                        return true;
+				List<Socket> readSockets = new List<Socket>();
+				readSockets.Add(_socket);
+            	Socket.Select(readSockets, null, null, 500);
+				if (readSockets.Count == 1)
+				{
+					if (_socket.Available > 0)
+						return true;
 					OnNetworkError(null, true);
-                    return false;
-                } 
+					return false;
+				}
 
-                _socket.Send(new byte[1], 0, 0);
+				_socket.Send(new byte[1], 0, 0);
             }
             catch (SocketException e)
             {

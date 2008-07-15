@@ -33,9 +33,9 @@ namespace ClearCanvas.Dicom.DataStore
 {
     internal interface IDicomDictionary
     {
-        bool Contains(TagName tagName);
+        bool Contains(string tagName);
         bool Contains(DicomTagPath path);
-        DictionaryEntry GetColumn(TagName tagName);
+		DictionaryEntry GetColumn(string tagName);
         DictionaryEntry GetColumn(DicomTagPath path);
     }
 }

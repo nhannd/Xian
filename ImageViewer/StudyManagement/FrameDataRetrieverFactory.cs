@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Dicom;
+using ClearCanvas.DicomServices;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {

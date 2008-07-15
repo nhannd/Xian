@@ -28,10 +28,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
-    </Reference>
     <Reference Include="DotNetMagic2005, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
@@ -99,6 +95,10 @@
     <ProjectReference Include="..\..\..\Desktop\Explorer\ClearCanvas.Desktop.Explorer.csproj">
       <Project>{085823EA-DDAE-4DAF-A99D-17F75A03CF23}</Project>
       <Name>ClearCanvas.Desktop.Explorer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\DicomServices\ClearCanvas.DicomServices.csproj">
+      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
+      <Name>ClearCanvas.DicomServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>

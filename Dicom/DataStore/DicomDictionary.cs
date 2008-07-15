@@ -109,7 +109,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			#region IDicomDictionary Members
 
-			public bool Contains(TagName tagName)
+			public bool Contains(string tagName)
 			{
 				return _tagNameToColumnDictionary.ContainsKey(tagName);
 			}
@@ -119,7 +119,7 @@ namespace ClearCanvas.Dicom.DataStore
 				return _pathToColumnDictionary.ContainsKey(path);
 			}
 
-			public DictionaryEntry GetColumn(TagName tagName)
+			public DictionaryEntry GetColumn(string tagName)
 			{
 				if (_tagNameToColumnDictionary.ContainsKey(tagName))
 					return _tagNameToColumnDictionary[tagName];

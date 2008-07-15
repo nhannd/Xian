@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services
@@ -138,6 +136,51 @@ namespace ClearCanvas.ImageViewer.Services
 		public StudyInformation Clone()
 		{
 			StudyInformation clone = new StudyInformation();
+			CopyTo(clone);
+			return clone;
+		}
+	}
+
+	public enum InstanceLevel
+	{
+		Study = 0,
+		Series,
+		Sop
+	}
+
+	[DataContract]
+	public class InstanceInformation
+	{
+		private InstanceLevel _instanceLevel;
+		private string _instanceUid;
+
+		public InstanceInformation()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public InstanceLevel InstanceLevel
+		{
+			get { return _instanceLevel; }
+			set { _instanceLevel = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string InstanceUid
+		{
+			get { return _instanceUid; }
+			set { _instanceUid = value; }
+		}
+
+		public void CopyTo(InstanceInformation other)
+		{
+			other.InstanceLevel = this.InstanceLevel;
+			other.InstanceUid = this.InstanceUid;
+		}
+
+		public InstanceInformation Clone()
+		{
+			InstanceInformation clone = new InstanceInformation();
 			CopyTo(clone);
 			return clone;
 		}

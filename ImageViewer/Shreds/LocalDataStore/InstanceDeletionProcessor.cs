@@ -36,6 +36,7 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
@@ -194,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 						{
-							IStudy study = reader.GetStudy(new Uid(instanceUid));
+							IStudy study = reader.GetStudy(instanceUid);
 
 							if (study == null)
 							{

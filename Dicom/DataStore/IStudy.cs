@@ -35,7 +35,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface IStudy
     {
-		Uid GetStudyInstanceUid();
+		string GetStudyInstanceUid();
 
 		int GetNumberOfSeries();
 		IEnumerable<ISeries> GetSeries();

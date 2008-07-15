@@ -30,13 +30,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom
 {
-    /// <summary>
+	//TODO: move this?
+	
+	/// <summary>
     /// Encapsulates the DICOM Person's Name.
     /// </summary>
     public class PersonName : IEquatable<PersonName>, IFormattable
@@ -158,7 +158,7 @@ namespace ClearCanvas.Dicom
             return pn.ToString();
         }
 
-		private void SetInternalPersonName(string personsName)
+    	private void SetInternalPersonName(string personsName)
 		{
 			_personsName = personsName ?? "";
 			BreakApartIntoComponentGroups();

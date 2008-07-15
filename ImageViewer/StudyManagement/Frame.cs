@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
+using ClearCanvas.DicomServices;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;

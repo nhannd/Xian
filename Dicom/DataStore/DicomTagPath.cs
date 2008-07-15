@@ -31,14 +31,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Dicom
+namespace ClearCanvas.Dicom.DataStore
 {
 	public class DicomTagPath : IEquatable<DicomTagPath>, IEquatable<DicomTag>, IEquatable<string>, IEquatable<uint>
 	{
+		private static readonly string _exceptionFormatInvalidTagPath = "The specified Dicom Tag Path is invalid: {0}.";
+
 		private static readonly char[] _pathSeparator = new char[] { '\\' };
 		private static readonly char[] _tagSeparator = new char[] { ',' };
 
@@ -75,7 +76,7 @@ namespace ClearCanvas.Dicom
 			BuildPath(tags);
 		}
 
-		public string Path
+		public virtual string Path
 		{
 			get { return _path; }
 			protected set 
@@ -195,15 +196,15 @@ namespace ClearCanvas.Dicom
 			{
 				string[] values = groupElement.Split(_tagSeparator);
 				if (values.Length != 2)
-					throw new ArgumentException(String.Format(SR.ExceptionDicomTagPathInvalid, path));
+					throw new ArgumentException(String.Format(_exceptionFormatInvalidTagPath, path));
 
 				string group = values[0];
 				if (!group.StartsWith("(") || group.Length != 5)
-					throw new ArgumentException(String.Format(SR.ExceptionDicomTagPathInvalid, path));
+					throw new ArgumentException(String.Format(_exceptionFormatInvalidTagPath, path));
 
 				string element = values[1];
 				if (!element.EndsWith(")") || element.Length != 5)
-					throw new ArgumentException(String.Format(SR.ExceptionDicomTagPathInvalid, path));
+					throw new ArgumentException(String.Format(_exceptionFormatInvalidTagPath, path));
 
 				try
 				{
@@ -211,14 +212,26 @@ namespace ClearCanvas.Dicom
 					ushort elementValue = Convert.ToUInt16(element.TrimEnd(')'), 16);
 
 					dicomTags.Add(DicomTagPath.NewTag(DicomTag.GetTagValue(groupValue, elementValue)));
+
 				}
 				catch
 				{
-					throw new ArgumentException(String.Format(SR.ExceptionDicomTagPathInvalid, path));
+					throw new ArgumentException(String.Format(_exceptionFormatInvalidTagPath, path));
 				}
 			}
 
+			ValidatePath(dicomTags);
+
 			return dicomTags;
+		}
+
+		private static void ValidatePath(List<DicomTag> dicomTags)
+		{
+			for (int i = 0; i < dicomTags.Count - 1; ++i)
+			{
+				if (dicomTags[i].VR != DicomVr.SQvr)
+					throw new ArgumentException("All but the last item in the path must have VR = SQ.");
+			}
 		}
 
 		private static IEnumerable<DicomTag> GetTags(IEnumerable<uint> tags)

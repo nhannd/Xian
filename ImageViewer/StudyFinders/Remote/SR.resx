@@ -120,4 +120,16 @@
   <data name="ExceptionModalitiesInStudyCannotPerformMultipleWildcardQueries" xml:space="preserve">
     <value>Multiple wildcard queries cannot be performed on the ModalitiesInStudy tag.</value>
   </data>
+  <data name="MessageConnectionFailed" xml:space="preserve">
+    <value>Connection failed.</value>
+  </data>
+  <data name="MessageConnectTimeoutExpired" xml:space="preserve">
+    <value>The connection timeout expired.</value>
+  </data>
+  <data name="MessageQueryOperationFailed" xml:space="preserve">
+    <value>The query operation failed.</value>
+  </data>
+  <data name="MessageRemoteServerCancelledFind" xml:space="preserve">
+    <value>The remote server cancelled the query.</value>
+  </data>
 </root>

@@ -35,7 +35,9 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
-    public enum PhotometricInterpretation
+	//TODO: move this?
+
+	public enum PhotometricInterpretation
     {
         Unknown = 0,
         Monochrome1,

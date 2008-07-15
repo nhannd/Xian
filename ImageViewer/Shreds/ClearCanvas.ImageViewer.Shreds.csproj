@@ -28,10 +28,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Dicom\OffisWrapper\csharp\$(Configuration)\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -41,13 +37,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DicomServer\DicomServerExtension.cs" />
+    <Compile Include="DicomServer\AssociationVerifier.cs" />
     <Compile Include="DicomServer\DicomServerManager.cs" />
+    <Compile Include="DicomServer\FindScpExtension.cs" />
+    <Compile Include="DicomServer\DicomServer.cs" />
+    <Compile Include="DicomServer\DicomServerExtension.cs" />
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
     <Compile Include="DicomServer\DicomServerSettings.cs" />
-    <Compile Include="DicomServer\DicomSessionObjects.cs" />
-    <Compile Include="DicomServer\Parcel.cs" />
-    <Compile Include="DicomServer\SendParcel.cs" />
+    <Compile Include="DicomServer\LocalDataStorePublishHelper.cs" />
+    <Compile Include="DicomServer\MoveScpExtension.cs" />
+    <Compile Include="DicomServer\RemoteServerDirectory.cs" />
+    <Compile Include="DicomServer\DicomRetrieveManager.cs" />
+    <Compile Include="DicomServer\ScpExtension.cs" />
+    <Compile Include="DicomServer\DicomSendManager.cs" />
+    <Compile Include="DicomServer\StoreScpExtension.cs" />
+    <Compile Include="DicomServer\VerifyScpExtension.cs" />
     <Compile Include="DiskspaceManager\DMDriveInfo.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
@@ -87,6 +91,10 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DicomServices\ClearCanvas.DicomServices.csproj">
+      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
+      <Name>ClearCanvas.DicomServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>

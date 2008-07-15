@@ -35,6 +35,8 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: move this?
+	
 	/// <summary>
 	/// Will parse a date range adhering to the dicom format.  For example:
 	/// 

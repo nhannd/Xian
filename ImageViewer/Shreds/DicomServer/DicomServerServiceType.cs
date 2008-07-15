@@ -31,13 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.ServiceModel;
-
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.ImageViewer.Services;
 using System.Runtime.Serialization;
+using System.ServiceModel;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -58,17 +56,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     [ServiceBehavior(InstanceContextMode=InstanceContextMode.PerCall)]
     public class DicomServerServiceType : IDicomServerService
     {
-        public DicomServerServiceType()
+		public DicomServerServiceType()
         {
 		}
 
-		#region IDicomServerService Members
+
+    	#region IDicomServerService Members
 
 		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
 		{
 			try
 			{
-				DicomServerManager.Instance.Send(destinationAEInformation, uids);
+				SendInstancesRequest request = new SendInstancesRequest(destinationAEInformation, uids, null);
+				DicomSendManager.Instance.SendInstances(request);
 			}
 			catch (Exception e)
 			{
@@ -85,7 +85,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			try
 			{
-				DicomServerManager.Instance.RetrieveStudies(sourceAEInformation, studiesToRetrieve);
+				RetrieveStudiesRequest request = new RetrieveStudiesRequest(sourceAEInformation, studiesToRetrieve);
+				DicomRetrieveManager.Instance.RetrieveStudies(request);
 			}
 			catch (Exception e)
 			{

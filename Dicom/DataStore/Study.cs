@@ -43,7 +43,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		private Guid _studyOid;
     	private string _studyInstanceUid;
-    	private PatientId _patientId;
+    	private string _patientId;
     	private PersonName _patientsName;
     	private string _patientsNameRaw;
     	private string _patientsSex;
@@ -83,7 +83,7 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _studyInstanceUid, value); }
 		}
 
-    	public virtual PatientId PatientId
+    	public virtual string PatientId
     	{
     		get { return _patientId; }
 			set { SetClassMember(ref _patientId, value); }
@@ -246,9 +246,9 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public Uid GetStudyInstanceUid()
+		public string GetStudyInstanceUid()
         {
-            return new Uid(this.StudyInstanceUid);
+            return this.StudyInstanceUid;
         }
 
         public IEnumerable<ISeries> GetSeries()
@@ -293,7 +293,7 @@ namespace ClearCanvas.Dicom.DataStore
 			Platform.CheckForEmptyString(StudyInstanceUid, "StudyInstanceUid");
 
 			attribute = sopInstanceDataset[DicomTags.PatientId];
-			PatientId = new PatientId(attribute.ToString());
+			PatientId = attribute.ToString();
 
 			attribute = sopInstanceDataset[DicomTags.PatientsName];
 			PatientsName = new PersonName(attribute.ToString());

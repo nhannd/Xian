@@ -29,12 +29,10 @@
 
 #endregion
 
-namespace ClearCanvas.Dicom
+namespace ClearCanvas.Dicom.DataStore
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Text;
 
     /// <summary>
     /// List of C-FIND query results. Each result represents the data

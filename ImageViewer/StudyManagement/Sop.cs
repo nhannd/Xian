@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.DicomServices;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {

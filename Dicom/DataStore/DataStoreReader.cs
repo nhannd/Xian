@@ -36,6 +36,7 @@ using System.Reflection;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.DicomServices;
 using NHibernate;
 using NHibernate.Expression;
 
@@ -50,7 +51,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 			}
 
-			private static bool StudyExists(ISession session, Uid referenceUid)
+			private static bool StudyExists(ISession session, string referenceUid)
 			{
 				string queryString = "select count(study) from Study study where study.StudyInstanceUid = ?";
 				IEnumerable results = session.CreateQuery(queryString).SetString(0, referenceUid.ToString()).Enumerable();
@@ -61,7 +62,7 @@ namespace ClearCanvas.Dicom.DataStore
 				return false;
 			}
 
-			private static bool SeriesExists(ISession session, Uid referenceUid)
+			private static bool SeriesExists(ISession session, string referenceUid)
 			{
 				string queryString = "select count(series) from Series series where series.SeriesInstanceUid = ?";
 				IEnumerable results = session.CreateQuery(queryString).SetString(0, referenceUid.ToString()).Enumerable();
@@ -72,7 +73,7 @@ namespace ClearCanvas.Dicom.DataStore
 				return false;
 			}
 
-			private static bool SopInstanceExists(ISession session, Uid referenceUid)
+			private static bool SopInstanceExists(ISession session, string referenceUid)
 			{
 				string queryString = "select count(sop) from SopInstance sop where sop.SopInstanceUid = ?";
 				IEnumerable results = session.CreateQuery(queryString).SetString(0, referenceUid.ToString()).Enumerable();
@@ -85,7 +86,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			#region IDataStore Members
 
-			public bool StudyExists(Uid referenceUid)
+			public bool StudyExists(string referenceUid)
 			{
 				try
 				{
@@ -99,7 +100,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public bool SeriesExists(Uid referenceUid)
+			public bool SeriesExists(string referenceUid)
 			{
 				try
 				{
@@ -113,7 +114,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public bool SopInstanceExists(Uid referenceUid)
+			public bool SopInstanceExists(string referenceUid)
 			{
 				try
 				{
@@ -127,7 +128,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public IStudy GetStudy(Uid referenceUid)
+			public IStudy GetStudy(string referenceUid)
 			{
 				try
 				{
@@ -159,7 +160,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public ISeries GetSeries(Uid referenceUid)
+			public ISeries GetSeries(string referenceUid)
 			{
 				try
 				{
@@ -187,7 +188,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public ISopInstance GetSopInstance(Uid referenceUid)
+			public ISopInstance GetSopInstance(string referenceUid)
 			{
 				try
 				{
@@ -330,14 +331,14 @@ namespace ClearCanvas.Dicom.DataStore
 					foreach (PropertyInfo pi in study.GetType().GetProperties())
 					{
 						string fieldName = pi.Name;
-						if (resultsDictionary.Contains(new TagName(fieldName)))
+						if (resultsDictionary.Contains(fieldName))
 						{
 							// ensure that property actually has a value
 							object fieldValue = pi.GetValue(study, null);
 							if (null == fieldValue)
 								continue;
 
-							DictionaryEntry col = resultsDictionary.GetColumn(new TagName(fieldName));
+							DictionaryEntry col = resultsDictionary.GetColumn(fieldName);
 							result.Add(col.Path, fieldValue.ToString());
 						}
 					}

@@ -36,13 +36,13 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface IDataStoreReader : IDisposable
     {
-		bool StudyExists(Uid referencedUid);
-        bool SeriesExists(Uid referencedUid);
-        bool SopInstanceExists(Uid referencedUid);
+		bool StudyExists(string referencedUid);
+		bool SeriesExists(string referencedUid);
+		bool SopInstanceExists(string referencedUid);
 
-		IStudy GetStudy(Uid referenceUid);
-		ISeries GetSeries(Uid referenceUid);
-		ISopInstance GetSopInstance(Uid referencedUid);
+		IStudy GetStudy(string referenceUid);
+		ISeries GetSeries(string referenceUid);
+		ISopInstance GetSopInstance(string referencedUid);
 
         IEnumerable<IStudy> GetStudies();
 

@@ -35,6 +35,8 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: move this?
+
 	public class ImagePositionPatient
 	{
 		#region Private Members

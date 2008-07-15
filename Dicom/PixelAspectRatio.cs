@@ -35,6 +35,8 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: move this?
+
 	public class PixelAspectRatio : IEquatable<PixelAspectRatio>
 	{
 		#region Private Members

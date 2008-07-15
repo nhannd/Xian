@@ -139,19 +139,19 @@ namespace ClearCanvas.Dicom.DataStore
 		
         #region ISopInstance Members
 
-    	public Uid GetSopInstanceUid()
+		public string GetSopInstanceUid()
     	{
-    		return new Uid(this.SopInstanceUid);
+    		return this.SopInstanceUid;
     	}
 
-    	public Uid GetSopClassUid()
+		public string GetSopClassUid()
     	{
-    		return new Uid(this.SopClassUid);
+    		return this.SopClassUid;
     	}
 
-    	public Uid GetTransferSyntaxUid()
+		public string GetTransferSyntaxUid()
         {
-            return new Uid(this.TransferSyntaxUid);
+			return this.TransferSyntaxUid;
         }
 
     	public ISeries GetParentSeries()

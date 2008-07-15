@@ -33,10 +33,58 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.OffisNetwork;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO: get rid of this
+
+	/// <summary>
+	/// Represents a remote dicom server.
+	/// </summary>
+	public class ApplicationEntity
+	{
+		private readonly string _host;
+		private readonly string _aeTitle;
+		private readonly int _port;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="host"></param>
+		/// <param name="aeTitle"></param>
+		/// <param name="port"></param>
+		public ApplicationEntity(string host, string aeTitle, int port)
+		{
+			_host = host;
+			_aeTitle = aeTitle;
+			_port = port;
+		}
+
+		/// <summary>
+		/// The host name or IP address.
+		/// </summary>
+		public string Host
+		{
+			get { return _host; }
+		}
+
+		/// <summary>
+		/// The AE Title.
+		/// </summary>
+		public string AETitle
+		{
+			get { return _aeTitle; }
+		}
+
+		/// <summary>
+		/// The listening port.
+		/// </summary>
+		public int Port
+		{
+			get { return _port; }
+		}
+	}
+
 	/// <summary>
 	/// A study item.
 	/// </summary>
@@ -52,7 +100,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the patient's birthdate.
 		/// </summary>
-        public string PatientsBirthDate
+		public string PatientsBirthDate
         {
             get { return _patientsBirthDate; }
             set { _patientsBirthDate = value; }
@@ -61,7 +109,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the patient's accession number.
 		/// </summary>
-        public string AccessionNumber
+		public string AccessionNumber
         {
             get { return _accessionNumber; }
             set { _accessionNumber = value; }
@@ -70,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the study description.
 		/// </summary>
-        public string StudyDescription
+		public string StudyDescription
         {
             get { return _studyDescription; }
             set { _studyDescription = value; }
@@ -79,7 +127,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the study date.
 		/// </summary>
-        public string StudyDate
+		public string StudyDate
         {
             get { return _studyDate; }
             set { _studyDate = value; }
@@ -97,7 +145,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the patient's name.
 		/// </summary>
-        public PersonName PatientsName
+		public PersonName PatientsName
         {
             get { return _patientsName; }
             set { _patientsName = value; }
@@ -106,7 +154,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the modalities in the study.
 		/// </summary>
-        public string ModalitiesInStudy
+		public string ModalitiesInStudy
         {
             get { return _modalitiesInStudy; }
             set { _modalitiesInStudy = value; }
@@ -122,6 +170,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
+		/// Gets or sets the number of study related instances.
+		/// </summary>
+		public uint NumberOfStudyRelatedInstances
+        {
+            get { return _numberOfStudyRelatedInstances; }
+            set { _numberOfStudyRelatedInstances = value; }
+        }
+
+		/// <summary>
+		/// Gets or sets the specific character set.
+		/// </summary>
+		public string SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set { _specificCharacterSet = value; }
+        }
+
+		/// <summary>
 		/// Gets or sets the study loader name.
 		/// </summary>
 		public string StudyLoaderName
@@ -131,31 +197,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets or sets the number of study related instances.
-		/// </summary>
-        public uint NumberOfStudyRelatedInstances
-        {
-            get { return _numberOfStudyRelatedInstances; }
-            set { _numberOfStudyRelatedInstances = value; }
-        }
-
-		/// <summary>
-		/// Gets or sets the specific character set.
-		/// </summary>
-        public string SpecificCharacterSet
-        {
-            get { return _specificCharacterSet; }
-            set { _specificCharacterSet = value; }
-        }
-
-		/// <summary>
 		/// Gets or sets the server.
 		/// </summary>
-        public ApplicationEntity Server
-        {
-            get { return _server; }
-            set { _server = value; }
-        }
+		public ApplicationEntity Server
+		{
+			get { return _server; }
+			set { _server = value; }
+		}
 
 		/// <summary>
 		/// Returns the patient's name, patient ID and study date associated
@@ -184,7 +232,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         private string _modalitiesInStudy;
         private uint _numberOfStudyRelatedInstances;
         private string _specificCharacterSet;
-        private ApplicationEntity _server;
+		private ApplicationEntity _server;
         private PersonName _patientsName;
         #endregion
 	}

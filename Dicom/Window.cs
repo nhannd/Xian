@@ -35,6 +35,8 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: move this?
+
     public class Window : IEquatable<Window>
     {
 		#region Private Members

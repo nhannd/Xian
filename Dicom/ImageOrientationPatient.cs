@@ -35,6 +35,8 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: move this?
+
 	/// <summary>
 	/// The ImageOrientationPatient class is quite simple, basically providing a centralized place to store the
 	/// row/column direction cosines from the Dicom Header.  One additional piece of functionality is the primary

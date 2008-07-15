@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.Dicom
+namespace ClearCanvas.Dicom.DataStore
 {
     using System;
     using System.Collections.Generic;
@@ -51,30 +51,30 @@ namespace ClearCanvas.Dicom
 		}
 
 		/// <summary>
-		/// Gets the Study Instance UID as a <see cref="Uid"/> object.
+		/// Gets the Study Instance UID.
         /// </summary>
-        public Uid StudyInstanceUid
+		public string StudyInstanceUid
         {
             get
             {
 				if (this.ContainsTag(DicomTags.StudyInstanceUid))
-					return new Uid(this[DicomTags.StudyInstanceUid]);
-                else
-                    return new Uid();
+					return this[DicomTags.StudyInstanceUid];
+				else
+					return null;
             }
         }
 
         /// <summary>
 		/// Gets the Patient ID as a <see cref="PatientId"/> object.
         /// </summary>
-        public PatientId PatientId
+        public string PatientId
         {
             get
             {
-                if (this.ContainsTag(DicomTags.PatientId))
-					return new PatientId(this[DicomTags.PatientId]);
+				if (this.ContainsTag(DicomTags.PatientId))
+					return this[DicomTags.PatientId];
 				else
-                    return new PatientId("");
+					return "";
             }
         }
 
@@ -219,16 +219,16 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-		/// Gets Series Instance UID as a <see cref="Uid"/> object.
+		/// Gets Series Instance UID.
         /// </summary>
-        public Uid SeriesInstanceUid
+		public string SeriesInstanceUid
         {
             get
             {
                 if (this.ContainsTag(DicomTags.SeriesInstanceUid))
-					return new Uid(this[DicomTags.SeriesInstanceUid]);
+					return this[DicomTags.SeriesInstanceUid];
 				else
-                    return new Uid();
+                    return null;
             }
         }
 

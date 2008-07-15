@@ -53,6 +53,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Security;
@@ -347,21 +348,25 @@ namespace ClearCanvas.Dicom.Network
                 return false;
             }
 
-		    // This is the recommended way to determine if a socket is still active, make a
-            // zero byte send call, and see if an exception is thrown.  See the Socket.Connected
-            // MSDN documentation  Only do the check when we know there's no data available
-            try
-            {
-                if (_socket.Poll(1000, SelectMode.SelectRead))
-                {
-                    if (_socket.Available > 0)
-                        return true;
+			// This is the recommended way to determine if a socket is still active, make a
+			// zero byte send call, and see if an exception is thrown.  See the Socket.Connected
+			// MSDN documentation  Only do the check when we know there's no data available
+			try
+			{
+				List<Socket> readSockets = new List<Socket>();
+				readSockets.Add(_socket);
+				Socket.Select(readSockets, null, null, 500);
+				if (readSockets.Count == 1)
+				{
+					if (_socket.Available > 0)
+						return true;
 					OnNetworkError(null, true);
-                    return false;
-                } 
-                _socket.Send(new byte[1], 0, 0);
-            }
-            catch (SocketException e)
+					return false;
+				}
+
+				_socket.Send(new byte[1], 0, 0);
+			}
+			catch (SocketException e)
             {
                 // 10035 == WSAEWOULDBLOCK
                 if (!e.NativeErrorCode.Equals(10035))

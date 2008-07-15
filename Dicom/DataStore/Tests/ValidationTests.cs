@@ -106,7 +106,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		public void TestComponentFieldTooLong()
 		{
 			Study study = NewStudy(); 
-			study.PatientId = new PatientId("A string that is more than 64 characters in length should throw an exception");
+			study.PatientId = "A string that is more than 64 characters in length should throw an exception";
 			_validator.ValidatePersistentObject(study);
 		}
 

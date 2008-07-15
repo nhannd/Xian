@@ -1128,7 +1128,7 @@ namespace ClearCanvas.Dicom.Network
                     }
                     else
                     {
-                        Thread.Sleep(10);
+                        Thread.Sleep(0);
                     }
                 }
                 _network.Close();

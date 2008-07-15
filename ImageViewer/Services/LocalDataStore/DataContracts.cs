@@ -31,9 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
-using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
@@ -43,13 +41,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		None = 0,
 		Cancel = 1,
 		Clear = 2
-	}
-
-	public enum InstanceLevel
-	{ 
-		Study = 0,
-		Series,
-		Sop
 	}
 
 	[DataContract]
@@ -759,44 +750,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _fileImportBehaviour; }
 			set { _fileImportBehaviour = value; }
-		}
-	}
-
-	[DataContract]
-	public class InstanceInformation
-	{
-		private InstanceLevel _instanceLevel;
-		private string _instanceUid;
-
-		public InstanceInformation()
-		{ 
-		}
-
-		[DataMember(IsRequired = true)]
-		public InstanceLevel InstanceLevel
-		{
-			get { return _instanceLevel; }
-			set { _instanceLevel = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public string InstanceUid
-		{
-			get { return _instanceUid; }
-			set { _instanceUid = value; }
-		}
-
-		public void CopyTo(InstanceInformation other)
-		{
-			other.InstanceLevel = this.InstanceLevel;
-			other.InstanceUid = this.InstanceUid;
-		}
-
-		public InstanceInformation Clone()
-		{
-			InstanceInformation clone = new InstanceInformation();
-			CopyTo(clone);
-			return clone;
 		}
 	}
 
