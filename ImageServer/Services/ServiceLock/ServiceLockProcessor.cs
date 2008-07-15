@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 			_threadStop = threadStop;
 
 			_threadPool = new ItemProcessingThreadPool<Model.ServiceLock>(numberThreads);
+        	_threadPool.ThreadPoolName = "ServiceLock Pool";
 
             ServiceLockFactoryExtensionPoint ep = new ServiceLockFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();

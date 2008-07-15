@@ -29,8 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
@@ -38,23 +43,68 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 	{
 		private PartitionArchive _archive;
 		private HsmArchive _hsmArchive;
+		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+		private readonly ItemProcessingThreadPool<ArchiveQueue> _threadPool;
 
 		public HsmArchiveService(string name, PartitionArchive archive, HsmArchive hsmArchive) : base(name)
 		{
 			_archive = archive;
 			_hsmArchive = hsmArchive;
+			_threadPool = new ItemProcessingThreadPool<ArchiveQueue>(HsmSettings.Default.ArchiveThreadCount);
+			_threadPool.ThreadPoolName = "HsmArchive Pool";
 		}
 
 		protected override void Initialize()
 		{
-			
+			// Start the thread pool
+			if (!_threadPool.Active)
+				_threadPool.Start();
 		}
 
 		protected override void Run()
 		{
-			while (!CheckStop(10000))
+			while (true)
 			{
-				
+				bool foundResult = false;
+
+				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
+				{
+					IList<ArchiveQueue> list;
+
+					using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+					{
+						QueryArchiveQueueParameters parms = new QueryArchiveQueueParameters();
+
+						parms.PartitionArchiveKey = _archive.GetKey();
+						parms.ProcessorId = ServiceTools.ProcessorId;
+
+						IQueryArchiveQueue broker = updateContext.GetBroker<IQueryArchiveQueue>();
+
+						list = broker.Execute(parms);
+
+						updateContext.Commit();
+					}
+
+					if (list.Count > 0)
+						foundResult = true;
+
+					foreach (ArchiveQueue queueListItem in list)
+					{
+						HsmStudyArchive archiver = new HsmStudyArchive(_archive);
+						_threadPool.Enqueue(queueListItem, archiver.Run);
+					}
+
+					if (!foundResult)
+						if (CheckStop(100))
+							return;
+				}
+				else
+				{
+					if (CheckStop(5000))
+					{
+						return;
+					}
+				}
 			}
 		}
 

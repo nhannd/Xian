@@ -88,12 +88,13 @@ namespace ClearCanvas.Common.Utilities
 		private StartStopState _state;
 		private bool _completeBeforeStop;
 		
-		private List<Thread> _threads;
+		private readonly List<Thread> _threads;
 		private event EventHandler<ItemEventArgs<StartStopState>> _startStopEvent;
 
 		private int _concurrency = MinConcurrency;
 		private ThreadPriority _threadPriority;
 
+		private string _threadPoolName = "Pool";
 		#endregion
 
 		/// <summary>
@@ -103,7 +104,7 @@ namespace ClearCanvas.Common.Utilities
 		protected ThreadPoolBase(int concurrency)
 			: this()
 		{
-			this.Concurrency = concurrency;
+			Concurrency = concurrency;
 		}
 
 		/// <summary>
@@ -168,7 +169,7 @@ namespace ClearCanvas.Common.Utilities
 			get { return _concurrency; }
 			set
 			{
-				if (this.Active)
+				if (Active)
 					throw new InvalidOperationException(String.Format(SR.ExceptionThreadPoolMustBeStopped, "Concurrency"));
 
 				Platform.CheckPositive(value, "Concurrency");
@@ -176,6 +177,18 @@ namespace ClearCanvas.Common.Utilities
 
 				_concurrency = value;
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets the name of the thread pool.
+		/// </summary>
+		/// <remarks>
+		/// The name of the thread pool is used when naming the individual threads within the pool.
+		/// </remarks>
+		public string ThreadPoolName
+		{
+			get { return _threadPoolName; }
+			set { _threadPoolName = value; }
 		}
 
 		/// <summary>
@@ -191,7 +204,7 @@ namespace ClearCanvas.Common.Utilities
 			get { return _threadPriority; }
 			set
 			{
-				if (this.Active)
+				if (Active)
 					throw new InvalidOperationException(String.Format(SR.ExceptionThreadPoolMustBeStopped, "ThreadPriority"));
 
 				_threadPriority = value;
@@ -326,7 +339,7 @@ namespace ClearCanvas.Common.Utilities
 			{
 				ThreadStart threadStart = new ThreadStart(this.RunThread);
 				Thread thread = new Thread(threadStart);
-                thread.Name = String.Format("Pool {0}", thread.ManagedThreadId);
+				thread.Name = String.Format("{0} {1}", _threadPoolName, thread.ManagedThreadId);
 				thread.IsBackground = true;
 				thread.Priority = _threadPriority;
 

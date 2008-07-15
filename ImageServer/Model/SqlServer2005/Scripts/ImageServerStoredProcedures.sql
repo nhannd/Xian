@@ -104,6 +104,22 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertArchiveQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertArchiveQueue]
 GO
+/****** Object:  StoredProcedure [dbo].[QueryArchiveQueue]    Script Date: 07/14/2008 10:43:32 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryArchiveQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryArchiveQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[QueryRestoreQueue]    Script Date: 07/14/2008 10:43:33 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryRestoreQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[QueryRestoreQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateArchiveQueue]    Script Date: 07/14/2008 10:43:33 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateArchiveQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[UpdateArchiveQueue]
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateRestoreQueue]    Script Date: 07/14/2008 10:43:33 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateRestoreQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[UpdateRestoreQueue]
+GO
 
 
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
@@ -2230,3 +2246,285 @@ END
 ' 
 END
 GO
+/****** Object:  StoredProcedure [dbo].[UpdateArchiveQueue]    Script Date: 07/14/2008 10:43:33 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateArchiveQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 14, 2008
+-- Description:	Update an ArchiveQueue row
+-- =============================================
+CREATE PROCEDURE [dbo].[UpdateArchiveQueue] 
+	@ArchiveQueueGUID uniqueidentifier, 
+	@StudyStorageGUID uniqueidentifier,
+	@ScheduledTime datetime = null,
+	@ArchiveQueueStatusEnum smallint
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+ 	declare @CompletedStatusEnum as int
+	declare @PendingStatusEnum as int
+	declare @FailedStatusEnum as int
+
+	select @CompletedStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''Completed''
+	select @PendingStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''Pending''
+	select @FailedStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''Failed''
+	
+	BEGIN TRANSACTION
+
+	if @ArchiveQueueStatusEnum = @CompletedStatusEnum 
+	BEGIN
+		-- Completed
+		DELETE FROM ArchiveQueue where GUID = @ArchiveQueueGUID
+		
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
+	END
+	ELSE 
+	BEGIN
+		UPDATE ArchiveQueue
+		SET ArchiveQueueStatusEnum = @ArchiveQueueStatusEnum, ScheduledTime = @ScheduledTime,
+			ProcessorID = Null
+		WHERE GUID = @ArchiveQueueGUID
+		
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
+	END
+	
+	COMMIT TRANSACTION
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryArchiveQueue]    Script Date: 07/14/2008 10:43:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryArchiveQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 14, 2008
+-- Description:	Query for entries in the ArchiveQueue
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryArchiveQueue] 
+	-- Add the parameters for the stored procedure here
+	@PartitionArchiveGUID uniqueidentifier,
+	@ProcessorID varchar(256)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.QueryArchiveQueue] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
+	declare @StudyStorageGUID uniqueidentifier
+	declare @ArchiveQueueGUID uniqueidentifier
+	declare @PendingStatusEnum as int
+	declare @InProgressStatusEnum as int
+
+	select @PendingStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''Pending''
+	select @InProgressStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''In Progress''
+	
+	SELECT TOP (1) @StudyStorageGUID = ArchiveQueue.StudyStorageGUID,
+		@ArchiveQueueGUID = ArchiveQueue.GUID 
+	FROM ArchiveQueue
+	JOIN
+		StudyStorage ON StudyStorage.GUID = ArchiveQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+	WHERE
+		ScheduledTime < getdate() 
+		AND ArchiveQueue.PartitionArchiveGUID = @PartitionArchiveGUID
+		AND ArchiveQueue.ArchiveQueueStatusEnum = @PendingStatusEnum
+	ORDER BY ArchiveQueue.ScheduledTime
+
+	-- We have a record, now do the updates
+	BEGIN TRANSACTION
+
+	UPDATE StudyStorage
+		SET Lock = 1, LastAccessedTime = getdate()
+	WHERE 
+		Lock = 0 
+		AND GUID = @StudyStorageGUID
+
+	if (@@ROWCOUNT = 1)
+	BEGIN
+		UPDATE ArchiveQueue
+			SET ArchiveQueueStatusEnum  = @InProgressStatusEnum,
+				ProcessorID = @ProcessorID
+		WHERE 
+			GUID = @ArchiveQueueGUID
+			
+		COMMIT TRANSACTION
+	END
+	ELSE
+	BEGIN
+		-- In case the lock failed, reset GUID
+		SET @ArchiveQueueGUID = newid()
+		
+		ROLLBACK TRANSACTION
+	END
+	
+
+	-- If the first update failed, this should select 0 records
+	SELECT * 
+	FROM ArchiveQueue
+	WHERE ArchiveQueueStatusEnum = @InProgressStatusEnum
+		AND GUID = @ArchiveQueueGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[QueryRestoreQueue]    Script Date: 07/14/2008 10:43:33 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryRestoreQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 14, 2008
+-- Description:	Query for entries in the RestoreQueue
+-- =============================================
+CREATE PROCEDURE [dbo].[QueryRestoreQueue] 
+	@PartitionArchiveGUID uniqueidentifier,
+	@ProcessorID varchar(256)
+AS
+BEGIN
+	SET NOCOUNT ON;
+
+	if (@ProcessorID is NULL)
+	begin
+		RAISERROR (N''Calling [dbo.QueryRestoreQueue] with @ProcessorID = NULL'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+		RETURN 50000
+	end
+
+	declare @StudyStorageGUID uniqueidentifier
+	declare @RestoreQueueGUID uniqueidentifier
+	declare @PendingStatusEnum as int
+	declare @InProgressStatusEnum as int
+
+	select @PendingStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''Pending''
+	select @InProgressStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''In Progress''
+	
+	SELECT TOP (1) @StudyStorageGUID = RestoreQueue.StudyStorageGUID,
+		@RestoreQueueGUID = RestoreQueue.GUID 
+	FROM RestoreQueue
+	JOIN
+		StudyStorage ON StudyStorage.GUID = RestoreQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+	JOIN
+		ArchiveStudyStorage ON ArchiveStudyStorage.GUID = RestoreQueue.ArchiveStudyStorageGUID
+	WHERE
+		ScheduledTime < getdate() 
+		AND ArchiveStudyStorage.PartitionArchiveGUID = @PartitionArchiveGUID
+		AND RestoreQueue.RestoreQueueStatusEnum = @PendingStatusEnum
+	ORDER BY RestoreQueue.ScheduledTime
+
+	-- We have a record, now do the updates
+	BEGIN TRANSACTION
+
+	UPDATE StudyStorage
+		SET Lock = 1, LastAccessedTime = getdate()
+	WHERE 
+		Lock = 0 
+		AND GUID = @StudyStorageGUID
+
+	if (@@ROWCOUNT = 1)
+	BEGIN
+		UPDATE RestoreQueue
+			SET RestoreQueueStatusEnum  = @InProgressStatusEnum,
+				ProcessorID = @ProcessorID
+		WHERE 
+			GUID = @RestoreQueueGUID
+			
+		COMMIT TRANSACTION
+	END
+	ELSE
+	BEGIN
+		-- In case the lock failed, reset GUID
+		SET @RestoreQueueGUID = newid()
+		
+		ROLLBACK TRANSACTION
+	END
+	
+
+	-- If the first update failed, this should select 0 records
+	SELECT * 
+	FROM RestoreQueue
+	WHERE RestoreQueueStatusEnum = @InProgressStatusEnum
+		AND GUID = @RestoreQueueGUID
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[UpdateRestoreQueue]    Script Date: 07/14/2008 10:43:33 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateRestoreQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 14, 2008
+-- Description:	Update an RestoreQueue row
+-- =============================================
+CREATE PROCEDURE [dbo].[UpdateRestoreQueue] 
+	@RestoreQueueGUID uniqueidentifier, 
+	@StudyStorageGUID uniqueidentifier,
+	@ScheduledTime datetime = null,
+	@RestoreQueueStatusEnum smallint
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+ 	declare @CompletedStatusEnum as int
+	declare @PendingStatusEnum as int
+	declare @FailedStatusEnum as int
+
+	select @CompletedStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''Completed''
+	select @PendingStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''Pending''
+	select @FailedStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''Failed''
+	
+	BEGIN TRANSACTION
+
+	if @RestoreQueueStatusEnum = @CompletedStatusEnum 
+	BEGIN
+		-- Completed
+		DELETE FROM RestoreQueue where GUID = @RestoreQueueGUID
+		
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
+	END
+	ELSE 
+	BEGIN
+		UPDATE RestoreQueue
+		SET RestoreQueueStatusEnum = @RestoreQueueStatusEnum, ScheduledTime = @ScheduledTime,
+			ProcessorID = Null
+		WHERE GUID = @RestoreQueueGUID
+		
+		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+		WHERE GUID = @StudyStorageGUID AND Lock = 1
+	END
+	
+	COMMIT TRANSACTION
+END
+' 
+END
+GO
+

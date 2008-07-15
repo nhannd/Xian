@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
         	_threadStop = threadStop;
 			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
+        	_threadPool.ThreadPoolName = "WorkQueue Pool";
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();

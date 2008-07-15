@@ -14,8 +14,7 @@
   <tr><td style="padding-top: 1px;">
     <asp:Panel runat="server" ScrollBars="Vertical" Height="500" BackColor="white"  CssClass="AboutPanel">
 <pre style="font-family: Sans-Serif; font-size: 14px;">
-<h4>ClearCanvas Inc.</h4>
-
+<b>ClearCanvas Inc.</b>
 Copyright (c) 2008, ClearCanvas Inc.
 All rights reserved.
 
@@ -41,9 +40,9 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE 
 OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED 
 OF THE POSSIBILITY OF SUCH DAMAGE.
-<h4>
+<b>
 mDCM: A C# DICOM library
-</h4>
+</b>
 Copyright (c) 2008  Colby Dillion
 
 This library is free software; you can redistribute it and/or
@@ -63,9 +62,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 Author:
    Colby Dillion (colby.dillion@gmail.com)
 
-<h4>
+<b>
 OpenJPEG: JPEG2000 Codec
-</h4>
+</b>
 /*
  * Copyright (c) 2002-2007, Communications and Remote Sensing Laboratory, Universite catholique de Louvain (UCL), Belgium
  * Copyright (c) 2002-2007, Professor Benoit Macq
@@ -97,9 +96,9 @@ OpenJPEG: JPEG2000 Codec
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-<h4>
+<b>
 AJAX Control Toolkit
-</h4>
+</b>
 License: Microsoft Public License (Ms-PL)
 Microsoft Public License (Ms-PL)
 
@@ -153,136 +152,10 @@ no express warranties, guarantees or conditions. You may have additional consume
 under your local laws which this license cannot change. To the extent permitted under 
 your local laws, the contributors exclude the implied warranties of merchantability, fitness 
 for a particular purpose and non-infringement.
-<h4>
-OFFIS DCMTK
-</h4>
-COPYRIGHT
 
-Unless otherwise specified, the DCMTK software package has the
-following copyright:
-
-/*
- *  Copyright (C) 1994-2004, OFFIS
- *
- *  This software and supporting documentation were developed by
- *
- *    Kuratorium OFFIS e.V.
- *    Healthcare Information and Communication Systems
- *    Escherweg 2
- *    D-26121 Oldenburg, Germany
- *
- *  THIS SOFTWARE IS MADE AVAILABLE,  AS IS,  AND OFFIS MAKES NO  WARRANTY
- *  REGARDING  THE  SOFTWARE,  ITS  PERFORMANCE,  ITS  MERCHANTABILITY  OR
- *  FITNESS FOR ANY PARTICULAR USE, FREEDOM FROM ANY COMPUTER DISEASES  OR
- *  ITS CONFORMITY TO ANY SPECIFICATION. THE ENTIRE RISK AS TO QUALITY AND
- *  PERFORMANCE OF THE SOFTWARE IS WITH THE USER.
- *
- *  Copyright of the software  and  supporting  documentation  is,  unless
- *  otherwise stated, owned by OFFIS, and free access is hereby granted as
- *  a license to  use  this  software,  copy  this  software  and  prepare
- *  derivative works based upon this software.  However, any  distribution
- *  of this software source code or supporting documentation or derivative
- *  works  (source code and  supporting documentation)  must  include  the
- *  three paragraphs of this copyright notice.
- *
- */
-
-Some portions of the DCMTK software package are derived from earlier
-versions of this software with the following copyright, and can be
-identifed by the following copyright notice located in each source file:
-
-/*  
- *  Copyright (C) 1993/1994, OFFIS, Oldenburg University and CERIUM
- *  
- *  This software and supporting documentation were
- *  developed by
- *  
- *    Institut OFFIS
- *    Bereich Kommunikationssysteme
- *    Westerstr. 10-12
- *    26121 Oldenburg, Germany
- *  
- *    Fachbereich Informatik
- *    Abteilung Prozessinformatik
- *    Carl von Ossietzky Universitaet Oldenburg
- *    Ammerlaender Heerstr. 114-118
- *    26111 Oldenburg, Germany
- *  
- *    CERIUM
- *    Laboratoire SIM
- *    Faculte de Medecine
- *    2 Avenue du Pr. Leon Bernard
- *    35043 Rennes Cedex, France
- *  
- *  for CEN/TC251/WG4 as a contribution to the Radiological
- *  Society of North America (RSNA) 1993 Digital Imaging and
- *  Communications in Medicine (DICOM) Demonstration.
- *  
- *  THIS SOFTWARE IS MADE AVAILABLE, AS IS, AND NEITHER OFFIS,
- *  OLDENBURG UNIVERSITY NOR CERIUM MAKE ANY WARRANTY REGARDING
- *  THE SOFTWARE, ITS PERFORMANCE, ITS MERCHANTABILITY OR
- *  FITNESS FOR ANY PARTICULAR USE, FREEDOM FROM ANY COMPUTER
- *  DISEASES OR ITS CONFORMITY TO ANY SPECIFICATION.  THE
- *  ENTIRE RISK AS TO QUALITY AND PERFORMANCE OF THE SOFTWARE
- *  IS WITH THE USER.
- *  
- *  Copyright of the software and supporting documentation
- *  is, unless otherwise stated, jointly owned by OFFIS,
- *  Oldenburg University and CERIUM and free access is hereby
- *  granted as a license to use this software, copy this
- *  software and prepare derivative works based upon this
- *  software. However, any distribution of this software
- *  source code or supporting documentation or derivative
- *  works (source code and supporting documentation) must
- *  include the three paragraphs of this copyright notice.
- *  
- */ 
-
-Some other parts of this software within the dcmtk/dcmnet
-sub-package related to the DICOM Upper Layer Protocol are
-derived from software developed for the RSNA'93 DICOM
-demonstration and kindly made available to us by the Mallinckrodt
-Institute of Radiology.  Such software can be identifed by the
-following copyright notice located in each affected source file:
-
-/*
- *  Copyright (C) 1993, RSNA and Washington University
- *
- *  The software and supporting documentation for the Radiological
- *  Society of North America (RSNA) 1993 Digital Imaging and
- *  Communications in Medicine (DICOM) Demonstration were developed
- *  at the
- *          Electronic Radiology Laboratory
- *          Mallinckrodt Institute of Radiology
- *          Washington University School of Medicine
- *          510 S. Kingshighway Blvd.
- *          St. Louis, MO 63110
- *  as part of the 1993 DICOM Central Test Node project for, and
- *  under contract with, the Radiological Society of North America.
- *
- *  THIS SOFTWARE IS MADE AVAILABLE, AS IS, AND NEITHER RSNA NOR
- *  WASHINGTON UNIVERSITY MAKE ANY WARRANTY ABOUT THE SOFTWARE, ITS
- *  PERFORMANCE, ITS MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR
- *  USE, FREEDOM FROM ANY COMPUTER DISEASES OR ITS CONFORMITY TO ANY
- *  SPECIFICATION. THE ENTIRE RISK AS TO QUALITY AND PERFORMANCE OF
- *  THE SOFTWARE IS WITH THE USER.
- *
- *  Copyright of the software and supporting documentation is
- *  jointly owned by RSNA and Washington University, and free access
- *  is hereby granted as a license to use this software, copy this
- *  software and prepare derivative works based upon this software.
- *  However, any distribution of this software source code or
- *  supporting documentation or derivative works (source code and
- *  supporting documentation) must include the three paragraphs of
- *  the copyright notice.
- */
-
-The dcmjpeg sub-package includes an adapted version of the Independent JPEG
-Group Toolkit Version 6b, which is contained in dcmjpeg/libijg8,
-dcmjpeg/libijg12 and dcmjpeg/libijg16.  This toolkit is covered by the
-following copyright.  The original README file for the Independent JPEG
-Group Toolkit is located in dcmjpeg/docs/ijg_readme.txt.
-
+<b>
+Independent JPEG Group Toolkit Version 6b
+</b>
 /*
  *  The authors make NO WARRANTY or representation, either express or implied,
  *  with respect to this software, its quality, accuracy, merchantability, or
@@ -321,157 +194,9 @@ Group Toolkit is located in dcmjpeg/docs/ijg_readme.txt.
  */
 
 
-The color quantization code in module dcmimage (dcmquant and the related
-classes) is derived from code written by Jef Poskanzer for the NetPBM
-toolkit which has the following copyright:
-
-/*
- * Copyright (C) 1989, 1991 by Jef Poskanzer.
- *
- * Permission to use, copy, modify, and distribute this software and its
- * documentation for any purpose and without fee is hereby granted, provided
- * that the above copyright notice appear in all copies and that both that
- * copyright notice and this permission notice appear in supporting
- * documentation.  This software is provided "as is" without express or
- * implied warranty.
- */
-
-
-The code for the OFStandard::strlcpy and OFStandard::strlcat helper
-functions in ofstd/libsrc/ofstd.cc has been derived from the BSD
-implementation of strlcpy() and strlcat() and which carries the
-following copyright notice:
-
-/*
- *  Copyright (c) 1998 Todd C. Miller (Todd.Miller(at)courtesan.com)
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
- *  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
- *  AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL
- *  THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- *  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- *  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- *  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- *  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- *  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
-The code for the OFStandard::atof helper function in
-ofstd/libsrc/ofstd.cc has been derived from an implementation which
-carries the following copyright notice:
-
-/*
- *  Copyright 1988 Regents of the University of California
- *  Permission to use, copy, modify, and distribute this software and
- *  its documentation for any purpose and without fee is hereby granted,
- *  provided that the above copyright notice appear in all copies.  The
- *  University of California makes no representations about the
- *  suitability of this software for any purpose.  It is provided "as
- *  is" without express or implied warranty.
- *
- *
- *  The code for OFStandard::ftoa has been derived
- *  from an implementation which carries the following copyright notice:
- *
- *  Copyright (c) 1988 Regents of the University of California.
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms are permitted
- *  provided that the above copyright notice and this paragraph are
- *  duplicated in all such forms and that any documentation,
- *  advertising materials, and other materials related to such
- *  distribution and use acknowledge that the software was developed
- *  by the University of California, Berkeley.  The name of the
- *  University may not be used to endorse or promote products derived
- *  from this software without specific prior written permission.
- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- *  WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
-
-The "Base64" encoder/decoder in ofstd/libsrc/ofstd.cc has been derived
-from an implementation which carries the following copyright notice:
-
-/*
- *  Copyright (c) 1999, Bob Withers - bwit(at)pobox.com
- *
- *  This code may be freely used for any purpose, either personal or commercial,
- *  provided the authors copyright notice remains intact.
- */
-
-The dcmjp2k sub-package (which is currently not part of the free 
-toolkit) includes an adapted version of the JasPer JPEG 2000 toolkit, 
-which is contained in dcmjp2k/libjaspr. This toolkit is covered by 
-the following copyright.
-
-/*  JasPer License Version 2.0
- *  
- *  Copyright (c) 1999-2000 Image Power, Inc.
- *  Copyright (c) 1999-2000 The University of British Columbia
- *  Copyright (c) 2001-2003 Michael David Adams
- *  
- *  All rights reserved.
- *  
- *  Permission is hereby granted, free of charge, to any person (the
- *  "User") obtaining a copy of this software and associated documentation
- *  files (the "Software"), to deal in the Software without restriction,
- *  including without limitation the rights to use, copy, modify, merge,
- *  publish, distribute, and/or sell copies of the Software, and to permit
- *  persons to whom the Software is furnished to do so, subject to the
- *  following conditions:
- *  
- *  1.  The above copyright notices and this permission notice (which
- *  includes the disclaimer below) shall be included in all copies or
- *  substantial portions of the Software.
- *  
- *  2.  The name of a copyright holder shall not be used to endorse or
- *  promote products derived from the Software without specific prior
- *  written permission.
- *  
- *  THIS DISCLAIMER OF WARRANTY CONSTITUTES AN ESSENTIAL PART OF THIS
- *  LICENSE.  NO USE OF THE SOFTWARE IS AUTHORIZED HEREUNDER EXCEPT UNDER
- *  THIS DISCLAIMER.  THE SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS
- *  "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- *  BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
- *  PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY RIGHTS.  IN NO
- *  EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
- *  INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
- *  FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
- *  NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
- *  WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.  NO ASSURANCES ARE
- *  PROVIDED BY THE COPYRIGHT HOLDERS THAT THE SOFTWARE DOES NOT INFRINGE
- *  THE PATENT OR OTHER INTELLECTUAL PROPERTY RIGHTS OF ANY OTHER ENTITY.
- *  EACH COPYRIGHT HOLDER DISCLAIMS ANY LIABILITY TO THE USER FOR CLAIMS
- *  BROUGHT BY ANY OTHER ENTITY BASED ON INFRINGEMENT OF INTELLECTUAL
- *  PROPERTY RIGHTS OR OTHERWISE.  AS A CONDITION TO EXERCISING THE RIGHTS
- *  GRANTED HEREUNDER, EACH USER HEREBY ASSUMES SOLE RESPONSIBILITY TO SECURE
- *  ANY OTHER INTELLECTUAL PROPERTY RIGHTS NEEDED, IF ANY.  THE SOFTWARE
- *  IS NOT FAULT-TOLERANT AND IS NOT INTENDED FOR USE IN MISSION-CRITICAL
- *  SYSTEMS, SUCH AS THOSE USED IN THE OPERATION OF NUCLEAR FACILITIES,
- *  AIRCRAFT NAVIGATION OR COMMUNICATION SYSTEMS, AIR TRAFFIC CONTROL
- *  SYSTEMS, DIRECT LIFE SUPPORT MACHINES, OR WEAPONS SYSTEMS, IN WHICH
- *  THE FAILURE OF THE SOFTWARE OR SYSTEM COULD LEAD DIRECTLY TO DEATH,
- *  PERSONAL INJURY, OR SEVERE PHYSICAL OR ENVIRONMENTAL DAMAGE ("HIGH
- *  RISK ACTIVITIES").  THE COPYRIGHT HOLDERS SPECIFICALLY DISCLAIM ANY
- *  EXPRESS OR IMPLIED WARRANTY OF FITNESS FOR HIGH RISK ACTIVITIES.
- */ 
-<h4>
+<b>
 Log4Net
-</h4>
+</b>
 Apache License
                            Version 2.0, January 2004
                         http://www.apache.org/licenses/
@@ -689,13 +414,13 @@ Apache License
 
    This product includes software developed at
    The Apache Software Foundation (http://www.apache.org/).
-<h4>
+<b>
 Aspect#, Castle Project
-</h4>
+</b>
 Released under Apache Software Foundation License 2.0 (see above).
-<h4>
+<b>
 NHibernate
-</h4>
+</b>
 		  GNU LESSER GENERAL PUBLIC LICENSE
 		       Version 2.1, February 1999
 
@@ -1198,9 +923,9 @@ necessary.  Here is a sample; alter the names:
   Ty Coon, President of Vice
 
 That's all there is to it!
-<h4>
+<b>
 NUnit
-</h4>
+</b>
 Copyright © 2002-2004 James W. Newkirk, Michael C. Two, Alexei A. Vorontsov, Charlie Poole
 Copyright © 2000-2004 Philip A. Craig
 
@@ -1231,6 +956,29 @@ commercial applications and libraries, but to keep the source code together
 and to give credit to the NUnit contributors for their efforts. While this 
 license allows shipping NUnit in source and binary form, if shipping a NUnit 
 variant is the sole purpose of your product, please let us know.
+
+<b>
+SharpZipLib 
+</b>  
+The software is released under the GPL with an exception which allows linking 
+with non GPL programs. The exception to the GPL is as follows: 
+
+Linking this library statically or dynamically with other modules is making a 
+combined work based on this library. Thus, the terms and conditions of the GNU 
+General Public License cover the whole combination. 
+
+As a special exception, the copyright holders of this library give you 
+permission to link this library with independent modules to produce an 
+executable, regardless of the license terms of these independent modules, and 
+to copy and distribute the resulting executable under terms of your choice, 
+provided that you also meet, for each linked independent module, the terms and 
+conditions of the license of that module. An independent module is a module 
+which is not derived from or based on this library. 
+
+If you modify this library, you may extend this exception to your version of 
+the library, but you are not obligated to do so. If you do not wish to do so, 
+delete this exception statement from your version. 
+
 </pre> 
     </asp:Panel>
   </td></tr>
