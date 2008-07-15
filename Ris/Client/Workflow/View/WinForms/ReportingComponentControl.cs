@@ -136,7 +136,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 		private void _cancelButton_Click(object sender, System.EventArgs e)
 		{
-			_component.CancelEditing();
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.CancelEditing();
+			}
 		}
 
 		private void _btnSkip_Click(object sender, System.EventArgs e)
