@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					RetrieveStudyInformation retrieveInfo = new RetrieveStudyInformation();
 					retrieveInfo.FromAETitle = base.RemoteAE;
 					retrieveInfo.StudyInformation = info;
-					LocalDataStorePublishHelper.Instance.RetrieveStarted(retrieveInfo);
+					LocalDataStoreEventPublisher.Instance.RetrieveStarted(retrieveInfo);
 				}
 			}
 
@@ -150,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					receiveError.FromAETitle = base.RemoteAE;
 					receiveError.StudyInformation = info;
 					receiveError.ErrorMessage = message;
-					LocalDataStorePublishHelper.Instance.ReceiveError(receiveError);
+					LocalDataStoreEventPublisher.Instance.ReceiveError(receiveError);
 				}
 			}
 

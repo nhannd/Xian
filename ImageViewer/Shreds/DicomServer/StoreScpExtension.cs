@@ -169,18 +169,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return true;
 		}
 
-		private void OnFileReceived(string fromAE, string filename)
+		private static void OnFileReceived(string fromAE, string filename)
 		{
 			StoreScpReceivedFileInformation info = new StoreScpReceivedFileInformation();
 			info.AETitle = fromAE;
 			info.FileName = filename;
-			LocalDataStorePublishHelper.Instance.FileReceived(info);
+			LocalDataStoreEventPublisher.Instance.FileReceived(info);
 		}
 
-		private void OnReceiveError(DicomMessage message, string error, string fromAE)
+		private static void OnReceiveError(DicomMessage message, string error, string fromAE)
 		{
 			ReceiveErrorInformation info = new ReceiveErrorInformation();
 			info.FromAETitle = fromAE;
+			info.ErrorMessage = error;
 
 			info.StudyInformation = new StudyInformation();
 			info.StudyInformation.PatientId = message.DataSet[DicomTags.PatientId].GetString(0, "");
@@ -189,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			info.StudyInformation.StudyDescription = message.DataSet[DicomTags.StudyDescription].GetString(0, "");
 			info.StudyInformation.StudyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 
-			LocalDataStorePublishHelper.Instance.ReceiveError(info);
+			LocalDataStoreEventPublisher.Instance.ReceiveError(info);
 		}
 	}
 }

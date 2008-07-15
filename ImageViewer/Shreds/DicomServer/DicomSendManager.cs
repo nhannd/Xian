@@ -254,13 +254,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				base.OnImageStoreCompleted(storageInstance);
 
-				if (base.RemainingSubOperations != 0)
+				if (storageInstance.SendStatus == DicomStatuses.Success)
 				{
 					StoreScuSentFileInformation info = new StoreScuSentFileInformation();
 					info.ToAETitle = RemoteAE;
 					info.FileName = storageInstance.Filename;
 
-					LocalDataStorePublishHelper.Instance.FileSent(info);
+					LocalDataStoreEventPublisher.Instance.FileSent(info);
+				}
+				else
+				{
+					string msg = String.Format("Error attempting to send file {0} ({1}:{2}).",
+						storageInstance.Filename, 
+						RemoteAE,
+						storageInstance.ExtendedFailureDescription);
+
+					Platform.Log(LogLevel.Error, msg);
+					OnSendError(msg);
 				}
 
 				if (_callback != null)
@@ -271,7 +281,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				//later, we could queue it up to limit the number of active scus.
 				foreach (SendStudyInformation info in _studies.Values)
-					LocalDataStorePublishHelper.Instance.SendStarted(info);
+					LocalDataStoreEventPublisher.Instance.SendStarted(info);
 			}
 
 			private void OnSendError(string message)
@@ -282,7 +292,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					error.ToAETitle = info.ToAETitle;
 					error.StudyInformation = info.StudyInformation;
 					error.ErrorMessage = message;
-					LocalDataStorePublishHelper.Instance.SendError(error);
+					LocalDataStoreEventPublisher.Instance.SendError(error);
 				}
 			}
 

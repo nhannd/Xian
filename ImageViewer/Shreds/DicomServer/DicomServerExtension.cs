@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			try
 			{
-				LocalDataStorePublishHelper.Instance.Start();
+				LocalDataStoreEventPublisher.Instance.Start();
 				DicomSendManager.Instance.Start();
 				DicomRetrieveManager.Instance.Start();
 				DicomServerManager.Instance.Start();
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				DicomServerManager.Instance.Stop();
 				DicomSendManager.Instance.Stop();
 				DicomRetrieveManager.Instance.Stop();
-				LocalDataStorePublishHelper.Instance.Stop();
+				LocalDataStoreEventPublisher.Instance.Stop();
 
 				Platform.Log(LogLevel.Info, String.Format(SR.FormatServiceStoppedSuccessfully, SR.DicomServer));
 			}

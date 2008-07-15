@@ -52,7 +52,19 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		private IServerTreeNode _currentNode;
 		private event EventHandler _serverTreeUpdated;
 
+    	private static readonly XmlSerializer _serializer;
+
 		#endregion
+
+		static ServerTree()
+		{
+			_serializer = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
+                    typeof(ServerGroup),
+                    typeof(Server),
+                    typeof(List<ServerGroup>),
+                    typeof(List<Server>)
+                });
+		}
 
     	public ServerTree()
     	{
@@ -242,15 +254,8 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		public void Save()
 		{
-            XmlSerializer xmlFormat = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
-                    typeof(ServerGroup),
-                    typeof(Server),
-                    typeof(List<ServerGroup>),
-                    typeof(List<Server>)
-                });
-
 			Stream fStream = new FileStream(MyServersXmlFile, FileMode.Create, FileAccess.Write, FileShare.Read);
-            xmlFormat.Serialize(fStream, _rootNode);
+			_serializer.Serialize(fStream, _rootNode);
             fStream.Close();
             return;
         }
@@ -276,14 +281,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
                 using (fStream)
                 {
-                    XmlSerializer xmlFormat = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
-                            typeof(ServerGroup),
-                            typeof(Server),
-                            typeof(List<ServerGroup>),
-                            typeof(List<Server>)
-                        });
-
-                    ServerTreeRoot serverTreeRoot = (ServerTreeRoot)xmlFormat.Deserialize(fStream);
+					ServerTreeRoot serverTreeRoot = (ServerTreeRoot)_serializer.Deserialize(fStream);
 					_rootNode = serverTreeRoot;
                 }
             }
