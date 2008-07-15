@@ -1126,10 +1126,10 @@ namespace ClearCanvas.Dicom.Network
                                 timeout = DateTime.Now.AddSeconds(_timeout);
                         }
                     }
-                    else
-                    {
-                        Thread.Sleep(0);
-                    }
+					//else
+					//{
+					//    Thread.Sleep(0);
+					//}
                 }
                 _network.Close();
                 _network.Dispose();
