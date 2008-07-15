@@ -591,7 +591,7 @@ var GeneralForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "??",
+				label: "Placenta Clearance",
 				cellType: "choice",
 				choices: ["Clear of Cervix", "Close to Cervix", "Praevia"],
 				getValue: function(item) { return item.cervixProximity; },
@@ -1266,10 +1266,10 @@ var WellBeingForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "??",
+				label: "Amount",
 				cellType: "text",
-				getValue: function(item) { return item.unknown; },
-				setValue: function(item, value) { item.unknown = value; },
+				getValue: function(item) { return item.afvAmount; },
+				setValue: function(item, value) { item.afvAmount = value; },
 				getError: function(item) { return null; }
 			},
 			{
@@ -1322,11 +1322,11 @@ var WellBeingForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "??",
+				label: "BPS Rating",
 				cellType: "choice",
 				choices: ["Abnormal", "Equivocal", "Normal"],
-				getValue: function(item) { return item.unknown2; },
-				setValue: function(item, value) { item.unknown2 = value; },
+				getValue: function(item) { return item.bpsRating; },
+				setValue: function(item, value) { item.bpsRating = value; },
 				getError: function(item) { return null; }
 			}
 		]);

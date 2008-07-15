@@ -221,7 +221,7 @@ var GeneralPreview = {
 			new readOnlyCell("Presentation", "presentation"),
 			new readOnlyCell("AFV", "afv"),
 			new readOnlyCell("Placenta", "placenta"),
-			new readOnlyCell("??", "cervixProximity"),
+			new readOnlyCell("Placenta Clearance", "cervixProximity"),
 			new readOnlyCell("Right Adnexa", "rightAdnexa"),
 			new readOnlyCell("Left Adnexa", "leftAdnexa"),
 			new readOnlyCell("Yolk Sac", "yolkSac"),
@@ -537,7 +537,7 @@ var WellBeingPreview = {
 		var bpsPreviewTable = Table.createTable($("bpsPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 		[
 			new readOnlyCell("AFV", "afv"),
-			new readOnlyCell("??", "unknown"),
+			new readOnlyCell("Amount", "afvAmount"),
 			new readOnlyCell("Max vertical pocket", "maxVerticalPocket"),
 			{
 				label: "AFI (A+B+C+D)",
@@ -557,7 +557,7 @@ var WellBeingPreview = {
 				setValue: function(item, value) { return; },
 				getError: function(item) { return null; }
 			},
-			new readOnlyCell("??", "unknown2")
+			new readOnlyCell("BPS Rating", "bpsRating")
 		]);
 
 		var dopplerUmbilicalArteryPreviewTable = Table.createTable($("dopplerUmbilicalArteryPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
