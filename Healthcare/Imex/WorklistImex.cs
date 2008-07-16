@@ -65,6 +65,22 @@ namespace ClearCanvas.Healthcare.Imex
                 public string Class;
             }
 
+			[DataContract]
+			public class LocationData
+			{
+				public LocationData()
+				{
+				}
+
+				public LocationData(string id)
+				{
+					this.Id = id;
+				}
+
+				[DataMember]
+				public string Id;
+			}
+
             [DataContract]
             public class EnumValueData
             {
@@ -109,6 +125,7 @@ namespace ClearCanvas.Healthcare.Imex
                     this.Facilities = new FacilitiesFilterData();
                     this.OrderPriorities = new MultiValuedFilterData<EnumValueData>();
                     this.PatientClasses = new MultiValuedFilterData<EnumValueData>();
+					this.PatientLocations = new MultiValuedFilterData<LocationData>();
                     this.Portable = new SingleValuedFilterData<bool>();
                 }
 
@@ -124,7 +141,10 @@ namespace ClearCanvas.Healthcare.Imex
                 [DataMember]
                 public MultiValuedFilterData<EnumValueData> PatientClasses;
 
-                [DataMember]
+				[DataMember]
+				public MultiValuedFilterData<LocationData> PatientLocations;
+
+				[DataMember]
                 public SingleValuedFilterData<bool> Portable;
             }
 
@@ -213,6 +233,8 @@ namespace ClearCanvas.Healthcare.Imex
                 delegate(OrderPriorityEnum item) { return new WorklistData.EnumValueData(item.Code); });
             ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
                 delegate(PatientClassEnum item) { return new WorklistData.EnumValueData(item.Code); });
+			ExportFilter(worklist.PatientLocationFilter, data.Filters.PatientLocations,
+				delegate(Location item) { return new WorklistData.LocationData(item.Id); });
 
             data.Filters.Portable.Enabled = worklist.PortableFilter.IsEnabled;
             data.Filters.Portable.Value = worklist.PortableFilter.Value;
@@ -262,6 +284,7 @@ namespace ClearCanvas.Healthcare.Imex
                     IProcedureTypeGroupBroker broker = context.GetBroker<IProcedureTypeGroupBroker>();
                     return CollectionUtils.FirstElement(broker.Find(criteria, ProcedureTypeGroup.GetSubClass(s.Class, context)));
                 });
+
 			//Bug #2284: don't forget to set the IncludeWorkingFacility property
         	worklist.FacilityFilter.IncludeWorkingFacility = data.Filters.Facilities.IncludeWorkingFacility;
 
@@ -294,6 +317,18 @@ namespace ClearCanvas.Healthcare.Imex
                     IEnumBroker broker = context.GetBroker<IEnumBroker>();
                     return broker.Find<PatientClassEnum>(s.Code);
                 });
+
+			ImportFilter(
+				worklist.PatientLocationFilter,
+				data.Filters.PatientLocations,
+				delegate(WorklistData.LocationData s)
+				{
+					LocationSearchCriteria criteria = new LocationSearchCriteria();
+					criteria.Id.EqualTo(s.Id);
+
+					ILocationBroker broker = context.GetBroker<ILocationBroker>();
+					return CollectionUtils.FirstElement(broker.Find(criteria));
+				});
 
             worklist.PortableFilter.IsEnabled = data.Filters.Portable.Enabled;
             worklist.PortableFilter.Value = data.Filters.Portable.Value;
