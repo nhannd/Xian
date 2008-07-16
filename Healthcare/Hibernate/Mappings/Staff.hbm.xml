@@ -48,8 +48,8 @@
         <property name="Unit" column="Unit_" type="String" length="50" not-null="false"/>
         <property name="City" column="City_" type="String" length="50" not-null="true"/>
         <property name="Province" column="Province_" type="String" length="50" not-null="true"/>
-        <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="true"/>
-        <property name="Country" column="Country_" type="String" length="50" not-null="true"/>
+        <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="false"/>
+        <property name="Country" column="Country_" type="String" length="50" not-null="false"/>
         <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>

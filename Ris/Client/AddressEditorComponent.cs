@@ -121,7 +121,6 @@ namespace ClearCanvas.Ris.Client
             get { return AddressEditorComponentSettings.Default.ProvinceChoices; }
         }
 
-        [ValidateNotNull]
         public string Country
         {
             get { return _address.Country; }
@@ -137,7 +136,6 @@ namespace ClearCanvas.Ris.Client
             get { return AddressEditorComponentSettings.Default.CountryChoices; }
         }
 
-        [ValidateNotNull]
         public string PostalCode
         {
             get { return _address.PostalCode; }
