@@ -368,7 +368,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 				InterpretationStep interpretation = new InterpretationStep(procedure);
 				interpretation.Assign(currentUserStaff);
-				interpretation.Start(currentUserStaff);
 				interpretation.ReportPart = procedure.ActiveReport.AddAddendum();
 				workflow.AddActivity(interpretation);
 				return interpretation;

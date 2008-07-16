@@ -30,21 +30,20 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 using Iesi.Collections.Generic;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -239,14 +238,21 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCreateAddendum")]
         public CreateAddendumResponse CreateAddendum(CreateAddendumRequest request)
         {
-			Procedure procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
+            Procedure procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
 
             Operations.CreateAddendum op = new Operations.CreateAddendum();
-			InterpretationStep interpretation = op.Execute(procedure, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
-
+            InterpretationStep interpretation = op.Execute(procedure, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
             PersistenceContext.SynchState();
+
+            IList<ReportingProcedureStep> procedureSteps = new List<ReportingProcedureStep>();
+            procedureSteps.Add(interpretation.Downcast<ReportingProcedureStep>());
+
+            IList<WorklistItem> items = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>().GetWorklistItems(procedureSteps);
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+            ReportingWorklistItem reportingWorklistItem = assembler.CreateWorklistItemSummary(CollectionUtils.FirstElement(items), this.PersistenceContext);
+
             CreateAddendumResponse response = new CreateAddendumResponse();
-            response.InterpretationStepRef = interpretation.GetRef();
+            response.ReportingWorklistItem = reportingWorklistItem;
             return response;
         }
 

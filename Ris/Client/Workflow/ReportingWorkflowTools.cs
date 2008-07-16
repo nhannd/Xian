@@ -259,16 +259,21 @@ namespace ClearCanvas.Ris.Client.Workflow
             if (ActivateIfAlreadyOpen(item))
                 return true;
 
+			ReportingWorklistItem interpretationWorklistItem = null;
+
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
                     CreateAddendumResponse response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureRef));
-                    item.ProcedureStepRef = response.InterpretationStepRef;
+                	interpretationWorklistItem = response.ReportingWorklistItem;
                 });
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.DraftFolder));
 
-            OpenReportEditor(item);
+			if (ActivateIfAlreadyOpen(interpretationWorklistItem))
+				return true;
+
+			OpenReportEditor(interpretationWorklistItem);
 
             return true;
         }

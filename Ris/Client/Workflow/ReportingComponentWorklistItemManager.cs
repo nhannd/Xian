@@ -31,6 +31,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Create,
 
 			/// <summary>
+			/// "Report Next Order" checkbox disabled.  Worklist item attempted to be claimed.
+			/// </summary>
+			CreateAddendum,
+
+			/// <summary>
 			/// "Report Next Order" checkbox disabled.  Worklist item not claimed.
 			/// </summary>
 			Edit,
@@ -106,13 +111,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 			else if(result == WorklistItemCompletedResult.Skipped)
 				_skippedItems.Add(_worklistItem);
 
-			if (_worklistCache.Count == 0)
-			{
-				RefreshWorklistItemCache();
-			}
-
-			_worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
 			_isInitialItem = false;
+
+			if (_reportNextItem)
+			{
+				if (_worklistCache.Count == 0)
+				{
+					RefreshWorklistItemCache();
+				}
+
+				_worklistItem = _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
+			}
+			else
+			{
+				_worklistItem = null;
+			}
 
 			EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 		}
@@ -133,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ShouldUnclaim
 		{
-			get { return _componentMode == ReportingComponentMode.Create; }
+			get { return _componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.CreateAddendum; }
 		}
 
 		#region Presentation Model
@@ -198,7 +211,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			switch (item.ActivityStatus.Code)
 			{
 				case StepState.Scheduled:
-					return ReportingComponentMode.Create;
+					return item.IsAddendumStep ? ReportingComponentMode.CreateAddendum : ReportingComponentMode.Create;
 				case StepState.InProgress:
 					return ReportingComponentMode.Edit;
 				default:
