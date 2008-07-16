@@ -159,7 +159,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="builderStyle"></param>
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
         {
-			List<ActionModelNode> nodeList = new List<ActionModelNode>(nodes);
+			List<ActionModelNode> nodeList = CombineAdjacentSeparators(new List<ActionModelNode>(nodes));
 			
 			// reverse nodes if alignment is right
 			if (builderStyle.ToolStripAlignment == ToolStripItemAlignment.Right)
@@ -206,7 +206,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="nodes"></param>
         public static void BuildMenu(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
         {
-            foreach (ActionModelNode node in nodes)
+			List<ActionModelNode> nodeList = CombineAdjacentSeparators(new List<ActionModelNode>(nodes));
+			foreach (ActionModelNode node in nodeList)
             {
                 ToolStripItem toolstripItem;
 
@@ -309,6 +310,25 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 
 			return;
+		}
+
+		private static List<ActionModelNode> CombineAdjacentSeparators(List<ActionModelNode> nodes)
+		{
+			// nothing to do if less than 2 items
+			if(nodes.Count < 2)
+				return nodes;
+
+			List<ActionModelNode> result = new List<ActionModelNode>();
+			result.Add(nodes[0]);
+			for(int i = 1; i < nodes.Count; i++)
+			{
+				// if both this node and the previous node are separators, do not add this node to the result
+				if(nodes[i] is SeparatorNode && nodes[i-1] is SeparatorNode)
+					continue;
+
+				result.Add(nodes[i]);
+			}
+			return result;
 		}
 
 		private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind)
