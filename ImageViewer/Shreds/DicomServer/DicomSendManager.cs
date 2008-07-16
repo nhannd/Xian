@@ -207,11 +207,34 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					OnBeginSend();
 
 					base.Send();
+
+					if (base.Status == ScuOperationStatus.Canceled)
+					{
+						OnSendError(String.Format("Remote server cancelled the C-STORE operation ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
+					else if (base.Status == ScuOperationStatus.ConnectFailed)
+					{
+						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
+					else if (base.Status == ScuOperationStatus.Failed)
+					{
+						OnSendError(String.Format("The C-STORE operation failed ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
+					else if (base.Status == ScuOperationStatus.TimeoutExpired)
+					{
+						OnSendError(String.Format("The connection timeout has expired ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
 				}
 				catch(Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, "An error occurred while processing the store operation.");
-					OnSendError(e.Message);
+					Platform.Log(LogLevel.Error, e, "An error occurred while processing the C-STORE operation.");
+					string message = String.Format("An unexpected error occurred while processing the C-STORE operation ({0}).",
+					                               e.Message);
+					OnSendError(message);
 				}
 				finally
 				{
@@ -225,8 +248,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				if (message.Status.Status == DicomState.Cancel)
 				{
-					string msg = String.Format(
-						"Remote server cancelled the C-STORE operation ({0}: {1}).",
+					string msg = String.Format("Remote server cancelled the C-STORE operation ({0}: {1}).",
 						RemoteAE, message.Status.Description);
 
 					Platform.Log(LogLevel.Info, msg);
@@ -264,13 +286,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				else
 				{
-					string msg = String.Format("Error attempting to send file {0} ({1}:{2}).",
-						storageInstance.Filename, 
-						RemoteAE,
+					string msg = String.Format("Error sending file {0} ({1}: {2}).",
+						storageInstance.Filename, RemoteAE,
 						storageInstance.ExtendedFailureDescription);
 
 					Platform.Log(LogLevel.Error, msg);
-					OnSendError(msg);
+
+					OnSendError(String.Format("Error sending file ({0}: {1}).",
+					                          RemoteAE, storageInstance.ExtendedFailureDescription));
 				}
 
 				if (_callback != null)

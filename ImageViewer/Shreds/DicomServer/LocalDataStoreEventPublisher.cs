@@ -48,6 +48,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					{
 						proxy.SendError(item as SendErrorInformation);
 					}
+
+					proxy.Close();
 				}
 				catch (Exception e)
 				{
