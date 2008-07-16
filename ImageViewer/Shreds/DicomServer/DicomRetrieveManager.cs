@@ -115,6 +115,27 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					OnBeginRetrieve();
 
 					Move();
+
+					if (base.Status == ScuOperationStatus.Canceled)
+					{
+						OnRetrieveError(String.Format("Remote server cancelled the C-MOVE operation ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
+					else if (base.Status == ScuOperationStatus.ConnectFailed)
+					{
+						OnRetrieveError(String.Format("Unable to connect to remote server ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
+					else if (base.Status == ScuOperationStatus.Failed)
+					{
+						OnRetrieveError(String.Format("The C-MOVE operation failed ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
+					else if (base.Status == ScuOperationStatus.TimeoutExpired)
+					{
+						OnRetrieveError(String.Format("The connection timeout has expired ({0}: {1}).",
+							RemoteAE, base.FailureDescription));
+					}
 				}
 				catch (Exception e)
 				{
