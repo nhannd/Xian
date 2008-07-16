@@ -200,13 +200,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         protected global::System.Web.UI.WebControls.ImageButton SearchButton;
         
         /// <summary>
-        /// CalendarExtender1 control.
+        /// ScheduleCalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender CalendarExtender1;
+        protected global::AjaxControlToolkit.CalendarExtender ScheduleCalendarExtender;
         
         /// <summary>
         /// ToolBarUpdatePanel control.

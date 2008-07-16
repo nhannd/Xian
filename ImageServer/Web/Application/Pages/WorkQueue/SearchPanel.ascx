@@ -54,7 +54,7 @@
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                        <aspAjax:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="ScheduleDate"
+                        <aspAjax:CalendarExtender ID="ScheduleCalendarExtender" runat="server" TargetControlID="ScheduleDate"
                             CssClass="Calendar">
                         </aspAjax:CalendarExtender>
                     </asp:TableCell> 

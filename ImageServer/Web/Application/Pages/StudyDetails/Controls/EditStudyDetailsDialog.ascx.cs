@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             
             PatientBirthDate.Attributes.Add("OnKeyDown", "return false;");
             StudyDate.Attributes.Add("OnKeyDown", "return false;");
+            PatientAge.Attributes.Add("OnKeyDown", "return false;");
 
         }
 
@@ -240,7 +241,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 
             if (!string.IsNullOrEmpty(study.PatientsBirthDate))
             {
-                DateTime birthDate = DateTime.ParseExact(study.StudyDate, ImageServerConstants.DicomDate, null);
+                DateTime birthDate = DateTime.ParseExact(study.PatientsBirthDate, ImageServerConstants.DicomDate, null);
 
                 PatientBirthDate.Text = birthDate.ToString(ImageServerConstants.MMDDYYY);
 

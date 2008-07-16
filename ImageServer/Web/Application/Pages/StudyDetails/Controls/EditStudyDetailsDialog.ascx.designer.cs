@@ -722,6 +722,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator StudyDateHelp;
         
         /// <summary>
+        /// DateValidator1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DateValidator DateValidator1;
+        
+        /// <summary>
         /// RegularExpressionFieldValidator16 control.
         /// </summary>
         /// <remarks>

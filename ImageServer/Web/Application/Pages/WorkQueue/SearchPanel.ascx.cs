@@ -99,9 +99,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             // initialize the controller
             _searchController = new WorkQueueController();
 
-            CalendarExtender1.Format = DateTimeFormatter.DefaultDateFormat;
+            ScheduleCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
-            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
+            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value='';" +
+                                                    "document.getElementById('" + ScheduleCalendarExtender.ClientID + "').SelectedDate=null; return false;";
 
             // setup child controls
             GridPagerTop.PageCountVisible = false;
@@ -136,15 +137,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             if (!Page.IsPostBack)
             {
                 // first time load
-                CalendarExtender1.SelectedDate = DateTime.Today;
+                ScheduleCalendarExtender.SelectedDate = DateTime.Today;
             }
             else
             {
                 ScheduleDate.Text = Request[ScheduleDate.UniqueID];
                 if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                    CalendarExtender1.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender1.Format, null);
+                    ScheduleCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
                 else
-                    CalendarExtender1.SelectedDate = null;
+                    ScheduleCalendarExtender.SelectedDate = null;
 
             }
 
@@ -194,7 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 if (String.IsNullOrEmpty(ScheduleDate.Text ))
                     parameters.ScheduledTime = null;
                 else
-                    parameters.ScheduledTime = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender1.Format, null);// CalendarExtender1.SelectedDate;
+                    parameters.ScheduledTime = DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);// CalendarExtender1.SelectedDate;
 
                 parameters.Accession = AccessionNumber.Text;
                 parameters.StudyDescription = StudyDescription.Text;

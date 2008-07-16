@@ -234,6 +234,11 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                         <td>
                                         <ccAsp:InvalidInputIndicator ID="StudyDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:ConditionalRequiredFieldValidator runat="server" ControlToValidate="StudyDate" Text="Study Date is required" Display="none" InvalidInputIndicatorID="StudyDateHelp" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" RequiredWhenChecked="False"/>
+                                        <ccValidator:DateValidator
+                                                        ID="DateValidator1" runat="server" ControlToValidate="StudyDate"
+                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
+                                                        Text="The Study Date cannot be in the future." Display="None">
+                                        </ccValidator:DateValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator16" runat="server" ControlToValidate="StudyTimeHours"
                                             InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
