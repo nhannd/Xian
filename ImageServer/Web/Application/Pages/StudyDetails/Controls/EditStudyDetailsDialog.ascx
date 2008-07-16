@@ -2,8 +2,11 @@
 
 <ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px">
 <ContentTemplate>
+<asp:ValidationSummary ID="ValidationSummary1" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
+HeaderText="Input Validation Failed. Please correct the values for the indicated fields."
+EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
-            <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
+            <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl" ForeColor="red">
                 <aspAjax:TabPanel ID="PatientTabPanel" runat="server" HeaderText="PatientTabPanel" CssClass="DialogTabControl">
                     <ContentTemplate>
                         <table cellpadding="2" cellspacing="5" width="100%" style="background-color: #eeeeee; border: solid 1px #cccccc;">
@@ -25,27 +28,27 @@
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator4" runat="server" ControlToValidate="PatientTitle"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator5" runat="server" ControlToValidate="PatientGivenName"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator6" runat="server" ControlToValidate="PatientMiddleName"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator7" runat="server" ControlToValidate="PatientLastName"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator8" runat="server" ControlToValidate="PatientSuffix"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;." Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;." Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             </td>
                                     </tr>
@@ -67,14 +70,14 @@
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator14" runat="server" ControlToValidate="PatientID"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientIDHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Patient ID" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Patient ID" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
                                  </td>
                             <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="GenderLabel" runat="server" Text="Gender" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
-                                    <table>
+                                    <table cellpadding="0" cellspacing="0">
                                         <tr><td>
                                             <asp:DropDownList ID="PatientGender" runat="server" CssClass="DialogDropDownList" CausesValidation="true" ValidationGroup="vg1">
                                                 <asp:ListItem Selected="True" Text=" " Value=" " />
@@ -88,7 +91,7 @@
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator15" runat="server" ControlToValidate="PatientGender"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientGenderHelp"
-                                                        ValidationExpression="M|F|O" ErrorMessage="Patient Gender is a required field" Display="None">
+                                                        ValidationExpression="M|F|O" Text="Patient Gender is a required field" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td>
                                         </tr>
@@ -100,19 +103,19 @@
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <asp:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" ReadOnly="true" ></asp:TextBox><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                        <asp:TextBox ID="PatientBirthDate" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" ></asp:TextBox><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:DateValidator
                                                         ID="DateValidator19" runat="server" ControlToValidate="PatientBirthDate"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientBirthDateHelp"
-                                                        ErrorMessage="The Patient Birth Date cannot be in the future." Display="None">
+                                                        Text="The Patient Birth Date cannot be in the future." Display="None">
                                             </ccValidator:DateValidator>
                                         </td></tr>
                                     </table>
                                 </td>
                             <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" Text="Age" CssClass="DialogTextBoxLabel" ReadOnly="true"/></td>
+                                <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" Text="Age" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
@@ -122,7 +125,7 @@
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientAgeHelp"
-                                                        ValidationExpression="^[^-]" ErrorMessage="Patient Age may not be negative" IgnoreEmptyValue="true" Display="None">
+                                                        ValidationExpression="^[^-]" Text="Patient Age may not be negative" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
                                     </table>
@@ -158,27 +161,27 @@
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator9" runat="server" ControlToValidate="PhysicianTitle"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator10" runat="server" ControlToValidate="PhysicianGivenName"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator11" runat="server" ControlToValidate="PhysicianMiddleName"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator12" runat="server" ControlToValidate="PhysicianLastName"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator13" runat="server" ControlToValidate="PhysicianSuffix"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PhysiciansNameHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;." Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Physician Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;." Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td>
                                     </tr>                                    
@@ -199,7 +202,7 @@
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator1" runat="server" ControlToValidate="StudyDescription"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDescriptionHelp"
-                                                        ValidationExpression="^([^\\]){0,64}$" ErrorMessage="Invalid Study Description" Display="None">
+                                                        ValidationExpression="^([^\\]){0,64}$" Text="Invalid Study Description" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
                                 </td>
@@ -207,12 +210,12 @@
                                 <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="Label12" runat="server" Text="Accession #" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
-                                    <table cellpadding="0" cellspacing="0"><tr><td><asp:TextBox ID="AccessionNumber" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" /></td>
+                                    <table cellpadding="0" cellspacing="0"><tr><td><asp:TextBox ID="AccessionNumber" runat="server" MaxLength="16" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" /></td>
                                     <td valign="bottom"><ccAsp:InvalidInputIndicator ID="AccessionNumberHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AccessionNumber"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AccessionNumberHelp"
-                                                        ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Invalid Accession Number" Display="None">
+                                                        ValidationExpression="^([^\\]){1,16}$" Text="Invalid Accession Number" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator></td></tr></table>
                                 </td>
                                 </tr>
@@ -226,25 +229,25 @@
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                         <td>
-                                            <asp:TextBox ID="StudyDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" Readonly="true" /><asp:TextBox ID="StudyTimeHours" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />:<asp:TextBox ID="StudyTimeMinutes" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />:<asp:TextBox ID="StudyTimeSeconds" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><asp:DropDownList ID="StudyTimeAmPm" runat="server" CausesValidation="true" CssClass="DialogDropDownList" ><asp:ListItem Selected="True" Text="AM" Value="AM" /><asp:ListItem Text="PM" Value="PM" /></asp:DropDownList><asp:LinkButton ID="ClearStudyDateTimeButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                            <asp:TextBox ID="StudyDate" runat="server" CausesValidation="true" CssClass="DialogTextBox" /><asp:TextBox ID="StudyTimeHours" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />:<asp:TextBox ID="StudyTimeMinutes" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" />:<asp:TextBox ID="StudyTimeSeconds" runat="server" CausesValidation="true" CssClass="DialogTextBox" Width="17" MaxLength="2" /><asp:DropDownList ID="StudyTimeAmPm" runat="server" CausesValidation="true" CssClass="DialogDropDownList" ><asp:ListItem Selected="True" Text="AM" Value="AM" /><asp:ListItem Text="PM" Value="PM" /></asp:DropDownList><asp:LinkButton ID="ClearStudyDateTimeButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
                                         </td>
                                         <td>
                                         <ccAsp:InvalidInputIndicator ID="StudyDateHelp" runat="server" SkinID="InvalidInputIndicator" />
-                                        <ccValidator:ConditionalRequiredFieldValidator runat="server" ControlToValidate="StudyDate" ErrorMessage="Study Date is required" Display="none" InvalidInputIndicatorID="StudyDateHelp" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" RequiredWhenChecked="False"/>
+                                        <ccValidator:ConditionalRequiredFieldValidator runat="server" ControlToValidate="StudyDate" Text="Study Date is required" Display="none" InvalidInputIndicatorID="StudyDateHelp" InvalidInputColor="#FAFFB5" ValidationGroup="vg1" RequiredWhenChecked="False"/>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator16" runat="server" ControlToValidate="StudyTimeHours"
                                             InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
-                                            ValidationExpression="^(0*[1-9]|1[0-2])$" IgnoreEmptyValue="true" ErrorMessage="Invalid Study Time" Display="None">
+                                            ValidationExpression="^(0*[1-9]|1[0-2])$" IgnoreEmptyValue="true" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator17" runat="server" ControlToValidate="StudyTimeMinutes"
                                             InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
-                                            ValidationExpression="^([0-5][0-9])*$" ErrorMessage="Invalid Study Time" Display="None">
+                                            ValidationExpression="^([0-5][0-9])*$" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         <ccValidator:RegularExpressionFieldValidator
                                             ID="RegularExpressionFieldValidator18" runat="server" ControlToValidate="StudyTimeSeconds"
                                             InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyDateHelp"
-                                            ValidationExpression="^([0-5][0-9])*$" ErrorMessage="Invalid Study Time" Display="None">
+                                            ValidationExpression="^([0-5][0-9])*$" Text="Invalid Study Time" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                         </td>
                                         </tr>
@@ -254,19 +257,19 @@
                                 <td class="DialogLabelBackground"><asp:Label ID="Label13" runat="server" Text="Study ID" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
-                                    <tr><td><asp:TextBox ID="StudyID" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" /></td>
+                                    <tr><td><asp:TextBox ID="StudyID" runat="server" CausesValidation="true" ValidationGroup="vg1" MaxLength="16" CssClass="DialogTextBox" /></td>
                                     <td valign="bottom">
                                        <ccAsp:InvalidInputIndicator ID="StudyIDHelp" runat="server" SkinID="InvalidInputIndicator" />
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator3" runat="server" ControlToValidate="StudyID"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="StudyIDHelp"
-                                                        ValidationExpression="^([^\\]){0,16}$" ErrorMessage="Invalid Study ID" Display="None">
+                                                        ValidationExpression="^([^\\]){0,16}$" Text="Invalid Study ID" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator>
                                     </td></tr></table>
                                 </td>
                                 </tr>
                              </table>
-                             <aspAjax:CalendarExtender ID="CalendarExtender1" runat="server" TargetControlID="StudyDate"
+                             <aspAjax:CalendarExtender ID="StudyDateCalendarExtender" runat="server" TargetControlID="StudyDate"
                                 CssClass="Calendar">
                             </aspAjax:CalendarExtender>
                     </ContentTemplate>

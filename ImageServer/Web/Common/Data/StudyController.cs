@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -118,14 +119,51 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return true;
         }
-    
+
+        public bool EditStudy(Study study, XmlDocument modifiedFields)
+        {
+            WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
+            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+            columns.ServerPartitionKey = study.ServerPartitionKey;
+
+            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
+
+            columns.StudyStorageKey = storages[0].GetKey();
+            DateTime time = Platform.Time.AddSeconds(60);
+            columns.ScheduledTime = time;
+            columns.ExpirationTime = time;
+            columns.FailureCount = 0;
+            columns.Data = modifiedFields;
+            
+            workqueueAdaptor.Add(columns);
+
+            return true;
+        }
+
+        public bool IsScheduledForEdit(Study study)
+        {
+            return IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebEditStudy);
+        }
+
+        public bool IsScheduledForDelete(Study study)
+        {
+            return IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebDeleteStudy);
+        }
 
         /// <summary>
         /// Returns a value indicating whether the specified study has been scheduled for delete.
         /// </summary>
         /// <param name="study"></param>
-        /// <returns></returns>
-        public bool IsScheduledForDelete(Study study)
+        /// <param name="workQueueType"></param>
+        /// <returns></returns>           
+        private bool IsStudyInWorkQueue(Study study, WorkQueueTypeEnum workQueueType)
         {
             Platform.CheckForNullReference(study, "Study");
             
@@ -139,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
                 WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-                workQueueCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.WebDeleteStudy);
+                workQueueCriteria.WorkQueueTypeEnum.EqualTo(workQueueType);
                 workQueueCriteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
                 workQueueCriteria.StudyStorageKey.EqualTo(storage.GetKey());
 
@@ -155,11 +193,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     if (list != null && list.Count > 0)
                         return true;
                 }
-
-                
             }
             return false;
-            
         }
 
 		/// <summary>

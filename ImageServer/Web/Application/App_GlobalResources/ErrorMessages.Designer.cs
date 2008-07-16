@@ -59,5 +59,23 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to delete the study. See server log for more details..
+        /// </summary>
+        internal static string DeleteStudyError {
+            get {
+                return ResourceManager.GetString("DeleteStudyError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Error. Please correct indicated errors before submitting changes..
+        /// </summary>
+        internal static string EditStudyValidationError {
+            get {
+                return ResourceManager.GetString("EditStudyValidationError", resourceCulture);
+            }
+        }
     }
 }

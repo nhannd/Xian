@@ -430,6 +430,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This study has been scheduled for update..
+        /// </summary>
+        internal static string StudyScheduledForEdit {
+            get {
+                return ResourceManager.GetString("StudyScheduledForEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
         internal static string Unknown {

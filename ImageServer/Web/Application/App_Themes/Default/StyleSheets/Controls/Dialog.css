@@ -55,8 +55,9 @@
 
 .DefaultModalDialogButtonPanel
 {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 10px;
+    padding-right: 1px;
+    padding-bottom: 7px;
 }
 
 .ConfirmationButtonPanel
@@ -194,14 +195,17 @@
 .DialogTabControl .ajax__tab_active .ajax__tab_inner
 {
 	background: url(../../images/Controls/Dialog/DialogActiveTabLeft.png) no-repeat;
+	
 }
 .DialogTabControl .ajax__tab_active .ajax__tab_tab
 {
 	background: url(../../images/Controls/Dialog/DialogActiveTabMiddle.png) repeat-x;
 	color: #205F87;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 14px;    
 }
+
+
 
 /*************************************************************************************************
 	Other styles

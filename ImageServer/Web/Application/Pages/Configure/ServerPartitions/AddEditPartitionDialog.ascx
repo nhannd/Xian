@@ -20,15 +20,15 @@
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" ErrorMessage="AE Title is required"
+                                                        ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="true" Text="AE Title is required"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator2"
-                                                        runat="server" ControlToValidate="AETitleTextBox" Display="None" ErrorMessage="The AE Title is not valid."
+                                                        runat="server" ControlToValidate="AETitleTextBox" Display="None" Text="The AE Title is not valid."
                                                         InvalidInputColor="#FAFFB5" ValidationExpression="^([^\\]){1,16}$" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                     <ccValidator:ServerPartitionValidator ID="ServerPartitionValidator" runat="server"
                                                         ControlToValidate="AETitleTextBox" Display="None" EnableClientScript="false"
-                                                        ErrorMessage="The AE Title is not valid." InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        Text="The AE Title is not valid." InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="AETitleHelp" />
                                                 </td>
                                             </tr>
@@ -58,7 +58,7 @@
                                                     <asp:TextBox ID="PortTextBox" runat="server" CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
-                                                        ErrorMessage="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
+                                                        Text="Partition Port must be between 1 and 65535" Display="None" InvalidInputIndicatorID="PortHelp"></ccValidator:RangeValidator>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator" />
@@ -75,7 +75,7 @@
                                                         ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"></asp:TextBox>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="Conditionalrequiredfieldvalidator1"
                                                         runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="true"
-                                                        ErrorMessage="Folder Name is required" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        Text="Folder Name is required" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="FolderHelp"></ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
                                                 <td valign="bottom">
@@ -158,7 +158,7 @@
                                                         <ccAsp:InvalidInputIndicator ID="DefaultPortHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                         <ccValidator:RangeValidator ID="DefaultRemotePortRangeValidator" runat="server"
                                                             ControlToValidate="DefaultRemotePortTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                            MinValue="1" MaxValue="65535" ErrorMessage="Remote device default port must be between 1 and 65535"
+                                                            MinValue="1" MaxValue="65535" Text="Remote device default port must be between 1 and 65535"
                                                             Display="None" InvalidInputIndicatorID="DefaultPortHelp" />
                                                     </td>
                                             </tr>

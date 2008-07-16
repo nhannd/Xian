@@ -1,8 +1,10 @@
 using System;
 using System.Web.UI.WebControls;
+using System.Xml;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 {
@@ -32,8 +34,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         /// <summary>
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
-        /// <param name="device">The device being added.</param>
-        public delegate void OnOKClickedEventHandler(Device device);
+        public delegate void OnOKClickedEventHandler();
 
         /// <summary>
         /// Occurs when users click on "OK".
@@ -42,6 +43,143 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 
         #endregion Events
         #region Private Methods
+
+        private void SetupJavascript()
+        {
+            ClearStudyDateTimeButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value='';" +
+                                         "document.getElementById('" + StudyTimeHours.ClientID + "').value='';" +
+                                         "document.getElementById('" + StudyTimeMinutes.ClientID + "').value='';" +
+                                         "document.getElementById('" + StudyTimeSeconds.ClientID + "').value='';" +
+                                         " return false;";
+
+            ClearPatientBirthDateButton.OnClientClick = "document.getElementById('" + PatientBirthDate.ClientID +
+                                                        "').value='';" +
+                                                        "document.getElementById('" + PatientAge.ClientID +
+                                                        "').value=''; return false;";
+
+            ChangeStudyInstanceUIDButton.OnClientClick = "document.getElementById('" + StudyInstanceUID.ClientID +
+                                                        "').value='" + DicomUid.GenerateUid().UID + "'; return false;";
+
+            Page.ClientScript.RegisterStartupScript(GetType(), "changeAge", @"function changeAge() {" +
+                                                                            "var today=new Date();" +
+                                                                            "var birthDate=new Date(document.getElementById('" + PatientBirthDate.ClientID + "').value);" +
+                                                                            "var diff=today-birthDate;" +
+                                                                            "diff=Math.round(diff/1000/60/60/24);" +
+                                                                            "if(diff < 365) { " +
+                                                                            "var iMonths = Math.round(diff/30);" +
+                                                                            "if(iMonths < 12 && iMonths > 0) { " +
+                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=iMonths + ' Month(s)'; " +
+                                                                            "} else { " +
+                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=diff + ' Day(s)'; " +
+                                                                            "} } else { var iYear = Math.floor(diff/365);" +
+                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=iYear + ' Year(s)';} }", true);
+
+            
+            PatientBirthDate.Attributes.Add("OnKeyDown", "return false;");
+            StudyDate.Attributes.Add("OnKeyDown", "return false;");
+
+        }
+
+        private XmlNode createChildNode(XmlNode setNode, string tagName, string value)
+        {
+            XmlNode clone = setNode.CloneNode(true);
+            clone.Attributes.GetNamedItem("tag").InnerXml = tagName;
+            clone.Attributes.GetNamedItem("value").InnerXml = value;
+            return clone;
+        }
+
+        private XmlDocument getChanges()
+        {
+            XmlDocument changes = new XmlDocument();
+
+            XmlElement rootNode = changes.CreateElement("editstudy");
+            XmlElement setNode = changes.CreateElement("set");
+            setNode.SetAttribute("tag", "");
+            setNode.SetAttribute("value","");
+
+            string dicomName = PatientLastName.Text + ImageServerConstants.DicomSeparator +
+                               PatientGivenName.Text + ImageServerConstants.DicomSeparator +
+                               PatientMiddleName.Text + ImageServerConstants.DicomSeparator +
+                               PatientTitle.Text + ImageServerConstants.DicomSeparator +
+                               PatientSuffix.Text;
+
+            dicomName = dicomName.Trim(new char[] { '^' });
+            
+            if(!study.PatientsName.Equals(dicomName))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientsName, dicomName));
+            }
+
+            String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
+                                        ? DateTime.Parse(PatientBirthDate.Text).ToString(ImageServerConstants.DicomDate)
+                                        : "";
+            if (!study.PatientsBirthDate.Equals(dicomBirthDate))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientsBirthDate, dicomBirthDate));
+            }
+
+            if (!study.PatientsSex.Equals(PatientGender.Text))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientsSex, PatientGender.Text));
+            }
+
+            if (!study.PatientId.Equals(PatientID.Text))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientID, PatientID.Text));
+            }
+
+            if(!study.StudyDescription.Equals((StudyDescription.Text)))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyDescription, StudyDescription.Text));
+            }
+
+            if(!study.StudyInstanceUid.Equals((StudyInstanceUID.Text)))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyInstanceUID, StudyInstanceUID.Text));
+            }
+
+            if(!study.StudyId.Equals((StudyID.Text)))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyID, StudyID.Text));
+            }
+
+            if(!study.AccessionNumber.Equals((AccessionNumber.Text)))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
+            }
+
+            dicomName = PhysicianLastName.Text + ImageServerConstants.DicomSeparator +
+                        PhysicianGivenName.Text + ImageServerConstants.DicomSeparator +
+                        PhysicianMiddleName.Text + ImageServerConstants.DicomSeparator +
+                        PhysicianTitle.Text + ImageServerConstants.DicomSeparator +
+                        PhysicianSuffix.Text;
+
+            dicomName = dicomName.Trim(new char[] { '^' });
+           
+            if(!study.ReferringPhysiciansName.Equals(dicomName))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.ReferringPhysician, dicomName));
+            }
+
+            String dicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
+                                        ? DateTime.Parse(StudyDate.Text).ToString(ImageServerConstants.DicomDate)
+                                        : "";
+
+            if(!study.StudyDate.Equals(dicomStudyDate))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyDate, dicomStudyDate));
+            }
+
+            string dicomStudyTime = StudyTimeHours.Text.PadLeft(2, '0') + StudyTimeMinutes.Text.PadLeft(2, '0') + StudyTimeSeconds.Text.PadLeft(2, '0');
+            if(!study.StudyTime.Equals(dicomStudyTime))
+            {
+                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyTime, dicomStudyTime));
+            }
+
+            changes.AppendChild(rootNode);
+
+            return changes;
+        }
 
         private void UpdateFields()
         {
@@ -78,6 +216,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 i++;
             }
 
+            if (!study.PatientsSex.Equals(string.Empty))
+            {
+                switch(study.PatientsSex)
+                {
+                    case "M":
+                        PatientGender.SelectedIndex = 1;
+                        break;
+                    case "F":
+                        PatientGender.SelectedIndex = 2;
+                        break;
+                    case "O":
+                        PatientGender.SelectedIndex = 3;
+                        break;
+                    default:
+                        PatientGender.SelectedIndex = 0;
+                        break;
+                }
+                
+            }
+
             PatientID.Text = study.PatientId;
 
             if (!string.IsNullOrEmpty(study.PatientsBirthDate))
@@ -105,8 +263,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 PatientBirthDate.Text = string.Empty;
                 PatientAge.Text = string.Empty;
             }
-
-            PatientGender.SelectedIndex = PatientGender.Items.IndexOf(new ListItem(study.PatientsSex));
             
             // Study Information
 
@@ -169,44 +325,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 
         #endregion
         #region Protected Methods
-
-        [ExtenderControlProperty]
-        [ClientPropertyName("PatientBirthDateClientID")]
-        public string PatientBirthDateClientID
-        {
-            get { return PatientBirthDate.ClientID; }
-        }
         
         protected override void OnInit(EventArgs e)
         {
-            ClearStudyDateTimeButton.OnClientClick = "document.getElementById('" + StudyTimeHours.ClientID + "').value='';" +
-                                                     "document.getElementById('" + StudyTimeMinutes.ClientID + "').value='';" +
-                                                     "document.getElementById('" + StudyTimeSeconds.ClientID + "').value='';" +
-                                                     " return false;";
-
-            ClearPatientBirthDateButton.OnClientClick = "document.getElementById('" + PatientBirthDate.ClientID +
-                                                        "').value='';" +
-                                                        "document.getElementById('" + PatientAge.ClientID +
-                                                        "').value=''; return false;";
-
-            ChangeStudyInstanceUIDButton.OnClientClick = "document.getElementById('" + StudyInstanceUID.ClientID +
-                                                        "').value='" +  DicomUid.GenerateUid().UID + "'; return false;";
-
-            Page.ClientScript.RegisterStartupScript(GetType(), "changeAge", @"function changeAge() {" +
-                                                                            "var today=new Date();" +
-                                                                            "var birthDate=new Date(document.getElementById('" + PatientBirthDate.ClientID + "').value);" +
-                                                                            "var diff=today-birthDate;" +
-                                                                            "diff=Math.round(diff/1000/60/60/24);" +
-                                                                            "if(diff < 365) { " +
-                                                                            "var iMonths = Math.round(diff/30);" +
-                                                                            "if(iMonths < 12 && iMonths > 0) { " +
-                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=iMonths + ' Month(s)'; " +
-                                                                            "} else { " +
-                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=diff + ' Day(s)'; " +
-                                                                            "} } else { var iYear = Math.floor(diff/365);" +
-                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=iYear + ' Year(s)';} }", true);
-                
-            
+            SetupJavascript();
         }
 
         /// <summary>
@@ -218,6 +340,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         {
             if (Page.IsValid)
             {
+                if (OKClicked != null)
+                {
+                    OKClicked();
+
+                    XmlDocument modifiedFields = getChanges();
+
+                    if (modifiedFields.HasChildNodes)
+                    {
+                        StudyController studyController = new StudyController();
+                        studyController.EditStudy(study, modifiedFields);                        
+                    }
+                }
+
+                Close();
             }
             else
             {

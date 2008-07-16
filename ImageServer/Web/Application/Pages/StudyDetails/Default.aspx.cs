@@ -71,6 +71,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
 
         #region Protected Methods
 
+        protected void SetupEventHandlers()
+        {
+            EditStudyDialog.OKClicked += delegate() { EditStudyDialog.study = _study; };
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             _studyInstanceUid = Request.QueryString[QUERY_KEY_STUDY_INSTANCE_UID];
@@ -104,6 +109,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
         protected override void OnInit(EventArgs e)
         {
             StudyDetailsPanel.EnclosingPage = this;
+
+            SetupEventHandlers();
 
             base.OnInit(e);
         }

@@ -1,8 +1,20 @@
 
-.StudyDetailsErrorMessage
+.StudyDetailsMessage
 {
     text-align:center; 
     font-size: 16px; 
+    font-weight: bold; 
+    background: #FFFFCC url(../images/Error/ErrorMessageBackground.png) repeat-x;
+    padding: 3px;
+    margin: 4px;
+    color: #FF0000;
+    border: solid 1px #ff0000;
+}
+
+.EditStudyDialogErrorMessage
+{
+    text-align:center; 
+    font-size: 12px; 
     font-weight: bold; 
     background: #FFFFCC url(../images/Error/ErrorMessageBackground.png) repeat-x;
     padding: 3px;

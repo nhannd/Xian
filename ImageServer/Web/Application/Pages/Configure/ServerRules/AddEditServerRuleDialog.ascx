@@ -26,7 +26,7 @@
 													<ccAsp:InvalidInputIndicator ID="RuleNameHelp" runat="server" SkinID="InvalidInputIndicator"/>
 													<ccValidator:ConditionalRequiredFieldValidator ID="RuleNameValidator" runat="server"
 														ControlToValidate="RuleNameTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-														ErrorMessage="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"/>
+														Text="Rule must have a name" InvalidInputIndicatorID="RuleNameHelp" Display="None"/>
 												</td>
 											</tr>
 										</table>
@@ -95,7 +95,7 @@
 										<ccValidator:ServerRuleValidator runat="server" ID="ServerRuleValidator" ControlToValidate="RuleXmlTextBox"
 											InputName="Server Rule XML" InvalidInputColor="#FAFFB5" InvalidInputIndicatorID="InvalidRuleHint"
 											ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateServerRule"
-											ParamsFunction="ValidationServerRuleParams" ErrorMessage="Invalid Server Rule"
+											ParamsFunction="ValidationServerRuleParams" Text="Invalid Server Rule"
 											Display="None" ValidationGroup="vg1" />
 									</td>
 								</tr>

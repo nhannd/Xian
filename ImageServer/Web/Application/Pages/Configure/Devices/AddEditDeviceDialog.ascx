@@ -19,12 +19,12 @@
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="AETitleHelp" ErrorMessage="AE Title is required" Display="None"
+                                                        InvalidInputIndicatorID="AETitleHelp" Text="AE Title is required" Display="None"
                                                         RequiredWhenChecked="False">
                                                     </ccValidator:ConditionalRequiredFieldValidator><ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"
-                                                        ValidationExpression="^([^\\]){1,16}$" ErrorMessage="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
+                                                        ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
                                                 </td>
                                             </tr>
                                         </table>
@@ -58,12 +58,12 @@
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
                                                         ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
-                                                        ErrorMessage="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
+                                                        Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
                                                         Display="None"></ccValidator:ConditionalRequiredFieldValidator>
                                                     <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
                                                         runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
                                                         IgnoreEmptyValue="true" ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
-                                                        ErrorMessage="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></ccValidator:RegularExpressionFieldValidator>
+                                                        Text="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></ccValidator:RegularExpressionFieldValidator>
                                                 </td>
                                             </tr>
                                         </table>
@@ -94,7 +94,7 @@
                                                     <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
-                                                        ErrorMessage="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
+                                                        Text="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
                                                         Display="None"></ccValidator:RangeValidator>                                                    
                                                 </td>
                                             </tr>

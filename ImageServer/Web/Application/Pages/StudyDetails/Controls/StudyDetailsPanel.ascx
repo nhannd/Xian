@@ -18,7 +18,7 @@
                 <td colspan="2" class="PatientInfo">
                     <table width="100%" cellpadding="0" cellspacing="0" class="PatientSummaryTable">
                         <tr><td>
-                            <asp:Panel CssClass="StudyDetailsErrorMessage" runat="server" ID="MessagePanel" ><asp:Label ID="ConfirmationMessage" runat="Server" Text="" /></asp:Panel>
+                            <asp:Panel CssClass="StudyDetailsMessage" runat="server" ID="MessagePanel" ><asp:Label ID="ConfirmationMessage" runat="Server" Text="" /></asp:Panel>
                         </td></tr>
                         <tr>
                             <td>

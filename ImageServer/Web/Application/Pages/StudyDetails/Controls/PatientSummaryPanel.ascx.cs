@@ -104,6 +104,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                         PatientSex.Text = "Female";
                     else if (_patientSummary.Sex.StartsWith("M"))
                         PatientSex.Text = "Male";
+                    else if (_patientSummary.Sex.StartsWith("O"))
+                        PatientSex.Text = "Other";
                     else
                         PatientSex.Text = "Unknown";
                 }

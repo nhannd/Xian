@@ -145,19 +145,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             {
                 StudyController controller = new StudyController();
                 bool scheduledForDelete = controller.IsScheduledForDelete(Study);
+                bool scheduledForEdit = controller.IsScheduledForEdit(Study);
 
-                DeleteStudyButton.Enabled = !scheduledForDelete;
-                EditStudyButton.Enabled = !scheduledForDelete;
+                DeleteStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit);
+                EditStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit);
 
                 if (scheduledForDelete)
                 {
                     ShowScheduledForDeleteAlert();
                 }
+                else if (scheduledForEdit)
+                {
+                    ShowScheduledForEditAlert();
+                }
                 else
                 {
                     MessagePanel.Visible = false;
                 }
-
 
                 int[] selectedSeriesIndices = SeriesGridView.SeriesListControl.SelectedIndices;
                 ViewSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;             
@@ -191,13 +195,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             if (controller.DeleteStudy(study))
             {
                 DeleteStudyButton.Enabled = false;
+                EditStudyButton.Enabled = false;
 
                 ShowScheduledForDeleteAlert();
                 
             }
             else
             {
-                throw new Exception("Unable to delete the study. See server log for more details");
+                throw new Exception(App_GlobalResources.ErrorMessages.DeleteStudyError);
 
             } 
         }
@@ -209,7 +214,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             UpdatePanel1.Update();
         }
 
-
+        private void ShowScheduledForEditAlert()
+        {
+            MessagePanel.Visible = true;
+            ConfirmationMessage.Text = App_GlobalResources.SR.StudyScheduledForEdit;
+            UpdatePanel1.Update();
+        }
+        
         #endregion Private Methods
     }
 }

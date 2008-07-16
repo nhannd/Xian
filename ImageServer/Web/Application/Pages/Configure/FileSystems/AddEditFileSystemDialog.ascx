@@ -26,7 +26,7 @@
                                                     <ccAsp:InvalidInputIndicator ID="InvalidDescriptionHint" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
                                                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
                                                         runat="server" ControlToValidate="DescriptionTextBox" InvalidInputColor="#FAFFB5"
-                                                        ValidationGroup="vg1" ErrorMessage="Description is required!!" Display="None"
+                                                        ValidationGroup="vg1" Text="Description is required!!" Display="None"
                                                         InvalidInputIndicatorID="InvalidDescriptionHint" RequiredWhenChecked="False">
                                                     </ccValidator:ConditionalRequiredFieldValidator>
                                                 </td>
