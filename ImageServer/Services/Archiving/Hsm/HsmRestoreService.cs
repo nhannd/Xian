@@ -29,38 +29,92 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
+	/// <summary>
+	/// Service thread for handling restore requests for <see cref="HsmArchive"/>s.
+	/// </summary>
 	public class HsmRestoreService : ThreadedService
 	{
-		private PartitionArchive _archive;
-		private HsmArchive _hsmArchive;
+		private readonly HsmArchive _hsmArchive;
+		private readonly ItemProcessingThreadPool<RestoreQueue> _threadPool;
 
-		public HsmRestoreService(string name, PartitionArchive archive, HsmArchive hsmArchive)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="name">The name of the service.</param>
+		/// <param name="hsmArchive">The <see cref="HsmArchive"/> for which to do restores. </param>
+		public HsmRestoreService(string name, HsmArchive hsmArchive)
 			: base(name)
 		{
-			_archive = archive;
 			_hsmArchive = hsmArchive;
+
+			_threadPool = new ItemProcessingThreadPool<RestoreQueue>(HsmSettings.Default.RestoreThreadCount);
+			_threadPool.ThreadPoolName = "HsmRestore Pool";
 		}
 
+		/// <summary>
+		/// Initialize the service.
+		/// </summary>
 		protected override void Initialize()
 		{
-			
+			// Start the thread pool
+			if (!_threadPool.Active)
+				_threadPool.Start();
 		}
 
+		/// <summary>
+		/// Run the service.
+		/// </summary>
 		protected override void Run()
 		{
-			while (!CheckStop(2000))
+			while (true)
 			{
+				bool foundResult = false;
+
+				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
+				{
+					IList<RestoreQueue> list = _hsmArchive.GetRestoreCandidate();
+
+					if (list.Count > 0)
+						foundResult = true;
+
+					foreach (RestoreQueue queueListItem in list)
+					{
+						HsmStudyRestore archiver = new HsmStudyRestore(_hsmArchive);
+						_threadPool.Enqueue(queueListItem, archiver.Run);
+					}
+
+					if (!foundResult)
+						if (CheckStop(5000))
+						{
+							Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
+							return;
+						}
+				}
+				else
+				{
+					if (CheckStop(5000))
+					{
+						Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
+						return;
+					}
+				}
 			}
 		}
 
+		/// <summary>
+		/// Stop the service thread.
+		/// </summary>
 		protected override void Stop()
 		{
-			
+			// NO-OP
 		}
 	}
 }

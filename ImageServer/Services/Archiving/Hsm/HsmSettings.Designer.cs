@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int ArchiveThreadCount {
             get {
                 return ((int)(this["ArchiveThreadCount"]));
@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int RestoreThreadCount {
             get {
                 return ((int)(this["RestoreThreadCount"]));

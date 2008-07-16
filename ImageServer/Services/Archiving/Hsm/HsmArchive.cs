@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -42,26 +43,63 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 	{
 		private HsmArchiveService _archiveService;
 		private HsmRestoreService _restoreService;
-	
+		private string _hsmPath;
+
+		public string HsmPath
+		{
+			get { return _hsmPath; }
+		}
+
+		/// <summary>
+		/// The <see cref="PartitionArchive"/> associated with the HsmArchive.
+		/// </summary>
+		public PartitionArchive PartitionArchive
+		{
+			get { return _partitionArchive; }
+		}
+
+		/// <summary>
+		/// The Archive Type.
+		/// </summary>
 		public override ArchiveTypeEnum ArchiveType
 		{
 			get { return ArchiveTypeEnum.HsmArchive; }
 		}
 
+		/// <summary>
+		/// Start the archive.
+		/// </summary>
+		/// <param name="archive">The <see cref="PartitionArchive"/> to start.</param>
 		public override void Start(PartitionArchive archive)
 		{
 			_partitionArchive = archive;
 
-			_restoreService = new HsmRestoreService("HSM Restore", archive, this);
+			LoadServerPartition();
+
+			_hsmPath = string.Empty;
+
+			//Hsm Archive specific Xml data.
+			XmlElement element = archive.ConfigurationXml.DocumentElement;
+			foreach (XmlElement node in element.ChildNodes)
+				if (node.Name.Equals("RootDir"))
+					_hsmPath = node.InnerText;
+
+			
+			// Start the restore service
+			_restoreService = new HsmRestoreService("HSM Restore", this);
 			_restoreService.StartService();
 
+			// If not "readonly", start the archive service.
 			if (!_partitionArchive.ReadOnly)
 			{
-				_archiveService = new HsmArchiveService("HSM Archive", archive, this);	
+				_archiveService = new HsmArchiveService("HSM Archive", this);	
 				_archiveService.StartService();
 			}			
 		}
 
+		/// <summary>
+		/// Stop the archive.
+		/// </summary>
 		public override void Stop()
 		{
 			if (_restoreService != null)

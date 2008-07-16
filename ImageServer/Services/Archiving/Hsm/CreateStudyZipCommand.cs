@@ -29,82 +29,70 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Model;
+using System;
+using System.IO;
+using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using Ionic.Utils.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
 	/// <summary>
-	/// Service thread for handling archivals.
+	/// <see cref="ServerCommand"/> to create Zip file containing all the dcm files in a study
 	/// </summary>
-	public class HsmArchiveService : ThreadedService
+	public class CreateStudyZipCommand : ServerCommand
 	{
-		private readonly HsmArchive _hsmArchive;
-		private readonly ItemProcessingThreadPool<ArchiveQueue> _threadPool;
+		private readonly string _zipFile;
+		private readonly StudyXml _studyXml;
+		private readonly string _studyFolder;
 
-		public HsmArchiveService(string name, HsmArchive hsmArchive) : base(name)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="zipFile">The path of the zip file to create</param>
+		/// <param name="studyXml">The <see cref="StudyXml"/> file describing the contents of the study.</param>
+		/// <param name="studyFolder">The folder the study is stored in.</param>
+		public CreateStudyZipCommand(string zipFile, StudyXml studyXml, string studyFolder) : base("Create study zip file",true)
 		{
-			_hsmArchive = hsmArchive;
-			_threadPool = new ItemProcessingThreadPool<ArchiveQueue>(HsmSettings.Default.ArchiveThreadCount);
-			_threadPool.ThreadPoolName = "HsmArchive Pool";
-		}
-
-		protected override void Initialize()
-		{
-			// Start the thread pool
-			if (!_threadPool.Active)
-				_threadPool.Start();
+			_zipFile = zipFile;
+			_studyXml = studyXml;
+			_studyFolder = studyFolder;
 		}
 
 		/// <summary>
-		/// Execute the service.
+		/// Do the work.
 		/// </summary>
-		protected override void Run()
+		protected override void OnExecute()
 		{
-			while (true)
+			using (ZipFile zip = new ZipFile(_zipFile))
 			{
-				bool foundResult = false;
+				zip.ForceNoCompression = true;
+				zip.Comment = String.Format("Archive for study {0}", _studyXml.StudyInstanceUid);
 
-				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
-				{
-					IList<ArchiveQueue> list = _hsmArchive.GetArchiveCandidates();
+				// Add the studyXml file
+				zip.AddFile(Path.Combine(_studyFolder,String.Format("{0}.xml",_studyXml.StudyInstanceUid)), String.Empty);
 
-					if (list.Count > 0)
-						foundResult = true;
-
-					foreach (ArchiveQueue queueListItem in list)
+				// Add each sop from the StudyXmlFile
+				foreach (SeriesXml seriesXml in _studyXml)
+					foreach (InstanceXml instanceXml in seriesXml)
 					{
-						HsmStudyArchive archiver = new HsmStudyArchive(_hsmArchive);
-						_threadPool.Enqueue(queueListItem, archiver.Run);
+						string filename = Path.Combine(_studyFolder, seriesXml.SeriesInstanceUid);
+						filename = Path.Combine(filename, String.Format("{0}.dcm", instanceXml.SopInstanceUid));
+
+						zip.AddFile(filename, seriesXml.SeriesInstanceUid);
 					}
 
-					if (!foundResult)
-						if (CheckStop(5000))
-						{
-							Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
-							return;
-						}
-				}
-				else
-				{
-					if (CheckStop(5000))
-					{
-						Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
-						return;
-					}
-				}
+				zip.Save();
 			}
 		}
 
 		/// <summary>
-		/// Stop the service.
+		/// Undo the work.
 		/// </summary>
-		protected override void Stop()
+		protected override void OnUndo()
 		{
-			// NO-OP
+			if (File.Exists(_zipFile))
+				File.Delete(_zipFile);
 		}
 	}
 }

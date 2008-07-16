@@ -32,10 +32,35 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
+	/// <summary>
+	/// Helper class for restoring a study from an <see cref="HsmArchive"/>
+	/// </summary>
 	public class HsmStudyRestore
 	{
+		private readonly HsmArchive _hsmArchive;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="hsmArchive">The HsmArchive to work with.</param>
+		public HsmStudyRestore(HsmArchive hsmArchive)
+		{
+			_hsmArchive = hsmArchive;
+		}
+
+		/// <summary>
+		/// Do the restore.
+		/// </summary>
+		/// <param name="queueItem">The queue item to restore.</param>
+		public void Run(RestoreQueue queueItem)
+		{
+			// Just reschedule
+			_hsmArchive.UpdateRestoreQueue(queueItem,RestoreQueueStatusEnum.Pending,Platform.Time);
+		}
 	}
 }

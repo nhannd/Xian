@@ -28,15 +28,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=0.85.4.369, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+    <Reference Include="Ionic.Utils.Zip, Version=1.5.0.11, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\ReferencedAssemblies\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\..\..\..\ReferencedAssemblies\Ionic.Utils.Zip.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateStudyZipCommand.cs" />
     <Compile Include="HsmArchive.cs" />
     <Compile Include="HsmArchiveService.cs" />
     <Compile Include="HsmRestoreService.cs" />
@@ -47,6 +48,7 @@
     </Compile>
     <Compile Include="HsmStudyArchive.cs" />
     <Compile Include="HsmStudyRestore.cs" />
+    <Compile Include="InsertArchiveStudyStorageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

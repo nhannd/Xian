@@ -36,24 +36,31 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ICSharpCode.SharpZipLib.Tar;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
+	/// <summary>
+	/// Support class for archiving a specific study with an <see cref="HsmArchive"/>.
+	/// </summary>
 	public class HsmStudyArchive
 	{
-		public HsmStudyArchive(PartitionArchive archive)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="hsmArchive">The HsmArchive to work with.</param>
+		public HsmStudyArchive(HsmArchive hsmArchive)
 		{
-			_archive = archive;
+			_hsmArchive = hsmArchive;
 		}
 		private StudyXml _studyXml;
 		private StudyStorageLocation _storageLocation;
 		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-		private ServerPartition _partition;
-		private readonly PartitionArchive _archive;
+		private readonly HsmArchive _hsmArchive;
+		private XmlDocument _archiveXml;
 
 		/// <summary>
 		/// Retrieves the storage location fromthe database for the specified study.
@@ -64,8 +71,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			using (IReadContext read = _store.OpenReadContext())
 			{
-				_partition = ServerPartition.Load(read, _archive.ServerPartitionKey);
-
 				IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
 				parms.StudyStorageKey = queueItem.StudyStorageKey;
@@ -80,77 +85,94 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			}
 		}
 
-		public void UpdateArchiveQueue(ArchiveQueue item, ArchiveQueueStatusEnum status, DateTime scheduledTime)
+		/// <summary>
+		/// Load the StudyXml file.
+		/// </summary>
+		/// <param name="studyXmlFile"></param>
+		public void LoadStudyXml(string studyXmlFile)
 		{
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-			{
-				UpdateArchiveQueueParameters parms = new UpdateArchiveQueueParameters();
-				parms.ArchiveQueueKey = item.GetKey();
-				parms.ArchiveQueueStatusEnum = status;
-				parms.ScheduledTime = scheduledTime;
-
-				IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
-
-				if (broker.Execute(parms))
-					updateContext.Commit();
-			}
-		}
-
-		public void Run(ArchiveQueue queueItem)
-		{
-			GetStudyStorageLocation(queueItem);
-
-			string studyFolder = _storageLocation.GetStudyPath();
-
-			string studyXmlFile =
-				String.Format("{0}{1}{2}.xml", studyFolder, Path.PathSeparator, _storageLocation.StudyInstanceUid);
-
 			using (Stream fileStream = new FileStream(studyXmlFile, FileMode.Open))
 			{
 				XmlDocument theDoc = new XmlDocument();
 
 				StudyXmlIo.Read(theDoc, fileStream);
 
+				_studyXml = new StudyXml(_storageLocation.StudyInstanceUid);
 				_studyXml.SetMemento(theDoc);
 
 				fileStream.Close();
 			}
-
-			string tarFile = String.Format("");
-
-			UpdateArchiveQueue(queueItem,ArchiveQueueStatusEnum.Pending,Platform.Time);
 		}
 
-		public void CreateTar(string archiveName, string studyFolder, string studyXml)
+
+		/// <summary>
+		/// Archive the specified <see cref="ArchiveQueue"/> item.
+		/// </summary>
+		/// <param name="queueItem">The ArchiveQueue item to archive.</param>
+		public void Run(ArchiveQueue queueItem)
 		{
-			Stream outStream = File.Create(archiveName);
+			try
+			{
+				GetStudyStorageLocation(queueItem);
+
+				string studyFolder = _storageLocation.GetStudyPath();
+
+				string studyXmlFile = Path.Combine(studyFolder,String.Format("{0}.xml",  _storageLocation.StudyInstanceUid));
+
+				// Load the study Xml file, this is used to generate the list of dicom files to archive.
+				LoadStudyXml(studyXmlFile);
+
+				// Use the command processor to do the archival.
+				ServerCommandProcessor commandProcessor = new ServerCommandProcessor("HSM Archive");
+
+				_archiveXml = new XmlDocument();
+
+				// Create the study date folder
+				string zipFilename = Path.Combine(_hsmArchive.HsmPath, _storageLocation.StudyFolder);
+				commandProcessor.AddCommand(new CreateDirectoryCommand(zipFilename));
+
+				// Create a folder for the study
+				zipFilename = Path.Combine(zipFilename, _storageLocation.StudyInstanceUid);
+				commandProcessor.AddCommand(new CreateDirectoryCommand(zipFilename));
+
+				// Save the archive data in the study folder, based on a filename with a date / time stamp
+				string filename = String.Format("{0}.zip",Platform.Time.ToString("yyyy-MM-dd-HHmm"));
+				string folderPlusZip = Path.Combine(_storageLocation.StudyFolder,
+				                                    String.Format("{0}", _storageLocation.StudyInstanceUid));
+				folderPlusZip = Path.Combine(folderPlusZip, filename);
+				zipFilename = Path.Combine(zipFilename, filename);
 
 
-			TarArchive archive = TarArchive.CreateOutputTarArchive(outStream, TarBuffer.DefaultBlockFactor);
+				// Create the Xml data to store in the ArchiveStudyStorage table telling
+				// where the archived study is located.
+				XmlElement hsmArchiveElement = _archiveXml.CreateElement("HsmArchive");
+				_archiveXml.AppendChild(hsmArchiveElement);
+				XmlElement pathElement = _archiveXml.CreateElement("Path");
+				hsmArchiveElement.AppendChild(pathElement);
+				pathElement.InnerText = folderPlusZip;
 
-			archive.SetKeepOldFiles(false);
-			archive.AsciiTranslate = false;
+				// Create the Zip file
+				commandProcessor.AddCommand(new CreateStudyZipCommand(zipFilename,_studyXml,studyFolder));
 
-			archive.RootPath = studyFolder;
+				// Update the database.
+				commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey,queueItem.PartitionArchiveKey,queueItem.GetKey(),_archiveXml));
 
-			//archive.SetUserInfo(this.userId, this.userName, this.groupId, this.groupName);
-
-			// Add the studyXml file
-
-			TarEntry xmlEntry = TarEntry.CreateEntryFromFile(studyXml);
-			archive.WriteEntry(xmlEntry, true);
-
-
-			foreach (SeriesXml seriesXml in _studyXml)
-				foreach (InstanceXml instanceXml in seriesXml)
+				if (!commandProcessor.Execute())
 				{
-					string filename = string.Format("{0}{1}{2}{3}{4}.dcm", studyFolder,
-					                                Path.PathSeparator, seriesXml.SeriesInstanceUid, Path.PathSeparator,
-					                                instanceXml.SopInstanceUid);
+					Platform.Log(LogLevel.Error, "Unexpected failure archiving study");
 
-					TarEntry entry = TarEntry.CreateEntryFromFile(filename);
-					archive.WriteEntry(entry, false);
+					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
 				}
+				else
+					Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
+					             _hsmArchive.PartitionArchive.Description);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception archiving study: {0} on {1}",
+				             _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+				_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
+			}
 		}
 	}
 }
