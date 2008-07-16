@@ -71,8 +71,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				_studiesToRetrieve = studiesToRetrieve;
 
 				_thread = new Thread(RetrieveInternal);
-				//_thread.IsBackground = false;
-
 				_thread.Name = String.Format("Retrieve from {0}/{1}:{2}", 
 					remoteAEInfo.HostName, remoteAEInfo.AETitle, remoteAEInfo.Port);
 			}
@@ -120,10 +118,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, "MOVE operation failed: {0}:{1}:{2} -> {3}",
-								base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle);
+					string message = String.Format("C-MOVE operation failed: {0}:{1}:{2} -> {3}",
+										base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle);
+					Platform.Log(LogLevel.Error, e, message);
 
-					OnRetrieveError(e.Message);
+					OnRetrieveError(String.Format("C-MOVE operation failed: {0}:{1}:{2} -> {3}; {4}",
+										base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle, e.Message));
 				}
 				finally
 				{
