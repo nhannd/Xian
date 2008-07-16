@@ -97,80 +97,70 @@ namespace WADOClient
         }
 
         
-        private static void RetrieveImages(string studypath)
+        private static void RetrieveImages(string studyPath)
         {
-            DirectoryInfo dirinfo = new DirectoryInfo(studypath);
-            string studyuid = dirinfo.Name;
+            StreamingClient client = new StreamingClient();
+            int totalFrameCount = 0;
+            
+            DirectoryInfo directoryInfo = new DirectoryInfo(studyPath);
+            string studyUid = directoryInfo.Name;
 
-            RateStatistics framerate = new RateStatistics("Speed", "frame");
+            RateStatistics frameRate = new RateStatistics("Speed", "frame");
             RateStatistics speed = new RateStatistics("Speed", RateType.BYTES);
-
-
-            framerate.Start();
+            AverageRateStatistics averageSpeed = new AverageRateStatistics(RateType.BYTES);
+            ByteCountStatistics totalSize = new ByteCountStatistics("Size");
+            
+            frameRate.Start();
             speed.Start();
 
-            AverageTimeSpanStatistics average = new AverageTimeSpanStatistics();
-            AverageRateStatistics averageSpeed = new AverageRateStatistics(RateType.BYTES);
-            ByteCountStatistics totalsize = new ByteCountStatistics("Size");
-            
-            Console.WriteLine("----------------------------------------------------------");
+            Console.WriteLine("--------------------------------------------------------------------------------------------------------");
 
-            string[] seriesDirs = Directory.GetDirectories(studypath);
-            int frameCount = 0;
+            string[] seriesDirs = Directory.GetDirectories(studyPath);
             foreach(string seriesPath in seriesDirs)
             {
                 DirectoryInfo dirInfo = new DirectoryInfo(seriesPath);
-                string seriesuid = dirInfo.Name;
-                string[] objectuidPath = Directory.GetFiles(seriesPath, "*.dcm");
+                string seriesUid = dirInfo.Name;
+                string[] objectUidPath = Directory.GetFiles(seriesPath, "*.dcm");
                 
-                foreach (string uidPath in objectuidPath)
+                foreach (string uidPath in objectUidPath)
                 {
-                    FileInfo fileinfo = new FileInfo(uidPath);
-                    string uid = fileinfo.Name.Replace(".dcm", "");
-                    Console.Write("{0,-64}...", uid);
+                    FileInfo fileInfo = new FileInfo(uidPath);
+                    string uid = fileInfo.Name.Replace(".dcm", "");
+                    Console.Write("{0,-64}... ", uid);
                                     
                     try
                     {
                         string baseUri = String.Format("http://{0}:{1}/wado", serverHost, serverPort);
-                        StreamingClient client = new StreamingClient(baseUri);
 
-                        StreamingResult result = null;
-                                
                         int frameIndex = 0;
                         
                         switch(type)
                         {
                             case ContentTypes.Dicom:
-                                result = client.RetrieveImage(studyuid, seriesuid, uid, type);
-                                frameCount++;
-                                averageSpeed.AddSample(client.Speed);
-                                totalsize.Value += (ulong)result.ContentStream.Length;
+                                StreamingResultMetaData sopResultMetaData;
+                                client.RetrieveImage(baseUri, studyUid, seriesUid, uid, ContentTypes.Dicom, out sopResultMetaData);
+                                totalFrameCount++;
+                                averageSpeed.AddSample(sopResultMetaData.Speed);
+                                totalSize.Value += (ulong)sopResultMetaData.ContentLength;
                                 break;
 
                             case ContentTypes.RawPixel:
-                                TimeSpanStatistics ts = new TimeSpanStatistics();
+                                TimeSpanStatistics elapsedTime = new TimeSpanStatistics();
                                 ulong instanceSize = 0;
-                                bool lastFrame = false;
-                                
+                                FrameStreamingResultMetaData frameResultMetaData;
                                 do
                                 {
-                                    result = client.RetrieveFrame(studyuid, seriesuid, uid, frameIndex, type);
-                                    frameCount++;
+                                    client.RetrieveFrame(baseUri, studyUid, seriesUid, uid, frameIndex, ContentTypes.Dicom, out frameResultMetaData);
+                                    totalFrameCount++;
                                     frameIndex++;
-                                    ts.Add(client.ElapsedTime);
-                                    averageSpeed.AddSample(client.Speed);
-                                    totalsize.Value += (ulong)result.ContentStream.Length;
-                                    instanceSize += (ulong)result.ContentStream.Length;
-                                    lastFrame = !(result as FrameStreamingResult).HasMore;
-                                    
+                                    averageSpeed.AddSample(frameResultMetaData.Speed);
+                                    totalSize.Value += (ulong)frameResultMetaData.ContentLength;
+                                    instanceSize += (ulong)frameResultMetaData.ContentLength;
 
-                                } while (!lastFrame);
+                                } while (!frameResultMetaData.IsLast);
 
-                                Console.WriteLine("{0} [{1}] in {2}", frameIndex, ByteCountFormatter.Format(instanceSize), ts.FormattedValue);
-                                break;
-
-                            default:
-                                result = client.RetrieveImage(studyuid, seriesuid, uid, type);
+                                elapsedTime.End();
+                                Console.WriteLine("{0,3} frames [{1}] in {2}", frameIndex, ByteCountFormatter.Format(instanceSize), elapsedTime.FormattedValue);
                                 break;
                         }
                         
@@ -191,16 +181,16 @@ namespace WADOClient
                     }
                 }
             }
-            framerate.SetData(frameCount);
-            framerate.End();
-            speed.SetData(totalsize.Value);
+            frameRate.SetData(totalFrameCount);
+            frameRate.End();
+            speed.SetData(totalSize.Value);
             speed.End();
 
 
-            Console.WriteLine("Total {0,3} images [{1,10}] in {2,12}   ==>  [ Speed: {3,12} / {4,12}]", 
-                    frameCount, totalsize.FormattedValue,
-                    TimeSpanFormatter.Format(framerate.ElapsedTime),
-                    framerate.FormattedValue,
+            Console.WriteLine("\nTotal {0,3} image/frames [{1,10}] in {2,12}   ==>  [ Speed: {3,12} / {4,12}]",
+                    totalFrameCount, totalSize.FormattedValue,
+                    TimeSpanFormatter.Format(frameRate.ElapsedTime),
+                    frameRate.FormattedValue,
                     speed.FormattedValue
                     );
 

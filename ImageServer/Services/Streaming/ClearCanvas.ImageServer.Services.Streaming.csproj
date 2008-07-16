@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImageStreaming\Handlers\DicomPixelDataCache.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageStreamingContext.cs" />
     <Compile Include="ImageStreaming\StreamingContext.cs" />
     <Compile Include="ImageStreaming\Converters\PixelConverter.cs" />

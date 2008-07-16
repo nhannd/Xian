@@ -30,35 +30,26 @@ namespace ImageStreaming
 
         private void Retrieve_Click(object sender, EventArgs e)
         {
-            StreamingResult result = null;
-            
-            StreamingClient client = new StreamingClient(BaseUri.Text);
-                
+            StreamingClient client = new StreamingClient();
             try
             {
                 if (RetrieveFrame.Checked)
                 {
-                    result = client.RetrieveFrame( StudyUid.Text, SeriesUid.Text, ObjectUid.Text, int.Parse(Frame.Text), (ContentTypes) ContentTypes.SelectedItem);
+                    FrameStreamingResultMetaData metaData;
+                    client.RetrieveFrame(BaseUri.Text, StudyUid.Text, SeriesUid.Text, ObjectUid.Text, int.Parse(Frame.Text), (ContentTypes)ContentTypes.SelectedItem, out metaData);
+
+                    String msg = String.Format("Type:\t{0}\nSize:\t{1}\nSpeed:\t{2}", metaData.ResponseMimeType,
+                            ByteCountFormatter.Format((ulong)metaData.ContentLength), metaData.Speed.FormattedValue);
+                    MessageBox.Show(msg);
                 }
                 else
                 {
-                    result = client.RetrieveImage(StudyUid.Text, SeriesUid.Text, ObjectUid.Text, (ContentTypes)ContentTypes.SelectedItem);
+                    StreamingResultMetaData metaData;
+                    client.RetrieveImage(BaseUri.Text, StudyUid.Text, SeriesUid.Text, ObjectUid.Text, (ContentTypes)ContentTypes.SelectedItem, out metaData);
+
+                    String msg = String.Format("Type:\t{0}\nSize:\t{1}\nSpeed:\t{2}", metaData.ResponseMimeType, ByteCountFormatter.Format((ulong)metaData.ContentLength), metaData.Speed.FormattedValue);
+                    MessageBox.Show(msg);
                 }
-
-                String msg = String.Format("Status:\t{0}\nType:\t{1}\nSize:\t{2}\nTime:\t{3}\nSpeed:\t{4}",
-                                           result.Status, result.MimeType,
-                                           ByteCountFormatter.Format((ulong) result.ContentStream.Length),
-                                           client.ElapsedTime.FormattedValue, client.Speed.FormattedValue);
-
-                if (result != null)
-                {
-                    Uri.Text = result.Uri.ToString();
-                } 
-                
-                MessageBox.Show(msg);
-
-                
-
             
             }
             catch(WebException ex)

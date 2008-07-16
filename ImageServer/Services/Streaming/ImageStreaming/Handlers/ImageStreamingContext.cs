@@ -27,7 +27,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             {
                 if (_pd == null)
                 {
-                    _pd = DicomPixelData.CreateFrom(ImagePath);
+                    object cached = DicomPixelDataCache.Find(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid);
+                    if (cached!=null)
+                    {
+                        _pd = cached as DicomPixelData;
+                    }
+                    else
+                    {
+                        _pd = DicomPixelData.CreateFrom(ImagePath);
+                        DicomPixelDataCache.Insert(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid, _pd);
+                    }
                     
                 }
                 return _pd;
