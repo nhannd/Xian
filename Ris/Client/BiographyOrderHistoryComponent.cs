@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client
 			_orderDetailComponentHost = new ChildComponentHost(this.Host, _orderDetailComponent);
 			_orderDetailComponentHost.StartComponent();
 
-			_visitDetailComponent = new VisitDetailViewComponent();
+			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderVisitComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
 			_orderVisitComponentHost.StartComponent();
 

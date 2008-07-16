@@ -202,8 +202,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				return IsAddendum
-						? WebResourcesSettings.Default.AddendumEditorPageUrl
-						: WebResourcesSettings.Default.ReportEditorPageUrl;
+						? WebResourcesSettings.Default.DefaultAddendumEditorPageUrl
+						: WebResourcesSettings.Default.DefaultReportEditorPageUrl;
 			}
 		}
 

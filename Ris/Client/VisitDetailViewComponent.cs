@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class VisitDetailViewComponent : DHtmlComponent
+	public abstract class VisitDetailViewComponent : DHtmlComponent
 	{
 		// Internal data contract used for jscript deserialization
 		[DataContract]
@@ -41,10 +41,7 @@ namespace ClearCanvas.Ris.Client
 			return _context;
 		}
 
-		protected virtual string PageUrl
-		{
-			get { return WebResourcesSettings.Default.VisitDetailPageUrl; }
-		}
+		protected abstract string PageUrl { get; }
 
 		public VisitContext Context
 		{

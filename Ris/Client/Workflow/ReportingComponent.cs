@@ -301,7 +301,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_priorReportHost = new ChildComponentHost(this.Host, new PriorReportComponent(this.WorklistItem));
 			_priorReportHost.StartComponent();
 
-			_orderDetailHost = new ChildComponentHost(this.Host, new OrderDetailViewComponent(this.WorklistItem.OrderRef));
+			_orderDetailHost = new ChildComponentHost(this.Host, new ReportingOrderDetailViewComponent(this.WorklistItem.OrderRef));
 			_orderDetailHost.StartComponent();
 
 			_orderAdditionalInfoHost = new ChildComponentHost(this.Host, new OrderAdditionalInfoSummaryComponent());

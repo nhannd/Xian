@@ -34,7 +34,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class OrderDetailViewComponent : DHtmlComponent
+	public abstract class OrderDetailViewComponent : DHtmlComponent
 	{
 		// Internal data contract used for jscript deserialization
 		[DataContract]
@@ -72,10 +72,7 @@ namespace ClearCanvas.Ris.Client
 			return _context;
 		}
 
-		protected virtual string PageUrl
-		{
-			get { return WebResourcesSettings.Default.OrderDetailPageUrl; }
-		}
+		protected abstract string PageUrl { get; }
 
 		public OrderContext Context
 		{

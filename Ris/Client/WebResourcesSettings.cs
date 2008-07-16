@@ -104,17 +104,17 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("orderdetail.htm")]
-		public string OrderDetailPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/order-detail.htm")]
+		public string ReportingOrderDetailPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderDetailPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingOrderDetailPageUrl"]));
 			}
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("biographyorderdetail.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("biography/order-detail.htm")]
 		public string BiographyOrderDetailPageUrl
 		{
 			get
@@ -124,12 +124,12 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("visitdetail.htm")]
-		public string VisitDetailPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("biography/visit-detail.htm")]
+		public string BiographyVisitDetailPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["VisitDetailPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BiographyVisitDetailPageUrl"]));
 			}
 		}
 
@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("biographypatientprofile.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("biography/patient-profile-detail.htm")]
 		public string BiographyPatientProfilePageUrl
 		{
 			get
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("biographyreportdetail.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("biography/report-detail.htm")]
 		public string BiographyReportDetailPageUrl
 		{
 			get
@@ -168,7 +168,7 @@ namespace ClearCanvas.Ris.Client
 		#region ClearCanvas.Ris.Client component settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("bookingpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/booking.htm")]
 		public string BookingFolderSystemUrl
 		{
 			get
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("registrationpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/registration.htm")]
 		public string RegistrationFolderSystemUrl
 		{
 			get
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("technologistpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/performing.htm")]
 		public string TechnologistFolderSystemUrl
 		{
 			get
@@ -222,17 +222,7 @@ namespace ClearCanvas.Ris.Client
 		#region ClearCanvas.Ris.Client.Reporting component settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("addendumeditor.htm")]
-		public string AddendumEditorPageUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["AddendumEditorPageUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("protocollingpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/protocolling.htm")]
 		public string ProtocollingFolderSystemUrl
 		{
 			get
@@ -252,7 +242,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("radiologistpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/reporting.htm")]
 		public string RadiologistFolderSystemUrl
 		{
 			get
@@ -262,17 +252,27 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("reporteditor.htm")]
-		public string ReportEditorPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/default-report-editor.htm")]
+		public string DefaultReportEditorPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportEditorPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DefaultReportEditorPageUrl"]));
 			}
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("reportpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/default-addendum-editor.htm")]
+		public string DefaultAddendumEditorPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DefaultAddendumEditorPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/report-preview.htm")]
 		public string ReportPreviewPageUrl
 		{
 			get
@@ -282,17 +282,17 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("priorreport.htm")]
-		public string ReportViewPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/prior-report.htm")]
+		public string PriorReportViewPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportViewPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PriorReportViewPageUrl"]));
 			}
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("emergencyphysicianpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/emergency.htm")]
 		public string EmergencyPhysicianFolderSystemUrl
 		{
 			get
@@ -302,7 +302,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("noteboxpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/order-notes.htm")]
 		public string EmergencyPhysicianOrderNoteboxFolderSystemUrl
 		{
 			get

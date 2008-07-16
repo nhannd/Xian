@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client
 					_visitList.Items.AddRange(response.ListVisitsResponse.Visits);
 				});
 
-			_visitDetailComponent = new VisitDetailViewComponent(null);
+			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_visitDetailComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
 			_visitDetailComponentHost.StartComponent();
 
