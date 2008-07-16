@@ -237,7 +237,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Accept
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Accept)]
 		public void Accept()
 		{
 			// don't allow accept if there are validation errors
@@ -270,7 +270,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Accept);
 			}
 		}
 
@@ -283,7 +283,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Submit For Approval
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForApproval)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForApproval)]
 		public void SubmitForApproval()
 		{
 			// don't allow accept if there are validation errors
@@ -316,7 +316,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval);
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForApproval);
 			}
 		}
 
@@ -329,7 +329,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Reject
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Reject()
 		{
 			try
@@ -373,7 +373,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Save
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save()
 		{
 			try

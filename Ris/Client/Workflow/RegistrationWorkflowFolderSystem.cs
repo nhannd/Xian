@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Registration)]
+	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Registration)]
 	public class RegistrationWorkflowFolderSystem
 		: RegistrationWorkflowFolderSystemBase<RegistrationWorkflowFolderExtensionPoint, RegistrationWorkflowFolderToolExtensionPoint,
 			RegistrationWorkflowItemToolExtensionPoint>

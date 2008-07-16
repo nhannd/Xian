@@ -486,6 +486,9 @@
   <data name="TitlePatientReconciliation" xml:space="preserve">
     <value>Patient Reconciliation</value>
   </data>
+  <data name="TitlePatientSearch" xml:space="preserve">
+    <value>Patient Search</value>
+  </data>
   <data name="TitlePerformedProcedureComponent" xml:space="preserve">
     <value>Performed Procedure Component</value>
   </data>

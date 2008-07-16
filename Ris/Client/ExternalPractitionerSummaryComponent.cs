@@ -198,11 +198,17 @@ namespace ClearCanvas.Ris.Client
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(
-				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Create));
+				OrPermissions(
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Create));
 			model.Edit.SetPermissibility(
-				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
+				OrPermissions(
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update));
 			model.Delete.SetPermissibility(
-				OrPermissions(AuthorityTokens.Admin.Data.ExternalPractitioner, AuthorityTokens.Workflow.ExternalPractitioner.Update));
+				OrPermissions(
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update));
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
 				SR.TitleMergePractitioner, Merge);

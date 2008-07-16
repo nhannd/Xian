@@ -1168,6 +1168,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient Search.
+        /// </summary>
+        internal static string TitlePatientSearch {
+            get {
+                return ResourceManager.GetString("TitlePatientSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Performed Procedure Component.
         /// </summary>
         internal static string TitlePerformedProcedureComponent {

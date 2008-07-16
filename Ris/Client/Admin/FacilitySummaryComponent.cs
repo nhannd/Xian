@@ -109,9 +109,9 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
-			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
-			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Facility);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
 		}
 
 		protected override bool SupportsDelete

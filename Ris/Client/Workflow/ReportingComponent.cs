@@ -447,7 +447,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SupervisorVisible
 		{
-			get { return !Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting); }
+			get { return !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.UnsupervisedReporting); }
 		}
 
 		#endregion
@@ -516,7 +516,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool VerifyReportVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify); }
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify); }
 		}
 
 		#endregion
@@ -530,7 +530,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
-				if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting) == false && _supervisor == null)
+				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.UnsupervisedReporting) == false && _supervisor == null)
 				{
 					this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
 					return;
@@ -723,7 +723,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				 return (_canCompleteInterpretationAndVerify || _canCompleteVerification)
-					 && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify);
+					 && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify);
 			}
 		}
 

@@ -30,6 +30,14 @@ namespace ClearCanvas.Ris.Client
 		protected abstract IApplicationComponent CreateComponent();
 
 		/// <summary>
+		/// Determines if the workspace that is launched is user-closable or not.
+		/// </summary>
+		protected virtual bool IsUserClosableWorkspace
+		{
+			get { return true; }
+		}
+
+		/// <summary>
 		/// Default clickHandler implementation for <see cref="MenuAction"/> and/or <see cref="ButtonAction"/> attributes.
 		/// These attributes must be specified on subclasses.
 		/// </summary>
@@ -43,10 +51,9 @@ namespace ClearCanvas.Ris.Client
 
 					if (component != null)
 					{
-						_workspace = ApplicationComponent.LaunchAsWorkspace(
-							this.Context.DesktopWindow,
-							component,
-							this.Title);
+						WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, this.Title, null);
+						args.UserClosable = this.IsUserClosableWorkspace;
+						_workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
 						_workspace.Closed += delegate { _workspace = null; };
 					}
 				}

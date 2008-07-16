@@ -46,7 +46,7 @@ using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff Groups", "Launch")]
-	[ActionPermission("launch", AuthorityTokens.Admin.Data.StaffGroup)]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class StaffGroupAdminTool : Tool<IDesktopToolContext>
     {
@@ -142,9 +142,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.StaffGroup);
-			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.StaffGroup);
-			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.StaffGroup);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
 		}
 
 		protected override bool SupportsDelete

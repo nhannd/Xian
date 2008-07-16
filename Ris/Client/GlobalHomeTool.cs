@@ -2,6 +2,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -21,11 +22,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.Initialize();
 
-			// automatically launch home page on startup
-			if (!LoginSession.Current.IsStaff)
-				return;
-
-			Launch();
+			// automatically launch home page on startup, only if current user is a Staff
+			if (LoginSession.Current.IsStaff)
+			{
+				Launch();
+			}
 		}
 
 		public override string Title
@@ -33,9 +34,14 @@ namespace ClearCanvas.Ris.Client
 			get { return "Home"; }
 		}
 
+		protected override bool IsUserClosableWorkspace
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.RestartHomepage); }
+		}
+
 		public bool Visible
 		{
-			get { return LoginSession.Current.IsStaff && this.HasFolderSystems; }
+			get { return LoginSession.Current.IsStaff && this.HasFolderSystems && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.RestartHomepage); }
 		}
 
 		public event EventHandler VisibleChanged

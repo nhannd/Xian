@@ -274,7 +274,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             }
         }
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
         public void SaveDocumentation()
         {
             try
@@ -299,7 +299,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             remove { _documentSaved -= value; }
         }
 
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Documentation.Accept)]
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept)]
 		public void CompleteDocumentation()
         {
             try
@@ -323,7 +323,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     	{
     		get
     		{
-    			return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept);
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept);
     		}
     	}
 

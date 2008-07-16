@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
-	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Create)]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	public class ProtocollingTool : Tool<IReportingWorkflowItemToolContext>
 	{

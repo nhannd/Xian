@@ -190,7 +190,7 @@ namespace ClearCanvas.Ris.Client
 					_emailAddressesSummary.Subject = _staffDetail.EmailAddresses;
 
 					// allow modification of groups only iff the user has StaffGroup admin permissions
-					if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup))
+					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup))
 					{
 						this.Pages.Add(new NavigatorPage("Staff/Groups", _groupsEditor = new StaffStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices)));
 					}

@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [MenuAction("apply", "folderexplorer-items-contextmenu/Open", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Open", "Apply")]
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
-	[ActionPermission("apply", AuthorityTokens.Workflow.Documentation.Create)]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class TechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>

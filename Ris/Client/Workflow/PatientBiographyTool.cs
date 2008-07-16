@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
     [Tooltip("view", "Open patient biography")]
 	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
-	[ActionPermission("view", AuthorityTokens.Workflow.PatientBiography.View)]
+	[ActionPermission("view", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View)]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PreviewToolExtensionPoint))]

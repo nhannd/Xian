@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ButtonAction("apply", "folderexplorer-items-toolbar/Modify Order", "Apply")]
     [IconSet("apply", IconScheme.Colour, "EditToolSmall.png", "EditToolMedium.png", "EditToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", AuthorityTokens.Workflow.Order.Modify)]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Modify)]
 
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]

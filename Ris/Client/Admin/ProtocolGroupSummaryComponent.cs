@@ -45,7 +45,7 @@ using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Protocol Groups", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.Admin.Data.ProtocolGroups)]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProtocolGroups)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ProtocolGroupSummaryTool : Tool<IDesktopToolContext>
     {
@@ -108,9 +108,9 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
-			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
-			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.ProtocolGroups);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProtocolGroups);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProtocolGroups);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProtocolGroups);
 		}
 
 		protected override bool SupportsDelete

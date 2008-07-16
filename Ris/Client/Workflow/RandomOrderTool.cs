@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [Tooltip("apply", "Random Order")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", AuthorityTokens.Development.CreateTestOrder)]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Development.CreateTestOrder)]
 
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]

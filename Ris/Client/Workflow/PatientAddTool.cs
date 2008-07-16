@@ -37,53 +37,57 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using System.Threading;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("apply", "global-menus/Go/New Patient", "Apply")]
-    [Tooltip("apply", "New Patient")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/New Patient", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/New Patient", "Apply")]
+	[ButtonAction("apply", "patientsearch-items-toolbar/New Patient", "Apply")]
+	[MenuAction("apply", "patientsearch-items-contextmenu/New Patient", "Apply")]
+	[Tooltip("apply", "Create a new patient record.")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
 
-    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PatientAddTool : Tool<IDesktopToolContext>
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
+	public class PatientAddTool : Tool<IToolContext>
     {
-        /// <summary>
-        /// Default constructor.  A no-args constructor is required by the
-        /// framework.  Do not remove.
-        /// </summary>
-        public PatientAddTool()
-        {
-        }
-
         /// <summary>
         /// Called by the framework when the user clicks the "apply" menu item or toolbar button.
         /// </summary>
         public void Apply()
         {
-            try
-            {
-                PatientProfileEditorComponent editor = new PatientProfileEditorComponent();
-                ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
-                    this.Context.DesktopWindow,
-                    editor,
-                    SR.TitleNewPatient);
+			if(this.Context is IRegistrationWorkflowItemToolContext)
+				Open(((IRegistrationWorkflowItemToolContext)this.Context).DesktopWindow);
+			else if (this.Context is IPatientSearchToolContext)
+				Open(((IPatientSearchToolContext)this.Context).DesktopWindow);
+		}
 
-                if (result == ApplicationComponentExitCode.Accepted && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientBiography.View))
-                {
-                    // open the patient overview for the newly created patient
-                    Document doc = new PatientBiographyDocument(editor.PatientRef, editor.PatientProfileRef, this.Context.DesktopWindow);
-                    doc.Open();
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-        }
+		private void Open(IDesktopWindow desktopWindow)
+		{
+			try
+			{
+				PatientProfileEditorComponent editor = new PatientProfileEditorComponent();
+				ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
+					desktopWindow,
+					editor,
+					SR.TitleNewPatient);
+
+				if (result == ApplicationComponentExitCode.Accepted && 
+					Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View))
+				{
+					// open the patient overview for the newly created patient
+					Document doc = new PatientBiographyDocument(editor.PatientRef, editor.PatientProfileRef, desktopWindow);
+					doc.Open();
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, desktopWindow);
+			}
+		}
     }
 }

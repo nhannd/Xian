@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     }
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Reporting)]
+	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Reporting)]
 	public class ReportingWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ReportingWorkflowFolderExtensionPoint, ReportingWorkflowFolderToolExtensionPoint,
 			ReportingWorkflowItemToolExtensionPoint>
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Folders.Add(new Folders.Reporting.ToBeVerifiedFolder());
 			this.Folders.Add(new Folders.Reporting.VerifiedFolder());
 
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting))
+			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.UnsupervisedReporting))
 				this.Folders.Add(new Folders.Reporting.ReviewResidentReportFolder());
         }
 

@@ -176,9 +176,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
-			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
-			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Staff);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
 		}
 
 		protected override bool SupportsDelete

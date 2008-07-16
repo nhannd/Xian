@@ -43,7 +43,7 @@ using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Enumerations", "Launch")]
-	[ActionPermission("launch", AuthorityTokens.Admin.Data.Enumeration)]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class EnumerationAdminTool : Tool<IDesktopToolContext>
     {
@@ -166,9 +166,9 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			base.InitializeActionModel(model);
 
-			model.Add.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
-			model.Edit.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
-			model.Delete.SetPermissibility(AuthorityTokens.Admin.Data.Enumeration);
+			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
+			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
 		}
 
 		protected override bool SupportsDelete

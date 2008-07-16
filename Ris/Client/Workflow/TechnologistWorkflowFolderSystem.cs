@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
-	[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FolderSystems.Performing)]
+	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Performing)]
 	public class TechnologistWorkflowFolderSystem
 		: TechnologistWorkflowFolderSystemBase<TechnologistWorkflowFolderExtensionPoint, TechnologistWorkflowFolderToolExtensionPoint,
 			TechnologistWorkflowItemToolExtensionPoint>

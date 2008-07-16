@@ -37,13 +37,13 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Client.Workflow
 {
-	[MenuAction("launch", "global-menus/Go/Patient Search", "Launch")]
-	[Tooltip("launch", "Search Patient")]
-	[IconSet("launch", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class PatientSearchTool : Tool<IDesktopToolContext>
+	[MenuAction("launch", "folderexplorer-items-contextmenu/Patient Search", "Launch")]
+	[Tooltip("launch", "Patient Search")]
+
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+	public class PatientSearchTool : Tool<IRegistrationWorkflowItemToolContext>
 	{
 		class PreviewComponent : DHtmlComponent
 		{
@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client
 					_workspace = ApplicationComponent.LaunchAsWorkspace(
 						this.Context.DesktopWindow,
 						BuildComponent(),
-						SR.TitleSearchPatients);
+						SR.TitlePatientSearch);
 					_workspace.Closed += delegate { _workspace = null; };
 				}
 				else

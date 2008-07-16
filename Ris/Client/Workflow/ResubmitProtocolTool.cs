@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Re-submit for Protocol", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", AuthorityTokens.Workflow.Protocol.Resubmit)]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Resubmit)]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class ResubmitProtocolTool : WorkflowItemTool<RegistrationWorklistItem, IWorkflowItemToolContext<RegistrationWorklistItem>>
 	{

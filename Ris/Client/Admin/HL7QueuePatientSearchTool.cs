@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Admin
     [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
     [Tooltip("view2", "Open patient biography")]
 	[IconSet("view2", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png")]
-	[ActionPermission("view2", AuthorityTokens.Workflow.PatientBiography.View)]
+	[ActionPermission("view2", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View)]
 	[ExtensionOf(typeof(HL7QueueToolExtensionPoint))]
     public class HL7QueuePatientSearchTool : Tool<IHL7QueueToolContext>
     {

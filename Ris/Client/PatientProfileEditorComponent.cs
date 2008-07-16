@@ -137,8 +137,8 @@ namespace ClearCanvas.Ris.Client
 
 					// if the user has permission to either a) create a new patient, or b) update the patient profile, then 
 					// these pages should be displayed
-					if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.PatientProfile.Update)
-						|| Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Create))
+					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientProfile.Update)
+						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create))
 					{
                         this.Pages.Add(new NavigatorPage("Patient", _patientEditor = new PatientProfileDetailsEditorComponent(formData.SexChoices, formData.MrnAssigningAuthorityChoices, formData.HealthcardAssigningAuthorityChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Addresses", _addressesSummary = new AddressesSummaryComponent(formData.AddressTypeChoices)));
@@ -162,8 +162,8 @@ namespace ClearCanvas.Ris.Client
 
 					// if the user has permission to either a) create a new patient, or b) update a patient, then
 					// these pages should be displayed
-					if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Create)
-						|| Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Patient.Update))
+					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)
+						|| Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Update))
                     {
                         this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new PatientNoteSummaryComponent(formData.NoteCategoryChoices)));
                         this.Pages.Add(new NavigatorPage("Patient/Documents", _documentSummary = new MimeDocumentPreviewComponent(true, true)));
