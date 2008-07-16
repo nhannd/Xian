@@ -38,15 +38,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// Panel4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel4;
-        
-        /// <summary>
         /// WorkQueueItemListPanel control.
         /// </summary>
         /// <remarks>
@@ -54,15 +45,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.WorkQueueItemListPanel WorkQueueItemListPanel;
-        
-        /// <summary>
-        /// Panel2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel2;
         
         /// <summary>
         /// WorkQueueSettingsPanel control.
@@ -74,31 +56,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit.WorkQueueSettingsPanel WorkQueueSettingsPanel;
         
         /// <summary>
-        /// Panel3 control.
+        /// Panel5 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel3;
+        protected global::System.Web.UI.WebControls.Panel Panel5;
         
         /// <summary>
-        /// ApplyButton control.
+        /// OKButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button ApplyButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
         
         /// <summary>
-        /// CancelButton control.
+        /// Cancel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button CancelButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton Cancel;
         
         /// <summary>
         /// PreOpenConfirmDialog control.
