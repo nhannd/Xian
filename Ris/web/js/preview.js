@@ -5,7 +5,7 @@
 function getAlertHtml(alertItem, patientName)
 {
 	//return "<img width='50' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "' align='right'/>";
-	return "<img class='alert' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
+	return "<img class='alert' src='" + imagePath + "/" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
 }
 
 function getAlertIcon(alertItem)
@@ -13,17 +13,17 @@ function getAlertIcon(alertItem)
 	switch (alertItem.AlertClassName)
 	{
 		case "NoteAlert":
-			return "Images/AlertNote.png";
+			return "AlertNote.png";
 		case "LanguageAlert":
-			return "Images/AlertLanguage.png";
+			return "AlertLanguage.png";
 		case "ReconciliationAlert":
-			return "Images/AlertReconcile.png";
+			return "AlertReconcile.png";
 		case "IncompleteDemographicDataAlert":
-			return "Images/AlertIncompleteData.png";
+			return "AlertIncompleteData.png";
 		case "InvalidVisitAlert":
-			return "Images/AlertVisit.png";
+			return "AlertVisit.png";
 		default:
-			return "Images/AlertGeneral.png";
+			return "AlertGeneral.png";
 	}
 }
 
@@ -151,7 +151,7 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 					var i = gImagingRequestsTablePractitioners.length;
 					gImagingRequestsTablePractitioners.push(item.OrderingPractitioner);
 					return "<a href=\"javascript:Ris.openPractitionerDetails(gImagingRequestsTablePractitioners["+i+"])\">" 
-						+ "<img src='images/PractitionerDetail.png' border=\"0\"/>"
+						+ "<img src='" + imagePath + "/PractitionerDetail.png' border=\"0\"/>"
 						+ "</a>"; 
 				}
 			}

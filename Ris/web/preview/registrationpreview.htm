@@ -2,17 +2,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
         <title>Registration Preview</title>
-        <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/jsx.js"></script>
-	    <script type="text/javascript" src="js/jsml.js"></script>
-	    <script type="text/javascript" src="js/ui.js"></script>
-	    <script type="text/javascript" src="js/ris.js"></script>
-	    <script type="text/javascript" src="js/preview.js"></script>
-	    <script type="text/javascript" src="js/layout.js"></script>
+        <link href="../css/default.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../js/jsx.js"></script>
+	    <script type="text/javascript" src="../js/jsml.js"></script>
+	    <script type="text/javascript" src="../js/ui.js"></script>
+	    <script type="text/javascript" src="../js/ris.js"></script>
+	    <script type="text/javascript" src="../js/preview.js"></script>
+	    <script type="text/javascript" src="../js/layout.js"></script>
 	    <script type="text/javascript" >
+			var imagePath = "../images";
+
 		    function onBodyLoad()
-		    {		        
+		    {
 			    scaleWidth();
+				
 		        if(!Ris)
 		            return;
 	            try

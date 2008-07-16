@@ -448,9 +448,9 @@ var Table = {
 					}
 
 					// launch calendar on click
-					var findButtonTime = document.createElement("input");
-					findButtonTime.type = "button";
-					findButtonTime.value = "...";
+					var findButtonTime = document.createElement("span");
+					findButtonTime.innerText = "     ";
+					findButtonTime.className = "datePickerButton";
 					td.appendChild(findButtonTime);
 					findButtonTime.onclick = function() 
 					{ 

@@ -1,21 +1,21 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Notes Preview</title>
-	<link href="css/default.css" rel="stylesheet" type="text/css" />
-	<script type="text/javascript" src="js/jsx.js"></script>
-	<script type="text/javascript" src="js/jsml.js"></script>
-	<script type="text/javascript" src="js/ui.js"></script>
-	<script type="text/javascript" src="js/ris.js"></script>
-	<script type="text/javascript" src="js/preview.js"></script>
-	<script type="text/javascript" src="js/layout.js"></script>
-	<script type="text/javascript" src="js/collapse.js"></script>
+	<title>Emergency Physician Preview</title>
+	<link href="../css/default.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="../js/jsx.js"></script>
+	<script type="text/javascript" src="../js/jsml.js"></script>
+	<script type="text/javascript" src="../js/ui.js"></script>
+	<script type="text/javascript" src="../js/ris.js"></script>
+	<script type="text/javascript" src="../js/preview.js"></script>
+	<script type="text/javascript" src="../js/layout.js"></script>
+	<script type="text/javascript" src="../js/collapse.js"></script>
 	<script type="text/javascript" >
 		var errorProvider = new ErrorProvider();
+		var imagePath = "../images";
 
 		function onBodyLoad()
 		{
-
 			scaleWidth();
 
 			if(!Ris)
@@ -24,8 +24,8 @@
 			try
 
 			{
-				var healchareContext = Ris.getHealthcareContext();
-				if (healchareContext == null)
+				var worklistItem = Ris.getHealthcareContext();
+				if (worklistItem == null)
 				{
 					Field.setValue($("myForm"), "");
 					return;
@@ -36,20 +36,21 @@
 				{
  					GetPatientProfileDetailRequest:
 						{
-							PatientProfileRef: healchareContext.PatientProfileRef,
+							PatientProfileRef: worklistItem.PatientProfileRef,
 							IncludeAlerts: true
 						},
 					GetOrderDetailRequest:
 						{
-							OrderRef: healchareContext.OrderRef,
+							OrderRef: worklistItem.OrderRef,
 							IncludeAlerts: true,
 							IncludeNotes: true,
+							NoteCategoriesFilter: ["PrelimDiagnosis"],
 
 							// only include ordered procedures if report not yet created
-							IncludeProcedures: (healchareContext.ReportRef == null)
+							IncludeProcedures: (worklistItem.ReportRef == null)
 						},
 					// only request the report detail if there is a report     
-					GetReportDetailRequest: healchareContext.ReportRef == null ? null : { ReportRef: healchareContext.ReportRef }
+					GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
 				};
 
 				var service = Ris.getPatientDataService();
@@ -89,7 +90,6 @@
 				var orderDetail = data.GetOrderDetailResponse.Order;
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 
-
 				// update Imaging Consultation Overview
 				Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 				Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
@@ -99,7 +99,7 @@
 
 				var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;
 
-				var selectedProcedure = procedures.find(function(rp) { return rp.ProcedureRef == healchareContext.ProcedureRef; });
+				var selectedProcedure = procedures.find(function(rp) { return rp.ProcedureRef == worklistItem.ProcedureRef; });
 				if (selectedProcedure)
 				{
 					Field.setValue($("procedure"), selectedProcedure.Type.Name);
