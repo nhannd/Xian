@@ -193,8 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
             StudyDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
-            ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value='';" +
-                                                 "document.getElementById('" + StudyDateCalendarExtender.ClientID + "').SelectedDate=null; return false;";
+            ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
             
             // setup child controls
             GridPagerBottom.ItemCountVisible = false;

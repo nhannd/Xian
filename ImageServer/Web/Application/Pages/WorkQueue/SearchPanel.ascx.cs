@@ -101,8 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
             ScheduleCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
-            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value='';" +
-                                                    "document.getElementById('" + ScheduleCalendarExtender.ClientID + "').SelectedDate=null; return false;";
+            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
 
             // setup child controls
             GridPagerTop.PageCountVisible = false;
