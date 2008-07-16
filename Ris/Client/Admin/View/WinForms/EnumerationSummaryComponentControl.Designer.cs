@@ -89,7 +89,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._enumerationValuesTableView.ReadOnly = false;
 			this._enumerationValuesTableView.Size = new System.Drawing.Size(623, 382);
 			this._enumerationValuesTableView.TabIndex = 2;
-			this._enumerationValuesTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._enumerationValuesTableView.ItemDoubleClicked += new System.EventHandler(this._enumerationValuesTableView_ItemDoubleClicked);
 			// 
 			// tableLayoutPanel1

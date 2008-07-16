@@ -50,7 +50,6 @@ namespace ClearCanvas.Ris.Client
     {
         private readonly PatientNoteDetail _note;
         private readonly List<PatientNoteCategorySummary> _noteCategoryChoices;
-        private readonly DateTime? _today;
 
         public PatientNoteEditorComponent(PatientNoteDetail noteDetail, List<PatientNoteCategorySummary> noteCategoryChoices)
         {

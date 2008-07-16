@@ -98,7 +98,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._worklistClassTableView.ReadOnly = false;
             this._worklistClassTableView.Size = new System.Drawing.Size(426, 295);
             this._worklistClassTableView.TabIndex = 2;
-            this._worklistClassTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._worklistClassTableView.ItemDoubleClicked += new System.EventHandler(this._worklistClassTableView_ItemDoubleClicked);
             // 
             // label1

@@ -143,7 +143,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffTableView.ReadOnly = false;
 			this._staffTableView.Size = new System.Drawing.Size(562, 309);
 			this._staffTableView.TabIndex = 1;
-			this._staffTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._staffTableView.ItemDoubleClicked += new System.EventHandler(this._staffTableView_ItemDoubleClicked);
 			// 
 			// tableLayoutPanel1

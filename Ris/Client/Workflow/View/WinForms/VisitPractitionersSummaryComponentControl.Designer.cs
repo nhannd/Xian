@@ -79,7 +79,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             this._visitPractitioners.TabIndex = 0;
             this._visitPractitioners.Table = null;
             this._visitPractitioners.ToolbarModel = null;
-            this._visitPractitioners.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._visitPractitioners.SelectionChanged += new System.EventHandler(this._visitPractitioners_SelectionChanged);
             // 
             // VisitPractitionersSummaryComponentControl

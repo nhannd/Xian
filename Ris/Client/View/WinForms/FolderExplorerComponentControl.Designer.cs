@@ -78,7 +78,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folderTreeView.ShowToolbar = false;
 			this._folderTreeView.Size = new System.Drawing.Size(183, 500);
 			this._folderTreeView.TabIndex = 1;
-			this._folderTreeView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			// 
 			// FolderExplorerComponentControl
 			// 

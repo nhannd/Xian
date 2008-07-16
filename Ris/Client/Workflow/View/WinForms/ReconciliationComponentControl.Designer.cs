@@ -92,7 +92,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reconciliationTableView.Size = new System.Drawing.Size(485, 89);
 			this._reconciliationTableView.TabIndex = 1;
 			this._reconciliationTableView.TabStop = false;
-			this._reconciliationTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._reconciliationTableView.SelectionChanged += new System.EventHandler(this._reconciliationTableView_SelectionChanged);
 			// 
 			// label1
@@ -179,7 +178,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._targetTableView.Size = new System.Drawing.Size(485, 89);
 			this._targetTableView.TabIndex = 0;
 			this._targetTableView.TabStop = false;
-			this._targetTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._targetTableView.SelectionChanged += new System.EventHandler(this._targetTableView_SelectionChanged);
 			// 
 			// label2

@@ -82,8 +82,6 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _itemsTableChanged;
 		private event EventHandler _totalItemCountChanged;
 
-		private ActionModelNode _menuModel;
-
 		private IResourceResolver _resourceResolver;
 		private bool _isOpen;
 

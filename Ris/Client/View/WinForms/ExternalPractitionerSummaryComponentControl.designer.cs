@@ -83,7 +83,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._practitionerTableView.ReadOnly = false;
 			this._practitionerTableView.Size = new System.Drawing.Size(562, 359);
 			this._practitionerTableView.TabIndex = 1;
-			this._practitionerTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._practitionerTableView.Load += new System.EventHandler(this._staffs_Load);
 			this._practitionerTableView.ItemDoubleClicked += new System.EventHandler(this._staffs_ItemDoubleClicked);
 			// 

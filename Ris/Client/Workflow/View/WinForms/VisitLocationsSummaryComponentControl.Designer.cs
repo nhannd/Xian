@@ -79,7 +79,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             this._locations.TabIndex = 0;
             this._locations.Table = null;
             this._locations.ToolbarModel = null;
-            this._locations.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._locations.SelectionChanged += new System.EventHandler(this._locations_SelectionChanged);
             // 
             // VisitLocationsSummaryComponentControl

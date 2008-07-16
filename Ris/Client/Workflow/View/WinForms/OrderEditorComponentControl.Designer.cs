@@ -328,7 +328,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._proceduresTableView.ShowToolbar = false;
 			this._proceduresTableView.Size = new System.Drawing.Size(477, 295);
 			this._proceduresTableView.TabIndex = 0;
-			this._proceduresTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
 			// 
 			// _orderNotesTab
@@ -384,7 +383,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._recipientsTableView.ShowToolbar = false;
 			this._recipientsTableView.Size = new System.Drawing.Size(469, 182);
 			this._recipientsTableView.TabIndex = 2;
-			this._recipientsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// panel2
 			// 

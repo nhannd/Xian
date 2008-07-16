@@ -159,7 +159,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._queue.ReadOnly = false;
 			this._queue.Size = new System.Drawing.Size(584, 174);
 			this._queue.TabIndex = 1;
-			this._queue.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._queue.SelectionChanged += new System.EventHandler(this._queue_SelectionChanged);
 			// 
 			// tableLayoutPanel3

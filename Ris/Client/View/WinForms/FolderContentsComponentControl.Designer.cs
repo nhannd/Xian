@@ -74,7 +74,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folderContentsTableView.SortButtonVisible = true;
 			this._folderContentsTableView.StatusBarVisible = true;
 			this._folderContentsTableView.TabIndex = 0;
-			this._folderContentsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
 			this._folderContentsTableView.ItemDoubleClicked += new System.EventHandler(this._folderContentsTableView_ItemDoubleClicked);
 			// 

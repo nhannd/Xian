@@ -42,7 +42,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._worklistItemTableView.ShowToolbar = false;
 			this._worklistItemTableView.Size = new System.Drawing.Size(462, 271);
 			this._worklistItemTableView.TabIndex = 1;
-			this._worklistItemTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _okButton
 			// 

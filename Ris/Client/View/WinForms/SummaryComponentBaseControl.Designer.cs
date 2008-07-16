@@ -75,7 +75,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._summaryTableView.ReadOnly = false;
 			this._summaryTableView.Size = new System.Drawing.Size(644, 457);
 			this._summaryTableView.TabIndex = 0;
-			this._summaryTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
 			// 
 			// _cancelButton

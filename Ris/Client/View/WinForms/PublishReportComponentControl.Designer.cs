@@ -86,7 +86,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableView.ShowToolbar = false;
 			this._recipientsTableView.Size = new System.Drawing.Size(410, 136);
 			this._recipientsTableView.TabIndex = 2;
-			this._recipientsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _consultantContactPoint
 			// 

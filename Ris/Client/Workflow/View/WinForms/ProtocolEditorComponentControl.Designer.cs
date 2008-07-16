@@ -169,7 +169,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._procedurePlanSummary.ShowToolbar = false;
 			this._procedurePlanSummary.Size = new System.Drawing.Size(521, 81);
 			this._procedurePlanSummary.TabIndex = 0;
-			this._procedurePlanSummary.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _urgency
 			// 

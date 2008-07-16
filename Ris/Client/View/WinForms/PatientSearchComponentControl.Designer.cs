@@ -62,7 +62,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchResults.ReadOnly = false;
 			this._searchResults.Size = new System.Drawing.Size(361, 234);
 			this._searchResults.TabIndex = 2;
-			this._searchResults.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			this._searchResults.ItemDoubleClicked += new System.EventHandler(this._searchResults_ItemDoubleClicked);
 			// 
 			// tableLayoutPanel1

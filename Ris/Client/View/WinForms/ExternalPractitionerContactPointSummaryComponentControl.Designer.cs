@@ -75,7 +75,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._contactPointTableView.ReadOnly = false;
 			this._contactPointTableView.Size = new System.Drawing.Size(392, 315);
 			this._contactPointTableView.TabIndex = 0;
-			this._contactPointTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._contactPointTableView.ItemDoubleClicked += new System.EventHandler(this._contactPointTableView_ItemDoubleClicked);
 			// 
 			// _okButton

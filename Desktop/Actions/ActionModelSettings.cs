@@ -330,7 +330,6 @@ namespace ClearCanvas.Desktop.Actions
         /// <returns>an <see cref="ActionModelNode"/> representing the root of the action model</returns>
 		private ActionModelRoot Build(string site, XmlElement xmlActionModel, IDictionary<string, IAction> actions)
         {
-        	int separatorCount = 0;
 			ActionModelRoot model = new ActionModelRoot(site);
         	List<XmlElement> actionNodes = CollectionUtils.Cast<XmlElement>(xmlActionModel.ChildNodes);
 

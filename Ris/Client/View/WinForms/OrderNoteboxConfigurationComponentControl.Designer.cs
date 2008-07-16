@@ -78,7 +78,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._foldersTableView.ReadOnly = false;
 			this._foldersTableView.Size = new System.Drawing.Size(461, 248);
 			this._foldersTableView.TabIndex = 3;
-			this._foldersTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _addGroupButton
 			// 

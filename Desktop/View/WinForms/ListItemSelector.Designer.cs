@@ -141,7 +141,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._availableItems.ReadOnly = false;
 			this._availableItems.Size = new System.Drawing.Size(248, 395);
 			this._availableItems.TabIndex = 0;
-			this._availableItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._availableItems.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
 			// 
 			// groupBox2
@@ -169,7 +168,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._selectedItems.ReadOnly = false;
 			this._selectedItems.Size = new System.Drawing.Size(248, 395);
 			this._selectedItems.TabIndex = 0;
-			this._selectedItems.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._selectedItems.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
 			// 
 			// ListItemSelector

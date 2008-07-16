@@ -68,7 +68,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._procedureTypeGroupTableView.ReadOnly = false;
 			this._procedureTypeGroupTableView.Size = new System.Drawing.Size(512, 292);
 			this._procedureTypeGroupTableView.TabIndex = 1;
-			this._procedureTypeGroupTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._procedureTypeGroupTableView.ItemDoubleClicked += new System.EventHandler(this._procedureTypeGroupTableView_ItemDoubleClicked);
 			// 
 			// panel1
