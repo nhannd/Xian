@@ -114,14 +114,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private volatile bool _isDisposed = false;
 		private event EventHandler _disposing;
 		private volatile Series _parentSeries;
-		protected volatile bool _loaded;
+		protected volatile bool _loaded = false;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="Sop"/>.
 		/// </summary>
 		protected Sop()
 		{
-
 		}
 
 		/// <summary>

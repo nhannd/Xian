@@ -17,6 +17,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 	{
 		private IEnumerator<DicomFile> _dicomFiles;
 		private string _host;
+		private StreamingPrefetchingStrategy _prefetcher;
 
 		#region IStudyLoader Members
 
@@ -45,6 +46,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				return new StreamingImageSop(_dicomFiles.Current, _host);
 		}
 
+		public void PrefetchPixelData(IImageViewer imageViewer)
+		{
+			if (_prefetcher == null)
+				_prefetcher = new StreamingPrefetchingStrategy(imageViewer);
+		}
+
 		#endregion
 
 		private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
@@ -56,7 +63,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			headerParams.ServerAETitle = ae.AETitle;
 			headerParams.ReferenceID = Guid.NewGuid().ToString();
 
-			string uri = String.Format("http://{0}:50221/HeaderRetrieval/HeaderRetrieval", _host);
+			//string uri = String.Format("http://{0}:50221/HeaderRetrieval/HeaderRetrieval", _host);
+			string uri = String.Format("http://{0}:60221/HeaderRetrieval/HeaderRetrieval", _host);
 			EndpointAddress endpoint = new EndpointAddress(uri);
 
 			HeaderStreamingServiceClient client = 

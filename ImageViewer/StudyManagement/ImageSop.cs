@@ -66,7 +66,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		protected ImageSop()
 		{
-			_loaded = false;
 		}
 
 		/// <summary>

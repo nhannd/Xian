@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class LocalImageSop : ImageSop
 	{
+		// is this lock necessary?  doesn't seem so.
 		private readonly object _syncLock = new object();
 		
 		/// <summary>

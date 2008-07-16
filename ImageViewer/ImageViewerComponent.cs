@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer
 		private ILayoutManager _layoutManager;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
-		private static readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
+		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
 
 		private event EventHandler _closingEvent;
 
@@ -569,6 +569,8 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			VerifyLoad(numberOfImages, failedImages);
+
+			studyLoader.PrefetchPixelData(this);
 		}
 
 		/// <summary>

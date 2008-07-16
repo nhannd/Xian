@@ -98,5 +98,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 			return localImage;
         }
+
+		public void PrefetchPixelData(IImageViewer imageViewer)
+    	{
+    		// Do nothing; don't prefetch pixel data.
+    	}
     }
 }

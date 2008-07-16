@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Net;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -18,11 +17,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_host = host;
 		}
 
-		private StreamingImageSop StreamingParentImageSop
-		{
-			get { return this.ParentImageSop as StreamingImageSop; }			
-		}
-
 		public override byte[] GetNormalizedPixelData()
 		{
 			if (_pixelData == null)
@@ -31,33 +25,26 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				{
 					if (_pixelData == null)
 					{
-						if (this.StreamingParentImageSop.DicomPixelData == null)
-						{
-							//TimeSpanStatistics timer = new TimeSpanStatistics();
+						//TimeSpanStatistics timer = new TimeSpanStatistics();
 
-							HttpWebResponse response = GetWadoReponse();
+						//timer.Start();
+						HttpWebResponse response = GetWadoReponse();
+						//timer.End();
 
-							if (response.StatusCode != HttpStatusCode.OK)
-								throw new Exception("Unable to connect to WADO server");
+						//string str = String.Format("GetWadoReponse: {0} ms", timer.Value.TotalMilliseconds);
+						//Platform.Log(LogLevel.Info, str);
 
-							//timer.Start();
-							MemoryStream stream = ReadWadoReponse(response);
-							//timer.End();
+						if (response.StatusCode != HttpStatusCode.OK)
+							throw new Exception("Unable to connect to WADO server");
 
-							//string str = String.Format("ReadWadoReponse: {0} ms", timer.Value.TotalMilliseconds);
-							//Platform.Log(LogLevel.Info, str);
+						//timer.Reset();
 
-							//timer.Start();
-							this.StreamingParentImageSop.DicomPixelData = new DicomFile();
-							this.StreamingParentImageSop.DicomPixelData.Load(stream);
-							stream.Close();
-							//timer.End();
+						//timer.Start();
+						_pixelData = ReadWadoReponse(response);
+						//timer.End();
 
-							//str = String.Format("DicomFile.Load: {0} ms", timer.Value.TotalMilliseconds);
-							//Platform.Log(LogLevel.Info, str);
-						}
-
-						_pixelData = GetNormalizedPixelData(this.StreamingParentImageSop.DicomPixelData);
+						//str = String.Format("ReadWadoReponse: {0} ms", timer.Value.TotalMilliseconds);
+						//Platform.Log(LogLevel.Info, str);
 					}
 				}
 			}
@@ -65,36 +52,38 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return _pixelData;
 		}
 
-		private MemoryStream ReadWadoReponse(HttpWebResponse response)
+		private byte[] ReadWadoReponse(HttpWebResponse response)
 		{
 			Stream stream = response.GetResponseStream();
-			int bufferSize = 1 * 1024 * 1024;// OptimizeBufferSize(response.ContentLength);
-			byte[] buffer = new byte[bufferSize];
-			MemoryStream memStream = new MemoryStream();
+			byte[] buffer = new byte[response.ContentLength];
 			int bytesRead = 0;
+			int offset = 0;
 
 			do
 			{
-				bytesRead = stream.Read(buffer, 0, buffer.Length);
-				memStream.Write(buffer, 0, bytesRead);
-			} 
+				bytesRead = stream.Read(buffer, offset, buffer.Length - offset);
+				offset += bytesRead;
+			}
 			while (bytesRead > 0);
 
 			stream.Close();
 
-			return memStream;
+			return buffer;
 		}
 
 		private HttpWebResponse GetWadoReponse()
 		{
-			string url = "http://{3}:{4}/wado?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}&contentType=application%2Fdicom";
+			string url =
+				"http://{4}:{5}/wado?requesttype=WADO&contentType=application%2Fclearcanvas&studyUID={0}&seriesUID={1}&objectUID={2}&frameNumber={3}";
+
 			url = String.Format(
 				url,
 				ParentImageSop.StudyInstanceUID,
 				ParentImageSop.SeriesInstanceUID,
 				ParentImageSop.SopInstanceUID,
+				FrameNumber - 1,
 				_host,
-				1000);
+				2000);
 
 			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
 			request.Accept = "*/*";

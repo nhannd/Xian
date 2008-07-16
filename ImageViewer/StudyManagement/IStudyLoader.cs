@@ -87,6 +87,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// in this method for performance reasons.
 		/// </remarks>
 		ImageSop LoadNextImage();
+
+		void PrefetchPixelData(IImageViewer imageViewer);
     }
 
 }
