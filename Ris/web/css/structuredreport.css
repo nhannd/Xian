@@ -17,14 +17,23 @@
 	width:100%;
 }
 
-.wellBeingBpsColumn .divCell
+
+.bpsTable .divCell
 {
 	width:40%;
 }
 
-.wellBeingBpsColumn .divCell *
+.bpsTable .divCell *
 {
 	width:100%;
+}
+
+.bpsAfiTable .divCel *
+{
+    padding-right:0em;
+    padding-left:0em;
+    margin-right:0em;
+    margin-left:0em;
 }
 
 .extremitiesTable .divCell

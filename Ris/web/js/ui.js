@@ -355,7 +355,7 @@ var Table = {
 			{
 				var input = document.createElement("input");
 				td.appendChild(input);
-				td._setCellDisplayValue = function(value) { input.value = (value || ""); }
+				td._setCellDisplayValue = function(value) { input.value = value !== undefined ? value : ""; }
 				if(column.size) input.size = column.size;
 				
 				// respond to every keystroke
@@ -370,7 +370,7 @@ var Table = {
 				var input = document.createElement("textarea");
 				td.appendChild(input);
 				  td.style.height = "100%";  // overwrite default styles heights so whole text area is visible
-				td._setCellDisplayValue = function(value) { input.value = (value || ""); }
+				td._setCellDisplayValue = function(value) { input.value = value !== undefined ? value : ""; }
 				if(column.cols) input.cols = column.cols;
 				  if(column.rows) input.rows = column.rows;
 				  if(column.readOnly) input.readOnly = column.readOnly;
@@ -512,7 +512,7 @@ var Table = {
 			
 				var input = document.createElement("select");
 				td.appendChild(input);
-				td._setCellDisplayValue = function(value) { input.value = (value || ""); }
+				td._setCellDisplayValue = function(value) { input.value = value !== undefined ? value : ""; }
 				if(column.size) input.style.width = column.size + "pc"; // set width in chars
 				
 				// choices may be an array, or a function that returns an array
@@ -585,7 +585,7 @@ var Table = {
 				
 				var input = document.createElement("input");
 				td.appendChild(input);
-				td._setCellDisplayValue = function(value) { input.value = (value || ""); }
+				td._setCellDisplayValue = function(value) { input.value = value !== undefined ? value : "";; }
 				if(column.size) input.size = column.size;
 				
 				input.onkeyup = function()
@@ -769,12 +769,12 @@ var Field =
 {
 	setValue: function(element, value)
 	{
-		element.innerHTML = value ? (value + "").escapeHTML() : "";
+		element.innerHTML = value !== undefined  ? (value + "").escapeHTML() : "";
 	},
 
 	setPreFormattedValue: function(element, value)
 	{
-		element.innerHTML = value ? (value + "").replaceLineBreak() : "";
+		element.innerHTML = value !== undefined ? (value + "").replaceLineBreak() : "";
 	},
 
 	getValue: function(element)

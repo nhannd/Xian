@@ -202,6 +202,7 @@ a.collapsibleHeading {
 .readonlyField {
 	font-style: italic;
 	padding-top:0.3em;
+    margin-bottom:0.28em;
 }
 
 #patientNotesTable .checkedDivCell {

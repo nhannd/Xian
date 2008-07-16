@@ -351,6 +351,9 @@ var StructuredReportForm = {
 		html+= 	"				<table id=\"bpsTable\">";
 		html+= 	"					<tr><td class=\"tableheading\">BPS</td></tr>";
 		html+= 	"				</table>";
+		html+= 	"				<table id=\"bpsAfiTable\">";
+		html+= 	"					<tr><td class=\"tableheading\"></td></tr>";
+		html+= 	"				</table>";
 		html+= 	"			</div>";
 		html+= 	"			<div class=\"wellBeingDopplerColumn\" style=\"{width:48%;float:right;}\">";
 		html+= 	"				<div id=\"dopplerHeading\" class=\"tableheading\">Doppler</div>";
@@ -1267,9 +1270,10 @@ var WellBeingForm = {
 			},
 			{
 				label: "Amount",
-				cellType: "text",
-				getValue: function(item) { return item.afvAmount; },
-				setValue: function(item, value) { item.afvAmount = value; },
+				cellType: "choice",
+                choices: ["0", "2"],
+				getValue: function(item) { return item.afvAmount = item.afvAmount || 0; },
+				setValue: function(item, value) { item.afvAmount = Number(value); },
 				getError: function(item) { return null; }
 			},
 			{
@@ -1280,46 +1284,51 @@ var WellBeingForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "AFI (A+B+C+D)",
-				cellType: "readonly",
-				getValue: function(item) { return "TODO"; },
-				setValue: function(item, value) { return; },
-				getError: function(item) { return null; }
-			},
-			{
 				label: "FM",
-				cellType: "text",
-				getValue: function(item) { return item.fm; },
-				setValue: function(item, value) { item.fm = value; },
+				cellType: "choice",
+                choices: ["0", "2"],
+				getValue: function(item) { return item.fm = item.fm || 0; },
+				setValue: function(item, value) { item.fm = Number(value); },
 				getError: function(item) { return null; }
 			},
 			{
 				label: "FT",
-				cellType: "text",
-				getValue: function(item) { return item.ft; },
-				setValue: function(item, value) { item.ft = value; },
+				cellType: "choice",
+                choices: ["0", "2"],
+				getValue: function(item) { return item.ft = item.ft || 0; },
+				setValue: function(item, value) { item.ft = Number(value); },
 				getError: function(item) { return null; }
 			},
 			{
 				label: "FBM",
-				cellType: "text",
-				getValue: function(item) { return item.fbm; },
-				setValue: function(item, value) { item.fbm = value; },
+				cellType: "choice",
+                choices: ["0", "2"],
+				getValue: function(item) { return item.fbm = item.fbm || 0; },
+				setValue: function(item, value) { item.fbm = Number(value); },
 				getError: function(item) { return null; }
 			},
 			{
 				label: "NST",
-				cellType: "text",
-				getValue: function(item) { return item.nst; },
-				setValue: function(item, value) { item.nst = value; },
+				cellType: "choice",
+                choices: ["N/A", "0", "2"],
+				getValue: function(item) { return item.nst = (item.nst || item.nst === 0) ? item.nst : "N/A"; },
+				setValue: function(item, value) { item.nst = Number(value); },
 				getError: function(item) { return null; }
 			},
 			{
 				label: "BPS",
 				cellType: "readonly",
-				getValue: function(item) { return "TODO"; },
-				setValue: function(item, value) { return; },
-				getError: function(item) { return null; }
+				getValue: function(item) 
+                { 
+                    var of = "/8";
+                    item.bpsTotal = item.afvAmount + item.fm + item.ft + item.fbm;
+                    if(!isNaN(item.nst))
+                    {
+                        item.bpsTotal += item.nst;
+                        of = "/10";
+                    }
+                    return item.bpsTotal + of; 
+                }
 			},
 			{
 				label: "BPS Rating",
@@ -1332,7 +1341,71 @@ var WellBeingForm = {
 		]);
 
 		bpsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-		
+
+		var bpsAfiTable = Table.createTable($("bpsAfiTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		[
+			{
+				label: "AFI",
+				cellType: "text",
+                size: 5,
+				getValue: function(item) { return item.afiA = item.afiA || 0; },
+				setValue: function(item, value) { item.afiA = !isNaN(value) ? Number(value) : 0; },
+				getError: function(item) { return null; }
+			},
+			{
+				label: "",
+				cellType: "readonly",
+				getValue: function(item) { return "+"; }
+			},
+			{
+				label: "",
+				cellType: "text",
+                size: 5,
+				getValue: function(item) { return item.afiB = item.afiB || 0; },
+				setValue: function(item, value) { item.afiB = !isNaN(value) ? Number(value) : 0; },
+				getError: function(item) { return null; }
+			},
+			{
+				label: "",
+				cellType: "readonly",
+				getValue: function(item) { return "+"; }
+			},
+			{
+				label: "",
+				cellType: "text",
+                size: 5,
+				getValue: function(item) { return item.afiC = item.afiC || 0; },
+				setValue: function(item, value) { item.afiC = !isNaN(value) ? Number(value) : 0; },
+				getError: function(item) { return null; }
+			},
+			{
+				label: "",
+				cellType: "readonly",
+				getValue: function(item) { return "+"; }
+			},
+			{
+				label: "",
+				cellType: "text",
+                size: 5,
+				getValue: function(item) { return item.afiD = item.afiD || 0; },
+				setValue: function(item, value) { item.afiD = !isNaN(value) ? Number(value) : 0; },
+				getError: function(item) { return null; }
+			},
+			{
+				label: "",
+				cellType: "readonly",
+				getValue: function(item) { return "="; }
+			},
+			{
+				label: "AFI Total",
+				cellType: "readonly",
+				getValue: function(item) { return item.afiTotal = item.afiA + item.afiB + item.afiC + item.afiD; },
+				getError: function(item) { return null; }
+			}
+		]);
+
+		bpsAfiTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+
 		var dopplerUmbilicalArteryTable = Table.createTable($("dopplerUmbilicalArteryTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[
 			{
@@ -1478,6 +1551,7 @@ var WellBeingForm = {
 		this._onWellBeingChanged(this._data[fetus].assessed == "Assessed");
 		
 		bpsTable.bindItems([this._data[fetus]]);
+		bpsAfiTable.bindItems([this._data[fetus]]);
 		dopplerUmbilicalArteryTable.bindItems([this._data[fetus]]);
 		dopplerUmbilicalVeinTable.bindItems([this._data[fetus]]);
 		dopplerUterineArteryTable.bindItems([this._data[fetus]]);
@@ -1490,6 +1564,7 @@ var WellBeingForm = {
 		var display = show ? "block" : "none";
 
 		document.getElementById("bpsTable").style.display = display;
+		document.getElementById("bpsAfiTable").style.display = display;
 		document.getElementById("dopplerHeading").style.display = display;
 		document.getElementById("dopplerUmbilicalArteryTable").style.display = display;
 		document.getElementById("dopplerUmbilicalVeinTable").style.display = display;
