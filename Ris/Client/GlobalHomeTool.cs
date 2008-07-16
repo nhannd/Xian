@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client
 	{
 	}
 
-	[MenuAction("launch", "global-menus/Go/Home", "Launch")]
+	[MenuAction("launch", "global-menus/MenuFile/Home", "Launch")]
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[VisibleStateObserver("launch", "Visible", "VisibleChanged")]

@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[MenuAction("apply", "folderexplorer-items-contextmenu/New Patient", "Apply")]
 	[ButtonAction("apply", "patientsearch-items-toolbar/New Patient", "Apply")]
 	[MenuAction("apply", "patientsearch-items-contextmenu/New Patient", "Apply")]
-	[Tooltip("apply", "Create a new patient record.")]
+	[Tooltip("apply", "Create a new patient record")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
 
