@@ -18,82 +18,66 @@ namespace WADOClient
         static private int serverPort;
         private static ContentTypes type;
         private static string studyFolder;
+        static bool repeat;
 
         static void Main(string[] args)
         {
-            serverHost = args[0];
-            serverPort = int.Parse(args[1]);
+            CommandLine cmdline = new CommandLine(args);
+            IDictionary<string, string> parameters = cmdline.Named;
 
-            string fsDir = args[2];
-
-            if (args.Length>=4)
+            serverHost = parameters["host"];
+            serverPort = int.Parse(parameters["port"]);
+            studyFolder = parameters["folder"];
+            
+            if (parameters.ContainsKey("type"))
             {
-                if (args[3] == "dicom") type = ContentTypes.Dicom;
-                else if (args[3] == "pixel") type = ContentTypes.RawPixel;
+                if (parameters["type"] == "dicom") type = ContentTypes.Dicom;
+                else if (parameters["type"] == "pixel") type = ContentTypes.RawPixel;
                 else
-                    type = ContentTypes.NotSpecified;
-
+                    throw new Exception("Invalid 'type' value");
             }
 
-            if (args.Length>=5)
+            repeat = cmdline.Switches.ContainsKey("repeat");
+
+            Console.WriteLine("Retrieve image in {0}", studyFolder);
+
+            DirectoryInfo dirInfo = new DirectoryInfo(studyFolder);
+
+            DirectoryInfo[] partitions = dirInfo.GetDirectories();
+
+            try
             {
-                studyFolder = args[4];
-            }
-
-            if (studyFolder==null)
-            {
-                Console.WriteLine("Retrieve image in {0}", fsDir);
-
-                DirectoryInfo dirInfo = new DirectoryInfo(fsDir);
-
-                DirectoryInfo[] partitions = dirInfo.GetDirectories();
-
-                try
-                {
-                    do
-                    {
-                        Random r = new Random();
-                        DirectoryInfo partition = partitions[r.Next(partitions.Length)];
-
-                        DirectoryInfo[] studydates = partition.GetDirectories();
-                        // pick one
-                        DirectoryInfo studyate = studydates[r.Next(studydates.Length)];
-
-                        DirectoryInfo[] studies = studyate.GetDirectories();
-
-                        if (studies.Length > 0)
-                        {
-                            // pick one
-                            DirectoryInfo study = studies[r.Next(studies.Length)];
-
-                            string path = study.FullName;
-                            RetrieveImages(path);
-                        }
-
-
-                        Thread.Sleep(r.Next(10000));
-
-                    } while (true);
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Retrieve image in {0}", studyFolder);
-                Random r = new Random();
-                        
                 do
                 {
-                    RetrieveImages(studyFolder);
-                    //Thread.Sleep(r.Next(5000));
-                } while (true);
-                
-                       
+                    Random r = new Random();
+                    DirectoryInfo partition = partitions[r.Next(partitions.Length)];
+
+                    DirectoryInfo[] studydates = partition.GetDirectories();
+                    // pick one
+                    DirectoryInfo studyate = studydates[r.Next(studydates.Length)];
+
+                    DirectoryInfo[] studies = studyate.GetDirectories();
+
+                    if (studies.Length > 0)
+                    {
+                        // pick one
+                        DirectoryInfo study = studies[r.Next(studies.Length)];
+
+                        string path = study.FullName;
+                        RetrieveImages(path);
+                    }
+
+                    if (repeat)
+                        Thread.Sleep(r.Next(10000));
+
+                } while (repeat);
+
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        
         }
 
         
@@ -113,7 +97,7 @@ namespace WADOClient
             frameRate.Start();
             speed.Start();
 
-            Console.WriteLine("--------------------------------------------------------------------------------------------------------");
+            Console.WriteLine("\n------------------------------------------------------------------------------------------------------------------------");
 
             string[] seriesDirs = Directory.GetDirectories(studyPath);
             foreach(string seriesPath in seriesDirs)
@@ -131,52 +115,68 @@ namespace WADOClient
                     try
                     {
                         string baseUri = String.Format("http://{0}:{1}/wado", serverHost, serverPort);
-
-                        int frameIndex = 0;
-                        
+                        Stream imageStream;
+                        StreamingResultMetaData imageMetaData;
+                        FrameStreamingResultMetaData frameMetaData;
+                                   
                         switch(type)
                         {
                             case ContentTypes.Dicom:
-                                StreamingResultMetaData sopResultMetaData;
-                                client.RetrieveImage(baseUri, studyUid, seriesUid, uid, ContentTypes.Dicom, out sopResultMetaData);
+                                imageStream = client.RetrieveImage(baseUri, studyUid, seriesUid, uid, out imageMetaData);
                                 totalFrameCount++;
-                                averageSpeed.AddSample(sopResultMetaData.Speed);
-                                totalSize.Value += (ulong)sopResultMetaData.ContentLength;
+                                averageSpeed.AddSample(imageMetaData.Speed);
+                                totalSize.Value += (ulong)imageMetaData.ContentLength;
+
+                                Console.WriteLine("1 dicom sop [{0,10}] in {1,12}\t[mime={2}]", ByteCountFormatter.Format((ulong)imageStream.Length), TimeSpanFormatter.Format(imageMetaData.Speed.ElapsedTime), imageMetaData.ResponseMimeType);
+                                
                                 break;
 
                             case ContentTypes.RawPixel:
                                 TimeSpanStatistics elapsedTime = new TimeSpanStatistics();
+                                elapsedTime.Start();
                                 ulong instanceSize = 0;
-                                FrameStreamingResultMetaData frameResultMetaData;
+                                int frameCount = 0;
                                 do
                                 {
-                                    client.RetrieveFrame(baseUri, studyUid, seriesUid, uid, frameIndex, ContentTypes.Dicom, out frameResultMetaData);
+                                    client.RetrievePixelData(baseUri, studyUid, seriesUid, uid, frameCount, out frameMetaData);
                                     totalFrameCount++;
-                                    frameIndex++;
-                                    averageSpeed.AddSample(frameResultMetaData.Speed);
-                                    totalSize.Value += (ulong)frameResultMetaData.ContentLength;
-                                    instanceSize += (ulong)frameResultMetaData.ContentLength;
+                                    frameCount++;
+                                    averageSpeed.AddSample(frameMetaData.Speed);
+                                    totalSize.Value += (ulong)frameMetaData.ContentLength;
+                                    instanceSize += (ulong)frameMetaData.ContentLength;
 
-                                } while (!frameResultMetaData.IsLast);
+                                } while (!frameMetaData.IsLast);
 
                                 elapsedTime.End();
-                                Console.WriteLine("{0,3} frames [{1}] in {2}", frameIndex, ByteCountFormatter.Format(instanceSize), elapsedTime.FormattedValue);
+                                Console.WriteLine("{0,3} frame(s) [{1,10}] in {2,12}\t[mime={3}]", frameCount, ByteCountFormatter.Format(instanceSize), elapsedTime.FormattedValue, frameMetaData.ResponseMimeType);
+                                break;
+
+                            default:
+
+                                imageStream = client.RetrieveImage(baseUri, studyUid, seriesUid, uid, out imageMetaData);
+                                totalFrameCount++;
+                                averageSpeed.AddSample(imageMetaData.Speed);
+                                totalSize.Value += (ulong)imageMetaData.ContentLength;
+
+                                Console.WriteLine("1 object [{0,10}] in {1,12}\t[mime={2}]", ByteCountFormatter.Format((ulong)imageStream.Length), TimeSpanFormatter.Format(imageMetaData.Speed.ElapsedTime), imageMetaData.ResponseMimeType);
+
                                 break;
                         }
-                        
-                        
 
                     }
-                    catch(WebException ex)
+                    catch(Exception ex)
                     {
-                        HttpWebResponse rsp = (ex.Response as HttpWebResponse);
-                        if (rsp != null)
+                        if (ex is WebException)
                         {
-                            string msg = String.Format("Error: {0}\n{1}",
-                                                       rsp.StatusCode,
-                                                       HttpUtility.HtmlDecode(rsp.StatusDescription)
+                            HttpWebResponse rsp = ( (ex as WebException).Response as HttpWebResponse);
+                        
+                            string msg = String.Format("Error: {0} : {1}", rsp.StatusCode,HttpUtility.HtmlDecode(rsp.StatusDescription)
                                 );
                             Console.WriteLine(msg);
+                        }
+                        else
+                        {
+                            Console.WriteLine(ex.Message);
                         }
                     }
                 }
@@ -187,7 +187,7 @@ namespace WADOClient
             speed.End();
 
 
-            Console.WriteLine("\nTotal {0,3} image/frames [{1,10}] in {2,12}   ==>  [ Speed: {3,12} / {4,12}]",
+            Console.WriteLine("\nTotal {0,3} image(s)/frame(s) [{1,10}] in {2,12}   ==>  [ Speed: {3,12} or {4,12}]",
                     totalFrameCount, totalSize.FormattedValue,
                     TimeSpanFormatter.Format(frameRate.ElapsedTime),
                     frameRate.FormattedValue,

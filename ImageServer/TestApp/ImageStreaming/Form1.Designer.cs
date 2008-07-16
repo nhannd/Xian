@@ -32,10 +32,10 @@ namespace ImageStreaming
             this.StudyUid = new System.Windows.Forms.TextBox();
             this.SeriesUid = new System.Windows.Forms.TextBox();
             this.ObjectUid = new System.Windows.Forms.TextBox();
-            this.Retrieve = new System.Windows.Forms.Button();
+            this.Go = new System.Windows.Forms.Button();
             this.Browse = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.RetrieveFrame = new System.Windows.Forms.CheckBox();
+            this.UseFrame = new System.Windows.Forms.CheckBox();
             this.Frame = new System.Windows.Forms.TextBox();
             this.ContentTypes = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,7 +43,6 @@ namespace ImageStreaming
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.Uri = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // BaseUri
@@ -75,19 +74,19 @@ namespace ImageStreaming
             this.ObjectUid.Size = new System.Drawing.Size(259, 20);
             this.ObjectUid.TabIndex = 1;
             // 
-            // Retrieve
+            // Go
             // 
-            this.Retrieve.Location = new System.Drawing.Point(161, 213);
-            this.Retrieve.Name = "Retrieve";
-            this.Retrieve.Size = new System.Drawing.Size(75, 23);
-            this.Retrieve.TabIndex = 2;
-            this.Retrieve.Text = "Retrieve";
-            this.Retrieve.UseVisualStyleBackColor = true;
-            this.Retrieve.Click += new System.EventHandler(this.Retrieve_Click);
+            this.Go.Location = new System.Drawing.Point(426, 180);
+            this.Go.Name = "Go";
+            this.Go.Size = new System.Drawing.Size(75, 23);
+            this.Go.TabIndex = 2;
+            this.Go.Text = "Go";
+            this.Go.UseVisualStyleBackColor = true;
+            this.Go.Click += new System.EventHandler(this.Retrieve_Click);
             // 
             // Browse
             // 
-            this.Browse.Location = new System.Drawing.Point(441, 50);
+            this.Browse.Location = new System.Drawing.Point(426, 103);
             this.Browse.Name = "Browse";
             this.Browse.Size = new System.Drawing.Size(75, 23);
             this.Browse.TabIndex = 3;
@@ -99,23 +98,23 @@ namespace ImageStreaming
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
-            // RetrieveFrame
+            // UseFrame
             // 
-            this.RetrieveFrame.AutoSize = true;
-            this.RetrieveFrame.Location = new System.Drawing.Point(161, 141);
-            this.RetrieveFrame.Name = "RetrieveFrame";
-            this.RetrieveFrame.Size = new System.Drawing.Size(55, 17);
-            this.RetrieveFrame.TabIndex = 6;
-            this.RetrieveFrame.Text = "Frame";
-            this.RetrieveFrame.UseVisualStyleBackColor = true;
-            this.RetrieveFrame.CheckedChanged += new System.EventHandler(this.RetrieveFrame_CheckedChanged);
+            this.UseFrame.AutoSize = true;
+            this.UseFrame.Location = new System.Drawing.Point(161, 144);
+            this.UseFrame.Name = "UseFrame";
+            this.UseFrame.Size = new System.Drawing.Size(55, 17);
+            this.UseFrame.TabIndex = 6;
+            this.UseFrame.Text = "Frame";
+            this.UseFrame.UseVisualStyleBackColor = true;
+            this.UseFrame.CheckedChanged += new System.EventHandler(this.RetrieveFrame_CheckedChanged);
             // 
             // Frame
             // 
             this.Frame.Enabled = false;
-            this.Frame.Location = new System.Drawing.Point(235, 138);
+            this.Frame.Location = new System.Drawing.Point(222, 141);
             this.Frame.Name = "Frame";
-            this.Frame.Size = new System.Drawing.Size(100, 20);
+            this.Frame.Size = new System.Drawing.Size(47, 20);
             this.Frame.TabIndex = 7;
             this.Frame.Text = "0";
             // 
@@ -123,7 +122,7 @@ namespace ImageStreaming
             // 
             this.ContentTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ContentTypes.FormattingEnabled = true;
-            this.ContentTypes.Location = new System.Drawing.Point(161, 174);
+            this.ContentTypes.Location = new System.Drawing.Point(161, 182);
             this.ContentTypes.Name = "ContentTypes";
             this.ContentTypes.Size = new System.Drawing.Size(259, 21);
             this.ContentTypes.TabIndex = 9;
@@ -167,26 +166,17 @@ namespace ImageStreaming
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(48, 182);
+            this.label5.Location = new System.Drawing.Point(48, 185);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(74, 13);
+            this.label5.Size = new System.Drawing.Size(70, 13);
             this.label5.TabIndex = 14;
-            this.label5.Text = "Request Type";
-            // 
-            // Uri
-            // 
-            this.Uri.Location = new System.Drawing.Point(161, 267);
-            this.Uri.Multiline = true;
-            this.Uri.Name = "Uri";
-            this.Uri.Size = new System.Drawing.Size(633, 86);
-            this.Uri.TabIndex = 16;
+            this.label5.Text = "Retrieve type";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(886, 448);
-            this.Controls.Add(this.Uri);
+            this.ClientSize = new System.Drawing.Size(576, 307);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -194,9 +184,9 @@ namespace ImageStreaming
             this.Controls.Add(this.label1);
             this.Controls.Add(this.ContentTypes);
             this.Controls.Add(this.Frame);
-            this.Controls.Add(this.RetrieveFrame);
+            this.Controls.Add(this.UseFrame);
             this.Controls.Add(this.Browse);
-            this.Controls.Add(this.Retrieve);
+            this.Controls.Add(this.Go);
             this.Controls.Add(this.ObjectUid);
             this.Controls.Add(this.SeriesUid);
             this.Controls.Add(this.StudyUid);
@@ -214,10 +204,10 @@ namespace ImageStreaming
         private System.Windows.Forms.TextBox StudyUid;
         private System.Windows.Forms.TextBox SeriesUid;
         private System.Windows.Forms.TextBox ObjectUid;
-        private System.Windows.Forms.Button Retrieve;
+        private System.Windows.Forms.Button Go;
         private System.Windows.Forms.Button Browse;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.CheckBox RetrieveFrame;
+        private System.Windows.Forms.CheckBox UseFrame;
         private System.Windows.Forms.TextBox Frame;
         private System.Windows.Forms.ComboBox ContentTypes;
         private System.Windows.Forms.Label label1;
@@ -225,7 +215,6 @@ namespace ImageStreaming
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox Uri;
     }
 }
 

@@ -30,27 +30,68 @@ namespace ImageStreaming
 
         private void Retrieve_Click(object sender, EventArgs e)
         {
-            StreamingClient client = new StreamingClient();
+            
             try
             {
-                if (RetrieveFrame.Checked)
-                {
-                    FrameStreamingResultMetaData metaData;
-                    client.RetrieveFrame(BaseUri.Text, StudyUid.Text, SeriesUid.Text, ObjectUid.Text, int.Parse(Frame.Text), (ContentTypes)ContentTypes.SelectedItem, out metaData);
+                StringBuilder url = new StringBuilder();
+                url.AppendFormat("{0}?requesttype=WADO&studyUID={1}&seriesUID={2}&objectUID={3}", BaseUri.Text, StudyUid.Text, SeriesUid.Text, ObjectUid.Text);
 
-                    String msg = String.Format("Type:\t{0}\nSize:\t{1}\nSpeed:\t{2}", metaData.ResponseMimeType,
-                            ByteCountFormatter.Format((ulong)metaData.ContentLength), metaData.Speed.FormattedValue);
-                    MessageBox.Show(msg);
-                }
-                else
+                if (UseFrame.Checked)
                 {
-                    StreamingResultMetaData metaData;
-                    client.RetrieveImage(BaseUri.Text, StudyUid.Text, SeriesUid.Text, ObjectUid.Text, (ContentTypes)ContentTypes.SelectedItem, out metaData);
-
-                    String msg = String.Format("Type:\t{0}\nSize:\t{1}\nSpeed:\t{2}", metaData.ResponseMimeType, ByteCountFormatter.Format((ulong)metaData.ContentLength), metaData.Speed.FormattedValue);
-                    MessageBox.Show(msg);
+                    url.AppendFormat("&frameNumber={0}", int.Parse(Frame.Text));
                 }
-            
+
+                ContentTypes type = (ContentTypes)ContentTypes.SelectedItem;
+
+                switch(type)
+                {
+                    case ClearCanvas.DicomServices.ServiceModel.Streaming.ContentTypes.Dicom:
+                            url.AppendFormat("&ContentType={0}", "application/dicom");
+                            break;
+                    case ClearCanvas.DicomServices.ServiceModel.Streaming.ContentTypes.RawPixel:
+                            url.AppendFormat("&ContentType={0}", "application/clearcanvas");
+                            break;
+                    case ClearCanvas.DicomServices.ServiceModel.Streaming.ContentTypes.NotSpecified:
+                            break;
+
+                }
+
+                RateStatistics speed = new RateStatistics("Speed", RateType.BYTES);
+                speed.Start();
+
+                HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
+                request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new Exception(String.Format("Server responded with an error: {0}", HttpUtility.HtmlDecode(response.StatusDescription)));
+                }
+
+
+                byte[] buffer = new byte[response.ContentLength];
+                Stream stream = response.GetResponseStream();
+
+                int offset = 0;
+                do
+                {
+                    int readSize = stream.Read(buffer, offset, buffer.Length - offset);
+                    if (readSize <= 0)
+                        break;
+                    offset += readSize;
+
+                } while (true);
+
+
+                stream.Close();
+
+                speed.SetData(buffer.Length);
+                speed.End();
+
+                String msg =
+                    String.Format("Mime:\t{0}\nSize:\t{1}\nSpeed:\t{2}", response.ContentType,ByteCountFormatter.Format((ulong)buffer.Length),speed.FormattedValue);
+                MessageBox.Show(msg);
+                
             }
             catch(WebException ex)
             {
@@ -88,7 +129,9 @@ namespace ImageStreaming
         
         private void RetrieveFrame_CheckedChanged(object sender, EventArgs e)
         {
-            Frame.Enabled = RetrieveFrame.Checked;
+            Frame.Enabled = UseFrame.Checked;
         }
+
+       
     }
 }

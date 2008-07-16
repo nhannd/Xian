@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
@@ -36,6 +37,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Converters
             else
             {
                 int frame = int.Parse(context.Request.QueryString["frameNumber"]);
+
+                if (frame <0 || frame >= context.PixelData.NumberOfFrames)
+                {
+                    throw new WADOException((int) HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} is in invalid range", frame));
+                }
+
                 output.ContentType = OutputMimeType;
                 byte[] buffer = context.PixelData.GetFrame(frame);
                 output.Stream = new MemoryStream(buffer);
@@ -45,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Converters
 
             #region Special Code
             // Note: this block of code inject a special header field to assist the client during streaming of frames
-            // Clients which has no aprior knowledge of the number of frames can use this field to load next frame.
+            // Clients which has no prior knowledge of the number of frames can use this field to load next frame.
             if (output.HasMoreFrame)
                 context.Response.Headers.Add("HasMoreFrame", "true");
             #endregion

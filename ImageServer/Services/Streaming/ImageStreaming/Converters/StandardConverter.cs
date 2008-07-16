@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Converters
 
         public ImageConverterOutput Convert(ImageStreamingContext context)
         {
-            throw new Exception("image/jpeg is not supported");
+            throw new WADOException( (int) HttpStatusCode.NotImplemented, "image/jpeg is not supported. Please use different ContentType");
         }
     }
 
