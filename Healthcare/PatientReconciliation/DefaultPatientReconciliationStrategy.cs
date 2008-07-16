@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             IList<PatientProfileMatch> matches = new List<PatientProfileMatch>();
 
             IList<PatientProfileMatch> highMatches = new List<PatientProfileMatch>();
-			if (targetProfile.Healthcard != null && targetProfile.Healthcard.Id != null)
+			if (targetProfile.Healthcard != null && !string.IsNullOrEmpty(targetProfile.Healthcard.Id))
 			{
 				PatientProfileSearchCriteria high = new PatientProfileSearchCriteria();
 				high.Healthcard.Id.EqualTo(targetProfile.Healthcard.Id);
@@ -73,10 +73,10 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 
         	PatientProfileSearchCriteria moderateViaName = new PatientProfileSearchCriteria();
 
-            if (targetProfile.Name.FamilyName != null && targetProfile.Name.FamilyName.Length > 0)
+            if (targetProfile.Name.FamilyName != null && !string.IsNullOrEmpty(targetProfile.Name.FamilyName))
                 moderateViaName.Name.FamilyName.EqualTo(targetProfile.Name.FamilyName);
 
-            if (targetProfile.Name.GivenName != null && targetProfile.Name.GivenName.Length > 0)
+            if (targetProfile.Name.GivenName != null && !string.IsNullOrEmpty(targetProfile.Name.GivenName))
                 moderateViaName.Name.GivenName.EqualTo(targetProfile.Name.GivenName);
 
 			if (targetProfile.DateOfBirth != null)
