@@ -40,46 +40,9 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public class ProtocollingOrderDetailViewComponent : DHtmlComponent
-	{
-		private WorklistItemSummaryBase _worklistItem;
-
-		public ProtocollingOrderDetailViewComponent(WorklistItemSummaryBase worklistItem)
-		{
-			_worklistItem = worklistItem;
-		}
-
-		public override void Start()
-		{
-			SetUrl(WebResourcesSettings.Default.ProtocollingOrderDetailPageUrl);
-			base.Start();
-		}
-
-		public WorklistItemSummaryBase WorklistItem
-		{
-			get { return _worklistItem; }
-			set
-			{
-				_worklistItem = value;
-				Refresh();
-			}
-		}
-
-		public void Refresh()
-		{
-			NotifyAllPropertiesChanged();
-		}
-
-		protected override DataContractBase GetHealthcareContext()
-		{
-			return _worklistItem;
-		}
-	}
-
 	/// <summary>
 	/// Extension point for views onto <see cref="ProtocollingComponent"/>
 	/// </summary>
@@ -166,7 +129,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
 			_priorReportsComponentHost.StartComponent();
 
-			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem));
+			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem.OrderRef));
 			_orderDetailViewComponentHost.StartComponent();
 
 			base.Start();
@@ -610,7 +573,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			((PriorReportComponent)_priorReportsComponentHost.Component).WorklistItem = _worklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
-			((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).WorklistItem = _worklistItem;
+			((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).Context = new OrderDetailViewComponent.OrderContext(_worklistItem.OrderRef);
 
 			// Load notes for new current item.
 			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;

@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItem> items)
 		{
-            return WebResourcesSettings.Default.RadiologistFolderSystemUrl;
+            return WebResourcesSettings.Default.ReportingFolderSystemUrl;
         }
 
         protected override SearchResultsFolder CreateSearchResultsFolder()

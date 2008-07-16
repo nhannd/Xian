@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<RegistrationWorklistItem> items)
 		{
-			return WebResourcesSettings.Default.EmergencyPhysicianFolderSystemUrl;
+			return WebResourcesSettings.Default.EmergencyFolderSystemUrl;
 		}
 
         protected override SearchResultsFolder CreateSearchResultsFolder()

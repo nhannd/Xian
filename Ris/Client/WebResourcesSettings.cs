@@ -71,8 +71,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		#region ClearCanvas.Ris.Client component settings
-
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("banner.htm")]
 		public string BannerPageUrl
@@ -83,35 +81,81 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		#region Home Page Preview settings
+
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfo.htm")]
-		public string OrderAdditionalInfoPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/registration.htm")]
+		public string RegistrationFolderSystemUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["RegistrationFolderSystemUrl"]));
 			}
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfosummary.htm")]
-		public string OrderAdditionalInfoSummaryPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/booking.htm")]
+		public string BookingFolderSystemUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoSummaryPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BookingFolderSystemUrl"]));
 			}
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("reporting/order-detail.htm")]
-		public string ReportingOrderDetailPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/performing.htm")]
+		public string TechnologistFolderSystemUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingOrderDetailPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["TechnologistFolderSystemUrl"]));
 			}
 		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/protocolling.htm")]
+		public string ProtocollingFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocollingFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/reporting.htm")]
+		public string ReportingFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/emergency.htm")]
+		public string EmergencyFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["EmergencyFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/order-notes.htm")]
+		public string OrderNoteboxFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderNoteboxFolderSystemUrl"]));
+			}
+		}
+
+		#endregion
+
+		#region Patient Biography settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("biography/order-detail.htm")]
@@ -130,16 +174,6 @@ namespace ClearCanvas.Ris.Client
 			get
 			{
 				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BiographyVisitDetailPageUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("technologistdocumentation-ordersummary.htm")]
-		public string OrderSummaryUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderSummaryUrl"]));
 			}
 		}
 
@@ -163,91 +197,17 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-#endregion
-
-		#region ClearCanvas.Ris.Client component settings
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/booking.htm")]
-		public string BookingFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["BookingFolderSystemUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/mpps.htm")]
-		public string DetailsPageUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DetailsPageUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("protocolsummary.htm")]
-		public string ProtocolSummaryUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocolSummaryUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/registration.htm")]
-		public string RegistrationFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["RegistrationFolderSystemUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/performing.htm")]
-		public string TechnologistFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["TechnologistFolderSystemUrl"]));
-			}
-		}
-
 		#endregion
 
-		#region ClearCanvas.Ris.Client.Reporting component settings
+		#region Reporting Settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/protocolling.htm")]
-		public string ProtocollingFolderSystemUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/order-detail.htm")]
+		public string ReportingOrderDetailPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocollingFolderSystemUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("protocollingorderdetail.htm")]
-		public string ProtocollingOrderDetailPageUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocollingOrderDetailPageUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/reporting.htm")]
-		public string RadiologistFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["RadiologistFolderSystemUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ReportingOrderDetailPageUrl"]));
 			}
 		}
 
@@ -282,37 +242,17 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("reporting/prior-report.htm")]
-		public string PriorReportViewPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/prior-report-preview.htm")]
+		public string PriorReportPreviewPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PriorReportViewPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PriorReportPreviewPageUrl"]));
 			}
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/emergency.htm")]
-		public string EmergencyPhysicianFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["EmergencyPhysicianFolderSystemUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("preview/order-notes.htm")]
-		public string EmergencyPhysicianOrderNoteboxFolderSystemUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["EmergencyPhysicianOrderNoteboxFolderSystemUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("printreportpreview.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/print-report-preview.htm")]
 		public string PrintReportPreviewUrl
 		{
 			get
@@ -322,6 +262,70 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
+
+		#region Protocolling Settings
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("protocolling/order-detail.htm")]
+		public string ProtocollingOrderDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocollingOrderDetailPageUrl"]));
+			}
+		}
+
+		#endregion
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfo.htm")]
+		public string OrderAdditionalInfoPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfosummary.htm")]
+		public string OrderAdditionalInfoSummaryPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoSummaryPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("technologistdocumentation-ordersummary.htm")]
+		public string OrderSummaryUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderSummaryUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/mpps.htm")]
+		public string DetailsPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DetailsPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("protocolsummary.htm")]
+		public string ProtocolSummaryUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocolSummaryUrl"]));
+			}
+		}
 	}
 
 	public static class WebResourceAbsoluteUrlHelper

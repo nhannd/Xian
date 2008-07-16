@@ -45,6 +45,7 @@
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
+    <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
     <Compile Include="ViewImagesTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />

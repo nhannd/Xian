@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<OrderNoteboxItemSummary> items)
 		{
-			return WebResourcesSettings.Default.EmergencyPhysicianOrderNoteboxFolderSystemUrl;
+			return WebResourcesSettings.Default.OrderNoteboxFolderSystemUrl;
 		}
 
 		protected override IWorkflowFolderToolContext CreateFolderToolContext()

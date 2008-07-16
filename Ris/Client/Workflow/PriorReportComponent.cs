@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			public override void Start()
 			{
-				SetUrl(WebResourcesSettings.Default.PriorReportViewPageUrl);
+				SetUrl(WebResourcesSettings.Default.PriorReportPreviewPageUrl);
 				base.Start();
 			}
 
