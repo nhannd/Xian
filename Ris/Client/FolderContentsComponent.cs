@@ -152,7 +152,9 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                if (_selectedFolder == null || _selectedFolder.TotalItemCount == 0)
+				// if no folder selected, or selected folder has 0 items or -1 items (i.e. unknown),
+				// don't display a status message
+                if (_selectedFolder == null || _selectedFolder.TotalItemCount < 1)
                     return "";
 
                 if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)

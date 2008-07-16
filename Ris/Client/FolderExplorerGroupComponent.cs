@@ -295,8 +295,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void Search(SearchData searchData)
 		{
-			if (this.SearchEnabled)
-				this.SelectedFolderExplorer.FolderSystem.ExecuteSearch(searchData);
+			this.SelectedFolderExplorer.ExecuteSearch(searchData);
 		}
 
 		#endregion

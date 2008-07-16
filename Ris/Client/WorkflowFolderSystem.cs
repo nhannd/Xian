@@ -320,6 +320,9 @@ namespace ClearCanvas.Ris.Client
             if (this.SearchResultsFolder != null)
             {
                 this.SearchResultsFolder.SearchData = data;
+
+				// immediately update and select the results folder
+				this.SearchResultsFolder.Update();
                 this.SelectedFolder = this.SearchResultsFolder;
             }
         }

@@ -71,6 +71,9 @@ namespace ClearCanvas.Ris.Client
             _folderSystem = folderSystem;
         }
 
+		/// <summary>
+		/// Gets or sets the currently selected folder.
+		/// </summary>
     	public IFolder SelectedFolder
     	{
 			get { return _selectedTreeNode == null ? null : _selectedTreeNode.Folder; }
@@ -87,6 +90,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			// invalidate all folders, and update starting at the root
 			_folderSystem.InvalidateFolders();
+		}
+
+		internal void ExecuteSearch(SearchData searchData)
+		{
+			if (_folderSystem.SearchEnabled)
+				_folderSystem.ExecuteSearch(searchData);
 		}
 
 		#region Application Component overrides

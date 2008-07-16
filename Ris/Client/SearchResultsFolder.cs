@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client
 
         /// <summary>
         /// Gets or sets the search arguments.  Setting this property will automatically
-        /// call <see cref="InvalidateCore"/> on this folder.
+        /// call <see cref="Folder.Invalidate"/> on this folder.
         /// </summary>
         public SearchData SearchData
         {
@@ -29,7 +29,9 @@ namespace ClearCanvas.Ris.Client
             set
             {
                 _searchData = value;
-                this.InvalidateCore();
+
+				// immediately invalidate the folder
+                this.Invalidate();
             }
         }
 
@@ -116,6 +118,7 @@ namespace ClearCanvas.Ris.Client
 		/// Called to execute the search query.
 		/// </summary>
 		/// <param name="query"></param>
+		/// <param name="specificityThreshold"></param>
 		/// <returns></returns>
 		protected abstract TextQueryResponse<TItem> DoQuery(string query, int specificityThreshold);
 
@@ -127,8 +130,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (_queryItemsTask != null)
 			{
-				// refresh already in progress
-				return;
+				// a search is already in progress, and should be abandoned
+				// unsubscribe from its Terminated event, which effectively orphans it
+				_queryItemsTask.Terminated -= OnQueryItemsCompleted;
 			}
 
 			if (this.SearchData != null)

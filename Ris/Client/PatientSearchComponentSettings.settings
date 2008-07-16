@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SearchCriteriaSpecificityThreshold" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">200</Value>
+      <Value Profile="(Default)">500</Value>
     </Setting>
   </Settings>
 </SettingsFile>
