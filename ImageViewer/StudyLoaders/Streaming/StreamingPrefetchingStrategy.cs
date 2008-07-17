@@ -13,7 +13,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 	class StreamingPrefetchingStrategy
 	{
 		private IImageViewer _imageViewer;
-		private readonly object _syncLock = new object();
 
 		public StreamingPrefetchingStrategy(IImageViewer imageViewer)
 		{
@@ -33,12 +32,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			foreach (IPresentationImage image in displaySet.PresentationImages)
 			{
-				//lock (_syncLock)
-				//{
-				//    Bitmap bitmap = image.DrawToBitmap(2, 2);
-				//    bitmap.Dispose();
-				//}
-
 				IImageSopProvider provider = image as IImageSopProvider;
 
 				if (provider != null)

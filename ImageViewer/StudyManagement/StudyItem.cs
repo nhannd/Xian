@@ -46,6 +46,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly string _host;
 		private readonly string _aeTitle;
 		private readonly int _port;
+		private readonly int _headerServicePort;
+		private readonly int _wadoServicePort;
 
 		/// <summary>
 		/// Constructor.
@@ -53,11 +55,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="host"></param>
 		/// <param name="aeTitle"></param>
 		/// <param name="port"></param>
-		public ApplicationEntity(string host, string aeTitle, int port)
+		/// <param name="headerServicePort"></param>
+		/// <param name="wadoServicePort"></param>
+		public ApplicationEntity(
+			string host, 
+			string aeTitle, 
+			int port,
+			int headerServicePort,
+			int wadoServicePort)
 		{
 			_host = host;
 			_aeTitle = aeTitle;
 			_port = port;
+			_headerServicePort = headerServicePort;
+			_wadoServicePort = wadoServicePort;
 		}
 
 		/// <summary>
@@ -77,11 +88,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// The listening port.
+		/// The DICOM listening port.
 		/// </summary>
 		public int Port
 		{
 			get { return _port; }
+		}
+
+		/// <summary>
+		/// Header service port for image streaming.
+		/// </summary>
+		public int HeaderServicePort
+		{
+			get { return _headerServicePort; }
+		}
+
+		/// <summary>
+		/// WADO service port.
+		/// </summary>
+		public int WadoServicePort
+		{
+			get { return _wadoServicePort; }
 		}
 	}
 

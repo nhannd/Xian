@@ -74,7 +74,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._host.DataBindings.Add("Readonly", _component, "FieldReadonly", true, DataSourceUpdateMode.OnPropertyChanged);
 
         	this._isStreaming.DataBindings.Add("Checked", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
-        }
+        	this._headerServicePort.DataBindings.Add("Text", _component, "HeaderServicePort", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._wadoServicePort.DataBindings.Add("Text", _component, "WadoServicePort", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._headerServicePort.DataBindings.Add("Enabled", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
+			this._wadoServicePort.DataBindings.Add("Enabled", _component, "IsStreaming", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 
 		void OnPortBindingFormat(object sender, ConvertEventArgs e)
 		{

@@ -290,7 +290,8 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
                 // create default entries and save them to disk
                 _rootNode.ServerGroupNode = new ServerGroup(MyServersTitle);
 				_rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup));
-                _rootNode.ServerGroupNode.ChildServers.Add(new Server(SR.ExampleServer,"", "localhost", "SAMPLE", 104, false));
+                _rootNode.ServerGroupNode.ChildServers.Add(
+					new Server(SR.ExampleServer,"", "localhost", "SAMPLE", 104, false, 0, 0));
             	Save();
             }
 
@@ -586,7 +587,15 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         {
         }
 
-        public Server(string name, string location, string host, string aeTitle, int port, bool isStreaming)
+        public Server(
+			string name, 
+			string location, 
+			string host, 
+			string aeTitle, 
+			int port, 
+			bool isStreaming,
+			int headerServicePort,
+			int wadoServicePort)
         {
 			NameOfServer = name;
             Location = location;
@@ -594,6 +603,8 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             AETitle = aeTitle;
             Port = port;
         	IsStreaming = isStreaming;
+			HeaderServicePort = headerServicePort;
+        	WadoServicePort = wadoServicePort;
 		}
 
 		#region Public Fields
@@ -618,8 +629,18 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		/// Public field for serialization only; do not modify directly.
 		/// </summary>
 		public int Port;
-
-    	public bool IsStreaming;
+		/// <summary>
+		/// Public field for serialization only; do not modify directly.
+		/// </summary>
+		public bool IsStreaming;
+		/// <summary>
+		/// Public field for serialization only; do not modify directly.
+		/// </summary>
+		public int HeaderServicePort;
+		/// <summary>
+		/// Public field for serialization only; do not modify directly.
+		/// </summary>
+		public int WadoServicePort;
 
 		#endregion
 

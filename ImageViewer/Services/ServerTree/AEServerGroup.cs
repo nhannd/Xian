@@ -80,6 +80,24 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 					return false;
 			}
 		}
-        
+
+		public bool IsOnlyStreamingServers()
+		{
+			if (_servers.Count == 0)
+				return false;
+
+			foreach (IServerTreeNode node in _servers)
+			{
+				if (node.IsServer)
+				{
+					Server server = node as Server;
+
+					if (!server.IsStreaming)
+						return false;
+				}
+			}
+
+			return true;
+		}
     }
 }

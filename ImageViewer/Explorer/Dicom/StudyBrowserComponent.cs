@@ -476,7 +476,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					else if (serverNode.IsServer)
 					{
 						Server server = (Server)serverNode;
-						ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Port);
+						ApplicationEntity ae = new ApplicationEntity(
+							server.Host, 
+							server.AETitle, 
+							server.Port,
+							server.HeaderServicePort,
+							server.WadoServicePort);
 
 						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
 					}

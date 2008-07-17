@@ -119,7 +119,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void SetDoubleClickHandler()
 		{
-			if (!this.Context.SelectedServerGroup.IsLocalDatastore)
+			if (!this.Context.SelectedServerGroup.IsLocalDatastore &&
+				!this.Context.SelectedServerGroup.IsOnlyStreamingServers())
 				this.Context.DefaultActionHandler = RetrieveStudy;
 		}
 

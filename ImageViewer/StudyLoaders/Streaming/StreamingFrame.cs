@@ -4,17 +4,20 @@ using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	public class StreamingFrame : Frame
 	{
-		private string _host;
+		private readonly string _host;
+		private readonly int _wadoServicePort;
 
-		public StreamingFrame(StreamingImageSop parentImageSop, int frameNumber, string host)
+		public StreamingFrame(StreamingImageSop parentImageSop, int frameNumber, string host, int wadoServicePort)
 			: base(parentImageSop, frameNumber)
 		{
 			_host = host;
+			_wadoServicePort = wadoServicePort;
 		}
 
 		public override byte[] GetNormalizedPixelData()
@@ -25,26 +28,15 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				{
 					if (_pixelData == null)
 					{
-						//TimeSpanStatistics timer = new TimeSpanStatistics();
+						string uri = String.Format("http://{0}:{1}/WADO", _host, _wadoServicePort);
 
-						//timer.Start();
-						HttpWebResponse response = GetWadoReponse();
-						//timer.End();
-
-						//string str = String.Format("GetWadoReponse: {0} ms", timer.Value.TotalMilliseconds);
-						//Platform.Log(LogLevel.Info, str);
-
-						if (response.StatusCode != HttpStatusCode.OK)
-							throw new Exception("Unable to connect to WADO server");
-
-						//timer.Reset();
-
-						//timer.Start();
-						_pixelData = ReadWadoReponse(response);
-						//timer.End();
-
-						//str = String.Format("ReadWadoReponse: {0} ms", timer.Value.TotalMilliseconds);
-						//Platform.Log(LogLevel.Info, str);
+						StreamingClient client = new StreamingClient();
+						_pixelData = client.RetrievePixelData(
+							uri,
+							ParentImageSop.StudyInstanceUID,
+							ParentImageSop.SeriesInstanceUID,
+							ParentImageSop.SopInstanceUID,
+							FrameNumber - 1);
 					}
 				}
 			}
@@ -52,42 +44,5 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return _pixelData;
 		}
 
-		private byte[] ReadWadoReponse(HttpWebResponse response)
-		{
-			Stream stream = response.GetResponseStream();
-			byte[] buffer = new byte[response.ContentLength];
-			int bytesRead = 0;
-			int offset = 0;
-
-			do
-			{
-				bytesRead = stream.Read(buffer, offset, buffer.Length - offset);
-				offset += bytesRead;
-			}
-			while (bytesRead > 0);
-
-			stream.Close();
-
-			return buffer;
-		}
-
-		private HttpWebResponse GetWadoReponse()
-		{
-			string url =
-				"http://{4}:{5}/wado?requesttype=WADO&contentType=application%2Fclearcanvas&studyUID={0}&seriesUID={1}&objectUID={2}&frameNumber={3}";
-
-			url = String.Format(
-				url,
-				ParentImageSop.StudyInstanceUID,
-				ParentImageSop.SeriesInstanceUID,
-				ParentImageSop.SopInstanceUID,
-				FrameNumber - 1,
-				_host,
-				2000);
-
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
-			request.Accept = "*/*";
-			return (HttpWebResponse)request.GetResponse();
-		}
 	}
 }

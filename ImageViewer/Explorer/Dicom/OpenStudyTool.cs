@@ -88,7 +88,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void SetDoubleClickHandler()
 		{
-			if (this.Context.SelectedServerGroup.IsLocalDatastore)
+			if (this.Context.SelectedServerGroup.IsLocalDatastore ||
+				this.Context.SelectedServerGroup.IsOnlyStreamingServers())
 				this.Context.DefaultActionHandler = OpenStudy;
 		}
 
@@ -96,7 +97,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			// If the results aren't from the local machine, then we don't
 			// even care whether a study has been selected or not
-			if (!this.Context.SelectedServerGroup.IsLocalDatastore)
+			if (!this.Context.SelectedServerGroup.IsLocalDatastore &&
+				!this.Context.SelectedServerGroup.IsOnlyStreamingServers())
 				return;
 
 			base.OnSelectedStudyChanged(sender, e);
@@ -115,35 +117,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else
 			{
-				if (IsOnlyStreamingServers())
+				if (this.Context.SelectedServerGroup.IsOnlyStreamingServers())
 				{
 					if (this.Context.SelectedStudy != null)
 						this.Enabled = true;
 					else
 						this.Enabled = false;
+
+					SetDoubleClickHandler();
 				}
 				else
 					this.Enabled = false;
 			}
 		}
 
-		private bool IsOnlyStreamingServers()
-		{
-			if (this.Context.SelectedServerGroup.Servers.Count == 0)
-				return false;
-
-			foreach (IServerTreeNode node in this.Context.SelectedServerGroup.Servers)
-			{
-				if (node.IsServer)
-				{
-					Server server = node as Server;
-
-					if (!server.IsStreaming)
-						return false;
-				}
-			}
-
-			return true;
-		}
 	}
 }

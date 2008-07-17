@@ -104,8 +104,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		}
 
 		public static readonly int MinimumPort = 1;
-		public static readonly int DefaultPort = 104;
 		public static readonly int MaximumPort = 65535;
+		public static readonly int DefaultPort = 104;
+		public static readonly int DefaultHeaderServicePort = 50221;
+		public static readonly int DefaultWadoServicePort = 1000;
+
 
 		#region Private Fields
 
@@ -116,6 +119,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _serverHost;
 		private int _serverPort;
 		private bool _isStreaming;
+		private int _headerServicePort;
+		private int _wadoServicePort;
 
 		#endregion
 
@@ -132,6 +137,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverHost = server.Host;
 				_serverPort = server.Port;
 				_isStreaming = server.IsStreaming;
+				_headerServicePort = server.HeaderServicePort;
+				_wadoServicePort = server.WadoServicePort;
 			}
 			else
 			{
@@ -141,6 +148,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverHost = "";
 				_serverPort = DefaultPort;
 				_isStreaming = false;
+				_headerServicePort = DefaultHeaderServicePort;
+				_wadoServicePort = WadoServicePort;
 			}
 		}
 
@@ -243,8 +252,41 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 
 				_isStreaming = value;
+				//StreamingPortsEnabled = !IsStreamin
 				AcceptEnabled = true;
 				NotifyPropertyChanged("IsStreaming");
+			}
+		}
+
+		[ValidateGreaterThanAttribute(0, Inclusive = false, Message = "MessagePortInvalid")]
+		[ValidateLessThanAttribute(65536, Inclusive = false, Message = "MessagePortInvalid")]
+		public int HeaderServicePort
+		{
+			get { return _headerServicePort; }
+			set
+			{
+				if (_headerServicePort == value)
+					return;
+
+				_headerServicePort = value;
+				AcceptEnabled = true;
+				NotifyPropertyChanged("HeaderServicePort");
+			}
+		}
+
+		[ValidateGreaterThanAttribute(0, Inclusive = false, Message = "MessagePortInvalid")]
+		[ValidateLessThanAttribute(65536, Inclusive = false, Message = "MessagePortInvalid")]
+		public int WadoServicePort
+		{
+			get { return _wadoServicePort; }
+			set
+			{
+				if (_wadoServicePort == value)
+					return;
+
+				_wadoServicePort = value;
+				AcceptEnabled = true;
+				NotifyPropertyChanged("WadoServicePort");
 			}
 		}
 
@@ -279,7 +321,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else
 			{
-				Server newServer = new Server(_serverName, _serverLocation, _serverHost, _serverAE, _serverPort, _isStreaming);
+				Server newServer = new Server(
+					_serverName, 
+					_serverLocation, 
+					_serverHost, 
+					_serverAE, 
+					_serverPort, 
+					_isStreaming,
+					_headerServicePort,
+					_wadoServicePort);
 
 				// edit current server
 				if (_serverTree.CurrentNode.IsServer)
