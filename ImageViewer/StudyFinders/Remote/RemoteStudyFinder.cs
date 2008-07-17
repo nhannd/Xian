@@ -137,14 +137,32 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 							server.AETitle, server.Host, server.Port,
 							requestCollection);
 
+						scu.Join(new TimeSpan(0, 0, 0, 0, 1000));
+
 						if(scu.Status == ScuOperationStatus.Canceled)
-							throw new DicomException(SR.MessageRemoteServerCancelledFind);
+						{
+							String message = String.Format(SR.MessageFormatRemoteServerCancelledFind, 
+								scu.FailureDescription ?? "no failure description provided");
+							throw new DicomException(message);
+						}
 						if (scu.Status == ScuOperationStatus.ConnectFailed)
-							throw new DicomException(SR.MessageConnectionFailed);
+						{
+							String message = String.Format(SR.MessageFormatConnectionFailed,
+								scu.FailureDescription ?? "no failure description provided");
+							throw new DicomException(message);
+						}
 						if (scu.Status == ScuOperationStatus.Failed)
-							throw new DicomException(SR.MessageQueryOperationFailed);
+						{
+							String message = String.Format(SR.MessageFormatQueryOperationFailed,
+								scu.FailureDescription ?? "no failure description provided");
+							throw new DicomException(message);
+						}
 						if (scu.Status == ScuOperationStatus.TimeoutExpired)
-							throw new DicomException(SR.MessageConnectTimeoutExpired);
+						{
+							String message = String.Format(SR.MessageFormatConnectTimeoutExpired,
+								scu.FailureDescription ?? "no failure description provided");
+							throw new DicomException(message);
+						}
 
 						//if this function returns true, it means that studies came back whose 
 						//modalities did not match the filter, meaning that filtering on

@@ -70,38 +70,38 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connection failed..
+        ///   Looks up a localized string similar to Connection failed ({0})..
         /// </summary>
-        public static string MessageConnectionFailed {
+        public static string MessageFormatConnectionFailed {
             get {
-                return ResourceManager.GetString("MessageConnectionFailed", resourceCulture);
+                return ResourceManager.GetString("MessageFormatConnectionFailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The connection timeout expired..
+        ///   Looks up a localized string similar to The connection timeout expired ({0})..
         /// </summary>
-        public static string MessageConnectTimeoutExpired {
+        public static string MessageFormatConnectTimeoutExpired {
             get {
-                return ResourceManager.GetString("MessageConnectTimeoutExpired", resourceCulture);
+                return ResourceManager.GetString("MessageFormatConnectTimeoutExpired", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The query operation failed..
+        ///   Looks up a localized string similar to The query operation failed ({0})..
         /// </summary>
-        public static string MessageQueryOperationFailed {
+        public static string MessageFormatQueryOperationFailed {
             get {
-                return ResourceManager.GetString("MessageQueryOperationFailed", resourceCulture);
+                return ResourceManager.GetString("MessageFormatQueryOperationFailed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The remote server cancelled the query..
+        ///   Looks up a localized string similar to The remote server cancelled the query ({0})..
         /// </summary>
-        public static string MessageRemoteServerCancelledFind {
+        public static string MessageFormatRemoteServerCancelledFind {
             get {
-                return ResourceManager.GetString("MessageRemoteServerCancelledFind", resourceCulture);
+                return ResourceManager.GetString("MessageFormatRemoteServerCancelledFind", resourceCulture);
             }
         }
     }

@@ -85,7 +85,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 				{
-					foreach (QueryResult result in reader.StudyQuery(BuildQueryKey(message.DataSet)))
+					ReadOnlyQueryResultCollection results = reader.StudyQuery(BuildQueryKey(message.DataSet));
+					foreach (QueryResult result in results)
 					{
 						DicomMessage response = BuildStudyQueryResponse(result);
 						response.DataSet[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");

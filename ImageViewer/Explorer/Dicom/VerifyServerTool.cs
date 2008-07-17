@@ -85,9 +85,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");
-			using (VerificationScu scu = new VerificationScu())
+			foreach (Server server in this.Context.SelectedServers.Servers)
 			{
-				foreach (Server server in this.Context.SelectedServers.Servers)
+				using (VerificationScu scu = new VerificationScu())
 				{
 					VerificationResult result = scu.Verify(myAE, server.AETitle, server.Host, server.Port);
 					if (result == VerificationResult.Success)

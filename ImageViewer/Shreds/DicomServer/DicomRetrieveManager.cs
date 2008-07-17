@@ -79,29 +79,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				base.OnReceiveResponseMessage(client, association, presentationID, message);
 
-				if (message.Status.Status == DicomState.Cancel)
-				{
-					string msg = String.Format(
-						"Remote server cancelled the operation corresponding to this C-MOVE-RQ ({0}: {1}).",
-						RemoteAE, message.Status.Description);
-
-					Platform.Log(LogLevel.Info, msg);
-					OnRetrieveError(msg);
-				}
-				else if (message.Status.Status == DicomState.Warning)
+				if (message.Status.Status == DicomState.Warning)
 				{
 					string msg = String.Format("Remote server returned a warning status ({0}: {1}).",
 						RemoteAE, message.Status.Description);
-
-					Platform.Log(LogLevel.Warn, msg);
-					OnRetrieveError(msg);
-				}
-				else if (message.Status.Status == DicomState.Failure)
-				{
-					string msg = String.Format("Remote server failed to process the C-MOVE request ({0}: {1}).",
-						RemoteAE, message.Status.Description);
-
-					Platform.Log(LogLevel.Error, msg);
 					OnRetrieveError(msg);
 				}
 			}
@@ -116,25 +97,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					Move();
 
+					Join(new TimeSpan(0, 0, 0, 0, 1000));
+
 					if (base.Status == ScuOperationStatus.Canceled)
 					{
-						OnRetrieveError(String.Format("Remote server cancelled the C-MOVE operation ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+						OnRetrieveError(String.Format("The C-MOVE operation was cancelled ({0}).", RemoteAE));
 					}
 					else if (base.Status == ScuOperationStatus.ConnectFailed)
 					{
 						OnRetrieveError(String.Format("Unable to connect to remote server ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 					else if (base.Status == ScuOperationStatus.Failed)
 					{
 						OnRetrieveError(String.Format("The C-MOVE operation failed ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 					else if (base.Status == ScuOperationStatus.TimeoutExpired)
 					{
 						OnRetrieveError(String.Format("The connection timeout has expired ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 				}
 				catch (Exception e)

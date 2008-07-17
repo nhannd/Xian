@@ -208,25 +208,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					base.Send();
 
+					Join(new TimeSpan(0, 0, 0, 0, 1000));
+
 					if (base.Status == ScuOperationStatus.Canceled)
 					{
-						OnSendError(String.Format("Remote server cancelled the C-STORE operation ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+						OnSendError(String.Format("The C-STORE operation has been cancelled ({0}).", RemoteAE));
 					}
 					else if (base.Status == ScuOperationStatus.ConnectFailed)
 					{
 						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 					else if (base.Status == ScuOperationStatus.Failed)
 					{
 						OnSendError(String.Format("The C-STORE operation failed ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 					else if (base.Status == ScuOperationStatus.TimeoutExpired)
 					{
 						OnSendError(String.Format("The connection timeout has expired ({0}: {1}).",
-							RemoteAE, base.FailureDescription));
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 				}
 				catch(Exception e)
@@ -239,36 +240,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				finally
 				{
 					Instance.OnSendComplete(this);
-				}
-			}
-
-			public override void OnReceiveResponseMessage(ClearCanvas.Dicom.Network.DicomClient client, ClearCanvas.Dicom.Network.ClientAssociationParameters association, byte presentationID, ClearCanvas.Dicom.DicomMessage message)
-			{
-				base.OnReceiveResponseMessage(client, association, presentationID, message);
-
-				if (message.Status.Status == DicomState.Cancel)
-				{
-					string msg = String.Format("Remote server cancelled the C-STORE operation ({0}: {1}).",
-						RemoteAE, message.Status.Description);
-
-					Platform.Log(LogLevel.Info, msg);
-					OnSendError(msg);
-				}
-				else if (message.Status.Status == DicomState.Warning)
-				{
-					string msg = String.Format("Remote server returned a warning status ({0}: {1}).",
-						RemoteAE, message.Status.Description);
-
-					Platform.Log(LogLevel.Warn, msg);
-					OnSendError(msg);
-				}
-				else if (message.Status.Status == DicomState.Failure)
-				{
-					string msg = String.Format("Remote server failed to process the C-STORE request ({0}: {1}).",
-						RemoteAE, message.Status.Description);
-
-					Platform.Log(LogLevel.Error, msg);
-					OnSendError(msg);
 				}
 			}
 
@@ -286,14 +257,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				else
 				{
+					string description = storageInstance.ExtendedFailureDescription;
+					if (String.IsNullOrEmpty(description))
+						description = storageInstance.SendStatus.ToString();
+
 					string msg = String.Format("Error sending file {0} ({1}: {2}).",
-						storageInstance.Filename, RemoteAE,
-						storageInstance.ExtendedFailureDescription);
+						storageInstance.Filename, RemoteAE, description);
 
 					Platform.Log(LogLevel.Error, msg);
 
 					OnSendError(String.Format("Error sending file ({0}: {1}).",
-					                          RemoteAE, storageInstance.ExtendedFailureDescription));
+					                          RemoteAE, description));
 				}
 
 				if (_callback != null)
