@@ -570,7 +570,7 @@ namespace ClearCanvas.ImageViewer
 
 			VerifyLoad(numberOfImages, failedImages);
 
-			studyLoader.PrefetchPixelData(this);
+			studyLoader.StartPrefetching(this);
 		}
 
 		/// <summary>
@@ -719,6 +719,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
+				StopPrefetching();
+
 				if (_physicalWorkspace != null)
 				{
 					_physicalWorkspace.Dispose();
@@ -765,6 +767,12 @@ namespace ClearCanvas.ImageViewer
 			ex.TotalImages = totalImages;
 			ex.FailedImages = failedImages;
 			throw ex;
+		}
+
+		private void StopPrefetching()
+		{
+			foreach (IStudyLoader loader in _studyLoaders)
+				loader.StopPrefetching();
 		}
 
 		#endregion

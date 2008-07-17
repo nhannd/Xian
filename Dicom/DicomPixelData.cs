@@ -709,6 +709,16 @@ namespace ClearCanvas.Dicom
             _sq = (DicomFragmentSequence) collection[DicomTags.PixelData];
         }
 
+		public DicomCompressedPixelData(DicomMessageBase msg, byte[] frameData) : base(msg)
+		{
+			_sq = new DicomFragmentSequence(DicomTags.PixelData);
+			AddFrameFragment(frameData);
+			//ByteBuffer buffer = new ByteBuffer(frameData);
+			//DicomFragment fragment = new DicomFragment(buffer);
+			//_sq.AddFragment(fragment);
+			NumberOfFrames = 1;
+		}
+
         /// <summary>
         /// Constructor from a <see cref="DicomUncompressedPixeldata"/> instance.
         /// </summary>

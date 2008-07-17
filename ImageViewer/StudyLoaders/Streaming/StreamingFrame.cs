@@ -1,10 +1,7 @@
 using System;
-using System.IO;
-using System.Net;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Statistics;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -37,6 +34,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 							ParentImageSop.SeriesInstanceUID,
 							ParentImageSop.SopInstanceUID,
 							FrameNumber - 1);
+
+						//_pixelData = GetNormalizedPixelData(_pixelData);
+
+						if (this.IsColor)
+							_pixelData = ToArgb(_pixelData, PhotometricInterpretation.Rgb);
 					}
 				}
 			}

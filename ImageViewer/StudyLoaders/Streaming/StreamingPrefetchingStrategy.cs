@@ -10,9 +10,12 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
+
 	class StreamingPrefetchingStrategy
 	{
 		private IImageViewer _imageViewer;
+		private bool _stopped = false;
+		private int _threadCount = 0;
 
 		public StreamingPrefetchingStrategy(IImageViewer imageViewer)
 		{
@@ -20,10 +23,24 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_imageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
 		}
 
+		public void Stop()
+		{
+			_stopped = true;
+
+			// Wait until all threads are done
+			while (_threadCount > 0)
+				Thread.Sleep(5);
+
+			_imageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+		}
+
 		private void OnDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
 		{
 			if (e.NewDisplaySet != null)
+			{
+				Interlocked.Increment(ref _threadCount);
 				ThreadPool.QueueUserWorkItem(PrefetchPixelData, e.NewDisplaySet);
+			}
 		}
 
 		private void PrefetchPixelData(object obj)
@@ -32,6 +49,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			foreach (IPresentationImage image in displaySet.PresentationImages)
 			{
+				if (_stopped)
+				{
+					Interlocked.Decrement(ref _threadCount);
+					return;
+				}
+
 				IImageSopProvider provider = image as IImageSopProvider;
 
 				if (provider != null)
@@ -56,6 +79,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				//    }
 				//}
 			}
+
+			Interlocked.Decrement(ref _threadCount);
 		}
 	}
 }

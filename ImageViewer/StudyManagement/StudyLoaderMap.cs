@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
         public IEnumerator GetEnumerator()
         {
-            return _studyLoaderMap.GetEnumerator();
+            return _studyLoaderMap.Values.GetEnumerator();
         }
 
         #endregion

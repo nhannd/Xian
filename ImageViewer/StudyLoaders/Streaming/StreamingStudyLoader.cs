@@ -9,6 +9,7 @@ using ClearCanvas.DicomServices.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
 using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -49,10 +50,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				return new StreamingImageSop(_dicomFiles.Current, _ae.Host, _ae.WadoServicePort);
 		}
 
-		public void PrefetchPixelData(IImageViewer imageViewer)
+		public void StartPrefetching(IImageViewer imageViewer)
 		{
 			if (_prefetcher == null)
 				_prefetcher = new StreamingPrefetchingStrategy(imageViewer);
+		}
+
+		public void StopPrefetching()
+		{
+			_prefetcher.Stop();
+			_prefetcher = null;
 		}
 
 		#endregion
@@ -72,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				"BasicHttpBinding_IHeaderRetrievalService",
 				endpoint);
 
-			Stream stream = client.GetStudyHeader("CC_NORMAN", headerParams);
+			Stream stream = client.GetStudyHeader(DicomServerConfigurationHelper.AETitle, headerParams);
 
 			return DecompressHeaderStreamToXml(stream);
 		}
@@ -102,6 +109,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						new DicomAttributeCollection(),
 						instanceXml.Collection);
 
+					file.TransferSyntax = instanceXml.TransferSyntax;
 					files.Add(file);
 				}
 			}

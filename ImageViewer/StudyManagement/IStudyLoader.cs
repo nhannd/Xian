@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Starts the enumeration of images that match the specified
 		/// Study Instance UID.
 		/// </summary>
-		/// <param name="studyInstanceUID"></param>
+		/// <param name="studyLoaderArgs"></param>
 		/// <returns>Number of images in study.</returns>
 		int Start(StudyLoaderArgs studyLoaderArgs);
 
@@ -88,7 +88,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		ImageSop LoadNextImage();
 
-		void PrefetchPixelData(IImageViewer imageViewer);
+		/// <summary>
+		/// Starts prefetching pixel data in the background.
+		/// </summary>
+		/// <param name="imageViewer"></param>
+		/// <remarks>
+		/// Use <paramref name="imageViewer"/> to determine how prefetching is done.
+		/// </remarks>
+		void StartPrefetching(IImageViewer imageViewer);
+
+		/// <summary>
+		/// Stops prefetching of pixel data in the background.
+		/// </summary>
+		/// <remarks>
+		/// Implementers should ensure that all background threads have terminated
+		/// before this method returns.
+		/// </remarks>
+		void StopPrefetching();
     }
 
 }
