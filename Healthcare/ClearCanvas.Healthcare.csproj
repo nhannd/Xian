@@ -213,8 +213,6 @@
     <Compile Include="Brokers\IReportingProcedureStepBroker.cs" />
     <Compile Include="Brokers\IReportingWorklistItemBroker.cs" />
     <Compile Include="ContactPerson.cs" />
-    <Compile Include="ContactPersonRelationship.cs" />
-    <Compile Include="ContactPersonType.cs" />
     <Compile Include="DateTimeRange.cs" />
     <Compile Include="DiagnosticService.cs" />
     <Compile Include="EmailAddress.cs" />
@@ -329,6 +327,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="StaffTypeEnum.enum.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ContactPersonRelationshipEnum.enum.xml" />
+    <EmbeddedResource Include="ContactPersonTypeEnum.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

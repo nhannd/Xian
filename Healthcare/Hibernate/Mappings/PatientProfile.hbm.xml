@@ -49,12 +49,12 @@
 			</collection-id>
 			<key column="PatientProfileOID_"/>
 			<composite-element class="ContactPerson">
-				<property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
 				<property name="Name" column="Name_" type="String" length="50" not-null="true"/>
 				<property name="Address" column="Address_" type="String" length="255" not-null="false"/>
 				<property name="HomePhone" column="HomePhone_" type="String" length="25" not-null="false"/>
 				<property name="BusinessPhone" column="BusinessPhone_" type="String" length="25" not-null="false"/>
-				<property name="Relationship" column="Relationship_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonRelationshipEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+				<many-to-one name="Type"  class="ContactPersonTypeEnum" column="Type_" not-null="true"/>
+				<many-to-one name="Relationship" class="ContactPersonRelationshipEnum" column="Relationship_" not-null="true"/>
 			</composite-element>
 		</idbag>
 

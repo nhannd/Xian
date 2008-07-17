@@ -33,9 +33,6 @@ using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Services.MimeDocumentService;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -122,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services
                 detail.ContactPersons = new List<ContactPersonDetail>();
                 foreach (ContactPerson cp in profile.ContactPersons)
                 {
-                    detail.ContactPersons.Add(contactPersonAssembler.CreateContactPersonDetail(cp, context));
+                    detail.ContactPersons.Add(contactPersonAssembler.CreateContactPersonDetail(cp));
                 }
             }
 
@@ -210,7 +207,7 @@ namespace ClearCanvas.Ris.Application.Services
             profile.ContactPersons.Clear();
             foreach (ContactPersonDetail cp in detail.ContactPersons)
             {
-                profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp));
+                profile.ContactPersons.Add(contactAssembler.CreateContactPerson(cp, context));
             }
 
         }

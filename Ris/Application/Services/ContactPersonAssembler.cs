@@ -29,19 +29,15 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services
 {
     public class ContactPersonAssembler
     {
-        public ContactPersonDetail CreateContactPersonDetail(ContactPerson cp, IPersistenceContext context)
+        public ContactPersonDetail CreateContactPersonDetail(ContactPerson cp)
         {
             ContactPersonDetail detail = new ContactPersonDetail();
 
@@ -49,13 +45,13 @@ namespace ClearCanvas.Ris.Application.Services
             detail.Address = cp.Address;
             detail.HomePhoneNumber = cp.HomePhone;
             detail.BusinessPhoneNumber = cp.BusinessPhone;
-            detail.Relationship = EnumUtils.GetEnumValueInfo(cp.Relationship, context);
-            detail.Type = EnumUtils.GetEnumValueInfo(cp.Type, context);
+            detail.Relationship = EnumUtils.GetEnumValueInfo(cp.Relationship);
+            detail.Type = EnumUtils.GetEnumValueInfo(cp.Type);
 
             return detail;
         }
 
-        public ContactPerson CreateContactPerson(ContactPersonDetail detail)
+        public ContactPerson CreateContactPerson(ContactPersonDetail detail, IPersistenceContext context)
         {
             ContactPerson cp = new ContactPerson();
 
@@ -63,8 +59,8 @@ namespace ClearCanvas.Ris.Application.Services
             cp.Address = detail.Address;
             cp.HomePhone = detail.HomePhoneNumber;
             cp.BusinessPhone = detail.BusinessPhoneNumber;
-            cp.Relationship = EnumUtils.GetEnumValue<ContactPersonRelationship>(detail.Relationship);
-            cp.Type = EnumUtils.GetEnumValue<ContactPersonType>(detail.Type);
+            cp.Relationship = EnumUtils.GetEnumValue<ContactPersonRelationshipEnum>(detail.Relationship, context);
+            cp.Type = EnumUtils.GetEnumValue<ContactPersonTypeEnum>(detail.Type, context);
 
             return cp;
         }
