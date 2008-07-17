@@ -116,6 +116,67 @@ namespace ClearCanvas.Healthcare.Imex
                 public bool IncludeWorkingFacility;
             }
 
+			[DataContract]
+			public class TimeRangeData
+			{
+				public TimeRangeData()
+				{
+				}
+
+				public TimeRangeData(WorklistTimeRange tr)
+				{
+					this.Start = tr.Start == null ? null : new TimePointData(tr.Start);
+					this.End = tr.End == null ? null : new TimePointData(tr.End);
+				}
+
+				public WorklistTimeRange CreateTimeRange()
+				{
+					return new WorklistTimeRange(
+						this.Start == null ? null : this.Start.CreateTimePoint(),
+						this.End == null ? null : this.End.CreateTimePoint());
+				}
+
+				[DataMember]
+				public TimePointData Start;
+
+				[DataMember]
+				public TimePointData End;
+			}
+
+			[DataContract]
+			public class TimePointData
+			{
+				public TimePointData()
+				{
+				}
+
+				public TimePointData(WorklistTimePoint tp)
+				{
+					this.FixedValue = tp.IsFixed ? tp.FixedValue : null;
+					this.RelativeValue = tp.IsRelative ? tp.RelativeValue.Value.Ticks.ToString() : null;
+					this.Resolution = tp.Resolution;
+				}
+
+				public WorklistTimePoint CreateTimePoint()
+				{
+					if(this.FixedValue != null)
+						return new WorklistTimePoint(this.FixedValue.Value, this.Resolution);
+					else if(this.RelativeValue != null)
+						return new WorklistTimePoint(TimeSpan.FromTicks(Int64.Parse(this.RelativeValue)), this.Resolution);
+					else 
+						return null;
+				}
+
+				[DataMember]
+				public DateTime? FixedValue;
+
+				[DataMember]
+				public string RelativeValue;
+
+				[DataMember]
+				public long Resolution;
+			}
+
             [DataContract]
             public class FiltersData
             {
@@ -127,6 +188,7 @@ namespace ClearCanvas.Healthcare.Imex
                     this.PatientClasses = new MultiValuedFilterData<EnumValueData>();
 					this.PatientLocations = new MultiValuedFilterData<LocationData>();
                     this.Portable = new SingleValuedFilterData<bool>();
+                	this.TimeWindow = new SingleValuedFilterData<TimeRangeData>();
                 }
 
                 [DataMember]
@@ -146,6 +208,9 @@ namespace ClearCanvas.Healthcare.Imex
 
 				[DataMember]
                 public SingleValuedFilterData<bool> Portable;
+
+				[DataMember]
+				public SingleValuedFilterData<TimeRangeData> TimeWindow;
             }
 
             public WorklistData()
@@ -238,6 +303,11 @@ namespace ClearCanvas.Healthcare.Imex
 
             data.Filters.Portable.Enabled = worklist.PortableFilter.IsEnabled;
             data.Filters.Portable.Value = worklist.PortableFilter.Value;
+
+			//Bug #2429: don't forget to include the time filter
+			data.Filters.TimeWindow.Enabled = worklist.TimeFilter.IsEnabled;
+        	data.Filters.TimeWindow.Value = worklist.TimeFilter.Value == null ? null : 
+				new WorklistData.TimeRangeData(worklist.TimeFilter.Value);
 
             return data;
         }
@@ -332,6 +402,12 @@ namespace ClearCanvas.Healthcare.Imex
 
             worklist.PortableFilter.IsEnabled = data.Filters.Portable.Enabled;
             worklist.PortableFilter.Value = data.Filters.Portable.Value;
+
+			//Bug #2429: don't forget to include the time filter
+			worklist.TimeFilter.IsEnabled = data.Filters.TimeWindow.Enabled;
+        	worklist.TimeFilter.Value = data.Filters.TimeWindow == null || data.Filters.TimeWindow.Value == null
+        	                            	? null
+        	                            	: data.Filters.TimeWindow.Value.CreateTimeRange();
         }
 
         #endregion
@@ -342,7 +418,7 @@ namespace ClearCanvas.Healthcare.Imex
             Converter<TDomain, TData> converter)
         {
             data.Enabled = filter.IsEnabled;
-            data.Values = CollectionUtils.Map<TDomain, TData>(filter.Values, converter);
+            data.Values = CollectionUtils.Map(filter.Values, converter);
         }
 
         private void ImportFilter<TDomain, TData>(WorklistMultiValuedFilter<TDomain> filter, WorklistData.MultiValuedFilterData<TData> data,
