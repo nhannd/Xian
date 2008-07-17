@@ -43,6 +43,7 @@
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
+    <Compile Include="Brokers\IDeleteFilesystemStudyStorage.cs" />
     <Compile Include="Brokers\IInsertArchiveQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
@@ -106,7 +107,7 @@
     <Compile Include="EntityBrokers\IServerTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServiceLockEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IServiceLockTypeEnumBroker.gen.cs" />
-    <Compile Include="EntityBrokers\IStorageFilesystemEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IFilesystemStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyStorageEntityBroker.gen.cs" />
@@ -141,8 +142,8 @@
     <Compile Include="EntityBrokers\ServerTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ServiceLockSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\ServiceLockUpdateColumns.gen.cs" />
-    <Compile Include="EntityBrokers\StorageFilesystemSelectCriteria.gen.cs" />
-    <Compile Include="EntityBrokers\StorageFilesystemUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\FilesystemStudyStorageSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\FilesystemStudyStorageUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\StudySelectCriteria.cs" />
     <Compile Include="EntityBrokers\StudySelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\StudyStorageSelectCriteria.gen.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="FilesystemQueue.gen.cs" />
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
+    <Compile Include="Parameters\DeleteFilesystemStudyStorageParameters.cs" />
     <Compile Include="Parameters\InsertArchiveQueueParameters.cs" />
     <Compile Include="Parameters\QueryArchiveQueueParameters.cs" />
     <Compile Include="Parameters\QueryRestoreQueueParameters.cs" />
@@ -187,7 +189,7 @@
     <Compile Include="ServerTransferSyntax.gen.cs" />
     <Compile Include="ServiceLock.gen.cs" />
     <Compile Include="ServiceLockTypeEnum.gen.cs" />
-    <Compile Include="StorageFilesystem.gen.cs" />
+    <Compile Include="FilesystemStudyStorage.gen.cs" />
     <Compile Include="Study.gen.cs" />
     <Compile Include="Brokers\IInsertInstance.cs" />
     <Compile Include="Brokers\IInsertRequestAttributes.cs" />
@@ -200,7 +202,7 @@
     <Compile Include="Parameters\ServiceLockQueryParameters.cs" />
     <Compile Include="Parameters\ServiceLockResetParameters.cs" />
     <Compile Include="Parameters\ServiceLockUpdateParameters.cs" />
-    <Compile Include="Parameters\StudyStorageDeleteParameters.cs" />
+    <Compile Include="Parameters\DeleteStudyStorageParameters.cs" />
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteStudyInsertParameters.cs" />

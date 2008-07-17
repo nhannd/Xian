@@ -84,6 +84,10 @@
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
+      <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
+      <Name>ClearCanvas.ImageServer.Rules</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Shreds\ClearCanvas.ImageServer.Services.Shreds.csproj">
       <Project>{9CE68574-CA73-43A3-9B33-8E26CECBC527}</Project>
       <Name>ClearCanvas.ImageServer.Services.Shreds</Name>

@@ -120,6 +120,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateRestoreQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[UpdateRestoreQueue]
 GO
+/****** Object:  StoredProcedure [dbo].[DeleteFilesystemStudyStorage]    Script Date: 07/16/2008 15:46:29 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteFilesystemStudyStorage]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[DeleteFilesystemStudyStorage]
+GO
 
 
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
@@ -267,34 +271,37 @@ BEGIN
 	IF @StudyStorageGUID is null and @ServerPartitionGUID is null
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
-				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock
+				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
-			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID
-			JOIN Filesystem on StorageFilesystem.FilesystemGUID = Filesystem.GUID
+			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
+			JOIN Filesystem on FilesystemStudyStorage.FilesystemGUID = Filesystem.GUID
+			JOIN ServerTransferSyntax on ServerTransferSyntax.GUID = FilesystemStudyStorage.ServerTransferSyntaxGUID
 		WHERE StudyStorage.StudyInstanceUid = @StudyInstanceUid
 	END
 	ELSE IF @StudyStorageGUID is null
 	BEGIN
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
-				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock
+				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
-			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID
-			JOIN Filesystem on StorageFilesystem.FilesystemGUID = Filesystem.GUID
+			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
+			JOIN Filesystem on FilesystemStudyStorage.FilesystemGUID = Filesystem.GUID
+			JOIN ServerTransferSyntax on ServerTransferSyntax.GUID = FilesystemStudyStorage.ServerTransferSyntaxGUID
 		WHERE StudyStorage.ServerPartitionGuid = @ServerPartitionGUID and StudyStorage.StudyInstanceUid = @StudyInstanceUid
 	END
 	ELSE
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.StudyStatusEnum,
-				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, StorageFilesystem.StudyFolder, StorageFilesystem.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock
+				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
-			JOIN StorageFilesystem on StudyStorage.GUID = StorageFilesystem.StudyStorageGUID
-			JOIN Filesystem on StorageFilesystem.FilesystemGUID = Filesystem.GUID
+			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
+			JOIN Filesystem on FilesystemStudyStorage.FilesystemGUID = Filesystem.GUID
+			JOIN ServerTransferSyntax on ServerTransferSyntax.GUID = FilesystemStudyStorage.ServerTransferSyntaxGUID
 		WHERE StudyStorage.GUID = @StudyStorageGUID
 	END
 END
@@ -387,12 +394,14 @@ BEGIN
 
 	-- Now, put in default rules for the partition
 	DECLARE  @StudyServerRuleApplyTimeEnum smallint
+	DECLARE  @StudyArchiveServerRuleApplyTimeEnum smallint
 	DECLARE  @StudyDeleteServerRuleTypeEnum smallint
 	DECLARE  @Tier1RetentionServerRuleTypeEnum smallint
 	DECLARE  @OnlineRetentionServerRuleTypeEnum smallint
 
 	-- Get the Study Processed Rule Apply Time
 	SELECT @StudyServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyProcessed''
+	SELECT @StudyArchiveServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyArchived''
 
 	-- Get all 3 types of Retention Rules
 	SELECT @StudyDeleteServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''StudyDelete''
@@ -425,7 +434,7 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
 			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
-			   (newid(),''Default Online Retention'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @OnlineRetentionServerRuleTypeEnum, 1, 1,
+			   (newid(),''Default Online Retention'',@ServerPartitionGUID, @StudyArchiveServerRuleApplyTimeEnum, @OnlineRetentionServerRuleTypeEnum, 1, 1,
 				''<rule id="Default Online Retention">
 					<condition>
 					</condition>
@@ -1447,7 +1456,16 @@ BEGIN
 	DELETE FROM FilesystemQueue 
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
-	DELETE FROM StorageFilesystem
+	DELETE FROM FilesystemStudyStorage
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
+	DELETE FROM ArchiveQueue 
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
+	DELETE FROM RestoreQueue 
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
+	DELETE FROM ArchiveStudyStorage
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
 	DELETE FROM WorkQueueUid
@@ -1790,8 +1808,8 @@ CREATE PROCEDURE [dbo].[InsertStudyStorage]
 	@ServerPartitionGUID uniqueidentifier, 
 	@StudyInstanceUid varchar(64),
 	@Folder varchar(8),
-	@FilesystemGUID uniqueidentifier
-	
+	@FilesystemGUID uniqueidentifier,
+	@TransferSyntaxUid varchar(64)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -1800,6 +1818,9 @@ BEGIN
 
 	declare @StudyStorageGUID as uniqueidentifier
 	declare @PendingStatusEnum as int
+	declare @ServerTransferSyntaxGUID as uniqueidentifier
+
+	select @ServerTransferSyntaxGUID = GUID from ServerTransferSyntax where Uid = @TransferSyntaxUid
 
 	set @StudyStorageGUID = NEWID()
 	select @PendingStatusEnum = Enum from StudyStatusEnum where Lookup = ''Pending''
@@ -1807,8 +1828,8 @@ BEGIN
 	INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum) 
 		values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @PendingStatusEnum)
 
-	INSERT into StorageFilesystem(GUID, StudyStorageGUID, FilesystemGUID, StudyFolder)
-		values (NEWID(), @StudyStorageGUID, @FilesystemGUID, @Folder)
+	INSERT into FilesystemStudyStorage(GUID, StudyStorageGUID, FilesystemGUID, StudyFolder, ServerTransferSyntaxGUID)
+		values (NEWID(), @StudyStorageGUID, @FilesystemGUID, @Folder, @ServerTransferSyntaxGUID)
 
 
 	-- Return the study location
@@ -1882,8 +1903,8 @@ BEGIN
 	BEGIN
 		--PRINT ''Deleting FilesystemQueue''
 		delete dbo.FilesystemQueue where StudyStorageGUID=@StudyStorageGUID
-		--PRINT ''Deleting StorageFilesystem''
-		delete dbo.StorageFilesystem where StudyStorageGUID=@StudyStorageGUID
+		--PRINT ''Deleting FilesystemStudyStorage''
+		delete dbo.FilesystemStudyStorage where StudyStorageGUID=@StudyStorageGUID
 		--PRINT ''Deleting WorkQueueUid''
 		delete dbo.WorkQueueUid where WorkQueueGUID in (select GUID from dbo.WorkQueue where StudyStorageGUID=@StudyStorageGUID)
 		--PRINT ''Deleting WorkQueue''
@@ -2527,4 +2548,68 @@ END
 ' 
 END
 GO
+/****** Object:  StoredProcedure [dbo].[DeleteFilesystemStudyStorage]    Script Date: 07/16/2008 15:46:29 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteFilesystemStudyStorage]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 16, 2008
+-- Description:	Make a study go offline/nearline
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteFilesystemStudyStorage] 
+	-- Add the parameters for the stored procedure here
+	@ServerPartitionGUID uniqueidentifier, 
+	@StudyStorageGUID uniqueidentifier,
+	@StudyStatusEnum smallint
 
+AS
+BEGIN
+-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	declare @StudyInstanceUid varchar(64)
+	declare @StudyGUID uniqueidentifier
+
+	-- Select key values
+	SELECT @StudyInstanceUid = StudyInstanceUid FROM StudyStorage WHERE GUID = @StudyStorageGUID
+
+	SELECT @StudyGUID = GUID
+	FROM Study 
+	WHERE StudyInstanceUid = @StudyInstanceUid and ServerPartitionGUID = @ServerPartitionGUID
+
+	-- Begin the transaction, keep all the deletes/updates in a single transaction
+	BEGIN TRANSACTION
+
+	UPDATE Series SET StudyStatusEnum = @StudyStatusEnum
+	WHERE StudyGUID = @StudyGUID
+
+	UPDATE Study SET StudyStatusEnum = @StudyStatusEnum
+	WHERE GUID = @StudyGUID
+
+	UPDATE StudyStorage SET StudyStatusEnum = @StudyStatusEnum
+	WHERE GUID = @StudyStorageGUID
+	
+    -- Now cleanup the more management related tables.
+	DELETE FROM FilesystemQueue 
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
+	DELETE FROM FilesystemStudyStorage
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
+	DELETE FROM WorkQueueUid
+	WHERE WorkQueueGUID IN (SELECT GUID from WorkQueue WHERE StudyStorageGUID = @StudyStorageGUID)
+
+	DELETE FROM WorkQueue 
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
+	COMMIT TRANSACTION
+
+END
+' 
+END
+GO

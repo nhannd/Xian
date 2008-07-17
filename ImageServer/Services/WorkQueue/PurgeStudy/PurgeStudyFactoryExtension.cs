@@ -29,24 +29,35 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 {
-    public class StudyStorageDeleteParameters : ProcedureParameters
-    {
-        public StudyStorageDeleteParameters()
-            : base("DeleteStudyStorage")
-        {
-        }
 
-        public ServerEntityKey ServerPartitionKey
-        {
-            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
-        }
-        public ServerEntityKey StudyStorageKey
-        {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
-        }
-    }
+	/// <summary>
+	/// Plugin for processing 'DeleteStudy' WorkQueue items.
+	/// </summary>
+	[ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
+	public class PurgeStudyFactoryExtension : IWorkQueueProcessorFactory
+	{
+		#region Constructors
+		public PurgeStudyFactoryExtension()
+		{ }
+		#endregion
+
+		#region IWorkQueueProcessorFactory Members
+
+		public virtual WorkQueueTypeEnum GetWorkQueueType()
+		{
+			return WorkQueueTypeEnum.PurgeStudy;
+		}
+
+		public virtual IWorkQueueItemProcessor GetItemProcessor()
+		{
+			return new PurgeStudyItemProcessor();
+		}
+		#endregion
+	}
+		
 }

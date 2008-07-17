@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 {
                     IDeleteStudyStorage delete = context.GetBroker<IDeleteStudyStorage>();
 
-                    StudyStorageDeleteParameters parms = new StudyStorageDeleteParameters();
+                    DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters();
                     parms.ServerPartitionKey = item.ServerPartitionKey;
                     parms.StudyStorageKey = item.StudyStorageKey;
 

@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 // Setup the delete parameters
-                StudyStorageDeleteParameters parms = new StudyStorageDeleteParameters();
+                DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters();
 
                 parms.ServerPartitionKey = item.ServerPartitionKey;
                 parms.StudyStorageKey = item.StudyStorageKey;

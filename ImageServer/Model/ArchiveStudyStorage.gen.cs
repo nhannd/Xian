@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.DateTime _archiveTime;
         private System.Xml.XmlDocument _archiveXml;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey;
+        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
         #endregion
 
@@ -71,6 +72,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _partitionArchiveKey; }
         set { _partitionArchiveKey = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        {
+        get { return _serverTransferSyntaxKey; }
+        set { _serverTransferSyntaxKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey

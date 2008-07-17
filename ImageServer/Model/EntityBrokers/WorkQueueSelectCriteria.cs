@@ -31,21 +31,22 @@
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
     public partial class WorkQueueSelectCriteria
     {
         /// <summary>
-        /// Used for EXISTS or NOT EXISTS subselects against the Series table.
+        /// Used for EXISTS or NOT EXISTS subselects against the FilesystemStudyStorage table based on StudyStorage being related.
         /// </summary>
         /// <remarks>
-        /// A <see cref="SeriesSelectCriteria"/> instance is created with the subselect parameters, 
-        /// and assigned to this Sub-Criteria.  Note that the link between the <see cref="Study"/>
-        /// and <see cref="Series"/> tables is automatically added into the <see cref="SeriesSelectCriteria"/>
+        /// A <see cref="FilesystemStudyStorageSelectCriteria"/> instance is created with the subselect parameters, 
+        /// and assigned to this Sub-Criteria.  Note that the link between the <see cref="WorkQueue"/>
+		/// and <see cref="FilesystemStudyStorage"/> tables is automatically added into the <see cref="WorkQueueSelectCriteria"/>
         /// instance by the broker.
         /// </remarks>
-        public IRelatedEntityCondition<EntitySelectCriteria> StudyFilesystemRelatedEntityCondition
+        public IRelatedEntityCondition<EntitySelectCriteria> FilesystemStudyStorageRelatedEntityCondition
         {
             get
             {

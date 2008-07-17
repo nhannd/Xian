@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private readonly ServerEntityKey _studyStorageKey;
 		private readonly ServerEntityKey _partitionArchiveKey;
 		private readonly ServerEntityKey _archiveQueueKey;
+		private readonly ServerEntityKey _serverTransferSyntaxKey;
 		private readonly XmlDocument _archiveXml;
 
 		/// <summary>
@@ -57,16 +58,19 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="studyStorageKey">The <see cref="StudyStorage"/> table key.</param>
 		/// <param name="partitionArchiveKey">The <see cref="PartitionArchive"/> table key.</param>
 		/// <param name="archiveQueueKey">The <see cref="ArchiveQueue"/> entry key.</param>
+		/// <param name="serverTransferSyntaxKey">The <see cref="ServerTransferSyntax"/> entity key.</param>
 		/// <param name="archiveXml">XML Specific archive data to be stored in the <see cref="ArchiveStudyStorage"/> table.</param>
 		public InsertArchiveStudyStorageCommand(ServerEntityKey studyStorageKey,
 				 ServerEntityKey partitionArchiveKey,
 				 ServerEntityKey archiveQueueKey,
+				 ServerEntityKey serverTransferSyntaxKey,
 				 XmlDocument archiveXml)
 			: base("Insert ArchiveStudyStorage", true)
 		{
 			_studyStorageKey = studyStorageKey;
 			_partitionArchiveKey = partitionArchiveKey;
 			_archiveQueueKey = archiveQueueKey;
+			_serverTransferSyntaxKey = serverTransferSyntaxKey;
 			_archiveXml = archiveXml;
 		}
 
@@ -82,6 +86,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			columns.PartitionArchiveKey = _partitionArchiveKey;
 			columns.StudyStorageKey = _studyStorageKey;
 			columns.ArchiveXml = _archiveXml;
+			columns.ServerTransferSyntaxKey = _serverTransferSyntaxKey;
 
 			IArchiveStudyStorageEntityBroker insertBroker = updateContext.GetBroker<IArchiveStudyStorageEntityBroker>();
 
@@ -92,7 +97,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			parms.ArchiveQueueKey = _archiveQueueKey;
 			parms.ArchiveQueueStatusEnum = ArchiveQueueStatusEnum.Completed;
 			parms.ScheduledTime = Platform.Time;
-			parms.StudyStorageKey = _studyStorageKey;
+			parms.StudyStorageKey = _studyStorageKey;		
 
 			IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
 

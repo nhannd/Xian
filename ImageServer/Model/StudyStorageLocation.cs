@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _filesystemKey;
+    	private ServerEntityKey _serverTransferSyntaxKey;
         private string _studyInstanceUid;
         private DateTime _lastAccessed;
         private DateTime _insertTime;
@@ -59,6 +60,7 @@ namespace ClearCanvas.ImageServer.Model
         private bool _readOnly;
         private bool _writeOnly;
         private FilesystemTierEnum _filesystemTierEnum;
+    	private String _transferSyntaxUid;
         #endregion
 
         #region Public Properties
@@ -71,7 +73,12 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _filesystemKey; }
             set { _filesystemKey = value; }
-        }        
+        }
+		public ServerEntityKey ServerTransferSyntaxKey
+        {
+			get { return _serverTransferSyntaxKey; }
+			set { _serverTransferSyntaxKey = value; }
+        }  		
         public string StudyInstanceUid
         {
             get { return _studyInstanceUid; }
@@ -132,14 +139,19 @@ namespace ClearCanvas.ImageServer.Model
             get { return _filesystemTierEnum; }
             set { _filesystemTierEnum = value; }
         }
-        #endregion
+		public string TransferSyntaxUid
+		{
+			get { return _transferSyntaxUid; }
+			set { _transferSyntaxUid = value; }
+		}
+		#endregion
 
         #region Public Methods
         public string GetStudyPath()
         {
-            string path = Path.Combine(FilesystemPath, this.PartitionFolder);
-            path = Path.Combine(path, this.StudyFolder);
-            path = Path.Combine(path, this.StudyInstanceUid);
+            string path = Path.Combine(FilesystemPath, PartitionFolder);
+            path = Path.Combine(path, StudyFolder);
+            path = Path.Combine(path, StudyInstanceUid);
 
             return path;
         }

@@ -29,37 +29,28 @@
 
 #endregion
 
-using System;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class StudyStorageInsertParameters : ProcedureParameters
-    {
-        public StudyStorageInsertParameters()
-            : base("InsertStudyStorage")
+	public class DeleteFilesystemStudyStorageParameters : ProcedureParameters
+	{
+		public DeleteFilesystemStudyStorageParameters()
+			: base("DeleteFilesystemStudyStorage")
         {
         }
 
         public ServerEntityKey ServerPartitionKey
         {
-            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
-        public String StudyInstanceUid
+        public ServerEntityKey StudyStorageKey
         {
-            set { this.SubCriteria["StudyInstanceUid"] = new ProcedureParameter<String>("StudyInstanceUid", value); }
+            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
-        public ServerEntityKey FilesystemKey
-        {
-            set { this.SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
-        }
-        public String Folder
-        {
-            set { this.SubCriteria["Folder"] = new ProcedureParameter<String>("Folder", value); }
-        }
-		public String TransferSyntaxUid
+		public StudyStatusEnum StudyStatusEnum
 		{
-			set { this.SubCriteria["TransferSyntaxUid"] = new ProcedureParameter<String>("TransferSyntaxUid", value); }
+			set { SubCriteria["StudyStatusEnum"] = new ProcedureParameter<ServerEnum>("StudyStatusEnum", value); }
 		}
 	}
 }

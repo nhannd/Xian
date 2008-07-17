@@ -276,11 +276,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             // block on that.
             criteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
 
-            StorageFilesystemSelectCriteria storageCriteria = new StorageFilesystemSelectCriteria();
+            FilesystemStudyStorageSelectCriteria filesystemCriteria = new FilesystemStudyStorageSelectCriteria();
 
-            storageCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+			filesystemCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
 
-            criteria.StudyFilesystemRelatedEntityCondition.Exists(storageCriteria);
+			criteria.FilesystemStudyStorageRelatedEntityCondition.Exists(filesystemCriteria);
             int count = select.Count(criteria);
 
             return count;
@@ -300,11 +300,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
             criteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.MigrateStudy);
             criteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress});
-            StorageFilesystemSelectCriteria storageCriteria = new StorageFilesystemSelectCriteria();
+            FilesystemStudyStorageSelectCriteria filesystemCriteria = new FilesystemStudyStorageSelectCriteria();
 
-            storageCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+			filesystemCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
 
-            criteria.StudyFilesystemRelatedEntityCondition.Exists(storageCriteria);
+			criteria.FilesystemStudyStorageRelatedEntityCondition.Exists(filesystemCriteria);
             int count = select.Count(criteria);
 
             return count;

@@ -53,6 +53,13 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),108,'MigrateStudy','Study Tier Migration','Migrate studies between tiers.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),109,'PurgeStudy','Purge Study','Purge archived study and place offline.')
+GO
+
+
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -180,6 +187,12 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),104,'StudyArchived','Study Archived','Apply rule after a Study is archived')
 GO
 
 
@@ -638,6 +651,10 @@ GO
 
 INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
 VALUES(newid(),102,'OnlineLossy','Online (Lossy)','Study is online and lossy compressed')
+GO
+
+INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+VALUES(newid(),103,'Nearline','Nearline','The study is nearline (in an automated library)')
 GO
 
 INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])

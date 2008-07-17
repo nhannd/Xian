@@ -36,17 +36,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 IPatientEntityBroker patientBroker = Context.UpdateContext.GetBroker<IPatientEntityBroker>();
                 patientBroker.Update(Context.Patient);
 
-                // Update the StorageFilesystem
-                IStorageFilesystemEntityBroker fsBroker = Context.UpdateContext.GetBroker<IStorageFilesystemEntityBroker>();
-                StorageFilesystemUpdateColumns columns = new StorageFilesystemUpdateColumns();
+                // Update the FilesystemStudyStorage
+                IFilesystemStudyStorageEntityBroker fsBroker = Context.UpdateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
+                FilesystemStudyStorageUpdateColumns columns = new FilesystemStudyStorageUpdateColumns();
                 columns.StudyFolder = Context.StorageLocation.StudyFolder;
 
-                StorageFilesystemSelectCriteria criteria = new StorageFilesystemSelectCriteria();
+                FilesystemStudyStorageSelectCriteria criteria = new FilesystemStudyStorageSelectCriteria();
                 criteria.StudyStorageKey.EqualTo(Context.StorageLocation.GetKey());
-                IList<StorageFilesystem> listFilesystem = fsBroker.Find(criteria);
+                IList<FilesystemStudyStorage> listFilesystem = fsBroker.Find(criteria);
                 if (listFilesystem != null)
                 {
-                    foreach (StorageFilesystem fs in listFilesystem)
+                    foreach (FilesystemStudyStorage fs in listFilesystem)
                         fsBroker.Update(fs.GetKey(), columns);
                 }
 

@@ -201,7 +201,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.Tier1Retention,
 			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
 			                                                 extensions) +
-			                    @"else "
+								@"else "
+								+ GetJavascriptForSampleRule(ServerRuleTypeEnum.OnlineRetention,
+															 ServerRuleApplyTimeEnum.StudyArchived,
+															 extensions) +
+								@"else "
 			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyCompress,
 			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
 			                                                 extensions) +
@@ -340,9 +344,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 			if (EditMode)
 			{
-                ModalDialog.Title = App_GlobalResources.SR.DialogEditServerRuleTitle;
-                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.UpdateButtonEnabled;
-                
+				ModalDialog.Title = App_GlobalResources.SR.DialogEditServerRuleTitle;
+				OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.UpdateButtonEnabled;
+
 				DefaultCheckBox.Checked = _rule.DefaultRule;
 				EnabledCheckBox.Checked = _rule.Enabled;
 				ExemptRuleCheckBox.Checked = _rule.ExemptRule;
@@ -357,37 +361,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 				// Fill in the drop down menus
 				RuleTypeDropDownList.Items.Add(new ListItem(
-                                                _rule.ServerRuleTypeEnum.Description,
-                                                _rule.ServerRuleTypeEnum.Lookup));
+				                               	_rule.ServerRuleTypeEnum.Description,
+				                               	_rule.ServerRuleTypeEnum.Lookup));
 
-                if(_rule.ServerRuleTypeEnum==ServerRuleTypeEnum.StudyDelete)
-					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Description,
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
+				if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.StudyDelete)
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
 
-                else if(_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.Tier1Retention)
-					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Description,
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
+				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.Tier1Retention)
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
 
-                else if(_rule.ServerRuleTypeEnum==ServerRuleTypeEnum.OnlineRetention)
-					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Description,
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
-                else if(_rule.ServerRuleTypeEnum==ServerRuleTypeEnum.AutoRoute)
-					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Description,
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
-                else if(_rule.ServerRuleTypeEnum==ServerRuleTypeEnum.StudyCompress)
-					            RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Description,
-                                                            ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
-                                
-				
-				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.ToString())!= null)
-                    RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Lookup;
+				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.OnlineRetention)
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.StudyArchived.Description,
+					                                    	ServerRuleApplyTimeEnum.StudyArchived.Lookup));
+				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.AutoRoute)
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
+				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.StudyCompress)
+				{
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
+					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
+					RuleApplyTimeDropDownList.Items.Add(new ListItem(
+					                                    	ServerRuleApplyTimeEnum.StudyArchived.Description,
+					                                    	ServerRuleApplyTimeEnum.StudyArchived.Lookup));
+				}
 
-                RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Lookup;
+
+				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.ToString()) != null)
+					RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Lookup;
+
+				RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Lookup;
 
 
 				// Fill in the Rule XML
@@ -412,8 +421,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			}
 			else
 			{
-                ModalDialog.Title = App_GlobalResources.SR.DialogAddServerRuleTitle;
-                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.AddButtonEnabled;
+				ModalDialog.Title = App_GlobalResources.SR.DialogAddServerRuleTitle;
+				OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.AddButtonEnabled;
 
 				DefaultCheckBox.Checked = false;
 				EnabledCheckBox.Checked = true;
@@ -427,19 +436,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 				// Do the drop down lists
 				RuleTypeDropDownList.Items.Add(new ListItem(
-                                                ServerRuleTypeEnum.AutoRoute.Description,
-                                                ServerRuleTypeEnum.AutoRoute.Lookup));
+				                               	ServerRuleTypeEnum.AutoRoute.Description,
+				                               	ServerRuleTypeEnum.AutoRoute.Lookup));
 				RuleTypeDropDownList.Items.Add(new ListItem(
-                                                ServerRuleTypeEnum.StudyDelete.Description,
-                                                ServerRuleTypeEnum.StudyDelete.Lookup));
+				                               	ServerRuleTypeEnum.StudyDelete.Description,
+				                               	ServerRuleTypeEnum.StudyDelete.Lookup));
 				RuleTypeDropDownList.Items.Add(new ListItem(
-                                                ServerRuleTypeEnum.StudyCompress.Description,
-                                                ServerRuleTypeEnum.StudyCompress.Lookup));
+				                               	ServerRuleTypeEnum.StudyCompress.Description,
+				                               	ServerRuleTypeEnum.StudyCompress.Lookup));
+				RuleTypeDropDownList.Items.Add(new ListItem(
+				                               	ServerRuleTypeEnum.OnlineRetention.Description,
+				                               	ServerRuleTypeEnum.OnlineRetention.Lookup));
 
 				RuleApplyTimeDropDownList.Items.Add(new ListItem(
-                                                        ServerRuleApplyTimeEnum.SopProcessed.Description,
-                                                        ServerRuleApplyTimeEnum.SopProcessed.Lookup));
-				
+				                                    	ServerRuleApplyTimeEnum.SopProcessed.Description,
+				                                    	ServerRuleApplyTimeEnum.SopProcessed.Lookup));
+
 				SampleRuleDropDownList.Items.Clear();
 				SampleRuleDropDownList.Items.Add(new ListItem(string.Empty, string.Empty));
 				SampleRuleDropDownList.Items.Add(new ListItem("Multi-Tag AutoRoute", "MultiTagAutoRoute"));

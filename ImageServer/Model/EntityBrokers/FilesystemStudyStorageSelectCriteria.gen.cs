@@ -36,42 +36,20 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
-    public partial class ArchiveStudyStorageSelectCriteria : EntitySelectCriteria
+    public partial class FilesystemStudyStorageSelectCriteria : EntitySelectCriteria
     {
-        public ArchiveStudyStorageSelectCriteria()
-        : base("ArchiveStudyStorage")
+        public FilesystemStudyStorageSelectCriteria()
+        : base("FilesystemStudyStorage")
         {}
-        public ISearchCondition<System.DateTime> ArchiveTime
+        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
         {
             get
             {
-              if (!SubCriteria.ContainsKey("ArchiveTime"))
+              if (!SubCriteria.ContainsKey("FilesystemKey"))
               {
-                 SubCriteria["ArchiveTime"] = new SearchCondition<System.DateTime>("ArchiveTime");
+                 SubCriteria["FilesystemKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["ArchiveTime"];
-            } 
-        }
-        public ISearchCondition<System.Xml.XmlDocument> ArchiveXml
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ArchiveXml"))
-              {
-                 SubCriteria["ArchiveXml"] = new SearchCondition<System.Xml.XmlDocument>("ArchiveXml");
-              }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ArchiveXml"];
-            } 
-        }
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> PartitionArchiveKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("PartitionArchiveKey"))
-              {
-                 SubCriteria["PartitionArchiveKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("PartitionArchiveKey");
-              }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["PartitionArchiveKey"];
+              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerTransferSyntaxKey
@@ -83,6 +61,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey");
               }
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
+            } 
+        }
+        public ISearchCondition<System.String> StudyFolder
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyFolder"))
+              {
+                 SubCriteria["StudyFolder"] = new SearchCondition<System.String>("StudyFolder");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["StudyFolder"];
             } 
         }
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey

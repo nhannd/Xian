@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\DeleteFilesystemStudyStorage.cs" />
     <Compile Include="Brokers\InsertArchiveQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\DeleteServerPartition.cs" />
@@ -86,7 +87,7 @@
     <Compile Include="EntityBrokers\ServerTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServiceLockEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServiceLockTypeEnumBroker.gen.cs" />
-    <Compile Include="EntityBrokers\StorageFilesystemEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\FilesystemStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyStorageEntityBroker.gen.cs" />

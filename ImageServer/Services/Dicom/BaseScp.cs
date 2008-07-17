@@ -226,6 +226,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     insertParms.Folder = studyDate;
                     insertParms.FilesystemKey = filesystem.GetKey();
 
+					if (!message.TransferSyntax.LosslessCompressed &&
+						!message.TransferSyntax.LossyCompressed)
+						insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+					else
+						insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
+
                     studyLocationList = locInsert.Execute(insertParms);
 
                     updateContext.Commit();

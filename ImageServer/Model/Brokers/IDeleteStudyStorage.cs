@@ -34,7 +34,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IDeleteStudyStorage : IProcedureUpdateBroker<StudyStorageDeleteParameters>
+    public interface IDeleteStudyStorage : IProcedureUpdateBroker<DeleteStudyStorageParameters>
     {
     }
 }

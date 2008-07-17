@@ -34,12 +34,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
@@ -61,6 +63,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
 		private readonly HsmArchive _hsmArchive;
 		private XmlDocument _archiveXml;
+		private ServerRulesEngine _rulesEngine;
 
 		/// <summary>
 		/// Retrieves the storage location fromthe database for the specified study.
@@ -113,6 +116,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			try
 			{
+				_rulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, _hsmArchive.ServerPartition.GetKey());
+				_rulesEngine.Load();
+
 				GetStudyStorageLocation(queueItem);
 
 				string studyFolder = _storageLocation.GetStudyPath();
@@ -121,6 +127,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 				// Load the study Xml file, this is used to generate the list of dicom files to archive.
 				LoadStudyXml(studyXmlFile);
+
+				DicomMessage message = LoadMessageFromStudyXml();
 
 				// Use the command processor to do the archival.
 				ServerCommandProcessor commandProcessor = new ServerCommandProcessor("HSM Archive");
@@ -155,7 +163,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				commandProcessor.AddCommand(new CreateStudyZipCommand(zipFilename,_studyXml,studyFolder));
 
 				// Update the database.
-				commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey,queueItem.PartitionArchiveKey,queueItem.GetKey(),_archiveXml));
+				commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey,queueItem.PartitionArchiveKey,queueItem.GetKey(),_storageLocation.ServerTransferSyntaxKey, _archiveXml));
+
+				// Apply the rules engine.
+				ServerActionContext context = new ServerActionContext(message, _storageLocation.FilesystemKey, _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
+
+				context.CommandProcessor = commandProcessor;
+
+				_rulesEngine.Execute(context);
 
 				if (!commandProcessor.Execute())
 				{
@@ -173,6 +188,24 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				             _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
 				_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
 			}
+		}
+
+		private DicomMessage LoadMessageFromStudyXml()
+		{
+			foreach (SeriesXml seriesXml in _studyXml)
+				foreach (InstanceXml instanceXml in seriesXml)
+				{
+					// Skip non-image objects
+					if (instanceXml.SopClass.Equals(SopClass.KeyObjectSelectionDocumentStorage)
+					    || instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
+						|| instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
+						|| instanceXml.SopClass.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass))
+						continue;
+
+					return new DicomMessage(new DicomAttributeCollection(), instanceXml.Collection);
+				}
+
+			return null;
 		}
 	}
 }

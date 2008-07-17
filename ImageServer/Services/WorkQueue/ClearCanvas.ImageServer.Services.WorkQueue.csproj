@@ -44,6 +44,8 @@
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
     <Compile Include="CompressStudy\CompressStudyFactoryExtension.cs" />
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
+    <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
+    <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
     <Compile Include="TierMigrate\TierMigrateStudyFactoryExtension.cs" />
     <Compile Include="TierMigrate\TierMigrateDatabaseUpdateCommand.cs" />
     <Compile Include="TierMigrate\TierMigrateItemProcessor.cs" />

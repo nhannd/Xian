@@ -29,37 +29,19 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    public class StudyStorageInsertParameters : ProcedureParameters
-    {
-        public StudyStorageInsertParameters()
-            : base("InsertStudyStorage")
-        {
-        }
-
-        public ServerEntityKey ServerPartitionKey
-        {
-            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
-        }
-        public String StudyInstanceUid
-        {
-            set { this.SubCriteria["StudyInstanceUid"] = new ProcedureParameter<String>("StudyInstanceUid", value); }
-        }
-        public ServerEntityKey FilesystemKey
-        {
-            set { this.SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
-        }
-        public String Folder
-        {
-            set { this.SubCriteria["Folder"] = new ProcedureParameter<String>("Folder", value); }
-        }
-		public String TransferSyntaxUid
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class DeleteFilesystemStudyStorage : ProcedureUpdateBroker<DeleteFilesystemStudyStorageParameters>, IDeleteFilesystemStudyStorage
+	{
+		public DeleteFilesystemStudyStorage()
+			: base("DeleteFilesystemStudyStorage")
 		{
-			set { this.SubCriteria["TransferSyntaxUid"] = new ProcedureParameter<String>("TransferSyntaxUid", value); }
 		}
 	}
 }

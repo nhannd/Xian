@@ -63,8 +63,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             // Fetch the patient info:
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
-
-            StudyAdaptor studyAdaptor = new StudyAdaptor();
+			if (storages == null)
+			{
+				summary.PatientID = "N/A";
+				summary.PatientName = "N/A";
+				return summary;
+			}
+        	StudyAdaptor studyAdaptor = new StudyAdaptor();
             StudySelectCriteria studycriteria = new StudySelectCriteria();
             studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
             IList<Study> studyList = studyAdaptor.Get(studycriteria);

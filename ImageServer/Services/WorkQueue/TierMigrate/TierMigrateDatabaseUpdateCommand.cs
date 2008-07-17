@@ -34,22 +34,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         protected override void OnExecute(IUpdateContext updateContext)
         {
-            // update StorageFilesystem
+            // update FilesystemStudyStorage
             if (Context != null)
             {
-                IStorageFilesystemEntityBroker broker = updateContext.GetBroker<IStorageFilesystemEntityBroker>();
+                IFilesystemStudyStorageEntityBroker broker = updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
 
-                StorageFilesystemSelectCriteria searchCriteria = new StorageFilesystemSelectCriteria();
+                FilesystemStudyStorageSelectCriteria searchCriteria = new FilesystemStudyStorageSelectCriteria();
                 searchCriteria.StudyStorageKey.EqualTo(Context.OriginalStudyLocation.GetKey());
                 searchCriteria.FilesystemKey.EqualTo(Context.OriginalStudyLocation.FilesystemKey);
-                IList<StorageFilesystem> storageFilesystems = broker.Find(searchCriteria);
+                IList<FilesystemStudyStorage> storageFilesystems = broker.Find(searchCriteria);
 
                 Debug.Assert(storageFilesystems.Count == 1);
 
-                StorageFilesystem storageFilesystem = storageFilesystems[0];
-                storageFilesystem.FilesystemKey = Context.Destination.Filesystem.GetKey();
+                FilesystemStudyStorage filesystemStudyStorage = storageFilesystems[0];
+                filesystemStudyStorage.FilesystemKey = Context.Destination.Filesystem.GetKey();
 
-                broker.Update(storageFilesystem);
+                broker.Update(filesystemStudyStorage);
 
 
                 IFilesystemQueueEntityBroker fsQueueBroker = updateContext.GetBroker<IFilesystemQueueEntityBroker>();                

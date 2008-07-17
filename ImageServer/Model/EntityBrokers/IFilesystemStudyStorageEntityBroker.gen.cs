@@ -33,46 +33,9 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
-    using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-    public partial class StorageFilesystemSelectCriteria : EntitySelectCriteria
-    {
-        public StorageFilesystemSelectCriteria()
-        : base("StorageFilesystem")
-        {}
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("FilesystemKey"))
-              {
-                 SubCriteria["FilesystemKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey");
-              }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
-            } 
-        }
-        public ISearchCondition<System.String> StudyFolder
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyFolder"))
-              {
-                 SubCriteria["StudyFolder"] = new SearchCondition<System.String>("StudyFolder");
-              }
-              return (ISearchCondition<System.String>)SubCriteria["StudyFolder"];
-            } 
-        }
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyStorageKey"))
-              {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey");
-              }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyStorageKey"];
-            } 
-        }
-    }
+public interface IFilesystemStudyStorageEntityBroker : IEntityBroker<FilesystemStudyStorage, FilesystemStudyStorageSelectCriteria, FilesystemStudyStorageUpdateColumns>
+{ }
 }

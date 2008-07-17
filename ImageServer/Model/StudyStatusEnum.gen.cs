@@ -46,6 +46,7 @@ public partial class StudyStatusEnum : ServerEnum
       private static readonly StudyStatusEnum _Online = GetEnum("Online");
       private static readonly StudyStatusEnum _OnlineLossless = GetEnum("OnlineLossless");
       private static readonly StudyStatusEnum _OnlineLossy = GetEnum("OnlineLossy");
+      private static readonly StudyStatusEnum _Nearline = GetEnum("Nearline");
       private static readonly StudyStatusEnum _Pending = GetEnum("Pending");
       #endregion
 
@@ -70,6 +71,13 @@ public partial class StudyStatusEnum : ServerEnum
       public static StudyStatusEnum OnlineLossy
       {
           get { return _OnlineLossy; }
+      }
+      /// <summary>
+      /// The study is nearline (in an automated library)
+      /// </summary>
+      public static StudyStatusEnum Nearline
+      {
+          get { return _Nearline; }
       }
       /// <summary>
       /// Pending
