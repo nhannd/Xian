@@ -135,16 +135,17 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="source"></param>
         public void Synchronize(ICollection<TDestItem> dest, ICollection<TSourceItem> source)
         {
-            List<TDestItem> unProcessed = new List<TDestItem>(dest);
+			List<TDestItem> existing = new List<TDestItem>(dest);
+			List<TDestItem> unProcessed = new List<TDestItem>(dest);
 
             CollectionUtils.ForEach(source,
                     delegate(TSourceItem sourceItem)
                     {
-                        // Find a dest item that matches the source item
-                        TDestItem foundDestItem = CollectionUtils.SelectFirst(dest,
-                            delegate(TDestItem domainItem) { return CompareItems(domainItem, sourceItem); });
+                        // Find a pre-existing item that matches the source item
+						TDestItem existingItem = CollectionUtils.SelectFirst(existing,
+                            delegate(TDestItem destItem) { return CompareItems(destItem, sourceItem); });
 
-                        if (foundDestItem == null)
+                        if (existingItem == null)
                         {
                             // Add a new dest item
                             AddItem(sourceItem, dest);
@@ -153,10 +154,10 @@ namespace ClearCanvas.Common.Utilities
                         {
                             // Update the existing attachment
                             if (_allowUpdate)
-                                UpdateItem(foundDestItem, sourceItem, dest);
+                                UpdateItem(existingItem, sourceItem, dest);
 
                             // and remove from un-processed list
-                            unProcessed.Remove(foundDestItem);
+                            unProcessed.Remove(existingItem);
                         }
                     });
 
