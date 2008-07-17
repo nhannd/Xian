@@ -250,7 +250,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_mppsActionHandler = new SimpleActionModel(resolver);
 
-			_stopAction = _mppsActionHandler.AddAction("stop", SR.TitleStopMpps, "Icons.CompleteToolSmall.png", SR.TitleStopMpps, StopPerformedProcedureStep);
+			_stopAction = _mppsActionHandler.AddAction("stop", SR.TitleStopMpps, "Icons.CheckInToolSmall.png", SR.TitleStopMpps, StopPerformedProcedureStep);
 			_discontinueAction = _mppsActionHandler.AddAction("discontinue", SR.TitleDiscontinueMpps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMpps, DiscontinuePerformedProcedureStep);
 			UpdateActionEnablement();
 

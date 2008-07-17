@@ -124,7 +124,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._sortButton.Margin = new System.Windows.Forms.Padding(0, 1, 0, 1);
 			this._sortButton.Name = "_sortButton";
 			this._sortButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-			this._sortButton.Size = new System.Drawing.Size(54, 26);
+			this._sortButton.Size = new System.Drawing.Size(54, 23);
 			this._sortButton.Text = "Sort By";
 			this._sortButton.Visible = false;
 			// 
@@ -152,7 +152,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._filterTextBox.Margin = new System.Windows.Forms.Padding(1, 1, 0, 1);
 			this._filterTextBox.Name = "_filterTextBox";
 			this._filterTextBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-			this._filterTextBox.Size = new System.Drawing.Size(100, 26);
+			this._filterTextBox.Size = new System.Drawing.Size(100, 23);
 			this._filterTextBox.ToolTipText = "Enter text here to filter table";
 			this._filterTextBox.Visible = false;
 			this._filterTextBox.TextChanged += new System.EventHandler(this._filterText_TextChanged);
@@ -161,12 +161,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._clearFilterButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._clearFilterButton.Enabled = false;
-			this._clearFilterButton.Image = global::ClearCanvas.Desktop.View.WinForms.SR.ClearFilterSmall;
+			this._clearFilterButton.Image = global::ClearCanvas.Desktop.View.WinForms.SR.ClearFilterMini;
+			this._clearFilterButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
 			this._clearFilterButton.ImageTransparentColor = System.Drawing.Color.Magenta;
 			this._clearFilterButton.Margin = new System.Windows.Forms.Padding(0, 0, 1, 0);
 			this._clearFilterButton.Name = "_clearFilterButton";
 			this._clearFilterButton.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-			this._clearFilterButton.Size = new System.Drawing.Size(28, 28);
+			this._clearFilterButton.Size = new System.Drawing.Size(23, 25);
 			this._clearFilterButton.Text = "Clear Filter";
 			this._clearFilterButton.Visible = false;
 			this._clearFilterButton.Click += new System.EventHandler(this._clearFilterButton_Click);

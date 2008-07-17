@@ -8,7 +8,7 @@ namespace ClearCanvas.Ris.Client
 {
 	[ButtonAction("apply", "folderexplorer-folders-toolbar/Refresh", "Refresh")]
 	[Tooltip("apply", "Refresh Folders")]
-	[IconSet("apply", IconScheme.Colour, "Icons.RefreshToolSmall.png", "Icons.RefreshToolMedium.png", "Icons.RefreshToolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.RefreshSmall.png", "Icons.RefreshMedium.png", "Icons.RefreshLarge.png")]
 	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
 	public class FolderRefreshTool : Tool<IFolderExplorerGroupToolContext>
 	{

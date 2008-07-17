@@ -42,6 +42,8 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[MenuAction("apply", "folderexplorer-items-contextmenu/View Images", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Verify", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.ViewImagesSmall.png", "Icons.ViewImagesMedium.png", "Icons.ViewImagesLarge.png")]
 	[Tooltip("apply", "View Images")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
@@ -61,7 +63,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </remarks>
 		public ViewImagesTool()
 		{
-			_enabled = true;
 		}
 
 		/// <summary>
@@ -70,6 +71,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Initialize()
 		{
 			base.Initialize();
+
+			if (this.ContextBase is IReportingWorkflowItemToolContext)
+			{
+				((IReportingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
+				{
+					this.Enabled = DetermineEnablement();
+				};
+			}
+			else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+			{
+				((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
+				{
+					this.Enabled = DetermineEnablement();
+				};
+			}
+			else if (this.ContextBase is IOrderNoteboxItemToolContext)
+			{
+				((IOrderNoteboxItemToolContext)this.ContextBase).SelectionChanged += delegate
+				{
+					this.Enabled = DetermineEnablement();
+				};
+			}
 		}
 
 		public bool Visible
@@ -86,13 +109,37 @@ namespace ClearCanvas.Ris.Client.Workflow
 			remove { }
 		}
 
+		private bool DetermineEnablement()
+		{
+			if (this.ContextBase is IReportingWorkflowItemToolContext)
+			{
+				return (((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+					&& ((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+			}
+			else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+			{
+				return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+					&& ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+			}
+			else if (this.ContextBase is IOrderNoteboxItemToolContext)
+			{
+				return (((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems != null
+					&& ((IOrderNoteboxItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Gets whether this tool is enabled/disabled in the UI.
 		/// </summary>
 		public bool Enabled
 		{
-			get { return _enabled; }
-			protected set
+			get
+			{
+				this.Enabled = DetermineEnablement();
+				return _enabled;
+			}
+			set
 			{
 				if (_enabled != value)
 				{
@@ -112,8 +159,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		public void Apply()
-		{
-			
+		{				
 			if (this.ContextBase is IRegistrationWorkflowItemToolContext)
 			{
 				IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;

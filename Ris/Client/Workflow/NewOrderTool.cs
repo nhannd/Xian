@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order", "NewOrder")]
     [ButtonAction("neworder", "patientsearch-items-toolbar/New Order", "NewOrder")]
     [MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
-    [IconSet("neworder", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+	[IconSet("neworder", IconScheme.Colour, "NewOrderSmall.png", "NewOrderMedium.png", "NewOrderLarge.png")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
 	[ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
 

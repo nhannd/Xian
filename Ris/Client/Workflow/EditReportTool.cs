@@ -40,14 +40,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Edit Report", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Edit Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class EditReportTool : ReportingWorkflowItemTool
 	{
-
 		public EditReportTool()
 			: base("EditReport")
 		{
@@ -71,6 +71,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 				else
 					return SR.TitleEditReport;
 			}
+		}
+
+		public IconSet CurrentIconSet
+		{
+		    get
+		    {
+		        ReportingWorklistItem item = GetSelectedItem();
+		        if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
+		            return new IconSet(IconScheme.Colour, "Icons.CreateReportSmall.png", "Icons.CreateReportMedium.png", "Icons.CreateReportMedium.png");
+		        else
+		            return new IconSet(IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png");
+		    }
 		}
 
 		public event EventHandler LabelChanged

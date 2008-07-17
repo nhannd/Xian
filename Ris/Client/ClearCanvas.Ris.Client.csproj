@@ -462,15 +462,6 @@
     <EmbeddedResource Include="Icons\CopyToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\OrderNoteConversationToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\OrderNoteConversationToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\OrderNoteConversationToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\GlobalHomeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
@@ -500,6 +491,26 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PrintLarge.png" />
+    <EmbeddedResource Include="Icons\PrintMedium.png" />
+    <EmbeddedResource Include="Icons\PrintSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OrderNoteConversationLarge.png" />
+    <EmbeddedResource Include="Icons\OrderNoteConversationMedium.png" />
+    <EmbeddedResource Include="Icons\OrderNoteConversationSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\PrelimDiagConvoToolLarge.png" />
+    <EmbeddedResource Include="Icons\PrelimDiagConvoToolMedium.png" />
+    <EmbeddedResource Include="Icons\PrelimDiagConvoToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshLarge.png" />
+    <EmbeddedResource Include="Icons\RefreshMedium.png" />
+    <EmbeddedResource Include="Icons\RefreshSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

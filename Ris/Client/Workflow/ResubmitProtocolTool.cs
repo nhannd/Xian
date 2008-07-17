@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Re-submit for Protocol", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Re-submit for Protocol", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.ResubmitOrderSmall.png", "Icons.ResubmitOrderMedium.png", "Icons.ResubmitOrderLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Resubmit)]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]

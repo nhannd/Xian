@@ -43,7 +43,6 @@ using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("view2", "hl7queue-contextmenu/View Details", "View")]
-    [ButtonAction("view2", "hl7queue-toolbar/Details", "View")]
     [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
     [Tooltip("view2", "Open patient biography")]
 	[IconSet("view2", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png")]
