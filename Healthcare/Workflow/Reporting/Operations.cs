@@ -375,6 +375,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			public bool CanExecute(Procedure procedure, Staff currentUserStaff)
 			{
+				if (procedure.ReportingProcedureSteps.Count == 0)
+					return false;
+
 				// can only create an addendum if all reporting steps for the procedure are terminated
 				if (!CollectionUtils.TrueForAll(procedure.ReportingProcedureSteps,
 					delegate(ReportingProcedureStep ps) { return ps.IsTerminated; }))

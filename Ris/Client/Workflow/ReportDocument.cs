@@ -47,7 +47,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_worklistItem = worklistItem;
 			_folderName = context.SelectedFolder.Name;
-			_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
+
+			if(context.SelectedFolder is ReportingWorkflowFolder)
+			{
+				_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
+			}
+			else
+			{
+				_worklistRef = null;
+			}
 		}
 
 		public override string GetTitle()

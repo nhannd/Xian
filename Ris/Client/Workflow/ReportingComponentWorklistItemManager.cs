@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_folderName = folderName;
 			_worklistRef = worklistRef;
 
-			_reportNextItem = _componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.Verify;
+			_reportNextItem = this.ReportNextItemEnabled;
 
 			_skippedItems = new List<ReportingWorklistItem>();
 			_worklistCache = new Stack<ReportingWorklistItem>();
@@ -187,8 +187,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return _componentMode == ReportingComponentMode.Create
-				       || _componentMode == ReportingComponentMode.Verify;
+				return _worklistRef != null &&
+					(_componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.Verify);
 			}
 		}
 
