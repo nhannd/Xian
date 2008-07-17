@@ -321,10 +321,10 @@ namespace ClearCanvas.Ris.Client
             {
                 this.SearchResultsFolder.SearchParams = @params;
 
-				// immediately update and select the results folder
-				this.SearchResultsFolder.Update();
+				// ensure the results folder is selected, and force an immediate update
                 this.SelectedFolder = this.SearchResultsFolder;
-            }
+				this.SearchResultsFolder.Update();
+			}
         }
 
 		/// <summary>

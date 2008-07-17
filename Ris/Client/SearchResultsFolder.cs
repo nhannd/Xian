@@ -30,8 +30,8 @@ namespace ClearCanvas.Ris.Client
             {
                 _searchParams = value;
 
-				// invalidate the folder
-            	_isValid = false;
+				// invalidate the folder immediately
+            	Invalidate();
             }
         }
 
@@ -39,13 +39,14 @@ namespace ClearCanvas.Ris.Client
 
 		protected override void InvalidateCore()
 		{
-			// search results folders do not support invalidation requests
-			// they can only be invalidated by setting the SearchParams property
+			_isValid = false;
 		}
 
 		protected override bool UpdateCore()
 		{
-			if(!_isValid)
+			// only initiate a query if this folder is open (eg selected)
+			// this folder does not support updating the count independently of the items
+			if(this.IsOpen && !_isValid)
 			{
 				BeginQueryItems();
 				_isValid = true;
