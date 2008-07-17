@@ -146,7 +146,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._procedureTypesSelector.Location = new System.Drawing.Point(3, 16);
 			this._procedureTypesSelector.Name = "_procedureTypesSelector";
 			this._procedureTypesSelector.SelectedItemsTable = null;
-			this._procedureTypesSelector.ShowToolbars = false;
 			this._procedureTypesSelector.Size = new System.Drawing.Size(648, 382);
 			this._procedureTypesSelector.TabIndex = 0;
 			// 

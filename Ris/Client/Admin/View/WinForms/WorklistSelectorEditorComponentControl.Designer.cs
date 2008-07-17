@@ -59,30 +59,29 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._usersSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
-            this.SuspendLayout();
-            // 
-            // _usersSelector
-            // 
-            this._usersSelector.AutoSize = true;
-            this._usersSelector.AvailableItemsTable = null;
-            this._usersSelector.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._usersSelector.Location = new System.Drawing.Point(0, 0);
-            this._usersSelector.Name = "_usersSelector";
-            this._usersSelector.SelectedItemsTable = null;
-            this._usersSelector.ShowToolbars = false;
-            this._usersSelector.Size = new System.Drawing.Size(516, 337);
-            this._usersSelector.TabIndex = 1;
-            // 
-            // WorklistSubscriptionEditorComponentControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._usersSelector);
-            this.Name = "WorklistSubscriptionEditorComponentControl";
-            this.Size = new System.Drawing.Size(516, 337);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			this._usersSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
+			this.SuspendLayout();
+			// 
+			// _usersSelector
+			// 
+			this._usersSelector.AutoSize = true;
+			this._usersSelector.AvailableItemsTable = null;
+			this._usersSelector.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._usersSelector.Location = new System.Drawing.Point(0, 0);
+			this._usersSelector.Name = "_usersSelector";
+			this._usersSelector.SelectedItemsTable = null;
+			this._usersSelector.Size = new System.Drawing.Size(516, 337);
+			this._usersSelector.TabIndex = 1;
+			// 
+			// WorklistSelectorEditorComponentControl
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._usersSelector);
+			this.Name = "WorklistSelectorEditorComponentControl";
+			this.Size = new System.Drawing.Size(516, 337);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 

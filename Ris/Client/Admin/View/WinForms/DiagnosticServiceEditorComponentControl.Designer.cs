@@ -72,7 +72,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._itemSelector.Location = new System.Drawing.Point(0, 93);
 			this._itemSelector.Name = "_itemSelector";
 			this._itemSelector.SelectedItemsTable = null;
-			this._itemSelector.ShowToolbars = false;
 			this._itemSelector.Size = new System.Drawing.Size(555, 420);
 			this._itemSelector.TabIndex = 0;
 			// 
