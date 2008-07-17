@@ -215,7 +215,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                         <ccValidator:RegularExpressionFieldValidator
                                                         ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AccessionNumber"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AccessionNumberHelp"
-                                                        ValidationExpression="^([^\\]){1,16}$" Text="Invalid Accession Number" Display="None">
+                                                        ValidationExpression="^([^\\]){0,16}$" Text="Invalid Accession Number" Display="None">
                                         </ccValidator:RegularExpressionFieldValidator></td></tr></table>
                                 </td>
                                 </tr>
