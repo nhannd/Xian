@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
             Control notes = (Control)_component.NotesHost.ComponentView.GuiElement;
             notes.Dock = DockStyle.Fill;
-            _orderNotesPanel.Controls.Add(notes);
+            _orderNotesGroupBox.Controls.Add(notes);
 
             Control additionalInfo = (Control)_component.AdditionalInfoHost.ComponentView.GuiElement;
             additionalInfo.Dock = DockStyle.Fill;
