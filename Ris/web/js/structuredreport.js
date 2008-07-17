@@ -540,6 +540,7 @@ var GeneralForm = {
 	initialize : function(data, fetalNumberChangeCallback)
 	{
 		var _me = this;
+		this._reportType = data.obusReportType;
 		this._onFetalNumberChanged = fetalNumberChangeCallback;
 
 		var table = Table.createTable($("generalTable"),{ editInPlace: true, flow: true, checkBoxes: false},
@@ -555,8 +556,13 @@ var GeneralForm = {
 			{
 				label: "Fetal Number",
 				cellType: "text",
-				getValue: function(item) { return item.fetalNumber = item.fetalNumber || "1"; },
-				setValue: function(item, value) { item.fetalNumber = value; _me._onFetalNumberChanged(parseInt(item.fetalNumber)); },
+                size: 5,
+				getValue: function(item) { return item.fetalNumber = item.fetalNumber || 1; },
+				setValue: function(item, value) 
+                { 
+                    item.fetalNumber = isNaN(value) ? item.fetalNumber : Number(value);
+                    _me._onFetalNumberChanged(item.fetalNumber); 
+                },
 				getError: function(item) { return null; }
 			},
 			{
@@ -568,6 +574,7 @@ var GeneralForm = {
 				getError: function(item) { return null; },
 				getVisible: function(item) { return parseInt(item.fetalNumber) > 1; }
 			},
+            new NewLineField(),
 			{
 				label: "FH Activity",
 				cellType: "choice",
@@ -585,6 +592,7 @@ var GeneralForm = {
 				getError: function(item) { return null; },
 				getVisible: function(item) { return item.fhActivity == "Absent"; }					
 			},
+            new NewLineField(),
 			{
 				label: "Placenta",
 				cellType: "choice",
@@ -601,6 +609,7 @@ var GeneralForm = {
 				setValue: function(item, value) { item.cervixProximity = value; },
 				getError: function(item) { return null; }
 			},
+            new NewLineField(),
 			{
 				label: "Right Adnexa",
 				cellType: "choice",
@@ -1283,6 +1292,7 @@ var WellBeingForm = {
 				setValue: function(item, value) { item.maxVerticalPocket = value; },
 				getError: function(item) { return null; }
 			},
+            new NewLineField(),
 			{
 				label: "FM",
 				cellType: "choice",
@@ -1315,6 +1325,7 @@ var WellBeingForm = {
 				setValue: function(item, value) { item.nst = Number(value); },
 				getError: function(item) { return null; }
 			},
+            new NewLineField(),
 			{
 				label: "BPS",
 				cellType: "readonly",

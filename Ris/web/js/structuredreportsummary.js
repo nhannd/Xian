@@ -540,9 +540,9 @@ var WellBeingPreview = {
 			new readOnlyCell("Amount", "afvAmount"),
 			new readOnlyCell("Max vertical pocket", "maxVerticalPocket"),
 			{
-				label: "AFI (A+B+C+D)",
+				label: "AFI",
 				cellType: "readonly",
-				getValue: function(item) { return "TODO"; },
+				getValue: function(item) { return item.afiA + " + " + item.afiB + " + " + item.afiC + " + " + item.afiD + " = " + item.afiTotal + "cm" ; },
 				setValue: function(item, value) { return; },
 				getError: function(item) { return null; }
 			},
@@ -553,7 +553,7 @@ var WellBeingPreview = {
 			{
 				label: "BPS",
 				cellType: "readonly",
-				getValue: function(item) { return "TODO"; },
+				getValue: function(item) { return item.bpsTotal + (!isNaN(item.nst) ? "/10" : "/8"); },
 				setValue: function(item, value) { return; },
 				getError: function(item) { return null; }
 			},
@@ -722,7 +722,7 @@ function readOnlyAssessedCell(label, prop)
 	this.prop = prop;
 	this.cellType = "readonly";
 	this.getValue = function(item) { return item[prop]; };
-	this.getVisible = function(item) { return item[prop] != null && item[prop] != "" && item[prop] != "Assessed"; };
+	this.getVisible = function(item) { return item[prop] && item[prop] !== "Assessed"; };
 }
 
 /*

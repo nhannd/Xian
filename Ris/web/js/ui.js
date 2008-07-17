@@ -351,6 +351,20 @@ var Table = {
 				td._setCellDisplayValue = function(value) { Field.setPreFormattedValue(field, value); }
 			}
 			else
+			if(["newline"].indexOf(column.cellType) > -1)
+            {
+                var parent = td.parentNode;
+                parent.removeChild(td);
+                
+                var right  = document.createElement("div");
+                right.style['float'] = right;
+                right.style.clear = 'both';
+                right._setCellDisplayValue = function() {};
+                parent.appendChild(right);
+                
+                td = right;
+            }
+			else
 			if(["text"].indexOf(column.cellType) > -1)
 			{
 				var input = document.createElement("input");
@@ -775,7 +789,13 @@ function insertAfter(newElement,targetElement)
 	}
 }
 
-
+function NewLineField() {
+    this.label = "";
+    this.cellType = "newline";
+    this.getValue = function(item) { return; };
+	this.setValue = function(item, value) { return; };
+	this.getError = function(item) { return null; };
+}
 
 var Field = 
 {
