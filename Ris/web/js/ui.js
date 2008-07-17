@@ -363,6 +363,10 @@ var Table = {
 				
 				// consider the edit complete when focus is lost
 				input.onblur = function() { table._onEditComplete(row, col); }
+                
+                // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+                // This cannot be done in CSS since IE ignores the "type" pseudo selector.
+                input.style.padding = '0px';
 			}
 			else
 			if(["textarea"].indexOf(column.cellType) > -1)
@@ -392,7 +396,11 @@ var Table = {
 					if(column.size) inputDate.size = column.size;
 					inputDate.readOnly = "readonly";
 
-					// launch calendar on click
+                    // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+                    // This cannot be done in CSS since IE ignores the "type" pseudo selector.
+                    inputDate.style.padding = '0px';
+
+                    // launch calendar on click
 					var findButtonDate = document.createElement("span");
 					findButtonDate.innerText = "     ";
 					findButtonDate.className = "datePickerButton";
@@ -419,6 +427,10 @@ var Table = {
 					inputTime.id = this.id + "_" + column.label + "_" + "timeinput" + row;
 					td.appendChild(inputTime);
 					if(column.size) inputTime.size = column.size;
+
+                    // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+                    // This cannot be done in CSS since IE ignores the "type" pseudo selector.
+                    inputTime.style.padding = '0px';  
 
 					inputTime.onkeyup = function()
 					{
@@ -450,7 +462,7 @@ var Table = {
 					// launch calendar on click
 					var findButtonTime = document.createElement("span");
 					findButtonTime.innerText = "     ";
-					findButtonTime.className = "datePickerButton";
+					findButtonTime.className = "timePickerButton";
 					td.appendChild(findButtonTime);
 					findButtonTime.onclick = function() 
 					{ 
@@ -514,7 +526,7 @@ var Table = {
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value; }
 				if(column.size) input.style.width = column.size + "pc"; // set width in chars
-				
+                
 				// choices may be an array, or a function that returns an array
 				var choices = (typeof(column.choices) == "function") ? column.choices(obj) : column.choices;
 				addOptions(input, choices);

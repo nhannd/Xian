@@ -202,7 +202,7 @@ a.collapsibleHeading {
 .readonlyField {
 	font-style: italic;
 	padding-top:0.3em;
-    margin-bottom:0.28em;
+    padding-bottom:0.18em;
 }
 
 #patientNotesTable .checkedDivCell {
@@ -229,9 +229,9 @@ a.collapsibleHeading {
 
 .lookupButton {
 	margin-left:0.1em;
-	font-size:24px;
-	width:24px;
-	height:24px;
+	font-size:19px;
+	width:19px;
+	height:19px;
 	padding:0px 0px 0px 0px;
 	cursor:pointer;
 	background-image:url(../images/PractitionerDetail.png);
@@ -240,9 +240,20 @@ a.collapsibleHeading {
 
 .datePickerButton {
 	margin-left:0.1em;
-	font-size:24px;
-	width:24px;
-	height:24px;
+	font-size:19px;
+	width:19px;
+	height:19px;
+	padding:0px 0px 0px 0px;
+	cursor:pointer;
+	background-image:url(../images/DatePicker.png);
+	background-repeat:no-repeat; 
+}
+
+.timePickerButton {
+	margin-left:0.1em;
+	font-size:19px;
+	width:19px;
+	height:19px;
 	padding:0px 0px 0px 0px;
 	cursor:pointer;
 	background-image:url(../images/DatePicker.png);
