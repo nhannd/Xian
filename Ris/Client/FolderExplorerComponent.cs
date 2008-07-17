@@ -92,10 +92,10 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.InvalidateFolders();
 		}
 
-		internal void ExecuteSearch(SearchData searchData)
+		internal void ExecuteSearch(SearchParams searchParams)
 		{
 			if (_folderSystem.SearchEnabled)
-				_folderSystem.ExecuteSearch(searchData);
+				_folderSystem.ExecuteSearch(searchParams);
 		}
 
 		#region Application Component overrides

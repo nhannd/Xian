@@ -96,6 +96,8 @@ namespace ClearCanvas.Ris.Client
 						_selectedFolder.TotalItemCountChanged -= TotalItemCountChangedEventHandler;
 						_selectedFolder.ItemsTableChanging -= ItemsTableChangingEventHandler;
 						_selectedFolder.ItemsTableChanged -= ItemsTableChangedEventHandler;
+						_selectedFolder.Updating -= UpdatingEventHandler;
+						_selectedFolder.Updated -= UpdatedEventHandler;
 					}
 
                 	_selectedFolder = value;
@@ -105,6 +107,8 @@ namespace ClearCanvas.Ris.Client
 						_selectedFolder.TotalItemCountChanged += TotalItemCountChangedEventHandler;
 						_selectedFolder.ItemsTableChanging += ItemsTableChangingEventHandler;
 						_selectedFolder.ItemsTableChanged += ItemsTableChangedEventHandler;
+						_selectedFolder.Updating += UpdatingEventHandler;
+						_selectedFolder.Updated += UpdatedEventHandler;
 					}
 
 					// ensure that selection changes are not suppressed
@@ -116,7 +120,8 @@ namespace ClearCanvas.Ris.Client
 					// notify that the selected items have changed (because the folder has changed)
 					NotifySelectedItemsChanged();
 
-                    NotifyPropertyChanged("StatusMessage");
+					NotifyPropertyChanged("IsUpdating");
+					NotifyPropertyChanged("StatusMessage");
                 }
             }
         }
@@ -137,7 +142,12 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public ITable FolderContentsTable
+		public bool MultiSelect
+		{
+			get { return _multiSelect; }
+		}
+
+		public ITable FolderContentsTable
         {
             get { return _selectedFolder == null ? null : _selectedFolder.ItemsTable; }
         }
@@ -152,9 +162,15 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
+				if (_selectedFolder == null)
+					return "";
+
+				if (_selectedFolder.IsUpdating)
+					return "Getting folder items...";
+
 				// if no folder selected, or selected folder has 0 items or -1 items (i.e. unknown),
 				// don't display a status message
-                if (_selectedFolder == null || _selectedFolder.TotalItemCount < 1)
+                if (_selectedFolder.TotalItemCount < 1)
                     return "";
 
                 if (_selectedFolder.TotalItemCount == _selectedFolder.ItemsTable.Items.Count)
@@ -165,11 +181,10 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public bool MultiSelect
-        {
-            get { return _multiSelect; }
-            set { _multiSelect = value; }
-        }
+    	public bool IsUpdating
+    	{
+			get { return _selectedFolder == null ? false : _selectedFolder.IsUpdating; }
+    	}
 
         public ISelection SelectedItems
         {
@@ -248,6 +263,12 @@ namespace ClearCanvas.Ris.Client
             NotifyPropertyChanged("StatusMessage");
         }
 
+		private void ItemsTableChangingEventHandler(object sender, EventArgs e)
+		{
+			// suppress selection changes while the folder contents are being refreshed
+			SuppressSelectionChanges(true);
+		}
+
 		private void ItemsTableChangedEventHandler(object sender, EventArgs e)
 		{
 			// update the selection appropriately - re-select the same items if possible
@@ -265,16 +286,23 @@ namespace ClearCanvas.Ris.Client
 			SuppressSelectionChanges(false);
 		}
 
-		private void ItemsTableChangingEventHandler(object sender, EventArgs e)
-		{
-			// suppress selection changes while the folder contents are being refreshed
-			SuppressSelectionChanges(true);
-		}
-
 		private void SuppressSelectionChanges(bool suppress)
 		{
 			_suppressFolderContentSelectionChanges = suppress;
 			NotifyPropertyChanged("SuppressFolderContentSelectionChanges");
 		}
+
+		private void UpdatingEventHandler(object sender, EventArgs e)
+		{
+			NotifyPropertyChanged("IsUpdating");
+			NotifyPropertyChanged("StatusMessage");
+		}
+
+		private void UpdatedEventHandler(object sender, EventArgs e)
+		{
+			NotifyPropertyChanged("IsUpdating");
+			NotifyPropertyChanged("StatusMessage");
+		}
+
 	}
 }

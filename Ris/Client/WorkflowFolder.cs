@@ -83,12 +83,12 @@ namespace ClearCanvas.Ris.Client
 
 		protected override IconSet ClosedIconSet
 		{
-			get { return IsUpdateInProgress ? _closedRefreshingIconSet : base.ClosedIconSet; }
+			get { return IsUpdating ? _closedRefreshingIconSet : base.ClosedIconSet; }
 		}
 
 		protected override IconSet OpenIconSet
 		{
-			get { return IsUpdateInProgress ? _openRefreshingIconSet : base.OpenIconSet; }
+			get { return IsUpdating ? _openRefreshingIconSet : base.OpenIconSet; }
 		}
 
 		protected override void InvalidateCore()
@@ -136,8 +136,6 @@ namespace ClearCanvas.Ris.Client
 		protected abstract void BeginQueryItems();
 
 		protected abstract void BeginQueryCount();
-
-		protected abstract bool IsUpdateInProgress { get; }
 
 		#endregion
 	}
@@ -263,6 +261,9 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
+			// notify the framework that an update is beginning
+			BeginUpdate();
+
 			_queryItemsTask = new BackgroundTask(
 				delegate(IBackgroundTaskContext taskContext)
 				{
@@ -296,6 +297,9 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
+			// notify the framework that an update is beginning
+			BeginUpdate();
+
 			_queryCountTask = new BackgroundTask(
 				delegate(IBackgroundTaskContext taskContext)
 				{
@@ -315,11 +319,6 @@ namespace ClearCanvas.Ris.Client
 			_queryCountTask.Run();
 
 			NotifyIconChanged();
-		}
-
-		protected override bool IsUpdateInProgress
-		{
-			get { return _queryCountTask != null || _queryItemsTask != null; }
 		}
 
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
@@ -349,6 +348,7 @@ namespace ClearCanvas.Ris.Client
             _queryItemsTask.Dispose();
             _queryItemsTask = null;
 
+			EndUpdate();
 			NotifyIconChanged();
 		}
 
@@ -371,6 +371,7 @@ namespace ClearCanvas.Ris.Client
             _queryCountTask.Dispose();
             _queryCountTask = null;
 
+			EndUpdate();
 			NotifyIconChanged();
 		}
 

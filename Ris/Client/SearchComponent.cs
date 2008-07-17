@@ -36,9 +36,9 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class SearchData
+    public class SearchParams
     {
-        public SearchData(string textSearch, bool showActiveOnly)
+        public SearchParams(string textSearch, bool showActiveOnly)
         {
             this.TextSearch = textSearch;
             this.ShowActiveOnly = showActiveOnly;
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     public interface ISearchDataHandler
     {
-        SearchData SearchData { set; }
+        SearchParams SearchParams { set; }
     }
 
     [ExtensionPoint]
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client
             {
                 ISearchDataHandler searchHandler = GetActiveWorkspaceSearchHandler();
                 if (searchHandler != null)
-                    searchHandler.SearchData = new SearchData(_searchField, _showActiveOnly);
+                    searchHandler.SearchParams = new SearchParams(_searchField, _showActiveOnly);
 
                 // always turn the validation errors off after a successful search
                 this.ShowValidation(false);

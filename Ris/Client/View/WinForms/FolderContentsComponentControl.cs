@@ -60,17 +60,35 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component.FolderSystemChanged += _component_FolderSystemChanged;
             
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
-            _folderContentsTableView.DataBindings.Add("StatusText", _component, "StatusMessage", true, DataSourceUpdateMode.Never);
 			_folderContentsTableView.DataBindings.Add("SuppressSelectionChangedEvent", _component, "SuppressFolderContentSelectionChanges",
 				true, DataSourceUpdateMode.OnPropertyChanged);
-        }
 
-        void _component_TableChanged(object sender, EventArgs e)
+			_statusText.Text = _component.StatusMessage;
+			_component.PropertyChanged += _component_PropertyChanged;
+
+//			_folderContentsTableView.DataBindings.Add("StatusText", _component, "StatusMessage", true, DataSourceUpdateMode.Never);
+		}
+
+		private void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == "StatusMessage")
+			{
+				_statusText.Text = _component.StatusMessage;
+			}
+
+			if(e.PropertyName == "IsUpdating")
+			{
+				_progressBar.Visible = _component.IsUpdating;
+				_progressBar.Style = _component.IsUpdating ? ProgressBarStyle.Marquee : ProgressBarStyle.Blocks;
+			}
+		}
+
+        private void _component_TableChanged(object sender, EventArgs e)
         {
             _folderContentsTableView.Table = _component.FolderContentsTable;
         }
 
-        void _component_FolderSystemChanged(object sender, EventArgs e)
+        private void _component_FolderSystemChanged(object sender, EventArgs e)
         {
             // Must set selection to null before setting tool models
             // This is because the type of item may be different between the old and new folder systems

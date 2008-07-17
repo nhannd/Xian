@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client
 	{
 		#region ISearchDataHandler implementation
 
-		public SearchData SearchData
+		public SearchParams SearchParams
 		{
 			set { Search(value); }
 		}
@@ -293,9 +293,9 @@ namespace ClearCanvas.Ris.Client
 			get { return SR.MessageSearchMessage; }
 		}
 
-		public void Search(SearchData searchData)
+		public void Search(SearchParams searchParams)
 		{
-			this.SelectedFolderExplorer.ExecuteSearch(searchData);
+			this.SelectedFolderExplorer.ExecuteSearch(searchParams);
 		}
 
 		#endregion

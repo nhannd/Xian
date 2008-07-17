@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client
 {
     public abstract class SearchResultsFolder : WorkflowFolder
     {
-        private SearchData _searchData;
+        private SearchParams _searchParams;
     	private bool _isValid;
 
         protected SearchResultsFolder()
@@ -23,15 +23,15 @@ namespace ClearCanvas.Ris.Client
         /// Gets or sets the search arguments.  Setting this property will automatically
         /// call <see cref="Folder.Invalidate"/> on this folder.
         /// </summary>
-        public SearchData SearchData
+        public SearchParams SearchParams
         {
-            get { return _searchData; }
+            get { return _searchParams; }
             set
             {
-                _searchData = value;
+                _searchParams = value;
 
-				// immediately invalidate the folder
-                this.Invalidate();
+				// invalidate the folder
+            	_isValid = false;
             }
         }
 
@@ -39,7 +39,8 @@ namespace ClearCanvas.Ris.Client
 
 		protected override void InvalidateCore()
 		{
-			_isValid = false;
+			// search results folders do not support invalidation requests
+			// they can only be invalidated by setting the SearchParams property
 		}
 
 		protected override bool UpdateCore()
@@ -135,14 +136,16 @@ namespace ClearCanvas.Ris.Client
 				_queryItemsTask.Terminated -= OnQueryItemsCompleted;
 			}
 
-			if (this.SearchData != null)
+			if (this.SearchParams != null)
 			{
+				BeginUpdate();
+
 				_queryItemsTask = new BackgroundTask(
 					delegate(IBackgroundTaskContext taskContext)
 					{
 						try
 						{
-							TextQueryResponse<TItem> response = DoQuery(this.SearchData.TextSearch, SearchCriteriaSpecificityThreshold);
+							TextQueryResponse<TItem> response = DoQuery(this.SearchParams.TextSearch, SearchCriteriaSpecificityThreshold);
 							if (response.TooManyMatches)
 								throw new WeakSearchCriteriaException();
 							taskContext.Complete(response.Matches ?? new List<TItem>());
@@ -157,11 +160,6 @@ namespace ClearCanvas.Ris.Client
 				_queryItemsTask.Terminated += OnQueryItemsCompleted;
 				_queryItemsTask.Run();
 			}
-		}
-
-		protected override bool IsUpdateInProgress
-		{
-			get { return _queryItemsTask != null; }
 		}
 
 		private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
@@ -187,6 +185,8 @@ namespace ClearCanvas.Ris.Client
 			_queryItemsTask.Terminated -= OnQueryItemsCompleted;
 			_queryItemsTask.Dispose();
 			_queryItemsTask = null;
+
+			EndUpdate();
 		}
 
 		#endregion

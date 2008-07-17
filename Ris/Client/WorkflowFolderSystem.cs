@@ -314,12 +314,12 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Performs a search, if supported.
         /// </summary>
-        /// <param name="data"></param>
-        public void ExecuteSearch(SearchData data)
+        /// <param name="params"></param>
+        public void ExecuteSearch(SearchParams @params)
         {
             if (this.SearchResultsFolder != null)
             {
-                this.SearchResultsFolder.SearchData = data;
+                this.SearchResultsFolder.SearchParams = @params;
 
 				// immediately update and select the results folder
 				this.SearchResultsFolder.Update();

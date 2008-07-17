@@ -81,6 +81,8 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _itemsTableChanging;
 		private event EventHandler _itemsTableChanged;
 		private event EventHandler _totalItemCountChanged;
+		private event EventHandler _updating;
+		private event EventHandler _updated;
 
 		private IResourceResolver _resourceResolver;
 		private bool _isOpen;
@@ -97,6 +99,7 @@ namespace ClearCanvas.Ris.Client
 
 		private TimeSpan _autoInvalidateInterval = TimeSpan.Zero;
 		private DateTime _lastUpdateTime = DateTime.MinValue;	// basically "never"
+		private bool _isUpdating;
 
 		/// <summary>
 		/// Constructor
@@ -197,7 +200,14 @@ namespace ClearCanvas.Ris.Client
 		public void Update()
 		{
 			if (UpdateCore())
+			{
 				_lastUpdateTime = Platform.Time;
+			}
+		}
+
+		public bool IsUpdating
+		{
+			get { return _isUpdating; }
 		}
 
 		public void Invalidate()
@@ -295,6 +305,24 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _itemsTableChanged += value; }
 			remove { _itemsTableChanged -= value; }
+		}
+
+		/// <summary>
+		/// Occurs before the folder is about to update.
+		/// </summary>
+		public event EventHandler Updating
+		{
+			add { _updating += value; }
+			remove { _updating -= value; }
+		}
+
+		/// <summary>
+		/// Occurs after the folder has finished updating.
+		/// </summary>
+		public event EventHandler Updated
+		{
+			add { _updated += value; }
+			remove { _updated -= value; }
 		}
 
 		/// <summary>
@@ -475,6 +503,31 @@ namespace ClearCanvas.Ris.Client
 		protected void NotifyTotalItemCountChanged()
 		{
 			EventsHelper.Fire(_totalItemCountChanged, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Sets the <see cref="IsUpdating"/> property to true and raises the <see cref="Updating"/> event.
+		/// </summary>
+		/// <remarks>
+		/// The subclass is responsible for calling this method, typically from within the <see cref="UpdateCore"/>
+		/// implementation.
+		/// </remarks>
+		protected void BeginUpdate()
+		{
+			_isUpdating = true;
+			EventsHelper.Fire(_updating, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Sets the <see cref="IsUpdating"/> property to false and raises the <see cref="Updated"/> event.
+		/// </summary>
+		/// <remarks>
+		/// The subclass is responsible for calling this method when an update is complete.
+		/// </remarks>
+		protected void EndUpdate()
+		{
+			_isUpdating = false;
+			EventsHelper.Fire(_updated, this, EventArgs.Empty);
 		}
 
 		#endregion

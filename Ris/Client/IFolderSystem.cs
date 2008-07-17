@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Performs a search, if enabled.
         /// </summary>
-        /// <param name="data"></param>
-        void ExecuteSearch(SearchData data);
+        /// <param name="params"></param>
+        void ExecuteSearch(SearchParams @params);
 	}
 }

@@ -77,9 +77,9 @@ namespace ClearCanvas.Ris.Client
 
 		#region ISearchDataHandler implementation
 
-		public SearchData SearchData
+		public SearchParams SearchParams
 		{
-			set { _folderSystemGroup.SearchData = value; }
+			set { _folderSystemGroup.SearchParams = value; }
 		}
 
 		#endregion

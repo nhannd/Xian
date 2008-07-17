@@ -130,6 +130,11 @@ namespace ClearCanvas.Ris.Client
 		/// </remarks>
 		DateTime LastUpdateTime { get; }
 
+		/// <summary>
+		/// Gets a value indicating whether the folder is currently in the process of updating.
+		/// </summary>
+		bool IsUpdating { get; }
+
 		#endregion
 
 		#region Events
@@ -163,6 +168,16 @@ namespace ClearCanvas.Ris.Client
 		/// Occurs when the value of the <see cref="TotalItemCount"/> property changes.
 		/// </summary>
 		event EventHandler TotalItemCountChanged;
+
+		/// <summary>
+		/// Occurs before the folder is about to update.
+		/// </summary>
+		event EventHandler Updating;
+
+		/// <summary>
+		/// Occurs after the folder has finished updating.
+		/// </summary>
+		event EventHandler Updated;
 
 		#endregion
 

@@ -62,35 +62,72 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
 			this._folderContentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._statusStrip = new System.Windows.Forms.StatusStrip();
+			this._statusText = new System.Windows.Forms.ToolStripStatusLabel();
+			this._progressBar = new System.Windows.Forms.ToolStripProgressBar();
+			this._statusStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _folderContentsTableView
 			// 
-			this._folderContentsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._folderContentsTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._folderContentsTableView.Location = new System.Drawing.Point(0, 0);
 			this._folderContentsTableView.Name = "_folderContentsTableView";
 			this._folderContentsTableView.ReadOnly = false;
-			this._folderContentsTableView.Size = new System.Drawing.Size(358, 500);
+			this._folderContentsTableView.Size = new System.Drawing.Size(358, 478);
 			this._folderContentsTableView.SortButtonVisible = true;
-			this._folderContentsTableView.StatusBarVisible = true;
 			this._folderContentsTableView.TabIndex = 0;
 			this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
 			this._folderContentsTableView.ItemDoubleClicked += new System.EventHandler(this._folderContentsTableView_ItemDoubleClicked);
+			// 
+			// _statusStrip
+			// 
+			this._statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._statusText,
+            this._progressBar});
+			this._statusStrip.Location = new System.Drawing.Point(0, 478);
+			this._statusStrip.Name = "_statusStrip";
+			this._statusStrip.Size = new System.Drawing.Size(358, 22);
+			this._statusStrip.SizingGrip = false;
+			this._statusStrip.TabIndex = 1;
+			this._statusStrip.Text = "statusStrip1";
+			// 
+			// _statusText
+			// 
+			this._statusText.Name = "_statusText";
+			this._statusText.Size = new System.Drawing.Size(210, 17);
+			this._statusText.Spring = true;
+			this._statusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// _progressBar
+			// 
+			this._progressBar.Name = "_progressBar";
+			this._progressBar.Size = new System.Drawing.Size(100, 16);
+			this._progressBar.Visible = false;
 			// 
 			// FolderContentsComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._statusStrip);
 			this.Controls.Add(this._folderContentsTableView);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "FolderContentsComponentControl";
 			this.Size = new System.Drawing.Size(358, 500);
+			this._statusStrip.ResumeLayout(false);
+			this._statusStrip.PerformLayout();
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TableView _folderContentsTableView;
+		private System.Windows.Forms.StatusStrip _statusStrip;
+		private System.Windows.Forms.ToolStripStatusLabel _statusText;
+		private System.Windows.Forms.ToolStripProgressBar _progressBar;
     }
 }
