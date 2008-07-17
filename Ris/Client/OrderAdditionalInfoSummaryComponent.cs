@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			SetUrl(WebResourcesSettings.Default.OrderAdditionalInfoSummaryPageUrl);
+			SetUrl(WebResourcesSettings.Default.OrderAdditionalInfoReadonlyPageUrl);
 			base.Start();
 		}
 

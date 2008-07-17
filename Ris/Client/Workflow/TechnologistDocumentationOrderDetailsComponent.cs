@@ -21,37 +21,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 	{
 		#region ProtocolSummaryComponent class
 
-		public class ProtocolSummaryComponent : DHtmlComponent
+		public class ProtocolSummaryComponent : OrderDetailViewComponent
 		{
-			[DataContract]
-			public class HealthcareContext : DataContractBase
-			{
-				internal HealthcareContext(EntityRef orderRef)
-				{
-					this.OrderRef = orderRef;
-				}
-
-				[DataMember]
-				public EntityRef OrderRef;
-
-			}
-
-			private readonly HealthcareContext _healthcareContext;
-
 			public ProtocolSummaryComponent(ITechnologistDocumentationContext context)
+				: base(context.OrderRef)
 			{
-				_healthcareContext = new HealthcareContext(context.OrderRef);
 			}
 
-			public override void Start()
+			protected override string PageUrl
 			{
-				SetUrl(WebResourcesSettings.Default.ProtocolSummaryUrl);
-				base.Start();
-			}
-
-			protected override DataContractBase GetHealthcareContext()
-			{
-				return _healthcareContext;
+				get { return WebResourcesSettings.Default.PerformingOrderDetailPageUrl; }
 			}
 		}
 

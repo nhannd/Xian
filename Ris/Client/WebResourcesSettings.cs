@@ -261,6 +261,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("reporting/order-additional-info-readonly.htm")]
+		public string OrderAdditionalInfoReadonlyPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoReadonlyPageUrl"]));
+			}
+		}
+
 		#endregion
 
 		#region Protocolling Settings
@@ -277,33 +287,25 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		#region Performing Settings
+
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfo.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("performing/order-detail.htm")]
+		public string PerformingOrderDetailPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PerformingOrderDetailPageUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("performing/order-additional-info.htm")]
 		public string OrderAdditionalInfoPageUrl
 		{
 			get
 			{
 				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoPageUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/orderadditionalinfosummary.htm")]
-		public string OrderAdditionalInfoSummaryPageUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoSummaryPageUrl"]));
-			}
-		}
-
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("technologistdocumentation-ordersummary.htm")]
-		public string OrderSummaryUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderSummaryUrl"]));
 			}
 		}
 
@@ -317,15 +319,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("protocolsummary.htm")]
-		public string ProtocolSummaryUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["ProtocolSummaryUrl"]));
-			}
-		}
+		#endregion
 	}
 
 	public static class WebResourceAbsoluteUrlHelper
