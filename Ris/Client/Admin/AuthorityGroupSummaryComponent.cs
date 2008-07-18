@@ -100,12 +100,12 @@ namespace ClearCanvas.Ris.Client.Admin
 			base.InitializeActionModel(model);
 
 			//TODO: need an icon
-			model.AddAction("duplicate", "Duplicate", null, "Duplicate the selected authority group",
+			model.AddAction("duplicate", "Duplicate","Icons.DuplicateSmall.png", "Duplicate the selected authority group",
 								DuplicateSelectedItem,
 								ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 
 			//TODO: need an icon
-			model.AddAction("import", "Import", null, "Import authority tokens and groups from local plugins",
+			model.AddAction("import", "Import", "Icons.ImportAuthorityTokensSmall.png", "Import authority tokens and groups from local plugins",
 								Import,
 				                ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 
