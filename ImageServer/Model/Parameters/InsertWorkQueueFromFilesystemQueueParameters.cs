@@ -30,39 +30,55 @@
 #endregion
 
 using System;
+using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueDeleteStudyInsertParameters : ProcedureParameters
+    public class InsertWorkQueueFromFilesystemQueueParameters : ProcedureParameters
     {
-        public WorkQueueDeleteStudyInsertParameters()
-            : base("InsertWorkQueueDeleteStudy")
+        public InsertWorkQueueFromFilesystemQueueParameters()
+            : base("InsertWorkQueueFromFilesystemQueue")
         { }
 
         public ServerEntityKey ServerPartitionKey
         {
-            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
         public ServerEntityKey StudyStorageKey
         {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
 
         public DateTime ExpirationTime
         {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
+            set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
         }
 
         public DateTime ScheduledTime
         {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
+            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
 
         public bool DeleteFilesystemQueue
         {
-            set { this.SubCriteria["DeleteFilesystemQueue"] = new ProcedureParameter<bool>("DeleteFilesystemQueue", value); }
+            set { SubCriteria["DeleteFilesystemQueue"] = new ProcedureParameter<bool>("DeleteFilesystemQueue", value); }
         }
+
+        public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
+        {
+            set { SubCriteria["FilesystemQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("FilesystemQueueTypeEnum", value); }
+        }
+
+		public WorkQueueTypeEnum WorkQueueTypeEnum
+        {
+            set { SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
+        }
+
+		public XmlDocument Data
+		{
+			set { SubCriteria["Data"] = new ProcedureParameter<XmlDocument>("Data", value); }
+		}
     }
 }

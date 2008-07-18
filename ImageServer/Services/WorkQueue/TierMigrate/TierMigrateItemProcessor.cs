@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
         #region Private static members
         private static int _sessionStudiesMigrate = 0;
         private static TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
-        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor();
+        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor("Tier Migrate");
         #endregion
 
         #region Private Members

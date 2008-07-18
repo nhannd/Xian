@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
         protected override void Run()
         {
         
-            FilesystemMonitor monitor = new FilesystemMonitor();
+            FilesystemMonitor monitor = new FilesystemMonitor("Dicom Server");
             monitor.Load();
             
             foreach (ServerPartition part in _partitions)

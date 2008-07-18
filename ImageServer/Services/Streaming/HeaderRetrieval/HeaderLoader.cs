@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
     /// </summary>
     internal class HeaderLoader
     {
-        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor();
+        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor("Header Retrieval");
         private readonly HeaderRetrievalContext _context;
         private readonly HeaderLoaderStatistics _statistics = new HeaderLoaderStatistics();
         private Stream _compressedHeaderStream = null;

@@ -51,10 +51,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 
 		#region Private Methods
 		/// <summary>
-		/// Process StudyDelete Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
+		/// Process StudyCompress Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
 		/// </summary>
 		/// <param name="candidateList">The list of candidate studies for deleting.</param>
-		private void ProcessCompressCandidates(IEnumerable<FilesystemQueue> candidateList)
+		/// <param name="type">The type of compress candidate (lossy or lossless)</param>
+		private void ProcessCompressCandidates(IEnumerable<FilesystemQueue> candidateList, FilesystemQueueTypeEnum type)
 		{
 			DateTime scheduledTime = Platform.Time.AddSeconds(10);
 
@@ -75,9 +76,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 				{
 					scheduledTime = scheduledTime.AddSeconds(3);
 
-					IInsertWorkQueueCompressStudy workQueueInsert = update.GetBroker<IInsertWorkQueueCompressStudy>();
+					IInsertWorkQueueFromFilesystemQueue workQueueInsert = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
-					WorkQueueCompressStudyInsertParameters insertParms = new WorkQueueCompressStudyInsertParameters();
+					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
 					insertParms.StudyStorageKey = location.GetKey();
@@ -87,6 +88,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					insertParms.ExpirationTime = expirationTime;
 					insertParms.DeleteFilesystemQueue = true;
 					insertParms.Data = queueItem.QueueXml;
+					insertParms.FilesystemQueueTypeEnum = type;
+					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
 
 					try
 					{
@@ -112,7 +115,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 		#region Public Methods
 		public void Process(Model.ServiceLock item)
 		{
-			_monitor = new FilesystemMonitor();
+			_monitor = new FilesystemMonitor("Filesystem Lossless Compress");
 			_monitor.Load();
 
 			ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(item.FilesystemKey);
@@ -132,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 
 				if (list.Count > 0)
 				{
-					ProcessCompressCandidates(list);
+					ProcessCompressCandidates(list, type);
 				}
 			}
 			catch (Exception e)
@@ -143,7 +146,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 
 			DateTime scheduledTime = Platform.Time.AddMinutes(delayMinutes);
 			if (_studiesInserted == 0)
-				Platform.Log(LogLevel.Warn,
+				Platform.Log(LogLevel.Info,
 				             "No eligable candidates to lossless compress from filesystem '{0}'.  Next scheduled filesystem check {1}",
 				             fs.Filesystem.Description, scheduledTime);
 			else

@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #region Public Methods
         public void Process(Model.ServiceLock item)
         {
-            _monitor = new FilesystemMonitor();
+            _monitor = new FilesystemMonitor("Filesystem reinventory");
             _monitor.Load();
             _store = PersistentStoreRegistry.GetDefaultStore();
 

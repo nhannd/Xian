@@ -4,9 +4,9 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryFilesystemQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryFilesystemQueue]
 GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueDeleteStudy]    Script Date: 01/08/2008 16:04:34 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueDeleteStudy]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[InsertWorkQueueDeleteStudy]
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueFromFilesystemQueue]    Script Date: 01/08/2008 16:04:34 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueFromFilesystemQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertWorkQueueFromFilesystemQueue]
 GO
 /****** Object:  StoredProcedure [dbo].[InsertFilesystemQueue]    Script Date: 01/08/2008 16:04:33 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystemQueue]') AND type in (N'P', N'PC'))
@@ -95,10 +95,6 @@ GO
 /****** Object:  StoredProcedure [dbo].[DeleteServerPartition]    Script Date: 04/26/2008 00:28:22 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteServerPartition]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[DeleteServerPartition]
-GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueCompressStudy]    Script Date: 05/12/2008 12:21:23 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueCompressStudy]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[InsertWorkQueueCompressStudy]
 GO
 /****** Object:  StoredProcedure [dbo].[InsertArchiveQueue]    Script Date: 07/11/2008 13:04:37 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertArchiveQueue]') AND type in (N'P', N'PC'))
@@ -449,25 +445,28 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueDeleteStudy]    Script Date: 01/08/2008 16:04:34 ******/
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueFromFilesystemQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueDeleteStudy]') AND type in (N'P', N'PC'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueFromFilesystemQueue]') AND type in (N'P', N'PC'))
 BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
--- Create date: November 14, 2007
--- Description:	Stored procedure for inserting DeleteStudy WorkQueue entries
+-- Create date: July 17, 2008
+-- Description:	Stored procedure for inserting WorkQueue entries
 -- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueDeleteStudy] 
+CREATE PROCEDURE [dbo].[InsertWorkQueueFromFilesystemQueue] 
 	-- Add the parameters for the stored procedure here
 	@StudyStorageGUID uniqueidentifier, 
 	@ServerPartitionGUID uniqueidentifier,
 	@ExpirationTime datetime,
 	@ScheduledTime datetime,
-	@DeleteFilesystemQueue bit 
+	@DeleteFilesystemQueue bit, 
+	@WorkQueueTypeEnum smallint,
+	@FilesystemQueueTypeEnum smallint,
+	@Data xml = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -478,30 +477,26 @@ BEGIN
 
 	declare @PendingStatusEnum as smallint
 	declare @IdleStatusEnum as smallint
-	declare @DeleteStudyTypeEnum as smallint
-	declare @DeleteStudyFilesystemQueueTypeEnum smallint
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
-	select @DeleteStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''DeleteStudy''
-	select @DeleteStudyFilesystemQueueTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''DeleteStudy''
 
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
-		AND WorkQueueTypeEnum = @DeleteStudyTypeEnum
+		AND WorkQueueTypeEnum = @WorkQueueTypeEnum
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeleteStudyTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, Data)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime, @Data)
 		IF @DeleteFilesystemQueue = 1
 		BEGIN
 			DELETE FROM FilesystemQueue
-			WHERE StudyStorageGUID = @StudyStorageGUID AND FilesystemQueueTypeEnum = @DeleteStudyFilesystemQueueTypeEnum
+			WHERE StudyStorageGUID = @StudyStorageGUID AND FilesystemQueueTypeEnum = @FilesystemQueueTypeEnum
 		END
 	END
 	ELSE
@@ -510,6 +505,8 @@ BEGIN
 			set ExpirationTime = @ExpirationTime
 			where GUID = @WorkQueueGUID
 	END
+
+	SELECT * FROM WorkQueue WHERE GUID = @WorkQueueGUID
 
 	COMMIT TRANSACTION
 END
@@ -2029,142 +2026,6 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueCompressStudy]    Script Date: 05/12/2008 12:21:23 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueCompressStudy]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Steve Wranovsky
--- Create date: May 9, 2008
--- Description:	Stored procedure for inserting Compress WorkQueue entries
--- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueCompressStudy] 
-	@WorkQueueTypeEnum smallint,
-	@FilesystemQueueTypeEnum smallint,
-	@StudyStorageGUID uniqueidentifier, 
-	@ServerPartitionGUID uniqueidentifier,
-	@ExpirationTime datetime,
-	@ScheduledTime datetime,
-	@DeleteFilesystemQueue bit,
-	@Data xml 
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	declare @WorkQueueGUID as uniqueidentifier
-	declare @PendingStatusEnum as smallint
-
-	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
-
-	BEGIN TRANSACTION
-
-    -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND WorkQueueTypeEnum = @WorkQueueTypeEnum
-	if @@ROWCOUNT = 0
-	BEGIN
-		set @WorkQueueGUID = NEWID();
-
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, Data)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @WorkQueueTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime, @Data)
-		IF @DeleteFilesystemQueue = 1
-		BEGIN
-			DELETE FROM FilesystemQueue
-			WHERE StudyStorageGUID = @StudyStorageGUID AND FilesystemQueueTypeEnum = @FilesystemQueueTypeEnum
-		END
-	END
-	ELSE
-	BEGIN
-		UPDATE WorkQueue 
-			set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
-	END
-
-	COMMIT TRANSACTION
-
-	SELECT * FROM WorkQueue WHERE GUID = @WorkQueueGUID
-
-END
-' 
-END
-GO
-
-
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueMigrateStudy]    Script Date: 06/24/2008 12:21:23 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueMigrateStudy]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Thanh Huynh
--- Create date: June 24, 2008
--- Description:	Stored procedure for inserting MigrateStudy WorkQueue entries
--- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueMigrateStudy] 
-	-- Add the parameters for the stored procedure here
-	@StudyStorageGUID uniqueidentifier, 
-	@ServerPartitionGUID uniqueidentifier,
-	@ExpirationTime datetime,
-	@ScheduledTime datetime,
-	@DeleteFilesystemQueue bit 
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	declare @WorkQueueGUID as uniqueidentifier
-
-	declare @PendingStatusEnum as smallint
-	declare @IdleStatusEnum as smallint
-	declare @MigrateStudyTypeEnum as smallint
-	declare @MigrateStudyFilesystemQueueTypeEnum smallint
-
-	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
-	select @MigrateStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''MigrateStudy''
-	select @MigrateStudyFilesystemQueueTypeEnum = Enum from FilesystemQueueTypeEnum where Lookup = ''TierMigrate''
-
-	BEGIN TRANSACTION
-
-    -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND WorkQueueTypeEnum = @MigrateStudyTypeEnum
-	if @@ROWCOUNT = 0
-	BEGIN
-		set @WorkQueueGUID = NEWID();
-
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @MigrateStudyTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
-		IF @DeleteFilesystemQueue = 1
-		BEGIN
-			DELETE FROM FilesystemQueue
-			WHERE StudyStorageGUID = @StudyStorageGUID AND FilesystemQueueTypeEnum = @MigrateStudyFilesystemQueueTypeEnum
-		END
-	END
-	ELSE
-	BEGIN
-		UPDATE WorkQueue 
-			set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
-	END
-
-	COMMIT TRANSACTION
-END
-' 
-END
-GO
-
-
 /****** Object:  StoredProcedure [dbo].[InsertArchiveQueue]    Script Date: 07/11/2008 13:04:37 ******/
 SET ANSI_NULLS ON
 GO

@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.TestApp
             try
             {
 
-                FilesystemMonitor monitor = new FilesystemMonitor();
+                FilesystemMonitor monitor = new FilesystemMonitor("TestApp");
 
                 monitor.Load();
 

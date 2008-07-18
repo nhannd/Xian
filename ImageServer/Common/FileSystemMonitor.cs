@@ -62,12 +62,14 @@ namespace ClearCanvas.ImageServer.Common
         private Thread _theThread = null;
         private bool _stop = false;
         private readonly object _lock = new object();
+    	private string _name;
         #endregion
 
         #region Constructors
-        public FilesystemMonitor()
+        public FilesystemMonitor(string name)
         {
             _store = PersistentStoreRegistry.GetDefaultStore();
+        	_name = name;
         }
         #endregion
 
@@ -315,7 +317,7 @@ namespace ClearCanvas.ImageServer.Common
             if (_theThread == null)
             {
                 _theThread = new Thread(Run);
-                _theThread.Name = "Filesystem Monitor";
+            	_theThread.Name = String.Format("{1} Filesystem Monitor ({0})", _name, _theThread.ManagedThreadId);
 
                 _theThread.Start();
             }

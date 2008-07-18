@@ -45,10 +45,8 @@
     <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\IDeleteFilesystemStudyStorage.cs" />
     <Compile Include="Brokers\IInsertArchiveQueue.cs" />
-    <Compile Include="Brokers\IInsertWorkQueueMigrateStudy.cs" />
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
-    <Compile Include="Brokers\IInsertWorkQueueCompressStudy.cs" />
     <Compile Include="Brokers\IQueryArchiveQueue.cs" />
     <Compile Include="Brokers\IQueryRestoreQueue.cs" />
     <Compile Include="Brokers\IQueryServerPartitionTransferSyntaxes.cs" />
@@ -58,7 +56,7 @@
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueAutoRoute.cs" />
-    <Compile Include="Brokers\IInsertWorkQueueDeleteStudy.cs" />
+    <Compile Include="Brokers\IInsertWorkQueueFromFilesystemQueue.cs" />
     <Compile Include="Brokers\IQueryFilesystemQueue.cs" />
     <Compile Include="Brokers\IQueryServiceLock.cs" />
     <Compile Include="Brokers\IResetServiceLock.cs" />
@@ -164,12 +162,10 @@
     <Compile Include="Parameters\QueryRestoreQueueParameters.cs" />
     <Compile Include="Parameters\UpdateArchiveQueueParameters.cs" />
     <Compile Include="Parameters\UpdateRestoreQueueParameters.cs" />
-    <Compile Include="Parameters\WorkQueueMigrateStudyInsertParameters.cs" />
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\PartitionTransferSyntaxQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
-    <Compile Include="Parameters\WorkQueueCompressStudyInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
     <Compile Include="PartitionArchive.gen.cs" />
     <Compile Include="PartitionSopClass.cs" />
@@ -205,7 +201,7 @@
     <Compile Include="Parameters\DeleteStudyStorageParameters.cs" />
     <Compile Include="Parameters\WorkQueueAutoRouteInsertParameters.cs" />
     <Compile Include="Parameters\WorkQueueResetParameters.cs" />
-    <Compile Include="Parameters\WorkQueueDeleteStudyInsertParameters.cs" />
+    <Compile Include="Parameters\InsertWorkQueueFromFilesystemQueueParameters.cs" />
     <Compile Include="Brokers\IQueryServerPartitionSopClasses.cs" />
     <Compile Include="Brokers\IQueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\IUpdateWorkQueue.cs" />

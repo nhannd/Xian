@@ -37,10 +37,10 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class InsertWorkQueueMigrateStudy : ProcedureUpdateBroker<WorkQueueMigrateStudyInsertParameters>, IInsertWorkQueueMigrateStudy
+    public class InsertWorkQueueFromFilesystemQueue : ProcedureQueryBroker<InsertWorkQueueFromFilesystemQueueParameters,WorkQueue>, IInsertWorkQueueFromFilesystemQueue
     {
-        public InsertWorkQueueMigrateStudy()
-            : base("InsertWorkQueueMigrateStudy")
+        public InsertWorkQueueFromFilesystemQueue()
+            : base("InsertWorkQueueFromFilesystemQueue")
         {
         }
     }

@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="item"></param>
         public void Process(Model.ServiceLock item)
         {
-            _monitor = new FilesystemMonitor();
+            _monitor = new FilesystemMonitor("Filesystem Reprocess");
             _monitor.Load();
 
             LoadRulesEngine();
