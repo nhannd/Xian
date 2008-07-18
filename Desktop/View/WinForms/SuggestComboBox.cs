@@ -48,7 +48,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ISuggestionProvider _suggestionProvider;
 
         private event EventHandler _valueChanged;
-
         #region Public properties
 
         /// <summary>
@@ -196,7 +195,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         protected override void OnTextUpdate(EventArgs e)
         {
             base.OnTextUpdate(e);
-			ResetCursor();
+			CursorReset();
             _suggestionProvider.SetQuery(this.Text);
         }
 
@@ -275,7 +274,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.ResumeLayout(false);
 		}
 
-		private void ResetCursor()
+		private void CursorReset()
 		{
 			Cursor.Current = Cursors.Default;
 			Cursor.Show();
@@ -283,7 +282,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void SuggestComboBox_CursorChanged(object sender, EventArgs e)
 		{
-			ResetCursor();
+			CursorReset();
 		}
     }
 }
