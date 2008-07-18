@@ -419,6 +419,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
             attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.PersistenceContext);
 
+			if (requisition.ExtendedProperties != null)
+			{
+				// copy properties individually so as not to overwrite any that were not sent by the client
+				foreach (KeyValuePair<string, string> pair in requisition.ExtendedProperties)
+				{
+					order.ExtendedProperties[pair.Key] = pair.Value;
+				}
+			}
+
             return order;
         }
 

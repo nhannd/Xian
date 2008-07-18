@@ -371,6 +371,7 @@ namespace ClearCanvas.Ris.Client
                 _selectedPriority = _priorityChoices.Count > 0 ? _priorityChoices[0] : null;
                 _orderingFacility = LoginSession.Current.WorkingFacility;
                 _schedulingRequestTime = Platform.Time;
+            	_orderAdditionalInfoComponent.OrderExtendedProperties = _extendedProperties;
             }
             else
             {
