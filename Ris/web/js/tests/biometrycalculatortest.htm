@@ -1,11 +1,13 @@
 <html>
  <head>
   <title>Test Page for BiometryCalculator</title>
-  <script language="javascript" src="../jsunit/app/jsUnitCore.js"></script>
-  <script language="javascript" src="../biometrycalculator.js"></script>
+  <script src="../jsunit/app/jsUnitCore.js"></script>
+  <script src="../biometrycalculator.js"></script>
  </head>
  <body>
-  <script language="javascript">
+  <script>
+    /*global BiometryCalculator, assertEquals */
+  
     function testCrlWithValidArgs() {
         assertEquals("CRL for 1 mm is 5.9", "5.9", BiometryCalculator.crlWeeks(1).toFixed(1));
         assertEquals("CRL for 10 mm is 7.3", "7.3", BiometryCalculator.crlWeeks(10).toFixed(1));
@@ -14,7 +16,7 @@
     function testCrlWithInvalidArgs() {
         assertEquals("CRL for null is 0", "0.0", BiometryCalculator.crlWeeks(null).toFixed(1));
     }
-	 
+
     function testBpdWithValidArgs() {
         assertEquals("BPD for 1 mm is 7.2", "7.2", BiometryCalculator.bpdWeeks(1).toFixed(1));
         assertEquals("BPD for 10 mm is 9.5", "9.5", BiometryCalculator.bpdWeeks(10).toFixed(1));
@@ -23,20 +25,19 @@
     function testBpdWithInvalidArgs() {
         assertEquals("BPD for null is 0", "0.0", BiometryCalculator.bpdWeeks(null).toFixed(1));
     }
-
     function testCorrectedBpdWithValidArgs() {
         assertEquals("Corrected BPD for BPD = 1 mm, OFD = 1 mm is 1 mm", "1", BiometryCalculator.correctedBpd(1, 1).toFixed(0));
         assertEquals("Corrected BPD for BPD = 10 mm, OFD = 10 mm is 9 mm", "9", BiometryCalculator.correctedBpd(10, 10).toFixed(0));
         assertEquals("Corrected BPD for BPD = 50 mm, OFD = 50 mm is 44 mm", "44", BiometryCalculator.correctedBpd(50, 50).toFixed(0));
     }
+
     function testCorrectedBpdWithoutOfdInvalidArgs() {
         assertEquals("Corrected BPD for BPD = 50 mm and without OFD is 50", "50", BiometryCalculator.correctedBpd(50, null).toFixed(0));
     }
     function testCorrectedBpdWithInvalidArgs() {
         assertEquals("BPD for null is 0", "0", BiometryCalculator.correctedBpd(null, null).toFixed(0));
     }
-	 
-	 function testAbdominalCircumferenceWithValidArgs() {
+    function testAbdominalCircumferenceWithValidArgs() {
         assertEquals("Abdominal Circumference for A1 = 5 mm, A2 = 10 mm is 24", "24", BiometryCalculator.abdomenCircumference(5, 10).toFixed(0));
     }
     function testAbdominalCircumferenceWithInvalidArgs() {
@@ -60,17 +61,29 @@
     function testFemurWithInvalidArgs() {
         assertEquals("Femur for null is 0", "0", BiometryCalculator.femurWeeks(null).toFixed(0));
     }
-	 
-	 function testAverageWeeksWithValidArgs() {
-        assertEquals("Average Weeks for BPD = 0, Abd Circ = 0, Femur = 0 is 0.0", "0.0", BiometryCalculator.averageWeeks(0,0,0).toFixed(1));
-        assertEquals("Average Weeks for BPD = 10, Abd Circ = 0, Femur = 0 is 10.0", "10.0", BiometryCalculator.averageWeeks(10,0,0).toFixed(1));
-        assertEquals("Average Weeks for BPD = 0, Abd Circ = 10, Femur = 0 is 10.0", "10.0", BiometryCalculator.averageWeeks(0,10,0).toFixed(1));
-        assertEquals("Average Weeks for BPD = 0, Abd Circ = 0, Femur = 10 is 10.0", "10.0", BiometryCalculator.averageWeeks(0,0,10).toFixed(1));
-        assertEquals("Average Weeks for BPD = 10, Abd Circ = 12, Femur = 0 is 11.0", "11.0", BiometryCalculator.averageWeeks(10,12,0).toFixed(1));
-        assertEquals("Average Weeks for BPD = 0, Abd Circ = 10, Femur = 12 is 11.0", "11.0", BiometryCalculator.averageWeeks(0,10,12).toFixed(1));
-        assertEquals("Average Weeks for BPD = 10, Abd Circ = 0, Femur = 12 is 11.0", "11.0", BiometryCalculator.averageWeeks(10,0,12).toFixed(1));
-        assertEquals("Average Weeks for BPD = 10, Abd Circ = 11, Femur = 12 is 11.0", "11.0", BiometryCalculator.averageWeeks(10,11,12).toFixed(1));
-	 }
+
+    function testAverageWeeksWithValidArgs() {
+        assertEquals("Average Weeks for BPD = 0, Abd Circ = 0, Femur = 0 is 0.0", "0.0", BiometryCalculator.averageWeeks(0, 0, 0).toFixed(1));
+        assertEquals("Average Weeks for BPD = 10, Abd Circ = 0, Femur = 0 is 10.0", "10.0", BiometryCalculator.averageWeeks(10, 0, 0).toFixed(1));
+        assertEquals("Average Weeks for BPD = 0, Abd Circ = 10, Femur = 0 is 10.0", "10.0", BiometryCalculator.averageWeeks(0, 10, 0).toFixed(1));
+        assertEquals("Average Weeks for BPD = 0, Abd Circ = 0, Femur = 10 is 10.0", "10.0", BiometryCalculator.averageWeeks(0, 0, 10).toFixed(1));
+        assertEquals("Average Weeks for BPD = 10, Abd Circ = 12, Femur = 0 is 11.0", "11.0", BiometryCalculator.averageWeeks(10, 12, 0).toFixed(1));
+        assertEquals("Average Weeks for BPD = 0, Abd Circ = 10, Femur = 12 is 11.0", "11.0", BiometryCalculator.averageWeeks(0, 10, 12).toFixed(1));
+        assertEquals("Average Weeks for BPD = 10, Abd Circ = 0, Femur = 12 is 11.0", "11.0", BiometryCalculator.averageWeeks(10, 0, 12).toFixed(1));
+        assertEquals("Average Weeks for BPD = 10, Abd Circ = 11, Femur = 12 is 11.0", "11.0", BiometryCalculator.averageWeeks(10, 11, 12).toFixed(1));
+    }
+
+    function testEfwWithValidArgs() {
+        assertEquals("EFW", 70, BiometryCalculator.efw(true, true, 37.7, 12, 10.7));
+        assertEquals("EFW", 40, BiometryCalculator.efw(true, false, 37.7, 12, 10.7));
+        assertEquals("EFW", 60, BiometryCalculator.efw(false, true, 37.7, 12, 10.7));
+        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, 37.7, 12, 10.7));
+
+        assertEquals("EFW", 580, BiometryCalculator.efw(true, true, 157.0, 50, 44.5));
+        assertEquals("EFW", 340, BiometryCalculator.efw(true, false, 157.0, 50, 44.5));
+        assertEquals("EFW", 620, BiometryCalculator.efw(false, true, 157.0, 50, 44.5));
+        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, 157.0, 50, 44.5));
+    }
 	</script>
  </body>
 </html>

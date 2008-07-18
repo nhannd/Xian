@@ -447,16 +447,24 @@ var IndicationsAndDatesForm = {
 			{
 				label: "EDC",
 				cellType: "readonly",
-				getVisible: function(item) { return item.LMP && item.LMP != null; },
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return; }
+				getVisible: function(item) { return !!item.LMP; },
+				getValue: function(item)
+                { 
+                    item.lmpEdc = EdcCalculator.edcFromLmp(item.LMP); 
+                    return Ris.formatDate(item.lmpEdc);
+                },
+                setValue: function(item, value) { return; }
 			},
 			{
-				label: "Age from dates",
+				label: "Age from dates (wks)",
 				cellType: "readonly",
-				getVisible: function(item) { return item.LMP && item.LMP != null; },
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return; }
+				getVisible: function(item) { return !!item.LMP; },
+				getValue: function(item) 
+                { 
+                    item.lmpAge = EdcCalculator.differenceInWeeks(item.LMP, new Date()); 
+                    return item.lmpAge.toFixed(1);
+                },
+                setValue: function(item, value) { return; }
 			}
 		]);
 		
@@ -473,23 +481,33 @@ var IndicationsAndDatesForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "Number of weeks",
+				label: "Age at 1st Ultrasound (wks)",
 				cellType: "text",
-				getValue: function(item) { return item.numberOfWeeks; },
-				setValue: function(item, value) { item.numberOfWeeks = value; },
+				getValue: function(item) { return item.firstUltrasoundAge; },
+				setValue: function(item, value) { item.firstUltrasoundAge = isNaN(value) ? null : Number(value); },
 				getError: function(item) { return null; }
 			},
 			{
-				label: "Today",
-				cellType: "text",
-				getValue: function(item) { return item.today; },
-				setValue: function(item, value) { item.today = value; },
-				getError: function(item) { return null; }
+				label: "Age Today (wks)",
+				cellType: "readonly",
+				getVisible: function(item) { return !!item.firstUltrasound && (!!item.firstUltrasoundAge || item.firstUltrasoundAge === 0); },
+				getValue: function(item)
+                { 
+                    item.ageToday = EdcCalculator.differenceInWeeks(item.firstUltrasound, new Date()) + item.firstUltrasoundAge; 
+                    return item.ageToday.toFixed(1);
+                },
+                setValue: function(item, value) { return; }
 			},
 			{
 				label: "EDC",
 				cellType: "readonly",
-				getValue: function(item) { return "CALC"; }
+				getValue: function(item) 
+                { 
+                    item.firstUltrasoundEdc = EdcCalculator.edcFromTodaysAge(item.ageToday);
+                    return Ris.formatDate(item.firstUltrasoundEdc); 
+                },
+				getVisible: function(item) { return !!item.firstUltrasound && (!!item.firstUltrasoundAge || item.firstUltrasoundAge === 0); },
+                setValue: function(item, value) { return; }
 			}
 		]);
 		
@@ -506,11 +524,15 @@ var IndicationsAndDatesForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "Age from EDC",
+				label: "Age from EDC (wks)",
 				cellType: "readonly",
-				getValue: function(item) { return "TODO"; },
+				getValue: function(item) 
+                { 
+                    item.establishedEDCAge = EdcCalculator.ageFromEdc(item.establishedEDC);
+                    return item.establishedEDCAge.toFixed(1); 
+                },
 				setValue: function(item, value) { return; },
-				getVisible: function(item) { return item.establishedEDC && item.establishedEDC != null; }
+				getVisible: function(item) { return !!item.establishedEDC; }
 			},
 			{
 				label: "How Determined",
@@ -710,6 +732,11 @@ var BiometryForm = {
 		averageSizeTable.bindItems([this._data[this._fetus]]);
 	},
 
+	UpdateEfw : function()
+	{
+		efwTable.bindItems([this._data[this._fetus]]);
+	},
+
 	initialize : function(data, fetus)
 	{
 		this._data = data.biometry;
@@ -737,7 +764,7 @@ var BiometryForm = {
 				label: "mm", 
 				size: 13,
 				cellType: "text",
-				getValue: function(item) { return item.crl; },
+				getValue: function(item) { return item.crl = item.crl || null; },
 				setValue: function(item, value) 
 				{ 
 					item.crl = parseInt(value);
@@ -766,6 +793,7 @@ var BiometryForm = {
 					item.correctedBpdWks = BiometryCalculator.bpdWeeks(item.correctedBpd);
 					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
+					BiometryForm.UpdateEfw();
 				},
 				getError: function(item) { return null; }
 			},
@@ -782,11 +810,12 @@ var BiometryForm = {
 					item.correctedBpdWks = BiometryCalculator.bpdWeeks(item.correctedBpd);
 					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
+					BiometryForm.UpdateEfw();
 				},
 				getError: function(item) { return null; },
 				getVisible: function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }
 			},
-			new CalculatedBiometryCell("Corrected BPD mm", "correctedBpd", 0, function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }),
+			new CalculatedBiometryCell("Corrected BPD mm", "correctedBpd", 1, function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; }),
 			new CalculatedBiometryCell("wks", "correctedBpdWks", 1, function(item) { return _me._reportType == reportTypes[1] || _me._reportType == reportTypes[2]; })
 		]);
 		
@@ -806,6 +835,7 @@ var BiometryForm = {
 					item.abdCircumferenceWks = BiometryCalculator.abdomenCircumferenceWeeks(item.abdCircumference);
 					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
+					BiometryForm.UpdateEfw();
 				},
 				getError: function(item) { return null; }
 			},
@@ -821,11 +851,11 @@ var BiometryForm = {
 					item.abdCircumferenceWks = BiometryCalculator.abdomenCircumferenceWeeks(item.abdCircumference);
 					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
-
+					BiometryForm.UpdateEfw();
 				},
 				getError: function(item) { return null; }
 			},
-			new CalculatedBiometryCell("AC mm", "abdCircumference", 0),
+			new CalculatedBiometryCell("AC mm", "abdCircumference", 1),
 			new CalculatedBiometryCell("wks", "abdCircumferenceWks", 1)
 		]);
 		
@@ -844,6 +874,7 @@ var BiometryForm = {
 					item.flWks = BiometryCalculator.femurWeeks(item.fl);
 					item.avgWks = BiometryCalculator.averageWeeks(item.correctedBpdWks, item.abdCircumferenceWks, item.flWks);
 					BiometryForm.UpdateAvgSize();
+					BiometryForm.UpdateEfw();
 				},
 				getError: function(item) { return null; }
 			},
@@ -887,7 +918,7 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.useBpdcHc = value; 
-					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl);
+					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl, item.abdCircumference, item.fl, item.correctedBpd);
 				},
 				getError: function(item) { return null; }
 			},
@@ -898,30 +929,31 @@ var BiometryForm = {
 				setValue: function(item, value) 
 				{ 
 					item.useFl = value; 
-					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl);
+					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl, item.abdCircumference, item.fl, item.correctedBpd);
 				},
 				getError: function(item) { return null; }
 			},
-			new CalculatedBiometryCell("gm", "efw", 1),
+            new NewLineField(),
+			new CalculatedBiometryCell("EFW (gm)", "efw", 0),
 			{
 				label: "Percentile", 
 				cellType: "text",
 				size: 5,
-				getValue: function(item) { return item.efwPercentile; },
-				setValue: function(item, value) { item.efwPercentile = parseInt(value); },
+				getValue: function(item) { return item.efwCentile; },
+				setValue: function(item, value) { item.efwCentile = parseInt(value); },
 				getError: function(item) { return null; }
 			}
 		]);
 
 		efwTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
-		var nuchalTransparencyTable = Table.createTable($("nuchalTransparencyTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		var nuchalTranslucencyTable = Table.createTable($("nuchalTransparencyTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
 				label: "mm", 
 				cellType: "text",
-				getValue: function(item) { return item.nuchalTransparency; },
-				setValue: function(item, value) { item.nuchalTransparency = value; },
+				getValue: function(item) { return item.nuchalTranslucency; },
+				setValue: function(item, value) { item.nuchalTranslucency = value; },
 				getError: function(item) { return null; },
 				getVisible: function(item) { return _me._reportType == reportTypes[1]; }
 			}

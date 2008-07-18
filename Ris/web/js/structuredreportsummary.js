@@ -127,20 +127,8 @@ var IndicationsAndDatesPreview = {
 		var lmpPreviewTable = Table.createTable($("lmpPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			new readOnlyDateCell("Date of LMP", "LMP"),
-			{
-				label: "EDC",
-				cellType: "readonly",
-				getVisible: function(item) { return item.LMP && item.LMP != null; },
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return; }
-			},
-			{
-				label: "Age from dates",
-				cellType: "readonly",
-				getVisible: function(item) { return item.LMP && item.LMP != null; },
-				getValue: function(item) { return "CALC"; },
-				setValue: function(item, value) { return; }
-			}
+			new readOnlyDateCell("EDC", "lmpEdc"),
+			new readOnlyCalculatedCell("Age from dates (wks)", "lmpAge")
 		]);
 		
 		lmpPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -150,14 +138,9 @@ var IndicationsAndDatesPreview = {
 		var usPreviewTable = Table.createTable($("usPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[						
 			new readOnlyDateCell("1st Ultrasound", "firstUltrasound"),
-			new readOnlyCell("Number of weeks", "numberOfWeeks"),
-			new readOnlyCell("Today", "today"),
-			{
-				label: "EDC",
-				cellType: "readonly",
-				getVisible: function(item) { return item.firstUltrasound && item.firstUltrasound != null; },
-				getValue: function(item) { return "CALC"; }
-			}
+			new readOnlyCell("Age at 1st Ultrasound (wks)", "firstUltrasoundAge"),
+			new readOnlyCalculatedCell("Age Today (wks)", "ageToday"),
+			new readOnlyDateCell("EDC", "firstUltrasoundEdc")
 		]);
 		
 		usPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -167,14 +150,8 @@ var IndicationsAndDatesPreview = {
 		var establishedEDCPreviewTable = Table.createTable($("establishedEDCPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			new readOnlyDateCell("EDC", "establishedEDC"),
-			{
-				label: "Age from EDC",
-				cellType: "readonly",
-				getValue: function(item) { return "TODO"; },
-				setValue: function(item, value) { return; },
-				getVisible: function(item) { return item.establishedEDC && item.establishedEDC != null; }
-			},
-			new readOnlyCell("How Determined?", "edcMethod"),
+			new readOnlyCell("Age from dates (wks)", "establishedEDCAge"),
+			new readOnlyCalculatedCell("How Determined?", "edcMethod"),
 			new readOnlyDateCell("Transferred Date", "transferredDate")
 		]);
 
@@ -697,6 +674,15 @@ function readOnlyCell(label, prop, formatLabelLikeTableHeading)
 	this.prop = prop;
 	this.cellType = "readonly";
 	this.getValue = function(item) { return item[prop]; };
+	this.getVisible = function(item) { return item[prop] != null && item[prop] != ""; };
+}
+
+function readOnlyCalculatedCell(label, prop, precision)
+{
+	this.label = label;
+	this.prop = prop;
+	this.cellType = "readonly";
+	this.getValue = function(item) { return item[prop].toFixed(precision); };
 	this.getVisible = function(item) { return item[prop] != null && item[prop] != ""; };
 }
 
