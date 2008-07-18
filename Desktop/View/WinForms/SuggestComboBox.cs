@@ -196,7 +196,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         protected override void OnTextUpdate(EventArgs e)
         {
             base.OnTextUpdate(e);
-
+			ResetCursor();
             _suggestionProvider.SetQuery(this.Text);
         }
 
@@ -222,21 +222,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
 				try
 				{
+					this.DroppedDown = false;
 					// there are no suggestions, so clear the items list
 					this.Items.Clear();
-
 					// reset text back to original text
 					// and return the cursor to the original position
 					this.Text = curText;
 					this.SelectionStart = cursorPosition;
-					this.SelectionLength = 0;
-					this.DroppedDown = false;
 				}
 				catch (ArgumentOutOfRangeException)
 				{
-					// seems to throw this exception is the list is cleared
-					// revert the combobox anyways.
-					this.DroppedDown = false;
+					// just in case...it throws the exception while clearing the list
 				}
             }
             else
@@ -258,15 +254,36 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void UpdateListItems(IList items)
         {
-            this.Items.Clear();
-            if (items.Count > 0)
-            {
-                object[] array = new object[items.Count];
-                items.CopyTo(array, 0);
-                this.Items.AddRange(array);
-            }
+			this.Items.Clear();
+			if (items.Count > 0)
+			{
+				object[] array = new object[items.Count];
+				items.CopyTo(array, 0);
+				this.Items.AddRange(array);
+			}
         }
 
         #endregion
+
+		private void InitializeComponent()
+		{
+			this.SuspendLayout();
+			// 
+			// SuggestComboBox
+			// 
+			this.CursorChanged += new System.EventHandler(this.SuggestComboBox_CursorChanged);
+			this.ResumeLayout(false);
+		}
+
+		private void ResetCursor()
+		{
+			Cursor.Current = Cursors.Default;
+			Cursor.Show();
+		}
+
+		private void SuggestComboBox_CursorChanged(object sender, EventArgs e)
+		{
+			ResetCursor();
+		}
     }
 }

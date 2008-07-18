@@ -488,6 +488,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>RichTextField.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SuggestComboBox.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>SuggestComboBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SuggestComboField.resx">
       <DependentUpon>SuggestComboField.cs</DependentUpon>
       <SubType>Designer</SubType>
