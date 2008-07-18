@@ -217,23 +217,33 @@ namespace ClearCanvas.Ris.Client
 
 		private void AutoInvalidateFolders()
 		{
-			int count = 0;
-			foreach (IFolder folder in _folderSystem.Folders)
+			try
 			{
-				if(folder.AutoInvalidateInterval > TimeSpan.Zero
-					&& (Platform.Time - folder.LastUpdateTime) > folder.AutoInvalidateInterval)
+				int count = 0;
+				foreach (IFolder folder in _folderSystem.Folders)
 				{
-					_folderSystem.InvalidateFolder(folder);
-					count++;
+					if (folder.AutoInvalidateInterval > TimeSpan.Zero
+						&& (Platform.Time - folder.LastUpdateTime) > folder.AutoInvalidateInterval)
+					{
+						_folderSystem.InvalidateFolder(folder);
+						count++;
+					}
 				}
-			}
 
-			if(count > 0)
+				if (count > 0)
+				{
+					// update folder tree in case any folders were invalidated
+					// this is done regardless of whether this folder explorer is currently visible, because
+					// we need to keep the title bars of the folder explorers updated
+					_folderTreeRoot.Update();
+				}
+
+			}
+			catch (Exception e)
 			{
-				// update folder tree in case any folders were invalidated
-				// this is done regardless of whether this folder explorer is currently visible, because
-				// we need to keep the title bars of the folder explorers updated
-				_folderTreeRoot.Update();
+				// Bug #2445 : given that this occurs inside a Timer callback, we might as well swallow
+				// and log any exceptions that might occur, to prevent client from crashing
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
