@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
+using System.Diagnostics;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -42,14 +43,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 	{
 		public abstract class ReportingOperation
 		{
-			public abstract bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff);
+			public abstract bool CanExecute(ReportingProcedureStep step, Staff executingStaff);
 
-			protected PublicationStep GetScheduledPublicationStep(Staff currentUserStaff, VerificationStep verification)
+			protected PublicationStep CreateScheduledPublicationStep(Staff executingStaff, VerificationStep verification)
 			{
 				ReportingWorkflowSettings settings = new ReportingWorkflowSettings();
 
 				PublicationStep publication = new PublicationStep(verification);
-				publication.Assign(currentUserStaff);
+				publication.Assign(executingStaff);
 				publication.Schedule(Platform.Time.AddSeconds(settings.PublicationDelay));
 
 				return publication;
@@ -67,24 +68,32 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 }
             }
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				return step.ReportPart != null;
+				// cannot save if no report part
+				if(step.ReportPart == null)
+					return false;
+
+				// only the owner of this step can save
+				if(step.PerformingStaff != null && !Equals(step.PerformingStaff, executingStaff))
+					return false;
+
+				return true;
 			}
 		}
 
 		public class StartInterpretation : ReportingOperation
 		{
-			public void Execute(InterpretationStep step, Staff currentUserStaff, List<InterpretationStep> linkInterpretations, IWorkflow workflow, IPersistenceContext context)
+			public void Execute(InterpretationStep step, Staff executingStaff, List<InterpretationStep> linkInterpretations, IWorkflow workflow, IPersistenceContext context)
 			{
 				// if not assigned, assign
 				if (step.AssignedStaff == null)
 				{
-					step.Assign(currentUserStaff);
+					step.Assign(executingStaff);
 				}
 
 				// put in-progress
-				step.Start(currentUserStaff);
+				step.Start(executingStaff);
 
 				// if a report has not yet been created for this step, create now
 				if (step.ReportPart == null)
@@ -104,7 +113,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				}
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
 				// must be an interpretation step
 				if (step.Is<InterpretationStep>() == false)
@@ -115,7 +124,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					return false;
 
 				// must not be assigned to another staff
-				if (step.AssignedStaff != null && !Equals(step.AssignedStaff, currentUserStaff))
+				if (step.AssignedStaff != null && !Equals(step.AssignedStaff, executingStaff))
 					return false;
 
 				return true;
@@ -124,10 +133,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public abstract class CompleteInterpretationBase : ReportingOperation
 		{
-			protected void UpdateStep(InterpretationStep step, Staff currentUserStaff)
+			protected void UpdateStep(InterpretationStep step, Staff executingStaff)
 			{
 				if(step.PerformingStaff == null)
-					step.Complete(currentUserStaff);
+					step.Complete(executingStaff);
 				else 
 					step.Complete();
 
@@ -136,7 +145,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					step.ReportPart.MarkPreliminary();
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
 				if (step.Is<InterpretationStep>() == false)
 					return false;
@@ -146,7 +155,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					return false;
 
 				// must not be assigned to someone else
-				if (!Equals(step.AssignedStaff, currentUserStaff))
+				if (!Equals(step.AssignedStaff, executingStaff))
 					return false;
 
 				return true;
@@ -155,9 +164,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteInterpretationForTranscription : CompleteInterpretationBase
 		{
-			public ReportingProcedureStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public ReportingProcedureStep Execute(InterpretationStep step, Staff executingStaff, IWorkflow workflow)
 			{
-				UpdateStep(step, currentUserStaff);
+				UpdateStep(step, executingStaff);
 
 				TranscriptionStep transcription = new TranscriptionStep(step);
 				workflow.AddActivity(transcription);
@@ -167,13 +176,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteInterpretationForVerification : CompleteInterpretationBase
 		{
-			public ReportingProcedureStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public ReportingProcedureStep Execute(InterpretationStep step, Staff executingStaff, IWorkflow workflow)
 			{
-				UpdateStep(step, currentUserStaff);
+				UpdateStep(step, executingStaff);
 
 				VerificationStep verification = new VerificationStep(step);
 				if (step.ReportPart.Supervisor == null)
-					verification.Assign(currentUserStaff);
+					verification.Assign(executingStaff);
 				else
 					verification.Assign(step.ReportPart.Supervisor);
 
@@ -184,16 +193,16 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteInterpretationAndVerify : CompleteInterpretationBase
 		{
-			public ReportingProcedureStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public ReportingProcedureStep Execute(InterpretationStep step, Staff executingStaff, IWorkflow workflow)
 			{
-				UpdateStep(step, currentUserStaff);
+				UpdateStep(step, executingStaff);
 
 				VerificationStep verification = new VerificationStep(step);
-				verification.Assign(currentUserStaff);
-				verification.Complete(currentUserStaff);
+				verification.Assign(executingStaff);
+				verification.Complete(executingStaff);
 				workflow.AddActivity(verification);
 
-				PublicationStep publication = GetScheduledPublicationStep(currentUserStaff, verification);
+				PublicationStep publication = CreateScheduledPublicationStep(executingStaff, verification);
 				workflow.AddActivity(publication);
 
 				return publication;
@@ -202,7 +211,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CancelReportingStep : ReportingOperation
 		{
-			public List<InterpretationStep> Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+			public List<InterpretationStep> Execute(ReportingProcedureStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				step.Discontinue();
 
@@ -234,7 +243,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				return interpretations;
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
 				// Publication steps cannot be cancelled after starting
 				if (step.Is<PublicationStep>() && step.State != ActivityStatus.SC)
@@ -246,6 +255,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 				// cannot cancel a step that is already completed or cancelled
 				if (step.IsTerminated)
+					return false;
+
+				// cannot cancel a step that is assigned to someone else
+				if(step.AssignedStaff != null && !Equals(step.AssignedStaff, executingStaff))
 					return false;
 
 				return true;
@@ -263,7 +276,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		/// </summary>
 		public class ReviseResidentReport : ReportingOperation
 		{
-			public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public InterpretationStep Execute(VerificationStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				// Cancel the current step
 				step.Discontinue();
@@ -275,14 +288,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				interpretation.ReportPart.Interpreter = null;
 
 				// Assign the new step to the resident
-				interpretation.Assign(currentUserStaff);
-				interpretation.Start(currentUserStaff);
+				interpretation.Assign(executingStaff);
+				interpretation.Start(executingStaff);
 
 				workflow.AddActivity(interpretation);
 				return interpretation;
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
 				if (step.Is<VerificationStep>() == false)
 					return false;
@@ -292,7 +305,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					return false;
 
 				// cannot revise a report that was read by someone else
-				if (!Equals(step.ReportPart.Interpreter, currentUserStaff))
+				if (!Equals(step.ReportPart.Interpreter, executingStaff))
 					return false;
 
 				return true;
@@ -301,25 +314,29 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class StartVerification : ReportingOperation
 		{
-			public void Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public void Execute(VerificationStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				// if not assigned, assign
 				if (step.AssignedStaff == null)
 				{
-					step.Assign(currentUserStaff);
+					step.Assign(executingStaff);
 				}
 
 				// put in-progress
-				step.Start(currentUserStaff);
+				step.Start(executingStaff);
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				if (step.Is<VerificationStep>() == false)
+				if (!step.Is<VerificationStep>())
 					return false;
 
 				// must be scheduled
 				if (step.State != ActivityStatus.SC)
+					return false;
+
+				// can only be verified by the interpreter or assigned supervisor
+				if(!(Equals(executingStaff, step.ReportPart.Interpreter) || Equals(executingStaff, step.ReportPart.Supervisor)))
 					return false;
 
 				return true;
@@ -328,24 +345,28 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteVerification : ReportingOperation
 		{
-			public PublicationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public PublicationStep Execute(VerificationStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				// this operation is legal even if the step was never started, therefore need to supply the performer
-				step.Complete(currentUserStaff);
+				step.Complete(executingStaff);
 
-				PublicationStep publication = GetScheduledPublicationStep(currentUserStaff, step);
+				PublicationStep publication = CreateScheduledPublicationStep(executingStaff, step);
 				workflow.AddActivity(publication);
 
 				return publication;
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				if (step.Is<VerificationStep>() == false)
+				if (!step.Is<VerificationStep>())
 					return false;
 
 				// must not be already completed or cancelled
 				if (step.IsTerminated)
+					return false;
+
+				// can only be verified by the interpreter or assigned supervisor
+				if (!(Equals(executingStaff, step.ReportPart.Interpreter) || Equals(executingStaff, step.ReportPart.Supervisor)))
 					return false;
 
 				return true;
@@ -354,7 +375,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CreateAddendum : ReportingOperation
 		{
-			public InterpretationStep Execute(Procedure procedure, Staff currentUserStaff, IWorkflow workflow)
+			public InterpretationStep Execute(Procedure procedure, Staff executingStaff, IWorkflow workflow)
 			{
 				// the procedure passed in may be any one of the procedures that this report covers
 				// ideally, the new interpretation step should be created on the procedure that the
@@ -367,13 +388,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					});
 
 				InterpretationStep interpretation = new InterpretationStep(procedure);
-				interpretation.Assign(currentUserStaff);
+				interpretation.Assign(executingStaff);
 				interpretation.ReportPart = procedure.ActiveReport.AddAddendum();
 				workflow.AddActivity(interpretation);
 				return interpretation;
 			}
 
-			public bool CanExecute(Procedure procedure, Staff currentUserStaff)
+			public bool CanExecute(Procedure procedure, Staff executingStaff)
 			{
 				if (procedure.ReportingProcedureSteps.Count == 0)
 					return false;
@@ -390,15 +411,15 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				return true;
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				return CanExecute(step.Procedure, currentUserStaff);
+				return CanExecute(step.Procedure, executingStaff);
 			}
 		}
 
 		public class ReviseUnpublishedReport : ReportingOperation
 		{
-			public VerificationStep Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public VerificationStep Execute(PublicationStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				// Discontinue the publication step
 				step.Discontinue();
@@ -410,16 +431,16 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				verification.ReportPart.Verifier = null;
 
 				// Assign the new step back to me
-				verification.Assign(currentUserStaff);
-				verification.Start(currentUserStaff);
+				verification.Assign(executingStaff);
+				verification.Start(executingStaff);
 
 				workflow.AddActivity(verification);
 				return verification;
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				if (step.Is<PublicationStep>() == false)
+				if (!step.Is<PublicationStep>())
 					return false;
 
 				// must be a scheduled publication
@@ -427,7 +448,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					return false;
 
 				// can only revise reports verified by the same staff
-				if (!Equals(step.ReportPart.Verifier, currentUserStaff))
+				if (!Equals(step.ReportPart.Verifier, executingStaff))
 					return false;
 
 				return true;
@@ -439,21 +460,25 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		/// </summary>
 		public class PublishReport : ReportingOperation
 		{
-			public void Execute(PublicationStep step, Staff currentUserStaff, IWorkflow workflow)
+			public void Execute(PublicationStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				if (step.AssignedStaff != null)
-					step.Complete(currentUserStaff);
+					step.Complete(executingStaff);
 				else
 					step.Complete();
 			}
 
-			public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				if (step.Is<PublicationStep>() == false)
+				if (!step.Is<PublicationStep>())
 					return false;
 
 				// must be a scheduled publication step
 				if (step.State != ActivityStatus.SC)
+					return false;
+
+				// can only publish reports verified by the same staff
+				if (!Equals(step.ReportPart.Verifier, executingStaff))
 					return false;
 
 				return true;

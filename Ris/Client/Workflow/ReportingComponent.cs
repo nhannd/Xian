@@ -272,6 +272,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _canCompleteVerification;
 		private bool _canCompleteInterpretationForVerification;
 		private bool _canCompleteInterpretationForTranscription;
+		private bool _canSaveReport;
 
 		private ReportDetail _report;
 		private int _activeReportPartIndex;
@@ -658,6 +659,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		public bool SaveReportEnabled
+		{
+			get { return CanSaveReport; }
+		}
+
+
 		#endregion
 
 		#region Skip
@@ -744,6 +751,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		private bool CanSaveReport
+		{
+			get { return _canSaveReport; }
+		}
+
 
 		private void SetSupervisor(StaffSummary supervisor)
 		{
@@ -800,6 +812,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					_canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
 					_canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
 					_canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+					_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveReport"];
 
 					LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(this.WorklistItem.ProcedureStepRef));
 					_report = response.Report;
