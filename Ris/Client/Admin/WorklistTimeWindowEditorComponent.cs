@@ -124,8 +124,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private WorklistAdminDetail _worklistDetail;
 
-        private bool _startTimeChecked;
-        private bool _isFixedTimeWindow;
+		private bool _isFixedTimeWindow;
+		private bool _startTimeChecked;
         private bool _endTimeChecked;
         private RelativeTime _slidingStartTime;
         private RelativeTime _slidingEndTime;
@@ -183,15 +183,25 @@ namespace ClearCanvas.Ris.Client.Admin
                 _slidingScale = Days;
 
             this.Validation.Add(new ValidationRule("SlidingEndTime",
-                delegate(IApplicationComponent c)
+                delegate
                 {
-                    int i = SlidingEndTime.CompareTo(SlidingStartTime);
+					// this rule only applies if user has selected a sliding time window
+					// only need to validate the time difference if both Start and End are specified
+					if(!_isFixedTimeWindow && _startTimeChecked && _endTimeChecked)
+					{
+						int i = SlidingEndTime.CompareTo(SlidingStartTime);
 
-                    // if the scale is Hours, then the end-time must be greater than start-time
-                    // if the scale is Days, then the end-time must be greater than or equal to start-time
-                    bool ok = _slidingScale == Hours ? (i > 0) : (i > -1);
-                    return new ValidationResult(ok, _slidingScale == Hours ? SR.MessageEndTimeMustBeGreaterThanStartTime
-                        : SR.MessageEndTimeMustBeGreaterOrEqualStartTime);
+						// if the scale is Hours, then the end-time must be greater than start-time
+						// if the scale is Days, then the end-time must be greater than or equal to start-time
+						bool ok = _slidingScale == Hours ? (i > 0) : (i > -1);
+						return new ValidationResult(ok, _slidingScale == Hours ? SR.MessageEndTimeMustBeGreaterThanStartTime
+							: SR.MessageEndTimeMustBeGreaterOrEqualStartTime);
+					}
+					else
+					{
+						// rule not applicable
+						return new ValidationResult(true, "");
+					}
                 }));
 
             base.Start();
