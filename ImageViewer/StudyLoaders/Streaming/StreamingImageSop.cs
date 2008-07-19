@@ -8,9 +8,9 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private readonly string _host;
 		private readonly int _wadoServicePort;
 
-		public StreamingImageSop(DicomFile dicomFile, string host, int wadoServicePort)
+		public StreamingImageSop(DicomMessageBase dicomMessage, string host, int wadoServicePort)
+			: base(dicomMessage)
 		{
-			_dicomFile = dicomFile;
 			_host = host;
 			_wadoServicePort = wadoServicePort;
 		}

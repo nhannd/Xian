@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 	[ExtensionOf(typeof(StudyLoaderExtensionPoint))]
 	public class StreamingStudyLoader : IStudyLoader
 	{
-		private IEnumerator<DicomFile> _dicomFiles;
+		private IEnumerator<DicomMessageBase> _dicomMessages;
 		private ApplicationEntity _ae;
 		private StreamingPrefetchingStrategy _prefetcher;
 
@@ -34,20 +34,20 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 			XmlDocument doc = RetrieveHeaderXml(studyLoaderArgs);
 
-			List<DicomFile> dicomFiles = BuildFileList(studyLoaderArgs.StudyInstanceUid, doc);
+			List<DicomMessageBase> dicomMessages = BuildFileList(studyLoaderArgs.StudyInstanceUid, doc);
 
-			_dicomFiles = dicomFiles.GetEnumerator();
-			_dicomFiles.Reset();
+			_dicomMessages = dicomMessages.GetEnumerator();
+			_dicomMessages.Reset();
 
-			return dicomFiles.Count;
+			return dicomMessages.Count;
 		}
 
 		public ImageSop LoadNextImage()
 		{
-			if (!_dicomFiles.MoveNext())
+			if (!_dicomMessages.MoveNext())
 				return null;
 			else
-				return new StreamingImageSop(_dicomFiles.Current, _ae.Host, _ae.WadoServicePort);
+				return new StreamingImageSop(_dicomMessages.Current, _ae.Host, _ae.WadoServicePort);
 		}
 
 		public void StartPrefetching(IImageViewer imageViewer)
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return DecompressHeaderStreamToXml(stream);
 		}
 
-		private XmlDocument DecompressHeaderStreamToXml(Stream stream)
+		private static XmlDocument DecompressHeaderStreamToXml(Stream stream)
 		{
 			GZipStream gzStream = new GZipStream(stream, CompressionMode.Decompress);
 
@@ -93,12 +93,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return doc;
 		}
 
-		private List<DicomFile> BuildFileList(string studyInstanceUid, XmlDocument doc)
+		private static List<DicomMessageBase> BuildFileList(string studyInstanceUid, XmlDocument doc)
 		{
 			StudyXml studyXml = new StudyXml(studyInstanceUid);
 			studyXml.SetMemento(doc);
 
-			List<DicomFile> files = new List<DicomFile>();
+			List<DicomMessageBase> dicomMessages = new List<DicomMessageBase>();
 			foreach (SeriesXml seriesXml in studyXml)
 			{
 				foreach (InstanceXml instanceXml in seriesXml)
@@ -110,10 +110,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						instanceXml.Collection);
 
 					file.TransferSyntax = instanceXml.TransferSyntax;
-					files.Add(file);
+					dicomMessages.Add(file);
 				}
 			}
-			return files;
+			return dicomMessages;
 		}
 	}
 }

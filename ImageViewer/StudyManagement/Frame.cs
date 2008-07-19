@@ -77,6 +77,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _parentImageSop; }
 		}
 
+		public string StudyInstanceUID
+		{
+			get { return ParentImageSop.StudyInstanceUID;  }
+		}
+
+		public string SeriesInstanceUID
+		{
+			get { return ParentImageSop.SeriesInstanceUID; }
+		}
+
+		public string SopInstanceUID
+		{
+			get { return ParentImageSop.SopInstanceUID; }
+		}
+		
 		/// <summary>
 		/// Gets the frame number.
 		/// </summary>

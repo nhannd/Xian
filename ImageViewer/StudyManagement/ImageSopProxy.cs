@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		private ImageSop _realImageSop;
 
-		internal ImageSopProxy(ImageSop realImageSop)
+		internal ImageSopProxy(ImageSop realImageSop) : base(null)
 		{
 			Platform.CheckForNullReference(realImageSop, "realImageSop");
 			_realImageSop = realImageSop;

@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		{
 		}
 
-		public MockImageSop(int numberOfFrames)
+		public MockImageSop(int numberOfFrames) : base(null)
 		{
 			_numberOfFrames = numberOfFrames;
 		}

@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </remarks>
 	public abstract class Sop : IDisposable
 	{
-		protected volatile DicomFile _dicomFile;
+		private volatile DicomMessageBase _dicomMessage;
 		private readonly object _syncLock = new object();
 		private volatile int _referenceCount = 0;
 		private volatile bool _isDisposed = false;
@@ -119,8 +119,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Initializes a new instance of <see cref="Sop"/>.
 		/// </summary>
-		protected Sop()
+		protected Sop(DicomMessageBase dicomMessage)
 		{
+			_dicomMessage = dicomMessage;
 		}
 
 		/// <summary>
@@ -140,7 +141,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				Load();
-				return _dicomFile;
+				return _dicomMessage;
 			}
 		}
 
@@ -915,9 +916,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			tagExists = false;
 
 			DicomAttribute dicomAttribute;
-			if(_dicomFile.DataSet.Contains(tag))
+			if(_dicomMessage.DataSet.Contains(tag))
 			{
-				dicomAttribute = _dicomFile.DataSet[tag];
+				dicomAttribute = _dicomMessage.DataSet[tag];
 				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
 				if (tagExists)
 				{
@@ -926,9 +927,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				}
 			}
 
-			if (_dicomFile.MetaInfo.Contains(tag))
+			if (_dicomMessage.MetaInfo.Contains(tag))
 			{
-				dicomAttribute = _dicomFile.MetaInfo[tag];
+				dicomAttribute = _dicomMessage.MetaInfo[tag];
 				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
 				if (tagExists)
 					getter(dicomAttribute, position, out value);
@@ -1055,7 +1056,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			lock (_syncLock)
 			{
-				_dicomFile = null;
+				_dicomMessage = null;
 				_loaded = false;
 			}
 		}

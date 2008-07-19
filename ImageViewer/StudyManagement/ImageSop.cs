@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageSop"/>.
 		/// </summary>
-		protected ImageSop()
+		protected ImageSop(DicomMessageBase dicomMessage) : base(dicomMessage)
 		{
 		}
 

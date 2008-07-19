@@ -47,9 +47,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// a specified filename.
 		/// </summary>
 		/// <param name="filename"></param>
-		public LocalImageSop(string filename)
+		public LocalImageSop(string filename) : base(new DicomFile(filename))
 		{
-			_dicomFile = new DicomFile(filename);
 		}
 
 		/// <summary>
@@ -59,8 +58,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				return _dicomFile.Filename;
+				return DicomFile.Filename;
 			}
+		}
+
+		private DicomFile DicomFile
+		{
+			get { return NativeDicomObject as DicomFile; }
 		}
 
 		internal override void Load()
@@ -75,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				CheckIsDisposed();
 
-				_dicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
+				DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 				_loaded = true;
 			}
 		}
