@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -40,12 +40,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <remarks>
 	/// Normally, you should not have to inherit directly from this class.
 	/// <see cref="SimpleDataLut"/> or <see cref="GeneratedDataLut"/> should cover
-	/// any common use cases.
+	/// most, if not all, common use cases.
 	/// </remarks>
 	[Cloneable(true)]
 	public abstract class DataLut : ComposableLut, IDataLut
 	{
 		private int _minInputValue;
+		private int _maxInputValue;
 		private int _minOutputValue;
 		private int _maxOutputValue;
 
@@ -55,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		protected DataLut()
 		{
 		}
-
+		
 		/// <summary>
 		/// Gets or sets the minimum input value.
 		/// </summary>
@@ -71,6 +72,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return;
 
 				_minInputValue = value;
+				OnLutChanged();
+			}
+		}
+
+		/// <summary>
+		/// Gets the maximum input value.
+		/// </summary>
+		/// <remarks>
+		/// This value should not be modified by your code.  It will be set internally by the framework.
+		/// </remarks>
+		public override int MaxInputValue
+		{
+			get { return _maxInputValue; }
+			set
+			{
+				if (value == _maxInputValue)
+					return;
+
+				_maxInputValue = value;
 				OnLutChanged();
 			}
 		}

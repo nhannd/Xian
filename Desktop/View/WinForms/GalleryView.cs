@@ -49,7 +49,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private event EventHandler _selectionChanged;
 		private bool _suppressGalleryChangeEvents = false;
 		private bool _dragOutside = false;
-		private ListViewItem _draggedItem;
 
 		public GalleryView()
 		{
@@ -229,7 +228,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-		private IGalleryItem CastToGalleryItem(object item)
+		private static IGalleryItem CastToGalleryItem(object item)
 		{
 			IGalleryItem galleryItem = item as IGalleryItem;
 
@@ -244,6 +243,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
 		}
 
+		private ListViewItem ExtractListViewItem(IDataObject dataObject)
+		{
+			if (dataObject.GetDataPresent(typeof(ListViewItem)))
+			{
+				ListViewItem item = (ListViewItem)dataObject.GetData(typeof(ListViewItem));
+				if (item.ListView == _listView)
+					return item;
+			}
+
+			return null;
+		}
+
 		private void OnItemDrag(object sender, ItemDragEventArgs e)
 		{
 			// Only allow dragging of one item at a time, so deselect all other items
@@ -253,42 +264,53 @@ namespace ClearCanvas.Desktop.View.WinForms
 					lvi.Selected = false;
 			}
 
-			_draggedItem = e.Item as ListViewItem;
+			ListViewItem draggedItem = (ListViewItem)e.Item;
 
-			if (_dragOutside)
-				_listView.DoDragDrop(_draggedItem.Tag, DragDropEffects.Move);
-			else
-				_listView.DoDragDrop(_draggedItem, DragDropEffects.Move);
+			DataObject data = new DataObject();
+			if (DragOutside)
+				data.SetData(draggedItem.Tag);
+			if (DragReorder)
+				data.SetData(draggedItem);
+
+			_listView.DoDragDrop(data, DragDropEffects.Move);
 		}
 
 		private void OnItemDragEnter(object sender, DragEventArgs e)
 		{
-			e.Effect = e.AllowedEffect;
+			if (ExtractListViewItem(e.Data) != null)
+				e.Effect = e.AllowedEffect;
+			else
+				e.Effect = DragDropEffects.None;
 		}
-
+		
 		private void OnItemDragOver(object sender, DragEventArgs e)
 		{
 			// Retrieve the client coordinates of the mouse pointer.
-			Point targetPoint =
-				_listView.PointToClient(new Point(e.X, e.Y));
+			Point targetPoint = _listView.PointToClient(new Point(e.X, e.Y));
 
-			// Retrieve the index of the item closest to the mouse pointer.
-			int targetIndex = _listView.InsertionMark.NearestIndex(targetPoint);
+			int targetIndex = -1;
 
-			// Confirm that the mouse pointer is not over the dragged item.
-			if (targetIndex > -1)
+			ListViewItem item = ExtractListViewItem(e.Data);
+			if (item != null)
 			{
-				// Determine whether the mouse pointer is to the left or
-				// the right of the midpoint of the closest item and set
-				// the InsertionMark.AppearsAfterItem property accordingly.
-				Rectangle itemBounds = _listView.GetItemRect(targetIndex);
-				if (targetPoint.X > itemBounds.Left + (itemBounds.Width / 2))
+				// Retrieve the index of the item closest to the mouse pointer.
+				targetIndex = _listView.InsertionMark.NearestIndex(targetPoint);
+
+				// Confirm that the mouse pointer is not over the dragged item.
+				if (targetIndex > -1)
 				{
-					_listView.InsertionMark.AppearsAfterItem = true;
-				}
-				else
-				{
-					_listView.InsertionMark.AppearsAfterItem = false;
+					// Determine whether the mouse pointer is to the left or
+					// the right of the midpoint of the closest item and set
+					// the InsertionMark.AppearsAfterItem property accordingly.
+					Rectangle itemBounds = _listView.GetItemRect(targetIndex);
+					if (targetPoint.X > itemBounds.Left + (itemBounds.Width/2))
+					{
+						_listView.InsertionMark.AppearsAfterItem = true;
+					}
+					else
+					{
+						_listView.InsertionMark.AppearsAfterItem = false;
+					}
 				}
 			}
 
@@ -321,20 +343,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 				targetIndex++;
 			}
 
-			// Retrieve the dragged item.
-			//ListViewItem draggedItem =
-			//	(ListViewItem)e.Data.GetData(typeof(ListViewItem));
-
-			int draggedIndex = _draggedItem.Index;
+			ListViewItem draggedItem = ExtractListViewItem(e.Data);
+			int draggedIndex = draggedItem.Index;
 
 			// Insert a copy of the dragged item at the target index.
 			// A copy must be inserted before the original item is removed
 			// to preserve item index values. 
-			_listView.Items.Insert(
-				targetIndex, (ListViewItem)_draggedItem.Clone());
+			_listView.Items.Insert(targetIndex, (ListViewItem)draggedItem.Clone());
 
 			// Remove the original copy of the dragged item.
-			_listView.Items.Remove(_draggedItem);
+			_listView.Items.Remove(draggedItem);
 
 			_suppressGalleryChangeEvents = true;
 

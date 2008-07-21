@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         	_galleryView.SelectionChanged += OnSelectionChanged;
         	_galleryView.MultiSelect = true;
         	_galleryView.DragReorder = true;
-        	_galleryView.DragOutside = true;
+			//_galleryView.DragOutside = true;
         }
 
 

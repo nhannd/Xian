@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		[CloneIgnore]//data will be re-generated.
 		private int[] _data;
-		private int _maxInputValue;
 
 		/// <summary>
 		/// Default constructor.
@@ -57,24 +56,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 		}
 
-		/// <summary>
-		/// Gets the maximum input value.
-		/// </summary>
-		/// <remarks>
-		/// This value should not be modified by your code.  It will be set internally by the framework.
-		/// </remarks>
-		public override int MaxInputValue
-		{
-			get { return _maxInputValue; }
-			set
-			{
-				if (value == _maxInputValue)
-					return;
-
-				_maxInputValue = value;
-				OnLutChanged();
-			}
-		}
 		/// <summary>
 		/// Gets the Lut's data, lazily created.
 		/// </summary>

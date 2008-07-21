@@ -408,6 +408,49 @@ namespace ClearCanvas.Dicom.Codec.Rle
 
             private static void Decode(byte[] buffer, byte[] rleData, int offset, int count)
             {
+				// Note: SB - this is a literal translation of the decoder as described in
+				// the Dicom standard.  It works exactly the same way as the existing code
+				// but would be easier to make unsafe if we wanted boost performance.
+				// Rewrote it while fixing #2349 to make sure the existing code was correct (and it is).
+
+				//int bufferPos = 0;
+				//for (int rlePos = offset; rlePos < offset + count; )
+				//{
+				//    if (rlePos > rleData.Length - 1)
+				//        return; //shouldn't happen, write to the log
+				//    if (bufferPos >= buffer.Length)
+				//        return; //shouldn't happen, write to the log
+				
+				//    sbyte n = (sbyte)rleData[rlePos++];
+				//    if (n >= 0 && n <= 127)
+				//    {
+				//        int numberBytesToOutput = n + 1;
+				//        int bufferBytesRemaining = buffer.Length - bufferPos - 1;
+				//        int rleBytesRemaining = rleData.Length - rlePos - 1;
+				//        if (numberBytesToOutput > bufferBytesRemaining || numberBytesToOutput > rleBytesRemaining)
+				//        {
+				//				//shouldn't happen, write to the log
+				//            numberBytesToOutput = Math.Min(bufferBytesRemaining, rleBytesRemaining);
+				//        }
+
+				//        Array.Copy(rleData, rlePos, buffer, bufferPos, numberBytesToOutput);
+				//        bufferPos += numberBytesToOutput;
+				//        rlePos += numberBytesToOutput;
+				//    }
+				//    else if (n <= -1 && n >= -127)
+				//    {
+				//        byte value = rleData[rlePos++];
+				//        int repeatCount = -n + 1;
+				//        for (int j = 0; j < repeatCount; ++j)
+				//        {
+				//            if (bufferPos >= buffer.Length)
+				//                break;//shouldn't happen, write to the log
+
+				//            buffer[bufferPos++] = value;
+				//        }
+				//    }
+				//}
+
                 int pos = 0;
                 int end = offset + count;
                 for (int i = offset; i < end; )

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -61,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_description = description;
 
 			base.MinInputValue = minInputValue;
+			base.MaxInputValue = minInputValue + _data.Length - 1;
 			base.MinOutputValue = minOutputValue;
 			base.MaxOutputValue = maxOutputValue;
 		}
@@ -96,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </remarks>
 		public override int MaxInputValue
 		{
-			get { return base.MinInputValue + _data.Length - 1; }
+			get { return base.MaxInputValue; }
 			set { }
 		}
 

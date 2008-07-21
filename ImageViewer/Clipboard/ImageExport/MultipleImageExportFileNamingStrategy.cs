@@ -109,10 +109,13 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			//replace directory separators with spaces.
 			prefix = prefix.Replace('\\', ' ');
-			prefix = prefix.Replace('/', ' '); 
+			prefix = prefix.Replace('/', ' ');
+
+			//Replace the wildcard characters as well.
+			prefix = prefix.Replace('*', ' ');
+			prefix = prefix.Replace('?', ' ');
 
 			char[] invalidChars = Path.GetInvalidPathChars();
-
 			foreach (char invalidChar in invalidChars)
 				prefix = prefix.Replace(invalidChar, ' '); //replace invalid characters with spaces.
 
