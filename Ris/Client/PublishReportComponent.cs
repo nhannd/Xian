@@ -338,6 +338,7 @@ namespace ClearCanvas.Ris.Client
 				_recipientsTable.Items.Add(new Checkable<ResultRecipientDetail>(
 					new ResultRecipientDetail(_recipientToAdd, _recipientContactPointToAdd, new EnumValueInfo("ANY", null, null)),
 					true));
+				NotifyPropertyChanged("AcceptEnabled");
 			}
 		}
 
