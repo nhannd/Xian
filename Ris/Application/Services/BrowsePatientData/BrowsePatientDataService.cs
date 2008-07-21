@@ -252,8 +252,8 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 				? PersistenceContext.Load<Report>(request.ReportRef)
 				: PersistenceContext.Load<Procedure>(request.ProcedureRef).ActiveReport;
 
-			ReportAssembler assembler = new ReportAssembler();
-			return new GetReportDetailResponse(assembler.CreateReportDetail(report, request.IncludeCancelledParts, PersistenceContext));
+			return new GetReportDetailResponse(report == null ? null :
+				new ReportAssembler().CreateReportDetail(report, request.IncludeCancelledParts, PersistenceContext));
 		}
 	}
 }
