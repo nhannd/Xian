@@ -138,6 +138,10 @@ namespace CopyrightTool
 		private static string UpdateAssemblyCopyright(string text, string newDate, out bool assemblyCopyrightChanged)
 		{
 			int start = text.IndexOf("[assembly: AssemblyCopyright");
+
+			if (start == -1)
+				start = text.IndexOf("[assembly : AssemblyCopyright");
+
 			int end = text.IndexOf("]", start);
 
 			string oldCopyright = text.Substring(start, end - start + 1);

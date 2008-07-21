@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			if (_prepareForAnalysisDelegate != null)
 				_prepareForAnalysisDelegate(left, top, right, bottom);
 
-			IModalityLut modalityLut = image.ModalityLut;
+			IComposableLut modalityLut = image.ModalityLut;
 			GrayscalePixelData pixelData = image.PixelData;
 
 			pixelData.ForEachPixel(left, top, right, bottom,
