@@ -75,7 +75,7 @@ namespace ClearCanvas.Healthcare.Imex
 		{
 			StaffData data = new StaffData();
 			data.Id = entity.Id;
-			data.StaffType = entity.Type.ToString();
+			data.StaffType = entity.Type.Code;
 			data.Title = entity.Title;
 			data.FamilyName = entity.Name.FamilyName;
 			data.GivenName = entity.Name.GivenName;
