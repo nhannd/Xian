@@ -128,7 +128,7 @@ var IndicationsAndDatesPreview = {
 		[			
 			new readOnlyDateCell("Date of LMP", "LMP"),
 			new readOnlyDateCell("EDC", "lmpEdc"),
-			new readOnlyCalculatedCell("Age from dates (wks)", "lmpAge")
+			new readOnlyCalculatedCell("Age from dates (wks)", "lmpAge", 1)
 		]);
 		
 		lmpPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -139,7 +139,7 @@ var IndicationsAndDatesPreview = {
 		[						
 			new readOnlyDateCell("1st Ultrasound", "firstUltrasound"),
 			new readOnlyCell("Age at 1st Ultrasound (wks)", "firstUltrasoundAge"),
-			new readOnlyCalculatedCell("Age Today (wks)", "ageToday"),
+			new readOnlyCalculatedCell("Age Today (wks)", "ageToday", 1),
 			new readOnlyDateCell("EDC", "firstUltrasoundEdc")
 		]);
 		
@@ -150,8 +150,8 @@ var IndicationsAndDatesPreview = {
 		var establishedEDCPreviewTable = Table.createTable($("establishedEDCPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			new readOnlyDateCell("EDC", "establishedEDC"),
-			new readOnlyCell("Age from dates (wks)", "establishedEDCAge"),
-			new readOnlyCalculatedCell("How Determined?", "edcMethod"),
+			new readOnlyCalculatedCell("Age from dates (wks)", "establishedEDCAge", 1),
+			new readOnlyCell("How Determined?", "edcMethod"),
 			new readOnlyDateCell("Transferred Date", "transferredDate")
 		]);
 
@@ -198,7 +198,7 @@ var GeneralPreview = {
 			new readOnlyCell("Presentation", "presentation"),
 			new readOnlyCell("AFV", "afv"),
 			new readOnlyCell("Placenta", "placenta"),
-			new readOnlyCell("Placenta Clearance", "cervixProximity"),
+			new readOnlyCell("Relationship to Placenta", "relationshipToPlacenta"),
 			new readOnlyCell("Right Adnexa", "rightAdnexa"),
 			new readOnlyCell("Left Adnexa", "leftAdnexa"),
 			new readOnlyCell("Yolk Sac", "yolkSac"),
@@ -242,12 +242,14 @@ var BiometryPreview = {
 			new readOnlyBiometryCell("CRL", "crl", "crlWks"),
 			new readOnlyBiometryCell("BPD", "bpd", "bpdWks"),
 			new readOnlyBiometryCell("OFD", "ofd", ""),
-			new readOnlyBiometryCell("Corrected BPD", "correctedBpd", "correctedBpdWks"),
-			new readOnlyBiometryCell("ABPD", "abdCircumference", "abdCircumferenceWks"),// ABPD
+			new readOnlyCalculatedBiometryCell("Corrected BPD", "correctedBpd", "correctedBpdWks"),
+			new readOnlyCalculatedBiometryCell("ABD", "abdCircumference", "abdCircumferenceWks"),
 			new readOnlyBiometryCell("FL", "fl", "flWks"),
 			new readOnlyBiometryCell("Average Size", "", "avgWks"),
 			new readOnlyBiometryCell("HC", "hc", "hcWks"),
-			new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", function(item) { return ""; })
+			new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", function(item) { return ""; }),
+			new readOnlyCell("EFW (gm)", "efw"),
+			new readOnlyCell("Centile", "efwCentile")
 		]);
 			
 		biometryPreviewTable.bindItems([source[fetus]]);
@@ -516,17 +518,12 @@ var WellBeingPreview = {
 			new readOnlyCell("AFV", "afv"),
 			new readOnlyCell("Amount", "afvAmount"),
 			new readOnlyCell("Max vertical pocket", "maxVerticalPocket"),
-			{
-				label: "AFI",
-				cellType: "readonly",
-				getValue: function(item) { return item.afiA + " + " + item.afiB + " + " + item.afiC + " + " + item.afiD + " = " + item.afiTotal + "cm" ; },
-				setValue: function(item, value) { return; },
-				getError: function(item) { return null; }
-			},
+            new NewLineField(),
 			new readOnlyCell("FM", "fm"),
 			new readOnlyCell("FT", "ft"),
 			new readOnlyCell("FBM", "fbm"),
 			new readOnlyCell("NST", "nst"),
+            new NewLineField(),
 			{
 				label: "BPS",
 				cellType: "readonly",
@@ -534,13 +531,21 @@ var WellBeingPreview = {
 				setValue: function(item, value) { return; },
 				getError: function(item) { return null; }
 			},
-			new readOnlyCell("BPS Rating", "bpsRating")
+			new readOnlyCell("BPS Score", "bpsScore"),
+            new NewLineField(),
+			{
+				label: "AFI",
+				cellType: "readonly",
+				getValue: function(item) { return item.afiA + " + " + item.afiB + " + " + item.afiC + " + " + item.afiD + " = " + item.afiTotal + "cm" ; },
+				setValue: function(item, value) { return; },
+				getError: function(item) { return null; }
+			}
 		]);
 
 		var dopplerUmbilicalArteryPreviewTable = Table.createTable($("dopplerUmbilicalArteryPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 		[
 			new readOnlyCell("PI", "umbilicalPi"),
-			new readOnlyCell("EDF", "edf")
+			new readOnlyCell("Status", "umbilicalStatus")
 		]);
 
 		var dopplerUmbilicalVeinPreviewTable = Table.createTable($("dopplerUmbilicalVeinPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
@@ -674,7 +679,7 @@ function readOnlyCell(label, prop, formatLabelLikeTableHeading)
 	this.prop = prop;
 	this.cellType = "readonly";
 	this.getValue = function(item) { return item[prop]; };
-	this.getVisible = function(item) { return item[prop] != null && item[prop] != ""; };
+	this.getVisible = function(item) { return item[prop] !== null && item[prop] !== undefined && item[prop] !== ""; };
 }
 
 function readOnlyCalculatedCell(label, prop, precision)
@@ -682,8 +687,8 @@ function readOnlyCalculatedCell(label, prop, precision)
 	this.label = label;
 	this.prop = prop;
 	this.cellType = "readonly";
-	this.getValue = function(item) { return item[prop].toFixed(precision); };
-	this.getVisible = function(item) { return item[prop] != null && item[prop] != ""; };
+	this.getValue = function(item) { return !isNaN(item[prop]) ? item[prop].toFixed(precision) : item[prop]; };
+	this.getVisible = function(item) { return item[prop] !== null && item[prop] !== undefined && item[prop] !== ""; };
 }
 
 /*
@@ -694,8 +699,9 @@ function readOnlyDateCell(label, prop)
 	this.label = label;
 	this.prop = prop;
 	this.cellType = "readonly";
+	//this.getValue = function(item) { return !isNaN(item[prop]) ? Ris.formatDate(item[prop]) : ""; };
 	this.getValue = function(item) { return Ris.formatDate(item[prop]); };
-	this.getVisible = function(item) { return item[prop] != null && item[prop] != ""; };
+	this.getVisible = function(item) { return item[prop] !== null && item[prop] !== undefined && item[prop] !== ""; };
 }
 
 /*
@@ -723,8 +729,24 @@ function readOnlyBiometryCell(label, prop, calcProp)
 	this.getValue = function(item) 
 	{ 
 		var value = "";
-		value += (item[prop] != null && item[prop] != "") ? item[prop] + " mm" : "";
-		value += (item[calcProp] != null && item[calcProp] != "") ? (value != "" ? " = " + item[calcProp].toFixed(1) + " wks" : item[calcProp].toFixed(1) + " wks") : "";
+		value += (item[prop] !== null && item[prop] !== undefined && item[prop] !== "") ? item[prop] + " mm" : "";
+		value += (item[calcProp] !== null && item[calcProp] !== undefined && item[calcProp] !== "") ? (value != "" ? " = " + item[calcProp].toFixed(1) + " wks" : item[calcProp].toFixed(1) + " wks") : "";
+		return value; 
+	}
+	this.getVisible = function(item) { return this.getValue(item) != ""; }
+}
+
+function readOnlyCalculatedBiometryCell(label, prop, calcProp)
+{
+	this.label = label;
+	this.prop = prop;
+	this.calc = calcProp;
+	this.cellType = "readonly";
+	this.getValue = function(item) 
+	{ 
+		var value = "";
+		value += (item[prop] !== null && item[prop] !== undefined && item[prop] !== "") ? item[prop].toFixed(1) + " mm" : "";
+		value += (item[calcProp] !== null && item[calcProp] !== undefined && item[calcProp] !== "") ? (value != "" ? " = " + item[calcProp].toFixed(1) + " wks" : item[calcProp].toFixed(1) + " wks") : "";
 		return value; 
 	}
 	this.getVisible = function(item) { return this.getValue(item) != ""; }

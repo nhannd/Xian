@@ -449,9 +449,9 @@ var IndicationsAndDatesForm = {
 				cellType: "readonly",
 				getVisible: function(item) { return !!item.LMP; },
 				getValue: function(item)
-                { 
+                {
                     item.lmpEdc = EdcCalculator.edcFromLmp(item.LMP); 
-                    return Ris.formatDate(item.lmpEdc);
+                    return !!item.lmpEdc ? Ris.formatDate(item.lmpEdc) : "";
                 },
                 setValue: function(item, value) { return; }
 			},
@@ -462,7 +462,7 @@ var IndicationsAndDatesForm = {
 				getValue: function(item) 
                 { 
                     item.lmpAge = EdcCalculator.differenceInWeeks(item.LMP, new Date()); 
-                    return item.lmpAge.toFixed(1);
+                    return !!item.lmpAge ? item.lmpAge.toFixed(1) : "";
                 },
                 setValue: function(item, value) { return; }
 			}
@@ -624,11 +624,11 @@ var GeneralForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "Placenta Clearance",
+				label: "Relationship to Placenta",
 				cellType: "choice",
 				choices: ["Clear of Cervix", "Close to Cervix", "Praevia"],
-				getValue: function(item) { return item.cervixProximity; },
-				setValue: function(item, value) { item.cervixProximity = value; },
+				getValue: function(item) { return item.relationshipToPlacenta; },
+				setValue: function(item, value) { item.relationshipToPlacenta = value; },
 				getError: function(item) { return null; }
 			},
             new NewLineField(),
@@ -1374,11 +1374,11 @@ var WellBeingForm = {
                 }
 			},
 			{
-				label: "BPS Rating",
+				label: "BPS Score",
 				cellType: "choice",
 				choices: ["Abnormal", "Equivocal", "Normal"],
-				getValue: function(item) { return item.bpsRating; },
-				setValue: function(item, value) { item.bpsRating = value; },
+				getValue: function(item) { return item.bpsScore; },
+				setValue: function(item, value) { item.bpsScore = value; },
 				getError: function(item) { return null; }
 			}
 		]);
@@ -1459,11 +1459,11 @@ var WellBeingForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "EDF",
+				label: "Status",
 				cellType: "choice",
 				choices: ["Absent EDF", "Elevated", "Normal", "Reversed EDF"],
-				getValue: function(item) { return item.edf; },
-				setValue: function(item, value) { item.edf= value; },
+				getValue: function(item) { return item.umbilicalStatus; },
+				setValue: function(item, value) { item.umbilicalStatus = value; },
 				getError: function(item) { return null; }
 			}
 		]);
