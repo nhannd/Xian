@@ -54,8 +54,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			if (this.ContextBase is IReportingWorkflowItemToolContext)
 			{
-				return (((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-					&& ((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
+				if (context.SelectedItems == null || context.SelectedItems.Count != 1)
+				{
+					return false;
+				}
+
+				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
+				if (item.ReportRef == null)
+				{
+					return false;
+				}
+
+				return true;
 			}
 			return false;
 		}
