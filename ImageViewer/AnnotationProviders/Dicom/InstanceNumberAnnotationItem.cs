@@ -50,26 +50,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (provider == null)
 				return "";
 
-			int totalImages = 1;
-			if (presentationImage.ParentDisplaySet != null)
-				totalImages = presentationImage.ParentDisplaySet.PresentationImages.Count;
+            Frame frame = provider.Frame;
 
-			Frame frame = provider.Frame;
-			string str = String.Format("{0}/{1}",
-								frame.ParentImageSop.InstanceNumber,
-								totalImages);
+            string str = String.Format("{0}/{1}",
+                                frame.ParentImageSop.InstanceNumber,
+                                frame.ParentImageSop.ParentSeries.Sops.Count);
 
-			if (frame.ParentImageSop.NumberOfFrames > 1)
-			{
-				string frameString = String.Format(
-					"Fr: {0}/{1}",
-					frame.FrameNumber,
-					frame.ParentImageSop.NumberOfFrames);
+            if (frame.ParentImageSop.NumberOfFrames > 1)
+            {
+                string frameString = String.Format(
+                    "Fr: {0}/{1}",
+                    frame.FrameNumber,
+                    frame.ParentImageSop.NumberOfFrames);
 
-				str += " " + frameString;
-			}
+                str += " " + frameString;
+            }
 
-			return str;
-		}
+            return str;
+        }
 	}
 }

@@ -33,16 +33,56 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
 	internal static class AnnotationLayoutFactory 
 	{
+        [Cloneable(true)]
+        private class StoredAnnotationLayoutProxy : IAnnotationLayout
+        {
+            //TODO: later, we may want to just get the annotation boxes directly from the factory (so that settings changes are reflected right away).
+            [CloneCopyReference]
+            private StoredAnnotationLayout _layout;
+            private bool _visible = true;
+            
+            private StoredAnnotationLayoutProxy()
+            {
+            }
+
+            public StoredAnnotationLayoutProxy(StoredAnnotationLayout layout)
+            {
+                _layout = layout;
+            }
+
+            #region IAnnotationLayout Members
+
+            public IEnumerable<AnnotationBox> AnnotationBoxes
+            {
+                get { return _layout.AnnotationBoxes; }
+            }
+
+            public bool Visible
+            {
+                get { return _visible;}
+                set { _visible = value; }
+            }
+
+            #endregion
+        }
+
 		private static readonly List<IAnnotationItemProvider> _providers;
+
+        private static readonly object _syncLock = new object();
+        private static readonly Dictionary<string, StoredAnnotationLayout> _layoutCache;
 
 		static AnnotationLayoutFactory()
 		{
-			_providers = new List<IAnnotationItemProvider>();
+            _layoutCache = new Dictionary<string, StoredAnnotationLayout>();
+            AnnotationLayoutStore.Instance.StoreChanged += delegate { ClearCache(); };
+
+            _providers = new List<IAnnotationItemProvider>();
 
 			try
 			{
@@ -59,7 +99,30 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 
-		public static IEnumerable<IAnnotationItem> AvailableAnnotationItems
+        private static void ClearCache()
+        {
+            lock(_syncLock)
+            {
+                _layoutCache.Clear();
+            }
+        }
+
+        private static StoredAnnotationLayout GetStoredLayout(string layoutId)
+        {
+            lock (_syncLock)
+            {
+                if (_layoutCache.ContainsKey(layoutId))
+                    return _layoutCache[layoutId];
+
+                StoredAnnotationLayout layout = AnnotationLayoutStore.Instance.GetLayout(layoutId, AvailableAnnotationItems);
+                if (layout != null)
+                    _layoutCache[layoutId] = layout;
+
+                return layout;
+            }
+        }
+        
+        private static IEnumerable<IAnnotationItem> AvailableAnnotationItems
 		{
 			get
 			{
@@ -71,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 			}
 		}
 		
-		public static IAnnotationItem GetAnnotationItem(string annotationItemIdentifier)
+		internal static IAnnotationItem GetAnnotationItem(string annotationItemIdentifier)
 		{
 			foreach (IAnnotationItemProvider provider in _providers)
 			{
@@ -89,9 +152,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			try
 			{
-				StoredAnnotationLayout storedLayout = AnnotationLayoutStore.Instance.GetLayout(storedLayoutId, AvailableAnnotationItems);
+                StoredAnnotationLayout storedLayout = GetStoredLayout(storedLayoutId);
 				if (storedLayout != null)
-					return storedLayout;
+					return new StoredAnnotationLayoutProxy(storedLayout);
 				
 				//just return an empty layout.
 				return new AnnotationLayout();

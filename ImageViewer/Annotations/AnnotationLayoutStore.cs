@@ -47,11 +47,9 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private readonly object _syncLock = new object();
 		private XmlDocument _document;
 		private event EventHandler _storeChanged;
-		private readonly Dictionary<string, StoredAnnotationLayout> _layoutsInMemory;
 
 		private AnnotationLayoutStore()
 		{
-			_layoutsInMemory = new Dictionary<string, StoredAnnotationLayout>();
 			AnnotationLayoutStoreSettings.Default.PropertyChanged += 
 			delegate
 			{
@@ -74,7 +72,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			lock (_syncLock)
 			{
-				_layoutsInMemory.Clear();
 				SaveSettings("");
 				Initialize(true);
 			}
@@ -99,9 +96,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 				foreach (XmlElement matchingNode in matchingNodes)
 					layoutsNode.RemoveChild(matchingNode);
 
-				if (_layoutsInMemory.ContainsKey(identifier))
-					_layoutsInMemory.Remove(identifier);
-
 				SaveSettings(_document.OuterXml);
 			}
 		}
@@ -119,21 +113,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				List<StoredAnnotationLayout> layouts = new List<StoredAnnotationLayout>();
 
 				foreach (XmlElement layoutNode in layoutNodes)
-				{
-					StoredAnnotationLayout layout;
-					string identifier = layoutNode.GetAttribute("id");
-					if (_layoutsInMemory.ContainsKey(identifier))
-					{
-						layout = _layoutsInMemory[identifier];
-					}
-					else
-					{
-						layout = deserializer.DeserializeLayout(layoutNode);
-						_layoutsInMemory[layout.Identifier] = layout;
-					}
-
-					layouts.Add(layout.Clone());
-				}
+                    layouts.Add(deserializer.DeserializeLayout(layoutNode));
 
 				return layouts;
 			}
@@ -144,26 +124,16 @@ namespace ClearCanvas.ImageViewer.Annotations
 			if (String.IsNullOrEmpty(identifier))
 				return null;
 
-			StoredAnnotationLayout layout;
-			lock (_syncLock)
+            string xPath = String.Format("annotation-configuration/annotation-layouts/annotation-layout[@id='{0}']", identifier);
+            
+            lock (_syncLock)
 			{
-				if (_layoutsInMemory.ContainsKey(identifier))
-				{
-					layout = _layoutsInMemory[identifier];
-				}
-				else
-				{
-					Initialize(false);
-					string xPath = String.Format("annotation-configuration/annotation-layouts/annotation-layout[@id='{0}']", identifier);
-					XmlElement layoutNode = _document.SelectSingleNode(xPath) as XmlElement;
-					if (layoutNode == null)
-						return null;
+				Initialize(false);
+				XmlElement layoutNode = _document.SelectSingleNode(xPath) as XmlElement;
+				if (layoutNode == null)
+					return null;
 
-					layout = new StoredAnnotationLayoutDeserializer(availableAnnotationItems).DeserializeLayout(layoutNode);
-					_layoutsInMemory[layout.Identifier] = layout;
-				}
-
-				return layout.Clone();
+				return new StoredAnnotationLayoutDeserializer(availableAnnotationItems).DeserializeLayout(layoutNode);
 			}
 		}
 
@@ -179,7 +149,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 				try
 				{
 					new StoredAnnotationLayoutSerializer().SerializeLayout(layout);
-					_layoutsInMemory[layout.Identifier] = layout;
 					SaveSettings(_document.OuterXml);
 				}
 				catch
@@ -205,8 +174,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 						Platform.CheckForNullReference(layout, "layout");
 						Platform.CheckForEmptyString(layout.Identifier, "layout.Identifier");
 
-						serializer.SerializeLayout(layout);
-						_layoutsInMemory[layout.Identifier] = layout;
+                        serializer.SerializeLayout(layout);
 					}
 
 					SaveSettings(_document.OuterXml);
@@ -235,8 +203,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 			{
 				if (_document != null && !reloadSettings)
 					return;
-
-				_layoutsInMemory.Clear();
 
 				try
 				{
