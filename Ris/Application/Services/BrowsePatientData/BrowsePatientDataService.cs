@@ -248,7 +248,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
 		private GetReportDetailResponse GetReportDetail(GetReportDetailRequest request)
 		{
-			Report report = PersistenceContext.Load<Report>(request.ReportRef);
+			Report report = request.ReportRef != null 
+				? PersistenceContext.Load<Report>(request.ReportRef)
+				: PersistenceContext.Load<Procedure>(request.ProcedureRef).ActiveReport;
 
 			ReportAssembler assembler = new ReportAssembler();
 			return new GetReportDetailResponse(assembler.CreateReportDetail(report, request.IncludeCancelledParts, PersistenceContext));

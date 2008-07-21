@@ -41,6 +41,9 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         public EntityRef ReportRef;
 
 		[DataMember]
+		public EntityRef ProcedureRef;
+
+		[DataMember]
 		public bool IncludeCancelledParts;
     }
 }
