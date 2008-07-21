@@ -175,13 +175,13 @@ namespace ClearCanvas.Ris.Client
                                 _diagnosticServices = service.ListDiagnosticServices(request).DiagnosticServices;
                             });
 
-                        // cache up to 1000 practitioners
+                        // cache up to 500 practitioners
                         Platform.GetService<IExternalPractitionerAdminService>(
                             delegate(IExternalPractitionerAdminService service)
                             {
                                 ListExternalPractitionersRequest request = new ListExternalPractitionersRequest();
                                 request.Page.FirstRow = 0;
-                                request.Page.MaxRows = 1000;
+                                request.Page.MaxRows = 500;
                                 _practitioners = service.ListExternalPractitioners(request).Practitioners;
                             });
 
