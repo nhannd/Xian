@@ -155,6 +155,9 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow access to the Report Editor and creation of radiology reports.")]
 				public const string Create = "Workflow/Report/Create";
 
+				[AuthorityToken(Description = "Allow saving the radiology reports to draft.")]
+				public const string Save = "Workflow/Report/Save";
+
 				[AuthorityToken(Description = "Allow verification of radiology reports.")]
 				public const string Verify = "Workflow/Report/Verify";
 

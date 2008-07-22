@@ -39,7 +39,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -86,6 +85,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Gets a value indicating whether the Send To Transcription operation is enabled.
 		/// </summary>
 		bool CanSendToTranscription { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether the Save operation is enabled.
+		/// </summary>
+		bool CanSaveReport { get; }
 
 		/// <summary>
 		/// Gets or sets the report content for the active report part.
@@ -228,6 +232,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			public bool CanSendToTranscription
 			{
 				get { return _owner.CanSendToTranscription; }
+			}
+
+			public bool CanSaveReport
+			{
+				get { return _owner.SaveReportEnabled; }
 			}
 
             public string ReportContent
@@ -664,6 +673,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return CanSaveReport; }
 		}
 
+		public bool SaveReportVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Save); }
+		}
 
 		#endregion
 
@@ -753,7 +766,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool CanSaveReport
 		{
-			get { return _canSaveReport; }
+			get { return _canSaveReport
+				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Save); }
 		}
 
 
@@ -884,7 +898,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				// start the verification step
 				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-				item.ProcedureStepRef = StartVerification(item);
+				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify))
+					item.ProcedureStepRef = StartVerification(item);
 			}
 			return true;
 		}

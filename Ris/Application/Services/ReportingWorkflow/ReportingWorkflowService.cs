@@ -501,7 +501,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanSaveReport(WorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.SaveReport(), itemKey);
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Save))
+				return false;
+			return CanExecuteOperation(new Operations.SaveReport(), itemKey);
         }
 
         private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)

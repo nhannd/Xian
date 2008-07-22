@@ -87,6 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_supervisor.Visible = _component.SupervisorVisible;
 			_verifyButton.Visible = _component.VerifyReportVisible;
 			_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;
+			_saveButton.Visible = _component.SaveReportVisible;
 
 			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_saveButton.DataBindings.Add("Enabled", _component, "SaveReportEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
