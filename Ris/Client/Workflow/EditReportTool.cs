@@ -99,12 +99,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return
 					this.Context.GetOperationEnablement("StartInterpretation") ||
 					this.Context.GetOperationEnablement("StartVerification") ||
-
-					// there is no workflow operation for editing a previously created draft,
-					// so we enable the tool if it looks like a draft
-					// (ideally we need to check that the Performer is the same, but we don't have that information)
-					(item != null && item.ActivityStatus.Code == StepState.InProgress
-					&& (item.ProcedureStepName == StepType.Interpretation || item.ProcedureStepName == StepType.Verification));
+					this.Context.GetOperationEnablement("SaveReport");
 			}
 		}
 
