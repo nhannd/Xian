@@ -46,7 +46,8 @@ namespace ClearCanvas.Ris.Application.Services
                 facility.GetRef(),
                 facility.Code,
                 facility.Name,
-                EnumUtils.GetEnumValueInfo(facility.InformationAuthority));
+                EnumUtils.GetEnumValueInfo(facility.InformationAuthority),
+				facility.Deactivated);
         }
 
         public FacilityDetail CreateFacilityDetail(Facility facility)
@@ -54,7 +55,8 @@ namespace ClearCanvas.Ris.Application.Services
             return new FacilityDetail(
                 facility.Code,
                 facility.Name,
-                EnumUtils.GetEnumValueInfo(facility.InformationAuthority));
+                EnumUtils.GetEnumValueInfo(facility.InformationAuthority),
+				facility.Deactivated);
         }
 
         public void UpdateFacility(FacilityDetail detail, Facility facility, IPersistenceContext context)
@@ -62,6 +64,7 @@ namespace ClearCanvas.Ris.Application.Services
             facility.Code = detail.Code;
             facility.Name = detail.Name;
             facility.InformationAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.InformationAuthority, context);
+        	facility.Deactivated = detail.Deactivated;
         }
     }
 }

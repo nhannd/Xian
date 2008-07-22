@@ -42,12 +42,14 @@ namespace ClearCanvas.Ris.Application.Common
 			EntityRef contactPointRef, 
 			string name, 
 			string description, 
-			bool isDefaultContactPoint)
+			bool isDefaultContactPoint,
+			bool deactivated)
 		{
 			this.ContactPointRef = contactPointRef;
 			this.Name = name;
 			this.Description = description;
 			this.IsDefaultContactPoint = isDefaultContactPoint;
+			this.Deactivated = deactivated;
 		}
 
 		public ExternalPractitionerContactPointSummary()
@@ -66,16 +68,19 @@ namespace ClearCanvas.Ris.Application.Common
 		[DataMember]
 		public bool IsDefaultContactPoint;
 
+		[DataMember]
+		public bool Deactivated;
+
 		#region ICloneable Members
 
 		public object Clone()
 		{
-			ExternalPractitionerContactPointSummary clone = new ExternalPractitionerContactPointSummary();
-			clone.ContactPointRef = this.ContactPointRef;
-			clone.Name = this.Name;
-			clone.Description = this.Description;
-			clone.IsDefaultContactPoint = this.IsDefaultContactPoint;
-			return clone;
+			return new ExternalPractitionerContactPointSummary(
+				this.ContactPointRef,
+				this.Name,
+				this.Description,
+				this.IsDefaultContactPoint,
+				this.Deactivated);
 		}
 
 		#endregion

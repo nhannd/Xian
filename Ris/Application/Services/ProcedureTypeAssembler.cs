@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Services
     {
 		public ProcedureTypeSummary CreateSummary(ProcedureType rpt)
         {
-            return new ProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id);
+            return new ProcedureTypeSummary(rpt.GetRef(), rpt.Name, rpt.Id, rpt.Deactivated);
         }
 
 		public ProcedureTypeDetail CreateDetail(ProcedureType procedureType)
@@ -64,7 +64,8 @@ namespace ClearCanvas.Ris.Application.Services
                 procedureType.Id,
                 procedureType.Name,
 				procedureType.BaseType == null ? null : CreateSummary(procedureType.BaseType),
-				planXml);
+				planXml,
+				procedureType.Deactivated);
         }
 
 		public void UpdateProcedureType(ProcedureType procType, ProcedureTypeDetail detail, IPersistenceContext context)
@@ -74,6 +75,7 @@ namespace ClearCanvas.Ris.Application.Services
 			procType.BaseType = detail.BaseType == null
 			                    	? null
 			                    	: context.Load<ProcedureType>(detail.BaseType.ProcedureTypeRef, EntityLoadFlags.Proxy);
+			procType.Deactivated = detail.Deactivated;
 
 			try
 			{

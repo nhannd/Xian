@@ -46,13 +46,15 @@ namespace ClearCanvas.Ris.Application.Common
 		{
 		}
 
-		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml)
+		public ProcedureTypeDetail(EntityRef entityRef, string id, string name, ProcedureTypeSummary baseType, string planXml,
+			bool deactivated)
         {
             this.ProcedureTypeRef = entityRef;
             this.Id = id;
             this.Name = name;
         	this.BaseType = baseType;
         	this.PlanXml = planXml;
+			this.Deactivated = deactivated;
         }
 
         [DataMember]
@@ -70,9 +72,12 @@ namespace ClearCanvas.Ris.Application.Common
 		[DataMember]
 		public string PlanXml;
 
-        public ProcedureTypeSummary GetSummary()
+		[DataMember]
+		public bool Deactivated;
+
+		public ProcedureTypeSummary GetSummary()
         {
-            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id);
+            return new ProcedureTypeSummary(this.ProcedureTypeRef, this.Name, this.Id, this.Deactivated);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
             this.PersistenceContext.Lock(protocolCode, DirtyState.New);
             this.PersistenceContext.SynchState();
 
-            return new AddProtocolCodeResponse(new ProtocolCodeDetail(protocolCode.GetRef(), protocolCode.Name, protocolCode.Description));
+            return new AddProtocolCodeResponse(new ProtocolCodeDetail(protocolCode.GetRef(), protocolCode.Name, protocolCode.Description, protocolCode.Deactivated));
         }
 
         [UpdateOperation]
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         {
             List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
 				this.PersistenceContext.GetBroker<IProtocolCodeBroker>().FindAll(false),
-                delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description); });
+                delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description, code.Deactivated); });
 
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
 

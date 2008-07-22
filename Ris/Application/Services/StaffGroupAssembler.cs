@@ -16,7 +16,8 @@ namespace ClearCanvas.Ris.Application.Services
                 staffGroup.GetRef(),
                 staffGroup.Name,
                 staffGroup.Description,
-				staffGroup.Elective);
+				staffGroup.Elective,
+				staffGroup.Deactivated);
         }
 
         public StaffGroupDetail CreateDetail(StaffGroup staffGroup, IPersistenceContext context)
@@ -31,7 +32,8 @@ namespace ClearCanvas.Ris.Application.Services
                                                          delegate (Staff staff)
                                                          {
                                                              return staffAssembler.CreateStaffSummary(staff, context);
-                                                         })
+                                                         }),
+				staffGroup.Deactivated
                 );
         }
 
@@ -40,6 +42,7 @@ namespace ClearCanvas.Ris.Application.Services
             group.Name = detail.Name;
             group.Description = detail.Description;
         	group.Elective = detail.IsElective;
+        	group.Deactivated = detail.Deactivated;
 
             group.Members.Clear();
             CollectionUtils.ForEach(detail.Members,

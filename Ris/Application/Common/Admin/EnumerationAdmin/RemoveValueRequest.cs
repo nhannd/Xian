@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 
         }
 
-        public RemoveValueRequest(string enumerationName, EnumValueInfo value)
+		public RemoveValueRequest(string enumerationName, EnumValueAdminInfo value)
         {
             this.AssemblyQualifiedClassName = enumerationName;
             this.Value = value;
@@ -55,6 +55,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
         public string AssemblyQualifiedClassName;
 
         [DataMember]
-        public EnumValueInfo Value;
+		public EnumValueAdminInfo Value;
     }
 }

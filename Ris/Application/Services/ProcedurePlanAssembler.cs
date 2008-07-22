@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services
                 order.Procedures,
                 delegate(Procedure rp) { return assembler.CreateProcedureDetail(rp, context); });
             detail.DiagnosticServiceSummary =
-                new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name);
+                new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name, order.DiagnosticService.Deactivated);
 
 
             return detail;

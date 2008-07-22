@@ -92,16 +92,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-            PatientNoteDetail clone = new PatientNoteDetail();
-        	clone.PatientNoteRef = this.PatientNoteRef;
-            clone.Comment = this.Comment;
-            clone.Category = (PatientNoteCategorySummary)this.Category.Clone();
-            clone.Author = this.Author == null ? null : (StaffSummary)this.Author.Clone();
-            clone.CreationTime = this.CreationTime;
-            clone.ValidRangeFrom = this.ValidRangeFrom;
-            clone.ValidRangeUntil = this.ValidRangeUntil;
-            clone.IsExpired = this.IsExpired;
-            return clone;
+            return new PatientNoteDetail(this.PatientNoteRef,this.Comment, this.Category, this.Author, this.CreationTime,
+				this.ValidRangeFrom, this.ValidRangeUntil, this.IsExpired);
         }
 
         #endregion    

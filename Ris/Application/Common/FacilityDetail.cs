@@ -37,11 +37,13 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class FacilityDetail : DataContractBase
     {
-        public FacilityDetail(string code, string name, EnumValueInfo informationAuthority)
+        public FacilityDetail(string code, string name, EnumValueInfo informationAuthority,
+			bool deactivated)
         {
             this.Code = code;
             this.Name = name;
             this.InformationAuthority = informationAuthority;
+        	this.Deactivated = deactivated;
         }
 
         public FacilityDetail()
@@ -56,5 +58,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public EnumValueInfo InformationAuthority;
-    }
+
+		[DataMember]
+		public bool Deactivated;
+	}
 }

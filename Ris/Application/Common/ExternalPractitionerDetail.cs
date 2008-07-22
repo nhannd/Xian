@@ -45,13 +45,15 @@ namespace ClearCanvas.Ris.Application.Common
             string licenseNumber,
             string billingNumber,
             List<ExternalPractitionerContactPointDetail> contactPoints,
-            Dictionary<string, string> extendedProperties)
+            Dictionary<string, string> extendedProperties,
+			bool deactivated)
         {
             this.Name = personNameDetail;
             this.LicenseNumber = licenseNumber;
             this.BillingNumber = billingNumber;
             this.ContactPoints = contactPoints;
             this.ExtendedProperties = extendedProperties;
+        	this.Deactivated = deactivated;
         }
 
         public ExternalPractitionerDetail()
@@ -76,5 +78,7 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public Dictionary<string, string> ExtendedProperties;
 
-    }
+		[DataMember]
+		public bool Deactivated;
+	}
 }

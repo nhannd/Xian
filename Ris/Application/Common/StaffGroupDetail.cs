@@ -14,13 +14,14 @@ namespace ClearCanvas.Ris.Application.Common
             this.Members = new List<StaffSummary>();
         }
 
-        public StaffGroupDetail(EntityRef groupRef, string name, string description, bool isElective, List<StaffSummary> members)
+        public StaffGroupDetail(EntityRef groupRef, string name, string description, bool isElective, List<StaffSummary> members, bool deactivated)
         {
             this.StaffGroupRef = groupRef;
             this.Name = name;
             this.Description = description;
             this.Members = members;
         	this.IsElective = isElective;
+        	this.Deactivated = deactivated;
         }
 
         [DataMember]
@@ -37,5 +38,8 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
         public List<StaffSummary> Members;
+
+		[DataMember]
+		public bool Deactivated;
     }
 }

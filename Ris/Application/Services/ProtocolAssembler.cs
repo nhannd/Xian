@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public ProtocolCodeDetail CreateProtocolCodeDetail(ProtocolCode pc)
 		{
-			ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description);
+			ProtocolCodeDetail detail = new ProtocolCodeDetail(pc.GetRef(), pc.Name, pc.Description, pc.Deactivated);
 			return detail;
 		}
 

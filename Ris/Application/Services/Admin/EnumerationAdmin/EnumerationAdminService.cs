@@ -68,8 +68,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
             IEnumBroker enumBroker = PersistenceContext.GetBroker<IEnumBroker>();
             IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName), true);
             return new ListEnumerationValuesResponse(
-                CollectionUtils.Map<EnumValue, EnumValueInfo, List<EnumValueInfo>>(enumValues,
-                    delegate(EnumValue value) { return EnumUtils.GetEnumValueInfo(value); }));
+                CollectionUtils.Map<EnumValue, EnumValueAdminInfo>(enumValues,
+					delegate(EnumValue value)
+					{
+						return new EnumValueAdminInfo(value.Code, value.Value, value.Description, value.Deactivated);
+					}));
         }
 
         [UpdateOperation]
@@ -87,7 +90,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 
             // add the new value
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.AddValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder, request.Deactivated);
+            broker.AddValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder,
+				IsSoftEnum(enumClass) ? request.Value.Deactivated : false);
 
             return new AddValueResponse();
         }
@@ -106,7 +110,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
                 request.InsertAfter == null ? null : request.InsertAfter.Code);
 
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.UpdateValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder, request.Deactivated);
+            broker.UpdateValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder,
+				IsSoftEnum(enumClass) ? request.Value.Deactivated : false);
 
             return new EditValueResponse();
         }

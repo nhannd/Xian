@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
                 group.Codes,
-                delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description);});
+                delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description, code.Deactivated);});
 
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
             List<ProcedureTypeGroupSummary> readingGroups = CollectionUtils.Map<ProcedureTypeGroup, ProcedureTypeGroupSummary>(

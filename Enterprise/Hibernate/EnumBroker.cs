@@ -102,10 +102,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
 			HqlQuery q = new HqlQuery(string.Format("from {0}", enumValueClass.FullName));
 
-			if(!includeDeactivated)
-				q.Conditions.Add(new HqlCondition("Deactivated = ?", false));
+			// bug : NHibernate does not properly convert property to column name, therefore we use the column name for now
+			if (!includeDeactivated)
+				q.Conditions.Add(new HqlCondition("Deactivated_ = ?", false));
 
-			// bug : NHibernate does not properly convert "order by" property to column name, therefore we use the column name for now
+			// bug : NHibernate does not properly convert property to column name, therefore we use the column name for now
 			q.Sorts.Add(new HqlSort("DisplayOrder_", true, 0));
 
             // caching these queries will be very efficient, because the tables rarely change

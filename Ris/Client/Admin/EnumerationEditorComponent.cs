@@ -59,21 +59,21 @@ namespace ClearCanvas.Ris.Client.Admin
     {
         private readonly object InsertAtBeginning = new object();
 
-        private EnumValueInfo _enumValue;
-        private IList<EnumValueInfo> _otherValues;
-        private EnumValueInfo _insertAfter;
+        private readonly EnumValueAdminInfo _enumValue;
+		private readonly IList<EnumValueAdminInfo> _otherValues;
+		private EnumValueAdminInfo _insertAfter;
 
-        private bool _isNew;
-        private string _enumerationClassName;
+        private readonly bool _isNew;
+        private readonly string _enumerationClassName;
         
         /// <summary>
         /// Constructor for add.
         /// </summary>
-        public EnumerationEditorComponent(string enumerationClassName, IList<EnumValueInfo> allValues)
+		public EnumerationEditorComponent(string enumerationClassName, IList<EnumValueAdminInfo> allValues)
         {
             _isNew = true;
             _enumerationClassName = enumerationClassName;
-            _enumValue = new EnumValueInfo();
+			_enumValue = new EnumValueAdminInfo();
             _otherValues = allValues;
 
             // default insertAfter to last value in list
@@ -86,12 +86,12 @@ namespace ClearCanvas.Ris.Client.Admin
         /// <param name="enumerationName"></param>
         /// <param name="value"></param>
         /// <param name="allValues"></param>
-        public EnumerationEditorComponent(string enumerationName, EnumValueInfo value, IList<EnumValueInfo> allValues)
+		public EnumerationEditorComponent(string enumerationName, EnumValueAdminInfo value, IList<EnumValueAdminInfo> allValues)
         {
             _isNew = false;
             _enumerationClassName = enumerationName;
             _enumValue = value;
-            _otherValues = CollectionUtils.Reject<EnumValueInfo>(allValues, delegate(EnumValueInfo v) { return v.Equals(value); });
+			_otherValues = CollectionUtils.Reject(allValues, delegate(EnumValueAdminInfo v) { return v.Equals(value); });
 
             int index = allValues.IndexOf(value);
             _insertAfter = index > 0 ? allValues[index - 1] : null;
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public EnumValueInfo EnumValue
+		public EnumValueAdminInfo EnumValue
         {
             get { return _enumValue; }
         }
@@ -158,7 +158,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 ArrayList list = new ArrayList();
                 list.Add(InsertAtBeginning);
-                foreach (EnumValueInfo info in _otherValues)
+				foreach (EnumValueAdminInfo info in _otherValues)
                 {
                     list.Add(info);
                 }
@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Admin
             if (item == InsertAtBeginning)
                 return "(Insert at beginning)";
 
-            EnumValueInfo info = (EnumValueInfo)item;
+			EnumValueAdminInfo info = (EnumValueAdminInfo)item;
             return string.Format("{0} - {1}", info.Code, info.Value);
         }
 
@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _insertAfter ?? InsertAtBeginning; }
             set
             {
-                EnumValueInfo choice = value == InsertAtBeginning ? null : (EnumValueInfo)value;
+				EnumValueAdminInfo choice = value == InsertAtBeginning ? null : (EnumValueAdminInfo)value;
                 if(!Equals(choice, _insertAfter))
                 {
                     _insertAfter = choice;
@@ -204,11 +204,11 @@ namespace ClearCanvas.Ris.Client.Admin
                     {
                         if (_isNew)
                         {
-                            service.AddValue(new AddValueRequest(_enumerationClassName, _enumValue, _insertAfter, false));
+                            service.AddValue(new AddValueRequest(_enumerationClassName, _enumValue, _insertAfter));
                         }
                         else
                         {
-                            service.EditValue(new EditValueRequest(_enumerationClassName, _enumValue, _insertAfter, false));
+                            service.EditValue(new EditValueRequest(_enumerationClassName, _enumValue, _insertAfter));
                         }
 
                     });

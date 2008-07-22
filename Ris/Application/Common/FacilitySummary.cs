@@ -38,12 +38,13 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class FacilitySummary : DataContractBase, IEquatable<FacilitySummary>
     {
-        public FacilitySummary(EntityRef facilityRef, string code, string name, EnumValueInfo informationAuthority)
+        public FacilitySummary(EntityRef facilityRef, string code, string name, EnumValueInfo informationAuthority, bool deactivated)
         {
             this.FacilityRef = facilityRef;
             this.Code = code;
             this.Name = name;
             this.InformationAuthority = informationAuthority;
+        	this.Deactivated = deactivated;
         }
 
         public FacilitySummary()
@@ -62,7 +63,10 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public EnumValueInfo InformationAuthority;
 
-        public bool Equals(FacilitySummary facilitySummary)
+		[DataMember]
+		public bool Deactivated;
+
+		public bool Equals(FacilitySummary facilitySummary)
         {
             if (facilitySummary == null) return false;
             return Equals(FacilityRef, facilitySummary.FacilityRef);

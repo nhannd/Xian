@@ -44,20 +44,23 @@ namespace ClearCanvas.Ris.Application.Services
             return new ModalitySummary(
                 modality.GetRef(),
                 modality.Id,
-                modality.Name);
+                modality.Name,
+				modality.Deactivated);
         }
 
         public ModalityDetail CreateModalityDetail(Modality modality)
         {
             return new ModalityDetail(
                 modality.Id,
-                modality.Name);
+                modality.Name,
+				modality.Deactivated);
         }
 
         public void UpdateModality(ModalityDetail detail, Modality modality)
         {
             modality.Id = detail.Id;
             modality.Name = detail.Name;
+        	modality.Deactivated = detail.Deactivated;
         }
 
     }

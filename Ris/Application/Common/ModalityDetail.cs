@@ -40,10 +40,11 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ModalityDetail : DataContractBase
     {
-        public ModalityDetail(string id, string name)
+        public ModalityDetail(string id, string name, bool deactivated)
         {
             this.Id = id;
             this.Name = name;
+        	this.Deactivated = deactivated;
         }
 
         public ModalityDetail()
@@ -55,5 +56,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
-    }
+
+		[DataMember]
+		public bool Deactivated;
+	}
 }

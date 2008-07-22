@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Common
 			PersonNameDetail personNameDetail, EnumValueInfo sex,
 			string title, string licenseNumber, string billingNumber,
 			List<TelephoneDetail> telephoneNumbers, List<AddressDetail> addresses, List<EmailAddressDetail> emailAddresses,
-			List<StaffGroupSummary> groups, Dictionary<string, string> extendedProperties)
+			List<StaffGroupSummary> groups, Dictionary<string, string> extendedProperties, bool deactivated)
 		{
 			this.StaffId = staffId;
 			this.StaffType = staffType;
@@ -56,6 +56,7 @@ namespace ClearCanvas.Ris.Application.Common
 			this.EmailAddresses = emailAddresses;
 			this.Groups = groups;
 			this.ExtendedProperties = extendedProperties;
+			this.Deactivated = deactivated;
 		}
 
 		public StaffDetail()
@@ -103,5 +104,8 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public Dictionary<string, string> ExtendedProperties;
+
+		[DataMember]
+		public bool Deactivated;
 	}
 }

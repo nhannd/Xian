@@ -46,7 +46,8 @@ namespace ClearCanvas.Ris.Application.Services
             return new DiagnosticServiceSummary(
                 diagnosticService.GetRef(),
                 diagnosticService.Id,
-                diagnosticService.Name);
+                diagnosticService.Name,
+				diagnosticService.Deactivated);
         }
 
         public DiagnosticServiceDetail CreateDetail(DiagnosticService diagnosticService)
@@ -61,13 +62,15 @@ namespace ClearCanvas.Ris.Application.Services
                     delegate(ProcedureType rpType)
                     {
 						return rptAssembler.CreateSummary(rpType);
-                    }));
+                    }),
+				diagnosticService.Deactivated);
         }
 
 		public void UpdateDiagnosticService(DiagnosticService ds, DiagnosticServiceDetail detail, IPersistenceContext context)
 		{
 			ds.Id = detail.Id;
 			ds.Name = detail.Name;
+			ds.Deactivated = detail.Deactivated;
 
 			ds.ProcedureTypes.Clear();
 			ds.ProcedureTypes.AddAll(

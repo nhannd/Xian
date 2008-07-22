@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// EnumerationSummaryComponent class
     /// </summary>
     [AssociateView(typeof(EnumerationSummaryComponentViewExtensionPoint))]
-	public class EnumerationSummaryComponent : SummaryComponentBase<EnumValueInfo, EnumValueInfoTable>
+	public class EnumerationSummaryComponent : SummaryComponentBase<EnumValueAdminInfo, EnumValueInfoTable>
     {
         private List<EnumerationSummary> _enumerations;
         private EnumerationSummary _selectedEnumeration;
@@ -182,7 +182,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <param name="firstItem"></param>
 		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<EnumValueInfo> ListItems(int firstItem, int maxItems)
+		protected override IList<EnumValueAdminInfo> ListItems(int firstItem, int maxItems)
 		{
 			ListEnumerationValuesResponse listResponse = new ListEnumerationValuesResponse();
 			if (_selectedEnumeration != null)
@@ -202,11 +202,11 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// </summary>
 		/// <param name="addedItems"></param>
 		/// <returns>True if items were added, false otherwise.</returns>
-		protected override bool AddItems(out IList<EnumValueInfo> addedItems)
+		protected override bool AddItems(out IList<EnumValueAdminInfo> addedItems)
 		{
 			// Assign value to addedItems, but we actually don't use this
 			// because the entire table need to be refreshed after changes to any enumValueInfo item
-			addedItems = new List<EnumValueInfo>();
+			addedItems = new List<EnumValueAdminInfo>();
 
 			EnumerationEditorComponent component = new EnumerationEditorComponent(
 				_selectedEnumeration.AssemblyQualifiedClassName,
@@ -229,16 +229,16 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <param name="items">A list of items to edit.</param>
 		/// <param name="editedItems">The list of items that were edited.</param>
 		/// <returns>True if items were edited, false otherwise.</returns>
-		protected override bool EditItems(IList<EnumValueInfo> items, out IList<EnumValueInfo> editedItems)
+		protected override bool EditItems(IList<EnumValueAdminInfo> items, out IList<EnumValueAdminInfo> editedItems)
 		{
 			// Assign value to addedItems, but we actually don't use this
 			// because the entire table need to be refreshed after changes to any enumValueInfo item
-			editedItems = new List<EnumValueInfo>();
+			editedItems = new List<EnumValueAdminInfo>();
 
-			EnumValueInfo item = CollectionUtils.FirstElement(items);
+			EnumValueAdminInfo item = CollectionUtils.FirstElement(items);
 			EnumerationEditorComponent component = new EnumerationEditorComponent(
 				_selectedEnumeration.AssemblyQualifiedClassName,
-				(EnumValueInfo)item.Clone(),
+				(EnumValueAdminInfo)item.Clone(),
 				this.Table.Items);
 			ApplicationComponentExitCode result = LaunchAsDialog(this.Host.DesktopWindow, component, SR.TitleEnumEditValue + " - " + item.Code);
 			if (result == ApplicationComponentExitCode.Accepted)
@@ -258,12 +258,12 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <param name="deletedItems">The list of items that were deleted.</param>
 		/// <param name="failureMessage">The message if there any errors that occurs during deletion.</param>
 		/// <returns>True if items were deleted, false otherwise.</returns>
-		protected override bool DeleteItems(IList<EnumValueInfo> items, out IList<EnumValueInfo> deletedItems, out string failureMessage)
+		protected override bool DeleteItems(IList<EnumValueAdminInfo> items, out IList<EnumValueAdminInfo> deletedItems, out string failureMessage)
 		{
 			failureMessage = null;
-			deletedItems = new List<EnumValueInfo>();
+			deletedItems = new List<EnumValueAdminInfo>();
 
-			foreach (EnumValueInfo item in items)
+			foreach (EnumValueAdminInfo item in items)
 			{
 				try
 				{
@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		protected override bool IsSameItem(EnumValueInfo x, EnumValueInfo y)
+		protected override bool IsSameItem(EnumValueAdminInfo x, EnumValueAdminInfo y)
 		{
 			return Equals(x.Code, y.Code);
 		}

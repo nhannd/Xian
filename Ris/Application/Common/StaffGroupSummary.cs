@@ -9,12 +9,13 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class StaffGroupSummary : DataContractBase
     {
-        public StaffGroupSummary(EntityRef groupRef, string name, string description, bool isElective)
+        public StaffGroupSummary(EntityRef groupRef, string name, string description, bool isElective, bool deactivated)
         {
             this.StaffGroupRef = groupRef;
             this.Name = name;
             this.Description = description;
         	this.IsElective = isElective;
+        	this.Deactivated = deactivated;
         }
 
         [DataMember]
@@ -28,5 +29,8 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public bool IsElective;
+
+		[DataMember]
+		public bool Deactivated;
 	}
 }

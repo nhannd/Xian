@@ -40,12 +40,14 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ExternalPractitionerSummary : DataContractBase, ICloneable, IEquatable<ExternalPractitionerSummary>
     {
-        public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, string licenseNumber, string billingNumber)
+        public ExternalPractitionerSummary(EntityRef pracRef, PersonNameDetail personNameDetail, string licenseNumber, string billingNumber,
+			bool deactivated)
         {
             this.PractitionerRef = pracRef;
             this.Name = personNameDetail;
             this.LicenseNumber = licenseNumber;
             this.BillingNumber = billingNumber;
+        	this.Deactivated = deactivated;
         }
 
         public ExternalPractitionerSummary()
@@ -64,7 +66,10 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string BillingNumber;
 
-        public bool Equals(ExternalPractitionerSummary externalPractitionerSummary)
+		[DataMember]
+		public bool Deactivated;
+		
+		public bool Equals(ExternalPractitionerSummary externalPractitionerSummary)
         {
             if (externalPractitionerSummary == null) return false;
             return Equals(PractitionerRef, externalPractitionerSummary.PractitionerRef);
@@ -85,12 +90,12 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-            ExternalPractitionerSummary clone = new ExternalPractitionerSummary();
-            clone.PractitionerRef = this.PractitionerRef;
-            clone.Name = (PersonNameDetail)this.Name.Clone();
-            clone.LicenseNumber = this.LicenseNumber;
-            clone.BillingNumber = this.BillingNumber;
-            return clone;
+            return new ExternalPractitionerSummary(
+				this.PractitionerRef,
+				(PersonNameDetail)this.Name.Clone(),
+				this.LicenseNumber,
+				this.BillingNumber,
+				this.Deactivated);
         }
 
         #endregion

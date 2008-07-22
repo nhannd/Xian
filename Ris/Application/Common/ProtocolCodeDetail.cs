@@ -38,11 +38,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ProtocolCodeDetail : DataContractBase, IEquatable<ProtocolCodeDetail>
     {
-        public ProtocolCodeDetail(EntityRef entityRef, string name, string description)
+        public ProtocolCodeDetail(EntityRef entityRef, string name, string description, bool deactivated)
         {
             EntityRef = entityRef;
             Name = name;
             Description = description;
+        	Deactivated = deactivated;
         }
 
         [DataMember]
@@ -54,6 +55,8 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string Description;
 
+		[DataMember]
+		public bool Deactivated;
 
         public bool Equals(ProtocolCodeDetail protocolCodeDetail)
         {

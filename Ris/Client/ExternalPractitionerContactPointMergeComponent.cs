@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IExternalPractitionerAdminService>(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					LoadMergeDuplicateContactPointFormDataRequest request = new LoadMergeDuplicateContactPointFormDataRequest(GetSummaryFromDetail(duplicate));
+					LoadMergeDuplicateContactPointFormDataRequest request = new LoadMergeDuplicateContactPointFormDataRequest(duplicate.GetSummary());
 					LoadMergeDuplicateContactPointFormDataResponse response = service.LoadMergeDuplicateContactPointFormData(request);
 					affectedOrders = response.AffectedOrders;
 				});
@@ -106,8 +106,8 @@ namespace ClearCanvas.Ris.Client
 					delegate(IExternalPractitionerAdminService service)
 					{
 						MergeDuplicateContactPointRequest request = new MergeDuplicateContactPointRequest(
-							GetSummaryFromDetail(this.SelectedDuplicateSummary),
-							GetSummaryFromDetail(this.SelectedOriginalSummary));
+							this.SelectedDuplicateSummary.GetSummary(),
+							this.SelectedOriginalSummary.GetSummary());
 
 						service.MergeDuplicateContactPoint(request);
 					});
@@ -120,15 +120,6 @@ namespace ClearCanvas.Ris.Client
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToMergeDuplicateContactPoints, this.Host.DesktopWindow);
 			}
-		}
-
-		public ExternalPractitionerContactPointSummary GetSummaryFromDetail(ExternalPractitionerContactPointDetail detail)
-		{
-			return new ExternalPractitionerContactPointSummary(
-				detail.ContactPointRef,
-				detail.Name,
-				detail.Description,
-				detail.IsDefaultContactPoint);
 		}
 	}
 }

@@ -49,7 +49,8 @@ namespace ClearCanvas.Ris.Application.Services
                 location.Floor,
                 location.PointOfCare,
                 location.Room,
-                location.Bed);
+                location.Bed,
+				location.Deactivated);
         }
 
         public LocationDetail CreateLocationDetail(Location location)
@@ -64,7 +65,8 @@ namespace ClearCanvas.Ris.Application.Services
                 location.Floor,
                 location.PointOfCare,
                 location.Room,
-                location.Bed);
+                location.Bed,
+				location.Deactivated);
         }
 
         public void UpdateLocation(LocationDetail detail, Location location, IPersistenceContext context)
@@ -79,6 +81,7 @@ namespace ClearCanvas.Ris.Application.Services
             location.PointOfCare = detail.PointOfCare;
             location.Room = detail.Room;
             location.Bed = detail.Bed;
+        	location.Deactivated = detail.Deactivated;
         }
 
     }

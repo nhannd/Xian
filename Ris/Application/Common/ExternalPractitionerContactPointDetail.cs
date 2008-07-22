@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Common
     {
         public ExternalPractitionerContactPointDetail(EntityRef contactPointRef, string name, string description, bool isDefaultContactPoint, 
             EnumValueInfo preferredResultCommunicationMode, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails,
-            TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress)
+            TelephoneDetail currentPhone, TelephoneDetail currentFax, AddressDetail currentAddress, bool deactivated)
         {
             this.ContactPointRef = contactPointRef;
             this.Name = name;
@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.CurrentPhoneNumber = currentPhone;
             this.CurrentFaxNumber = currentFax;
             this.CurrentAddress = currentAddress;
+        	this.Deactivated = deactivated;
         }
 
         public ExternalPractitionerContactPointDetail()
@@ -93,13 +94,17 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public List<AddressDetail> Addresses;
 
-        public ExternalPractitionerContactPointSummary GetSummary()
+		[DataMember]
+		public bool Deactivated;
+
+		public ExternalPractitionerContactPointSummary GetSummary()
         {
             return new ExternalPractitionerContactPointSummary(
                 this.ContactPointRef,
                 this.Name,
                 this.Description,
-                this.IsDefaultContactPoint);
+                this.IsDefaultContactPoint,
+				this.Deactivated);
         }
 
         #region ICloneable Members
@@ -118,7 +123,8 @@ namespace ClearCanvas.Ris.Application.Common
                     delegate(AddressDetail detail) { return (AddressDetail)detail.Clone(); }),
                 (TelephoneDetail)(this.CurrentPhoneNumber == null ? null : this.CurrentPhoneNumber.Clone()),
                 (TelephoneDetail) (this.CurrentFaxNumber == null ? null : this.CurrentFaxNumber.Clone()),
-                (AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone())
+                (AddressDetail) (this.CurrentAddress == null ? null : this.CurrentAddress.Clone()),
+				this.Deactivated
             );
         }
 

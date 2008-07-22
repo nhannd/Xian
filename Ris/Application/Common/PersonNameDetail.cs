@@ -81,15 +81,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-            PersonNameDetail clone = new PersonNameDetail();
-            clone.FamilyName = this.FamilyName;
-            clone.GivenName = this.GivenName;
-            clone.MiddleName = this.MiddleName;
-            clone.Prefix = this.Prefix;
-            clone.Suffix = this.Suffix;
-            clone.Degree = this.Degree;
-
-            return clone;
+        	return new PersonNameDetail(this.FamilyName, this.GivenName, this.MiddleName,
+				this.Prefix, this.Suffix, this.Degree);
         }
 
         #endregion

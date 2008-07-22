@@ -46,7 +46,8 @@ namespace ClearCanvas.Ris.Application.Common
             string floor,
             string pointOfCare,
             string room,
-            string bed)
+            string bed, 
+			bool deactivated)
         {
         	this.Id = id;
         	this.Name = name;
@@ -57,6 +58,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.PointOfCare = pointOfCare;
             this.Room = room;
             this.Bed = bed;
+        	this.Deactivated = deactivated;
         }
 
         public LocationDetail()
@@ -89,5 +91,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Bed;
-    }
+
+		[DataMember]
+		public bool Deactivated;
+	}
 }

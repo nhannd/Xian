@@ -46,12 +46,14 @@ namespace ClearCanvas.Ris.Application.Common
 			this.ProcedureTypes = new List<ProcedureTypeSummary>();
 		}
 
-        public DiagnosticServiceDetail(EntityRef diagnosticServiceRef, string id, string name, List<ProcedureTypeSummary> procedureTypes)
+        public DiagnosticServiceDetail(EntityRef diagnosticServiceRef, string id, string name, List<ProcedureTypeSummary> procedureTypes,
+			bool deactivated)
         {
             this.DiagnosticServiceRef = diagnosticServiceRef;
             this.Id = id;
             this.Name = name;
             this.ProcedureTypes = procedureTypes;
+        	this.Deactivated = deactivated;
         }
 
         [DataMember]
@@ -66,9 +68,12 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public List<ProcedureTypeSummary> ProcedureTypes;
 
-        public DiagnosticServiceSummary GetSummary()
+		[DataMember]
+		public bool Deactivated;
+
+		public DiagnosticServiceSummary GetSummary()
         {
-            return new DiagnosticServiceSummary(this.DiagnosticServiceRef, this.Id, this.Name);
+            return new DiagnosticServiceSummary(this.DiagnosticServiceRef, this.Id, this.Name, this.Deactivated);
         }
     }
 }

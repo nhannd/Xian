@@ -55,6 +55,7 @@
     <Compile Include="Admin\DiagnosticServiceAdmin\LoadDiagnosticServiceForEditResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\UpdateDiagnosticServiceRequest.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\UpdateDiagnosticServiceResponse.cs" />
+    <Compile Include="Admin\EnumerationAdmin\EnumValueAdminInfo.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\DeleteExternalPractitionerRequest.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\DeleteExternalPractitionerResponse.cs" />
     <Compile Include="Admin\ExternalPractitionerAdmin\LoadMergeDuplicateContactPointFormDataRequest.cs" />

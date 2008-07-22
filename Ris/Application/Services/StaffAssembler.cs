@@ -46,7 +46,8 @@ namespace ClearCanvas.Ris.Application.Services
 
 			return new StaffSummary(staff.GetRef(), staff.Id,
 				EnumUtils.GetEnumValueInfo(staff.Type),
-				new PersonNameAssembler().CreatePersonNameDetail(staff.Name));
+				new PersonNameAssembler().CreatePersonNameDetail(staff.Name),
+				staff.Deactivated);
 		}
 
 		public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
@@ -77,7 +78,8 @@ namespace ClearCanvas.Ris.Application.Services
 				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
 					staff.Groups,
 					delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
-				new Dictionary<string, string>(staff.ExtendedProperties));
+				new Dictionary<string, string>(staff.ExtendedProperties),
+				staff.Deactivated);
 		}
 
 		public void UpdateStaff(StaffDetail detail, Staff staff, bool updateGroups, IPersistenceContext context)
@@ -94,6 +96,7 @@ namespace ClearCanvas.Ris.Application.Services
 			staff.Title = detail.Title;
 			staff.LicenseNumber = detail.LicenseNumber;
 			staff.BillingNumber = detail.BillingNumber;
+			staff.Deactivated = detail.Deactivated;
 
 			staff.TelephoneNumbers.Clear();
 			if (detail.TelephoneNumbers != null)

@@ -40,12 +40,13 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class StaffSummary : DataContractBase, ICloneable
     {
-        public StaffSummary(EntityRef staffRef, string staffId, EnumValueInfo staffType, PersonNameDetail personNameDetail)
+        public StaffSummary(EntityRef staffRef, string staffId, EnumValueInfo staffType, PersonNameDetail personNameDetail, bool deactivated)
         {
             this.StaffRef = staffRef;
             this.StaffId = staffId;
             this.StaffType = staffType;
             this.Name = personNameDetail;
+        	this.Deactivated = deactivated;
         }
 
         public StaffSummary()
@@ -64,7 +65,10 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public PersonNameDetail Name;
 
-        public override string ToString()
+		[DataMember]
+		public bool Deactivated;
+
+		public override string ToString()
         {
             return this.Name.ToString();
         }
@@ -73,12 +77,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-            StaffSummary clone = new StaffSummary();
-            clone.StaffRef = this.StaffRef;
-            clone.StaffId = this.StaffId;
-            clone.Name = (PersonNameDetail)this.Name.Clone();
-            clone.StaffType = this.StaffType;
-            return clone;
+        	return new StaffSummary(this.StaffRef, this.StaffId, this.StaffType, this.Name, this.Deactivated);
         }
 
         #endregion

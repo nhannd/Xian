@@ -45,12 +45,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 
         }
 
-        public ListEnumerationValuesResponse(List<EnumValueInfo> values)
+		public ListEnumerationValuesResponse(List<EnumValueAdminInfo> values)
         {
             this.Values = values;
         }
 
         [DataMember]
-        public List<EnumValueInfo> Values;
+		public List<EnumValueAdminInfo> Values;
     }
 }

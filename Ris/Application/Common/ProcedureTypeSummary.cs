@@ -38,11 +38,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ProcedureTypeSummary : DataContractBase, IEquatable<ProcedureTypeSummary>
     {
-        public ProcedureTypeSummary(EntityRef entityRef, string name, string id)
+        public ProcedureTypeSummary(EntityRef entityRef, string name, string id, bool deactivated)
         {
             this.ProcedureTypeRef = entityRef;
             this.Name = name;
             this.Id = id;
+        	this.Deactivated = deactivated;
         }
 
         [DataMember]
@@ -54,7 +55,10 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string Id;
 
-        public bool Equals(ProcedureTypeSummary that)
+		[DataMember]
+		public bool Deactivated;
+
+		public bool Equals(ProcedureTypeSummary that)
         {
             if (that == null) return false;
             return Equals(this.ProcedureTypeRef, that.ProcedureTypeRef);

@@ -41,11 +41,12 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class DiagnosticServiceSummary : DataContractBase, IEquatable<DiagnosticServiceSummary>
     {
-        public DiagnosticServiceSummary(EntityRef diagnosticServiceRef, string id, string name)
+        public DiagnosticServiceSummary(EntityRef diagnosticServiceRef, string id, string name, bool deactivated)
         {
             this.DiagnosticServiceRef = diagnosticServiceRef;
             this.Id = id;
             this.Name = name;
+        	this.Deactivated = deactivated;
         }
 
         [DataMember]
@@ -56,6 +57,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string Name;
+
+		[DataMember]
+		public bool Deactivated;
 
         public bool Equals(DiagnosticServiceSummary diagnosticServiceSummary)
         {

@@ -48,7 +48,8 @@ namespace ClearCanvas.Ris.Application.Services
                 prac.GetRef(),
                 new PersonNameAssembler().CreatePersonNameDetail(prac.Name),
                 prac.LicenseNumber,
-                prac.BillingNumber);
+                prac.BillingNumber,
+				prac.Deactivated);
 
             return summary;
         }
@@ -56,8 +57,6 @@ namespace ClearCanvas.Ris.Application.Services
         public ExternalPractitionerDetail CreateExternalPractitionerDetail(ExternalPractitioner prac, IPersistenceContext context)
         {
             PersonNameAssembler assembler = new PersonNameAssembler();
-            TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
-            AddressAssembler addressAssembler = new AddressAssembler();
 
             ExternalPractitionerDetail detail = new ExternalPractitionerDetail(
                 assembler.CreatePersonNameDetail(prac.Name),
@@ -69,7 +68,8 @@ namespace ClearCanvas.Ris.Application.Services
                     {
                         return CreateExternalPractitionerContactPointDetail(cp, context);
                     }),
-                    new Dictionary<string, string>(prac.ExtendedProperties));
+                    new Dictionary<string, string>(prac.ExtendedProperties),
+					prac.Deactivated);
 
 
             return detail;
@@ -88,6 +88,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             prac.LicenseNumber = detail.LicenseNumber;
             prac.BillingNumber = detail.BillingNumber;
+        	prac.Deactivated = detail.Deactivated;
 
             // update contact points collection
             CollectionSynchronizeHelper<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail> syncHelper
@@ -128,7 +129,8 @@ namespace ClearCanvas.Ris.Application.Services
             return new ExternalPractitionerContactPointSummary(contactPoint.GetRef(),
                 contactPoint.Name,
                 contactPoint.Description,
-                contactPoint.IsDefaultContactPoint);
+                contactPoint.IsDefaultContactPoint,
+				contactPoint.Deactivated);
         }
 
         public ExternalPractitionerContactPointDetail CreateExternalPractitionerContactPointDetail(ExternalPractitionerContactPoint contactPoint,
@@ -161,7 +163,8 @@ namespace ClearCanvas.Ris.Application.Services
                     }),
                     currentPhone == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentPhone, context),
                     currentFax == null ? null : telephoneNumberAssembler.CreateTelephoneDetail(currentFax, context),
-                    currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context)
+                    currentAddress == null ? null : addressAssembler.CreateAddressDetail(currentAddress, context),
+					contactPoint.Deactivated
                 );
        }
 
@@ -172,6 +175,7 @@ namespace ClearCanvas.Ris.Application.Services
            contactPoint.Description = detail.Description;
            contactPoint.IsDefaultContactPoint = detail.IsDefaultContactPoint;
            contactPoint.PreferredResultCommunicationMode = EnumUtils.GetEnumValue<ResultCommunicationMode>(detail.PreferredResultCommunicationMode);
+		   contactPoint.Deactivated = detail.Deactivated;
 
            TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
            AddressAssembler addressAssembler = new AddressAssembler();
