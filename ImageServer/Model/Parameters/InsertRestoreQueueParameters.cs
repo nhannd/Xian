@@ -29,38 +29,24 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
-	/// <summary>
-	/// Helper class for restoring a study from an <see cref="HsmArchive"/>
-	/// </summary>
-	public class HsmStudyRestore
-	{
-		private readonly HsmArchive _hsmArchive;
+	public class InsertRestoreQueueParameters : ProcedureParameters
+    {
+        public InsertRestoreQueueParameters()
+            : base("InsertRestoreQueue")
+        {
+        }
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="hsmArchive">The HsmArchive to work with.</param>
-		public HsmStudyRestore(HsmArchive hsmArchive)
+        public ServerEntityKey StudyStorageKey
+        {
+            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+		public ServerEntityKey ArchiveStudyStorageKey
 		{
-			_hsmArchive = hsmArchive;
-		}
-
-		/// <summary>
-		/// Do the restore.
-		/// </summary>
-		/// <param name="queueItem">The queue item to restore.</param>
-		public void Run(RestoreQueue queueItem)
-		{
-			// Just reschedule
-			_hsmArchive.UpdateRestoreQueue(queueItem,RestoreQueueStatusEnum.Pending,Platform.Time.AddSeconds(60));
+			set { SubCriteria["ArchiveStudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("ArchiveStudyStorageKey", value); }
 		}
 	}
 }

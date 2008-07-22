@@ -82,6 +82,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 				parms.ServerPartitionKey = item.ServerPartitionKey;
 				parms.StudyStorageKey = item.StudyStorageKey;
+				parms.StudyStatusEnum = StudyStatusEnum.Nearline;
 
 				// Get the Insert Instance broker and do the insert
 				IDeleteFilesystemStudyStorage delete = updateContext.GetBroker<IDeleteFilesystemStudyStorage>();
@@ -106,7 +107,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 			_partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
-			Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
+			Platform.Log(LogLevel.Info, "Purging study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
 						 _partition.Description);
 
 			RemoveFilesystem();

@@ -37,6 +37,7 @@
     <Compile Include="Brokers\InsertArchiveQueue.cs" />
     <Compile Include="Brokers\DeleteServerPartition.cs" />
     <Compile Include="Brokers\DeleteWorkQueue.cs" />
+    <Compile Include="Brokers\InsertRestoreQueue.cs" />
     <Compile Include="Brokers\QueryArchiveQueue.cs" />
     <Compile Include="Brokers\QueryPartitionTransferSyntaxes.cs" />
     <Compile Include="Brokers\QueryRestoreQueue.cs" />

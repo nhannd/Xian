@@ -39,8 +39,11 @@ using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.Scu;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -79,6 +82,30 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #endregion
 
         #region Private Methods
+
+		/// <summary>
+		/// Insert a RestoreQueue record for a given study.
+		/// </summary>
+		/// <param name="studyStorageKey">The <see cref="StudyStorage"/> key to insert the record for.</param>
+		/// <returns></returns>
+		private bool InsertRestore(ServerEntityKey studyStorageKey)
+		{
+			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
+
+				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
+				parms.StudyStorageKey = studyStorageKey;
+
+				IList<RestoreQueue> storageList = broker.Execute(parms);
+
+				if (storageList.Count == 0)
+					return false;
+			}		
+
+			return true;
+		}
+
         /// <summary>
         /// Create a list of SOP Instances to move based on a Patient level C-MOVE-RQ.
         /// </summary>
@@ -120,6 +147,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
        /// <returns></returns>
         private bool GetSopListForStudy(DicomMessageBase msg)
         {
+        	bool bOfflineFound = false;
+
             string[] studyList = (string[]) msg.DataSet[DicomTags.StudyInstanceUid].Values;
 
             // Now get the storage location
@@ -127,13 +156,36 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 StudyStorageLocation location;
 
-                if (false == GetStudyStorageLocation(studyInstanceUid, out location))
-                    return false;
-
-                StudyXml theStream = LoadStudyXml(location);
+				if (false == GetStudyStorageLocation(studyInstanceUid, out location))
+				{
+					StudyStorage studyStorage;
+					if (!GetStudyStatus(studyInstanceUid, out studyStorage))
+					{
+						return false;
+					}
+					else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
+					{
+						if (false == InsertRestore(studyStorage.GetKey()))
+						{
+							Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
+							return false;
+						}
+						else
+						{
+							bOfflineFound = true;
+							Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
+							continue;
+						}
+					}
+					else
+						return false;
+				}
+            	StudyXml theStream = LoadStudyXml(location);
 
                 _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
+
+			if (bOfflineFound) return false;
 
             return true;
         }
@@ -153,9 +205,30 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             StudyStorageLocation location;
 
             if (false == GetStudyStorageLocation(studyInstanceUid, out location))
-                return false;
+            {
+				StudyStorage studyStorage;
+				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
+				{
+					return false;
+				}
+				else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
+				{
+					if (false == InsertRestore(studyStorage.GetKey()))
+					{
+						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
+						return false;
+					}
+					else
+					{
+						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
+						return false;
+					}
+				}
+				else
+					return false;
+            }
 
-            StudyXml studyStream = LoadStudyXml(location);
+        	StudyXml studyStream = LoadStudyXml(location);
 
             foreach (string seriesInstanceUid in seriesList)
             {
@@ -179,10 +252,31 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-            if (false == GetStudyStorageLocation(studyInstanceUid, out location))
-                return false;
+			if (false == GetStudyStorageLocation(studyInstanceUid, out location))
+			{
+				StudyStorage studyStorage;
+				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
+				{
+					return false;
+				}
+				else if (studyStorage.StudyStatusEnum == StudyStatusEnum.Nearline)
+				{
+					if (false == InsertRestore(studyStorage.GetKey()))
+					{
+						Platform.Log(LogLevel.Error, "Unable to insert RestoreQueue entry for study {0}", studyStorage.StudyInstanceUid);
+						return false;
+					}
+					else
+					{
+						Platform.Log(LogLevel.Info, "Inserted Restore request for nearline study {0}", studyStorage.StudyInstanceUid);
+						return false;
+					}
+				}
+				else
+					return false;
+			}
 
-            // There can be multiple SOP Instance UIDs in the move request
+        	// There can be multiple SOP Instance UIDs in the move request
             foreach (string sopInstanceUid in sopInstanceUidArray)
             {
                 string path = Path.Combine(location.GetStudyPath(), seriesInstanceUid);
@@ -306,12 +400,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
 
                     // Could not find an online/readable location for the requested objects to move.
-                    if (!bOnline)
+					// Note that if the C-MOVE-RQ included a list of study instance uids, and some 
+					// were online and some offline, we don't fail now (ie, the check on the Count)
+					if (!bOnline && _theScu.StorageInstanceList.Count == 0)
                     {
                         Platform.Log(LogLevel.Error, "Unable to find online storage location for C-MOVE-RQ");
 
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-                                                 DicomStatuses.QueryRetrieveUnableToProcess);
+                                                 DicomStatuses.QueryRetrieveUnableToPerformSuboperations);
                         finalResponseSent = true;
                         _theScu = null;
                         return true;
@@ -355,6 +451,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               				status =
                 	                               					DicomStatuses.
                 	                               						QueryRetrieveSubOpsOneOrMoreFailures;
+															else if (!bOnline)
+																status = DicomStatuses.QueryRetrieveUnableToPerformSuboperations;
                 	                               			else
                 	                               				status = DicomStatuses.Success;
 

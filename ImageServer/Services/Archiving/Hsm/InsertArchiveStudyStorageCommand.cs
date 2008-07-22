@@ -101,10 +101,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 			IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
 
-			if (broker.Execute(parms))
-			{
-				updateContext.Commit();
-			}
+			broker.Execute(parms);
 		}
 	}
 }

@@ -148,9 +148,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Find the <see cref="ServerEntityKey"/> reference for a given Study Instance UID and Server Partition.
         /// </summary>
-        /// <param name="read"></param>
-        /// <param name="studyInstanceUid"></param>
-        /// <returns></returns>
+		/// <param name="read">The connection to use to read the values.</param>
+        /// <param name="studyInstanceUid">The list of Study Instance Uids for which to retrieve the table keys.</param>
+        /// <returns>A list of <see cref="ServerEntityKey"/>s.</returns>
         private List<ServerEntityKey> LoadStudyKey(IReadContext read, string[] studyInstanceUid)
         {
             IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
@@ -175,15 +175,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Populate data from a <see cref="Patient"/> entity into a DICOM C-FIND-RSP message.
         /// </summary>
-        /// <param name="response"></param>
-        /// <param name="tagList"></param>
-        /// <param name="row"></param>
+        /// <param name="response">The response message to populate with results.</param>
+        /// <param name="tagList">The list of tags to populate.</param>
+        /// <param name="row">The <see cref="Patient"/> table to populate from.</param>
         private void PopulatePatient(DicomMessage response, IList<uint> tagList, Patient row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-            dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+            //dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
             if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
@@ -236,16 +236,20 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Populate the data from a <see cref="Study"/> entity into a DICOM C-FIND-RSP message.
         /// </summary>
-        /// <param name="read"></param>
+		/// <param name="read">The connection to use to read the values.</param>
         /// <param name="response"></param>
         /// <param name="tagList"></param>
-        /// <param name="row"></param>
+        /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
         private void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-            dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+
+			if (row.StudyStatusEnum == StudyStatusEnum.Nearline)
+				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
+			else
+				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
             if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
@@ -321,18 +325,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Populate the data from a <see cref="Series"/> entity into a DICOM C-FIND-RSP message.
         /// </summary>
-        /// <param name="read"></param>
+		/// <param name="read">The connection to use to read the values.</param>
         /// <param name="request"></param>
         /// <param name="response"></param>
         /// <param name="tagList"></param>
-        /// <param name="row"></param>
+        /// <param name="row">The <see cref="Series"/> table to populate the row from.</param>
         private void PopulateSeries(IReadContext read, DicomMessage request, DicomMessage response, IList<uint> tagList,
                                     Series row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-            dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+			if (row.StudyStatusEnum == StudyStatusEnum.Nearline)
+				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
+			else
+				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
 
             foreach (uint tag in tagList)
             {
@@ -525,7 +532,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="server"></param>
         /// <param name="presentationID"></param>
-        /// <param name="message"></param>
+        /// <param name="message">The Patient level query message.</param>
         /// <returns></returns>
         private bool OnReceivePatientQuery(DicomServer server, byte presentationID, DicomMessage message)
         {
@@ -649,7 +656,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                 SetStringCondition(criteria.ReferringPhysiciansName,
                                                    data[DicomTags.ReferringPhysiciansName].GetString(0, ""));
                                 break;
-                            case DicomTags.ModalitiesInStudy: // todo
+                            case DicomTags.ModalitiesInStudy:
                                 // Specify a subselect on Modality in series
                                 SeriesSelectCriteria seriesSelect = new SeriesSelectCriteria();
                                 SetStringArrayCondition(seriesSelect.Modality,
@@ -842,7 +849,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 Platform.Log(LogLevel.Error, "Unable to load storage location for study: {0}", studyInstanceUid);
                 DicomMessage failureResponse = new DicomMessage();
-                server.SendCFindResponse(presentationID, message.MessageId, failureResponse,
+				message.DataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
+				message.DataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
+            	message.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyInstanceUid);
+				message.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
+				server.SendCFindResponse(presentationID, message.MessageId, failureResponse,
                                          DicomStatuses.QueryRetrieveUnableToProcess);
                 return true;
             }

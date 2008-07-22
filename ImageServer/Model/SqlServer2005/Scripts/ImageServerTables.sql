@@ -1223,7 +1223,7 @@ ALTER TABLE [dbo].[RestoreQueue] CHECK CONSTRAINT [FK_RestoreQueue_RestoreQueueS
 GO
 /****** Object:  ForeignKey [FK_RestoreQueue_StudyStorage]    Script Date: 07/17/2008 00:49:46 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_RestoreQueue_StudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[RestoreQueue]'))
-ALTER TABLE [dbo].[RestoreQueue]  WITH CHECK ADD  CONSTRAINT [FK_RestoreQueue_StudyStorage] FOREIGN KEY([ArchiveStudyStorageGUID])
+ALTER TABLE [dbo].[RestoreQueue]  WITH CHECK ADD  CONSTRAINT [FK_RestoreQueue_StudyStorage] FOREIGN KEY([StudyStorageGUID])
 REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
 ALTER TABLE [dbo].[RestoreQueue] CHECK CONSTRAINT [FK_RestoreQueue_StudyStorage]

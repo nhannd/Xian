@@ -120,7 +120,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteFilesystemStudyStorage]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[DeleteFilesystemStudyStorage]
 GO
-
+/****** Object:  StoredProcedure [dbo].[InsertRestoreQueue]    Script Date: 07/21/2008 16:11:22 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertRestoreQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertRestoreQueue]
+GO
 
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
@@ -2468,8 +2471,85 @@ BEGIN
 	DELETE FROM WorkQueue 
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
+	UPDATE StudyStorage
+	SET Lock = 0, LastAccessedTime = getdate() 
+	WHERE Lock = 1 AND GUID = @StudyStorageGUID
+
 	COMMIT TRANSACTION
 
+END
+' 
+END
+GO
+/****** Object:  StoredProcedure [dbo].[InsertRestoreQueue]    Script Date: 07/21/2008 16:11:22 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertRestoreQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: July 21, 2008
+-- Description:	Insert a RestoreQueue record, if one doesn''t
+--              already exist for the Study.
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertRestoreQueue] 
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier,
+	@ArchiveStudyStorageGUID uniqueidentifier = null
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @PendingRestoreQueueStatus smallint
+	DECLARE @RestoreQueueGUID uniqueidentifier
+	DECLARE	@NewArchiveStudyStorageGUID uniqueidentifier
+
+	SELECT @PendingRestoreQueueStatus = Enum from RestoreQueueStatusEnum where Lookup = ''Pending''
+
+	BEGIN TRANSACTION
+
+	IF @ArchiveStudyStorageGUID IS null
+	BEGIN
+		SELECT TOP 1 @NewArchiveStudyStorageGUID = GUID FROM ArchiveStudyStorage
+		WHERE StudyStorageGUID = @StudyStorageGUID
+		ORDER BY ArchiveTime DESC
+		IF @@ROWCOUNT = 0
+		BEGIN
+			-- A bit ugly, the study does not appear to be archived, so can''t be restored.
+			-- set the GUID to an invalid value, so no rows are returned.
+			SET @RestoreQueueGUID = newid()	
+		END
+		ELSE
+		BEGIN
+			SELECT @RestoreQueueGUID = GUID FROM RestoreQueue
+			WHERE ArchiveStudyStorageGUID = @NewArchiveStudyStorageGUID
+			IF @@ROWCOUNT = 0
+			BEGIN
+				SET @RestoreQueueGUID = newid()
+				INSERT INTO RestoreQueue (GUID, ArchiveStudyStorageGUID, StudyStorageGUID, ScheduledTime, RestoreQueueStatusEnum, ProcessorId)
+				VALUES	(@RestoreQueueGUID, @NewArchiveStudyStorageGUID, @StudyStorageGUID, getdate(), @PendingRestoreQueueStatus, null)
+			END
+		END
+	END
+	ELSE
+	BEGIN
+		SELECT @RestoreQueueGUID = GUID FROM RestoreQueue
+		WHERE ArchiveStudyStorageGUID = @ArchiveStudyStorageGUID
+		IF @@ROWCOUNT = 0
+		BEGIN
+			SET @RestoreQueueGUID = newid()
+			INSERT INTO RestoreQueue (GUID, ArchiveStudyStorageGUID, StudyStorageGUID, ScheduledTime, RestoreQueueStatusEnum, ProcessorId)
+			VALUES	(@RestoreQueueGUID, @ArchiveStudyStorageGUID, @StudyStorageGUID, getdate(), @PendingRestoreQueueStatus, null)
+		END
+	END
+
+	COMMIT TRANSACTION
+
+	SELECT * FROM RestoreQueue WHERE GUID = @RestoreQueueGUID
 END
 ' 
 END

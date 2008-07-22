@@ -29,38 +29,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
+namespace ClearCanvas.ImageServer.Model.Brokers
 {
-	/// <summary>
-	/// Helper class for restoring a study from an <see cref="HsmArchive"/>
-	/// </summary>
-	public class HsmStudyRestore
+	public interface IInsertRestoreQueue : IProcedureQueryBroker<InsertRestoreQueueParameters, RestoreQueue>	
 	{
-		private readonly HsmArchive _hsmArchive;
-
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="hsmArchive">The HsmArchive to work with.</param>
-		public HsmStudyRestore(HsmArchive hsmArchive)
-		{
-			_hsmArchive = hsmArchive;
-		}
-
-		/// <summary>
-		/// Do the restore.
-		/// </summary>
-		/// <param name="queueItem">The queue item to restore.</param>
-		public void Run(RestoreQueue queueItem)
-		{
-			// Just reschedule
-			_hsmArchive.UpdateRestoreQueue(queueItem,RestoreQueueStatusEnum.Pending,Platform.Time.AddSeconds(60));
-		}
 	}
 }

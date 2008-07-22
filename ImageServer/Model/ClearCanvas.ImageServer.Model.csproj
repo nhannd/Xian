@@ -47,6 +47,7 @@
     <Compile Include="Brokers\IInsertArchiveQueue.cs" />
     <Compile Include="Brokers\IDeleteServerPartition.cs" />
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
+    <Compile Include="Brokers\IInsertRestoreQueue.cs" />
     <Compile Include="Brokers\IQueryArchiveQueue.cs" />
     <Compile Include="Brokers\IQueryRestoreQueue.cs" />
     <Compile Include="Brokers\IQueryServerPartitionTransferSyntaxes.cs" />
@@ -158,6 +159,7 @@
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="Parameters\DeleteFilesystemStudyStorageParameters.cs" />
     <Compile Include="Parameters\InsertArchiveQueueParameters.cs" />
+    <Compile Include="Parameters\InsertRestoreQueueParameters.cs" />
     <Compile Include="Parameters\QueryArchiveQueueParameters.cs" />
     <Compile Include="Parameters\QueryRestoreQueueParameters.cs" />
     <Compile Include="Parameters\UpdateArchiveQueueParameters.cs" />

@@ -41,8 +41,10 @@ using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
@@ -61,11 +63,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #endregion
 
         #region Properties
+		/// <summary>
+		/// The <see cref="ServerPartition"/> associated with the Scp.
+		/// </summary>
         protected ServerPartition Partition
         {
             get { return _partition; }
         }
 
+		/// <summary>
+		/// The <see cref="FilesystemMonitor"/> class associated with the Scp.
+		/// </summary>
         protected FilesystemMonitor Monitor
         {
             get { return _fsMonitor; }
@@ -95,13 +103,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         #region Public Methods
 
+		/// <summary>
+		/// Verify a presentation context.
+		/// </summary>
+		/// <param name="association"></param>
+		/// <param name="pcid"></param>
+		/// <returns></returns>
         public DicomPresContextResult VerifyAssociation(AssociationParameters association, byte pcid)
         {
-            bool isNew = false;
+            bool isNew;
 
             Device = DeviceManager.LookupDevice(_partition, association, out isNew);
 
-            // Let the subclass to perform the verification
+            // Let the subclass perform the verification
             DicomPresContextResult result = OnVerifyAssociation(association, pcid);
             if (result!=DicomPresContextResult.Accept)
             {
@@ -162,6 +176,34 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             return theXml;
         }
 
+		/// <summary>
+		/// Get the Status of a study.
+		/// </summary>
+		/// <param name="studyInstanceUid">The Study to check for.</param>
+		/// <param name="studyStorage">The returned study storage object</param>
+		/// <returns>true on success, false on no records found.</returns>
+		public bool GetStudyStatus(string studyInstanceUid, out StudyStorage studyStorage)
+		{
+			using (IReadContext read = _store.OpenReadContext())
+			{
+				IStudyStorageEntityBroker selectBroker = read.GetBroker<IStudyStorageEntityBroker>();
+				StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+
+				criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+				criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
+
+				IList<StudyStorage> storageList = selectBroker.Find(criteria);
+
+				foreach (StudyStorage studyLocation in storageList)
+				{
+					studyStorage = studyLocation;
+					return true;
+				}
+				studyStorage = null;
+				return false;
+			}
+		}
+
         /// <summary>
         /// Retrieves the storage location fromthe database for the specified study.
         /// </summary>
@@ -219,6 +261,22 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 if (studyLocationList.Count == 0)
                 {
+					IStudyStorageEntityBroker selectBroker = updateContext.GetBroker<IStudyStorageEntityBroker>();
+					StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+
+					criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+					criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
+
+					IList<StudyStorage> storageList = selectBroker.Find(criteria);
+					if (storageList.Count > 0)
+					{
+						StudyStorage storage = storageList[0];
+
+						Platform.Log(LogLevel.Warn,"Received SOP Instances for Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
+						return null;
+					}
+
+
                     IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
                     StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
                     insertParms.ServerPartitionKey = Partition.GetKey();
@@ -263,7 +321,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             _selector = parms.FilesystemSelector;
             
         }
-
         
         public virtual bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
