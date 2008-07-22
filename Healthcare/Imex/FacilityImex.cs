@@ -15,7 +15,7 @@ namespace ClearCanvas.Healthcare.Imex
     public class FacilityImex : XmlEntityImex<Facility, FacilityImex.FacilityData>
     {
         [DataContract]
-        public class FacilityData
+		public class FacilityData : ReferenceEntityDataBase
         {
             [DataMember]
             public string Code;
@@ -39,7 +39,8 @@ namespace ClearCanvas.Healthcare.Imex
         protected override FacilityData Export(Facility entity, IReadContext context)
         {
             FacilityData data = new FacilityData();
-            data.Code = entity.Code;
+			data.Deactivated = entity.Deactivated;
+			data.Code = entity.Code;
             data.Name = entity.Name;
             data.InformationAuthority = entity.InformationAuthority.Code;
 
@@ -52,6 +53,7 @@ namespace ClearCanvas.Healthcare.Imex
                 context.GetBroker<IEnumBroker>().Find<InformationAuthorityEnum>(data.InformationAuthority);
 
             Facility f = LoadOrCreateFacility(data.Code, data.Name, ia, context);
+        	f.Deactivated = data.Deactivated;
             f.Name = data.Name;
             f.InformationAuthority = ia;
         }

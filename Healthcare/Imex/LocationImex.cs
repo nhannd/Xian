@@ -15,7 +15,7 @@ namespace ClearCanvas.Healthcare.Imex
 	public class LocationImex : XmlEntityImex<Location, LocationImex.LocationData>
 	{
 		[DataContract]
-		public class LocationData
+		public class LocationData : ReferenceEntityDataBase
 		{
 			[DataMember]
 			public string Id;
@@ -58,6 +58,7 @@ namespace ClearCanvas.Healthcare.Imex
 		protected override LocationData Export(Location entity, IReadContext context)
 		{
 			LocationData data = new LocationData();
+			data.Deactivated = entity.Deactivated;
 			data.Id = entity.Id;
 			data.Name = entity.Name;
 			data.Description = entity.Description;
@@ -78,6 +79,7 @@ namespace ClearCanvas.Healthcare.Imex
 			Facility facility = context.GetBroker<IFacilityBroker>().FindOne(facilityCriteria);
 
 			Location l = LoadOrCreateLocation(data.Id, data.Name, facility, context);
+			l.Deactivated = data.Deactivated;
 			l.Description = data.Description;
 			l.Building = data.Building;
 			l.Floor = data.Floor;

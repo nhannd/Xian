@@ -45,12 +45,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 
         }
 
-        public EditValueRequest(string enumerationName, EnumValueInfo value, EnumValueInfo insertAfter)
+        public EditValueRequest(string enumerationName, EnumValueInfo value, EnumValueInfo insertAfter, bool deactivated)
         {
             this.AssemblyQualifiedClassName = enumerationName;
             this.Value = value;
             this.InsertAfter = insertAfter;
-        }
+			this.Deactivated = deactivated;
+		}
 
         [DataMember]
         public string AssemblyQualifiedClassName;
@@ -60,5 +61,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 
         [DataMember]
         public EnumValueInfo InsertAfter;
-    }
+
+		[DataMember]
+		public bool Deactivated;
+	}
 }

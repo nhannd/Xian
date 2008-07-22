@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 				EnumUtils.GetEnumValueList<SexEnum>(this.PersistenceContext),
 				(new SimplifiedPhoneTypeAssembler()).GetPatientPhoneTypeChoices(),
 				EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
-				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
 					delegate(StaffGroup group) { return groupAssember.CreateSummary(group); })
 				);
 		}

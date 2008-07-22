@@ -45,7 +45,6 @@ namespace ClearCanvas.Healthcare.Imex
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class FacilityImporter : CsvDataImporterBase
     {
-        private IUpdateContext _context;
         private IEnumBroker _enumBroker;
         private List<InformationAuthorityEnum> _authorities;
 
@@ -67,9 +66,8 @@ namespace ClearCanvas.Healthcare.Imex
         /// <param name="context"></param>
         public override void Import(List<string> rows, IUpdateContext context)
         {
-            _context = context;
             _enumBroker = context.GetBroker<IEnumBroker>();
-            _authorities = new List<InformationAuthorityEnum>(_enumBroker.Load<InformationAuthorityEnum>());
+            _authorities = new List<InformationAuthorityEnum>(_enumBroker.Load<InformationAuthorityEnum>(true));
 
             List<Facility> facilities = new List<Facility>();
 
@@ -118,7 +116,7 @@ namespace ClearCanvas.Healthcare.Imex
             {
                 // create a new value
                 InformationAuthorityEnum lastValue = CollectionUtils.LastElement(_authorities);
-                authority = (InformationAuthorityEnum) _enumBroker.AddValue(typeof(InformationAuthorityEnum), id, id, name, lastValue == null ? 1 : lastValue.DisplayOrder + 1);
+                authority = (InformationAuthorityEnum) _enumBroker.AddValue(typeof(InformationAuthorityEnum), id, id, name, lastValue == null ? 1 : lastValue.DisplayOrder + 1, false);
                 _authorities.Add(authority);
             }
             return authority;

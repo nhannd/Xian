@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
             // (ie inactive facilities, etc) 
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             List<FacilitySummary> facilities = CollectionUtils.Map<Facility, FacilitySummary>(
-                PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+				PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                 delegate(Facility f) { return facilityAssembler.CreateFacilitySummary(f); });
 
             return new GetWorkingFacilityChoicesResponse(facilities);

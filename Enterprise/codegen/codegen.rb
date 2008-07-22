@@ -78,7 +78,8 @@ class CodeGen
     	model.add(filePath, parseDirectives(filePath))
      end
     end
-    
+
+ 
     #process each template
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
     applyTemplates(@@entityBrokerTemplates, model.entityDefs.select {|entityDef| !entityDef.suppressBrokerGen }, destDir)

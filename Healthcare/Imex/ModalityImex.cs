@@ -15,14 +15,14 @@ namespace ClearCanvas.Healthcare.Imex
     public class ModalityImex : XmlEntityImex<Modality, ModalityImex.ModalityData>
     {
         [DataContract]
-        public class ModalityData
+		public class ModalityData : ReferenceEntityDataBase
         {
             [DataMember]
             public string Id;
 
             [DataMember]
             public string Name;
-        }
+		}
 
         #region Overrides
 
@@ -37,7 +37,8 @@ namespace ClearCanvas.Healthcare.Imex
         protected override ModalityData Export(Modality entity, IReadContext context)
         {
             ModalityData data = new ModalityData();
-            data.Id = entity.Id;
+			data.Deactivated = entity.Deactivated;
+			data.Id = entity.Id;
             data.Name = entity.Name;
 
             return data;
@@ -46,7 +47,8 @@ namespace ClearCanvas.Healthcare.Imex
         protected override void Import(ModalityData data, IUpdateContext context)
         {
             Modality m = LoadOrCreateModality(data.Id, data.Name, context);
-            m.Name = data.Name;
+        	m.Deactivated = data.Deactivated;
+			m.Name = data.Name;
         }
 
         #endregion

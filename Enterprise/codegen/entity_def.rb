@@ -15,6 +15,9 @@ class EntityDef < ClassDef
         processUniqueKeys(fieldNode)
       end
     end
+	
+	# recognize field named "Deactivation" as a special field
+	@deactivationField = fields.find { |f| f.accessorName === "Deactivated" }
   end
   
   def kind
@@ -37,7 +40,12 @@ class EntityDef < ClassDef
     # if this entity has a superclass, inherit from it's searchCriteria class, otherwise use "EntitySearchCriteria"
     superClass ? superClass.searchCriteriaClassName : "EntitySearchCriteria<"+className+">"
   end
-
+  
+  def attributes
+    attrs = []
+    attrs << "DeactivationFlag(\"#{@deactivationField.accessorName}\")" if @deactivationField
+    attrs
+  end
   
 protected
 

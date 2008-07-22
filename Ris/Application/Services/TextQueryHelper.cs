@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -136,6 +137,16 @@ namespace ClearCanvas.Ris.Application.Services
 
 
             TSearchCriteria[] where = BuildCriteria(request.TextQuery.Trim());
+
+			// augment criteria to exclude de-activated items if specified
+			if(!request.IncludeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)))
+			{
+				string propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)).PropertyName;
+				SearchCondition<bool> c = new SearchCondition<bool>(propertyName);
+				c.EqualTo(false);
+
+				CollectionUtils.ForEach(where, delegate(TSearchCriteria w) { w.SubCriteria[propertyName] = c; });
+			}
 
             // if a specificity threshold was specified, apply it now
             if (request.SpecificityThreshold > 0)

@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
-                PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+				PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                 delegate(Facility f)
                 {
                     return facilityAssembler.CreateFacilitySummary(f);
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 
 			LocationAssembler locationAssembler = new LocationAssembler();
 			response.CurrentLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
-				PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
+				PersistenceContext.GetBroker<ILocationBroker>().FindAll(false),
 				delegate(Location f)
 				{
 					return locationAssembler.CreateLocationSummary(f);

@@ -14,5 +14,6 @@
       <key column="DiagnosticServiceOID_"/>
       <many-to-many column="ProcedureTypeOID_" class="ProcedureType" fetch="join"/>
     </set>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

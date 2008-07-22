@@ -72,5 +72,7 @@
         </property>
       </composite-element>
     </idbag>
+    
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

@@ -10,11 +10,10 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		{
 		}
 
-		public CannedTextDetail(string name, string category, StaffSummary staff, StaffGroupSummary staffGroup, string text)
+		public CannedTextDetail(string name, string category, StaffGroupSummary staffGroup, string text)
 		{
 			this.Name = name;
 			this.Category = category;
-			this.Staff = staff;
 			this.StaffGroup = staffGroup;
 			this.Text = text;
 		}
@@ -26,9 +25,6 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 		public string Category;
 
 		[DataMember]
-		public StaffSummary Staff;
-
-		[DataMember]
 		public StaffGroupSummary StaffGroup;
 
 		[DataMember]
@@ -36,7 +32,7 @@ namespace ClearCanvas.Ris.Application.Common.CannedTextService
 
 		public bool IsPersonal
 		{
-			get { return this.Staff != null; }
+			get { return !this.IsGroup; }
 		}
 
 		public bool IsGroup

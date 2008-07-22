@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             StaffAssembler staffAssembler = new StaffAssembler();
             response.StaffChoices = CollectionUtils.Map<Staff, StaffSummary>(
-                this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(),
+				this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(false),
                 delegate(Staff item)
                 {
                     return staffAssembler.CreateStaffSummary(item, PersistenceContext);
@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
             response.StaffGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-                this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(),
+				this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
                 delegate(StaffGroup item)
                 {
                     return staffGroupAssembler.CreateSummary(item);
@@ -169,7 +169,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
-                this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+				this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                 delegate(Facility f)
                 {
                     return facilityAssembler.CreateFacilitySummary(f);
@@ -177,7 +177,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 			LocationAssembler locationAssembler = new LocationAssembler();
 			response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
-				this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
+				this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(false),
 				delegate(Location l)
 				{
 					return locationAssembler.CreateLocationSummary(l);

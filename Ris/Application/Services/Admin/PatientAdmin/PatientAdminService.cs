@@ -62,8 +62,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             response.MrnAssigningAuthorityChoices = EnumUtils.GetEnumValueList<InformationAuthorityEnum>(PersistenceContext);
 
             // Sort the category from High to Low, then sort by name
-            IList<PatientNoteCategory> sortedCategoryList = CollectionUtils.Sort<PatientNoteCategory>(
-                PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().FindAll(),
+            IList<PatientNoteCategory> sortedCategoryList = CollectionUtils.Sort(
+				PersistenceContext.GetBroker<IPatientNoteCategoryBroker>().FindAll(false),
                 delegate(PatientNoteCategory x, PatientNoteCategory y)
                 {
                     return string.Compare(x.Name, y.Name);

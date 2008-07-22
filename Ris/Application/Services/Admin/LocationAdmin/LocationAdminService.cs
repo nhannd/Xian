@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
             FacilityAssembler assembler = new FacilityAssembler();
             return new GetLocationEditFormDataResponse(
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
-                    PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+                    PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                     delegate(Facility f)
                     {
                         return assembler.CreateFacilitySummary(f);

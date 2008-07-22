@@ -36,6 +36,7 @@ using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Core
 {
+	[DeactivationFlag("Deactivated")]
     public class EnumValue : DomainObject
     {
         // these are the values we have been using in the Hibernate mapping files
@@ -47,6 +48,7 @@ namespace ClearCanvas.Enterprise.Core
         private string _value;
         private string _description;
         private float _displayOrder;
+    	private bool _deactivated;
 
         protected EnumValue()
         {
@@ -104,6 +106,15 @@ namespace ClearCanvas.Enterprise.Core
             get { return _displayOrder; }
             private set { _displayOrder = value; }
         }
+
+		/// <summary>
+		/// Gets a value indicating whether this enumerated value has been de-activated.
+		/// </summary>
+    	public virtual bool Deactivated
+    	{
+			get { return _deactivated; }
+			private set { _deactivated = value; }
+    	}
 
         /// <summary>
         /// Overridden to provide value-based hash code

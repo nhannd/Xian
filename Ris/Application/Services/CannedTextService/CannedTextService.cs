@@ -47,12 +47,11 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		[ReadOperation]
 		public GetCannedTextEditFormDataResponse GetCannedTextEditFormData(GetCannedTextEditFormDataRequest request)
 		{
-			StaffAssembler staffAssembler = new StaffAssembler();
 			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
 
 			return new GetCannedTextEditFormDataResponse(
-				staffAssembler.CreateStaffSummary(this.CurrentUserStaff, this.PersistenceContext),
-				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(this.CurrentUserStaff.Groups,
+				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+					this.CurrentUserStaff.ActiveGroups,	// only active staff groups should be choosable
 					delegate(StaffGroup group)
 						{
 							return groupAssembler.CreateSummary(group);
@@ -104,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 					throw new RequestValidationException(SR.ExceptionCannedTextCategoryRequired);
 
 				CannedTextAssembler assembler = new CannedTextAssembler();
-				CannedText cannedText = assembler.CreateCannedText(request.Detail, this.PersistenceContext);
+				CannedText cannedText = assembler.CreateCannedText(request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
 				PersistenceContext.Lock(cannedText, DirtyState.New);
 				PersistenceContext.SynchState();
@@ -113,8 +112,8 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 			}
 			catch (EntityValidationException)
 			{
-				string text = request.Detail.IsPersonal ? 
-					string.Format("staff {0}, {1}", request.Detail.Staff.Name.FamilyName, request.Detail.Staff.Name.GivenName) :
+				string text = request.Detail.IsPersonal ?
+					string.Format("staff {0}, {1}", this.CurrentUserStaff.Name.FamilyName, this.CurrentUserStaff.Name.GivenName) :
 					string.Format("{0} group", request.Detail.StaffGroup.Name);
 
 				throw new RequestValidationException(string.Format(SR.ExceptionIdenticalCannedTextExist, text));
@@ -127,7 +126,7 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 			CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
 
 			CannedTextAssembler assembler = new CannedTextAssembler();
-			assembler.UpdateCannedText(cannedText, request.Detail, this.PersistenceContext);
+			assembler.UpdateCannedText(cannedText, request.Detail, this.CurrentUserStaff, this.PersistenceContext);
 
 			PersistenceContext.SynchState();
 			return new UpdateCannedTextResponse(assembler.GetCannedTextSummary(cannedText, this.PersistenceContext));

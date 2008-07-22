@@ -17,7 +17,7 @@ namespace ClearCanvas.Healthcare.Imex
     public class ProcedureTypeImex : XmlEntityImex<ProcedureType, ProcedureTypeImex.ProcedureTypeData>
     {
         [DataContract]
-        public class ProcedureTypeData
+		public class ProcedureTypeData : ReferenceEntityDataBase
         {
             [DataMember]
             public string Id;
@@ -45,7 +45,8 @@ namespace ClearCanvas.Healthcare.Imex
         protected override ProcedureTypeData Export(ProcedureType entity, IReadContext context)
         {
             ProcedureTypeData data = new ProcedureTypeData();
-            data.Id = entity.Id;
+			data.Deactivated = entity.Deactivated;
+			data.Id = entity.Id;
             data.Name = entity.Name;
             if (entity.BaseType != null)
             {
@@ -59,6 +60,7 @@ namespace ClearCanvas.Healthcare.Imex
         protected override void Import(ProcedureTypeData data, IUpdateContext context)
         {
             ProcedureType pt = LoadOrCreateProcedureType(data.Id, data.Name, context);
+        	pt.Deactivated = data.Deactivated;
             if (!string.IsNullOrEmpty(data.BaseTypeId))
             {
                 pt.BaseType = GetBaseProcedureType(data.BaseTypeId, context);

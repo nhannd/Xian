@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services
         }
 
         /// <summary>
-        /// Returns a list of <see cref="EnumValueInfo"/> objects representing the values in the specified enumeration class.
+        /// Returns a list of <see cref="EnumValueInfo"/> objects representing the active values in the specified enumeration class.
         /// </summary>
         /// <typeparam name="TEnumValue"></typeparam>
         /// <param name="context"></param>
@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services
         public static List<EnumValueInfo> GetEnumValueList<TEnumValue>(IPersistenceContext context)
             where TEnumValue : EnumValue
         {
-            return CollectionUtils.Map<EnumValue, EnumValueInfo, List<EnumValueInfo>>(context.GetBroker<IEnumBroker>().Load<TEnumValue>(),
+            return CollectionUtils.Map<EnumValue, EnumValueInfo, List<EnumValueInfo>>(context.GetBroker<IEnumBroker>().Load<TEnumValue>(false),
                 delegate(EnumValue ev)
                 {
                     return new EnumValueInfo(ev.Code, ev.Value, ev.Description);

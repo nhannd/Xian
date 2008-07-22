@@ -102,6 +102,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 		{
 			ProcedureTypeSearchCriteria where = new ProcedureTypeSearchCriteria();
 			where.Id.SortAsc(0);
+			where.Deactivated.EqualTo(false);
 
 			IList<ProcedureType> procTypes = PersistenceContext.GetBroker<IProcedureTypeBroker>().Find(where);
 

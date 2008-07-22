@@ -15,7 +15,7 @@ namespace ClearCanvas.Healthcare.Imex
 	public class PatientNoteCategoryImex : XmlEntityImex<PatientNoteCategory, PatientNoteCategoryImex.PatientNoteCategoryData>
 	{
 		[DataContract]
-		public class PatientNoteCategoryData
+		public class PatientNoteCategoryData : ReferenceEntityDataBase
 		{
 			[DataMember]
 			public string Name;
@@ -37,12 +37,13 @@ namespace ClearCanvas.Healthcare.Imex
 			return context.GetBroker<IPatientNoteCategoryBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
 		}
 
-		protected override PatientNoteCategoryData Export(PatientNoteCategory nc, IReadContext context)
+		protected override PatientNoteCategoryData Export(PatientNoteCategory entity, IReadContext context)
 		{
 			PatientNoteCategoryData data = new PatientNoteCategoryData();
-			data.Name = nc.Name;
-			data.Description = nc.Description;
-			data.Severity = nc.Severity.ToString();
+			data.Deactivated = entity.Deactivated;
+			data.Name = entity.Name;
+			data.Description = entity.Description;
+			data.Severity = entity.Severity.ToString();
 
 			return data;
 		}
@@ -51,6 +52,7 @@ namespace ClearCanvas.Healthcare.Imex
 		{
 			NoteSeverity severity = (NoteSeverity) Enum.Parse(typeof (NoteSeverity), data.Severity);
 			PatientNoteCategory nc = LoadOrCreatePatientNoteCategory(data.Name, severity, context);
+			nc.Deactivated = data.Deactivated;
 			nc.Description = data.Description;
 		}
 

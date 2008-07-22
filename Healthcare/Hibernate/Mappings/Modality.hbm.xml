@@ -8,5 +8,6 @@
     <version name="Version" column="Version_"/>
     <property name="Id" column="Id_" type="String" length="30" not-null="true" unique="true"/>
     <property name="Name" column="Name_" type="String" length="200" not-null="true" unique="true"/>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

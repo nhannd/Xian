@@ -35,6 +35,8 @@ using System.Text;
 
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Healthcare {
@@ -45,7 +47,15 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class Staff : Entity
     {
-        private void CustomInitialize()
+		/// <summary>
+		/// Gets only the active <see cref="StaffGroup"/>s to which this staff belongs.
+		/// </summary>
+		public virtual IList<StaffGroup> ActiveGroups
+		{
+			get { return CollectionUtils.Select(_groups, delegate(StaffGroup g) { return !g.Deactivated; }); }
+		}
+
+		private void CustomInitialize()
         {
         }
 	}

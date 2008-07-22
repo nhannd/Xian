@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             return new GetOrderEntryFormDataResponse(
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
-                    PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+					PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                     delegate(Facility f)
                     {
                         return facilityAssembler.CreateFacilitySummary(f);
@@ -168,7 +168,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // TODO: we need to build a list of orderable procedure types, based on what has already been ordered
             // for now, just return everything
             IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
-            IList<ProcedureType> rpTypes = broker.FindAll();
+			IList<ProcedureType> rpTypes = broker.FindAll(false);
 
             ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             List<ProcedureTypeSummary> summaries = CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(rpTypes,

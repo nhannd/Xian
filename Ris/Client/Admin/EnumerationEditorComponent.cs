@@ -204,11 +204,11 @@ namespace ClearCanvas.Ris.Client.Admin
                     {
                         if (_isNew)
                         {
-                            service.AddValue(new AddValueRequest(_enumerationClassName, _enumValue, _insertAfter));
+                            service.AddValue(new AddValueRequest(_enumerationClassName, _enumValue, _insertAfter, false));
                         }
                         else
                         {
-                            service.EditValue(new EditValueRequest(_enumerationClassName, _enumValue, _insertAfter));
+                            service.EditValue(new EditValueRequest(_enumerationClassName, _enumValue, _insertAfter, false));
                         }
 
                     });

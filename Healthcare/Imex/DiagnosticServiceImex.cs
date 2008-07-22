@@ -16,7 +16,7 @@ namespace ClearCanvas.Healthcare.Imex
     public class DiagnosticServiceImex : XmlEntityImex<DiagnosticService, DiagnosticServiceImex.DiagnosticServiceData>
     {
         [DataContract]
-        public class DiagnosticServiceData
+		public class DiagnosticServiceData : ReferenceEntityDataBase
         {
             [DataMember]
             public string Id;
@@ -45,9 +45,10 @@ namespace ClearCanvas.Healthcare.Imex
             return context.GetBroker<IDiagnosticServiceBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
-        protected override DiagnosticServiceImex.DiagnosticServiceData Export(DiagnosticService entity, IReadContext context)
+        protected override DiagnosticServiceData Export(DiagnosticService entity, IReadContext context)
         {
             DiagnosticServiceData data = new DiagnosticServiceData();
+        	data.Deactivated = entity.Deactivated;
             data.Id = entity.Id;
             data.Name = entity.Name;
             data.ProcedureTypes = CollectionUtils.Map<ProcedureType,ProcedureTypeData>(
@@ -65,6 +66,7 @@ namespace ClearCanvas.Healthcare.Imex
         protected override void Import(DiagnosticServiceData data, IUpdateContext context)
         {
             DiagnosticService ds = GetDiagnosticService(data.Id, data.Name, context);
+        	ds.Deactivated = data.Deactivated;
             ds.Name = data.Name;
 
             if (data.ProcedureTypes != null)

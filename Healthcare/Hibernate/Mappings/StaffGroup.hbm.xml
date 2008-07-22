@@ -15,5 +15,6 @@
       <key column="StaffGroupOID_"/>
       <many-to-many column="StaffOID_" class="Staff" fetch="join"/>
     </set>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

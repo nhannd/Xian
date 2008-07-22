@@ -62,12 +62,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
             public string GetCreateScript(Dialect dialect, string defaultSchema)
             {
-                return string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_) values ({1}, {2}, {3}, {4})",
+                return string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_, Deactivated_) values ({1}, {2}, {3}, {4}, {5})",
                     Table.GetQualifiedName(dialect, defaultSchema),
                     SqlFormat(Code),
                     SqlFormat(Value),
                     SqlFormat(Description),
-                    DisplayOrder);
+                    DisplayOrder,
+					SqlFormat(false.ToString()));
             }
 
             private string SqlFormat(string str)

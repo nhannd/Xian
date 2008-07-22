@@ -7,5 +7,6 @@
     <property name="Value" column="Value_" type="String" length="50"/>
     <property name="Description" column="Description_" type="String" length="200"/>
     <property name="DisplayOrder" column="DisplayOrder_" type="Single"/>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

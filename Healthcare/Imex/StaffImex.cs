@@ -15,7 +15,7 @@ namespace ClearCanvas.Healthcare.Imex
 	public class StaffImex : XmlEntityImex<Staff, StaffImex.StaffData>
 	{
 		[DataContract]
-		public class StaffData
+		public class StaffData : ReferenceEntityDataBase
 		{
 			[DataMember]
 			public string Id;
@@ -74,6 +74,7 @@ namespace ClearCanvas.Healthcare.Imex
 		protected override StaffData Export(Staff entity, IReadContext context)
 		{
 			StaffData data = new StaffData();
+			data.Deactivated = entity.Deactivated;
 			data.Id = entity.Id;
 			data.StaffType = entity.Type.Code;
 			data.Title = entity.Title;
@@ -100,6 +101,7 @@ namespace ClearCanvas.Healthcare.Imex
 		protected override void Import(StaffData data, IUpdateContext context)
 		{
 			Staff staff = GetStaff(data.Id, context);
+			staff.Deactivated = data.Deactivated;
 			staff.Type = context.GetBroker<IEnumBroker>().Find<StaffTypeEnum>(data.StaffType);
 			staff.Title = data.Title;
 			staff.Name.FamilyName = data.FamilyName;

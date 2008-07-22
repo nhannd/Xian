@@ -3,6 +3,13 @@ using System;
 
 namespace ClearCanvas.Healthcare.Imex
 {
+	[DataContract]
+	public class ReferenceEntityDataBase
+	{
+		[DataMember]
+		public bool Deactivated;
+	}
+
     [DataContract]
     public class TelephoneNumberData
     {

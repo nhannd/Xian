@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 		public ListEnumerationValuesResponse ListEnumerationValues(ListEnumerationValuesRequest request)
         {
             IEnumBroker enumBroker = PersistenceContext.GetBroker<IEnumBroker>();
-            IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName));
+            IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName), true);
             return new ListEnumerationValuesResponse(
                 CollectionUtils.Map<EnumValue, EnumValueInfo, List<EnumValueInfo>>(enumValues,
                     delegate(EnumValue value) { return EnumUtils.GetEnumValueInfo(value); }));
@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 
             // add the new value
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.AddValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder);
+            broker.AddValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder, request.Deactivated);
 
             return new AddValueResponse();
         }
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
                 request.InsertAfter == null ? null : request.InsertAfter.Code);
 
             IEnumBroker broker = PersistenceContext.GetBroker<IEnumBroker>();
-            broker.UpdateValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder);
+            broker.UpdateValue(enumClass, request.Value.Code, request.Value.Value, request.Value.Description, displayOrder, request.Deactivated);
 
             return new EditValueResponse();
         }
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 
             // get the insertBefore value (the value immediately following insertAfter)
             // this may be null if insertAfter is the last value in the set
-            IList<EnumValue> values = broker.Load(enumValueClass);
+            IList<EnumValue> values = broker.Load(enumValueClass, true);
             int insertAfterIndex = insertAfter == null ? -1 : values.IndexOf(insertAfter);
             EnumValue insertBefore = (insertAfterIndex + 1 == values.Count) ? null : values[insertAfterIndex + 1];
 

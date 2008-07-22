@@ -33,7 +33,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-
+using ClearCanvas.Enterprise.Core.Modelling;
 using NHibernate;
 using NHibernate.Expression;
 using ClearCanvas.Enterprise.Hibernate.Hql;
@@ -98,10 +98,26 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public IList<TEntity> FindAll()
         {
-            return Find(new TSearchCriteria(), null);
+            return FindAll(true);
         }
 
-        public TEntity FindOne(TSearchCriteria criteria)
+    	public IList<TEntity> FindAll(bool includeDeactivated)
+    	{
+    		TSearchCriteria where = new TSearchCriteria();
+
+			// if the entity class supports deactivation, apply this condition
+			if(!includeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TEntity)))
+			{
+				string propertyName = AttributeUtils.GetAttribute<DeactivationFlagAttribute>(typeof (TEntity)).PropertyName;
+				SearchCondition<bool> c = new SearchCondition<bool>(propertyName);
+				c.EqualTo(false);
+				where.SubCriteria[propertyName] = c;
+			}
+
+			return Find(where, null);
+		}
+
+    	public TEntity FindOne(TSearchCriteria criteria)
         {
             return FindOne(new TSearchCriteria[] { criteria });
         }

@@ -53,10 +53,22 @@ namespace ClearCanvas.Ris.Application.Common
 		/// </summary>
 		/// <param name="textQuery"></param>
 		/// <param name="specificityThreshold"></param>
-    	public TextQueryRequest(string textQuery, int specificityThreshold)
+		public TextQueryRequest(string textQuery, int specificityThreshold)
+			:this(textQuery, specificityThreshold, false)
+		{
+		}
+
+    	/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="textQuery"></param>
+		/// <param name="specificityThreshold"></param>
+    	/// <param name="includeDeactivated"></param>
+    	public TextQueryRequest(string textQuery, int specificityThreshold, bool includeDeactivated)
     	{
     		TextQuery = textQuery;
     		SpecificityThreshold = specificityThreshold;
+			IncludeDeactivated = includeDeactivated;
     	}
 
     	/// <summary>
@@ -72,6 +84,12 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         [DataMember]
         public int SpecificityThreshold;
+
+		/// <summary>
+		/// Specifies whether to include de-activated items in the results.  Ignored if the entity does not support de-activation.
+		/// </summary>
+		[DataMember]
+		public bool IncludeDeactivated;
 
     }
 }

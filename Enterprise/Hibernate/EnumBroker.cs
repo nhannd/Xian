@@ -50,20 +50,17 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         #region IEnumBroker Members
 
-        public IList<EnumValue> Load(Type enumValueClass)
-        {
-            // load all values in asc order
-            return LoadTable<EnumValue>(enumValueClass);
-        }
+    	public IList<EnumValue> Load(Type enumValueClass, bool includeDeactivated)
+    	{
+			return LoadTable<EnumValue>(enumValueClass, includeDeactivated);
+		}
 
-        public IList<TEnumValue> Load<TEnumValue>()
-            where TEnumValue : EnumValue
-        {
-            // load all values in asc order
-            return LoadTable<TEnumValue>(typeof(TEnumValue));
-        }
+    	public IList<TEnumValue> Load<TEnumValue>(bool includeDeactivated) where TEnumValue : EnumValue
+    	{
+			return LoadTable<TEnumValue>(typeof(TEnumValue), includeDeactivated);
+		}
 
-        public EnumValue Find(Type enumValueClass, string code)
+    	public EnumValue Find(Type enumValueClass, string code)
         {
             Platform.CheckForEmptyString(code, "code");
             return this.Context.LoadEnumValue(enumValueClass, code, true);
@@ -75,20 +72,20 @@ namespace ClearCanvas.Enterprise.Hibernate
             return (TEnumValue)Find(typeof(TEnumValue), code);
         }
 
-        public EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder)
+		public EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated)
         {
             EnumValue ev = (EnumValue)Activator.CreateInstance(enumValueClass, true);
-            UpdateValue(ev, code, value, description, displayOrder);
+            UpdateValue(ev, code, value, description, displayOrder, deactivated);
 
             this.Context.Session.Save(ev);
 
             return ev;
         }
 
-        public EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder)
+		public EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated)
         {
             EnumValue ev = this.Context.LoadEnumValue(enumValueClass, code, false); 
-            UpdateValue(ev, code, value, description, displayOrder);
+            UpdateValue(ev, code, value, description, displayOrder, deactivated);
 
             return ev;
         }
@@ -101,26 +98,31 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         #endregion
 
-        private IList<T> LoadTable<T>(Type enumValueClass)
+        private IList<T> LoadTable<T>(Type enumValueClass, bool includeDeactivated)
         {
-            // load all values in asc order
-            // bug : NHibernate does not properly convert "order by" property to column name, therefore we use the column name for now
-            HqlQuery q = new HqlQuery(string.Format("from {0} order by DisplayOrder_ asc", enumValueClass.FullName));
+			HqlQuery q = new HqlQuery(string.Format("from {0}", enumValueClass.FullName));
+
+			if(!includeDeactivated)
+				q.Conditions.Add(new HqlCondition("Deactivated = ?", false));
+
+			// bug : NHibernate does not properly convert "order by" property to column name, therefore we use the column name for now
+			q.Sorts.Add(new HqlSort("DisplayOrder_", true, 0));
 
             // caching these queries will be very efficient, because the tables rarely change
             q.Cacheable = true;
             return ExecuteHql<T>(q);
         }
 
-        private void UpdateValue(EnumValue ev, string code, string value, string description, float displayOrder)
+        private void UpdateValue(EnumValue ev, string code, string value, string description, float displayOrder, bool deactivated)
         {
             SetEnumValueProperty(ev, "Code", code);
             SetEnumValueProperty(ev, "Value", value);
             SetEnumValueProperty(ev, "Description", description);
             SetEnumValueProperty(ev, "DisplayOrder", displayOrder);
-        }
+			SetEnumValueProperty(ev, "Deactivated", deactivated);
+		}
 
-        private void SetEnumValueProperty(EnumValue ev, string property, object value)
+        private static void SetEnumValueProperty(EnumValue ev, string property, object value)
         {
             MethodInfo setter = typeof(EnumValue).GetProperty(property).GetSetMethod(true);
             setter.Invoke(ev, new object[] { value });

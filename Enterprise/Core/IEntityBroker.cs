@@ -146,6 +146,15 @@ namespace ClearCanvas.Enterprise.Core
         /// <returns></returns>
         IList<TEntity> FindAll();
 
+		/// <summary>
+		/// Retrieves the entire set of entities of this class, optionally including de-activated instances.
+		/// </summary>
+		/// <remarks>
+		/// Caution: this method may return an arbitrarily large result set.
+		/// </remarks>
+		/// <returns></returns>
+		IList<TEntity> FindAll(bool includeDeactivated);
+
         /// <summary>
         /// Retrieves the first entity matching the specified criteria, or throws a <see cref="EntityNotFoundException"/>
         /// if no matching entity is found.

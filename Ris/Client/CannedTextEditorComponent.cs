@@ -49,7 +49,6 @@ namespace ClearCanvas.Ris.Client
 		private CannedTextDetail _cannedTextDetail;
 		private CannedTextSummary _cannedTextSummary;
 
-		private StaffSummary _currentStaff;
 		private List<StaffGroupSummary> _staffGroupChoices;
 
 		private readonly bool _isDuplicate;
@@ -103,7 +102,6 @@ namespace ClearCanvas.Ris.Client
 						GetCannedTextEditFormDataResponse formDataResponse =
 							service.GetCannedTextEditFormData(new GetCannedTextEditFormDataRequest());
 						_staffGroupChoices = formDataResponse.StaffGroups;
-						_currentStaff = formDataResponse.CurrentStaff;
 
 
 						if (_isNew && _isDuplicate == false)
@@ -123,8 +121,6 @@ namespace ClearCanvas.Ris.Client
 								this.Modified = true;
 						}
 					});
-
-			_cannedTextDetail.Staff = _currentStaff;
 
 			// The selected staff groups should only contain entries in the selected group choices
 			if (_cannedTextDetail.StaffGroup == null)
@@ -262,8 +258,6 @@ namespace ClearCanvas.Ris.Client
 				// Depends on the editing mode, remove the unnecessary information
 				if (this.IsEditingPersonal)
 					_cannedTextDetail.StaffGroup = null;
-				else
-					_cannedTextDetail.Staff = null;
 
 				Platform.GetService<ICannedTextService>(
 					delegate(ICannedTextService service)

@@ -35,7 +35,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 this.Value = value.Value;
                 this.Description = value.Description;
                 this.DisplayOrder = value.DisplayOrder;
-
+            	this.Deactivated = value.Deactivated;
 	        }
 
             [DataMember]
@@ -49,7 +49,10 @@ namespace ClearCanvas.Enterprise.Core.Imex
 
             [DataMember]
             public float DisplayOrder;
-        }
+
+			[DataMember]
+			public bool Deactivated;
+		}
 
         #region ExportItem class
 
@@ -83,7 +86,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
                 {
                     EnumerationData data = new EnumerationData();
                     data.EnumerationClass = enumClass.FullName;
-                    data.Members = CollectionUtils.Map<EnumValue, EnumerationMemberData>(enumBroker.Load(enumClass),
+                    data.Members = CollectionUtils.Map<EnumValue, EnumerationMemberData>(enumBroker.Load(enumClass, true),
                         delegate(EnumValue v) { return new EnumerationMemberData(v); });
 
                     yield return new ExportItem(data);
@@ -121,7 +124,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
 						continue;
 					}
 
-					IList<EnumValue> existingValues = enumBroker.Load(enumClass);
+					IList<EnumValue> existingValues = enumBroker.Load(enumClass, true);
 					foreach (EnumerationMemberData md in data.Members)
 					{
 						// check if a conflicting value exists
@@ -143,13 +146,13 @@ namespace ClearCanvas.Enterprise.Core.Imex
 						if (value == null)
 						{
 							// value does not exist - add it
-							value = enumBroker.AddValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder);
+							value = enumBroker.AddValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder, md.Deactivated);
 							existingValues.Add(value);
 						}
 						else
 						{
 							// value exists - update it
-							enumBroker.UpdateValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder);
+							enumBroker.UpdateValue(enumClass, md.Code, md.Value, md.Description, md.DisplayOrder, md.Deactivated);
 						}
 					}
 

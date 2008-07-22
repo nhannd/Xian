@@ -37,21 +37,22 @@ namespace ClearCanvas.Enterprise.Core
 {
     public interface IEnumBroker : IPersistenceBroker
     {
-        /// <summary>
-        /// Loads all enumeration values for the specified enumeration class.
-        /// </summary>
-        /// <param name="enumValueClass"></param>
-        /// <returns></returns>
-        IList<EnumValue> Load(Type enumValueClass);
+		/// <summary>
+		/// Loads all enumeration values for the specified enumeration class, optionally including de-activated values.
+		/// </summary>
+		/// <param name="enumValueClass"></param>
+		/// <param name="includeDeactivated"></param>
+		/// <returns></returns>
+		IList<EnumValue> Load(Type enumValueClass, bool includeDeactivated);
 
-        /// <summary>
-        /// Loads all enumeration values for the specified enumeration class.
-        /// </summary>
-        /// <typeparam name="TEnumValue"></typeparam>
-        /// <returns></returns>
-        IList<TEnumValue> Load<TEnumValue>() where TEnumValue : EnumValue;
-
-        /// <summary>
+		/// <summary>
+		/// Loads all enumeration values for the specified enumeration class, optionally including de-activated values.
+		/// </summary>
+		/// <typeparam name="TEnumValue"></typeparam>
+		/// <returns></returns>
+		IList<TEnumValue> Load<TEnumValue>(bool includeDeactivated) where TEnumValue : EnumValue;
+		
+		/// <summary>
         /// Finds the enumeration value for the specified enumeration class and enumeration code.
         /// </summary>
         /// <param name="enumValueClass"></param>
@@ -76,7 +77,7 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="description"></param>
         /// <param name="displayOrder"></param>
         /// <returns></returns>
-        EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder);
+		EnumValue AddValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated);
 
         /// <summary>
         /// Updates the value of the specified enumeration class and code, with the supplied arguments.
@@ -86,8 +87,9 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="value"></param>
         /// <param name="description"></param>
         /// <param name="displayOrder"></param>
-        /// <returns></returns>
-        EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder);
+		/// <param name="deactivated"></param>
+		/// <returns></returns>
+        EnumValue UpdateValue(Type enumValueClass, string code, string value, string description, float displayOrder, bool deactivated);
 
         /// <summary>
         /// Removes the value with the specified code from the specified enumeration class.

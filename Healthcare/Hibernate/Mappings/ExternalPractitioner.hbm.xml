@@ -27,5 +27,6 @@
       <index column="Name_" type="String"/>
       <element column="Value_" type="StringClob" length="65000"/>
     </map>
+    <property name="Deactivated" column="Deactivated_" type="Boolean" not-null="true"/>
   </class>
 </hibernate-mapping>

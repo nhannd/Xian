@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             Platform.CheckForNullReference(request, "request");
 
             IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
-            IList<StaffGroup> items = request.Page == null ? broker.FindAll() : broker.Find(new StaffGroupSearchCriteria(), request.Page);
+            IList<StaffGroup> items = broker.Find(new StaffGroupSearchCriteria(), request.Page);
 
             StaffGroupAssembler assembler = new StaffGroupAssembler();
             return new ListStaffGroupsResponse(
@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         [ReadOperation]
         public LoadStaffGroupEditorFormDataResponse LoadStaffGroupEditorFormData(LoadStaffGroupEditorFormDataRequest request)
         {
-            IList<Staff> allStaff = PersistenceContext.GetBroker<IStaffBroker>().FindAll();
+			IList<Staff> allStaff = PersistenceContext.GetBroker<IStaffBroker>().FindAll(false);
             StaffAssembler assembler = new StaffAssembler();
             return new LoadStaffGroupEditorFormDataResponse(
                 CollectionUtils.Map<Staff, StaffSummary>(allStaff,

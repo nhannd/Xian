@@ -16,6 +16,8 @@ namespace <%= namespace %>
     /// <summary>
     /// <%= className %> entity
     /// </summary>
+	<% attributes.each do |attr| %>
+	[<%= attr %>]<% end %>
 	public partial class <%= className %> : <%= @superClassName %>
 	{
        	#region Private fields
@@ -44,12 +46,12 @@ namespace <%= namespace %>
 	  	/// <summary>
 	  	/// All fields constructor
 	  	/// </summary>
-	  	public <%= className %>(<%= (inheritedFields + fields).map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
-			:base(<%= inheritedFields.map {|f| "#{f.accessorName.downcase}1" }.join(', ') %>)
+	  	public <%= className %>(<%= (inheritedFields + fields).select {|f| f.accessorName != "Deactivated"}.map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
+			:base(<%= inheritedFields.select {|f| f.accessorName != "Deactivated"}.map {|f| "#{f.accessorName.downcase}1" }.join(', ') %>)
 	  	{
 		  	CustomInitialize();
 
-			<% fields.each do |f| %>
+			<% fields.select {|f| f.accessorName != "Deactivated"}.each do |f| %>
 		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
 		  	<% end %>
 	  	}

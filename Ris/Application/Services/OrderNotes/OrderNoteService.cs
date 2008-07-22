@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
 			return new GetConversationEditorFormDataResponse(
 				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-					this.CurrentUserStaff.Groups,
+					this.CurrentUserStaff.ActiveGroups,	// only active staff groups should be choices
 					delegate (StaffGroup sg)
 					{
 						return groupAssembler.CreateSummary(sg);

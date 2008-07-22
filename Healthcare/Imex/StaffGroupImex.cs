@@ -16,7 +16,7 @@ namespace ClearCanvas.Healthcare.Imex
     public class StaffGroupImex : XmlEntityImex<StaffGroup, StaffGroupImex.StaffGroupData>
     {
         [DataContract]
-        public class StaffGroupData
+		public class StaffGroupData : ReferenceEntityDataBase
         {
             [DataMember]
             public string Name;
@@ -52,7 +52,8 @@ namespace ClearCanvas.Healthcare.Imex
         protected override StaffGroupData Export(StaffGroup entity, IReadContext context)
         {
             StaffGroupData data = new StaffGroupData();
-            data.Name = entity.Name;
+			data.Deactivated = entity.Deactivated;
+			data.Name = entity.Name;
             data.Description = entity.Description;
         	data.Elective = entity.Elective;
 
@@ -71,6 +72,7 @@ namespace ClearCanvas.Healthcare.Imex
         protected override void Import(StaffGroupData data, IUpdateContext context)
         {
             StaffGroup group = LoadOrCreateGroup(data.Name,context);
+        	group.Deactivated = data.Deactivated;
             group.Description = data.Description;
         	group.Elective = data.Elective;
 

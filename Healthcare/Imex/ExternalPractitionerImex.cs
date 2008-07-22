@@ -16,7 +16,7 @@ namespace ClearCanvas.Healthcare.Imex
     public class ExternalPractitionerImex : XmlEntityImex<ExternalPractitioner, ExternalPractitionerImex.ExternalPractitionerData>
     {
         [DataContract]
-        public class ExternalPractitionerData
+		public class ExternalPractitionerData : ReferenceEntityDataBase
         {
             [DataMember]
             public string FamilyName;
@@ -79,17 +79,18 @@ namespace ClearCanvas.Healthcare.Imex
             return context.GetBroker<IExternalPractitionerBroker>().Find(where, new SearchResultPage(firstRow, maxRows));
         }
 
-        protected override ExternalPractitionerData Export(ExternalPractitioner prac, IReadContext context)
+        protected override ExternalPractitionerData Export(ExternalPractitioner entity, IReadContext context)
         {
             ExternalPractitionerData data = new ExternalPractitionerData();
-            data.FamilyName = prac.Name.FamilyName;
-            data.GivenName = prac.Name.GivenName;
-            data.MiddleName = prac.Name.MiddleName;
-            data.LicenseNumber = prac.LicenseNumber;
-            data.BillingNumber = prac.BillingNumber;
+			data.Deactivated = entity.Deactivated;
+			data.FamilyName = entity.Name.FamilyName;
+            data.GivenName = entity.Name.GivenName;
+            data.MiddleName = entity.Name.MiddleName;
+            data.LicenseNumber = entity.LicenseNumber;
+            data.BillingNumber = entity.BillingNumber;
             data.ContactPoints =
                 CollectionUtils.Map<ExternalPractitionerContactPoint, ExternalPractitionerContactPointData>(
-                    prac.ContactPoints,
+                    entity.ContactPoints,
                     delegate(ExternalPractitionerContactPoint cp)
                     {
                         ExternalPractitionerContactPointData cpData = new ExternalPractitionerContactPointData();
@@ -106,7 +107,7 @@ namespace ClearCanvas.Healthcare.Imex
                         return cpData;
                     });
 
-            data.ExtendedProperties = new Dictionary<string, string>(prac.ExtendedProperties);
+            data.ExtendedProperties = new Dictionary<string, string>(entity.ExtendedProperties);
 
             return data;
         }
@@ -119,7 +120,8 @@ namespace ClearCanvas.Healthcare.Imex
                 new PersonName(data.FamilyName, data.GivenName, data.MiddleName, null, null, null),
                 context);
 
-            if (data.ContactPoints != null)
+			prac.Deactivated = data.Deactivated;
+			if (data.ContactPoints != null)
             {
                 foreach (ExternalPractitionerContactPointData cpData in data.ContactPoints)
                 {
