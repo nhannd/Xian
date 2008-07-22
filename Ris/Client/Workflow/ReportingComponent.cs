@@ -673,11 +673,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return CanSaveReport; }
 		}
 
-		public bool SaveReportVisible
-		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Save); }
-		}
-
 		#endregion
 
 		#region Skip
@@ -766,8 +761,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool CanSaveReport
 		{
-			get { return _canSaveReport
-				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Save); }
+			get { return _canSaveReport; }
 		}
 
 
