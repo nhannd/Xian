@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Converters;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
     public class ImageStreamingContext : StreamingContext
     {
         private DicomPixelData _pd;
+
+        private string _serverAE;
 
         public string ImagePath
         {
@@ -49,6 +50,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             {
                 return PixelData.NumberOfFrames > 1;
             }
+        }
+
+        public string ServerAE
+        {
+            get { return _serverAE; }
+            set { _serverAE = value; }
         }
     }
 }

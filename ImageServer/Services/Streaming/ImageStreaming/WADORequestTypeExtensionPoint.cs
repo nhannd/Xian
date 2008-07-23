@@ -32,7 +32,6 @@
 using System;
 using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
@@ -52,8 +51,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         /// <summary>
         /// Processes a WADO request.
         /// </summary>
-        /// <param name="request"></param>
-        WADOResponse Process(HttpListenerContext context);
+        /// <param name="context"></param>
+        WADOResponse Process(string serverAE, HttpListenerContext context);
     }
 
     /// <summary>

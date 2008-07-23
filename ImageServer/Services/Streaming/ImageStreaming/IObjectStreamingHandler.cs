@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     /// </summary>
     interface IObjectStreamingHandler
     {
-        WADOResponse Process(HttpListenerContext context);
+        WADOResponse Process(string severAE, HttpListenerContext context);
     }
 
     

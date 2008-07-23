@@ -7,7 +7,7 @@ using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
     [ExtensionPoint]
-    class ImageMimeTypeConverterExtensionPoint : ExtensionPoint<IImageMimeTypeConverter>
+    class ImageMimeTypeProcessorExtensionPoint : ExtensionPoint<IImageMimeTypeProcessor>
     {
     }
 }

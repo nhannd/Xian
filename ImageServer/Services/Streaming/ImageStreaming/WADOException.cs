@@ -31,28 +31,20 @@
 
 
 using System;
+using System.Net;
+using System.Web;
+
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
 
     /// <summary>
     /// Represents an exception that is caused by violation of Dicom wado specifications or failure to process the wado requests.
     /// </summary>
-    public class WADOException : Exception
+    public class WADOException : HttpException
     {
-        private int _HttpErrorCode;
-        public WADOException(int code, string message)
-            : base(message)
+        public WADOException(HttpStatusCode code, string message)
+            : base((int)code, message)
         {
-            HttpErrorCode = code;
-        }
-
-        /// <summary>
-        /// The associated http status code to be returned to the client for the exception.
-        /// </summary>
-        public int HttpErrorCode
-        {
-            get { return _HttpErrorCode; }
-            set { _HttpErrorCode = value; }
         }
     }
 }

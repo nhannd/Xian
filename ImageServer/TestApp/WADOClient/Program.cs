@@ -8,23 +8,50 @@ using System.Web;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
 namespace WADOClient
 {
+    /// <summary>
+    /// Types of data to be retrieved from the streaming server.
+    /// </summary>
+    public enum ContentTypes
+    {
+        /// <summary>
+        /// Auto-detected by the server according to the protocol and the data
+        /// </summary>
+        NotSpecified,
+
+        /// <summary>
+        /// Indicates the client is expecting data to be in Dicom format.
+        /// </summary>
+        Dicom,
+
+        /// <summary>
+        /// Indicates the client is expecting data to be raw pixel data.
+        /// </summary>
+        RawPixel
+    }
+
     class Program
     {
         static private string serverHost;
         static private int serverPort;
         private static ContentTypes type;
+        private static string serverAE;
         private static string studyFolder;
+
         static bool repeat;
 
         static void Main(string[] args)
         {
+            DicomCodecHelper.RegisterCodecExtensions();
+
             CommandLine cmdline = new CommandLine(args);
             IDictionary<string, string> parameters = cmdline.Named;
 
+            serverAE = parameters["serverAE"];
             serverHost = parameters["host"];
             serverPort = int.Parse(parameters["port"]);
             studyFolder = parameters["folder"];
@@ -53,22 +80,26 @@ namespace WADOClient
                     DirectoryInfo partition = partitions[r.Next(partitions.Length)];
 
                     DirectoryInfo[] studydates = partition.GetDirectories();
-                    // pick one
-                    DirectoryInfo studyate = studydates[r.Next(studydates.Length)];
-
-                    DirectoryInfo[] studies = studyate.GetDirectories();
-
-                    if (studies.Length > 0)
+                    if (studydates.Length>0)
                     {
                         // pick one
-                        DirectoryInfo study = studies[r.Next(studies.Length)];
+                        DirectoryInfo studyate = studydates[r.Next(studydates.Length)];
 
-                        string path = study.FullName;
-                        RetrieveImages(path);
+                        DirectoryInfo[] studies = studyate.GetDirectories();
+
+                        if (studies.Length > 0)
+                        {
+                            // pick one
+                            DirectoryInfo study = studies[r.Next(studies.Length)];
+
+                            string path = study.FullName;
+                            RetrieveImages(partition.Name, path);
+                        }
                     }
+                    
 
-                    if (repeat)
-                        Thread.Sleep(r.Next(10000));
+                    //if (repeat)
+                    //    Thread.Sleep(r.Next(10000));
 
                 } while (repeat);
 
@@ -81,9 +112,11 @@ namespace WADOClient
         }
 
         
-        private static void RetrieveImages(string studyPath)
+        private static void RetrieveImages(string serverAE, string studyPath)
         {
-            StreamingClient client = new StreamingClient();
+            Console.WriteLine("server={0}", serverAE);
+            string baseUri = String.Format("http://{0}:{1}", serverHost, serverPort);
+            StreamingClient client = new StreamingClient(new Uri(baseUri));
             int totalFrameCount = 0;
             
             DirectoryInfo directoryInfo = new DirectoryInfo(studyPath);
@@ -114,7 +147,6 @@ namespace WADOClient
                                     
                     try
                     {
-                        string baseUri = String.Format("http://{0}:{1}/wado", serverHost, serverPort);
                         Stream imageStream;
                         StreamingResultMetaData imageMetaData;
                         FrameStreamingResultMetaData frameMetaData;
@@ -122,7 +154,7 @@ namespace WADOClient
                         switch(type)
                         {
                             case ContentTypes.Dicom:
-                                imageStream = client.RetrieveImage(baseUri, studyUid, seriesUid, uid, out imageMetaData);
+                                imageStream = client.RetrieveImage(serverAE, studyUid, seriesUid, uid, out imageMetaData);
                                 totalFrameCount++;
                                 averageSpeed.AddSample(imageMetaData.Speed);
                                 totalSize.Value += (ulong)imageMetaData.ContentLength;
@@ -138,7 +170,7 @@ namespace WADOClient
                                 int frameCount = 0;
                                 do
                                 {
-                                    client.RetrievePixelData(baseUri, studyUid, seriesUid, uid, frameCount, out frameMetaData);
+                                    client.RetrievePixelData(serverAE, studyUid, seriesUid, uid, frameCount, out frameMetaData);
                                     totalFrameCount++;
                                     frameCount++;
                                     averageSpeed.AddSample(frameMetaData.Speed);
@@ -153,7 +185,7 @@ namespace WADOClient
 
                             default:
 
-                                imageStream = client.RetrieveImage(baseUri, studyUid, seriesUid, uid, out imageMetaData);
+                                imageStream = client.RetrieveImage(serverAE, studyUid, seriesUid, uid, out imageMetaData);
                                 totalFrameCount++;
                                 averageSpeed.AddSample(imageMetaData.Speed);
                                 totalSize.Value += (ulong)imageMetaData.ContentLength;

@@ -42,11 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ImageStreaming\Handlers\DicomPixelDataCache.cs" />
+    <Compile Include="ImageStreaming\Handlers\IImageMimeTypeProcessor.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageStreamingContext.cs" />
+    <Compile Include="ImageStreaming\Handlers\PixelDataLoader.cs" />
     <Compile Include="ImageStreaming\StreamingContext.cs" />
-    <Compile Include="ImageStreaming\Converters\PixelConverter.cs" />
+    <Compile Include="ImageStreaming\MimeTypes\PixelDataMimeType.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageMimeTypeConverterExtensionPoint.cs" />
-    <Compile Include="ImageStreaming\Converters\StandardConverter.cs" />
+    <Compile Include="ImageStreaming\MimeTypes\StandardMimeType.cs" />
     <Compile Include="ImageStreaming\ObjectStreamingHandlerFactory.cs" />
     <Compile Include="HeaderRetrieval\HeaderLoader.cs" />
     <Compile Include="HeaderRetrieval\HeaderRetrievalContext.cs" />
@@ -59,8 +61,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ImageStreaming\Handlers\ImageStreamingHandler.cs" />
-    <Compile Include="ImageStreaming\Handlers\ImageConverterOutput.cs" />
-    <Compile Include="ImageStreaming\Handlers\IImageMimeTypeConverter.cs" />
+    <Compile Include="ImageStreaming\Handlers\MimeTypeProcessorOutput.cs" />
     <Compile Include="ImageStreaming\IObjectStreamingHandler.cs" />
     <Compile Include="ImageStreaming\StudyStorageUtility.cs" />
     <Compile Include="ImageStreaming\WADORequestTypeExtensionPoint.cs" />
@@ -70,11 +71,6 @@
     <Compile Include="ImageStreaming\WADOResponse.cs" />
     <Compile Include="ImageStreaming\WADORequestProcessor.cs" />
     <Compile Include="ImageStreaming\StandardWADORequestTypeHandler.cs" />
-    <Compile Include="ImageStreaming\WADOServerSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>WADOServerSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
@@ -128,10 +124,6 @@
     <None Include="HeaderRetrieval\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ImageStreaming\WADOServerSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>WADOServerSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

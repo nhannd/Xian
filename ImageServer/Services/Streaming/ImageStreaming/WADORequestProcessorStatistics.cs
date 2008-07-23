@@ -64,122 +64,18 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         }
 
         /// <summary>
-        /// Total transmission time.
+        /// Transmission speed.
         /// </summary>
-        public TimeSpanStatistics TransmissionTime
+        public RateStatistics TransmissionSpeed
         {
             get
             {
-                if (this["TransmissionTime"] == null)
-                    this["TransmissionTime"] = new TimeSpanStatistics("TransmissionTime");
+                if (this["TransmissionSpeed"] == null)
+                    this["TransmissionSpeed"] = new RateStatistics("TransmissionSpeed", RateType.BYTES);
 
-                return (this["TransmissionTime"] as TimeSpanStatistics);
+                return (this["TransmissionSpeed"] as RateStatistics);
             }
-            set { this["TransmissionTime"] = value; }
-        }
-
-        /// <summary>
-        /// Image size
-        /// </summary>
-        public ulong ImageSize
-        {
-            set
-            {
-                this["ImageSize"] = new ByteCountStatistics("ImageSize", value);
-            }
-            get
-            {
-                if (this["ImageSize"] == null)
-                    this["ImageSize"] = new ByteCountStatistics("ImageSize");
-
-                return (this["ImageSize"] as ByteCountStatistics).Value;
-            }
-        }
-
-        /// <summary>
-        /// Read buffer size used
-        /// </summary>
-        public ulong BufferSize
-        {
-            set
-            {
-                this["BufferSize"] = new ByteCountStatistics("BufferSize", value);
-            }
-            get
-            {
-                if (this["BufferSize"] == null)
-                    this["BufferSize"] = new ByteCountStatistics("BufferSize");
-
-                return (this["BufferSize"] as ByteCountStatistics).Value;
-            }
-        }
-
-        /// <summary>
-        /// Number of disk accesses (reading).
-        /// </summary>
-        public int DiskAccessCount
-        {
-            set
-            {
-                this["DiskAccessCount"] = new Statistics<int>("DiskAccessCount", value);
-            }
-            get
-            {
-                if (this["DiskAccessCount"] == null)
-                    this["DiskAccessCount"] = new Statistics<int>("DiskAccessCount");
-
-                return (this["DiskAccessCount"] as Statistics<int>).Value;
-            }
-        }
-
-        /// <summary>
-        /// Number of network write accesses (send)
-        /// </summary>
-        public int NetworkWriteCount
-        {
-            set
-            {
-                this["NetworkWriteCount"] = new Statistics<int>("NetworkWriteCount", value);
-            }
-            get
-            {
-                if (this["NetworkWriteCount"] == null)
-                    this["NetworkWriteCount"] = new Statistics<int>("NetworkWriteCount");
-
-                return (this["NetworkWriteCount"] as Statistics<int>).Value;
-            }
-        }
-
-
-        /// <summary>
-        /// Total transmission time.
-        /// </summary>
-        public AverageRateStatistics AverageDiskSpeed
-        {
-            get
-            {
-                if (this["AverageDiskSpeed"] == null)
-                    this["AverageDiskSpeed"] = new AverageRateStatistics("AverageDiskSpeed", RateType.BYTES);
-
-                return (this["AverageDiskSpeed"] as AverageRateStatistics);
-            }
-            set { this["AverageDiskSpeed"] = value; }
-        }
-
-
-        /// <summary>
-        /// Total transmission time.
-        /// </summary>
-        public AverageRateStatistics AverageTransmissionSpeed
-        {
-            get
-            {
-                if (this["AverageTransmissionSpeed"] == null)
-                    this["AverageTransmissionSpeed"] = new AverageRateStatistics("AverageTransmissionSpeed", RateType.BYTES);
-
-                return (this["AverageTransmissionSpeed"] as AverageRateStatistics);
-            }
-            set { this["AverageTransmissionSpeed"] = value; }
+            set { this["TransmissionSpeed"] = value; }
         }
         #endregion
     }

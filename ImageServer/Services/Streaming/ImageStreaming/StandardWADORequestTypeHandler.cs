@@ -30,18 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Net;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
-using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
@@ -67,18 +58,18 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
             if (String.IsNullOrEmpty(studyUid))
             {
-                throw new WADOException((int)HttpStatusCode.BadRequest, String.Format("studyUID is not specified"));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("studyUID is not specified"));
             }
 
             if (String.IsNullOrEmpty(seriesUid))
             {
-                throw new WADOException((int)HttpStatusCode.BadRequest, String.Format("seriesUid is not specified"));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("seriesUid is not specified"));
                 
             }
 
             if (String.IsNullOrEmpty(objectUid))
             {
-                throw new WADOException((int)HttpStatusCode.BadRequest, String.Format("objectUid is not specified"));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("objectUid is not specified"));
             }
         }
         
@@ -88,13 +79,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
 
 
-        public WADOResponse Process(HttpListenerContext httpContext)
+        public WADOResponse Process(string serverAE, HttpListenerContext httpContext)
         {
             Validate(httpContext.Request);
 
             ObjectStreamingHandlerFactory factory = new ObjectStreamingHandlerFactory();
             IObjectStreamingHandler handler = factory.CreateHandler(httpContext.Request);
-            return handler.Process(httpContext);
+            return handler.Process(serverAE, httpContext);
         }
 
         #endregion

@@ -25,7 +25,9 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
             : base(ImageStreamingServerSettings.Default.Address)
         {
             HttpRequestReceived += OnHttpRequestReceived;
+            
         }
+
 
         #endregion
 
@@ -35,7 +37,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
         /// Event handler for <see cref="HttpServer.HttpRequestReceived"/> events.
         /// </summary>
         /// <param name="args"></param>
-        protected void OnHttpRequestReceived(object sender, HttpRequestReceivedEventArg args)
+        protected static void OnHttpRequestReceived(object sender, HttpRequestReceivedEventArg args)
         {
             // NOTE: This method is run under different threads for different http requests.
 
@@ -43,16 +45,27 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
             try
             {
-                WADORequestProcessor processor = new WADORequestProcessor();
-                processor.Process(context);
+                //TODO: find better way to "map" the requests to the processor
+                if (context.Request.Url.Segments.Length>1)
+                {
+                    if (context.Request.Url.Segments[1].Equals("WADO/", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        WADORequestProcessor processor = new WADORequestProcessor();
+                        processor.Process(context);
+                    }
+                    else
+                    {
+                        throw new HttpException((int)HttpStatusCode.BadRequest, "Invalid url");
+                    }
+                }
             }
-            catch (WADOException e)
+            catch (HttpException e)
             {
-                context.Response.StatusCode = e.HttpErrorCode;
+                context.Response.StatusCode = e.GetHttpCode();
                 if (e.InnerException!=null)
                     context.Response.StatusDescription = HttpUtility.HtmlEncode(e.InnerException.Message);
                 else
-                    context.Response.StatusDescription =  HttpUtility.HtmlEncode(e.Message);
+                    context.Response.StatusDescription = HttpUtility.HtmlEncode(e.Message);
                 
             }
 
@@ -62,14 +75,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer
 
 
         #region Overridden Public Methods
-
-        public override void Stop()
-        {
-            // TODO: how wait for all threads to finish?
-
-            base.Stop();
-        }
-
+       
 
         public override string GetDisplayName()
         {

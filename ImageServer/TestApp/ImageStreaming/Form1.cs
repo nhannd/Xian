@@ -13,6 +13,27 @@ using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
 namespace ImageStreaming
 {
+    /// <summary>
+    /// Types of data to be retrieved from the streaming server.
+    /// </summary>
+    public enum ContentTypes
+    {
+        /// <summary>
+        /// Auto-detected by the server according to the protocol and the data
+        /// </summary>
+        NotSpecified,
+
+        /// <summary>
+        /// Indicates the client is expecting data to be in Dicom format.
+        /// </summary>
+        Dicom,
+
+        /// <summary>
+        /// Indicates the client is expecting data to be raw pixel data.
+        /// </summary>
+        RawPixel
+    }
+
     public partial class Form1 : Form
     {
         public Form1()
@@ -33,8 +54,10 @@ namespace ImageStreaming
             
             try
             {
+                Uri baseUri = new Uri(String.Format("{0}/{1}", BaseUri.Text, ServerAE.Text));
+
                 StringBuilder url = new StringBuilder();
-                url.AppendFormat("{0}?requesttype=WADO&studyUID={1}&seriesUID={2}&objectUID={3}", BaseUri.Text, StudyUid.Text, SeriesUid.Text, ObjectUid.Text);
+                url.AppendFormat("{0}?requesttype=WADO&studyUID={1}&seriesUID={2}&objectUID={3}", baseUri, StudyUid.Text, SeriesUid.Text, ObjectUid.Text);
 
                 if (UseFrame.Checked)
                 {
@@ -45,14 +68,14 @@ namespace ImageStreaming
 
                 switch(type)
                 {
-                    case ClearCanvas.DicomServices.ServiceModel.Streaming.ContentTypes.Dicom:
-                            url.AppendFormat("&ContentType={0}", "application/dicom");
-                            break;
-                    case ClearCanvas.DicomServices.ServiceModel.Streaming.ContentTypes.RawPixel:
-                            url.AppendFormat("&ContentType={0}", "application/clearcanvas");
-                            break;
-                    case ClearCanvas.DicomServices.ServiceModel.Streaming.ContentTypes.NotSpecified:
-                            break;
+                    case ImageStreaming.ContentTypes.Dicom:
+                        url.AppendFormat("&ContentType={0}", "application/dicom");
+                        break;
+                    case ImageStreaming.ContentTypes.RawPixel:
+                        url.AppendFormat("&ContentType={0}", "application/clearcanvas");
+                        break;
+                    case ImageStreaming.ContentTypes.NotSpecified:
+                        break;
 
                 }
 
@@ -60,7 +83,7 @@ namespace ImageStreaming
                 speed.Start();
 
                 HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
-                request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
+                request.Accept = "application/dicom,application/clearcanvas";
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode != HttpStatusCode.OK)

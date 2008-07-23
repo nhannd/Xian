@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
             if (_handlers.ContainsKey(requestType))
                 return _handlers[requestType];
             else
-                throw new WADOException((int)HttpStatusCode.BadRequest, String.Format("Unsupported RequestType {0}", requestType));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("Unsupported RequestType {0}", requestType));
 
         }
 

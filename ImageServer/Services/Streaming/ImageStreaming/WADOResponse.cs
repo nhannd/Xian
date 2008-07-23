@@ -41,8 +41,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     {
         #region Private Members
         private string _contentType;
-        private Stream _stream;
-        private bool _hasMore;
+        private byte[] _output;
+        private bool _isLast;
         #endregion
 
         #region Public Properties
@@ -59,16 +59,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         /// <summary>
         /// Gets the data stream that will be sent to the client
         /// </summary>
-        public Stream Stream
+        public byte[] Output
         {
-            get { return _stream; }
-            set { _stream = value; }
+            get { return _output; }
+            set { _output = value; }
         }
 
-        public bool HasMoreFrame
+        public bool IsLast
         {
-            get { return _hasMore; }
-            set { _hasMore = value; }
+            get { return _isLast; }
+            set { _isLast = value; }
         }
 
         #endregion
@@ -78,10 +78,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         public void Dispose()
         {
-             if (_stream!=null)
-             {
-                 _stream.Dispose();
-             }
         }
 
         #endregion
