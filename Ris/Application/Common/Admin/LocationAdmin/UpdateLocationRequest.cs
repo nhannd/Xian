@@ -40,14 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
     [DataContract]
     public class UpdateLocationRequest : DataContractBase
     {
-        public UpdateLocationRequest(EntityRef locationRef, LocationDetail detail)
+        public UpdateLocationRequest(LocationDetail detail)
         {
-            this.LocationRef = locationRef;
             this.LocationDetail = detail;
         }
-
-        [DataMember]
-        public EntityRef LocationRef;
 
         [DataMember]
         public LocationDetail LocationDetail;

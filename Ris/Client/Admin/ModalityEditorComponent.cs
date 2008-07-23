@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     delegate(IModalityAdminService service)
                     {
                         LoadModalityForEditResponse response = service.LoadModalityForEdit(new LoadModalityForEditRequest(_modalityRef));
-                        _modalityRef = response.ModalityRef;
+                        _modalityRef = response.ModalityDetail.ModalityRef;
                         _modalityDetail = response.ModalityDetail;
                     });
             }
@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     }
                     else
                     {
-                        UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityRef, _modalityDetail));
+                        UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityDetail));
                         _modalityRef = response.Modality.ModalityRef;
                         _modalitySummary = response.Modality;
                     }

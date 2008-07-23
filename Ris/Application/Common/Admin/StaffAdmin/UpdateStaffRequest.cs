@@ -40,14 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     [DataContract]
     public class UpdateStaffRequest : DataContractBase
     {
-        public UpdateStaffRequest(EntityRef staffRef, StaffDetail staffDetail)
+        public UpdateStaffRequest(StaffDetail staffDetail)
         {
-            this.StaffRef = staffRef;
             this.StaffDetail = staffDetail;
         }
-
-        [DataMember]
-        public EntityRef StaffRef;
 
         [DataMember]
         public StaffDetail StaffDetail;

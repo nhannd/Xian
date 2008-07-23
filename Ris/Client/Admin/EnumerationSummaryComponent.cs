@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -162,13 +163,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Enumeration);
 		}
 
 		protected override bool SupportsDelete
@@ -285,6 +287,36 @@ namespace ClearCanvas.Ris.Client.Admin
 		}
 
 		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<EnumValueAdminInfo> items, out IList<EnumValueAdminInfo> editedItems)
+		{
+			List<EnumValueAdminInfo> results = new List<EnumValueAdminInfo>();
+			foreach (EnumValueAdminInfo item in items)
+			{
+				Platform.GetService<IEnumerationAdminService>(
+					delegate(IEnumerationAdminService service)
+					{
+						item.Deactivated = !item.Deactivated;
+
+						// this is kind of annoying, but the way the service interface is designed, we need to know
+						// who to insert after in order to update the value
+						int index = this.Table.Items.IndexOf(item);
+						EnumValueAdminInfo insertAfter = index > 0 ? this.Table.Items[index - 1] : null;
+						service.EditValue(new EditValueRequest(_selectedEnumeration.AssemblyQualifiedClassName, item, insertAfter));
+
+						results.Add(item);
+					});
+			}
+
+			editedItems = results;
+			return true;
+		}
+
+		/// <summary>
 		/// Compares two items to see if they represent the same item.
 		/// </summary>
 		/// <param name="x"></param>
@@ -309,7 +341,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			else
 			{
 				this.ActionModel.Add.Enabled = _selectedEnumeration.CanAddRemoveValues;
-				this.ActionModel.Delete.Enabled = this.ActionModel.Delete.Enabled && _selectedEnumeration.CanAddRemoveValues;
+				this.ActionModel.Delete.Enabled = _selectedEnumeration.CanAddRemoveValues;
+				this.ActionModel.ToggleActivation.Enabled = _selectedEnumeration.CanAddRemoveValues;
 			}
 
 		}

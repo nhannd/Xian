@@ -40,15 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
     [DataContract]
     public class LoadModalityForEditResponse : DataContractBase
     {
-        public LoadModalityForEditResponse(EntityRef modalityRef, ModalityDetail modalityDetail)
+        public LoadModalityForEditResponse(ModalityDetail modalityDetail)
         {
-            this.ModalityRef = modalityRef;
             this.ModalityDetail = modalityDetail;
         }
-
-
-        [DataMember]
-        public EntityRef ModalityRef;
 
         [DataMember]
         public ModalityDetail ModalityDetail;

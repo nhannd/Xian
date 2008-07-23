@@ -38,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Common
     public class LocationDetail : DataContractBase
     {
         public LocationDetail(
+			EntityRef locationRef,
 			string id,
 			string name,
 			string description,
@@ -49,6 +50,7 @@ namespace ClearCanvas.Ris.Application.Common
             string bed, 
 			bool deactivated)
         {
+        	this.LocationRef = locationRef;
         	this.Id = id;
         	this.Name = name;
         	this.Description = description;
@@ -64,6 +66,10 @@ namespace ClearCanvas.Ris.Application.Common
         public LocationDetail()
         {
         }
+
+
+		[DataMember]
+		public EntityRef LocationRef;
 
 		[DataMember]
 		public string Id;

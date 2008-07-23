@@ -53,6 +53,7 @@ namespace ClearCanvas.Ris.Application.Services
         public FacilityDetail CreateFacilityDetail(Facility facility)
         {
             return new FacilityDetail(
+				facility.GetRef(),
                 facility.Code,
                 facility.Name,
                 EnumUtils.GetEnumValueInfo(facility.InformationAuthority),

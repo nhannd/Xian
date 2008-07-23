@@ -51,6 +51,7 @@ namespace ClearCanvas.Ris.Application.Services
         public ModalityDetail CreateModalityDetail(Modality modality)
         {
             return new ModalityDetail(
+				modality.GetRef(),
                 modality.Id,
                 modality.Name,
 				modality.Deactivated);

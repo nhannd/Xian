@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -58,6 +59,11 @@ namespace ClearCanvas.Ris.Client
         public abstract void DeleteSelectedItems();
 
 		/// <summary>
+		/// Handles the "toggle activation" action.
+		/// </summary>
+		public abstract void ToggleSelectedItemsActivation();
+
+		/// <summary>
 		/// Gets a value indicating whether dialog accept/cancel buttons are visible.
 		/// </summary>
 		public abstract bool ShowAcceptCancelButtons { get; }
@@ -94,14 +100,40 @@ namespace ClearCanvas.Ris.Client
         where TSummary : class
         where TTable : Table<TSummary>, new()
     {
+		public class AdminActionModel : CrudActionModel
+		{
+			private static readonly object ToggleActivationKey = new object();
+
+			public AdminActionModel(bool add, bool edit, bool delete, bool toggleActivation, IResourceResolver resolver)
+				:base(add, edit, delete, resolver)
+			{
+				if (toggleActivation)
+				{
+					this.AddAction(ToggleActivationKey, "Toggle Activation", IconAddResource);
+				}
+			}
+
+			/// <summary>
+			/// Gets the ToggleActivation action.
+			/// </summary>
+			public ClickAction ToggleActivation
+			{
+				get { return this[ToggleActivationKey]; }
+			}
+		}
+
+
+
         private IList<TSummary> _selectedItems;
         private readonly TTable _summaryTable;
 
-        private CrudActionModel _actionModel;
+		private AdminActionModel _actionModel;
         private PagingController<TSummary> _pagingController;
 
     	private readonly bool _dialogMode;
 		private bool _setModifiedOnListChange;
+
+    	private bool _showActiveColumn;
 
 
 		public SummaryComponentBase()
@@ -114,6 +146,10 @@ namespace ClearCanvas.Ris.Client
 			_dialogMode = dialogMode;
 			_summaryTable = new TTable();
 			_selectedItems = new List<TSummary>();
+
+			// by default, we show the "active" column if not in dialog mode (e.g. running as an admin screen)
+			// we could expose this for customization if exceptions to this rule are found
+			_showActiveColumn = !_dialogMode;
 		}
 
 		/// <summary>
@@ -132,7 +168,22 @@ namespace ClearCanvas.Ris.Client
         {
             InitializeTable(_summaryTable);
 
-            _actionModel = new CrudActionModel(true, this.SupportsEdit, this.SupportsDelete,
+			// add the "Active" column if needed
+			if (_showActiveColumn && SupportsDeactivation)
+			{
+				_summaryTable.Columns.Add(new TableColumn<TSummary, bool>("Active",
+					delegate(TSummary item)
+					{
+						return !GetItemDeactivated(item);
+					}, 0.1f));
+			}
+
+			// build the action model
+			_actionModel = new AdminActionModel(
+				true,
+				this.SupportsEdit,
+				this.SupportsDelete,
+				this.SupportsDeactivation,
 				new ResourceResolver(this.GetType(), true));
 
             _actionModel.Add.SetClickHandler(AddItems);
@@ -143,14 +194,21 @@ namespace ClearCanvas.Ris.Client
 				_actionModel.Edit.Enabled = false;
 			}
 
-			if(SupportsDelete)
+			if (SupportsDelete)
 			{
 				_actionModel.Delete.SetClickHandler(DeleteSelectedItems);
 				_actionModel.Delete.Enabled = false;
 			}
 
+			if (SupportsDeactivation)
+			{
+				_actionModel.ToggleActivation.SetClickHandler(ToggleSelectedItemsActivation);
+				_actionModel.ToggleActivation.Enabled = false;
+			}
+
 			InitializeActionModel(_actionModel);
 
+			// setup paging
 			if (SupportsPaging)
 			{
 				_pagingController = new PagingController<TSummary>(
@@ -323,6 +381,33 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+		public override void ToggleSelectedItemsActivation()
+		{
+            try
+            {
+                if (_selectedItems.Count == 0) return;
+
+                IList<TSummary> editedItems;
+                if (UpdateItemsActivation(_selectedItems, out editedItems))
+                {
+                    foreach (TSummary item in editedItems)
+                    {
+                        _summaryTable.Items.Replace(
+                            delegate(TSummary x) { return IsSameItem(item, x); },
+                            item);
+                    }
+
+                    this.SummarySelection = new Selection(editedItems);
+					if (_setModifiedOnListChange)
+						this.Modified = true;
+				}
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+		}
+
 		public override bool ShowAcceptCancelButtons
 		{
 			get { return _dialogMode; }
@@ -344,14 +429,12 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Accept()
 		{
-			this.ExitCode = ApplicationComponentExitCode.Accepted;
-			this.Host.Exit();
+			this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 
 		public override void Cancel()
 		{
-			this.ExitCode = ApplicationComponentExitCode.None;
-			this.Host.Exit();
+			this.Exit(ApplicationComponentExitCode.None);
 		}
 
         #endregion
@@ -382,6 +465,19 @@ namespace ClearCanvas.Ris.Client
         /// <param name="editedItems">The list of items that were edited.</param>
         /// <returns>True if items were edited, false otherwise.</returns>
         protected abstract bool EditItems(IList<TSummary> items, out IList<TSummary> editedItems);
+
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected virtual bool UpdateItemsActivation(IList<TSummary> items, out IList<TSummary> editedItems)
+		{
+			editedItems = new List<TSummary>();
+			return false;
+		}
 
         /// <summary>
         /// Called to handle the "delete" action, if supported.
@@ -415,7 +511,7 @@ namespace ClearCanvas.Ris.Client
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected virtual void InitializeActionModel(CrudActionModel model)
+		protected virtual void InitializeActionModel(AdminActionModel model)
 		{
 		}
 
@@ -424,11 +520,14 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         protected virtual void OnSelectedItemsChanged()
         {
-			if (SupportsEdit)
+			if(SupportsEdit)
 				_actionModel.Edit.Enabled = _selectedItems.Count == 1;
 
             if(SupportsDelete)
                 _actionModel.Delete.Enabled = _selectedItems.Count > 0;
+
+			if (SupportsDeactivation)
+				_actionModel.ToggleActivation.Enabled = _selectedItems.Count > 0;
         }
 
 		/// <summary>
@@ -458,12 +557,38 @@ namespace ClearCanvas.Ris.Client
 			get { return true; }
     	}
 
+		/// <summary>
+		/// Gets a value indicating whether the items listed by this component support de-activation.
+		/// The default implementation looks for a boolean "Deactivated" field on the summary item class,
+		/// and assumes true if this field is present.
+		/// </summary>
+		protected virtual bool SupportsDeactivation
+		{
+			get
+			{
+				FieldInfo f = GetDeactivatedField();
+				return f != null && f.FieldType.Equals(typeof (bool));
+			}
+		}
+
+		/// <summary>
+		/// Called to determine whether the specified item is deactivated, assuming <see cref="SupportsDeactivation"/> is true.
+		/// The default implementation queries the "Deactivated" field on the summary item class.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		protected virtual bool GetItemDeactivated(TSummary item)
+		{
+			FieldInfo field = GetDeactivatedField();
+			return field == null ? false : (bool)field.GetValue(item);
+		}
+
 		#endregion 
         
         /// <summary>
         /// Gets the action model.
         /// </summary>
-        protected CrudActionModel ActionModel
+        protected AdminActionModel ActionModel
         {
             get { return _actionModel; }
         }
@@ -491,5 +616,11 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _selectedItems; }
         }
+
+		private static FieldInfo GetDeactivatedField()
+		{
+			return typeof(TSummary).GetField("Deactivated");
+		}
+
 	}
 }

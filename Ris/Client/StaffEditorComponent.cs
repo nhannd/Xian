@@ -171,7 +171,7 @@ namespace ClearCanvas.Ris.Client
 					else
 					{
 						LoadStaffForEditResponse response = service.LoadStaffForEdit(new LoadStaffForEditRequest(_staffRef));
-						_staffRef = response.StaffRef;
+						_staffRef = response.StaffDetail.StaffRef;
 						_staffDetail = response.StaffDetail;
 					}
 
@@ -248,7 +248,7 @@ namespace ClearCanvas.Ris.Client
 						}
 						else
 						{
-							UpdateStaffResponse response = service.UpdateStaff(new UpdateStaffRequest(_staffRef, _staffDetail));
+							UpdateStaffResponse response = service.UpdateStaff(new UpdateStaffRequest(_staffDetail));
 							_staffRef = response.Staff.StaffRef;
 							_staffSummary = response.Staff;
 						}

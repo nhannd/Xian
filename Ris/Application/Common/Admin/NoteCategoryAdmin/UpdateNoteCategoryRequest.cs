@@ -40,14 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
     [DataContract]
     public class UpdateNoteCategoryRequest : DataContractBase
     {
-        public UpdateNoteCategoryRequest(EntityRef NoteCategoryRef, PatientNoteCategoryDetail detail)
+        public UpdateNoteCategoryRequest(PatientNoteCategoryDetail detail)
         {
-            this.NoteCategoryRef = NoteCategoryRef;
             this.NoteCategoryDetail = detail;
         }
-
-        [DataMember]
-        public EntityRef NoteCategoryRef;
 
         [DataMember]
         public PatientNoteCategoryDetail NoteCategoryDetail;

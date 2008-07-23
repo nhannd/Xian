@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             Modality m = PersistenceContext.Load<Modality>(request.ModalityRef);
             ModalityAssembler assembler = new ModalityAssembler();
 
-            return new LoadModalityForEditResponse(m.GetRef(), assembler.CreateModalityDetail(m));
+            return new LoadModalityForEditResponse(assembler.CreateModalityDetail(m));
         }
 
         [UpdateOperation]
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Modality)]
 		public UpdateModalityResponse UpdateModality(UpdateModalityRequest request)
         {
-            Modality modality = PersistenceContext.Load<Modality>(request.ModalityRef, EntityLoadFlags.CheckVersion);
+            Modality modality = PersistenceContext.Load<Modality>(request.ModalityDetail.ModalityRef, EntityLoadFlags.CheckVersion);
 
             ModalityAssembler assembler = new ModalityAssembler();
             assembler.UpdateModality(request.ModalityDetail, modality);

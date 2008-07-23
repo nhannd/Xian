@@ -47,14 +47,12 @@ namespace ClearCanvas.Ris.Application.Services
             if (category == null)
                 return null;
 
-            PatientNoteCategoryDetail detail = new PatientNoteCategoryDetail();
-
-            detail.Category = category.Name;
-            detail.Description = category.Description;
-
-            detail.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
-
-            return detail;
+        	return new PatientNoteCategoryDetail(
+        		category.GetRef(),
+        		category.Name,
+        		category.Description,
+        		EnumUtils.GetEnumValueInfo(category.Severity, context),
+        		category.Deactivated);
         }
 
         public PatientNoteCategorySummary CreateNoteCategorySummary(PatientNoteCategory category, IPersistenceContext context)

@@ -152,6 +152,12 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+    	public bool IsActive
+    	{
+			get { return !_enumValue.Deactivated; }
+			set { _enumValue.Deactivated = !value; }
+    	}
+
         public IList InsertAfterChoices
         {
             get

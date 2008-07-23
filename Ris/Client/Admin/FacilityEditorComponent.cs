@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     else
                     {
                         LoadFacilityForEditResponse response = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(_facilityRef));
-                        _facilityRef = response.FacilityRef;
+                        _facilityRef = response.FacilityDetail.FacilityRef;
                         _facilityDetail = response.FacilityDetail;
                     }
                 });
@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client.Admin
                             }
                             else
                             {
-                                UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
+                                UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityDetail));
                                 _facilityRef = response.Facility.FacilityRef;
                                 _facilitySummary = response.Facility;
                             }

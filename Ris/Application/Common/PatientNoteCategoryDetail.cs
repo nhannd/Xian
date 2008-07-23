@@ -40,8 +40,9 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class PatientNoteCategoryDetail : DataContractBase, ICloneable
     {
-        public PatientNoteCategoryDetail(string category, string description, EnumValueInfo severity, bool deactivated)
+        public PatientNoteCategoryDetail(EntityRef categoryRef, string category, string description, EnumValueInfo severity, bool deactivated)
         {
+        	this.NoteCategoryRef = categoryRef;
             this.Category = category;
             this.Description = description;
             this.Severity = severity;
@@ -52,7 +53,10 @@ namespace ClearCanvas.Ris.Application.Common
         {
         }
 
-        [DataMember]
+		[DataMember]
+		public EntityRef NoteCategoryRef;
+
+		[DataMember]
         public string Category;
 
         [DataMember]
@@ -68,7 +72,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public object Clone()
         {
-        	return new PatientNoteCategoryDetail(this.Category, this.Description, this.Severity, this.Deactivated);
+        	return new PatientNoteCategoryDetail(this.NoteCategoryRef, this.Category, this.Description, this.Severity, this.Deactivated);
         }
 
         #endregion

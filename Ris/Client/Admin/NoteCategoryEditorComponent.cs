@@ -222,7 +222,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     }
                     else
                     {
-                        UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryRef, _noteCategoryDetail));
+                        UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryDetail));
                         _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
                         _noteCategorySummary = response.NoteCategory;
                     }

@@ -107,13 +107,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService);
 		}
 
 		protected override bool SupportsDelete
@@ -214,6 +215,34 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<DiagnosticServiceSummary> items, out IList<DiagnosticServiceSummary> editedItems)
+		{
+			List<DiagnosticServiceSummary> results = new List<DiagnosticServiceSummary>();
+			foreach (DiagnosticServiceSummary item in items)
+			{
+				Platform.GetService<IDiagnosticServiceAdminService>(
+					delegate(IDiagnosticServiceAdminService service)
+					{
+						DiagnosticServiceDetail detail = service.LoadDiagnosticServiceForEdit(
+							new LoadDiagnosticServiceForEditRequest(item.DiagnosticServiceRef)).DiagnosticService;
+						detail.Deactivated = !detail.Deactivated;
+						DiagnosticServiceSummary summary = service.UpdateDiagnosticService(
+							new UpdateDiagnosticServiceRequest(detail)).DiagnosticService;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
 		/// <summary>

@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Client
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
@@ -259,8 +259,25 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> deletedItems, out string failureMessage)
 		{
-			// TODO implement delete action, which should de-activate the contact point (can't delete it)
+			// not allowed?
 			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> editedItems)
+		{
+			editedItems = new List<ExternalPractitionerContactPointDetail>();
+			foreach (ExternalPractitionerContactPointDetail item in items)
+			{
+				item.Deactivated = !item.Deactivated;
+				editedItems.Add(item);
+			}
+			return true;
 		}
 
 		/// <summary>

@@ -75,7 +75,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             Facility f = PersistenceContext.Load<Facility>(request.FacilityRef);
             FacilityAssembler assembler = new FacilityAssembler();
 
-            return new LoadFacilityForEditResponse(f.GetRef(), assembler.CreateFacilityDetail(f));
+            return new LoadFacilityForEditResponse(assembler.CreateFacilityDetail(f));
         }
 
         [UpdateOperation]
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Facility)]
 		public UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request)
         {
-            Facility facility = PersistenceContext.Load<Facility>(request.FacilityRef, EntityLoadFlags.CheckVersion);
+            Facility facility = PersistenceContext.Load<Facility>(request.FacilityDetail.FacilityRef, EntityLoadFlags.CheckVersion);
 
             FacilityAssembler assembler = new FacilityAssembler();
             assembler.UpdateFacility(request.FacilityDetail, facility, this.PersistenceContext);

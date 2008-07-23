@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
             Location l = PersistenceContext.Load<Location>(request.LocationRef);
             LocationAssembler assembler = new LocationAssembler();
 
-            return new LoadLocationForEditResponse(l.GetRef(), assembler.CreateLocationDetail(l));
+            return new LoadLocationForEditResponse(assembler.CreateLocationDetail(l));
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Location)]
 		public UpdateLocationResponse UpdateLocation(UpdateLocationRequest request)
         {
-            Location location = PersistenceContext.Load<Location>(request.LocationRef, EntityLoadFlags.CheckVersion);
+            Location location = PersistenceContext.Load<Location>(request.LocationDetail.LocationRef, EntityLoadFlags.CheckVersion);
 
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);

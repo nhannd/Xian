@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
 			StaffAssembler assembler = new StaffAssembler();
 
-			return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s, this.PersistenceContext));
+			return new LoadStaffForEditResponse(assembler.CreateStaffDetail(s, this.PersistenceContext));
 		}
 
 		[ReadOperation]
@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
 		public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
 		{
-			Staff staff = PersistenceContext.Load<Staff>(request.StaffRef, EntityLoadFlags.CheckVersion);
+			Staff staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef, EntityLoadFlags.CheckVersion);
 
 			StaffAssembler assembler = new StaffAssembler();
 			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);

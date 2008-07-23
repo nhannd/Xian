@@ -138,13 +138,14 @@ namespace ClearCanvas.Ris.Client
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup);
 		}
 
 		protected override bool SupportsDelete
@@ -242,6 +243,34 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<StaffGroupSummary> items, out IList<StaffGroupSummary> editedItems)
+		{
+			List<StaffGroupSummary> results = new List<StaffGroupSummary>();
+			foreach (StaffGroupSummary item in items)
+			{
+				Platform.GetService<IStaffGroupAdminService>(
+					delegate(IStaffGroupAdminService service)
+					{
+						StaffGroupDetail detail = service.LoadStaffGroupForEdit(
+							new LoadStaffGroupForEditRequest(item.StaffGroupRef)).StaffGroup;
+						detail.Deactivated = !detail.Deactivated;
+						StaffGroupSummary summary = service.UpdateStaffGroup(
+							new UpdateStaffGroupRequest(detail)).StaffGroup;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
         /// <summary>

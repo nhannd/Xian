@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Application.Services
             PersonNameAssembler assembler = new PersonNameAssembler();
 
             ExternalPractitionerDetail detail = new ExternalPractitionerDetail(
+				prac.GetRef(),
                 assembler.CreatePersonNameDetail(prac.Name),
                 prac.LicenseNumber,
                 prac.BillingNumber,

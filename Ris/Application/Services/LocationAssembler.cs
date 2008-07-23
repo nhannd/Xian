@@ -57,6 +57,7 @@ namespace ClearCanvas.Ris.Application.Services
         {
             FacilitySummary facility = new FacilityAssembler().CreateFacilitySummary(location.Facility);
             return new LocationDetail(
+				location.GetRef(),
 				location.Id,
 				location.Name,
 				location.Description,

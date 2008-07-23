@@ -148,13 +148,14 @@ namespace ClearCanvas.Ris.Client
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff);
 		}
 
 		protected override bool SupportsDelete
@@ -257,6 +258,34 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<StaffSummary> items, out IList<StaffSummary> editedItems)
+		{
+			List<StaffSummary> results = new List<StaffSummary>();
+			foreach (StaffSummary item in items)
+			{
+				Platform.GetService<IStaffAdminService>(
+					delegate(IStaffAdminService service)
+					{
+						StaffDetail detail = service.LoadStaffForEdit(
+							new LoadStaffForEditRequest(item.StaffRef)).StaffDetail;
+						detail.Deactivated = !detail.Deactivated;
+						StaffSummary summary = service.UpdateStaff(
+							new UpdateStaffRequest(detail)).Staff;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
 		/// <summary>

@@ -71,13 +71,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType);
 		}
 
 		protected override bool SupportsDelete
@@ -196,6 +197,34 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<ProcedureTypeSummary> items, out IList<ProcedureTypeSummary> editedItems)
+		{
+			List<ProcedureTypeSummary> results = new List<ProcedureTypeSummary>();
+			foreach (ProcedureTypeSummary item in items)
+			{
+				Platform.GetService<IProcedureTypeAdminService>(
+					delegate(IProcedureTypeAdminService service)
+					{
+						ProcedureTypeDetail detail = service.LoadProcedureTypeForEdit(
+							new LoadProcedureTypeForEditRequest(item.ProcedureTypeRef)).ProcedureType;
+						detail.Deactivated = !detail.Deactivated;
+						ProcedureTypeSummary summary = service.UpdateProcedureType(
+							new UpdateProcedureTypeRequest(detail)).ProcedureType;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
 		/// <summary>

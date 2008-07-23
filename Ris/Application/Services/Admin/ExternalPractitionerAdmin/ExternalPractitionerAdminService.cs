@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             ExternalPractitioner s = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef);
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 
-            return new LoadExternalPractitionerForEditResponse(s.GetRef(), assembler.CreateExternalPractitionerDetail(s, this.PersistenceContext));
+            return new LoadExternalPractitionerForEditResponse(assembler.CreateExternalPractitionerDetail(s, this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.ExternalPractitioner.Update)]
 		public UpdateExternalPractitionerResponse UpdateExternalPractitioner(UpdateExternalPractitionerRequest request)
         {
-            ExternalPractitioner prac = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerRef, EntityLoadFlags.CheckVersion);
+            ExternalPractitioner prac = PersistenceContext.Load<ExternalPractitioner>(request.PractitionerDetail.PractitionerRef, EntityLoadFlags.CheckVersion);
 
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
             assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac, PersistenceContext);

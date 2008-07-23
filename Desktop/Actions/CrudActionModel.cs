@@ -81,20 +81,8 @@ namespace ClearCanvas.Desktop.Actions
         /// <param name="edit"></param>
         /// <param name="delete"></param>
         public CrudActionModel(bool add, bool edit, bool delete)
-            :base(new ResourceResolver(typeof(CrudActionModel).Assembly))
+            :this(add, edit, delete, new ResourceResolver(typeof(CrudActionModel).Assembly))
         {
-            if (add)
-            {
-                this.AddAction(AddKey, SR.TitleAdd, IconAddResource);
-            }
-            if (edit)
-            {
-                this.AddAction(EditKey, SR.TitleEdit, IconEditResource);
-            }
-            if (delete)
-            {
-                this.AddAction(DeleteKey, SR.TitleDelete, IconDeleteResource);
-            }
         }
 
 		/// <summary>

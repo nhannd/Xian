@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.PatientNoteCategory)]
 		public UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request)
         {
-            PatientNoteCategory noteCategory = PersistenceContext.Load<PatientNoteCategory>(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);
+            PatientNoteCategory noteCategory = PersistenceContext.Load<PatientNoteCategory>(request.NoteCategoryDetail.NoteCategoryRef, EntityLoadFlags.CheckVersion);
 
             PatientNoteCategoryAssembler assembler = new PatientNoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);

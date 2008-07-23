@@ -105,13 +105,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Modality);
 		}
 
 		protected override bool SupportsDelete
@@ -209,6 +210,34 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<ModalitySummary> items, out IList<ModalitySummary> editedItems)
+		{
+			List<ModalitySummary> results = new List<ModalitySummary>();
+			foreach (ModalitySummary item in items)
+			{
+				Platform.GetService<IModalityAdminService>(
+					delegate(IModalityAdminService service)
+					{
+						ModalityDetail detail = service.LoadModalityForEdit(
+							new LoadModalityForEditRequest(item.ModalityRef)).ModalityDetail;
+						detail.Deactivated = !detail.Deactivated;
+						ModalitySummary summary = service.UpdateModality(
+							new UpdateModalityRequest(detail)).Modality;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
 		/// <summary>

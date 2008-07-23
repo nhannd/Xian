@@ -38,12 +38,13 @@ namespace ClearCanvas.Ris.Application.Common
 	[DataContract]
 	public class StaffDetail : DataContractBase
 	{
-		public StaffDetail(string staffId, EnumValueInfo staffType,
+		public StaffDetail(EntityRef staffRef, string staffId, EnumValueInfo staffType,
 			PersonNameDetail personNameDetail, EnumValueInfo sex,
 			string title, string licenseNumber, string billingNumber,
 			List<TelephoneDetail> telephoneNumbers, List<AddressDetail> addresses, List<EmailAddressDetail> emailAddresses,
 			List<StaffGroupSummary> groups, Dictionary<string, string> extendedProperties, bool deactivated)
 		{
+			this.StaffRef = staffRef;
 			this.StaffId = staffId;
 			this.StaffType = staffType;
 			this.Name = personNameDetail;
@@ -68,6 +69,9 @@ namespace ClearCanvas.Ris.Application.Common
 			this.Groups = new List<StaffGroupSummary>();
 			this.ExtendedProperties = new Dictionary<string, string>();
 		}
+
+		[DataMember]
+		public EntityRef StaffRef;
 
 		[DataMember]
 		public string StaffId;

@@ -40,14 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
     [DataContract]
     public class LoadExternalPractitionerForEditResponse : DataContractBase
     {
-        public LoadExternalPractitionerForEditResponse(EntityRef pracRef, ExternalPractitionerDetail pracDetail)
+        public LoadExternalPractitionerForEditResponse(ExternalPractitionerDetail pracDetail)
         {
-            this.PractitionerRef = pracRef;
             this.PractitionerDetail = pracDetail;
         }
-
-        [DataMember]
-        public EntityRef PractitionerRef;
 
         [DataMember]
         public ExternalPractitionerDetail PractitionerDetail;

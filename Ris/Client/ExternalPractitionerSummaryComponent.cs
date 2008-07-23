@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Client
 		/// such as adding permissions or adding custom actions.
 		/// </summary>
 		/// <param name="model"></param>
-		protected override void InitializeActionModel(CrudActionModel model)
+		protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
@@ -182,10 +182,10 @@ namespace ClearCanvas.Ris.Client
 				OrPermissions(
 					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
 					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update));
-			model.Delete.SetPermissibility(
-				OrPermissions(
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Update));
+
+			// these actions are only available to admins
+			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
 				SR.TitleMergePractitioner, Merge);
@@ -291,6 +291,34 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+		/// <summary>
+		/// Called to handle the "toggle activation" action, if supported
+		/// </summary>
+		/// <param name="items">A list of items to edit.</param>
+		/// <param name="editedItems">The list of items that were edited.</param>
+		/// <returns>True if items were edited, false otherwise.</returns>
+		protected override bool UpdateItemsActivation(IList<ExternalPractitionerSummary> items, out IList<ExternalPractitionerSummary> editedItems)
+		{
+			List<ExternalPractitionerSummary> results = new List<ExternalPractitionerSummary>();
+			foreach (ExternalPractitionerSummary item in items)
+			{
+				Platform.GetService<IExternalPractitionerAdminService>(
+					delegate(IExternalPractitionerAdminService service)
+					{
+						ExternalPractitionerDetail detail = service.LoadExternalPractitionerForEdit(
+							new LoadExternalPractitionerForEditRequest(item.PractitionerRef)).PractitionerDetail;
+						detail.Deactivated = !detail.Deactivated;
+						ExternalPractitionerSummary summary = service.UpdateExternalPractitioner(
+							new UpdateExternalPractitionerRequest(detail)).Practitioner;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
 		/// <summary>

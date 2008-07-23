@@ -105,13 +105,14 @@ namespace ClearCanvas.Ris.Client.Admin
     	/// such as adding permissions or adding custom actions.
     	/// </summary>
     	/// <param name="model"></param>
-    	protected override void InitializeActionModel(CrudActionModel model)
+    	protected override void InitializeActionModel(AdminActionModel model)
 		{
 			base.InitializeActionModel(model);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
 			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
 			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
+			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Facility);
 		}
 
 		protected override bool SupportsDelete
@@ -209,6 +210,34 @@ namespace ClearCanvas.Ris.Client.Admin
 			}
 
 			return deletedItems.Count > 0;
+		}
+
+    	/// <summary>
+    	/// Called to handle the "toggle activation" action, if supported
+    	/// </summary>
+    	/// <param name="items">A list of items to edit.</param>
+    	/// <param name="editedItems">The list of items that were edited.</param>
+    	/// <returns>True if items were edited, false otherwise.</returns>
+    	protected override bool UpdateItemsActivation(IList<FacilitySummary> items, out IList<FacilitySummary> editedItems)
+		{
+			List<FacilitySummary> results = new List<FacilitySummary>();
+			foreach (FacilitySummary item in items)
+			{
+				Platform.GetService<IFacilityAdminService>(
+					delegate(IFacilityAdminService service)
+					{
+						FacilityDetail detail = service.LoadFacilityForEdit(
+							new LoadFacilityForEditRequest(item.FacilityRef)).FacilityDetail;
+						detail.Deactivated = !detail.Deactivated;
+						FacilitySummary summary = service.UpdateFacility(
+							new UpdateFacilityRequest(detail)).Facility;
+
+						results.Add(summary);
+					});
+			}
+
+			editedItems = results;
+			return true;
 		}
 
 		/// <summary>

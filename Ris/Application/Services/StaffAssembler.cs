@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Application.Services
 			AddressAssembler addressAssembler = new AddressAssembler();
 
 			return new StaffDetail(
+				staff.GetRef(),
 				staff.Id,
 				EnumUtils.GetEnumValueInfo(staff.Type),
 				assembler.CreatePersonNameDetail(staff.Name),

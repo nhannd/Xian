@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     delegate(ILocationAdminService service)
                     {
                             LoadLocationForEditResponse response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
-                            _locationRef = response.LocationRef;
+                            _locationRef = response.LocationDetail.LocationRef;
                             _locationDetail = response.LocationDetail;
                     });
             }
@@ -292,7 +292,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 Platform.GetService<ILocationAdminService>(
                     delegate(ILocationAdminService service)
                     {
-                        UpdateLocationResponse response = service.UpdateLocation(new UpdateLocationRequest(_locationRef, _locationDetail));
+                        UpdateLocationResponse response = service.UpdateLocation(new UpdateLocationRequest(_locationDetail));
                         _locationRef = response.Location.LocationRef;
                         _locationSummary = response.Location;
                     });

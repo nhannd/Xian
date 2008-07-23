@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client
 					else
 					{
 						LoadExternalPractitionerForEditResponse response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(_practitionerRef));
-						_practitionerRef = response.PractitionerRef;
+						_practitionerRef = response.PractitionerDetail.PractitionerRef;
 						_practitionerDetail = response.PractitionerDetail;
 					}
 				});
@@ -227,7 +227,7 @@ namespace ClearCanvas.Ris.Client
 						}
 						else
 						{
-							UpdateExternalPractitionerResponse response = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(_practitionerRef, _practitionerDetail));
+							UpdateExternalPractitionerResponse response = service.UpdateExternalPractitioner(new UpdateExternalPractitionerRequest(_practitionerDetail));
 							_practitionerRef = response.Practitioner.PractitionerRef;
 							_practitionerSummary = response.Practitioner;
 						}

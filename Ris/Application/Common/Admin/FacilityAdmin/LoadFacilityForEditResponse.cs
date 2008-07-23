@@ -40,14 +40,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
     [DataContract]
     public class LoadFacilityForEditResponse : DataContractBase
     {
-        public LoadFacilityForEditResponse(EntityRef facilityRef, FacilityDetail facilityDetail)
+        public LoadFacilityForEditResponse(FacilityDetail facilityDetail)
         {
-            this.FacilityRef = facilityRef;
             this.FacilityDetail = facilityDetail;
         }
-
-        [DataMember]
-        public EntityRef FacilityRef;
 
         [DataMember]
         public FacilityDetail FacilityDetail;

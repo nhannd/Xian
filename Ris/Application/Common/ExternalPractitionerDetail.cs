@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Common
     public class ExternalPractitionerDetail : DataContractBase
     {
         public ExternalPractitionerDetail(
+			EntityRef practitionerRef,
             PersonNameDetail personNameDetail,
             string licenseNumber,
             string billingNumber,
@@ -48,6 +49,7 @@ namespace ClearCanvas.Ris.Application.Common
             Dictionary<string, string> extendedProperties,
 			bool deactivated)
         {
+        	this.PractitionerRef = practitionerRef;
             this.Name = personNameDetail;
             this.LicenseNumber = licenseNumber;
             this.BillingNumber = billingNumber;
@@ -63,7 +65,10 @@ namespace ClearCanvas.Ris.Application.Common
             this.ExtendedProperties = new Dictionary<string, string>();
         }
 
-        [DataMember]
+		[DataMember]
+		public EntityRef PractitionerRef;
+
+		[DataMember]
         public PersonNameDetail Name;
 
         [DataMember]
