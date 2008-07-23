@@ -14,6 +14,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     /// </summary>
     internal class ImageStreamingHandler : IObjectStreamingHandler
     {
+        static FilesystemMonitor _monitor = new FilesystemMonitor("ImageStreaming");
+        
+        static ImageStreamingHandler()
+        {
+            _monitor.Load();
+        }
 
         public WADOResponse Process(string serverAE, HttpListenerContext httpContext)
         {
@@ -45,9 +51,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 throw new WADOException(HttpStatusCode.NotFound, "The requested object does not exist on the specified server");
             }
 
-            FilesystemMonitor monitor = new FilesystemMonitor("ImageStreaming");
-            monitor.Load();
-            ServerFilesystemInfo fs = monitor.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
+            ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
             if (!fs.Readable)
             {
                 throw new WADOException(HttpStatusCode.Forbidden, "The requested object is not located on readable filesystem");

@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
             
             #endregion
 
-            Platform.Log(LogLevel.Debug, "Streaming {0} pixel data: {1} x {2} x {3} , {4} bits  [Size: {5} KB] ({6})",
+            Platform.Log(LogLevel.Info, "Streaming {0} pixel data: {1} x {2} x {3} , {4} bits  [Size: {5} KB] ({6})",
                     output.IsCompressed? "compressed":"uncompressed",
                     pd.ImageHeight,
                     pd.ImageWidth,
