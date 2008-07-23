@@ -145,6 +145,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		protected DicomMessageBase NativeDicomObjectInternal
+		{
+			get
+			{
+				return _dicomMessage;
+			}
+		}
+
 		#region Meta info
 
 		/// <summary>
@@ -687,9 +695,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		internal virtual void Load()
+		internal void Load()
 		{
-			
+			if (_loaded)
+				return;
+
+			lock (_syncLock)
+			{
+				if (_loaded)
+					return;
+
+				CheckIsDisposed();
+
+				LoadInternal();
+				_loaded = true;
+			}
+
+		}
+
+		protected virtual void LoadInternal()
+		{
+
 		}
 
 		#region Dicom Tag Retrieval Methods

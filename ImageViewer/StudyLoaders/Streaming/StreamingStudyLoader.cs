@@ -58,8 +58,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		public void StopPrefetching()
 		{
-			_prefetcher.Stop();
-			_prefetcher = null;
+			if (_prefetcher != null)
+			{
+				_prefetcher.Stop();
+				_prefetcher = null;
+			}
 		}
 
 		#endregion

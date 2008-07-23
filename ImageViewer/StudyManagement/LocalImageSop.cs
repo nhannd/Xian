@@ -39,9 +39,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class LocalImageSop : ImageSop
 	{
-		// is this lock necessary?  doesn't seem so.
-		private readonly object _syncLock = new object();
-		
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalImageSop"/> with
 		/// a specified filename.
@@ -64,24 +61,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private DicomFile DicomFile
 		{
-			get { return NativeDicomObject as DicomFile; }
+			get { return NativeDicomObjectInternal as DicomFile; }
 		}
 
-		internal override void Load()
+		protected override void LoadInternal()
 		{
-			if (_loaded)
-				return;
-
-			lock (_syncLock)
-			{
-				if (_loaded)
-					return;
-
-				CheckIsDisposed();
-
-				DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
-				_loaded = true;
-			}
+			DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 		}
 	}
 }
