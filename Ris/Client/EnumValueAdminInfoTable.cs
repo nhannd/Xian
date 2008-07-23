@@ -4,9 +4,9 @@ using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class EnumValueInfoTable : Table<EnumValueAdminInfo>
+	public class EnumValueAdminInfoTable : Table<EnumValueAdminInfo>
 	{
-		public EnumValueInfoTable()
+		public EnumValueAdminInfoTable()
 		{
 			this.Columns.Add(new TableColumn<EnumValueAdminInfo, string>(SR.ColumnEnumCode,
 				delegate(EnumValueAdminInfo info) { return info.Code; }, 0.4F));

@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// EnumerationSummaryComponent class
     /// </summary>
     [AssociateView(typeof(EnumerationSummaryComponentViewExtensionPoint))]
-	public class EnumerationSummaryComponent : SummaryComponentBase<EnumValueAdminInfo, EnumValueInfoTable>
+	public class EnumerationSummaryComponent : SummaryComponentBase<EnumValueAdminInfo, EnumValueAdminInfoTable>
     {
         private List<EnumerationSummary> _enumerations;
         private EnumerationSummary _selectedEnumeration;
