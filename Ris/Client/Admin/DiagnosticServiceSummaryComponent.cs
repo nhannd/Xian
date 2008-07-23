@@ -50,6 +50,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		}
 	}
 
+	/// <summary>
+    /// Extension point for views onto <see cref="DiagnosticServiceSummaryComponent"/>
+    /// </summary>
+    [ExtensionPoint]
+    public class DiagnosticServiceSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    {
+    }
+
 	public class DiagnosticServiceSummaryTable : Table<DiagnosticServiceSummary>
 	{
 		private readonly int columnSortIndex = 0;
@@ -71,8 +79,29 @@ namespace ClearCanvas.Ris.Client.Admin
 	/// <summary>
 	/// DiagnosticServiceSummaryComponent class.
 	/// </summary>
+	[AssociateView(typeof(DiagnosticServiceSummaryComponentViewExtensionPoint))]
 	public class DiagnosticServiceSummaryComponent : SummaryComponentBase<DiagnosticServiceSummary, DiagnosticServiceSummaryTable>
 	{
+		private string _id;
+		private string _name;
+
+		#region Presentation Model
+
+		public string Id
+		{
+			get { return _id; }
+			set { _id = value; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		#endregion
+
+
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
 		/// such as adding permissions or adding custom actions.
@@ -104,10 +133,14 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<IDiagnosticServiceAdminService>(
 				delegate(IDiagnosticServiceAdminService service)
 				{
-					listResponse = service.ListDiagnosticServices(new ListDiagnosticServicesRequest(new SearchResultPage(firstItem, maxItems)));
+					ListDiagnosticServicesRequest request = new ListDiagnosticServicesRequest(new SearchResultPage(firstItem, maxItems));
+					request.Id = _id;
+					request.Name = _name;
+					listResponse = service.ListDiagnosticServices(request);
 				});
 			return listResponse.DiagnosticServices;
 		}
+
 
 		/// <summary>
 		/// Called to handle the "add" action.

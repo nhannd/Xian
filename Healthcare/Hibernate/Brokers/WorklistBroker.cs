@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IWorklistBroker Members
 
-        public IList<Worklist> FindWorklistsForStaff(Staff staff, IEnumerable<string> worklistClassNames)
+        public IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames)
         {
             HqlProjectionQuery query = GetBaseQuery();
             AddStaffConditions(query, staff);
@@ -59,7 +59,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return ExecuteHql<Worklist>(query);
         }
 
-        public IList<Worklist> FindWorklists(IEnumerable<string> worklistClassNames, SearchResultPage page)
+        public IList<Worklist> Find(IEnumerable<string> worklistClassNames, SearchResultPage page)
         {
             HqlProjectionQuery query = GetBaseQuery();
             AddClassConditions(query, worklistClassNames);
@@ -68,7 +68,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return ExecuteHql<Worklist>(query);
         }
 
-        public Worklist FindWorklist(string name, string worklistClassName)
+		public IList<Worklist> Find(string name, IEnumerable<string> worklistClassNames, SearchResultPage page)
+		{
+			HqlProjectionQuery query = GetBaseQuery();
+			query.Conditions.Add(new HqlCondition("w.Name like ?", string.Format("%{0}%", name)));
+			AddClassConditions(query, worklistClassNames);
+			query.Page = page;
+
+			return ExecuteHql<Worklist>(query);
+		}
+
+        public Worklist FindOne(string name, string worklistClassName)
         {
             HqlQuery query = new HqlQuery("from Worklist w");
             query.Conditions.Add(new HqlCondition("w.Name = ?", name));

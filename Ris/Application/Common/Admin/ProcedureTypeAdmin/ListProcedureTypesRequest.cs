@@ -17,5 +17,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin
 			: base(page)
 		{
 		}
+
+		[DataMember]
+		public string Id;
+
+		[DataMember]
+		public string Name;
 	}
 }
+		

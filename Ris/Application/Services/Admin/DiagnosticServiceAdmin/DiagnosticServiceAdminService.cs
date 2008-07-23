@@ -27,6 +27,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 
 			DiagnosticServiceSearchCriteria where = new DiagnosticServiceSearchCriteria();
 			where.Id.SortAsc(0);
+			if (!string.IsNullOrEmpty(request.Id))
+				where.Id.StartsWith(request.Id);
+			if (!string.IsNullOrEmpty(request.Name))
+				where.Name.Like(string.Format("%{0}%", request.Name));
 
 			IDiagnosticServiceBroker broker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
 			IList<DiagnosticService> items = broker.Find(where, request.Page);

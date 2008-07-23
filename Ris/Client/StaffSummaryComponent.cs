@@ -94,7 +94,6 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(StaffSummaryComponentViewExtensionPoint))]
     public class StaffSummaryComponent : SummaryComponentBase<StaffSummary, StaffTable>
     {
-        private ListStaffRequest _listRequest;
         private string _firstName;
         private string _lastName;
         private readonly string[] _staffTypesFilter;
@@ -128,16 +127,6 @@ namespace ClearCanvas.Ris.Client
             _staffTypesFilter = staffTypesFilter;
         }
 
-        public override void Start()
-        {
-			_listRequest = new ListStaffRequest();
-        	_listRequest.LastName = _lastName;
-        	_listRequest.FirstName = _firstName;
-
-			base.Start();
-		}
-
-
         #region Presentation Model
 
         public string FirstName
@@ -150,19 +139,6 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _lastName; }
             set { _lastName = value; }
-        }
-
-        public void Search()
-        {
-            try
-            {
-                DoSearch();
-            }
-            catch (Exception e)
-            {
-                // search failed
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
         }
 
         #endregion
@@ -198,9 +174,12 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IStaffAdminService>(
 				delegate(IStaffAdminService service)
 				{
-					_listRequest.Page = new SearchResultPage(firstItem, maxItems);
-					_listRequest.StaffTypesFilter = _staffTypesFilter;
-					listResponse = service.ListStaff(_listRequest);
+					ListStaffRequest request = new ListStaffRequest();
+					request.Page = new SearchResultPage(firstItem, maxItems);
+					request.StaffTypesFilter = _staffTypesFilter;
+					request.LastName = _lastName;
+					request.FirstName = _firstName;
+					listResponse = service.ListStaff(request);
 				});
 
 			return listResponse.Staffs;
@@ -290,15 +269,5 @@ namespace ClearCanvas.Ris.Client
 		{
 			return x.StaffRef.Equals(y.StaffRef, true);
 		}
-
-		private void DoSearch()
-		{
-			_listRequest.FirstName = _firstName;
-			_listRequest.LastName = _lastName;
-
-			this.Table.Items.Clear();
-			this.Table.Items.AddRange(this.PagingController.GetFirst());
-		}
-
 	}
 }

@@ -26,6 +26,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 
 			ProcedureTypeSearchCriteria where = new ProcedureTypeSearchCriteria();
 			where.Id.SortAsc(0);
+			if (!string.IsNullOrEmpty(request.Id))
+				where.Id.StartsWith(request.Id);
+			if (!string.IsNullOrEmpty(request.Name))
+				where.Name.Like(string.Format("%{0}%", request.Name));
 
 			IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
 			IList<ProcedureType> items = broker.Find(where, request.Page);

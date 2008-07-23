@@ -61,6 +61,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         public ListUsersResponse ListUsers(ListUsersRequest request)
         {
             UserSearchCriteria criteria = new UserSearchCriteria();
+			if (!string.IsNullOrEmpty(request.UserName))
+				criteria.UserName.StartsWith(request.UserName);
+			if (!string.IsNullOrEmpty(request.DisplayName))
+				criteria.DisplayName.Like(string.Format("%{0}%", request.DisplayName));
 
             UserAssembler assembler = new UserAssembler();
             List<UserSummary> userSummaries = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(

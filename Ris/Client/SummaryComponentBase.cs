@@ -30,12 +30,17 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Gets the summary table <see cref="ITable"/>.
         /// </summary>
-        public abstract ITable SummaryTable { get; }
+		public abstract ITable SummaryTable { get; }
 
         /// <summary>
         /// Gets the summary table selection as an <cref="ISelection"/>.
         /// </summary>
         public abstract ISelection SummarySelection { get; set; }
+
+		/// <summary>
+		/// Handles the "search" action if supported.
+		/// </summary>
+		public abstract void Search();
 
         /// <summary>
         /// Handles the "add" action.
@@ -207,6 +212,20 @@ namespace ClearCanvas.Ris.Client
                 }
             }
         }
+
+		public override void Search()
+		{
+			try
+			{
+				this.Table.Items.Clear();
+				this.Table.Items.AddRange(this.PagingController.GetFirst());
+			}
+			catch (Exception e)
+			{
+				// search failed
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
+		}
 
         /// <summary>
         /// Handles the "add" action.

@@ -76,12 +76,23 @@ namespace ClearCanvas.Ris.Client.Admin
         }
     }
 
+	/// <summary>
+	/// Extension point for views onto <see cref="ProcedureTypeSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class UserSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
+
     /// <summary>
     /// UserSummaryComponent class
     /// </summary>
+	[AssociateView(typeof(UserSummaryComponentViewExtensionPoint))]
     public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable>
     {
         private Action _resetPasswordAction;
+		private string _id;
+		private string _name;
 
         /// <summary>
         /// Constructor
@@ -117,6 +128,18 @@ namespace ClearCanvas.Ris.Client.Admin
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
+
+		public string ID
+		{
+			get { return _id; }
+			set { _id = value; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
 
         #endregion
 
@@ -154,7 +177,10 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<IUserAdminService>(
 				delegate(IUserAdminService service)
 				{
-					listResponse = service.ListUsers(new ListUsersRequest(new SearchResultPage(firstItem, maxItems)));
+					ListUsersRequest request = new ListUsersRequest(new SearchResultPage(firstItem, maxItems));
+					request.UserName = _id;
+					request.DisplayName = _name;
+					listResponse = service.ListUsers(request);
 				});
 
 			return listResponse.Users;

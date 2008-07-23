@@ -113,7 +113,6 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(ExternalPractitionerSummaryComponentViewExtensionPoint))]
 	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerTable>
     {
-        private ListExternalPractitionersRequest _listRequest;
         private string _firstName;
         private string _lastName;
 
@@ -135,15 +134,6 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-        public override void Start()
-        {
-			_listRequest = new ListExternalPractitionersRequest();
-			_listRequest.LastName = _lastName;
-			_listRequest.FirstName = _firstName;
-
-			base.Start();
-		}
-
         #region Presentation Model
 
         public string FirstName
@@ -164,19 +154,6 @@ namespace ClearCanvas.Ris.Client
 				_lastName = value;
 				NotifyPropertyChanged("LastName");
 			}
-        }
-
-        public void Search()
-        {
-            try
-            {
-                DoSearch();
-            }
-            catch (Exception e)
-            {
-                // search failed
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
         }
 
 		public void Clear()
@@ -232,8 +209,11 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IExternalPractitionerAdminService>(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					_listRequest.Page = new SearchResultPage(firstItem, maxItems);
-					listResponse = service.ListExternalPractitioners(_listRequest);
+					ListExternalPractitionersRequest request = new ListExternalPractitionersRequest();
+					request.Page = new SearchResultPage(firstItem, maxItems);
+					request.FirstName = _firstName;
+					request.LastName = _lastName;
+					listResponse = service.ListExternalPractitioners(request);
 				});
 
 			return listResponse.Practitioners;
@@ -335,15 +315,6 @@ namespace ClearCanvas.Ris.Client
 				(this.SelectedItems.Count == 1 ||
 				 this.SelectedItems.Count == 2);
 		}
-
-		private void DoSearch()
-        {
-            _listRequest.FirstName = _firstName;
-            _listRequest.LastName = _lastName;
-
-            this.Table.Items.Clear();
-			this.Table.Items.AddRange(this.PagingController.GetFirst());
-        }
 
 		private static ISpecification OrPermissions(string token1, string token2)
 		{

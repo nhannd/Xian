@@ -57,5 +57,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         /// </summary>
         [DataMember]
         public bool IncludeStatic;
+
+		/// <summary>
+		/// Filters the results by the specified name.
+		/// </summary>
+		[DataMember]
+		public string WorklistName;
     }
 }

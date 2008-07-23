@@ -38,8 +38,37 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
     {
-        IList<Worklist> FindWorklistsForStaff(Staff staff, IEnumerable<string> worklistClassNames);
-        IList<Worklist> FindWorklists(IEnumerable<string> worklistClassNames, SearchResultPage page);
-        Worklist FindWorklist(string name, string worklistClassName);
+		/// <summary>
+		/// Finds worklists matching specified class names and assigned to specified staff.
+		/// </summary>
+		/// <param name="staff"></param>
+		/// <param name="worklistClassNames"></param>
+		/// <returns></returns>
+        IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames);
+
+		/// <summary>
+		/// Finds worklists of the specified class names.
+		/// </summary>
+		/// <param name="worklistClassNames"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+        IList<Worklist> Find(IEnumerable<string> worklistClassNames, SearchResultPage page);
+
+		/// <summary>
+		/// Finds worklists matching the specified name (which may contain wildcards) and class names.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="worklistClassNames"></param>
+		/// <param name="page"></param>
+		/// <returns></returns>
+		IList<Worklist> Find(string name, IEnumerable<string> worklistClassNames, SearchResultPage page);
+
+		/// <summary>
+		/// Finds one worklist with the specified name and class name.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="worklistClassName"></param>
+		/// <returns></returns>
+        Worklist FindOne(string name, string worklistClassName);
     }
 }

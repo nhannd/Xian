@@ -50,10 +50,22 @@ namespace ClearCanvas.Ris.Client.Admin
 	}
 
 	/// <summary>
+	/// Extension point for views onto <see cref="ProcedureTypeSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class ProcedureTypeSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
+
+	/// <summary>
 	/// ProcedureTypeSummaryComponent class.
 	/// </summary>
+	[AssociateView(typeof(ProcedureTypeSummaryComponentViewExtensionPoint))]
 	public class ProcedureTypeSummaryComponent : SummaryComponentBase<ProcedureTypeSummary, ProcedureTypeTable>
 	{
+		private string _id;
+		private string _name;
+
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
 		/// such as adding permissions or adding custom actions.
@@ -70,8 +82,27 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		protected override bool SupportsDelete
 		{
-			get { return true; }
+			get
+			{
+				return true;
+			}
 		}
+
+		#region Presentation Model
+
+		public string Id
+		{
+			get { return _id; }
+			set { _id = value; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		#endregion
 		
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
@@ -85,7 +116,10 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<IProcedureTypeAdminService>(
 				delegate(IProcedureTypeAdminService service)
 				{
-					_response = service.ListProcedureTypes(new ListProcedureTypesRequest(new SearchResultPage(firstItem, maxItems)));
+					ListProcedureTypesRequest request = new ListProcedureTypesRequest(new SearchResultPage(firstItem, maxItems));
+					request.Id = _id;
+					request.Name = _name;
+					_response = service.ListProcedureTypes(request);
 				});
 			return _response.ProcedureTypes;
 		}

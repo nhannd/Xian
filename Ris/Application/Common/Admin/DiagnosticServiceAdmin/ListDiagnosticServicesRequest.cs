@@ -17,5 +17,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 			: base(page)
 		{
 		}
+
+		[DataMember]
+		public string Id;
+
+		[DataMember]
+		public string Name;
 	}
 }

@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services
 			WorklistAssembler assembler = new WorklistAssembler();
 			return new ListWorklistsForUserResponse(
 				CollectionUtils.Map<Worklist, WorklistSummary>(
-					PersistenceContext.GetBroker<IWorklistBroker>().FindWorklistsForStaff(CurrentUserStaff, request.WorklistTokens),
+					PersistenceContext.GetBroker<IWorklistBroker>().Find(CurrentUserStaff, request.WorklistTokens),
 					delegate(Worklist worklist)
 					{
 						return assembler.GetWorklistSummary(worklist);

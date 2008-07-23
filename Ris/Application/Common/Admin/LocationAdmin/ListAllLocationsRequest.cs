@@ -48,5 +48,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
             :base(page)
         {
         }
+
+		[DataMember]
+		public FacilitySummary Facility;
+
+		[DataMember]
+		public string Name;
     }
 }

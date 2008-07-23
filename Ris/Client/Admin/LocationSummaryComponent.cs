@@ -45,6 +45,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.LocationAdmin;
 using ClearCanvas.Ris.Application.Common;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -94,15 +95,56 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// LocationSummaryComponent class
     /// </summary>
+	[AssociateView(typeof(LocationSummaryComponentViewExtensionPoint))]
     public class LocationSummaryComponent : SummaryComponentBase<LocationSummary, LocationTable>
     {
+		private List<FacilitySummary> _facilityList;
+		private FacilitySummary _facility;
+		private string _name;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public LocationSummaryComponent()
         {
-        }
+			Platform.GetService<ILocationAdminService>(
+				delegate(ILocationAdminService service)
+				{
+					_facilityList = service.GetLocationEditFormData(new GetLocationEditFormDataRequest()).FacilityChoices;
+				});
+		}
+
+		# region Presentation Model
+
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		public FacilitySummary Facility
+		{
+			get {return _facility; }
+			set
+			{
+				_facility = value;
+				Search();
+				this.Modified = true;
+			}
+		}
+
+		public IList FacilityChoices
+		{
+			get { return _facilityList; }
+		}
+
+		public string FormatFacilityListItem(object item)
+		{
+			FacilitySummary summary = (FacilitySummary)item;
+			return string.Format(summary.Name);
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -135,7 +177,10 @@ namespace ClearCanvas.Ris.Client.Admin
 			Platform.GetService<ILocationAdminService>(
 				delegate(ILocationAdminService service)
 				{
-					listResponse = service.ListAllLocations(new ListAllLocationsRequest(new SearchResultPage(firstItem, maxItems)));
+					ListAllLocationsRequest request = new ListAllLocationsRequest(new SearchResultPage(firstItem, maxItems));
+					request.Facility = _facility;
+					request.Name = _name;
+					listResponse = service.ListAllLocations(request);
 				});
 
 			return listResponse.Locations;

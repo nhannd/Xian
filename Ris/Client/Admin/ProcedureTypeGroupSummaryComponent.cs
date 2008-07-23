@@ -60,8 +60,6 @@ namespace ClearCanvas.Ris.Client.Admin
 		private readonly List<EnumValueInfo> _categoryChoices;
 		private EnumValueInfo _selectedCategory;
 		
-		private ListProcedureTypeGroupsRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -94,7 +92,6 @@ namespace ClearCanvas.Ris.Client.Admin
 						_categoryChoices.AddRange(response.CategoryChoices);
 					});
 
-			_listRequest = new ListProcedureTypeGroupsRequest();
 
 			base.Start();
 		}
@@ -123,7 +120,6 @@ namespace ClearCanvas.Ris.Client.Admin
 			set
 			{
 				_selectedCategory = value;
-				Search();
 			}
 		}
 
@@ -158,15 +154,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns></returns>
 		protected override IList<ProcedureTypeGroupSummary> ListItems(int firstItem, int maxItems)
 		{
-			if (_selectedCategory != _filterNone)
-				_listRequest.CategoryFilter = _selectedCategory;
-
 			ListProcedureTypeGroupsResponse listResponse = null;
 			Platform.GetService<IProcedureTypeGroupAdminService>(
 				delegate(IProcedureTypeGroupAdminService service)
 				{
-					_listRequest.Page = new SearchResultPage(firstItem, maxItems);
-					listResponse = service.ListProcedureTypeGroups(_listRequest);
+					ListProcedureTypeGroupsRequest request = new ListProcedureTypeGroupsRequest();
+					request.CategoryFilter = (_selectedCategory == _filterNone) ? null : _selectedCategory;
+					request.Page = new SearchResultPage(firstItem, maxItems);
+					listResponse = service.ListProcedureTypeGroups(request);
 				});
 
 			return listResponse.Items;
@@ -258,21 +253,5 @@ namespace ClearCanvas.Ris.Client.Admin
 		}
 
 		#endregion
-
-		private void Search()
-		{
-			try
-			{
-				_listRequest.CategoryFilter = (_selectedCategory == _filterNone) ? null : _selectedCategory;
-
-				this.Table.Items.Clear();
-				this.Table.Items.AddRange(this.PagingController.GetFirst());
-			}
-			catch (Exception e)
-			{
-				// search failed
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
 	}
 }

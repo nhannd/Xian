@@ -37,15 +37,39 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using System.Collections.Generic;
+using System.Collections;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
+	[ExtensionPoint]
+	public class WorklistSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
+
     /// <summary>
     /// WorklistSummaryComponent class
     /// </summary>
+	[AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
     public class WorklistSummaryComponent : SummaryComponentBase<WorklistAdminSummary, WorklistAdminSummaryTable>
     {
+		private readonly object _filterNone = new object();
         private readonly object _duplicateWorklistActionKey = new object();
+		private string _name;
+		private WorklistClassSummary _worklistClass;
+		private ArrayList _worklistClassChoices = new ArrayList();
+
+		public override void Start()
+		{
+			Platform.GetService<IWorklistAdminService>(
+					delegate(IWorklistAdminService service)
+					{
+						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
+						_worklistClassChoices.Add(_filterNone);
+						_worklistClassChoices.AddRange(response.WorklistClasses);
+					});
+			base.Start();
+		}
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -67,6 +91,42 @@ namespace ClearCanvas.Ris.Client.Admin
 		}
 
         #region Presentation Model
+
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
+
+		public object SelectedWorklistClass
+		{
+			get { return _worklistClass; }
+			set
+			{
+				if (value == _filterNone)
+					_worklistClass = null;
+				else
+					_worklistClass = (WorklistClassSummary)value;
+
+				Search();
+				this.Modified = true;
+			}
+		}
+
+		public IList WorklistClassChoices
+		{
+			get { return _worklistClassChoices; }
+		}
+
+		public string FormatWorklistClassChoicesItem(object item)
+		{
+			if (item != _filterNone)
+			{
+				WorklistClassSummary summary = (WorklistClassSummary)item;
+				return string.Format("{0} - {1}", summary.CategoryName, summary.DisplayName);
+			}
+			return SR.DummyItemNone;
+		}
 
         public void DuplicateWorklist()
         {
@@ -114,6 +174,13 @@ namespace ClearCanvas.Ris.Client.Admin
                     ListWorklistsRequest listRequest = new ListWorklistsRequest();
                     listRequest.Page.FirstRow = firstItem;
                     listRequest.Page.MaxRows = maxItems;
+					if (_worklistClass != null)
+					{
+						string[] classNames = _worklistClass == null ? new string[] { } : new string[] { _worklistClass.ClassName };
+						listRequest.ClassNames = new List<string>(classNames); 
+					}
+					
+					listRequest.WorklistName = _name;
 
                     listResponse = service.ListWorklists(listRequest);
                 });

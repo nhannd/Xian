@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -36,69 +36,65 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.View.WinForms
+namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="StaffSummaryComponent"/>
-    /// </summary>
-    public partial class StaffSummaryComponentControl : ApplicationComponentUserControl
-    {
-        private StaffSummaryComponent _component;
+	public partial class ProcedureTypeSummaryComponentControl : ApplicationComponentUserControl
+	{
+		private ProcedureTypeSummaryComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public StaffSummaryComponentControl(StaffSummaryComponent component)
+		public ProcedureTypeSummaryComponentControl(ProcedureTypeSummaryComponent component)
             : base(component)
         {
             InitializeComponent();
             _component = component;
 
-            _staffTableView.ToolbarModel = _component.SummaryTableActionModel;
-			_staffTableView.MenuModel = _component.SummaryTableActionModel;
+            _procedureTypeTableView.ToolbarModel = _component.SummaryTableActionModel;
+			_procedureTypeTableView.MenuModel = _component.SummaryTableActionModel;
 
-            _staffTableView.Table = _component.SummaryTable;
-            _staffTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
+            _procedureTypeTableView.Table = _component.SummaryTable;
+            _procedureTypeTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _firstName.DataBindings.Add("Value", _component, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _lastName.DataBindings.Add("Value", _component, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_id.DataBindings.Add("Value", _component, "Id", true, DataSourceUpdateMode.OnPropertyChanged);
+			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
             _cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
-        }
+		}
 
-        private void _searchButton_Click(object sender, EventArgs e)
-        {
-            using (new CursorManager(Cursors.WaitCursor))
-            {
-                _component.Search();
-            }
-        }
+		private void _searchButton_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.Search();
+			}
+		}
 
         private void _okButton_Click(object sender, EventArgs e)
         {
-            _component.Accept();        
-        }
+			_component.Accept();
+		}
 
-        private void _cancelButton_Click(object sender, EventArgs e)
-        {
-            _component.Cancel();
-        }
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
 
-        private void _staffTableView_ItemDoubleClicked(object sender, EventArgs e)
+        private void _procedureTypeTableView_ItemDoubleClicked(object sender, EventArgs e)
         {
             _component.DoubleClickSelectedItem();
         }
 
 		private void _clearButton_Click(object sender, EventArgs e)
 		{
-			_firstName.Value = "";
-			_lastName.Value = "";
+			_id.Value = "";
+			_name.Value = "";
 			_component.Search();
 		}
-    }
+	}
 }

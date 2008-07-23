@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
-	partial class UserSummaryComponentControl
+	partial class LocationSummaryComponentControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -29,15 +29,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		private void InitializeComponent()
 		{
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this._userTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._locationTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this._facilityComboBox = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._clearButton = new System.Windows.Forms.Button();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
-			this._id = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel1.Controls.Add(this._userTableView, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._locationTableView, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -58,23 +58,23 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this.tableLayoutPanel1.Size = new System.Drawing.Size(667, 492);
-			this.tableLayoutPanel1.TabIndex = 0;
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(670, 488);
+			this.tableLayoutPanel1.TabIndex = 1;
 			// 
-			// _userTableView
+			// _locationTableView
 			// 
-			this._userTableView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._userTableView.Location = new System.Drawing.Point(4, 64);
-			this._userTableView.Margin = new System.Windows.Forms.Padding(4);
-			this._userTableView.Name = "_userTableView";
-			this._userTableView.ReadOnly = false;
-			this._userTableView.Size = new System.Drawing.Size(659, 390);
-			this._userTableView.TabIndex = 1;
-			this._userTableView.ItemDoubleClicked += new System.EventHandler(this._userTableView_ItemDoubleClicked);
+			this._locationTableView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._locationTableView.Location = new System.Drawing.Point(4, 64);
+			this._locationTableView.Margin = new System.Windows.Forms.Padding(4);
+			this._locationTableView.Name = "_locationTableView";
+			this._locationTableView.ReadOnly = false;
+			this._locationTableView.Size = new System.Drawing.Size(662, 386);
+			this._locationTableView.TabIndex = 1;
+			this._locationTableView.Click += new System.EventHandler(this._locationTableView_ItemDoubleClicked);
 			// 
 			// panel1
 			// 
-			this.panel1.Controls.Add(this._id);
+			this.panel1.Controls.Add(this._facilityComboBox);
 			this.panel1.Controls.Add(this._clearButton);
 			this.panel1.Controls.Add(this._searchButton);
 			this.panel1.Controls.Add(this._name);
@@ -83,9 +83,22 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.panel1.Size = new System.Drawing.Size(661, 54);
 			this.panel1.TabIndex = 0;
 			// 
+			// _facilityComboBox
+			// 
+			this._facilityComboBox.DataSource = null;
+			this._facilityComboBox.DisplayMember = "";
+			this._facilityComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._facilityComboBox.LabelText = "Facility";
+			this._facilityComboBox.Location = new System.Drawing.Point(2, 6);
+			this._facilityComboBox.Margin = new System.Windows.Forms.Padding(2);
+			this._facilityComboBox.Name = "_facilityComboBox";
+			this._facilityComboBox.Size = new System.Drawing.Size(212, 39);
+			this._facilityComboBox.TabIndex = 4;
+			this._facilityComboBox.Value = null;
+			// 
 			// _clearButton
 			// 
-			this._clearButton.Location = new System.Drawing.Point(382, 24);
+			this._clearButton.Location = new System.Drawing.Point(444, 24);
 			this._clearButton.Margin = new System.Windows.Forms.Padding(2);
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.Size = new System.Drawing.Size(73, 23);
@@ -96,7 +109,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _searchButton
 			// 
-			this._searchButton.Location = new System.Drawing.Point(303, 24);
+			this._searchButton.Location = new System.Drawing.Point(365, 24);
 			this._searchButton.Margin = new System.Windows.Forms.Padding(2);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(75, 23);
@@ -108,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// _name
 			// 
 			this._name.LabelText = "Name";
-			this._name.Location = new System.Drawing.Point(149, 7);
+			this._name.Location = new System.Drawing.Point(211, 7);
 			this._name.Margin = new System.Windows.Forms.Padding(2);
 			this._name.Mask = "";
 			this._name.Name = "_name";
@@ -125,15 +138,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._okButton);
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 460);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 456);
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(663, 30);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(666, 30);
 			this.flowLayoutPanel1.TabIndex = 2;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(586, 2);
+			this._cancelButton.Location = new System.Drawing.Point(589, 2);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -144,7 +157,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(507, 2);
+			this._okButton.Location = new System.Drawing.Point(510, 2);
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
@@ -153,26 +166,13 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
-			// _id
-			// 
-			this._id.LabelText = "User ID";
-			this._id.Location = new System.Drawing.Point(2, 7);
-			this._id.Margin = new System.Windows.Forms.Padding(2);
-			this._id.Mask = "";
-			this._id.Name = "_id";
-			this._id.PasswordChar = '\0';
-			this._id.Size = new System.Drawing.Size(150, 41);
-			this._id.TabIndex = 0;
-			this._id.ToolTip = null;
-			this._id.Value = null;
-			// 
-			// UserSummaryComponentControl
+			// LocationSummaryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
-			this.Name = "UserSummaryComponentControl";
-			this.Size = new System.Drawing.Size(667, 492);
+			this.Name = "LocationSummaryComponentControl";
+			this.Size = new System.Drawing.Size(670, 488);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this.flowLayoutPanel1.ResumeLayout(false);
@@ -183,14 +183,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		#endregion
 
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-		private ClearCanvas.Desktop.View.WinForms.TableView _userTableView;
+		private ClearCanvas.Desktop.View.WinForms.TableView _locationTableView;
 		private System.Windows.Forms.Panel panel1;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _facilityComboBox;
 		private System.Windows.Forms.Button _clearButton;
 		private System.Windows.Forms.Button _searchButton;
 		private ClearCanvas.Desktop.View.WinForms.TextField _name;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
-		private ClearCanvas.Desktop.View.WinForms.TextField _id;
 	}
 }

@@ -54,6 +54,13 @@
       <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DiagnosticServiceEditorComponentView.cs" />
+    <Compile Include="DiagnosticServiceSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiagnosticServiceSummaryComponentControl.Designer.cs">
+      <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiagnosticServiceSummaryComponentView.cs" />
     <Compile Include="EnumerationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -96,6 +103,13 @@
       <DependentUpon>LocationEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="LocationEditorComponentView.cs" />
+    <Compile Include="LocationSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LocationSummaryComponentControl.Designer.cs">
+      <DependentUpon>LocationSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocationSummaryComponentView.cs" />
     <Compile Include="ModalityEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -117,6 +131,13 @@
       <DependentUpon>ProcedureTypeEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProcedureTypeEditorComponentView.cs" />
+    <Compile Include="ProcedureTypeSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProcedureTypeSummaryComponentControl.Designer.cs">
+      <DependentUpon>ProcedureTypeSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedureTypeSummaryComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -158,6 +179,13 @@
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserEditorComponentView.cs" />
+    <Compile Include="UserSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserSummaryComponentControl.designer.cs">
+      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserSummaryComponentView.cs" />
     <Compile Include="ValidationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -200,6 +228,13 @@
       <DependentUpon>WorklistSelectorEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistSelectorEditorComponentView.cs" />
+    <Compile Include="WorklistSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistSummaryComponentControl.Designer.cs">
+      <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistSummaryComponentView.cs" />
     <Compile Include="WorklistTimeWindowEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -246,6 +281,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="DiagnosticServiceSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="EnumerationEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>EnumerationEditorComponentControl.cs</DependentUpon>
@@ -270,6 +309,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>LocationEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LocationSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LocationSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ModalityEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
@@ -285,6 +328,10 @@
     <EmbeddedResource Include="ProcedureTypeGroupSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProcedureTypeSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProcedureTypeSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
@@ -306,6 +353,10 @@
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ValidationEditorComponentControl.resx">
       <SubType>Designer</SubType>
@@ -330,6 +381,10 @@
     <EmbeddedResource Include="WorklistSelectorEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>WorklistSelectorEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorklistTimeWindowEditorComponentControl.resx">
       <SubType>Designer</SubType>

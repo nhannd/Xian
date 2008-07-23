@@ -442,7 +442,7 @@ namespace ClearCanvas.Healthcare.Imex
 
             try
             {
-                worklist = context.GetBroker<IWorklistBroker>().FindWorklist(name, worklistClassName);
+                worklist = context.GetBroker<IWorklistBroker>().FindOne(name, worklistClassName);
             }
             catch (EntityNotFoundException)
             {
