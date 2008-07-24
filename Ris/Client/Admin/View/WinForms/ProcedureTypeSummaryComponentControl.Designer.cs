@@ -28,16 +28,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._procedureTypeTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this._clearButton = new System.Windows.Forms.Button();
-			this._searchButton = new System.Windows.Forms.Button();
 			this._id = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
+			this._clearButton = new System.Windows.Forms.Button();
+			this._searchButton = new System.Windows.Forms.Button();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -82,28 +84,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.panel1.Name = "panel1";
 			this.panel1.Size = new System.Drawing.Size(700, 54);
 			this.panel1.TabIndex = 0;
-			// 
-			// _clearButton
-			// 
-			this._clearButton.Location = new System.Drawing.Point(383, 23);
-			this._clearButton.Margin = new System.Windows.Forms.Padding(2);
-			this._clearButton.Name = "_clearButton";
-			this._clearButton.Size = new System.Drawing.Size(75, 23);
-			this._clearButton.TabIndex = 3;
-			this._clearButton.Text = "Clear";
-			this._clearButton.UseVisualStyleBackColor = true;
-			this._clearButton.Click += new System.EventHandler(this._clearButton_Click);
-			// 
-			// _searchButton
-			// 
-			this._searchButton.Location = new System.Drawing.Point(304, 23);
-			this._searchButton.Margin = new System.Windows.Forms.Padding(2);
-			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(75, 23);
-			this._searchButton.TabIndex = 2;
-			this._searchButton.Text = "Search";
-			this._searchButton.UseVisualStyleBackColor = true;
-			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
 			// 
 			// _id
 			// 
@@ -166,6 +146,40 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
+			// _clearButton
+			// 
+			this._clearButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._clearButton.BackColor = System.Drawing.Color.Transparent;
+			this._clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this._clearButton.FlatAppearance.BorderSize = 0;
+			this._clearButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.ClearFilterSmall;
+			this._clearButton.Location = new System.Drawing.Point(332, 18);
+			this._clearButton.Margin = new System.Windows.Forms.Padding(0);
+			this._clearButton.Name = "_clearButton";
+			this._clearButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this._clearButton.Size = new System.Drawing.Size(30, 30);
+			this._clearButton.TabIndex = 5;
+			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+			this.toolTip1.SetToolTip(this._clearButton, "Clear search query");
+			this._clearButton.UseVisualStyleBackColor = false;
+			this._clearButton.Click += new System.EventHandler(this._clearButton_Click);
+			// 
+			// _searchButton
+			// 
+			this._searchButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._searchButton.BackColor = System.Drawing.Color.Transparent;
+			this._searchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this._searchButton.FlatAppearance.BorderSize = 0;
+			this._searchButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.SearchToolSmall;
+			this._searchButton.Location = new System.Drawing.Point(301, 18);
+			this._searchButton.Margin = new System.Windows.Forms.Padding(0);
+			this._searchButton.Name = "_searchButton";
+			this._searchButton.Size = new System.Drawing.Size(30, 30);
+			this._searchButton.TabIndex = 4;
+			this.toolTip1.SetToolTip(this._searchButton, "Search");
+			this._searchButton.UseVisualStyleBackColor = false;
+			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
+			// 
 			// ProcedureTypeSummaryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,13 +199,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private ClearCanvas.Desktop.View.WinForms.TableView _procedureTypeTableView;
 		private System.Windows.Forms.Panel panel1;
-		private System.Windows.Forms.Button _clearButton;
-		private System.Windows.Forms.Button _searchButton;
 		private ClearCanvas.Desktop.View.WinForms.TextField _id;
 		private ClearCanvas.Desktop.View.WinForms.TextField _name;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
+		private System.Windows.Forms.Button _clearButton;
+		private System.Windows.Forms.ToolTip toolTip1;
+		private System.Windows.Forms.Button _searchButton;
 
 	}
 }
