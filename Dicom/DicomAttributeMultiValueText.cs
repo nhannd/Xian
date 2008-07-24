@@ -297,7 +297,8 @@ namespace ClearCanvas.Dicom
                 if (value is string[])
                 {
                     _values = (string[])value;
-                    Count = _values.Length;
+                    // If the values array length is 0, then it is technically an empty string and we want Count to be 1
+                    Count = _values.Length == 0 ? 1 : _values.Length;
                     StreamLength = (uint)ToString().Length;
                 }
                 else if (value is string)
@@ -441,7 +442,7 @@ namespace ClearCanvas.Dicom
 
             StreamLength = (uint)this.ToString().Length;
 
-            Count++;
+            Count = newArray.Length;
         }
 
         
