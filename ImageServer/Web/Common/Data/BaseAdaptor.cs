@@ -90,6 +90,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
+		public TServerEntity GetFirst(TCriteria criteria)
+		{
+			using (IReadContext ctx = PersistentStore.OpenReadContext())
+			{
+				TIEntity select = ctx.GetBroker<TIEntity>();
+				IList<TServerEntity> list = select.Find(criteria);
+				if (list.Count > 0)
+					return list[0];
+
+				return null;
+			}
+		}
+
         public TServerEntity Add(TColumns param)
         {
             try

@@ -29,39 +29,48 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
+using System.IO;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using Ionic.Utils.Zip;
 
-namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
+namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
-    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class Jpeg2000LosslessSamples : SampleRuleBase
-    {
-        public Jpeg2000LosslessSamples()
-            : base("Jpeg2000Lossless",
-                   "JPEG 2000 Lossless Sample Rule",
-				   ServerRuleTypeEnum.StudyCompress,
-                   "SampleJpeg2000Lossless.xml")
-        {
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
-        }
-    }
-
-	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class Jpeg2000ComboSample : SampleRuleBase
+	/// <summary>
+	/// <see cref="ServerCommand"/> for extracting a zip file containing study files to a specific directory.
+	/// </summary>
+	public class ExtractZipCommand : ServerCommand
 	{
-		public Jpeg2000ComboSample()
-			: base("Jpeg2000Combo",
-				   "JPEG 2000 Lossless and Lossy Sample Rule",
-				   ServerRuleTypeEnum.StudyCompress,
-				   "SampleJpeg2000Combo.xml")
+		private readonly string _zipFile;
+		private readonly string _destinationFolder;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="zip">The zip file to extract.</param>
+		/// <param name="destinationFolder">The destination folder.</param>
+		public ExtractZipCommand(string zip, string destinationFolder): base("Extract Zip File",true)
 		{
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
+			_zipFile = zip;
+			_destinationFolder = destinationFolder;
+		}
+
+		/// <summary>
+		/// Do the unzip.
+		/// </summary>
+		protected override void OnExecute()
+		{
+			using (ZipFile zip = new ZipFile(_zipFile))
+			{
+				zip.ExtractAll(_destinationFolder);
+			}
+		}
+
+		/// <summary>
+		/// Undo.  Remove the destination folder.
+		/// </summary>
+		protected override void OnUndo()
+		{
+			Directory.Delete(_destinationFolder, true);
 		}
 	}
 }

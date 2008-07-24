@@ -36,6 +36,7 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -249,7 +250,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <summary>
         /// Updates the status of a study to a new status
         /// </summary>
-		protected virtual void UpdateStudyStatus(StudyStorageLocation theStudyStorage, StudyStatusEnum theStatus)
+		protected virtual void UpdateStudyStatus(StudyStorageLocation theStudyStorage, StudyStatusEnum theStatus, TransferSyntax theSyntax)
         {
         	DBUpdateTime.Add(
         		delegate
@@ -258,6 +259,37 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         					IUpdateContext updateContext =
         						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
         				{
+							// Select the Server Transfer Syntax
+							ServerTransferSyntaxSelectCriteria syntaxCriteria = new ServerTransferSyntaxSelectCriteria();
+							IServerTransferSyntaxEntityBroker syntaxBroker =
+								updateContext.GetBroker<IServerTransferSyntaxEntityBroker>();
+							syntaxCriteria.Uid.EqualTo(theSyntax.UidString);
+
+							IList<ServerTransferSyntax> syntaxList = syntaxBroker.Find(syntaxCriteria);
+							if (syntaxList.Count == 0)
+							{
+								Platform.Log(LogLevel.Error, "Unable to load ServerTransferSyntax for {0}.  Unable to update study status.", theSyntax.Name);
+								return;
+							}
+
+        					ServerTransferSyntax serverSyntax = syntaxList[0];
+
+							// Get the FilesystemStudyStorage update broker ready
+        					IFilesystemStudyStorageEntityBroker filesystemQueueBroker =
+								updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
+							FilesystemStudyStorageUpdateColumns filesystemQueueUpdate = new FilesystemStudyStorageUpdateColumns();
+        					filesystemQueueUpdate.ServerTransferSyntaxKey = serverSyntax.GetKey();
+							FilesystemStudyStorageSelectCriteria filesystemQueueCriteria = new FilesystemStudyStorageSelectCriteria();
+        					filesystemQueueCriteria.StudyStorageKey.EqualTo(theStudyStorage.GetKey());
+
+							// Get the StudyStorage update broker ready
+        					IStudyStorageEntityBroker studyStorageBroker =
+        						updateContext.GetBroker<IStudyStorageEntityBroker>();
+							StudyStorageUpdateColumns studyStorageUpdate = new StudyStorageUpdateColumns();
+        					studyStorageUpdate.StudyStatusEnum = theStatus;
+        					studyStorageUpdate.LastAccessedTime = Platform.Time;
+
+							// Setup the Study Status Update
         					IStudyEntityBroker broker = updateContext.GetBroker<IStudyEntityBroker>();
 
 							StudySelectCriteria criteria = new StudySelectCriteria();
@@ -267,10 +299,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							StudyUpdateColumns updateColumns = new StudyUpdateColumns();
         					updateColumns.StudyStatusEnum = theStatus;
 
-        					if (!broker.Update(criteria, updateColumns))
-        						Platform.Log(LogLevel.Error, "Unable to update Study row: Study {0}, Server Entity {1}", theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);
-        					else
-        						updateContext.Commit();
+
+							if (!broker.Update(criteria, updateColumns))
+							{
+								Platform.Log(LogLevel.Error, "Unable to update Study row: Study {0}, Server Entity {1}",
+											 theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);
+							}
+							else if (!filesystemQueueBroker.Update(filesystemQueueCriteria,filesystemQueueUpdate))
+							{
+								Platform.Log(LogLevel.Error, "Unable to update FilesystemQueue row: Study {0}, Server Entity {1}",
+											 theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);
+								
+							}
+							else if (!studyStorageBroker.Update(theStudyStorage.GetKey(),studyStorageUpdate))
+							{
+								Platform.Log(LogLevel.Error, "Unable to update StudyStorage row: Study {0}, Server Entity {1}",
+											 theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);								
+							}
+							else
+								updateContext.Commit();
         				}
         			}
         		);

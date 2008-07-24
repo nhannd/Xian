@@ -69,6 +69,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             get { return this.ViewStudyDetailsButton.ClientID; }
         }
 
+		[ExtenderControlProperty]
+		[ClientPropertyName("RestoreButtonClientID")]
+		public string RestoreButtonClientID
+		{
+			get { return this.RestoreStudyButton.ClientID; }
+		}
+
         [ExtenderControlProperty]
         [ClientPropertyName("SendButtonClientID")]
         public string SendButtonClientID
@@ -230,6 +237,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                                 LoadStudies();
                                 UpdatePanel.Update(); // force refresh
                             };
+
+			RestoreMessageBox.Confirmed += delegate(object data)
+							{
+								if (data is IList<Study>)
+								{
+									IList<Study> studies = data as IList<Study>;
+									foreach (Study study in studies)
+									{
+										_controller.RestoreStudy(study);
+									}
+								}
+								else if (data is Study)
+								{
+									Study study = data as Study;
+									_controller.RestoreStudy(study);
+								}
+
+								LoadStudies();
+								UpdatePanel.Update(); // force refresh
+							};
             
         }
 
@@ -288,17 +315,57 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             }
         }
 
+		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
+		{
+			IList<Study> studies = StudyListGridView.SelectedStudies;
+
+			if (studies != null && studies.Count > 0)
+			{
+				if (studies.Count > 1) RestoreMessageBox.Message = string.Format(App_GlobalResources.SR.MultipleStudyRestore);
+				else RestoreMessageBox.Message = string.Format(App_GlobalResources.SR.SingleStudyRestore);
+
+				RestoreMessageBox.Message += "<table>";
+				foreach (Study study in studies)
+				{
+					String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>",
+									study.PatientsName, study.AccessionNumber, study.StudyDescription);
+					RestoreMessageBox.Message += text;
+				}
+				RestoreMessageBox.Message += "</table>";
+
+				RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+				RestoreMessageBox.Data = studies;
+				RestoreMessageBox.Show();
+			}
+		}
+
         protected void UpdateToolbarButtonState()
         {
             IList<Study> studies = StudyListGridView.SelectedStudies;
             if (studies != null)
             {
-                ViewStudyDetailsButton.Enabled = true;
-                DeleteStudyButton.Enabled = true;
+				RestoreStudyButton.Enabled = true;
+				foreach (Study study in studies)
+				{
+					if (!study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+					{
+						RestoreStudyButton.Enabled = false;
+						break;
+					}
+				}
+
+
+            	ViewStudyDetailsButton.Enabled = true;
+				DeleteStudyButton.Enabled = true;
                 MoveStudyButton.Enabled = true;
                 foreach (Study study in studies)
                 {
-                    if (_controller.IsScheduledForDelete(study))
+					if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+					{
+						DeleteStudyButton.Enabled = false;
+						MoveStudyButton.Enabled = false;
+					}
+                    else if (_controller.IsScheduledForDelete(study))
                     {
                         DeleteStudyButton.Enabled = false;
                         break;
@@ -310,6 +377,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                 ViewStudyDetailsButton.Enabled = false;
                 MoveStudyButton.Enabled = false;
                 DeleteStudyButton.Enabled = false;
+            	RestoreStudyButton.Enabled = false;
             }
         }
 

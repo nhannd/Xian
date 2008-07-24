@@ -367,6 +367,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to restore the following studies?.
+        /// </summary>
+        internal static string MultipleStudyRestore {
+            get {
+                return ResourceManager.GetString("MultipleStudyRestore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No DHCP.
         /// </summary>
         internal static string NoDHCP {
@@ -417,6 +426,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string SingleStudyDelete {
             get {
                 return ResourceManager.GetString("SingleStudyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to restore this study?.
+        /// </summary>
+        internal static string SingleStudyRestore {
+            get {
+                return ResourceManager.GetString("SingleStudyRestore", resourceCulture);
             }
         }
         

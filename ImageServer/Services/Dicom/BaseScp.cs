@@ -41,7 +41,6 @@ using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -284,11 +283,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     insertParms.Folder = studyDate;
                     insertParms.FilesystemKey = filesystem.GetKey();
 
-					if (!message.TransferSyntax.LosslessCompressed &&
-						!message.TransferSyntax.LossyCompressed)
-						insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-					else
+					if (message.TransferSyntax.LosslessCompressed)
+					{
 						insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
+						insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+					}
+					else if (message.TransferSyntax.LossyCompressed)
+					{
+						insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
+						insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+					}
+					else
+                	{
+						insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+						insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+					}
 
                     studyLocationList = locInsert.Execute(insertParms);
 

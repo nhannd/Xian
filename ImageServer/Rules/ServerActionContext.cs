@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Rules
     public class ServerActionContext
 	{
 		#region Private Members
-        private readonly DicomMessageBase _msg;
+        private DicomMessageBase _msg;
         private readonly ServerEntityKey _serverPartitionKey;
         private readonly ServerEntityKey _studyLocationKey;
         private readonly ServerEntityKey _filesystemKey;
@@ -77,6 +77,7 @@ namespace ClearCanvas.ImageServer.Rules
         public DicomMessageBase Message
         {
             get { return _msg; }
+			set { _msg = value; }
         }
 
 		/// <summary>

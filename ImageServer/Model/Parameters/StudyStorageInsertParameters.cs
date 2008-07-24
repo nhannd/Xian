@@ -61,5 +61,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 		{
 			set { this.SubCriteria["TransferSyntaxUid"] = new ProcedureParameter<String>("TransferSyntaxUid", value); }
 		}
+		public StudyStatusEnum StudyStatusEnum
+		{
+			set { SubCriteria["StudyStatusEnum"] = new ProcedureParameter<ServerEnum>("StudyStatusEnum", value); }
+		}
 	}
 }

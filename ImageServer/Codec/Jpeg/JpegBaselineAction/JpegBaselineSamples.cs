@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
                    "SampleJpegBaseline.xml")
         {
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
         }
     }
 
@@ -58,6 +60,8 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 				   "SampleJpegBaselineStudyDate.xml")
 		{
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
 		}
 	}
 }

@@ -220,11 +220,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                         bool deleted = controller.IsScheduledForDelete(study);
                         if (deleted)
                             row.Attributes.Add("deleted", "true");
-                   
+						if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+							row.Attributes.Add("nearline", "true");
                     }
- 
                 }
-                    
             }
         }
 

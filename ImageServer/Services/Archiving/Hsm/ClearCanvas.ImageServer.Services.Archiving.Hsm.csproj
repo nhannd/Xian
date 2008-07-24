@@ -37,7 +37,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplyRulesCommand.cs" />
     <Compile Include="CreateStudyZipCommand.cs" />
+    <Compile Include="ExtractZipCommand.cs" />
     <Compile Include="HsmArchive.cs" />
     <Compile Include="HsmArchiveService.cs" />
     <Compile Include="HsmRestoreService.cs" />
@@ -48,7 +50,6 @@
     </Compile>
     <Compile Include="HsmStudyArchive.cs" />
     <Compile Include="HsmStudyRestore.cs" />
-    <Compile Include="InsertArchiveStudyStorageCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

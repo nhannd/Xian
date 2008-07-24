@@ -132,6 +132,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
             return row.getAttribute('deleted')=='true';
         },
         
+        _studyIsNearline : function(row)
+        {
+            //"nearline" is a custom attribute injected by the study list control
+            return row.getAttribute('nearline')=='true';
+        },
+        
         _openSelectedStudies : function()
         {
             var studylist = $find(this._StudyListClientID);
@@ -198,10 +204,18 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
                 if (rows.length>0)
                 {
                     this._enableOpenStudyButton(true);
-                    
+					this._enableRestoreButton(true);                    
                     for(i=0; i<rows.length; i++)
                     {
-                        if (this._studyIsDeleted(rows[i])) 
+                        if (!this._studyIsNearline(rows[i])) 
+                        {
+                            this._enableRestoreButton(false);   
+                        }
+                    }
+
+                    for(i=0; i<rows.length; i++)
+                    {
+                        if (this._studyIsDeleted(rows[i]) || this._studyIsNearline(rows[i])) 
                         {
                             this._enableDeleteButton(false);
                             this._enableSendStudyButton(false);
@@ -216,6 +230,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
                     this._enableDeleteButton(false);
                     this._enableOpenStudyButton(false);
                     this._enableSendStudyButton(false);
+                    this._enableRestoreButton(false);
                 }
             }
             else
@@ -223,6 +238,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
                 this._enableDeleteButton(false);
                 this._enableOpenStudyButton(false);
                 this._enableSendStudyButton(false);
+                this._enableRestoreButton(false);
             }
         },
         
@@ -246,6 +262,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
             sendButton.set_enable(en);
         },
         
+        _enableRestoreButton : function(en)
+        {
+            var deleteButton = $find(this._RestoreButtonClientID);
+            deleteButton.set_enable(en);
+        },
+        
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -260,6 +282,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
         // Properties
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
+        get_RestoreButtonClientID : function() {
+            return this._RestoreButtonClientID;
+        },
+
+        set_RestoreButtonClientID : function(value) {
+            this._RestoreButtonClientID = value;
+            this.raisePropertyChanged('RestoreButtonClientID');
+        },
         
         get_DeleteButtonClientID : function() {
             return this._DeleteButtonClientID;

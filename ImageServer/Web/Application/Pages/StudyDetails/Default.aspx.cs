@@ -127,15 +127,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.StudyInstanceUid.EqualTo(_studyInstanceUid);
             criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-            IList<Study> studies =  studyAdaptor.Get(criteria);
+			Study study = studyAdaptor.GetFirst(criteria);
 
-            if (studies!=null && studies.Count>0)
-            {
-                Platform.CheckArgumentRange(studies.Count, 1, 1, "Number of study with matching study instance uid on the server");
-                
-                // there should be only one study
-                _study  = studies[0];
-            }
+			if (study != null) _study = study;
 
 
             StudyDetailsPanel.Study = _study;

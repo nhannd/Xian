@@ -209,6 +209,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteStudyButton;
         
         /// <summary>
+        /// RestoreStudyButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton RestoreStudyButton;
+        
+        /// <summary>
         /// Panel2 control.
         /// </summary>
         /// <remarks>
@@ -252,5 +261,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
+        
+        /// <summary>
+        /// RestoreMessageBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox RestoreMessageBox;
     }
 }

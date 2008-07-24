@@ -52,6 +52,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 		private bool _editMode;
 		private ServerRule _rule;
 
+		// If new rule types are added, must be updated!
+		private static readonly ServerRuleApplyTimeEnum[] _autoRouteList =
+			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.SopProcessed};
+
+		private static readonly ServerRuleApplyTimeEnum[] _studyDeleteList =
+			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyProcessed};
+
+		private static readonly ServerRuleApplyTimeEnum[] _tier1RetentionList =
+			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyArchived, ServerRuleApplyTimeEnum.StudyRestored};
+
+		private static readonly ServerRuleApplyTimeEnum[] _onlineRetentionList =
+			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyArchived, ServerRuleApplyTimeEnum.StudyRestored};
+
+		private static readonly ServerRuleApplyTimeEnum[] _studyCompressList =
+			new ServerRuleApplyTimeEnum[]
+				{
+					ServerRuleApplyTimeEnum.StudyProcessed, ServerRuleApplyTimeEnum.StudyArchived,
+					ServerRuleApplyTimeEnum.StudyRestored
+				};
+															
 		#endregion
 
 		#region public members
@@ -116,7 +136,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 		#endregion Events
 
 		#region Protected Methods
-		private static string GetJavascriptForSampleRule(ServerRuleTypeEnum typeEnum, ServerRuleApplyTimeEnum applyTimeEnum, object[] extensions )
+		private static string GetJavascriptForSampleRule(ServerRuleTypeEnum typeEnum, ServerRuleApplyTimeEnum[] applyTimeEnumList, object[] extensions )
 		{
 			string sampleList = string.Empty;
 
@@ -124,10 +144,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			{
 				if (extension.Type.Equals(typeEnum))
 				{
-					foreach (ServerRuleApplyTimeEnum applyTimeExtension in extension.ApplyTimeList)
-					{
-						if (applyTimeExtension.Equals(applyTimeExtension))
-						{
 							sampleList +=
 								String.Format(
 									@"        myEle = document.createElement('option') ;
@@ -135,25 +151,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
                     myEle.text = '{1}' ;
                     sampleList.add(myEle) ;",
 									extension.Name, extension.Description);
-						}
-					}
 				}
+			}
+
+			string enumList = string.Empty;
+			foreach (ServerRuleApplyTimeEnum applyTimeEnum in applyTimeEnumList)
+			{
+				enumList += String.Format( @"myEle = document.createElement('option') ;
+                    myEle.value = '{0}';
+                    myEle.text = '{1}';
+                    applyTimeList.add(myEle) ;",applyTimeEnum, applyTimeEnum.Description);
 			}
 			
 			return String.Format(@"if (val == '{0}')
                 {{
+					{1}
                     myEle = document.createElement('option') ;
                     myEle.value = '';
                     myEle.text = '' ;
                     sampleList.add(myEle) ;
-                    {3}
-
-                    myEle = document.createElement('option') ;
-                    myEle.value = '{1}';
-                    myEle.text = '{2}';
-                    applyTimeList.add(myEle) ;
-
-                }}", typeEnum.Lookup, applyTimeEnum, applyTimeEnum.Description, sampleList);
+                    {2}
+                }}", typeEnum.Lookup, enumList, sampleList);
 		}
 
 		protected override void OnInit(EventArgs e)
@@ -172,8 +190,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             function ValidationServerRuleParams()
             {
                 control = document.getElementById('" +
-			                    RuleXmlTextBox.ClientID +
-			                    @"');
+								RuleXmlTextBox.ClientID +
+								@"');
                 params = new Array();
                 params.serverRule=escape(control.value);
                 return params;
@@ -183,33 +201,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             {         
                 var val = oList.value; 
                 var sampleList = document.getElementById('" +
-			                    SampleRuleDropDownList.ClientID +
-			                    @"');
+								SampleRuleDropDownList.ClientID +
+								@"');
                 var applyTimeList = document.getElementById('" +
-			                    RuleApplyTimeDropDownList.ClientID +
-			                    @"');
+								RuleApplyTimeDropDownList.ClientID +
+								@"');
                 for (var q=sampleList.options.length; q>=0; q--) sampleList.options[q]=null;
                 for (var q=applyTimeList.options.length; q>=0; q--) applyTimeList.options[q]=null;
-				" + 
-			                    GetJavascriptForSampleRule(ServerRuleTypeEnum.AutoRoute,
-			                                               ServerRuleApplyTimeEnum.SopProcessed,extensions) +
-			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyDelete,
-			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
-			                                                 extensions) +
-			                    @"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.Tier1Retention,
-			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
-			                                                 extensions) +
+				" +
+								GetJavascriptForSampleRule(ServerRuleTypeEnum.AutoRoute,
+														   _autoRouteList, extensions) +
+								@"else "
+								+ GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyDelete,
+															 _studyDeleteList,extensions) +
+								@"else "
+								+ GetJavascriptForSampleRule(ServerRuleTypeEnum.Tier1Retention,
+															 _tier1RetentionList,extensions) +
 								@"else "
 								+ GetJavascriptForSampleRule(ServerRuleTypeEnum.OnlineRetention,
-															 ServerRuleApplyTimeEnum.StudyArchived,
-															 extensions) +
+															 _onlineRetentionList,extensions) +
 								@"else "
-			                    + GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyCompress,
-			                                                 ServerRuleApplyTimeEnum.StudyProcessed,
-			                                                 extensions) +
-			                    @"}
+								+ GetJavascriptForSampleRule(ServerRuleTypeEnum.StudyCompress,
+															 _studyCompressList,extensions) +
+								@"}
 
             // This function calls the Web Service method.  
             function webServiceScript(oList)
@@ -229,13 +243,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             function OnSucess(result)
             {
                 var oList = document.getElementById('" +
-			                    SampleRuleDropDownList.ClientID +
-			                    @"');
+								SampleRuleDropDownList.ClientID +
+								@"');
                 var sValue = oList.options[oList.selectedIndex].value;
              
                 RsltElem = document.getElementById('" +
-			                    RuleXmlTextBox.ClientID +
-			                    @"');
+								RuleXmlTextBox.ClientID +
+								@"');
                 RsltElem.value = result;
             }
   
@@ -319,7 +333,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 
 			_rule.ServerRuleTypeEnum = ServerRuleTypeEnum.GetEnum(RuleTypeDropDownList.SelectedItem.Value);
 
-			_rule.ServerRuleApplyTimeEnum = ServerRuleApplyTimeEnum.GetEnum(RuleApplyTimeDropDownList.SelectedItem.Value);
+			// If new rule types are added, must be updated!
+			if (_rule.ServerRuleTypeEnum.Equals(ServerRuleTypeEnum.AutoRoute))
+				_rule.ServerRuleApplyTimeEnum = _autoRouteList[RuleApplyTimeDropDownList.SelectedIndex];
+			else if (_rule.ServerRuleTypeEnum.Equals(ServerRuleTypeEnum.OnlineRetention))
+				_rule.ServerRuleApplyTimeEnum = _onlineRetentionList[RuleApplyTimeDropDownList.SelectedIndex];
+			else if (_rule.ServerRuleTypeEnum.Equals(ServerRuleTypeEnum.StudyCompress))
+				_rule.ServerRuleApplyTimeEnum = _studyCompressList[RuleApplyTimeDropDownList.SelectedIndex];
+			else if (_rule.ServerRuleTypeEnum.Equals(ServerRuleTypeEnum.StudyDelete))
+				_rule.ServerRuleApplyTimeEnum = _studyDeleteList[RuleApplyTimeDropDownList.SelectedIndex];
+			else if (_rule.ServerRuleTypeEnum.Equals(ServerRuleTypeEnum.Tier1Retention))
+				_rule.ServerRuleApplyTimeEnum = _tier1RetentionList[RuleApplyTimeDropDownList.SelectedIndex];
 
 			_rule.Enabled = EnabledCheckBox.Checked;
 			_rule.DefaultRule = DefaultCheckBox.Checked;
@@ -364,36 +388,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 				                               	_rule.ServerRuleTypeEnum.Description,
 				                               	_rule.ServerRuleTypeEnum.Lookup));
 
+				ServerRuleApplyTimeEnum[] list = new ServerRuleApplyTimeEnum[0];
+
+				// NOTE:  Needs to be adjusted if new rules types are added!
 				if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.StudyDelete)
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
-
+					list = _studyDeleteList;
 				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.Tier1Retention)
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
-
+					list = _tier1RetentionList;
 				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.OnlineRetention)
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.StudyArchived.Description,
-					                                    	ServerRuleApplyTimeEnum.StudyArchived.Lookup));
+					list = _onlineRetentionList;
 				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.AutoRoute)
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
+					list = _autoRouteList;
 				else if (_rule.ServerRuleTypeEnum == ServerRuleTypeEnum.StudyCompress)
-				{
+					list = _studyCompressList;
+
+				foreach (ServerRuleApplyTimeEnum applyTime in list)
 					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Description,
-					                                    	ServerRuleApplyTimeEnum.StudyProcessed.Lookup));
-					RuleApplyTimeDropDownList.Items.Add(new ListItem(
-					                                    	ServerRuleApplyTimeEnum.StudyArchived.Description,
-					                                    	ServerRuleApplyTimeEnum.StudyArchived.Lookup));
-				}
+															applyTime.Description,
+															applyTime.Lookup));
 
 
-				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.ToString()) != null)
+				if (RuleApplyTimeDropDownList.Items.FindByValue(_rule.ServerRuleApplyTimeEnum.Lookup) != null)
 					RuleApplyTimeDropDownList.SelectedValue = _rule.ServerRuleApplyTimeEnum.Lookup;
 
 				RuleTypeDropDownList.SelectedValue = _rule.ServerRuleTypeEnum.Lookup;

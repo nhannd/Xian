@@ -133,28 +133,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails
                 ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
                 criteria.AeTitle.EqualTo(_serverae);
 
-                IList<Model.ServerPartition> partitions = adaptor.Get(criteria);
-                if (partitions != null && partitions.Count > 0)
+                Model.ServerPartition partition = adaptor.GetFirst(criteria);
+                if (partition != null)
                 {
-                    Partition = partitions[0];
+                    Partition = partition;
 
                     StudySelectCriteria studyCriteria = new StudySelectCriteria();
                     studyCriteria.StudyInstanceUid.EqualTo(_studyInstanceUid);
                     studyCriteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-                    IList<Model.Study> studies = studyAdaptor.Get(studyCriteria);
+                    Model.Study study = studyAdaptor.GetFirst(studyCriteria);
 
-                    if (studies != null && studies.Count > 0)
+                    if (study != null)
                     {
                         // there should be only one study
-                        _study = studies[0];
+                        _study = study;
 
                         SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
                         seriesCriteria.SeriesInstanceUid.EqualTo(_seriesInstanceUid);
-                        IList<Model.Series> series = seriesAdaptor.Get(seriesCriteria);
+                        Series series = seriesAdaptor.GetFirst(seriesCriteria);
 
-                        if (series != null && series.Count > 0)
+                        if (series != null)
                         {
-                            _series = series[0];
+                            _series = series;
                         }
                     }
 

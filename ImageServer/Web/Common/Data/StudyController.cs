@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private readonly StudyAdaptor _adaptor = new StudyAdaptor();
         private readonly SeriesSearchAdaptor _seriesAdaptor = new SeriesSearchAdaptor();
-
+		private readonly PartitionArchiveAdaptor _partitionArchiveAdaptor = new PartitionArchiveAdaptor();
         #endregion
 
         #region Public Methods
@@ -63,7 +63,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _seriesAdaptor.Get(criteria);
         }
 
-
+		/// <summary>
+		/// Delete a Study.
+		/// </summary>
+		/// <param name="study">The <see cref="Study"/> to delete.</param>
+		/// <returns>true on success, false on failure.</returns>
         public bool DeleteStudy(Study study)
         {
             WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
@@ -93,6 +97,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return true;
         }
 
+		/// <summary>
+		/// Restore a nearline study.
+		/// </summary>
+		/// <param name="study">The <see cref="Study"/> to restore.</param>
+		/// <returns>true on success, false on failure.</returns>
+		public bool RestoreStudy(Study study)
+		{
+			return _partitionArchiveAdaptor.RestoreStudy(study);
+		}
+
         public bool MoveStudy(Study study, Device device)
         {
             WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
@@ -106,9 +120,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
             criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
-            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
+            StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
-            columns.StudyStorageKey = storages[0].GetKey();
+            columns.StudyStorageKey = storage.GetKey();
             DateTime time = Platform.Time.AddSeconds(60);
             columns.ScheduledTime = time;
             columns.ExpirationTime = time;
@@ -133,9 +147,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
             criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
-            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
+            StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
-            columns.StudyStorageKey = storages[0].GetKey();
+            columns.StudyStorageKey = storage.GetKey();
             DateTime time = Platform.Time.AddSeconds(60);
             columns.ScheduledTime = time;
             columns.ExpirationTime = time;

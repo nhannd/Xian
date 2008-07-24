@@ -39,7 +39,7 @@ using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
+namespace ClearCanvas.ImageServer.Services.Archiving
 {
 	/// <summary>
 	/// Command to insert an <see cref="ArchiveStudyStorage"/> record and update the <see cref="ArchiveQueue"/>
@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="serverTransferSyntaxKey">The <see cref="ServerTransferSyntax"/> entity key.</param>
 		/// <param name="archiveXml">XML Specific archive data to be stored in the <see cref="ArchiveStudyStorage"/> table.</param>
 		public InsertArchiveStudyStorageCommand(ServerEntityKey studyStorageKey,
-				 ServerEntityKey partitionArchiveKey,
-				 ServerEntityKey archiveQueueKey,
-				 ServerEntityKey serverTransferSyntaxKey,
-				 XmlDocument archiveXml)
+		                                        ServerEntityKey partitionArchiveKey,
+		                                        ServerEntityKey archiveQueueKey,
+		                                        ServerEntityKey serverTransferSyntaxKey,
+		                                        XmlDocument archiveXml)
 			: base("Insert ArchiveStudyStorage", true)
 		{
 			_studyStorageKey = studyStorageKey;

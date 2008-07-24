@@ -219,6 +219,9 @@
   <data name="MultipleStudyDelete" xml:space="preserve">
     <value>Are you sure you want to delete the following studies?</value>
   </data>
+  <data name="MultipleStudyRestore" xml:space="preserve">
+    <value>Are you sure you want to restore the following studies?</value>
+  </data>
   <data name="NoDHCP" xml:space="preserve">
     <value>No DHCP</value>
   </data>
@@ -236,6 +239,9 @@
   </data>
   <data name="SingleStudyDelete" xml:space="preserve">
     <value>Are you sure you want to delete this study?</value>
+  </data>
+  <data name="SingleStudyRestore" xml:space="preserve">
+    <value>Are you sure you want to restore this study?</value>
   </data>
   <data name="StudyScheduledForDeletion" xml:space="preserve">
     <value>This study has been scheduled for deletion.</value>

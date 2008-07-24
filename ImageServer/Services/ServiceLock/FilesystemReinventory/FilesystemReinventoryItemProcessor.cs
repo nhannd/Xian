@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -74,7 +76,22 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                         StudyStorageLocation location;
                         if (false == GetStudyStorageLocation(partition, studyInstanceUid, out location))
                         {
-                            IList<StudyStorageLocation> studyLocationList;
+							List<FileInfo> fileList = new List<FileInfo>();
+							foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
+							{
+								FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+
+								foreach (FileInfo sopFile in sopInstanceFiles)
+									fileList.Add(sopFile);
+							}
+
+                        	FileInfo firstFile = fileList[0];
+
+                        
+							DicomFile file = new DicomFile(firstFile.FullName);
+                        	file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
+
+                        	IList<StudyStorageLocation> studyLocationList;
                             using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                             {
                                 IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
@@ -83,6 +100,21 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                 insertParms.StudyInstanceUid = studyInstanceUid;
                                 insertParms.Folder = dateDir.Name;
                                 insertParms.FilesystemKey = filesystem.GetKey();
+								if (file.TransferSyntax.LosslessCompressed)
+								{
+									insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+									insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+								}
+								else if (file.TransferSyntax.LossyCompressed)
+								{
+									insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+									insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+								}
+								else
+								{
+									insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+									insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+								}
 
                                 studyLocationList = studyInsert.Execute(insertParms);
 
@@ -95,13 +127,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                             if (File.Exists(studyXml))
                                 File.Delete(studyXml);
 
-                            foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
-                            {
-                                String seriesInstanceUid = seriesDir.Name;
-                                FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
 
-                                foreach (FileInfo sopFile in sopInstanceFiles)
+                                foreach (FileInfo sopFile in fileList)
                                 {
+
                                     String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
 
                                     // Just use a read context here, in hopes of improving 
@@ -114,7 +143,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                         new WorkQueueStudyProcessInsertParameters();
                                     queueInsertParms.StudyStorageKey = location.GetKey();
                                     queueInsertParms.ServerPartitionKey = partition.GetKey();
-                                    queueInsertParms.SeriesInstanceUid = seriesInstanceUid;
+                                    queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
                                     queueInsertParms.SopInstanceUid = sopInstanceUid;
                                     queueInsertParms.ScheduledTime = Platform.Time;
                                     queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(1.0);
@@ -122,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                                     if (!workQueueInsert.Execute(queueInsertParms))
                                         Platform.Log(LogLevel.Error,
                                                      "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
-                                }
+                                
                             }
                         }
                     }

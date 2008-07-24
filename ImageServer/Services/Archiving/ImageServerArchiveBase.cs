@@ -43,21 +43,65 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 	/// <summary>
 	/// Base class for implementing archives.
 	/// </summary>
-	public abstract class ImageServerArchiveBase : IImageServerArchivePlugin
+	/// <remarks>
+	/// Archives supported by ImageServer are implemented via the <see cref="ImageServerArchiveExtensionPoint"/>
+	/// plugin.  These plugins must implement the <see cref="IImageServerArchivePlugin"/> 
+	/// interface.  The ImageServerArchiveBase class implements a base set of methods that
+	/// will be used by any archive plugin.
+	/// </remarks>
+	public abstract class ImageServerArchiveBase : IImageServerArchivePlugin, IDisposable
 	{
 		protected PartitionArchive _partitionArchive;
 		private ServerPartition _serverPartition;
 		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+		private FilesystemMonitor _fsMonitor;
+		private readonly FilesystemSelector _selector;
 
+		/// <summary>
+		/// The <see cref="ServerPartition"/> associated with the archive.
+		/// </summary>
 		public ServerPartition ServerPartition
 		{
 			get { return _serverPartition; }
 		}
-		public abstract ArchiveTypeEnum ArchiveType { get; }
 
+		/// <summary>
+		/// A <see cref="FilesystemMonitor"/> to be used by the archive.
+		/// </summary>
+		public FilesystemMonitor Monitor
+		{
+			get { return _fsMonitor; }
+		}
+
+		/// <summary>
+		/// A <see cref="FilesystemSelector"/> used to select a filesystem when restoring studies.
+		/// </summary>
+		public FilesystemSelector Selector
+		{
+			get { return _selector; }
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected ImageServerArchiveBase()
+		{
+			_fsMonitor = new FilesystemMonitor("Archive");
+			_selector = new FilesystemSelector(_fsMonitor);
+			_fsMonitor.Load();
+		}
+
+		public abstract ArchiveTypeEnum ArchiveType { get; }
 		public abstract void Start(PartitionArchive archive);
 		public abstract void Stop();
 
+		/// <summary>
+		/// Get a list of restore candidates for the archive.
+		/// </summary>
+		/// <remarks>
+		/// Note that at the current time only one cadidate is returned at a time.
+		/// </remarks>
+		/// <returns>A list of restore candidates.  The list will be empty if no candidates exist.</returns>
 		public IList<RestoreQueue> GetRestoreCandidate()
 		{
 			IList<RestoreQueue> list;
@@ -83,7 +127,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// <summary>
 		/// Get candidates for archival on the <see cref="PartitionArchive"/>.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A list of archive candidates.  The list will be empty if no candidates exist.</returns>
 		public IList<ArchiveQueue> GetArchiveCandidates()
 		{
 			IList<ArchiveQueue> list;
@@ -107,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		}
 
 		/// <summary>
-		/// Load the server partition information for the 
+		/// Load the server partition information for the the archive.
 		/// </summary>
 		public void LoadServerPartition()
 		{
@@ -142,7 +186,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		}
 
 		/// <summary>
-		/// Update an <see cref="RestoreQueue"/> entry.
+		/// Update a <see cref="RestoreQueue"/> entry.
 		/// </summary>
 		/// <param name="item">The item to update.</param>
 		/// <param name="status">The status to set the entry to.</param>
@@ -165,6 +209,18 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				}
 				else
 					Platform.Log(LogLevel.Error, "Unexpected failure updating RestoreQueue entry {0}", item.GetKey());
+			}
+		}
+
+		/// <summary>
+		/// Dispose the class.
+		/// </summary>
+		public void Dispose()
+		{
+			if (_fsMonitor != null)
+			{
+				_fsMonitor.Dispose();
+				_fsMonitor = null;
 			}
 		}
 	}

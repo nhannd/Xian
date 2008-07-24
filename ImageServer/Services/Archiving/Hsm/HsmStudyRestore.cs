@@ -30,10 +30,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
@@ -42,8 +45,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 	/// </summary>
 	public class HsmStudyRestore
 	{
+		#region Private Members
 		private readonly HsmArchive _hsmArchive;
+		#endregion
 
+		#region Constructors
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -52,6 +58,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			_hsmArchive = hsmArchive;
 		}
+		#endregion
 
 		/// <summary>
 		/// Do the restore.
@@ -59,8 +66,86 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="queueItem">The queue item to restore.</param>
 		public void Run(RestoreQueue queueItem)
 		{
-			// Just reschedule
-			_hsmArchive.UpdateRestoreQueue(queueItem,RestoreQueueStatusEnum.Pending,Platform.Time.AddSeconds(60));
+			Filesystem fs = _hsmArchive.Selector.SelectFilesystem();
+			if (fs == null)
+			{
+				DateTime scheduleTime = Platform.Time.AddMinutes(5);
+				Platform.Log(LogLevel.Error, "No writeable filesystem for restore, rescheduling restore request to {0}", scheduleTime);
+				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
+				return;
+			}
+			
+			ArchiveStudyStorage archiveStudyStorage = ArchiveStudyStorage.Load(queueItem.ArchiveStudyStorageKey);
+			StudyStorage studyStorage = StudyStorage.Load(queueItem.StudyStorageKey);
+			ServerTransferSyntax serverSyntax = ServerTransferSyntax.Load(archiveStudyStorage.ServerTransferSyntaxKey);
+			TransferSyntax syntax = TransferSyntax.GetTransferSyntax(serverSyntax.Uid);
+
+			string studyFolder = String.Empty;
+			string filename = String.Empty;
+
+			XmlElement element = archiveStudyStorage.ArchiveXml.DocumentElement;
+			foreach (XmlElement node in element.ChildNodes)
+				if (node.Name.Equals("StudyFolder"))
+					studyFolder = node.InnerText;
+				else if (node.Name.Equals("Filename"))
+					filename = node.InnerText;
+
+			string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
+			zipFile = Path.Combine(zipFile, studyStorage.StudyInstanceUid);
+			zipFile = Path.Combine(zipFile, filename);
+
+			try
+			{
+				FileStream stream = File.OpenRead(zipFile);
+				stream.Close();
+				stream.Dispose();
+			}
+			catch (Exception)
+			{
+				// Just reschedule, the file is unreadable.
+				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending,
+				                               Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds));
+				return;
+			}
+
+			try
+			{
+				ServerCommandProcessor processor = new ServerCommandProcessor("HSM Restore Study");
+
+				string destinationFolder = Path.Combine(fs.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
+				processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
+				destinationFolder = Path.Combine(destinationFolder, studyFolder);
+				processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
+				destinationFolder = Path.Combine(destinationFolder, studyStorage.StudyInstanceUid);
+				processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
+
+				processor.AddCommand(new ExtractZipCommand(zipFile, destinationFolder));
+
+				processor.AddCommand(
+					new InsertFilesystemStudyStorageCommand(studyStorage.ServerPartitionKey, studyStorage.StudyInstanceUid, studyFolder,
+					                                        fs.GetKey(), syntax));
+
+				// Apply the rules engine.
+				ServerActionContext context = new ServerActionContext(null, fs.GetKey(), _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
+
+				context.CommandProcessor = processor;
+
+	
+				if (!processor.Execute())
+				{
+					Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
+								 studyStorage.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
+				}
+				else
+					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
+				             studyStorage.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
+			}
 		}
 	}
 }

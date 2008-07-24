@@ -48,6 +48,7 @@ public partial class ServerRuleApplyTimeEnum : ServerEnum
       private static readonly ServerRuleApplyTimeEnum _SeriesProcessed = GetEnum("SeriesProcessed");
       private static readonly ServerRuleApplyTimeEnum _StudyProcessed = GetEnum("StudyProcessed");
       private static readonly ServerRuleApplyTimeEnum _StudyArchived = GetEnum("StudyArchived");
+      private static readonly ServerRuleApplyTimeEnum _StudyRestored = GetEnum("StudyRestored");
       #endregion
 
       #region Public Static Properties
@@ -85,6 +86,13 @@ public partial class ServerRuleApplyTimeEnum : ServerEnum
       public static ServerRuleApplyTimeEnum StudyArchived
       {
           get { return _StudyArchived; }
+      }
+      /// <summary>
+      /// Apply rule after a Study has been restored
+      /// </summary>
+      public static ServerRuleApplyTimeEnum StudyRestored
+      {
+          get { return _StudyRestored; }
       }
 
       #endregion

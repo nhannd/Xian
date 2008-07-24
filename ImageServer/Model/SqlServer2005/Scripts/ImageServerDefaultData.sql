@@ -195,6 +195,12 @@ INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            (newid(),104,'StudyArchived','Study Archived','Apply rule after a Study is archived')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),105,'StudyRestored','Study Restored','Apply rule after a Study has been restored')
+GO
+
 
 -- FilesystemQueueTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
@@ -657,10 +663,6 @@ INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Descri
 VALUES(newid(),103,'Nearline','Nearline','The study is nearline (in an automated library)')
 GO
 
-INSERT INTO [ImageServer].[dbo].[StudyStatusEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-VALUES(newid(),200,'Pending','Pending','Pending')
-GO
-
 
 -- DuplicateSopPolicyEnum inserts
 INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
@@ -716,6 +718,6 @@ GO
 
 
 -- ArchiveTypeEnum inserts
-INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+INSERT INTO [ImageServer].[dbo].[ArchiveTypeEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES (newid(),100,'HsmArchive','HSM Archive','Hierarchical storage management archive such as StorageTek QFS')
 GO

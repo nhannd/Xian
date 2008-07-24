@@ -109,13 +109,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             StudyAdaptor studyAdaptor = new StudyAdaptor();
             StudySelectCriteria studycriteria = new StudySelectCriteria();
             studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-            IList<Study> studyList = studyAdaptor.Get(studycriteria);
+			studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+			Study study = studyAdaptor.GetFirst(studycriteria);
 
             // Study may not be available until the images are processed.
-            if (studyList != null && studyList.Count > 0)
+            if (study != null)
             {
                 StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
-                detail.Study = studyAssembler.CreateStudyDetail(studyList[0]);
+                detail.Study = studyAssembler.CreateStudyDetail(study);
             }
             return detail;
         }
@@ -167,13 +168,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 StudySelectCriteria studycriteria = new StudySelectCriteria();
                 studycriteria.StudyInstanceUid.EqualTo(studyStorage.StudyInstanceUid);
-                IList<Study> studyList = studyAdaptor.Get(studycriteria);
+				studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+                Study study = studyAdaptor.GetFirst(studycriteria);
 
                 // Study may not be available until the images are processed.
-                if (studyList != null && studyList.Count > 0)
+                if (study != null)
                 {
                     StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
-                    detail.Study = studyAssembler.CreateStudyDetail(studyList[0]);
+                    detail.Study = studyAssembler.CreateStudyDetail(study);
                 }
             }
             
@@ -227,13 +229,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             {
                 StudySelectCriteria studycriteria = new StudySelectCriteria();
                 studycriteria.StudyInstanceUid.EqualTo(studyStorage.StudyInstanceUid);
-                IList<Study> studyList = studyAdaptor.Get(studycriteria);
+				studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
+				Study study = studyAdaptor.GetFirst(studycriteria);
 
                 // Study may not be available until the images are processed.
-                if (studyList != null && studyList.Count > 0)
+				if (study != null)
                 {
                     StudyDetailsAssembler studyAssembler = new StudyDetailsAssembler();
-                    detail.Study = studyAssembler.CreateStudyDetail(studyList[0]);
+                    detail.Study = studyAssembler.CreateStudyDetail(study);
                 }
             }
             

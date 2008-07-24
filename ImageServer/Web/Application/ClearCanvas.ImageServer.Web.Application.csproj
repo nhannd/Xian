@@ -635,6 +635,8 @@
     <Content Include="App_Themes\Default\images\Buttons\NoEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKEnabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\RestoreDisabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\RestoreEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\Search.png" />
     <Content Include="App_Themes\Default\images\Buttons\RescheduleDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\RescheduleEnabled.png" />

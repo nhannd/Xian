@@ -31,35 +31,18 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LosslessAction
+namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
 {
-    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class Jpeg2000LosslessSamples : SampleRuleBase
-    {
-        public Jpeg2000LosslessSamples()
-            : base("Jpeg2000Lossless",
-                   "JPEG 2000 Lossless Sample Rule",
-				   ServerRuleTypeEnum.StudyCompress,
-                   "SampleJpeg2000Lossless.xml")
-        {
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
-        }
-    }
-
 	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
-	public class Jpeg2000ComboSample : SampleRuleBase
+	public class SimpleOnlineRetention : SampleRuleBase
 	{
-		public Jpeg2000ComboSample()
-			: base("Jpeg2000Combo",
-				   "JPEG 2000 Lossless and Lossy Sample Rule",
-				   ServerRuleTypeEnum.StudyCompress,
-				   "SampleJpeg2000Combo.xml")
+		public SimpleOnlineRetention()
+			: base("SimpleOnlineRetention",
+				   "Simple Online Retention",
+				   ServerRuleTypeEnum.OnlineRetention,
+				   "Sample_OnlineRetentionSimple.xml")
 		{
-			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
 		}

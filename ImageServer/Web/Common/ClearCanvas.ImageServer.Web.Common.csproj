@@ -48,6 +48,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\PartitionArchiveAdaptor.cs" />
     <Compile Include="Data\BaseAdaptor.cs" />
     <Compile Include="Data\BaseController.cs" />
     <Compile Include="Data\ServiceLockDataAdapter.cs" />

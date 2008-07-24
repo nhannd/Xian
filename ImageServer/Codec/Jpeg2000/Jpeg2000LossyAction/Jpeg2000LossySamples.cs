@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg2000.Jpeg2000LossyAction
                    "SampleJpeg2000Lossy.xml")
         {
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
         }
     }
 }

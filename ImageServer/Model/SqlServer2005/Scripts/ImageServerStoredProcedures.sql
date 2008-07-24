@@ -397,10 +397,12 @@ BEGIN
 	DECLARE  @StudyDeleteServerRuleTypeEnum smallint
 	DECLARE  @Tier1RetentionServerRuleTypeEnum smallint
 	DECLARE  @OnlineRetentionServerRuleTypeEnum smallint
+	DECLARE  @StudyRestoreServerRuleApplyTimeEnum smallint
 
 	-- Get the Study Processed Rule Apply Time
 	SELECT @StudyServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyProcessed''
 	SELECT @StudyArchiveServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyArchived''
+	SELECT @StudyRestoreServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyRestored''
 
 	-- Get all 3 types of Retention Rules
 	SELECT @StudyDeleteServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''StudyDelete''
@@ -435,6 +437,17 @@ BEGIN
 		 VALUES
 			   (newid(),''Default Online Retention'',@ServerPartitionGUID, @StudyArchiveServerRuleApplyTimeEnum, @OnlineRetentionServerRuleTypeEnum, 1, 1,
 				''<rule id="Default Online Retention">
+					<condition>
+					</condition>
+					<action><online-retention time="4" unit="weeks"/></action>
+				</rule>'' )
+
+	-- Insert a default Online Retention Rule
+	INSERT INTO [ImageServer].[dbo].[ServerRule]
+			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
+		 VALUES
+			   (newid(),''Default Restore Online Retention'',@ServerPartitionGUID, @StudyRestoreServerRuleApplyTimeEnum, @OnlineRetentionServerRuleTypeEnum, 1, 1,
+				''<rule id="Default Restore Online Retention">
 					<condition>
 					</condition>
 					<action><online-retention time="4" unit="weeks"/></action>
@@ -1809,7 +1822,8 @@ CREATE PROCEDURE [dbo].[InsertStudyStorage]
 	@StudyInstanceUid varchar(64),
 	@Folder varchar(8),
 	@FilesystemGUID uniqueidentifier,
-	@TransferSyntaxUid varchar(64)
+	@TransferSyntaxUid varchar(64),
+	@StudyStatusEnum smallint
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -1817,16 +1831,28 @@ BEGIN
 	SET NOCOUNT ON;
 
 	declare @StudyStorageGUID as uniqueidentifier
-	declare @PendingStatusEnum as int
 	declare @ServerTransferSyntaxGUID as uniqueidentifier
 
 	select @ServerTransferSyntaxGUID = GUID from ServerTransferSyntax where Uid = @TransferSyntaxUid
 
-	set @StudyStorageGUID = NEWID()
-	select @PendingStatusEnum = Enum from StudyStatusEnum where Lookup = ''Pending''
+	SELECT @StudyStorageGUID=GUID FROM StudyStorage 
+	WHERE ServerPartitionGUID = @ServerPartitionGUID AND StudyInstanceUid = @StudyInstanceUid
+	IF @@ROWCOUNT = 0
+	BEGIN
+		set @StudyStorageGUID = NEWID()
+	
+		INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum) 
+			values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @StudyStatusEnum)
+	END
+	ELSE
+	BEGIN
+		declare @StudyGUID as uniqueidentifier
 
-	INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum) 
-		values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @PendingStatusEnum)
+		SELECT @StudyGUID = GUID FROM Study WHERE ServerPartitionGUID = @ServerPartitionGUID AND StudyInstanceUid = @StudyInstanceUid
+		UPDATE Study SET StudyStatusEnum = @StudyStatusEnum WHERE GUID = @StudyGUID
+		UPDATE Series SET StudyStatusEnum = @StudyStatusEnum WHERE StudyGUID = @StudyGUID
+
+	END
 
 	INSERT into FilesystemStudyStorage(GUID, StudyStorageGUID, FilesystemGUID, StudyFolder, ServerTransferSyntaxGUID)
 		values (NEWID(), @StudyStorageGUID, @FilesystemGUID, @Folder, @ServerTransferSyntaxGUID)

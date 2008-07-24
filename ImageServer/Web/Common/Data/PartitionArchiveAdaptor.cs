@@ -30,48 +30,47 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    /// <summary>
-    /// Assembles an instance of  <see cref="StudyDetails"/> based on a <see cref="Study"/> object.
-    /// </summary>
-    public class StudyDetailsAssembler
-    {
-        /// <summary>
-        /// Creates an instance of <see cref="StudyDetails"/> base on a <see cref="Study"/> object.
-        /// </summary>
-        /// <param name="study"></param>
-        /// <returns></returns>
-        public StudyDetails CreateStudyDetail(Model.Study study)
-        {
-            StudyDetails details = new StudyDetails();
-            details.StudyInstanceUID = study.StudyInstanceUid;
-            details.Status = study.StudyStatusEnum.ToString();
-            details.PatientName = study.PatientsName;
-            details.AccessionNumber = study.AccessionNumber;
-            details.PatientID = study.PatientId;
+	public class PartitionArchiveAdaptor : BaseAdaptor<PartitionArchive, IPartitionArchiveEntityBroker, PartitionArchiveSelectCriteria, PartitionArchiveUpdateColumns>
+	{
+		#region Private Members
 
-            details.StudyDescription = study.StudyDescription;
+		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
 
+		#endregion Private Members
 
-            if (study.StudyInstanceUid != null)
-            {
-                StudyStorageAdaptor adaptor = new StudyStorageAdaptor();
-                StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-                criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+		public bool RestoreStudy(Study theStudy)
+		{
+			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IStudyStorageEntityBroker query = updateContext.GetBroker<IStudyStorageEntityBroker>();
 
-                StudyStorage storages = adaptor.GetFirst(criteria);
-                if (storages != null)
-                    details.Lock = storages.Lock;
-            }
+				StudyStorageSelectCriteria queryParms = new StudyStorageSelectCriteria();
+				queryParms.StudyInstanceUid.EqualTo(theStudy.StudyInstanceUid);
+				queryParms.ServerPartitionKey.EqualTo(theStudy.ServerPartitionKey);
 
+				IList<StudyStorage> list = query.Find(queryParms);
+				
+				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
 
-            return details;
-        }
-    }
+				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
+				parms.StudyStorageKey = list[0].GetKey();
+
+				IList<RestoreQueue> storageList = broker.Execute(parms);
+
+				if (storageList.Count == 0)
+					return false;
+
+				updateContext.Commit();
+			}
+			return true;
+		}
+	}
 }

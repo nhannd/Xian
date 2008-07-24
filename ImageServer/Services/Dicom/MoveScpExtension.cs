@@ -101,6 +101,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 				if (storageList.Count == 0)
 					return false;
+
+				updateContext.Commit();
 			}		
 
 			return true;

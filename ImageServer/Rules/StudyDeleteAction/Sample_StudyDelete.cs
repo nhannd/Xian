@@ -29,107 +29,34 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 {
-    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class AgeBasedDeleteSample : ISampleRule
-    {
-        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
+ 	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class AgeBasedDeleteSample : SampleRuleBase
+	{
+		public AgeBasedDeleteSample()
+			: base("AgeBasedDelete",
+				   "Age Based Delete",
+				   ServerRuleTypeEnum.StudyDelete,
+				   "Sample_StudyDeleteAgeBased.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+		}
+	}
 
-        public AgeBasedDeleteSample()
-        {
-            _applyTime.Add(ServerRuleApplyTimeEnum.SopProcessed);
-        }
-
-        #region ISampleRule Members
-
-        public string Name
-        {
-            get { return "AgeBasedDelete"; }
-        }
-
-        public string Description
-        {
-            get { return "Age Based Delete"; }
-        }
-
-        public ServerRuleTypeEnum Type
-        {
-            get { return ServerRuleTypeEnum.StudyDelete; }
-        }
-
-        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-        {
-            get { return _applyTime; }
-        }
-
-        public XmlDocument Rule
-        {
-            get
-            {
-                Stream stream =
-                    GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteAgeBased.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-            }
-        }
-
-        #endregion
-    }
-
-    [ExtensionOf(typeof (SampleRuleExtensionPoint))]
-    public class MultiTagDeleteSample : ISampleRule
-    {
-        private readonly IList<ServerRuleApplyTimeEnum> _applyTime = new List<ServerRuleApplyTimeEnum>();
-
-        public MultiTagDeleteSample()
-        {
-            _applyTime.Add(ServerRuleApplyTimeEnum.SopProcessed);
-        }
-
-        #region ISampleRule Members
-
-        public string Name
-        {
-            get { return "TagBasedDelete"; }
-        }
-
-        public string Description
-        {
-            get { return "Tag Based Delete"; }
-        }
-
-        public ServerRuleTypeEnum Type
-        {
-            get { return ServerRuleTypeEnum.StudyDelete; }
-        }
-
-        public IList<ServerRuleApplyTimeEnum> ApplyTimeList
-        {
-            get { return _applyTime; }
-        }
-
-        public XmlDocument Rule
-        {
-            get
-            {
-                Stream stream =
-                    GetType().Assembly.GetManifestResourceStream(GetType(), "Sample_StudyDeleteTagBased.xml");
-                XmlDocument doc = new XmlDocument();
-                doc.Load(stream);
-                stream.Close();
-                return doc;
-            }
-        }
-
-        #endregion
-    }
+	[ExtensionOf(typeof(SampleRuleExtensionPoint))]
+	public class MultiTagDeleteSample : SampleRuleBase
+	{
+		public MultiTagDeleteSample()
+			: base("TagBasedDelete",
+				   "Tag Based Delete",
+				   ServerRuleTypeEnum.StudyDelete,
+				   "Sample_StudyDeleteTagBased.xml")
+		{
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+		}
+	}
 }

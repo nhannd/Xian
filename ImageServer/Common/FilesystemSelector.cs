@@ -30,7 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 
@@ -50,6 +49,11 @@ namespace ClearCanvas.ImageServer.Common
         }
 
         public Filesystem SelectFilesystem(DicomMessageBase msg)
+        {
+        	return SelectFilesystem();
+        }
+
+        public Filesystem SelectFilesystem()
         {
             ServerFilesystemInfo selectedFilesystem = null;
 

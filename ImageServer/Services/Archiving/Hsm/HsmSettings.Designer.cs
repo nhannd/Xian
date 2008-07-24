@@ -40,5 +40,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm {
                 return ((int)(this["RestoreThreadCount"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int ReadFailRescheduleDelaySeconds {
+            get {
+                return ((int)(this["ReadFailRescheduleDelaySeconds"]));
+            }
+        }
     }
 }

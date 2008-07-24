@@ -48,7 +48,7 @@ public partial class ArchiveTypeEnum : ServerEnum
 
       #region Public Static Properties
       /// <summary>
-      /// HSM Archive (such as Sun/StorageTek QFS/SAM)
+      /// Hierarchical storage management archive such as StorageTek QFS
       /// </summary>
       public static ArchiveTypeEnum HsmArchive
       {

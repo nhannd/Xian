@@ -68,6 +68,7 @@
                                         <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" />
                                         <ccUI:ToolbarButton ID="MoveStudyButton" runat="server" SkinID="MoveButton" />
                                         <ccUI:ToolbarButton ID="DeleteStudyButton" runat="server" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />
+                                        <ccUI:ToolbarButton ID="RestoreStudyButton" runat="server" SkinID="RestoreButton" OnClick="RestoreStudyButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
@@ -89,5 +90,6 @@
             </asp:Table>
 
         <ccAsp:MessageBox ID="MessageBox" runat="server" />    
+        <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />    
     </ContentTemplate>
 </asp:UpdatePanel>

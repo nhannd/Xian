@@ -145,9 +145,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 				// Save the archive data in the study folder, based on a filename with a date / time stamp
 				string filename = String.Format("{0}.zip",Platform.Time.ToString("yyyy-MM-dd-HHmm"));
-				string folderPlusZip = Path.Combine(_storageLocation.StudyFolder,
-				                                    String.Format("{0}", _storageLocation.StudyInstanceUid));
-				folderPlusZip = Path.Combine(folderPlusZip, filename);
 				zipFilename = Path.Combine(zipFilename, filename);
 
 
@@ -155,9 +152,13 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				// where the archived study is located.
 				XmlElement hsmArchiveElement = _archiveXml.CreateElement("HsmArchive");
 				_archiveXml.AppendChild(hsmArchiveElement);
-				XmlElement pathElement = _archiveXml.CreateElement("Path");
-				hsmArchiveElement.AppendChild(pathElement);
-				pathElement.InnerText = folderPlusZip;
+				XmlElement studyFolderElement = _archiveXml.CreateElement("StudyFolder");
+				hsmArchiveElement.AppendChild(studyFolderElement);
+				studyFolderElement.InnerText = _storageLocation.StudyFolder;
+				XmlElement filenameElement = _archiveXml.CreateElement("Filename");
+				hsmArchiveElement.AppendChild(filenameElement);
+				filenameElement.InnerText = filename;
+				
 
 				// Create the Zip file
 				commandProcessor.AddCommand(new CreateStudyZipCommand(zipFilename,_studyXml,studyFolder));
@@ -190,22 +191,31 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			}
 		}
 
+		/// <summary>
+		/// Simple class to load a sample image file from the study.
+		/// </summary>
+		/// <returns></returns>
 		private DicomMessage LoadMessageFromStudyXml()
 		{
+			DicomMessage defaultMessage = null;
 			foreach (SeriesXml seriesXml in _studyXml)
 				foreach (InstanceXml instanceXml in seriesXml)
 				{
 					// Skip non-image objects
 					if (instanceXml.SopClass.Equals(SopClass.KeyObjectSelectionDocumentStorage)
-					    || instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
+						|| instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
 						|| instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
 						|| instanceXml.SopClass.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass))
+					{
+						if (defaultMessage == null)
+							defaultMessage = new DicomMessage(new DicomAttributeCollection(), instanceXml.Collection);
 						continue;
+					}
 
 					return new DicomMessage(new DicomAttributeCollection(), instanceXml.Collection);
 				}
 
-			return null;
+			return defaultMessage;
 		}
 	}
 }

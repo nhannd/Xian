@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
                    "SampleJpegLossless.xml")
         {
 			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
         }
     }
 }

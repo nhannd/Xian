@@ -38,11 +38,40 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 	/// <summary>
 	/// HSM Based archive plugin.
 	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// The <see cref="HsmArchive"/> class is a plugin to implement an 
+	/// Hierarchical Storage Management archive.  Among the HSM style interfaces 
+	/// to automated tape libraries are the Sun/StorageTek QFS/SAMFS and Legato DiskXtender.  
+	/// </para>
+	/// <para>
+	/// The <see cref="HsmArchive"/> class takes as input an accessable directory where
+	/// the filesystem for the HSM has been mounted.  When storing studies to the HSM
+	/// filesystem, a hierarchical folder structure is created.  At the root, a folder
+	/// typically based on Study Date is created.  Next, a folder named after Study Instance
+	/// UID of the study being archived is created.  Finally, the ZIP file for the study
+	/// is placed in this folder.  The zip file has a timestamp as the filename.
+	/// </para>
+	/// <para>
+	/// The zip file created is not in a compressed format.  It assumes the images themselves
+	/// are compressed, or the HSM filesystem / underlying tape drives are doing the compression.
+	/// </para>
+	/// <para>
+	/// When a restore of a study occurs, the HsmArchive will do an initial read of the zip 
+	/// file.  If the read fails, it will reschedule the read after a configurable time delay,
+	/// allowing the HSM system to read the zip file off disk and restore it.
+	/// </para>
+	/// <para>
+	/// The HsmArchive class is basically a shell for the archive.  A configurable number of threads
+	/// are created to handle the actual archiving and restoring of data.
+	/// </para>
+	/// </remarks>
 	[ExtensionOf(typeof(ImageServerArchiveExtensionPoint))]
 	public class HsmArchive : ImageServerArchiveBase
 	{
 		private HsmArchiveService _archiveService;
 		private HsmRestoreService _restoreService;
+		
 		private string _hsmPath;
 
 		public string HsmPath
@@ -75,7 +104,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			_partitionArchive = archive;
 
 			LoadServerPartition();
-
+		
 			_hsmPath = string.Empty;
 
 			//Hsm Archive specific Xml data.
@@ -83,7 +112,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			foreach (XmlElement node in element.ChildNodes)
 				if (node.Name.Equals("RootDir"))
 					_hsmPath = node.InnerText;
-
 			
 			// Start the restore service
 			_restoreService = new HsmRestoreService("HSM Restore", this);

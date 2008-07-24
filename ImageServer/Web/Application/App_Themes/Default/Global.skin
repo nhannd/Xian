@@ -40,6 +40,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="NoButton" EnabledImageURL="images/Buttons/NoEnabled.png" DisabledImageURL="images/Buttons/NoDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="ApplyButton" EnabledImageURL="images/Buttons/ApplyEnabled.png" DisabledImageURL="images/Buttons/ApplyDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="UpdateButton" EnabledImageURL="images/Buttons/UpdateEnabled.png" DisabledImageURL="images/Buttons/UpdateDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="RestoreButton" EnabledImageURL="images/Buttons/RestoreEnabled.png" DisabledImageURL="images/Buttons/RestoreDisabled.png" />
 <asp:LinkButton runat="server" SkinId="CloseButton" Text="Close" CssClass="CloseButton" />
 
 <%-- Tables --%>

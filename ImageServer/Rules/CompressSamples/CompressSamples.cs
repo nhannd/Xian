@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageServer.Rules.CompressSamples
 			       "SampleCompressExempt.xml")
 		{
 		    ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyProcessed);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyArchived);
+			ApplyTimeList.Add(ServerRuleApplyTimeEnum.StudyRestored);
 		}
 	}
 
