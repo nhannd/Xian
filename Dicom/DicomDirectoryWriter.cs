@@ -238,7 +238,7 @@ namespace ClearCanvas.Dicom
             {
                 try
                 {
-                    if (dicomFile.MetaInfo.Count == 0)
+                    if (dicomFile.DataSet.Count == 0)
                         dicomFile.Load(DicomReadOptions.Default);
                     DirectoryRecordSequenceItem patientRecord;
                     DirectoryRecordSequenceItem studyRecord;
