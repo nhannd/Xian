@@ -64,7 +64,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 		private void _clearButton_Click(object sender, EventArgs e)
 		{
-			_name.Value = "";
+			_component.SelectedWorklistClass = _component.NullFilter;
+			_component.Name = "";
 			_component.Search();
 		}
 	}

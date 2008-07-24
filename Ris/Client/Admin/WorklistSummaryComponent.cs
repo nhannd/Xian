@@ -53,7 +53,13 @@ namespace ClearCanvas.Ris.Client.Admin
 	[AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
     public class WorklistSummaryComponent : SummaryComponentBase<WorklistAdminSummary, WorklistAdminSummaryTable>
     {
-		private readonly object _filterNone = new object();
+		private readonly WorklistClassSummary _filterNone = new WorklistClassSummary(SR.DummyItemNone,
+																					 SR.DummyItemNone,
+																					 SR.DummyItemNone,
+																					 SR.DummyItemNone,
+																					 SR.DummyItemNone,
+																					 SR.DummyItemNone,
+																					 false);
         private readonly object _duplicateWorklistActionKey = new object();
 		private string _name;
 		private WorklistClassSummary _worklistClass;
@@ -69,6 +75,7 @@ namespace ClearCanvas.Ris.Client.Admin
 						_worklistClassChoices.AddRange(response.WorklistClasses);
 					});
 			base.Start();
+			_worklistClass = _filterNone;
 		}
 
 		/// <summary>
@@ -92,6 +99,11 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+		public object NullFilter
+		{
+			get { return _filterNone; }
+		}
+
 		public string Name
 		{
 			get { return _name; }
@@ -110,6 +122,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
 				Search();
 				this.Modified = true;
+
+				if (value == _filterNone)
+					_worklistClass = _filterNone;
 			}
 		}
 
@@ -174,12 +189,8 @@ namespace ClearCanvas.Ris.Client.Admin
                     ListWorklistsRequest listRequest = new ListWorklistsRequest();
                     listRequest.Page.FirstRow = firstItem;
                     listRequest.Page.MaxRows = maxItems;
-					if (_worklistClass != null)
-					{
-						string[] classNames = _worklistClass == null ? new string[] { } : new string[] { _worklistClass.ClassName };
-						listRequest.ClassNames = new List<string>(classNames); 
-					}
-					
+					string[] classNames = _worklistClass == null|| _worklistClass == _filterNone ? new string[] { } : new string[] { _worklistClass.ClassName };
+					listRequest.ClassNames = new List<string>(classNames);
 					listRequest.WorklistName = _name;
 
                     listResponse = service.ListWorklists(listRequest);

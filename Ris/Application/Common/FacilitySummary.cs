@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public override int GetHashCode()
         {
-            return FacilityRef.GetHashCode();
+            return FacilityRef == null ? 0 : FacilityRef.GetHashCode();
         }
     }
 }

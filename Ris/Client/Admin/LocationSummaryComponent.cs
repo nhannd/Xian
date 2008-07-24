@@ -99,23 +99,31 @@ namespace ClearCanvas.Ris.Client.Admin
 	[AssociateView(typeof(LocationSummaryComponentViewExtensionPoint))]
     public class LocationSummaryComponent : SummaryComponentBase<LocationSummary, LocationTable>
     {
-		private List<FacilitySummary> _facilityList;
+		private FacilitySummary _filterNone = new FacilitySummary();
+		private ArrayList _facilityList = new ArrayList();
 		private FacilitySummary _facility;
 		private string _name;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public LocationSummaryComponent()
-        {
+		public override void Start()
+		{
 			Platform.GetService<ILocationAdminService>(
 				delegate(ILocationAdminService service)
 				{
-					_facilityList = service.GetLocationEditFormData(new GetLocationEditFormDataRequest()).FacilityChoices;
+					GetLocationEditFormDataResponse response = service.GetLocationEditFormData(new GetLocationEditFormDataRequest());
+					_filterNone.Name = SR.DummyItemNone;
+					_facilityList.Add(_filterNone);
+					_facilityList.AddRange(response.FacilityChoices);
 				});
+			base.Start();
+			_facility = _filterNone;
 		}
 
 		# region Presentation Model
+
+		public object NullFilter
+		{
+			get { return _filterNone; }
+		}
 
 		public string Name
 		{
@@ -123,14 +131,20 @@ namespace ClearCanvas.Ris.Client.Admin
 			set { _name = value; }
 		}
 
-		public FacilitySummary Facility
+		public object Facility
 		{
 			get {return _facility; }
 			set
 			{
-				_facility = value;
+				if (value == _filterNone)
+					_facility = null;
+				else
+					_facility = (FacilitySummary)value;
+
 				Search();
 				this.Modified = true;
+				if (value == _filterNone)
+					_facility = _filterNone;
 			}
 		}
 
@@ -180,7 +194,8 @@ namespace ClearCanvas.Ris.Client.Admin
 				delegate(ILocationAdminService service)
 				{
 					ListAllLocationsRequest request = new ListAllLocationsRequest(new SearchResultPage(firstItem, maxItems));
-					request.Facility = _facility;
+					if(_facility != _filterNone && _facility != null)
+						request.Facility = _facility;
 					request.Name = _name;
 					listResponse = service.ListAllLocations(request);
 				});
