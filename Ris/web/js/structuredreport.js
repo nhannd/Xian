@@ -583,6 +583,18 @@ var GeneralForm = {
 				setValue: function(item, value) 
                 { 
                     item.fetalNumber = isNaN(value) ? item.fetalNumber : Number(value);
+                    if (item.fetalNumber === 0)
+                    {
+                        item.fetalNumber = 1;
+                    }
+
+                    // limit input to maximum of 25 to limit the amount of additional divs created.
+                    // further validation should be put in the getError function
+                    if (item.fetalNumber >= 25)
+                    {
+                        item.fetalNumber = 25;
+                    }
+                    
                     _me._onFetalNumberChanged(item.fetalNumber); 
                 },
 				getError: function(item) { return null; }
