@@ -73,7 +73,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="User.cs" />
-    <Compile Include="UserAdminService.cs" />
     <Compile Include="UserInfo.cs" />
     <Compile Include="UserSession.cs" />
   </ItemGroup>

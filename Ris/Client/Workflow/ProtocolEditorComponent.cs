@@ -375,7 +375,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			//NotifyPropertyChanged("Urgency");
 		}
 
-		private void RefreshAvailableProtocolCodes(IEnumerable<ProtocolCodeDetail> existingSelectedCodes, IProtocollingWorkflowService service)
+		private void RefreshAvailableProtocolCodes(IEnumerable<ProtocolCodeSummary> existingSelectedCodes, IProtocollingWorkflowService service)
 		{
 			_availableProtocolCodes.Items.Clear();
 
@@ -387,7 +387,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_availableProtocolCodes.Items.AddRange(protocolCodesDetailResponse.ProtocolGroup.Codes);
 
 				// Make existing code selections unavailable
-				foreach (ProtocolCodeDetail code in existingSelectedCodes)
+				foreach (ProtocolCodeSummary code in existingSelectedCodes)
 				{
 					_availableProtocolCodes.Items.Remove(code);
 				}
@@ -396,14 +396,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void SelectedProtocolCodesChanged(object sender, ItemChangedEventArgs e)
 		{
-			ProtocolCodeDetail detail = (ProtocolCodeDetail)e.Item;
+			ProtocolCodeSummary code = (ProtocolCodeSummary)e.Item;
 			switch (e.ChangeType)
 			{
 				case ItemChangeType.ItemAdded:
-					_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.Add(detail);
+					_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.Add(code);
 					break;
 				case ItemChangeType.ItemRemoved:
-					_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.Remove(detail);
+					_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Codes.Remove(code);
 					break;
 				default:
 					return;

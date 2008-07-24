@@ -149,7 +149,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._codesSelector.Location = new System.Drawing.Point(3, 3);
 			this._codesSelector.Name = "_codesSelector";
 			this._codesSelector.SelectedItemsTable = null;
-			this._codesSelector.ShowToolbars = false;
 			this._codesSelector.Size = new System.Drawing.Size(638, 367);
 			this._codesSelector.TabIndex = 0;
 			// 
@@ -173,6 +172,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._readingGroupsSelector.Location = new System.Drawing.Point(3, 3);
 			this._readingGroupsSelector.Name = "_readingGroupsSelector";
 			this._readingGroupsSelector.SelectedItemsTable = null;
+			this._readingGroupsSelector.ShowToolbars = false;
 			this._readingGroupsSelector.Size = new System.Drawing.Size(644, 373);
 			this._readingGroupsSelector.TabIndex = 0;
 			// 

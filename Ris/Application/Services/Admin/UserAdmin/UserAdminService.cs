@@ -37,6 +37,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Brokers;
@@ -228,7 +229,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 			}
 			catch (PersistenceException)
 			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(User).Name));
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(User))));
 			}
 		}
 
@@ -281,13 +282,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 			{
 				IAuthorityGroupBroker broker = PersistenceContext.GetBroker<IAuthorityGroupBroker>();
 				AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupName);
+
+				// order to delete an authority group, first need to remove all tokens and users
+				authorityGroup.AuthorityTokens.Clear();
+				authorityGroup.RemoveAllUsers();
+
+
 				broker.Delete(authorityGroup);
 				PersistenceContext.SynchState();
 				return new DeleteAuthorityGroupResponse();
 			}
 			catch (PersistenceException)
 			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(AuthorityGroup).Name));
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(AuthorityGroup))));
 			}
 		}
 

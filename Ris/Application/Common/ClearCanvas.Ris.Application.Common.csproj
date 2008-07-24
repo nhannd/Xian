@@ -91,6 +91,10 @@
     <Compile Include="Admin\ProcedureTypeGroupAdmin\DeleteProcedureTypeGroupResponse.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupSummaryFormDataRequest.cs" />
     <Compile Include="Admin\ProcedureTypeGroupAdmin\GetProcedureTypeGroupSummaryFormDataResponse.cs" />
+    <Compile Include="Admin\ProtocolAdmin\ListProtocolCodesRequest.cs" />
+    <Compile Include="Admin\ProtocolAdmin\ListProtocolCodesResponse.cs" />
+    <Compile Include="Admin\ProtocolAdmin\LoadProtocolCodeForEditRequest.cs" />
+    <Compile Include="Admin\ProtocolAdmin\LoadProtocolCodeForEditResponse.cs" />
     <Compile Include="Admin\StaffAdmin\DeleteStaffRequest.cs" />
     <Compile Include="Admin\StaffAdmin\DeleteStaffResponse.cs" />
     <Compile Include="Admin\StaffGroupAdmin\AddStaffGroupRequest.cs" />
@@ -140,6 +144,7 @@
     <Compile Include="CannedTextService\UpdateCannedTextRequest.cs" />
     <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextSummary.cs" />
+    <Compile Include="ProtocolCodeSummary.cs" />
     <Compile Include="GetOperationEnablementRequest.cs" />
     <Compile Include="GetOperationEnablementResponse.cs" />
     <Compile Include="IWorkflowService.cs" />

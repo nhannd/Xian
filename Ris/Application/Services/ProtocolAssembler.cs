@@ -50,9 +50,9 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.RejectReason = EnumUtils.GetEnumValueInfo(protocol.RejectReason);
 
 			detail.Codes = protocol.Codes == null
-				? new List<ProtocolCodeDetail>()
-				: CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(protocol.Codes,
-					delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
+				? new List<ProtocolCodeSummary>()
+				: CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(protocol.Codes,
+					delegate(ProtocolCode code) { return CreateProtocolCodeSummary(code); });
 
 			return detail;
 		}
@@ -63,14 +63,19 @@ namespace ClearCanvas.Ris.Application.Services
 			return detail;
 		}
 
+		public ProtocolCodeSummary CreateProtocolCodeSummary(ProtocolCode code)
+		{
+			return new ProtocolCodeSummary(code.GetRef(), code.Name, code.Description, code.Deactivated);
+		}
+
 		public void UpdateProtocol(Protocol protocol, ProtocolDetail detail, IPersistenceContext context)
 		{
 			protocol.Urgency = EnumUtils.GetEnumValue<ProtocolUrgencyEnum>(detail.Urgency, context);
 
 			protocol.Codes.Clear();
-			foreach (ProtocolCodeDetail codeDetail in detail.Codes)
+			foreach (ProtocolCodeSummary item in detail.Codes)
 			{
-				ProtocolCode code = context.Load<ProtocolCode>(codeDetail.EntityRef, EntityLoadFlags.Proxy);
+				ProtocolCode code = context.Load<ProtocolCode>(item.ProtocolCodeRef, EntityLoadFlags.Proxy);
 				protocol.Codes.Add(code);
 			}
 		}
@@ -82,9 +87,9 @@ namespace ClearCanvas.Ris.Application.Services
 
 		public ProtocolGroupDetail CreateProtocolGroupDetail(ProtocolGroup group, IPersistenceContext context)
 		{
-			List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
+			List<ProtocolCodeSummary> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
 				group.Codes,
-				delegate(ProtocolCode code) { return CreateProtocolCodeDetail(code); });
+				delegate(ProtocolCode code) { return CreateProtocolCodeSummary(code); });
 
 			ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
 			List<ProcedureTypeGroupSummary> groups =

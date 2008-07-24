@@ -11,7 +11,8 @@
     <property name="Name" column="Name_" type="String" length="100" not-null="true" unique="true"/>
     <property name="Description" column="Description_" type="String" length="1024" not-null="false"/>
 
-    <set name="ProcedureTypes" table="ProcedureTypeGroupProcedureType_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
+    <!-- set of procedure types in this group - "cascade" is set to none because the group does not own the procedure types -->
+    <set name="ProcedureTypes" table="ProcedureTypeGroupProcedureType_" lazy="true" cascade="none" access="nosetter.camelcase-underscore">
       <key column="ProcedureTypeGroupOID_"/>
       <many-to-many column="ProcedureTypeOID_" class="ProcedureType" fetch="join"/>
     </set>

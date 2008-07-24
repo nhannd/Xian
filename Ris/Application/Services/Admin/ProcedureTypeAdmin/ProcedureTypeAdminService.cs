@@ -4,6 +4,7 @@ using System.Text;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
@@ -121,7 +122,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 			}
 			catch (PersistenceException)
 			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(ProcedureType).Name));
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(ProcedureType))));
 			}
 		}
 

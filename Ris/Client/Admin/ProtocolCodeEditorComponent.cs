@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -55,38 +56,73 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(ProtocolCodeEditorComponentViewExtensionPoint))]
     public class ProtocolCodeEditorComponent : ApplicationComponent
     {
-        #region Private fields
+    	private readonly EntityRef _protocolCodeRef;
+    	private readonly bool _isNew;
+    	private ProtocolCodeDetail _detail;
+		private ProtocolCodeSummary _protocolCode;
 
-        private string _name = "";
-        private string _description = "";
-        private ProtocolCodeDetail _protocolCodeDetail;
+		/// <summary>
+		/// Constructor for adding new protocol code.
+		/// </summary>
+		public ProtocolCodeEditorComponent()
+		{
+			_isNew = true;
+		}
 
-        #endregion
+		/// <summary>
+		/// Constructor for editing existing code.
+		/// </summary>
+		/// <param name="protocolCodeRef"></param>
+		public ProtocolCodeEditorComponent(EntityRef protocolCodeRef)
+		{
+			_protocolCodeRef = protocolCodeRef;
+		}
+
+		public ProtocolCodeSummary ProtocolCode
+		{
+			get { return _protocolCode; }
+		}
+
+		public override void Start()
+		{
+			if(_isNew)
+			{
+				_detail = new ProtocolCodeDetail();
+			}
+			else
+			{
+				Platform.GetService<IProtocolAdminService>(
+					delegate(IProtocolAdminService service)
+					{
+						LoadProtocolCodeForEditResponse response = service.LoadProtocolCodeForEdit(
+							new LoadProtocolCodeForEditRequest(_protocolCodeRef));
+						_detail = response.ProtocolCode;
+					});
+			}
+
+
+			base.Start();
+		}
 
         #region Presentation Model
-
-        public ProtocolCodeDetail ProtocolCode
-        {
-            get { return _protocolCodeDetail; }
-        }
 
         [ValidateNotNull]
         public string Name
         {
-            get { return _name; }
+            get { return _detail.Name; }
             set
             {
-                _name = value;
+				_detail.Name = value;
                 this.Modified = true;
             }
         }
 
         public string Description
         {
-            get { return _description; }
+			get { return _detail.Description; }
             set
             {
-                _description = value;
+				_detail.Description = value;
                 this.Modified = true;
             }
         }
@@ -133,10 +169,16 @@ namespace ClearCanvas.Ris.Client.Admin
             Platform.GetService<IProtocolAdminService>(
                 delegate(IProtocolAdminService service)
                 {
-                    AddProtocolCodeRequest request = new AddProtocolCodeRequest(_name, _description);
-                    AddProtocolCodeResponse response = service.AddProtocolCode(request);
-
-                    _protocolCodeDetail = response.Detail;
+					if(_isNew)
+					{
+						AddProtocolCodeResponse response = service.AddProtocolCode(new AddProtocolCodeRequest(_detail));
+						_protocolCode = response.ProtocolCode;
+					}
+					else
+					{
+						UpdateProtocolCodeResponse response = service.UpdateProtocolCode(new UpdateProtocolCodeRequest(_detail));
+						_protocolCode = response.ProtocolCode;
+					}
                 });
         }
     }

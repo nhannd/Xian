@@ -34,6 +34,7 @@ using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
@@ -47,28 +48,76 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
     {
         #region IProtocolAdminService Members
 
-        [UpdateOperation]
+		[ReadOperation]
+    	public ListProtocolCodesResponse ListProtocolCodes(ListProtocolCodesRequest request)
+    	{
+			ProtocolCodeSearchCriteria where = new ProtocolCodeSearchCriteria();
+			where.Name.SortAsc(0);
+
+    		IList<ProtocolCode> codes = PersistenceContext.GetBroker<IProtocolCodeBroker>().Find(where, request.Page);
+
+			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+			return new ListProtocolCodesResponse(
+				CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(codes,
+					delegate (ProtocolCode code)
+					{
+						return assembler.GetProtocolCodeSummary(code);
+					}));
+    	}
+
+		[ReadOperation]
+		public LoadProtocolCodeForEditResponse LoadProtocolCodeForEdit(LoadProtocolCodeForEditRequest request)
+    	{
+			ProtocolCode code = this.PersistenceContext.Load<ProtocolCode>(request.ProtocolCodeRef);
+
+			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+			return new LoadProtocolCodeForEditResponse(assembler.GetProtocolCodeDetail(code));
+		}
+
+    	[UpdateOperation]
         public AddProtocolCodeResponse AddProtocolCode(AddProtocolCodeRequest request)
         {
-            ProtocolCode protocolCode = new ProtocolCode(request.Name, request.Description);
-
+			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+			ProtocolCode protocolCode = new ProtocolCode();
+			assembler.UpdateProtocolCode(protocolCode, request.ProtocolCode);
             this.PersistenceContext.Lock(protocolCode, DirtyState.New);
+
             this.PersistenceContext.SynchState();
 
-            return new AddProtocolCodeResponse(new ProtocolCodeDetail(protocolCode.GetRef(), protocolCode.Name, protocolCode.Description, protocolCode.Deactivated));
+            return new AddProtocolCodeResponse(assembler.GetProtocolCodeSummary(protocolCode));
         }
 
         [UpdateOperation]
         public UpdateProtocolCodeResponse UpdateProtocolCode(UpdateProtocolCodeRequest request)
         {
-            throw new System.NotImplementedException();
-        }
+        	ProtocolCode code = PersistenceContext.Load<ProtocolCode>(request.ProtocolCode.ProtocolCodeRef);
+			ProtocolGroupAssembler assembler = new ProtocolGroupAssembler();
+			assembler.UpdateProtocolCode(code, request.ProtocolCode);
+
+			this.PersistenceContext.SynchState();
+
+			return new UpdateProtocolCodeResponse(assembler.GetProtocolCodeSummary(code));
+		}
 
         [UpdateOperation]
         public DeleteProtocolCodeResponse DeleteProtocolCode(DeleteProtocolCodeRequest request)
         {
-            throw new System.NotImplementedException();
-        }
+			try
+			{
+				IProtocolCodeBroker broker = PersistenceContext.GetBroker<IProtocolCodeBroker>();
+				ProtocolCode item = broker.Load(request.ProtocolCodeRef, EntityLoadFlags.Proxy);
+				broker.Delete(item);
+
+				PersistenceContext.SynchState();
+
+				return new DeleteProtocolCodeResponse();
+			}
+			catch (PersistenceException)
+			{
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete,
+					TerminologyTranslator.Translate(typeof(ProtocolCode))));
+			}
+		}
 
         [ReadOperation]
         public ListProtocolGroupsResponse ListProtocolGroups(ListProtocolGroupsRequest request)
@@ -94,9 +143,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         public GetProtocolGroupEditFormDataResponse GetProtocolGroupEditFormData(
             GetProtocolGroupEditFormDataRequest request)
         {
-            List<ProtocolCodeDetail> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeDetail>(
+			ProtocolGroupAssembler protocolAssembler = new ProtocolGroupAssembler();
+			List<ProtocolCodeSummary> codes = CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(
 				this.PersistenceContext.GetBroker<IProtocolCodeBroker>().FindAll(false),
-                delegate(ProtocolCode code) { return new ProtocolCodeDetail(code.GetRef(), code.Name, code.Description, code.Deactivated); });
+				delegate(ProtocolCode code) { return protocolAssembler.GetProtocolCodeSummary(code); });
 
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
 
@@ -150,7 +200,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
 			}
 			catch (PersistenceException)
 			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(ProtocolGroup).Name));
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(ProtocolGroup))));
 			}
         }
 

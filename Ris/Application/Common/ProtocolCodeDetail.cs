@@ -38,16 +38,21 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ProtocolCodeDetail : DataContractBase, IEquatable<ProtocolCodeDetail>
     {
+		public ProtocolCodeDetail()
+		{
+
+		}
+
         public ProtocolCodeDetail(EntityRef entityRef, string name, string description, bool deactivated)
         {
-            EntityRef = entityRef;
+            ProtocolCodeRef = entityRef;
             Name = name;
             Description = description;
         	Deactivated = deactivated;
         }
 
         [DataMember]
-        public EntityRef EntityRef;
+        public EntityRef ProtocolCodeRef;
 
         [DataMember]
         public string Name;
@@ -61,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Common
         public bool Equals(ProtocolCodeDetail protocolCodeDetail)
         {
             if (protocolCodeDetail == null) return false;
-            return Equals(this.EntityRef, protocolCodeDetail.EntityRef);
+            return Equals(this.ProtocolCodeRef, protocolCodeDetail.ProtocolCodeRef);
         }
 
         public override bool Equals(object obj)
@@ -72,7 +77,7 @@ namespace ClearCanvas.Ris.Application.Common
 
         public override int GetHashCode()
         {
-			return EntityRef.GetHashCode();
+			return ProtocolCodeRef.GetHashCode();
         }
     }
 }

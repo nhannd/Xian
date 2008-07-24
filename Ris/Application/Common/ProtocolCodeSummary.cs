@@ -29,20 +29,50 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class UpdateProtocolCodeResponse : DataContractBase
+    public class ProtocolCodeSummary : DataContractBase, IEquatable<ProtocolCodeSummary>
     {
-		public UpdateProtocolCodeResponse(ProtocolCodeSummary summary)
+		public ProtocolCodeSummary(EntityRef entityRef, string name, string description, bool deactivated)
         {
-            ProtocolCode = summary;
+			ProtocolCodeRef = entityRef;
+            Name = name;
+            Description = description;
+        	Deactivated = deactivated;
         }
 
         [DataMember]
-		public ProtocolCodeSummary ProtocolCode;
+        public EntityRef ProtocolCodeRef;
+
+        [DataMember]
+        public string Name;
+
+        [DataMember]
+        public string Description;
+
+		[DataMember]
+		public bool Deactivated;
+
+		public bool Equals(ProtocolCodeSummary protocolCodeDetail)
+        {
+            if (protocolCodeDetail == null) return false;
+			return Equals(this.ProtocolCodeRef, protocolCodeDetail.ProtocolCodeRef);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as ProtocolCodeSummary);
+        }
+
+        public override int GetHashCode()
+        {
+			return this.ProtocolCodeRef.GetHashCode();
+        }
     }
 }

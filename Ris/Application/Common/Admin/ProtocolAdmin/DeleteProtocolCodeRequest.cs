@@ -37,5 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
     [DataContract]
     public class DeleteProtocolCodeRequest : DataContractBase
     {
+		public DeleteProtocolCodeRequest(EntityRef protocolCodeRef)
+		{
+			this.ProtocolCodeRef = protocolCodeRef;
+		}
+
+		[DataMember]
+		public EntityRef ProtocolCodeRef;
     }
 }

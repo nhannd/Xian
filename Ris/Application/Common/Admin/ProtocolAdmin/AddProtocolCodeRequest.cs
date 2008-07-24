@@ -37,16 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
     [DataContract]
     public class AddProtocolCodeRequest : DataContractBase
     {
-        public AddProtocolCodeRequest(string name, string description)
+        public AddProtocolCodeRequest(ProtocolCodeDetail detail)
         {
-            Name = name;
-            Description = description;
+        	ProtocolCode = detail;
         }
 
         [DataMember]
-        public string Name;
-
-        [DataMember]
-        public string Description;
+        public ProtocolCodeDetail ProtocolCode;
     }
 }

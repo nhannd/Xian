@@ -172,7 +172,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             return this.Context.Load<TEntity>(entityRef, flags);
         }
 
-        public virtual void Delete(TEntity entity)
+        public void Delete(TEntity entity)
         {
             if(this.Context.ReadOnly)
                  throw new Exception();  //TODO elaborate

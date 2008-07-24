@@ -34,14 +34,14 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class ProtocolCodeTable : Table<ProtocolCodeDetail>
+	public class ProtocolCodeTable : Table<ProtocolCodeSummary>
     {
         public ProtocolCodeTable()
         {
-            this.Columns.Add(new TableColumn<ProtocolCodeDetail, string>("Code",
-                                                                         delegate(ProtocolCodeDetail detail)
-                                                                             { return detail.Name; },
-                                                                         0.5f));
+            this.Columns.Add(new TableColumn<ProtocolCodeSummary, string>("Code",
+											 delegate(ProtocolCodeSummary detail)
+                                                 { return detail.Name; },
+                                             0.5f));
         }
     }
 }

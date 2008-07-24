@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
@@ -151,7 +152,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
 			}
 			catch (PersistenceException)
 			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(Location).Name));
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(Location))));
 			}
 		}
 

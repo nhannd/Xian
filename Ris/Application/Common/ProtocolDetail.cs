@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common
 	{
 		public ProtocolDetail()
 		{
-			Codes = new List<ProtocolCodeDetail>();
+			Codes = new List<ProtocolCodeSummary>();
 		}
 
 		[DataMember]
@@ -59,6 +59,6 @@ namespace ClearCanvas.Ris.Application.Common
 		public EnumValueInfo RejectReason;
 
 		[DataMember]
-		public List<ProtocolCodeDetail> Codes;
+		public List<ProtocolCodeSummary> Codes;
 	}
 }

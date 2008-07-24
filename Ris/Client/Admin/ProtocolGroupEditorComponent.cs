@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private ProtocolCodeTable _availableProtocolCodes;
         private ProtocolCodeTable _selectedProtocolCodes;
-        private ProtocolCodeDetail _selectedProtocolCodesSelection;
+		private ProtocolCodeSummary _selectedProtocolCodesSelection;
 
         private SimpleActionModel _selectedProtocolCodesActionHandler;
         private readonly string _moveCodeUpKey = "MoveCodeUp";
@@ -138,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Admin
                             _selectedReadingGroups.Items.AddRange(_protocolGroupDetail.ReadingGroups);
                         }
 
-                        foreach (ProtocolCodeDetail item in _selectedProtocolCodes.Items)
+						foreach (ProtocolCodeSummary item in _selectedProtocolCodes.Items)
                         {
                             _availableProtocolCodes.Items.Remove(item);
                         }
@@ -212,7 +212,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return new Selection(_selectedProtocolCodesSelection); }
             set
             {
-                _selectedProtocolCodesSelection = (ProtocolCodeDetail)value.Item;
+				_selectedProtocolCodesSelection = (ProtocolCodeSummary)value.Item;
                 SelectedProtocolCodesSelectionChanged();
             }
         }

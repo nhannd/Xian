@@ -11,6 +11,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
@@ -166,7 +167,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 			}
 			catch (PersistenceException)
 			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, typeof(DiagnosticService).Name));
+				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(DiagnosticService))));
 			}
 		}
 
