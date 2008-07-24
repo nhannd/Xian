@@ -222,14 +222,15 @@ namespace ClearCanvas.Enterprise.Common
             {
                 // this clause supports serialization of an embedded JSML document inline with the
                 // output of the serializer
-                XmlDocument xmlDoc = (XmlDocument) dataObject;
+				writer.WriteStartElement(objectName);
+				writer.WriteAttributeString("hash", "true");
+				XmlDocument xmlDoc = (XmlDocument)dataObject;
                 if(xmlDoc.DocumentElement != null)
                 {
-                    writer.WriteStartElement(objectName);
-                    xmlDoc.DocumentElement.WriteTo(writer);
-                    writer.WriteEndElement();
+ 					xmlDoc.DocumentElement.WriteTo(writer);
                 }
-            }
+				writer.WriteEndElement();
+			}
             else
             {
                 writer.WriteElementString(objectName, dataObject.ToString());
