@@ -529,7 +529,7 @@ var IndicationsAndDatesForm = {
 				getValue: function(item) 
                 { 
                     item.establishedEDCAge = EdcCalculator.ageFromEdc(item.establishedEDC);
-                    return item.establishedEDCAge.toFixed(1); 
+                    return !!item.establishedEDCAge ? item.establishedEDCAge.toFixed(1) : ""; 
                 },
 				setValue: function(item, value) { return; },
 				getVisible: function(item) { return !!item.establishedEDC; }
