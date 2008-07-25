@@ -61,6 +61,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         public ListAllNoteCategoriesResponse ListAllNoteCategories(ListAllNoteCategoriesRequest request)
         {
             PatientNoteCategorySearchCriteria criteria = new PatientNoteCategorySearchCriteria();
+			criteria.Name.SortAsc(0);
+			if (!request.IncludeDeactivated)
+				criteria.Deactivated.EqualTo(false);
 
             PatientNoteCategoryAssembler assembler = new PatientNoteCategoryAssembler();
             return new ListAllNoteCategoriesResponse(

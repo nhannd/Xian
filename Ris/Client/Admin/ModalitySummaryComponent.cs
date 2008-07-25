@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// ModalitySummaryComponent class
     /// </summary>
-    public class ModalitySummaryComponent : SummaryComponentBase<ModalitySummary, ModalityTable>
+    public class ModalitySummaryComponent : SummaryComponentBase<ModalitySummary, ModalityTable, ListAllModalitiesRequest>
     {
 
         /// <summary>
@@ -123,16 +123,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<ModalitySummary> ListItems(int firstItem, int maxItems)
+		protected override IList<ModalitySummary> ListItems(ListAllModalitiesRequest request)
 		{
 			ListAllModalitiesResponse listResponse = null;
 			Platform.GetService<IModalityAdminService>(
 				delegate(IModalityAdminService service)
 				{
-					listResponse = service.ListAllModalities(new ListAllModalitiesRequest(new SearchResultPage(firstItem, maxItems)));
+					listResponse = service.ListAllModalities(request);
 				});
 
 			return listResponse.Modalities;

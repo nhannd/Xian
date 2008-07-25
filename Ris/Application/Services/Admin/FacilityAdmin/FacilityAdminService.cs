@@ -52,6 +52,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         public ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request)
         {
             FacilitySearchCriteria criteria = new FacilitySearchCriteria();
+			criteria.Code.SortAsc(0);
+			if (!request.IncludeDeactivated)
+				criteria.Deactivated.EqualTo(false);
 
             FacilityAssembler assembler = new FacilityAssembler();
             return new ListAllFacilitiesResponse(

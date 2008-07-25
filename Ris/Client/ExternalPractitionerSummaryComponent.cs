@@ -111,7 +111,7 @@ namespace ClearCanvas.Ris.Client
     /// ExternalPractitionerSummaryComponent class
     /// </summary>
     [AssociateView(typeof(ExternalPractitionerSummaryComponentViewExtensionPoint))]
-	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerTable>
+	public class ExternalPractitionerSummaryComponent : SummaryComponentBase<ExternalPractitionerSummary, ExternalPractitionerTable, ListExternalPractitionersRequest>
     {
         private string _firstName;
         private string _lastName;
@@ -200,17 +200,13 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<ExternalPractitionerSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<ExternalPractitionerSummary> ListItems(ListExternalPractitionersRequest request)
 		{
 			ListExternalPractitionersResponse listResponse = null;
 			Platform.GetService<IExternalPractitionerAdminService>(
 				delegate(IExternalPractitionerAdminService service)
 				{
-					ListExternalPractitionersRequest request = new ListExternalPractitionersRequest();
-					request.Page = new SearchResultPage(firstItem, maxItems);
 					request.FirstName = _firstName;
 					request.LastName = _lastName;
 					listResponse = service.ListExternalPractitioners(request);

@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [ReadOperation]
-		public TextQueryResponse<ModalityWorklistItem> SearchWorklists(WorklistTextQueryRequest request)
+		public TextQueryResponse<ModalityWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
         {
             ModalityWorkflowAssembler assembler = new ModalityWorkflowAssembler();
             IModalityWorklistItemBroker broker = PersistenceContext.GetBroker<IModalityWorklistItemBroker>();

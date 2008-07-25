@@ -53,6 +53,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
     	{
 			ProtocolCodeSearchCriteria where = new ProtocolCodeSearchCriteria();
 			where.Name.SortAsc(0);
+			if (!request.IncludeDeactivated)
+				where.Deactivated.EqualTo(false);
 
     		IList<ProtocolCode> codes = PersistenceContext.GetBroker<IProtocolCodeBroker>().Find(where, request.Page);
 
@@ -122,8 +124,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProtocolAdmin
         [ReadOperation]
         public ListProtocolGroupsResponse ListProtocolGroups(ListProtocolGroupsRequest request)
         {
-            List<ProtocolGroupSummary> protocolGroups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
-                this.PersistenceContext.GetBroker<IProtocolGroupBroker>().FindAll(),
+			ProtocolGroupSearchCriteria where = new ProtocolGroupSearchCriteria();
+			where.Name.SortAsc(0);
+
+			List<ProtocolGroupSummary> protocolGroups = CollectionUtils.Map<ProtocolGroup, ProtocolGroupSummary>(
+                this.PersistenceContext.GetBroker<IProtocolGroupBroker>().Find(where, request.Page),
                 delegate(ProtocolGroup pg) { return new ProtocolGroupSummary(pg.GetRef(), pg.Name, pg.Description); });
 
             return new ListProtocolGroupsResponse(protocolGroups);

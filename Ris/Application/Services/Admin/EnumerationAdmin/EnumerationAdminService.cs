@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 		public ListEnumerationValuesResponse ListEnumerationValues(ListEnumerationValuesRequest request)
         {
             IEnumBroker enumBroker = PersistenceContext.GetBroker<IEnumBroker>();
-            IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName), true);
+            IList<EnumValue> enumValues = enumBroker.Load(GetEnumClass(request.AssemblyQualifiedClassName), request.IncludeDeactivated);
             return new ListEnumerationValuesResponse(
                 CollectionUtils.Map<EnumValue, EnumValueAdminInfo>(enumValues,
 					delegate(EnumValue value)

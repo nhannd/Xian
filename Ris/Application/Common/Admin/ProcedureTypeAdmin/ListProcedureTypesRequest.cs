@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin
 {
 	[DataContract]
-	public class ListProcedureTypesRequest : PagedDataContractBase
+	public class ListProcedureTypesRequest : ListRequestBase
 	{
 		public ListProcedureTypesRequest()
 		{

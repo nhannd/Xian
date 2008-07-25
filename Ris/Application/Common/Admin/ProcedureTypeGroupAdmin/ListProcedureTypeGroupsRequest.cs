@@ -35,7 +35,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
 {
     [DataContract]
-    public class ListProcedureTypeGroupsRequest : PagedDataContractBase
+	public class ListProcedureTypeGroupsRequest : ListRequestBase
     {
 		public ListProcedureTypeGroupsRequest()
 		{

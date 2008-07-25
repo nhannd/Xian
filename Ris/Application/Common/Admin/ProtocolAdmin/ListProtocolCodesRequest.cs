@@ -7,8 +7,13 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
 {
 	[DataContract]
-	public class ListProtocolCodesRequest : PagedDataContractBase
+	public class ListProtocolCodesRequest : ListRequestBase
 	{
+		public ListProtocolCodesRequest()
+		{
+
+		}
+
 		public ListProtocolCodesRequest(SearchResultPage page)
 			:base(page)
 		{

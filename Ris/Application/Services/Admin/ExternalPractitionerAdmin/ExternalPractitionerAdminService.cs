@@ -58,12 +58,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
 
             ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
+			criteria.Name.FamilyName.SortAsc(0);
+
             if (!string.IsNullOrEmpty(request.FirstName))
                 criteria.Name.GivenName.StartsWith(request.FirstName);
             if (!string.IsNullOrEmpty(request.LastName))
                 criteria.Name.FamilyName.StartsWith(request.LastName);
+			if (!request.IncludeDeactivated)
+				criteria.Deactivated.EqualTo(false);
 
-            return new ListExternalPractitionersResponse(
+			return new ListExternalPractitionersResponse(
                 CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary, List<ExternalPractitionerSummary>>(
                     PersistenceContext.GetBroker<IExternalPractitionerBroker>().Find(criteria, request.Page),
                     delegate(ExternalPractitioner s)

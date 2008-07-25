@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
 {
     [DataContract]
-    public class ListStaffGroupsRequest : PagedDataContractBase
+	public class ListStaffGroupsRequest : ListRequestBase
     {
         public ListStaffGroupsRequest()
         {

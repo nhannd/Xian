@@ -57,6 +57,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         public ListAllModalitiesResponse ListAllModalities(ListAllModalitiesRequest request)
         {
             ModalitySearchCriteria criteria = new ModalitySearchCriteria();
+			criteria.Id.SortAsc(0);
+			if (!request.IncludeDeactivated)
+				criteria.Deactivated.EqualTo(false);
 
             ModalityAssembler assembler = new ModalityAssembler();
             return new ListAllModalitiesResponse(

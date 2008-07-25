@@ -32,6 +32,10 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -367,6 +371,14 @@
     <ProjectReference Include="..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
+      <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
+      <Name>ClearCanvas.Ris.Application.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.Ris.Client.csproj">
       <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>

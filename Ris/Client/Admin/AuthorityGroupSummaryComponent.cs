@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// AuthorityGroupSummaryComponent class
     /// </summary>
-    public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable>
+    public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable, ListAuthorityGroupsRequest>
     {
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -192,16 +192,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<AuthorityGroupSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<AuthorityGroupSummary> ListItems(ListAuthorityGroupsRequest request)
 		{
 			ListAuthorityGroupsResponse listResponse = null;
 			Platform.GetService<IUserAdminService>(
 				delegate(IUserAdminService service)
 				{
-					listResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+					listResponse = service.ListAuthorityGroups(request);
 				});
 
 			return listResponse.AuthorityGroups;

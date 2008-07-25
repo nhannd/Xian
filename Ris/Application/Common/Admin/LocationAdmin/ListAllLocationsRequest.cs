@@ -38,7 +38,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
 {
     [DataContract]
-    public class ListAllLocationsRequest : PagedDataContractBase
+	public class ListAllLocationsRequest : ListRequestBase
     {
         public ListAllLocationsRequest()
         {

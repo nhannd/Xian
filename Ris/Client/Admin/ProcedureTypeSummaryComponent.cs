@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Admin
 	/// ProcedureTypeSummaryComponent class.
 	/// </summary>
 	[AssociateView(typeof(ProcedureTypeSummaryComponentViewExtensionPoint))]
-	public class ProcedureTypeSummaryComponent : SummaryComponentBase<ProcedureTypeSummary, ProcedureTypeTable>
+	public class ProcedureTypeSummaryComponent : SummaryComponentBase<ProcedureTypeSummary, ProcedureTypeTable, ListProcedureTypesRequest>
 	{
 		private string _id;
 		private string _name;
@@ -108,16 +108,13 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<ProcedureTypeSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<ProcedureTypeSummary> ListItems(ListProcedureTypesRequest request)
 		{
 			ListProcedureTypesResponse _response = null;
 			Platform.GetService<IProcedureTypeAdminService>(
 				delegate(IProcedureTypeAdminService service)
 				{
-					ListProcedureTypesRequest request = new ListProcedureTypesRequest(new SearchResultPage(firstItem, maxItems));
 					request.Id = _id;
 					request.Name = _name;
 					_response = service.ListProcedureTypes(request);

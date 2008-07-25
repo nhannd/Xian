@@ -32,6 +32,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 				where.Id.StartsWith(request.Id);
 			if (!string.IsNullOrEmpty(request.Name))
 				where.Name.Like(string.Format("%{0}%", request.Name));
+			if(!request.IncludeDeactivated)
+				where.Deactivated.EqualTo(false);
 
 			IDiagnosticServiceBroker broker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
 			IList<DiagnosticService> items = broker.Find(where, request.Page);

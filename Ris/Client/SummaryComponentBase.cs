@@ -6,6 +6,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -133,7 +134,7 @@ namespace ClearCanvas.Ris.Client
     	private readonly bool _dialogMode;
 		private bool _setModifiedOnListChange;
 
-    	private bool _showActiveColumn;
+    	private readonly bool _showActiveColumn;
 
 
 		public SummaryComponentBase()
@@ -446,10 +447,8 @@ namespace ClearCanvas.Ris.Client
         /// If <see cref="SupportsPaging"/> is false, then this method should ignore the first and max items
         /// parameters and return all items.
         /// </summary>
-        /// <param name="firstItem"></param>
-        /// <param name="maxItems"></param>
         /// <returns></returns>
-        protected abstract IList<TSummary> ListItems(int firstItem, int maxItems);
+        protected abstract IList<TSummary> ListItems(int firstRow, int maxRows);
 
         /// <summary>
         /// Called to handle the "add" action.
@@ -617,10 +616,46 @@ namespace ClearCanvas.Ris.Client
             get { return _selectedItems; }
         }
 
+		/// <summary>
+		/// Gets a value indicating whether the component is running in dialog mode.
+		/// </summary>
+    	protected bool DialogMode
+    	{
+			get { return _dialogMode; }
+    	}
+
 		private static FieldInfo GetDeactivatedField()
 		{
 			return typeof(TSummary).GetField("Deactivated");
 		}
 
 	}
+
+	public abstract class SummaryComponentBase<TSummary, TTable, TListRequest> : SummaryComponentBase<TSummary, TTable>
+		where TSummary : class
+		where TTable : Table<TSummary>, new()
+		where TListRequest : ListRequestBase, new()
+	{
+		protected SummaryComponentBase()
+		{
+		}
+
+		protected SummaryComponentBase(bool dialogMode)
+			:base(dialogMode)
+		{
+		}
+
+		protected override IList<TSummary> ListItems(int firstRow, int maxRows)
+		{
+			TListRequest request = new TListRequest();
+			request.Page.FirstRow = firstRow;
+			request.Page.MaxRows = maxRows;
+			request.IncludeDeactivated = !this.DialogMode;	// generally, include de-activated for admin scenario, but not dialog mode
+
+			return ListItems(request);
+		}
+
+		protected abstract IList<TSummary> ListItems(TListRequest request);
+	}
+
 }

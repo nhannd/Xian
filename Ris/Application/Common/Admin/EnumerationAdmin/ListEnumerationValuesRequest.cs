@@ -38,7 +38,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin
 {
     [DataContract]
-    public class ListEnumerationValuesRequest : DataContractBase
+    public class ListEnumerationValuesRequest : ListRequestBase
     {
         public ListEnumerationValuesRequest()
         {

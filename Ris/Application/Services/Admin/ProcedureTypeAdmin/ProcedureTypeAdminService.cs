@@ -31,6 +31,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 				where.Id.StartsWith(request.Id);
 			if (!string.IsNullOrEmpty(request.Name))
 				where.Name.Like(string.Format("%{0}%", request.Name));
+			if (!request.IncludeDeactivated)
+				where.Deactivated.EqualTo(false);
 
 			IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
 			IList<ProcedureType> items = broker.Find(where, request.Page);

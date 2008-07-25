@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// ProtocolGroupSummaryComponent class
     /// </summary>
-    public class ProtocolGroupSummaryComponent : SummaryComponentBase<ProtocolGroupSummary, ProtocolGroupTable>
+    public class ProtocolGroupSummaryComponent : SummaryComponentBase<ProtocolGroupSummary, ProtocolGroupTable, ListProtocolGroupsRequest>
     {
 
         /// <summary>
@@ -121,16 +121,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<ProtocolGroupSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<ProtocolGroupSummary> ListItems(ListProtocolGroupsRequest request)
 		{
 			ListProtocolGroupsResponse listResponse = null;
 			Platform.GetService<IProtocolAdminService>(
 				delegate(IProtocolAdminService service)
 				{
-					listResponse = service.ListProtocolGroups(new ListProtocolGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+					listResponse = service.ListProtocolGroups(request);
 				});
 
 			return listResponse.ProtocolGroups;

@@ -35,7 +35,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin
 {
     [DataContract]
-    public class ListProtocolGroupsRequest : PagedDataContractBase
+	public class ListProtocolGroupsRequest : ListRequestBase
     {
         public ListProtocolGroupsRequest()
         {

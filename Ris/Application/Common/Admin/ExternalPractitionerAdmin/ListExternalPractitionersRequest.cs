@@ -38,7 +38,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin
 {
     [DataContract]
-    public class ListExternalPractitionersRequest : PagedDataContractBase
+	public class ListExternalPractitionersRequest : ListRequestBase
     {
         public ListExternalPractitionersRequest()
         {

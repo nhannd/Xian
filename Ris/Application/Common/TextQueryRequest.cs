@@ -38,7 +38,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class TextQueryRequest : PagedDataContractBase
+	public class TextQueryRequest : ListRequestBase
     {
 		/// <summary>
 		/// Constructor
@@ -84,12 +84,5 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         [DataMember]
         public int SpecificityThreshold;
-
-		/// <summary>
-		/// Specifies whether to include de-activated items in the results.  Ignored if the entity does not support de-activation.
-		/// </summary>
-		[DataMember]
-		public bool IncludeDeactivated;
-
     }
 }

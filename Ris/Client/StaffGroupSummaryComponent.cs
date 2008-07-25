@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client
     /// <summary>
     /// StaffGroupSummaryComponent class
     /// </summary>
-    public class StaffGroupSummaryComponent : SummaryComponentBase<StaffGroupSummary, StaffGroupSummaryTable>
+    public class StaffGroupSummaryComponent : SummaryComponentBase<StaffGroupSummary, StaffGroupSummaryTable, ListStaffGroupsRequest>
     {
     	private readonly string _initialFilterText;
 
@@ -156,16 +156,14 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
         /// Gets the list of items to show in the table, according to the specifed first and max items.
         /// </summary>
-        /// <param name="firstItem"></param>
-        /// <param name="maxItems"></param>
         /// <returns></returns>
-        protected override IList<StaffGroupSummary> ListItems(int firstItem, int maxItems)
+        protected override IList<StaffGroupSummary> ListItems(ListStaffGroupsRequest request)
         {
             ListStaffGroupsResponse listResponse = null;
             Platform.GetService<IStaffGroupAdminService>(
                 delegate(IStaffGroupAdminService service)
                 {
-                    listResponse = service.ListStaffGroups(new ListStaffGroupsRequest(new SearchResultPage(firstItem, maxItems)));
+                    listResponse = service.ListStaffGroups(request);
                 });
 
             return listResponse.StaffGroups;

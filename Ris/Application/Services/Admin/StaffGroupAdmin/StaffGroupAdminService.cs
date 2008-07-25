@@ -92,8 +92,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         {
             Platform.CheckForNullReference(request, "request");
 
+        	StaffGroupSearchCriteria where = new StaffGroupSearchCriteria();
+			where.Name.SortAsc(0);
+
             IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
-            IList<StaffGroup> items = broker.Find(new StaffGroupSearchCriteria(), request.Page);
+			IList<StaffGroup> items = broker.Find(where, request.Page);
 
             StaffGroupAssembler assembler = new StaffGroupAssembler();
             return new ListStaffGroupsResponse(

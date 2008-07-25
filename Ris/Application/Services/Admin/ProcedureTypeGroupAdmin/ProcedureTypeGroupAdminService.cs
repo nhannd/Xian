@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeGroupAdmin
             ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
 
 			ProcedureTypeGroupSearchCriteria criteria = new ProcedureTypeGroupSearchCriteria();
-
+			criteria.Name.SortAsc(0);
 			IList<ProcedureTypeGroup> result = request.CategoryFilter == null ?
 				PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(criteria, request.Page) :
 				PersistenceContext.GetBroker<IProcedureTypeGroupBroker>().Find(criteria, Type.GetType(request.CategoryFilter.Code), request.Page);

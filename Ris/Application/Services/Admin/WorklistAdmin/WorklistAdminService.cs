@@ -83,7 +83,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-			IList<Worklist> worklists = new List<Worklist>();
             List<Type> worklistClasses =
                 ListClassesHelper(request.ClassNames, request.Categories, request.IncludeStatic);
             
@@ -93,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 delegate(Type t) { return !Worklist.GetIsStatic(t); })
                 .ConvertAll<string>(delegate(Type t) { return Worklist.GetClassName(t); });
 
-			worklists = string.IsNullOrEmpty(request.WorklistName) ?
+			IList<Worklist> worklists = string.IsNullOrEmpty(request.WorklistName) ?
 				broker.Find(persistentClassNames, request.Page)
 				: broker.Find(request.WorklistName, persistentClassNames, request.Page);
 

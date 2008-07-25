@@ -38,7 +38,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
 {
     [DataContract]
-    public class ListAllModalitiesRequest : PagedDataContractBase
+	public class ListAllModalitiesRequest : ListRequestBase
     {
         public ListAllModalitiesRequest()
         {

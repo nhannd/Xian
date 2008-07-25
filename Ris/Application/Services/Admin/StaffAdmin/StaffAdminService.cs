@@ -63,10 +63,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			StaffAssembler assembler = new StaffAssembler();
 
 			StaffSearchCriteria criteria = new StaffSearchCriteria();
+			criteria.Name.FamilyName.SortAsc(0);
 			if (!string.IsNullOrEmpty(request.FirstName))
 				criteria.Name.GivenName.StartsWith(request.FirstName);
 			if (!string.IsNullOrEmpty(request.LastName))
 				criteria.Name.FamilyName.StartsWith(request.LastName);
+			if (!request.IncludeDeactivated)
+				criteria.Deactivated.EqualTo(false);
 
 			ApplyStaffTypesFilter(request.StaffTypesFilter, new StaffSearchCriteria[] { criteria });
 

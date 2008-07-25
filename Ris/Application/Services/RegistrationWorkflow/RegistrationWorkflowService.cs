@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         #region IRegistrationWorkflowService Members
 
         [ReadOperation]
-        public TextQueryResponse<RegistrationWorklistItem> SearchWorklists(WorklistTextQueryRequest request)
+        public TextQueryResponse<RegistrationWorklistItem> SearchWorklists(WorklistItemTextQueryRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             IRegistrationWorklistItemBroker broker = PersistenceContext.GetBroker<IRegistrationWorklistItemBroker>();

@@ -33,6 +33,6 @@ namespace ClearCanvas.Ris.Application.Common
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
-		TextQueryResponse<TItemSummary> SearchWorklists(WorklistTextQueryRequest request);
+		TextQueryResponse<TItemSummary> SearchWorklists(WorklistItemTextQueryRequest request);
 	}
 }

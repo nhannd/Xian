@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Admin
 	/// <summary>
 	/// ProtocolCodeSummaryComponent class.
 	/// </summary>
-	public class ProtocolCodeSummaryComponent : SummaryComponentBase<ProtocolCodeSummary, ProtocolCodeSummaryTable>
+	public class ProtocolCodeSummaryComponent : SummaryComponentBase<ProtocolCodeSummary, ProtocolCodeSummaryTable, ListProtocolCodesRequest>
 	{
 		protected override bool SupportsDelete
 		{
@@ -98,16 +98,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<ProtocolCodeSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<ProtocolCodeSummary> ListItems(ListProtocolCodesRequest request)
 		{
 			ListProtocolCodesResponse listResponse = null;
 			Platform.GetService<IProtocolAdminService>(
 				delegate(IProtocolAdminService service)
 				{
-					listResponse = service.ListProtocolCodes(new ListProtocolCodesRequest(new SearchResultPage(firstItem, maxItems)));
+					listResponse = service.ListProtocolCodes(request);
 				});
 
 			return listResponse.ProtocolCodes;

@@ -144,6 +144,7 @@
     <Compile Include="CannedTextService\UpdateCannedTextRequest.cs" />
     <Compile Include="CannedTextService\UpdateCannedTextResponse.cs" />
     <Compile Include="CannedTextService\CannedTextSummary.cs" />
+    <Compile Include="ListRequestBase.cs" />
     <Compile Include="ProtocolCodeSummary.cs" />
     <Compile Include="GetOperationEnablementRequest.cs" />
     <Compile Include="GetOperationEnablementResponse.cs" />
@@ -635,7 +636,7 @@
     </Compile>
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
-    <Compile Include="WorklistTextQueryRequest.cs" />
+    <Compile Include="WorklistItemTextQueryRequest.cs" />
     <Compile Include="WorklistTokenAttribute.cs" />
     <Compile Include="WorklistClassNames.cs" />
     <Compile Include="WorklistSummary.cs" />

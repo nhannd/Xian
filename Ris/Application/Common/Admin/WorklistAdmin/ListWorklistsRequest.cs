@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     /// Requests a list of worklist, according to the specified filters.
     /// </summary>
     [DataContract]
-    public class ListWorklistsRequest : PagedDataContractBase
+	public class ListWorklistsRequest : ListRequestBase
     {
         /// <summary>
         /// Filters the results by the specified class names.

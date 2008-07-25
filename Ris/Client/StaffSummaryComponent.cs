@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client
     /// StaffSummaryComponent class
     /// </summary>
     [AssociateView(typeof(StaffSummaryComponentViewExtensionPoint))]
-    public class StaffSummaryComponent : SummaryComponentBase<StaffSummary, StaffTable>
+    public class StaffSummaryComponent : SummaryComponentBase<StaffSummary, StaffTable, ListStaffRequest>
     {
         private string _firstName;
         private string _lastName;
@@ -166,17 +166,13 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<StaffSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<StaffSummary> ListItems(ListStaffRequest request)
 		{
 			ListStaffResponse listResponse = null;
 			Platform.GetService<IStaffAdminService>(
 				delegate(IStaffAdminService service)
 				{
-					ListStaffRequest request = new ListStaffRequest();
-					request.Page = new SearchResultPage(firstItem, maxItems);
 					request.StaffTypesFilter = _staffTypesFilter;
 					request.LastName = _lastName;
 					request.FirstName = _firstName;

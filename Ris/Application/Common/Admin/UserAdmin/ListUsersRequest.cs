@@ -37,7 +37,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 {
     [DataContract]
-    public class ListUsersRequest : PagedDataContractBase
+	public class ListUsersRequest : ListRequestBase
     {
         public ListUsersRequest()
         {

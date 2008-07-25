@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Admin
 	/// DiagnosticServiceSummaryComponent class.
 	/// </summary>
 	[AssociateView(typeof(DiagnosticServiceSummaryComponentViewExtensionPoint))]
-	public class DiagnosticServiceSummaryComponent : SummaryComponentBase<DiagnosticServiceSummary, DiagnosticServiceSummaryTable>
+	public class DiagnosticServiceSummaryComponent : SummaryComponentBase<DiagnosticServiceSummary, DiagnosticServiceSummaryTable, ListDiagnosticServicesRequest>
 	{
 		private string _id;
 		private string _name;
@@ -125,16 +125,13 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<DiagnosticServiceSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<DiagnosticServiceSummary> ListItems(ListDiagnosticServicesRequest request)
 		{
 			ListDiagnosticServicesResponse listResponse = null;
 			Platform.GetService<IDiagnosticServiceAdminService>(
 				delegate(IDiagnosticServiceAdminService service)
 				{
-					ListDiagnosticServicesRequest request = new ListDiagnosticServicesRequest(new SearchResultPage(firstItem, maxItems));
 					request.Id = _id;
 					request.Name = _name;
 					listResponse = service.ListDiagnosticServices(request);

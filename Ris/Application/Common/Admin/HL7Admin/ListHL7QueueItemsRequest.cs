@@ -37,7 +37,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
 {
     [DataContract]
-    public class ListHL7QueueItemsRequest : PagedDataContractBase
+	public class ListHL7QueueItemsRequest : ListRequestBase
     {
         public ListHL7QueueItemsRequest()
         {

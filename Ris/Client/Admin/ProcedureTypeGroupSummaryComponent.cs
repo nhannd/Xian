@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// ProcedureTypeGroupSummaryComponent class
     /// </summary>
 	[AssociateView(typeof(ProcedureTypeGroupSummaryComponentViewExtensionPoint))]
-	public class ProcedureTypeGroupSummaryComponent : SummaryComponentBase<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable>
+	public class ProcedureTypeGroupSummaryComponent : SummaryComponentBase<ProcedureTypeGroupSummary, ProcedureTypeGroupSummaryTable, ListProcedureTypeGroupsRequest>
     {
     	private readonly EnumValueInfo _filterNone;
 		private readonly List<EnumValueInfo> _categoryChoices;
@@ -149,18 +149,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<ProcedureTypeGroupSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<ProcedureTypeGroupSummary> ListItems(ListProcedureTypeGroupsRequest request)
 		{
 			ListProcedureTypeGroupsResponse listResponse = null;
 			Platform.GetService<IProcedureTypeGroupAdminService>(
 				delegate(IProcedureTypeGroupAdminService service)
 				{
-					ListProcedureTypeGroupsRequest request = new ListProcedureTypeGroupsRequest();
 					request.CategoryFilter = (_selectedCategory == _filterNone) ? null : _selectedCategory;
-					request.Page = new SearchResultPage(firstItem, maxItems);
 					listResponse = service.ListProcedureTypeGroups(request);
 				});
 

@@ -61,10 +61,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         public ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request)
         {
             LocationSearchCriteria criteria = new LocationSearchCriteria();
+			criteria.Id.SortAsc(0);
 			if (request.Facility != null)
 				criteria.Facility.EqualTo(PersistenceContext.Load<Facility>(request.Facility.FacilityRef));
 			if (!string.IsNullOrEmpty(request.Name))
 				criteria.Name.StartsWith(request.Name);
+			if (!request.IncludeDeactivated)
+				criteria.Deactivated.EqualTo(false);
 
             LocationAssembler assembler = new LocationAssembler();
             return new ListAllLocationsResponse(

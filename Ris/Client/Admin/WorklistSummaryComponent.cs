@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// WorklistSummaryComponent class
     /// </summary>
 	[AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
-    public class WorklistSummaryComponent : SummaryComponentBase<WorklistAdminSummary, WorklistAdminSummaryTable>
+    public class WorklistSummaryComponent : SummaryComponentBase<WorklistAdminSummary, WorklistAdminSummaryTable, ListWorklistsRequest>
     {
 		private readonly WorklistClassSummary _filterNone = new WorklistClassSummary(SR.DummyItemNone,
 																					 SR.DummyItemNone,
@@ -179,21 +179,19 @@ namespace ClearCanvas.Ris.Client.Admin
             this.ActionModel[_duplicateWorklistActionKey].Enabled = this.SelectedItems.Count == 1;
         }
 
-        protected override IList<WorklistAdminSummary> ListItems(int firstItem, int maxItems)
+        protected override IList<WorklistAdminSummary> ListItems(ListWorklistsRequest request)
         {
             ListWorklistsResponse listResponse = null;
 
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-                    ListWorklistsRequest listRequest = new ListWorklistsRequest();
-                    listRequest.Page.FirstRow = firstItem;
-                    listRequest.Page.MaxRows = maxItems;
-					string[] classNames = _worklistClass == null|| _worklistClass == _filterNone ? new string[] { } : new string[] { _worklistClass.ClassName };
-					listRequest.ClassNames = new List<string>(classNames);
-					listRequest.WorklistName = _name;
+					string[] classNames = (_worklistClass == null || _worklistClass == _filterNone) ?
+						new string[] { } : new string[] { _worklistClass.ClassName };
+					request.ClassNames = new List<string>(classNames);
+					request.WorklistName = _name;
 
-                    listResponse = service.ListWorklists(listRequest);
+					listResponse = service.ListWorklists(request);
                 });
 
             return listResponse.WorklistSummaries;

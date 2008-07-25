@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// LocationSummaryComponent class
     /// </summary>
 	[AssociateView(typeof(LocationSummaryComponentViewExtensionPoint))]
-    public class LocationSummaryComponent : SummaryComponentBase<LocationSummary, LocationTable>
+    public class LocationSummaryComponent : SummaryComponentBase<LocationSummary, LocationTable, ListAllLocationsRequest>
     {
 		private FacilitySummary _filterNone = new FacilitySummary();
 		private ArrayList _facilityList = new ArrayList();
@@ -184,16 +184,13 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<LocationSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<LocationSummary> ListItems(ListAllLocationsRequest request)
 		{
 			ListAllLocationsResponse listResponse = null;
 			Platform.GetService<ILocationAdminService>(
 				delegate(ILocationAdminService service)
 				{
-					ListAllLocationsRequest request = new ListAllLocationsRequest(new SearchResultPage(firstItem, maxItems));
 					if(_facility != _filterNone && _facility != null)
 						request.Facility = _facility;
 					request.Name = _name;

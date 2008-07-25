@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// UserSummaryComponent class
     /// </summary>
 	[AssociateView(typeof(UserSummaryComponentViewExtensionPoint))]
-    public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable>
+    public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable, ListUsersRequest>
     {
         private Action _resetPasswordAction;
 		private string _id;
@@ -168,16 +168,13 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<UserSummary> ListItems(int firstItem, int maxItems)
+		protected override IList<UserSummary> ListItems(ListUsersRequest request)
 		{
 			ListUsersResponse listResponse = null;
 			Platform.GetService<IUserAdminService>(
 				delegate(IUserAdminService service)
 				{
-					ListUsersRequest request = new ListUsersRequest(new SearchResultPage(firstItem, maxItems));
 					request.UserName = _id;
 					request.DisplayName = _name;
 					listResponse = service.ListUsers(request);

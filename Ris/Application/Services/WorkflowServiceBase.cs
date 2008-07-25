@@ -184,7 +184,7 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <param name="mapCallback"></param>
 		/// <returns></returns>
 		protected TextQueryResponse<TSummary> SearchHelper<TItem, TSummary>(
-			WorklistTextQueryRequest request,
+			WorklistItemTextQueryRequest request,
 			IWorklistItemBroker<TItem> broker,
 			Converter<TItem, TSummary> mapCallback)
 			where TSummary : DataContractBase

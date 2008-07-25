@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// NoteCategorySummaryComponent class
     /// </summary>
-    public class NoteCategorySummaryComponent : SummaryComponentBase<PatientNoteCategorySummary, NoteCategoryTable>
+	public class NoteCategorySummaryComponent : SummaryComponentBase<PatientNoteCategorySummary, NoteCategoryTable, ListAllNoteCategoriesRequest>
     {
         /// <summary>
         /// Constructor
@@ -123,16 +123,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<PatientNoteCategorySummary> ListItems(int firstItem, int maxItems)
+		protected override IList<PatientNoteCategorySummary> ListItems(ListAllNoteCategoriesRequest request)
 		{
 			ListAllNoteCategoriesResponse listResponse = null;
 			Platform.GetService<INoteCategoryAdminService>(
 				delegate(INoteCategoryAdminService service)
 				{
-					listResponse = service.ListAllNoteCategories(new ListAllNoteCategoriesRequest(new SearchResultPage(firstItem, maxItems)));
+					listResponse = service.ListAllNoteCategories(request);
 				});
 
 			return listResponse.NoteCategories;

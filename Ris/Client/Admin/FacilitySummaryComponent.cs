@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// FacilitySummaryComponent class
     /// </summary>
-    public class FacilitySummaryComponent : SummaryComponentBase<FacilitySummary, FacilityTable>
+    public class FacilitySummaryComponent : SummaryComponentBase<FacilitySummary, FacilityTable, ListAllFacilitiesRequest>
     {
         /// <summary>
         /// Constructor
@@ -123,16 +123,14 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
-		/// <param name="firstItem"></param>
-		/// <param name="maxItems"></param>
 		/// <returns></returns>
-		protected override IList<FacilitySummary> ListItems(int firstItem, int maxItems)
+		protected override IList<FacilitySummary> ListItems(ListAllFacilitiesRequest request)
 		{
 			ListAllFacilitiesResponse listResponse = null;
 			Platform.GetService<IFacilityAdminService>(
 				delegate(IFacilityAdminService service)
 				{
-					listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest(new SearchResultPage(firstItem, maxItems)));
+					listResponse = service.ListAllFacilities(request);
 				});
 
 			return listResponse.Facilities;
