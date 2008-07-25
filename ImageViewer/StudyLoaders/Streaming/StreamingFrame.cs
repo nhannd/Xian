@@ -1,5 +1,6 @@
 using System;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Codec;
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -8,12 +9,19 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 	public class StreamingFrame : Frame
 	{
 		private readonly string _host;
+		private readonly string _aeTitle;
 		private readonly int _wadoServicePort;
 
-		public StreamingFrame(StreamingImageSop parentImageSop, int frameNumber, string host, int wadoServicePort)
+		public StreamingFrame(
+			StreamingImageSop parentImageSop, 
+			int frameNumber, 
+			string host, 
+			string aeTitle,
+			int wadoServicePort)
 			: base(parentImageSop, frameNumber)
 		{
 			_host = host;
+			_aeTitle = aeTitle;
 			_wadoServicePort = wadoServicePort;
 		}
 
@@ -25,20 +33,33 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				{
 					if (_pixelData == null)
 					{
-						string uri = String.Format("http://{0}:{1}/WADO", _host, _wadoServicePort);
+						Uri uri = new Uri(String.Format("http://{0}:{1}/WADO", _host, _wadoServicePort));
 
-						StreamingClient client = new StreamingClient();
+						StreamingClient client = new StreamingClient(uri);
 						_pixelData = client.RetrievePixelData(
-							uri,
+							_aeTitle,
 							ParentImageSop.StudyInstanceUID,
 							ParentImageSop.SeriesInstanceUID,
 							ParentImageSop.SopInstanceUID,
 							FrameNumber - 1);
 
-						//_pixelData = GetNormalizedPixelData(_pixelData);
-
 						if (this.IsColor)
-							_pixelData = ToArgb(_pixelData, PhotometricInterpretation.Rgb);
+						{
+							PhotometricInterpretation pi;
+
+							TransferSyntax ts = TransferSyntax.GetTransferSyntax(ParentImageSop.TransferSyntaxUID);
+
+							if ( ts == TransferSyntax.Jpeg2000ImageCompression ||
+								ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
+								ts == TransferSyntax.JpegExtendedProcess24 ||
+								ts == TransferSyntax.JpegBaselineProcess1 ||
+								ts == TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1)
+								pi = PhotometricInterpretation.Rgb;
+							else
+								pi = this.PhotometricInterpretation;
+
+							_pixelData = ToArgb(_pixelData, pi);
+						}
 					}
 				}
 			}

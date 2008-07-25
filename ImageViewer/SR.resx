@@ -300,6 +300,18 @@
   <data name="MessageNoRendererPluginsExist" xml:space="preserve">
     <value>No renderer plugins exist; defaulting to GDI renderer.</value>
   </data>
+  <data name="PrefetchingStrategyDescriptionNoOp" xml:space="preserve">
+    <value>Does not prefetch image data.</value>
+  </data>
+  <data name="PrefetchingStrategyDescriptionVisibleDisplaySet" xml:space="preserve">
+    <value>Prefetches image data in a display set when display set becomes visible.</value>
+  </data>
+  <data name="PrefetchingStrategyNameNoOp" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="PrefetchingStrategyNameVisibleDisplaySet" xml:space="preserve">
+    <value>Visible Display Set</value>
+  </data>
   <data name="SeparatorPatientDescription" xml:space="preserve">
     <value>-</value>
   </data>

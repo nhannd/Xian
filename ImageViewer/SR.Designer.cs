@@ -610,6 +610,42 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Does not prefetch image data..
+        /// </summary>
+        public static string PrefetchingStrategyDescriptionNoOp {
+            get {
+                return ResourceManager.GetString("PrefetchingStrategyDescriptionNoOp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefetches image data in a display set when display set becomes visible..
+        /// </summary>
+        public static string PrefetchingStrategyDescriptionVisibleDisplaySet {
+            get {
+                return ResourceManager.GetString("PrefetchingStrategyDescriptionVisibleDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to None.
+        /// </summary>
+        public static string PrefetchingStrategyNameNoOp {
+            get {
+                return ResourceManager.GetString("PrefetchingStrategyNameNoOp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visible Display Set.
+        /// </summary>
+        public static string PrefetchingStrategyNameVisibleDisplaySet {
+            get {
+                return ResourceManager.GetString("PrefetchingStrategyNameVisibleDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to -.
         /// </summary>
         public static string SeparatorPatientDescription {

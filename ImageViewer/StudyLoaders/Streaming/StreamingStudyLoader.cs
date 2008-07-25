@@ -18,13 +18,24 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 	{
 		private IEnumerator<DicomMessageBase> _dicomMessages;
 		private ApplicationEntity _ae;
-		private StreamingPrefetchingStrategy _prefetcher;
+		private IPrefetchingStrategy _prefetchingStrategy;
 
 		#region IStudyLoader Members
 
 		public string Name
 		{
 			get { return "CC_STREAMING"; }
+		}
+
+		public IPrefetchingStrategy PrefetchingStrategy
+		{
+			get 
+			{
+				if (_prefetchingStrategy == null)
+					_prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy();
+
+				return _prefetchingStrategy;
+			}
 		}
 
 		public int Start(StudyLoaderArgs studyLoaderArgs)
@@ -47,22 +58,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (!_dicomMessages.MoveNext())
 				return null;
 			else
-				return new StreamingImageSop(_dicomMessages.Current, _ae.Host, _ae.WadoServicePort);
-		}
-
-		public void StartPrefetching(IImageViewer imageViewer)
-		{
-			if (_prefetcher == null)
-				_prefetcher = new StreamingPrefetchingStrategy(imageViewer);
-		}
-
-		public void StopPrefetching()
-		{
-			if (_prefetcher != null)
-			{
-				_prefetcher.Stop();
-				_prefetcher = null;
-			}
+				return new StreamingImageSop(_dicomMessages.Current, _ae.Host, _ae.AETitle, _ae.WadoServicePort);
 		}
 
 		#endregion

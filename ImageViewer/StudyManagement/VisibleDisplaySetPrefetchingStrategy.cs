@@ -8,19 +8,32 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
+namespace ClearCanvas.ImageViewer.StudyManagement
 {
 
-	class StreamingPrefetchingStrategy
+	public class VisibleDisplaySetPrefetchingStrategy : IPrefetchingStrategy
 	{
 		private IImageViewer _imageViewer;
 		private bool _stopped = false;
 		private int _threadCount = 0;
 
-		public StreamingPrefetchingStrategy(IImageViewer imageViewer)
+		public string Name
 		{
-			_imageViewer = imageViewer;	
-			_imageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+			get { return SR.PrefetchingStrategyNameVisibleDisplaySet; }
+		}
+
+		public string Description
+		{
+			get { return SR.PrefetchingStrategyDescriptionVisibleDisplaySet; }
+		}
+
+		public void Start(IImageViewer imageViewer)
+		{
+			if (_imageViewer == null)
+			{
+				_imageViewer = imageViewer;
+				_imageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+			}
 		}
 
 		public void Stop()
@@ -39,6 +52,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (e.NewDisplaySet != null)
 			{
 				Interlocked.Increment(ref _threadCount);
+
+				// Should this use our thread pool instead?
 				ThreadPool.QueueUserWorkItem(PrefetchPixelData, e.NewDisplaySet);
 			}
 		}

@@ -70,6 +70,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		string Name { get; }
 
 		/// <summary>
+		/// Gets the study loader's pixel data prefetching strategy.
+		/// </summary>
+		IPrefetchingStrategy PrefetchingStrategy { get; }
+
+		/// <summary>
 		/// Starts the enumeration of images that match the specified
 		/// Study Instance UID.
 		/// </summary>
@@ -87,24 +92,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// in this method for performance reasons.
 		/// </remarks>
 		ImageSop LoadNextImage();
-
-		/// <summary>
-		/// Starts prefetching pixel data in the background.
-		/// </summary>
-		/// <param name="imageViewer"></param>
-		/// <remarks>
-		/// Use <paramref name="imageViewer"/> to determine how prefetching is done.
-		/// </remarks>
-		void StartPrefetching(IImageViewer imageViewer);
-
-		/// <summary>
-		/// Stops prefetching of pixel data in the background.
-		/// </summary>
-		/// <remarks>
-		/// Implementers should ensure that all background threads have terminated
-		/// before this method returns.
-		/// </remarks>
-		void StopPrefetching();
     }
-
 }

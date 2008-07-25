@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
     public class LocalDataStoreStudyLoader : IStudyLoader
     {
 		private IEnumerator<ISopInstance> _sops;
+		private IPrefetchingStrategy _prefetchingStrategy;
 
         public LocalDataStoreStudyLoader()
         {
@@ -60,7 +61,18 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
         }
 
-		public int Start(StudyLoaderArgs studyLoaderArgs)
+    	public IPrefetchingStrategy PrefetchingStrategy
+    	{
+			get
+			{
+				if (_prefetchingStrategy == null)
+					_prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy();
+
+				return _prefetchingStrategy;
+			}
+		}
+
+    	public int Start(StudyLoaderArgs studyLoaderArgs)
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
@@ -98,14 +110,5 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 			return localImage;
         }
-
-		public void StartPrefetching(IImageViewer imageViewer)
-    	{
-    		// Do nothing; don't prefetch pixel data.
-    	}
-
-    	public void StopPrefetching()
-    	{
-    	}
     }
 }

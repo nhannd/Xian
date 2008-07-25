@@ -570,7 +570,8 @@ namespace ClearCanvas.ImageViewer
 
 			VerifyLoad(numberOfImages, failedImages);
 
-			studyLoader.StartPrefetching(this);
+			if (studyLoader.PrefetchingStrategy != null)
+				studyLoader.PrefetchingStrategy.Start(this);
 		}
 
 		/// <summary>
@@ -772,7 +773,10 @@ namespace ClearCanvas.ImageViewer
 		private void StopPrefetching()
 		{
 			foreach (IStudyLoader loader in _studyLoaders)
-				loader.StopPrefetching();
+			{
+				if (loader.PrefetchingStrategy != null)
+					loader.PrefetchingStrategy.Stop();
+			}
 		}
 
 		#endregion
