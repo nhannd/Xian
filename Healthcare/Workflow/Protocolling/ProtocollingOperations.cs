@@ -251,7 +251,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class SubmitForApprovalOperation : ProtocollingOperation
 		{
-			public void Execute(Order order)
+			public void Execute(Order order, Staff supervisor)
 			{
 				foreach (Procedure rp in order.Procedures)
 				{
@@ -267,6 +267,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 						rp.AddProcedureStep(approvalStep);
 
 						approvalStep.Schedule(DateTime.Now);
+						approvalStep.Assign(supervisor);
 					}
 				}
 			}

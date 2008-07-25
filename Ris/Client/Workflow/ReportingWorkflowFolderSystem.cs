@@ -31,61 +31,56 @@
 
 using System.Collections.Generic;
 using System.Security.Permissions;
-using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [ExtensionPoint]
+	[ExtensionPoint]
 	public class ReportingWorkflowFolderExtensionPoint : ExtensionPoint<IWorklistFolder>
-    {
-    }
+	{
+	}
 
-    [ExtensionPoint]
-    public class ReportingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class ReportingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
-    [ExtensionPoint]
-    public class ReportingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint]
+	public class ReportingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
 	[ExtensionOf(typeof(FolderSystemExtensionPoint))]
 	[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FolderSystems.Reporting)]
 	public class ReportingWorkflowFolderSystem
 		: ReportingWorkflowFolderSystemBase<ReportingWorkflowFolderExtensionPoint, ReportingWorkflowFolderToolExtensionPoint,
 			ReportingWorkflowItemToolExtensionPoint>
-    {
-        public ReportingWorkflowFolderSystem()
-            : base(SR.TitleReportingFolderSystem) 
-        {
-            // add the personal folders, since they are not extensions and will not be automatically added
-            this.Folders.Add(new Folders.Reporting.AssignedFolder());
+	{
+		public ReportingWorkflowFolderSystem()
+			: base(SR.TitleReportingFolderSystem)
+		{
+			// add the personal folders, since they are not extensions and will not be automatically added
+			this.Folders.Add(new Folders.Reporting.AssignedFolder());
+			this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 
-            if (ReportingSettings.Default.EnableTranscriptionWorkflow)
+			if (ReportingSettings.Default.EnableTranscriptionWorkflow)
 				this.Folders.Add(new Folders.Reporting.InTranscriptionFolder());
 
-			this.Folders.Add(new Folders.Reporting.ToBeVerifiedFolder());
+			this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
 			this.Folders.Add(new Folders.Reporting.VerifiedFolder());
-
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.UnsupervisedReporting))
-				this.Folders.Add(new Folders.Reporting.ReviewResidentReportFolder());
-        }
+		}
 
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItem> items)
 		{
-            return WebResourcesSettings.Default.ReportingFolderSystemUrl;
-        }
+			return WebResourcesSettings.Default.ReportingFolderSystemUrl;
+		}
 
-        protected override SearchResultsFolder CreateSearchResultsFolder()
-        {
-            return new Folders.Reporting.ReportingSearchFolder();
-        }
-    }
+		protected override SearchResultsFolder CreateSearchResultsFolder()
+		{
+			return new Folders.Reporting.ReportingSearchFolder();
+		}
+	}
 }

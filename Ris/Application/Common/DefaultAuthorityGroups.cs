@@ -29,25 +29,22 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    /// <summary>
-    /// Defines a default set of authority groups to be imported at deployment time.  This class
-    /// is not used post-deployment.
-    /// </summary>
-    [ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
-    public class DefaultAuthorityGroups : IDefineAuthorityGroups
-    {
-        // note: we do not define the sys admin ("Administrators") group here because it is defined 
-        // automatically in ClearCanvas.Enterprise.Authentication
+	/// <summary>
+	/// Defines a default set of authority groups to be imported at deployment time.  This class
+	/// is not used post-deployment.
+	/// </summary>
+	[ExtensionOf(typeof(DefineAuthorityGroupsExtensionPoint))]
+	public class DefaultAuthorityGroups : IDefineAuthorityGroups
+	{
+		// note: we do not define the sys admin ("Administrators") group here because it is defined 
+		// automatically in ClearCanvas.Enterprise.Authentication
 
-        public const string HealthcareAdmin = "Healthcare Administrators";
+		public const string HealthcareAdmin = "Healthcare Administrators";
 		public const string Clerical = "Clerical";
 		public const string Technologists = "Technologists";
 		public const string Radiologists = "Radiologists";
@@ -55,11 +52,11 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string EmergencyPhysicians = "Emergency Physicians";
 
 
-        #region IDefineAuthorityGroups Members
+		#region IDefineAuthorityGroups Members
 
-        public AuthorityGroupDefinition[] GetAuthorityGroups()
-        {
-            return new AuthorityGroupDefinition[]
+		public AuthorityGroupDefinition[] GetAuthorityGroups()
+		{
+			return new AuthorityGroupDefinition[]
             {
                 new AuthorityGroupDefinition(HealthcareAdmin,
                     new string[] 
@@ -87,7 +84,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Report.Create,
                         AuthorityTokens.Workflow.Report.Cancel,
                         AuthorityTokens.Workflow.Report.Verify,
-                        AuthorityTokens.Workflow.Report.UnsupervisedReporting,
+                        AuthorityTokens.Workflow.Report.OmitSupervisor,
                         AuthorityTokens.Workflow.ExternalPractitioner.Create,
                         AuthorityTokens.Workflow.ExternalPractitioner.Update,
                         AuthorityTokens.Workflow.ExternalPractitioner.Merge,
@@ -166,9 +163,10 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Report.Create,
                         AuthorityTokens.Workflow.Report.Verify,
                         AuthorityTokens.Workflow.Report.Cancel,
-                        AuthorityTokens.Workflow.Report.UnsupervisedReporting,
+                        AuthorityTokens.Workflow.Report.OmitSupervisor,
                         AuthorityTokens.Workflow.Protocol.Create,
                         AuthorityTokens.Workflow.Protocol.Accept,
+                        AuthorityTokens.Workflow.Protocol.OmitSupervisor,
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 
 						AuthorityTokens.FolderSystems.Protocolling,
@@ -203,8 +201,8 @@ namespace ClearCanvas.Ris.Application.Common
                     }),
 
             };
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

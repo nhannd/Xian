@@ -29,8 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common;
-
 namespace ClearCanvas.Ris.Application.Common
 {
 	public class WorklistClassNames
@@ -100,9 +98,6 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ReportingToBeReportedWorklist = "ReportingToBeReportedWorklist";
 
 		[WorklistClassName]
-		public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
-
-		[WorklistClassName]
 		public const string ReportingAssignedWorklist = "ReportingAssignedWorklist";
 
 		[WorklistClassName]
@@ -112,10 +107,13 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
 
 		[WorklistClassName]
-		public const string ReportingRadiologistToBeVerifiedWorklist = "ReportingRadiologistToBeVerifiedWorklist";
+		public const string ReportingToBeReviewedReportWorklist = "ReportingToBeReviewedReportWorklist";
 
 		[WorklistClassName]
-		public const string ReportingResidentToBeVerifiedWorklist = "ReportingResidentToBeVerifiedWorklist";
+		public const string ReportingAssignedReviewWorklist = "ReportingAssignedReviewWorklist";
+
+		[WorklistClassName]
+		public const string ReportingAwaitingReviewWorklist = "ReportingAwaitingReviewWorklist";
 
 		[WorklistClassName]
 		public const string ReportingRadiologistVerifiedWorklist = "ReportingRadiologistVerifiedWorklist";
@@ -123,8 +121,16 @@ namespace ClearCanvas.Ris.Application.Common
 		[WorklistClassName]
 		public const string ReportingResidentVerifiedWorklist = "ReportingResidentVerifiedWorklist";
 
+		#region Protocolling
+
 		[WorklistClassName]
-		public const string ReportingReviewResidentReportWorklist = "ReportingReviewResidentReportWorklist";
+		public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
+
+		[WorklistClassName]
+		public const string ReportingToBeReviewedProtocolWorklist = "ReportingToBeReviewedProtocolWorklist";
+
+		[WorklistClassName]
+		public const string ReportingAssignedReviewProtocolWorklist = "ReportingAssignedReviewProtocolWorklist";
 
 		[WorklistClassName]
 		public const string ReportingDraftProtocolWorklist = "ReportingDraftProtocolWorklist";
@@ -136,10 +142,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ReportingRejectedProtocolWorklist = "ReportingRejectedProtocolWorklist";
 
 		[WorklistClassName]
-		public const string ReportingToBeApprovedProtocolWorklist = "ReportingToBeApprovedProtocolWorklist";
-
-		[WorklistClassName]
 		public const string ReportingAwaitingApprovalProtocolWorklist = "ReportingAwaitingApprovalProtocolWorklist";
+
+		#endregion
 
 		#endregion
 

@@ -65,12 +65,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			: base(SR.TitleProtocollingFolderSystem)
 		{
             // add the personal folders, since they are not extensions and will not be automatically added
+			this.Folders.Add(new Folders.Reporting.AssignedForReviewProtocolFolder());
 			this.Folders.Add(new Folders.Reporting.DraftProtocolFolder());
+			this.Folders.Add(new Folders.Reporting.AwaitingApprovalProtocolFolder());
 			this.Folders.Add(new Folders.Reporting.CompletedProtocolFolder());
-			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForApproval))
-			{
-				this.Folders.Add(new Folders.Reporting.AwaitingApprovalProtocolFolder());
-			}
 			this.Folders.Add(new Folders.Reporting.RejectedProtocolFolder());
 		}
 

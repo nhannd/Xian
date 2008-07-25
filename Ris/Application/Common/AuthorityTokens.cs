@@ -161,8 +161,8 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow radiology reports to be cancelled and returned to the communal worklist.")]
 				public const string Cancel = "Workflow/Report/Cancel";
 
-				[AuthorityToken(Description = "Allow creation of radiology reports without specifying a supervising radiologist.")]
-				public const string UnsupervisedReporting = "Workflow/Report/Unsupervised Reporting";
+				[AuthorityToken(Description = "Allow reporting without specifying a supervisor")]
+				public const string OmitSupervisor = "Workflow/Report/Omit Supervisor";
 			}
 
 			public static class Protocol
@@ -176,8 +176,8 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow orders that were rejected/suspended by the protocolling radiologist to be cancelled, or re-submitted for protocoling.")]
 				public const string Resubmit = "Workflow/Protocol/Resolve";
 
-				[AuthorityToken(Description = "Allow submission of procedure Protocols to another party.")]
-				public const string SubmitForApproval = "Workflow/Protocol/Submit For Approval";
+				[AuthorityToken(Description = "Allow protocolling without specifying a supervisor")]
+				public const string OmitSupervisor = "Workflow/Protocol/Omit Supervisor";
 			}
 
 			public static class Patient

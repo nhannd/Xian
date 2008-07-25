@@ -29,14 +29,10 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Workflow;
-using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
@@ -50,8 +46,21 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedWorklist)]
-		[FolderPath("Assigned")]
+		[FolderPath("Assigned/To be Reported")]
 		public class AssignedFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingToBeReviewedReportWorklist)]
+		[FolderPath("To be Reviewed", true)]
+		public class ToBeReviewedFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewWorklist)]
+		[FolderPath("Assigned/To be Reviewed")]
+		public class AssignedForReviewFolder : ReportingWorkflowFolder
 		{
 		}
 
@@ -67,27 +76,9 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist)]
-		[FolderPath("To be Verified")]
-		public class ToBeVerifiedFolder : ReportingWorkflowFolder
-		{
-			/// <summary>
-			/// Overridden to tweak behaviour based on user permissions.
-			/// </summary>
-			public override string WorklistClassName
-			{
-				get
-				{
-					return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify) ?
-						WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist :
-						WorklistClassNames.ReportingResidentToBeVerifiedWorklist;
-				}
-			}
-		}
-
-		[FolderForWorklistClass(WorklistClassNames.ReportingReviewResidentReportWorklist)]
-		[FolderPath("Review Resident Report")]
-		public class ReviewResidentReportFolder : ReportingWorkflowFolder
+		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingReviewWorklist)]
+		[FolderPath("Awaiting Review")]
+		public class AwaitingReviewFolder : ReportingWorkflowFolder
 		{
 		}
 
@@ -117,9 +108,15 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingToBeApprovedProtocolWorklist)]
-		[FolderPath("To be Approved", true)]
-		public class ToBeApprovedFolder : ReportingWorkflowFolder
+		[FolderForWorklistClass(WorklistClassNames.ReportingToBeReviewedProtocolWorklist)]
+		[FolderPath("To be Reviewed", true)]
+		public class ToBeReviewedProtocolFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewProtocolWorklist)]
+		[FolderPath("Assigned/To be Reviewed")]
+		public class AssignedForReviewProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
@@ -136,7 +133,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
-		[FolderPath("Awaiting Approval")]
+		[FolderPath("Awaiting Review")]
 		public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
 		{
 		}

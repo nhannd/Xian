@@ -35,7 +35,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
-using System.Diagnostics;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -61,21 +60,21 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		{
 			public void Execute(ReportingProcedureStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor, IPersistenceContext context)
 			{
-                step.ReportPart.Supervisor = supervisor;
-                foreach (KeyValuePair<string, string> pair in reportPartExtendedProperties)
-                {
-                    step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
-                }
-            }
+				step.ReportPart.Supervisor = supervisor;
+				foreach (KeyValuePair<string, string> pair in reportPartExtendedProperties)
+				{
+					step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
+				}
+			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
 				// cannot save if no report part
-				if(step.ReportPart == null)
+				if (step.ReportPart == null)
 					return false;
 
 				// only the owner of this step can save
-				if(step.PerformingStaff != null && !Equals(step.PerformingStaff, executingStaff))
+				if (step.PerformingStaff != null && !Equals(step.PerformingStaff, executingStaff))
 					return false;
 
 				return true;
@@ -135,9 +134,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		{
 			protected void UpdateStep(InterpretationStep step, Staff executingStaff)
 			{
-				if(step.PerformingStaff == null)
+				if (step.PerformingStaff == null)
 					step.Complete(executingStaff);
-				else 
+				else
 					step.Complete();
 
 				// move draft report to prelim status
@@ -181,10 +180,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				UpdateStep(step, executingStaff);
 
 				VerificationStep verification = new VerificationStep(step);
-				if (step.ReportPart.Supervisor == null)
-					verification.Assign(executingStaff);
-				else
-					verification.Assign(step.ReportPart.Supervisor);
+
+				// supervisor can be null, in which case the verification step is unassigned.
+				verification.Assign(step.ReportPart.Supervisor);
 
 				workflow.AddActivity(verification);
 				return verification;
@@ -235,7 +233,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					foreach (Procedure procedure in procedures)
 					{
 						InterpretationStep interpretation = new InterpretationStep(procedure);
-                        interpretation.Schedule(Platform.Time);
+						interpretation.Schedule(Platform.Time);
 						interpretations.Add(interpretation);
 						workflow.AddActivity(interpretation);
 					}
@@ -258,7 +256,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					return false;
 
 				// cannot cancel a step that is assigned to someone else
-				if(step.AssignedStaff != null && !Equals(step.AssignedStaff, executingStaff))
+				if (step.AssignedStaff != null && !Equals(step.AssignedStaff, executingStaff))
 					return false;
 
 				return true;
@@ -335,11 +333,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.State != ActivityStatus.SC)
 					return false;
 
-				// can only be verified by the interpreter or assigned supervisor
-				if(!(Equals(executingStaff, step.ReportPart.Interpreter) || Equals(executingStaff, step.ReportPart.Supervisor)))
-					return false;
+				if (step.AssignedStaff != null && Equals(executingStaff, step.ReportPart.Interpreter)) return true;
+				if (step.ReportPart.Supervisor != null && Equals(executingStaff, step.ReportPart.Supervisor)) return true;
+				if (step.AssignedStaff == null && step.ReportPart.Supervisor == null) return true;
 
-				return true;
+				return false;
 			}
 		}
 
@@ -365,11 +363,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.IsTerminated)
 					return false;
 
-				// can only be verified by the interpreter or assigned supervisor
-				if (!(Equals(executingStaff, step.ReportPart.Interpreter) || Equals(executingStaff, step.ReportPart.Supervisor)))
-					return false;
+				if (step.AssignedStaff != null && Equals(executingStaff, step.ReportPart.Interpreter)) return true;
+				if (step.ReportPart.Supervisor != null && Equals(executingStaff, step.ReportPart.Supervisor)) return true;
+				if (step.AssignedStaff == null && step.ReportPart.Supervisor == null) return true;
 
-				return true;
+				return false;
 			}
 		}
 

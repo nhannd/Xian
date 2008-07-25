@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.SetColumnSpan(this._supervisor, 2);
 			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._supervisor.LabelText = "Supervising Radiologist:";
+			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
 			this._supervisor.Location = new System.Drawing.Point(2, 700);
 			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
 			this._supervisor.Name = "_supervisor";
@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._sendToVerifyButton.Name = "_sendToVerifyButton";
 			this._sendToVerifyButton.Size = new System.Drawing.Size(83, 23);
 			this._sendToVerifyButton.TabIndex = 1;
-			this._sendToVerifyButton.Text = "To be Verified";
+			this._sendToVerifyButton.Text = "For Review";
 			this._sendToVerifyButton.UseVisualStyleBackColor = true;
 			this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
 			// 
@@ -266,7 +266,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
 			this._priorReportsTab.Name = "_priorReportsTab";
 			this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
-			this._priorReportsTab.Size = new System.Drawing.Size(502, 775);
+			this._priorReportsTab.Size = new System.Drawing.Size(504, 775);
 			this._priorReportsTab.TabIndex = 0;
 			this._priorReportsTab.Text = "Prior Reports";
 			this._priorReportsTab.UseVisualStyleBackColor = true;
@@ -276,7 +276,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderAdditionalInfoTab.Location = new System.Drawing.Point(4, 22);
 			this._orderAdditionalInfoTab.Name = "_orderAdditionalInfoTab";
 			this._orderAdditionalInfoTab.Padding = new System.Windows.Forms.Padding(3);
-			this._orderAdditionalInfoTab.Size = new System.Drawing.Size(502, 775);
+			this._orderAdditionalInfoTab.Size = new System.Drawing.Size(504, 775);
 			this._orderAdditionalInfoTab.TabIndex = 2;
 			this._orderAdditionalInfoTab.Text = "Additional Info";
 			this._orderAdditionalInfoTab.UseVisualStyleBackColor = true;

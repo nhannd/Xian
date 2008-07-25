@@ -268,13 +268,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanSubmitProtocolForApproval")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForApproval)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+			Staff supervisor = request.Supervisor == null ? null : this.PersistenceContext.Load<Staff>(request.Supervisor);
 
 			ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
-			op.Execute(order);
+			op.Execute(order, supervisor);
 
 			UpdateProtocols(request.Protocols);
 			UpdateOrderNotes(order, request.OrderNotes);
@@ -341,8 +342,9 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		public bool CanSubmitProtocolForApproval(ProtocolOperationEnablementContext enablementContext)
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForApproval))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
 				return false;
+
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.SubmitForApprovalOperation(), enablementContext.ProcedureStepRef);
 		}
 

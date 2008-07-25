@@ -455,11 +455,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _supervisorLookupHandler; }
 		}
 
-		public bool SupervisorVisible
-		{
-			get { return !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.UnsupervisedReporting); }
-		}
-
 		#endregion
 
 		#region Verify
@@ -503,7 +498,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// Source Folders
 				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReportedFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
+				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.VerifiedFolder));
 
@@ -540,7 +535,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
-				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.UnsupervisedReporting) == false && _supervisor == null)
+				bool supervisorRequired = !Thread.CurrentPrincipal.IsInRole(
+					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
+				supervisorRequired &= _supervisor == null;
+
+				if (supervisorRequired)
 				{
 					this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
 					return;
@@ -560,7 +559,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				//DocumentManager.InvalidateFolder(typeof(Folders.ToBeReportedFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
 				// Destination Folders
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
+				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.AwaitingReviewFolder));
 
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
@@ -654,7 +653,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.VerifiedFolder));
 				// Destination Folders
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
+				//DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeVerifiedFolder));
 
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}

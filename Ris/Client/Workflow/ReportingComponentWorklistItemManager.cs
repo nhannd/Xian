@@ -234,7 +234,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						switch (_componentMode)
 						{
 							case ReportingComponentMode.Verify:
-								request = new QueryWorklistRequest(WorklistClassNames.ReportingRadiologistToBeVerifiedWorklist, true, true);
+								request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeReviewedReportWorklist, true, true);
 								break;
 							case ReportingComponentMode.Create:
 							default:

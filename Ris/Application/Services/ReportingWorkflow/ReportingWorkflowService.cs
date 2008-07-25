@@ -121,6 +121,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return response;
         }
 
+		// TODO: change this to submit for review
     	[UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationForVerification")]
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
@@ -551,7 +552,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		/// <param name="supervisor"></param>
         private void SaveReportHelper(Dictionary<string, string> reportPartExtendedProperties, ReportingProcedureStep step, Staff supervisor)
         {
-			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.UnsupervisedReporting) == false && supervisor == null)
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.OmitSupervisor) == false && supervisor == null)
 				throw new RequestValidationException(SR.ExceptionSupervisorRequired);
 
 			if (reportPartExtendedProperties == null)
