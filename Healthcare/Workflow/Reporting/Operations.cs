@@ -73,6 +73,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.ReportPart == null)
 					return false;
 
+				// cannot save if the report part is no longer modifiable
+				if (!step.ReportPart.IsModifiable)
+					return false;
+
 				// only the owner of this step can save
 				if (step.PerformingStaff != null && !Equals(step.PerformingStaff, executingStaff))
 					return false;

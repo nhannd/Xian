@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client
         {
             base.Initialize();
 
-            this.Context.RegisterDoubleClickHandler(Open);
+			this.Context.RegisterDoubleClickHandler(Open, delegate { return this.Enabled; });
         }
 
 		protected override EntityRef OrderRef

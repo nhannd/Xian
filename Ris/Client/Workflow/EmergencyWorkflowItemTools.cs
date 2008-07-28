@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-            this.Context.RegisterDoubleClickHandler(Open);
+			this.Context.RegisterDoubleClickHandler(Open, delegate { return this.Enabled; });
         }
 	}
 }

@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-            this.Context.RegisterDoubleClickHandler(Apply);
+			this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
         }
 
         public bool Enabled

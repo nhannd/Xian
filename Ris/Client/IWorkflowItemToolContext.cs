@@ -41,6 +41,12 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client
 {
 	/// <summary>
+	/// Delegate used to determine if a double-click handler is enabled.
+	/// </summary>
+	/// <returns></returns>
+	public delegate bool DoubleClickHandlerEnablementDelegate();
+
+	/// <summary>
 	/// Defines a base tool context for tools that operate on workflow items.
 	/// </summary>
     public interface IWorkflowItemToolContext : IToolContext
@@ -82,16 +88,18 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="folderClass"></param>
 		void InvalidateFolders(Type folderClass);
 
+
 		/// <summary>
 		/// Allows the tool to register itself as a double-click handler for items,
 		/// regardless of which folder they are in.
 		/// </summary>
 		/// <remarks>
-		/// It does not make sense for more than one tool to register a double-click handler.
-		/// Only the last tool to register will actually receive the call.
+		/// More than one tool may register a double-click handler, but at most one will receive
+		/// the notification.  The first handler whose enablement function returns true will receive the call. 
 		/// </remarks>
 		/// <param name="handler"></param>
-		void RegisterDoubleClickHandler(ClickHandlerDelegate handler);
+		/// <param name="enablement"></param>
+		void RegisterDoubleClickHandler(ClickHandlerDelegate handler, DoubleClickHandlerEnablementDelegate enablement);
 
 		/// <summary>
 		/// Allows the tool to register a workflow service with the folder system.  When the selection changes,

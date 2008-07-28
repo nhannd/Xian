@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 
 			this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftFolder), this);
-			this.Context.RegisterDoubleClickHandler(Apply);
+			this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
 		}
 
 		public string Label
@@ -99,7 +99,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return
 					this.Context.GetOperationEnablement("StartInterpretation") ||
 					this.Context.GetOperationEnablement("StartVerification") ||
-					this.Context.GetOperationEnablement("SaveReport");
+
+					// there is no specific workflow operation for editing a previously created draft,
+					// so we enable the tool if it looks like a draft and SaveReport is enabled
+					(this.Context.GetOperationEnablement("SaveReport") && item != null && item.ActivityStatus.Code == StepState.InProgress);
 			}
 		}
 

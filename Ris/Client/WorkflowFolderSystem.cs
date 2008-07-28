@@ -135,9 +135,9 @@ namespace ClearCanvas.Ris.Client
 				_owner.InvalidateFolders(folderClass);
 			}
 
-            public void RegisterDoubleClickHandler(ClickHandlerDelegate handler)
+            public void RegisterDoubleClickHandler(ClickHandlerDelegate handler, DoubleClickHandlerEnablementDelegate enablement)
             {
-                _owner._doubleClickHandler = handler;
+                _owner._doubleClickHandlers.Add(new DoubleClickHandlerRegistration(handler, enablement));
             }
 
             protected void RegisterDropHandler(Type folderClass, object dropHandler)
@@ -153,10 +153,35 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
+		#region DoubleClickHandlerRegistration
+
+		class DoubleClickHandlerRegistration
+		{
+			private readonly ClickHandlerDelegate _clickHandler;
+			private readonly DoubleClickHandlerEnablementDelegate _enablement;
+
+			public DoubleClickHandlerRegistration(ClickHandlerDelegate clickHandler, DoubleClickHandlerEnablementDelegate enablement)
+			{
+				_clickHandler = clickHandler;
+				_enablement = enablement;
+			}
+
+			public bool Handle()
+			{
+				if(_enablement())
+				{
+					_clickHandler();
+					return true;
+				}
+				return false;
+			}
+		}
+
+		#endregion
+
 		private readonly FolderList _workflowFolders;
 		private IFolderSystemContext _context;
 
-		private event EventHandler _selectedItemDoubleClicked;
 		private event EventHandler _selectedItemsChanged;
 		private event EventHandler _titleChanged;
 		private event EventHandler _titleIconChanged;
@@ -174,7 +199,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly List<Type> _workflowServices = new List<Type>();
 		private IDictionary<string, bool> _workflowEnablement;
         private readonly Dictionary<Type, List<object>> _mapFolderClassToDropHandlers = new Dictionary<Type, List<object>>();
-        private ClickHandlerDelegate _doubleClickHandler;
+		private readonly List<DoubleClickHandlerRegistration> _doubleClickHandlers = new List<DoubleClickHandlerRegistration>();
 
         private SearchResultsFolder _searchFolder;
 
@@ -576,10 +601,12 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="args"></param>
 		private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs args)
 		{
-			EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
-
-			if (_doubleClickHandler != null)
-				_doubleClickHandler();
+			// find a double-click handler
+			foreach (DoubleClickHandlerRegistration handler in _doubleClickHandlers)
+			{
+				if (handler.Handle())
+					break;
+			}
 		}
 
 		/// <summary>
