@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -300,6 +301,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 																FailQueueItem(queueItem, e.InnerException.Message);
 															else
 																FailQueueItem(queueItem, e.Message);
+
+
+
+                                                            Platform.Alert(AlertCategory.Application, AlertLevel.Error, queueItem.WorkQueueTypeEnum.ToString(),
+                                                                                "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+                                                                                 queueItem.WorkQueueTypeEnum,
+                                                                                 queueItem.GetKey());
                                                         }
 
                                                         // Cleanup the processor

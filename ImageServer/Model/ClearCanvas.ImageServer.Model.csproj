@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alert.gen.cs" />
+    <Compile Include="AlertCategoryEnum.gen.cs" />
+    <Compile Include="AlertLevelEnum.gen.cs" />
     <Compile Include="ArchiveQueue.gen.cs" />
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
@@ -67,6 +70,8 @@
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.gen.cs" />
     <Compile Include="DuplicateSopPolicyEnum.gen.cs" />
+    <Compile Include="EntityBrokers\AlertSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\AlertUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveQueueSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveStudyStorageSelectCriteria.gen.cs" />
@@ -79,6 +84,9 @@
     <Compile Include="EntityBrokers\FilesystemQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\IAlertCategoryEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IAlertEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IAlertLevelEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IArchiveQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IArchiveQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IArchiveStudyStorageEntityBroker.gen.cs" />

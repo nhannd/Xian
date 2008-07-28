@@ -98,6 +98,7 @@
     <Compile Include="Actions\IXmlActionCompilerOperator.cs" />
     <Compile Include="Actions\XmlActionCompiler.cs" />
     <Compile Include="Actions\XmlActionCompilerException.cs" />
+    <Compile Include="Alert\Alert.cs" />
     <Compile Include="Auditing\IAuditMessage.cs" />
     <Compile Include="Authorization\AuthorityGroupDefinition.cs" />
     <Compile Include="Authorization\AuthorityGroupSetup.cs" />

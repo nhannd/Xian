@@ -59,6 +59,9 @@
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\UpdateServiceLock.cs" />
+    <Compile Include="EntityBrokers\AlertCategoryEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\AlertEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\AlertLevelEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveStudyStorageEntityBroker.gen.cs" />

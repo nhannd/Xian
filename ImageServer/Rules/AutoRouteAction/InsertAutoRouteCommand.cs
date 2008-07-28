@@ -29,7 +29,10 @@
 
 #endregion
 
+using System;
+using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -41,6 +44,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
+    
     /// <summary>
     /// <see cref="ServerDatabaseCommand"/> derived class for use with <see cref="ServerCommandProcessor"/> for inserting AutoRoute WorkQueue entries into the Persistent Store.
     /// </summary>
@@ -80,16 +84,24 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 				Platform.Log(LogLevel.Warn,
 				             "Device '{0}' on partition {1} not in database for autoroute request!  Ignoring request.", _deviceAe,
 				             _context.ServerPartition.AeTitle);
-				return;
+
+			    Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "AutoRoute Rule",
+			                   "Unknown device '{0}' on partition '{1}'", _deviceAe, _context.ServerPartition.AeTitle);
+
+                return;
 			}
         	if (!dev.AllowAutoRoute)
             {
                 Platform.Log(LogLevel.Warn,
                              "Auto-route attempted to device {0} on partition {1} with autoroute support disabled.  Ignoring request.",
                              dev.AeTitle, _context.ServerPartition.AeTitle);
+
+                Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "AutoRoute Rule",
+                            "Device {0} on partition {1} has autoroute support disabled.", dev.AeTitle, _context.ServerPartition.AeTitle);
+                
                 return;
             }
-
+                
             WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
 
             parms.ScheduledTime = Platform.Time.AddSeconds(30);

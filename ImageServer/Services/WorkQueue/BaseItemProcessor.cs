@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
@@ -407,8 +408,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 						if (false == update.Execute(parms))
 						{
-							Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}",
-										 item.WorkQueueTypeEnum, item.GetKey().ToString());
+							Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
 						}
 						else
 							updateContext.Commit();
@@ -457,9 +457,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								Platform.Log(LogLevel.Error,
 											 "Failing {0} WorkQueue entry ({1}), fatal error",
 											 item.WorkQueueTypeEnum, item.GetKey());
+
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
 								parms.ScheduledTime = Platform.Time;
-								parms.ExpirationTime = Platform.Time; // expire now								
+								parms.ExpirationTime = Platform.Time; // expire now		
+
+							    Platform.Alert(AlertCategory.Application, AlertLevel.Critical, "Study Process",
+							                   "Failing {0} WorkQueue entry ({1}), fatal error",
+							                   item.WorkQueueTypeEnum, item.GetKey());
 							}
 							else if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
 							{
@@ -469,6 +474,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now
+
+
+							    Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process",
+							                   "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
 							}
 							else
 							{
@@ -527,6 +537,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                                 parms.ScheduledTime = Platform.Time;
                                 parms.ExpirationTime = Platform.Time.AddDays(1);
+
+
+                                Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process", 
+                                                "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                                item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
                             }
                             else
                             {
@@ -538,6 +553,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 parms.ExpirationTime =
                                     Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
                                                              settings.WorkQueueFailureDelayMinutes);
+
                             }
 
                             if (false == update.Execute(parms))

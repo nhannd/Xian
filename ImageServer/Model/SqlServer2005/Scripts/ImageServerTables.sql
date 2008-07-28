@@ -1032,6 +1032,82 @@ END
 GO
 
 
+/****** Object:  Table [dbo].[AlertCategoryEnum]    Script Date: 07/16/2008 23:49:13 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AlertCategoryEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[AlertCategoryEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_AlertCategoryEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_AlertCategoryEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+
+/****** Object:  Table [dbo].[AlertLevelEnum]    Script Date: 07/16/2008 23:49:13 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AlertLevelEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[AlertLevelEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_AlertLevelEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_AlertLevelEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+
+GO
+/****** Object:  Table [dbo].[Alert]    Script Date: 07/24/2008 16:05:32 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Alert]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[Alert](
+	[GUID] [uniqueidentifier] NOT NULL,
+	[Source] [nvarchar](128) NOT NULL,
+	[Content] [xml] NOT NULL,
+	[InsertTime] [datetime] NOT NULL,
+	[ExpirationTime] [datetime] NULL,
+	[AlertLevelEnum] [smallint] NOT NULL,
+	[AlertCategoryEnum] [smallint] NOT NULL,
+ CONSTRAINT [PK_SystemAlert] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+END
+GO
+
+
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
 ALTER TABLE [dbo].[ArchiveQueue]  WITH CHECK ADD  CONSTRAINT [FK_ArchiveQueue_ArchiveQueueStatusEnum] FOREIGN KEY([ArchiveQueueStatusEnum])
@@ -1375,3 +1451,14 @@ REFERENCES [dbo].[WorkQueue] ([GUID])
 GO
 ALTER TABLE [dbo].[WorkQueueUid] CHECK CONSTRAINT [FK_WorkQueueUid_WorkQueue]
 GO
+
+/****** Object:  ForeignKey [FK_Alert_AlertCategoryEnum]    Script Date: 07/24/2008 00:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Alert_AlertCategoryEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Alert]'))
+ALTER TABLE [dbo].[Alert]  WITH CHECK ADD  CONSTRAINT [FK_Alert_AlertCategoryEnum] FOREIGN KEY([AlertCategoryEnum])
+REFERENCES [dbo].[AlertCategoryEnum] ([Enum])
+GO
+
+/****** Object:  ForeignKey [FK_Alert_AlertLevelEnum]    Script Date: 07/24/2008 00:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Alert_AlertLevelEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Alert]'))
+ALTER TABLE [dbo].[Alert]  WITH CHECK ADD  CONSTRAINT [FK_Alert_AlertLevelEnum] FOREIGN KEY([AlertLevelEnum])
+REFERENCES [dbo].[AlertLevelEnum] ([Enum])

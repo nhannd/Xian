@@ -32,7 +32,9 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -93,7 +95,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (false == context.CommandProcessor.Execute())
             {
-                Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules");   
+                Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules");
+
+                Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process",
+                                    "Unexpected failure processing Study level rules. Study UID={0} SOP={1}",
+                                    file.DataSet[DicomTags.StudyInstanceUid].GetString(0,""),
+                                    file.DataSet[DicomTags.SopInstanceUid].GetString(0,"")
+                               );
             }
         }
 
@@ -125,6 +133,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (false == context.CommandProcessor.Execute())
             {
                 Platform.Log(LogLevel.Error,"Error processing Series level rules StudyStorage {0}",item.StudyStorageKey);
+                Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process",
+                                    "Unexpected failure processing Series level rules. Study UID={0} SOP={1}",
+                                    file.DataSet[DicomTags.StudyInstanceUid].GetString(0, ""),
+                                    file.DataSet[DicomTags.SopInstanceUid].GetString(0, "")
+                               );
             }
         }
 
@@ -148,7 +161,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 Platform.Log(LogLevel.Info,
                              "Duplicate SOP being processed is identical.  Removing SOP: {0}",
                              baseFile.MediaStorageSopInstanceUid);
+
                 File.Delete(duplicatePath);
+
+                Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "Study Process",
+                                   "Duplicate SOP being processed is identical.  Removed SOP: {0}",
+                                   baseFile.MediaStorageSopInstanceUid
+                              );
+                
                 return;
             }
             else throw new ApplicationException(failureReason);
@@ -219,6 +239,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (!processor.Execute())
                 {
                     Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+
                     throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
                 }
                 else
@@ -372,10 +393,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             	break;
                             }
                         }
-
-                    UpdateWorkQueueUid(sop);
                 }
-
+                UpdateWorkQueueUid(sop);
                 return false;
                 
             }
@@ -523,28 +542,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         }
                 );
 
-			if (!successful)
-			{
-				bool failNow = true;
-				foreach (WorkQueueUid uid in WorkQueueUidList)
-				{
-					if (uid.Failed && !uid.Duplicate)
-					{
-						failNow = false;
-						break;
-					}
-				}
-				if (failNow)
-				{
-					Platform.Log(LogLevel.Error,"Failing queue entry, all entries are duplicates.");
-					PostProcessingFailure(item, true);
-					return;
-				}
-			}
 			if (successful)
 				PostProcessing(item, batchProcessed, false);
 			else
-				PostProcessingFailure(item, false);
+			{
+                bool allFailedDuplicate = CollectionUtils.TrueForAll<WorkQueueUid>(WorkQueueUidList, delegate(WorkQueueUid uid)
+                                                                               {
+                                                                                   return uid.Duplicate && uid.Failed;
+                                                                               });
+
+                if (allFailedDuplicate)
+                {
+                    Platform.Log(LogLevel.Error, "All entries are duplicates");
+                }
+
+                bool failNow = allFailedDuplicate;
+
+                if (failNow)
+                {
+                    PostProcessingFailure(item, true);
+                    return;
+                }
+                else
+                {
+                    PostProcessingFailure(item, false);
+                }
+			}
+				
         }
 
 

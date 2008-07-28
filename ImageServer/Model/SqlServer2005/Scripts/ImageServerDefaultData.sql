@@ -721,3 +721,31 @@ GO
 INSERT INTO [ImageServer].[dbo].[ArchiveTypeEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES (newid(),100,'HsmArchive','HSM Archive','Hierarchical storage management archive such as StorageTek QFS')
 GO
+
+-- AlertCategoryEnum inserts
+INSERT INTO [ImageServer].[dbo].[AlertCategoryEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1001,'System','System alert','System alert')
+GO
+INSERT INTO [ImageServer].[dbo].[AlertCategoryEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1002,'Application','Application alert','Application alert')
+GO
+INSERT INTO [ImageServer].[dbo].[AlertCategoryEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1003,'Security','Security alert','Security alert')
+GO
+INSERT INTO [ImageServer].[dbo].[AlertCategoryEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1004,'User','User alert','User alert')
+GO
+
+-- AlertLevelEnum inserts
+INSERT INTO [ImageServer].[dbo].[AlertLevelEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1001,'Informational','Informational','Informational alert')
+GO
+INSERT INTO [ImageServer].[dbo].[AlertLevelEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1002,'Warning','Warning','Warning alert')
+GO
+INSERT INTO [ImageServer].[dbo].[AlertLevelEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1003,'Error','Error','Error alert')
+GO
+INSERT INTO [ImageServer].[dbo].[AlertLevelEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),1004,'Critical','Critical','Critical alert')
+GO
