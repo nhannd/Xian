@@ -465,6 +465,9 @@
   <data name="MessageMissingCancellationReason" xml:space="preserve">
     <value>A cancellation reason is required to replace an order.</value>
   </data>
+  <data name="MessageNoProcedures" xml:space="preserve">
+    <value>You must have at least one procedure.</value>
+  </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
   </data>

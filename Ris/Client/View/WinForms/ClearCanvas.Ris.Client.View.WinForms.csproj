@@ -573,7 +573,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\FacilityText.png" />
+    <None Include="Resources\ClearFilterSmall.png" />
     <Content Include="Resources\LogoLarge.PNG" />
+    <None Include="Resources\searchtoolsmall.png" />
     <None Include="Resources\UserText.png" />
     <None Include="Resources\PasswordText.png" />
     <EmbeddedResource Include="Resources\Splash.png" />

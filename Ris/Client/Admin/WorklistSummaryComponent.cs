@@ -121,7 +121,6 @@ namespace ClearCanvas.Ris.Client.Admin
 					_worklistClass = (WorklistClassSummary)value;
 
 				Search();
-				this.Modified = true;
 
 				if (value == _filterNone)
 					_worklistClass = _filterNone;

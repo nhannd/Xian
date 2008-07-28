@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (toggleActivation)
 				{
-					this.AddAction(ToggleActivationKey, "Toggle Activation", IconAddResource);
+					this.AddAction(ToggleActivationKey, "Toggle Activation", "Icons.ToggleActivationSmall.png");
 				}
 			}
 

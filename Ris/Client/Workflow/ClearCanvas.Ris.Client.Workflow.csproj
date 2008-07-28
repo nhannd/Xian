@@ -364,6 +364,9 @@
     <Content Include="Icons\ImportAuthorityTokensLarge.png" />
     <Content Include="Icons\ImportAuthorityTokensMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensSmall.png" />
+    <EmbeddedResource Include="Icons\SearchPatientToolLarge.png" />
+    <EmbeddedResource Include="Icons\SearchPatientToolMedium.png" />
+    <EmbeddedResource Include="Icons\SearchPatientToolSmall.png" />
     <EmbeddedResource Include="Icons\SingleExclamation.png" />
     <EmbeddedResource Include="Icons\ResubmitOrderLarge.png" />
     <EmbeddedResource Include="Icons\ResubmitOrderMedium.png" />

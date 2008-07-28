@@ -60,6 +60,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms {
             }
         }
         
+        internal static System.Drawing.Bitmap ClearFilterSmall {
+            get {
+                object obj = ResourceManager.GetObject("ClearFilterSmall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         internal static System.Drawing.Bitmap FacilityText {
             get {
                 object obj = ResourceManager.GetObject("FacilityText", resourceCulture);
@@ -77,6 +84,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms {
         internal static System.Drawing.Bitmap PasswordText {
             get {
                 object obj = ResourceManager.GetObject("PasswordText", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap SearchToolSmall {
+            get {
+                object obj = ResourceManager.GetObject("SearchToolSmall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
