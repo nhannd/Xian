@@ -14,7 +14,7 @@ using ClearCanvas.Ris.Application.Common.Admin.ProtocolAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-	[MenuAction("launch", "global-menus/Admin/Protocol Codes", "Launch")]
+	[MenuAction("launch", "global-menus/Admin/Protocol/Codes", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProtocolGroups)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ProtocolCodeAdminTool : Tool<IDesktopToolContext>

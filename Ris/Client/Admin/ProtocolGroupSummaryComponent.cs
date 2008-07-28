@@ -44,7 +44,7 @@ using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Protocol Groups", "Launch")]
+    [MenuAction("launch", "global-menus/Admin/Protocol/Groups", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProtocolGroups)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ProtocolGroupSummaryTool : Tool<IDesktopToolContext>
