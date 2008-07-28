@@ -80,17 +80,17 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._recipientsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this._consultantContactPoint = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._addConsultantButton = new System.Windows.Forms.Button();
 			this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
-			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._rightHandPanel = new System.Windows.Forms.Panel();
 			this._bannerPanel = new System.Windows.Forms.Panel();
+			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -310,7 +310,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Margin = new System.Windows.Forms.Padding(2);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(2);
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(2, 2, 17, 2);
 			this.tabPage1.Size = new System.Drawing.Size(481, 299);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "Procedures";
@@ -318,6 +318,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _proceduresTableView
 			// 
+			this._proceduresTableView.AutoSize = true;
+			this._proceduresTableView.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._proceduresTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._proceduresTableView.FilterTextBoxWidth = 132;
 			this._proceduresTableView.Location = new System.Drawing.Point(2, 2);
@@ -326,7 +328,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._proceduresTableView.Name = "_proceduresTableView";
 			this._proceduresTableView.ReadOnly = false;
 			this._proceduresTableView.ShowToolbar = false;
-			this._proceduresTableView.Size = new System.Drawing.Size(477, 295);
+			this._proceduresTableView.Size = new System.Drawing.Size(462, 295);
 			this._proceduresTableView.TabIndex = 0;
 			this._proceduresTableView.ItemDoubleClicked += new System.EventHandler(this._proceduresTableView_ItemDoubleClicked);
 			// 
@@ -408,16 +410,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._consultantContactPoint.TabIndex = 6;
 			this._consultantContactPoint.Value = null;
 			// 
-			// _consultantLookup
-			// 
-			this._consultantLookup.LabelText = "Find Practitioner";
-			this._consultantLookup.Location = new System.Drawing.Point(2, 5);
-			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
-			this._consultantLookup.Name = "_consultantLookup";
-			this._consultantLookup.Size = new System.Drawing.Size(382, 45);
-			this._consultantLookup.TabIndex = 4;
-			this._consultantLookup.Value = null;
-			// 
 			// _addConsultantButton
 			// 
 			this._addConsultantButton.Location = new System.Drawing.Point(400, 42);
@@ -446,20 +438,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._schedulingRequestTime.Size = new System.Drawing.Size(244, 40);
 			this._schedulingRequestTime.TabIndex = 9;
 			this._schedulingRequestTime.Value = null;
-			// 
-			// _diagnosticService
-			// 
-			this._diagnosticService.AutoSize = true;
-			this._diagnosticService.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel3.SetColumnSpan(this._diagnosticService, 2);
-			this._diagnosticService.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._diagnosticService.LabelText = "Imaging Service";
-			this._diagnosticService.Location = new System.Drawing.Point(2, 47);
-			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
-			this._diagnosticService.Name = "_diagnosticService";
-			this._diagnosticService.Size = new System.Drawing.Size(491, 41);
-			this._diagnosticService.TabIndex = 2;
-			this._diagnosticService.Value = null;
 			// 
 			// _schedulingRequestDate
 			// 
@@ -492,19 +470,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._priority.Size = new System.Drawing.Size(243, 41);
 			this._priority.TabIndex = 3;
 			this._priority.Value = null;
-			// 
-			// _orderingPractitioner
-			// 
-			this._orderingPractitioner.AutoSize = true;
-			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._orderingPractitioner.LabelText = "Ordering Practitioner";
-			this._orderingPractitioner.Location = new System.Drawing.Point(249, 92);
-			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
-			this._orderingPractitioner.Name = "_orderingPractitioner";
-			this._orderingPractitioner.Size = new System.Drawing.Size(244, 41);
-			this._orderingPractitioner.TabIndex = 4;
-			this._orderingPractitioner.Value = null;
 			// 
 			// _indication
 			// 
@@ -556,6 +521,43 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Size = new System.Drawing.Size(1019, 79);
 			this._bannerPanel.TabIndex = 0;
 			// 
+			// _consultantLookup
+			// 
+			this._consultantLookup.LabelText = "Find Practitioner";
+			this._consultantLookup.Location = new System.Drawing.Point(2, 5);
+			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
+			this._consultantLookup.Name = "_consultantLookup";
+			this._consultantLookup.Size = new System.Drawing.Size(382, 45);
+			this._consultantLookup.TabIndex = 4;
+			this._consultantLookup.Value = null;
+			// 
+			// _diagnosticService
+			// 
+			this._diagnosticService.AutoSize = true;
+			this._diagnosticService.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel3.SetColumnSpan(this._diagnosticService, 2);
+			this._diagnosticService.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._diagnosticService.LabelText = "Imaging Service";
+			this._diagnosticService.Location = new System.Drawing.Point(2, 47);
+			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
+			this._diagnosticService.Name = "_diagnosticService";
+			this._diagnosticService.Size = new System.Drawing.Size(491, 41);
+			this._diagnosticService.TabIndex = 2;
+			this._diagnosticService.Value = null;
+			// 
+			// _orderingPractitioner
+			// 
+			this._orderingPractitioner.AutoSize = true;
+			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._orderingPractitioner.LabelText = "Ordering Practitioner";
+			this._orderingPractitioner.Location = new System.Drawing.Point(249, 92);
+			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
+			this._orderingPractitioner.Name = "_orderingPractitioner";
+			this._orderingPractitioner.Size = new System.Drawing.Size(244, 41);
+			this._orderingPractitioner.TabIndex = 4;
+			this._orderingPractitioner.Value = null;
+			// 
 			// OrderEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -576,6 +578,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel4.ResumeLayout(false);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
+			this.tabPage1.PerformLayout();
 			this.tabPage2.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);

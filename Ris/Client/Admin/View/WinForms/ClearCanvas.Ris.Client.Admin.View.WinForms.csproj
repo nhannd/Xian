@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="DiagnosticServiceEditorComponentView.cs" />
     <Compile Include="DiagnosticServiceSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DiagnosticServiceSummaryComponentControl.Designer.cs">
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>

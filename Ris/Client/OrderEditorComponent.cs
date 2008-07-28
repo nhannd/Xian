@@ -391,6 +391,20 @@ namespace ClearCanvas.Ris.Client
 
             InitializeTabPages();
 
+			// add validation rule to ensure the table has at least one entry (preventing 0 items case)
+			this.Validation.Add(new ValidationRule("SelectedProcedure",
+				delegate
+				{
+					bool countIsNotZero;
+
+					if (_proceduresTable.Items.Count > 0)
+						countIsNotZero = true;
+					else
+						countIsNotZero = false;
+
+					return new ValidationResult(countIsNotZero, SR.MessageNoProcedures);
+				}));
+
             base.Start();
         }
 
@@ -795,10 +809,9 @@ namespace ClearCanvas.Ris.Client
         {
             if (_selectedProcedure == null || !_selectedProcedure.CanModify)
                 return;
-
-            _proceduresTable.Items.Remove(_selectedProcedure);
-            _selectedProcedure = null;
-            NotifyPropertyChanged("SelectedProcedure");
+			_proceduresTable.Items.Remove(_selectedProcedure);
+			_selectedProcedure = null;
+			NotifyPropertyChanged("SelectedProcedure");
         }
 
         public void UpdateProcedureActionModel()
@@ -854,6 +867,11 @@ namespace ClearCanvas.Ris.Client
         {
             this.Exit(ApplicationComponentExitCode.None);
         }
+
+		public int ProcedureCount
+		{
+			get { return this._proceduresTable.Items.Count; }
+		}
 
         #endregion
 
