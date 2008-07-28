@@ -152,9 +152,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             }
 
+            // exclude nodes that point to de-activated diagnostic services
+            children = CollectionUtils.Select(children,
+                delegate(DiagnosticServiceTreeNode n) { return n.DiagnosticService == null || !n.DiagnosticService.Deactivated; });
+
             OrderEntryAssembler assembler = new OrderEntryAssembler();
             return new GetDiagnosticServiceSubTreeResponse(
-                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
+                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem>(
                     children,
                     delegate(DiagnosticServiceTreeNode n)
                     {
