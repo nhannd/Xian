@@ -282,7 +282,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
             Order orderToReplace = PersistenceContext.Load<Order>(request.OrderRef);
-            ValidateOrderModifiable(orderToReplace);
+			ValidateOrderReplacable(orderToReplace);
 
 			// reason is optional
             OrderCancelReasonEnum reason = (request.CancelReason != null) ?
@@ -332,6 +332,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified or replaced.",
                     EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
         }
+
+		private void ValidateOrderReplacable(Order order)
+		{
+			if (order.Status != OrderStatus.SC)
+				throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified or replaced.",
+					EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
+		}
 
         // TODO: ideally this should be done in the model layer
         private void ValidatePatientProfilesExist(Order order)
