@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Alert;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -57,7 +56,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #endregion
 
         #region Private Methods
-        private void ReinventoryFilesystem(Filesystem filesystem)
+        private void ReinventoryFilesystem(Filesystem filesystem, WorkQueuePriorityEnum priority)
         {
             ServerPartition partition;
 
@@ -77,83 +76,91 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                         StudyStorageLocation location;
                         if (false == GetStudyStorageLocation(partition, studyInstanceUid, out location))
                         {
-							List<FileInfo> fileList = new List<FileInfo>();
-							foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
+							if (location == null)
 							{
-								FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
-
-								foreach (FileInfo sopFile in sopInstanceFiles)
-									fileList.Add(sopFile);
+								Platform.Log(LogLevel.Warn, "Study {0} on partition {1} does not have an online location",studyInstanceUid, partition.Description);
 							}
-
-                        	FileInfo firstFile = fileList[0];
-
-                        
-							DicomFile file = new DicomFile(firstFile.FullName);
-                        	file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
-
-                        	IList<StudyStorageLocation> studyLocationList;
-                            using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-                            {
-                                IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
-                                StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
-                                insertParms.ServerPartitionKey = partition.GetKey();
-                                insertParms.StudyInstanceUid = studyInstanceUid;
-                                insertParms.Folder = dateDir.Name;
-                                insertParms.FilesystemKey = filesystem.GetKey();
-								if (file.TransferSyntax.LosslessCompressed)
+							else
+							{
+								List<FileInfo> fileList = new List<FileInfo>();
+								foreach (DirectoryInfo seriesDir in studyDir.GetDirectories())
 								{
-									insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
-									insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-								}
-								else if (file.TransferSyntax.LossyCompressed)
-								{
-									insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
-									insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-								}
-								else
-								{
-									insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-									insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+									FileInfo[] sopInstanceFiles = seriesDir.GetFiles("*.dcm");
+
+									foreach (FileInfo sopFile in sopInstanceFiles)
+										fileList.Add(sopFile);
 								}
 
-                                studyLocationList = studyInsert.Execute(insertParms);
-
-                                update.Commit();
-                            }
-
-                            location = studyLocationList[0];
-
-                            string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
-                            if (File.Exists(studyXml))
-                                File.Delete(studyXml);
+								FileInfo firstFile = fileList[0];
 
 
-                                foreach (FileInfo sopFile in fileList)
-                                {
+								DicomFile file = new DicomFile(firstFile.FullName);
+								file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
 
-                                    String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
+								IList<StudyStorageLocation> studyLocationList;
+								using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+								{
+									IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
+									StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
+									insertParms.ServerPartitionKey = partition.GetKey();
+									insertParms.StudyInstanceUid = studyInstanceUid;
+									insertParms.Folder = dateDir.Name;
+									insertParms.FilesystemKey = filesystem.GetKey();
+									if (file.TransferSyntax.LosslessCompressed)
+									{
+										insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+										insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
+									}
+									else if (file.TransferSyntax.LossyCompressed)
+									{
+										insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;
+										insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
+									}
+									else
+									{
+										insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
+										insertParms.StudyStatusEnum = StudyStatusEnum.Online;
+									}
 
-                                    // Just use a read context here, in hopes of improving 
-                                    // performance.  Every other place in the code should use
-                                    // Update contexts when doing transactions.
-                                    IInsertWorkQueueStudyProcess workQueueInsert =
-                                        ReadContext.GetBroker<IInsertWorkQueueStudyProcess>();
+									studyLocationList = studyInsert.Execute(insertParms);
 
-                                    WorkQueueStudyProcessInsertParameters queueInsertParms =
-                                        new WorkQueueStudyProcessInsertParameters();
-                                    queueInsertParms.StudyStorageKey = location.GetKey();
-                                    queueInsertParms.ServerPartitionKey = partition.GetKey();
-                                    queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
-                                    queueInsertParms.SopInstanceUid = sopInstanceUid;
-                                    queueInsertParms.ScheduledTime = Platform.Time;
-                                    queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(1.0);
+									update.Commit();
+								}
 
-                                    if (!workQueueInsert.Execute(queueInsertParms))
-                                        Platform.Log(LogLevel.Error,
-                                                     "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
-                                
-                            }
+								location = studyLocationList[0];
+
+								string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
+								if (File.Exists(studyXml))
+									File.Delete(studyXml);
+
+
+								foreach (FileInfo sopFile in fileList)
+								{
+
+									String sopInstanceUid = sopFile.Name.Replace(sopFile.Extension, "");
+
+									// Just use a read context here, in hopes of improving 
+									// performance.  Every other place in the code should use
+									// Update contexts when doing transactions.
+									IInsertWorkQueueStudyProcess workQueueInsert =
+										ReadContext.GetBroker<IInsertWorkQueueStudyProcess>();
+
+									WorkQueueStudyProcessInsertParameters queueInsertParms =
+										new WorkQueueStudyProcessInsertParameters();
+									queueInsertParms.StudyStorageKey = location.GetKey();
+									queueInsertParms.ServerPartitionKey = partition.GetKey();
+									queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
+									queueInsertParms.SopInstanceUid = sopInstanceUid;
+									queueInsertParms.ScheduledTime = Platform.Time;
+									queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+									queueInsertParms.WorkQueuePriorityEnum = priority;
+
+									if (!workQueueInsert.Execute(queueInsertParms))
+										Platform.Log(LogLevel.Error,
+													 "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
+
+								}
+							}
                         }
                     }
                 }
@@ -198,7 +205,18 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #region Public Methods
         public void Process(Model.ServiceLock item)
         {
-            _monitor = new FilesystemMonitor("Filesystem reinventory");
+        	WorkQueuePriorityEnum priority;
+
+			try
+			{
+				priority = WorkQueuePriorityEnum.GetEnum(ServiceLockSettings.Default.ReinventoryWorkQueuePriority);
+			}
+			catch
+			{
+				priority = WorkQueuePriorityEnum.Medium;
+			}
+
+        	_monitor = new FilesystemMonitor("Filesystem reinventory");
             
             _monitor.Load();
             _store = PersistentStoreRegistry.GetDefaultStore();
@@ -214,7 +232,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                            "Filesystem Reinventory started for filesystem '{0}'",
                            info.Filesystem.Description);
 
-            ReinventoryFilesystem(info.Filesystem);
+            ReinventoryFilesystem(info.Filesystem, priority);
 
             Platform.Log(LogLevel.Info, "Completed reinventory of filesystem: {0}", info.Filesystem.Description);
             Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reinventory",

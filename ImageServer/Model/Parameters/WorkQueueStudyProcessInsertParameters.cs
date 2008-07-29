@@ -79,5 +79,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["Extension"] = new ProcedureParameter<string>("Extension", value); }           
         }
-    }
+		public WorkQueuePriorityEnum WorkQueuePriorityEnum
+		{
+			set { SubCriteria["WorkQueuePriorityEnum"] = new ProcedureParameter<ServerEnum>("WorkQueuePriorityEnum", value); }
+		}
+	}
 }

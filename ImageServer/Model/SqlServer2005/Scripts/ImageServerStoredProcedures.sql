@@ -745,7 +745,8 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueStudyProcess]
 	@ExpirationTime datetime,
 	@ScheduledTime datetime,
 	@Duplicate bit = 0,
-	@Extension varchar(10) = null 
+	@Extension varchar(10) = null, 
+	@WorkQueuePriorityEnum smallint
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -772,8 +773,8 @@ BEGIN
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
 	END
 	ELSE
 	BEGIN

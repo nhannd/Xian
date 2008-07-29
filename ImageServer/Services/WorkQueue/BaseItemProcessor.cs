@@ -188,7 +188,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         /// <param name="item">The <see cref="WorkQueue"/> item to be processed</param>
         /// <returns>The maximum batch size for the <see cref="WorkQueue"/> item</returns>
-        protected static int GetMaxBatchSize(Model.WorkQueue item)
+        /// <param name="listCount">The number of available list items.</param>
+        protected static int GetMaxBatchSize(Model.WorkQueue item, int listCount)
         {
             int maxSize;
 
@@ -204,7 +205,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
             else if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.High)
             {
-                maxSize = settings.HighPriorityMaxBatchSize;
+                maxSize = listCount;
             }
             else
             {
@@ -224,7 +225,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
 			if (item != null && list != null)
 			{
-				int maxSize = GetMaxBatchSize(item);
+				int maxSize = GetMaxBatchSize(item, list.Count);
 				if (list.Count <= maxSize)
 					return list;
 
@@ -386,6 +387,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
 							parms.FailureCount = item.FailureCount;
 							parms.ScheduledTime = scheduledTime;
+
 							parms.ExpirationTime = item.ExpirationTime; // Keep the same
 						}
 						// If the batch size is 0, switch to idle state.

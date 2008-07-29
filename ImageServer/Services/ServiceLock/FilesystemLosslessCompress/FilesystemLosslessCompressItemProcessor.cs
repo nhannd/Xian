@@ -69,8 +69,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 
 				// Get the disk usage
 				StudyStorageLocation location = CollectionUtils.FirstElement(storageList);
-
-				StudyXml studyXml = LoadStudyXml(location);
+				StudyXml studyXml;
+				try
+				{
+					studyXml = LoadStudyXml(location);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error,e,"Skipping compress candidate, unexpected exception loading StudyXml file for {0}",location.GetStudyPath());
+					continue;
+				}
 
 				using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
@@ -103,7 +111,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					}
 					catch (Exception e)
 					{
-						Platform.Log(LogLevel.Error, e, "Unexpected problem inserting 'CompressStudy' record into WorkQueue for Study {0}", location.StudyInstanceUid);
+						Platform.Log(LogLevel.Error, e, "Skipping compress record, unexpected problem inserting 'CompressStudy' record into WorkQueue for Study {0}", location.StudyInstanceUid);
 						// throw; -- would cause abort of inserts, go ahead and try everything
 					}
 				}

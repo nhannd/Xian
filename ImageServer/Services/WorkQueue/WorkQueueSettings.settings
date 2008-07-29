@@ -29,8 +29,5 @@
     <Setting Name="MedPriorityMaxBatchSize" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">250</Value>
     </Setting>
-    <Setting Name="HighPriorityMaxBatchSize" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">500</Value>
-    </Setting>
   </Settings>
 </SettingsFile>

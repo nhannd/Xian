@@ -14,5 +14,8 @@
     <Setting Name="TierMigrationSpeed" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">5</Value>
     </Setting>
+    <Setting Name="ReinventoryWorkQueuePriority" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">High</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

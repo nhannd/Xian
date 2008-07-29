@@ -71,5 +71,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock {
                 return ((int)(this["TierMigrationSpeed"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("High")]
+        public string ReinventoryWorkQueuePriority {
+            get {
+                return ((string)(this["ReinventoryWorkQueuePriority"]));
+            }
+        }
     }
 }
