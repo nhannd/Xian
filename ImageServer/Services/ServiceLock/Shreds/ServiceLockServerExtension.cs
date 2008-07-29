@@ -33,43 +33,42 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
+namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
 {
-    /// <summary>
-    /// Plugin to handle the DICOM Server Shred for the ImageServer.
-    /// </summary>
-    [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class DicomServerExtension : Shred
-    {
-        private readonly string _className;
-   
-        public DicomServerExtension()
-        {
-            _className = this.GetType().ToString();
-        }
+	/// <summary>
+	/// Plugin to handle ServiceLock processing for the ImageServer.
+	/// </summary>
+	[ExtensionOf(typeof(ShredExtensionPoint))]
+	public class ServiceLockServerExtension : Shred
+	{
+		private readonly string _className;
+      
+		public ServiceLockServerExtension()
+		{
+			_className = this.GetType().ToString();
+		}
+		public override void Start()
+		{
+			Platform.Log(LogLevel.Info, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-        public override void Start()
-        {
-            Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+			ServiceLockServerManager.Instance.StartService();
+		}
 
-            DicomServerManager.Instance.StartService();
-        }
+		public override void Stop()
+		{
+			ServiceLockServerManager.Instance.StopService();
 
-        public override void Stop()
-        {
-            DicomServerManager.Instance.StopService();
+			Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+		}
 
-            Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
-        }
+		public override string GetDisplayName()
+		{
+			return SR.ServiceLockServer;
+		}
 
-        public override string GetDisplayName()
-        {
-            return SR.DicomServer;
-        }
-
-        public override string GetDescription()
-        {
-            return SR.DicomServerDescription;
-        }
-    }
+		public override string GetDescription()
+		{
+			return SR.ServiceLockServerDescription;
+		}
+	}
 }

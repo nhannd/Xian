@@ -117,30 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DicomServer" xml:space="preserve">
-    <value>Dicom Server</value>
-  </data>
-  <data name="DicomServerDescription" xml:space="preserve">
-    <value>Dicom Server</value>
-  </data>
-  <data name="HeaderStreamingServerDescription" xml:space="preserve">
-    <value>Provide DICOM header streaming service</value>
-  </data>
-  <data name="HeaderStreamingServerDisplayName" xml:space="preserve">
-    <value>Study header Streaming Server</value>
-  </data>
-  <data name="HeaderStreamingServiceDescription" xml:space="preserve">
-    <value>Provide DICOM header streaming service</value>
-  </data>
-  <data name="HeaderStreamingServiceDisplayName" xml:space="preserve">
-    <value>Header Streaming Service</value>
-  </data>
-  <data name="ImageStreamingServerDescription" xml:space="preserve">
-    <value>Image Streaming Server</value>
-  </data>
-  <data name="ImageStreamingServerDisplayName" xml:space="preserve">
-    <value>Image Streaming Server</value>
-  </data>
   <data name="WorkQueueServer" xml:space="preserve">
     <value>Work Queue Server</value>
   </data>

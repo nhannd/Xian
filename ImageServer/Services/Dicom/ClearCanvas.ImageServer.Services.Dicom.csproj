@@ -39,10 +39,14 @@
     <Compile Include="CompressedStorageScpExtension.cs" />
     <Compile Include="DeviceManager.cs" />
     <Compile Include="DicomScpContext.cs" />
+    <Compile Include="DicomSettings.Designer.cs" />
     <Compile Include="ImageServerStorageScu.cs" />
     <Compile Include="MoveScpExtension.cs" />
     <Compile Include="NonImageStorageScpExtension.cs" />
     <Compile Include="QueryScpExtension.cs" />
+    <Compile Include="Shreds\DicomServerExtension.cs" />
+    <Compile Include="Shreds\DicomServerManager.cs" />
+    <Compile Include="SR.Designer.cs" />
     <Compile Include="StorageScp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UncompressedStorageScpExtension.cs" />
@@ -61,6 +65,10 @@
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
+      <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
+      <Name>ClearCanvas.Server.ShredHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
@@ -81,6 +89,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="DicomSettings.settings" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

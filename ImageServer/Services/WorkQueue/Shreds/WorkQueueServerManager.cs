@@ -34,45 +34,45 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.WorkQueue;
 
-namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
+namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 {
-    /// <summary>
-    /// Shreds namespace manager of processing threads for the WorkQueue.
-    /// </summary>
-    public class WorkQueueServerManager : ThreadedService
-    {
-        #region Private Members
-        private static WorkQueueServerManager _instance;
-        private WorkQueueProcessor _theProcessor;
-        #endregion
+	/// <summary>
+	/// Shreds namespace manager of processing threads for the WorkQueue.
+	/// </summary>
+	public class WorkQueueServerManager : ThreadedService
+	{
+		#region Private Members
+		private static WorkQueueServerManager _instance;
+		private WorkQueueProcessor _theProcessor;
+		#endregion
 
-        #region Constructors
-        /// <summary>
-        /// **** For internal use only***
-        /// </summary>
-        private WorkQueueServerManager(string name) : base(name)
-        { }
-        #endregion
+		#region Constructors
+		/// <summary>
+		/// **** For internal use only***
+		/// </summary>
+		private WorkQueueServerManager(string name) : base(name)
+		{ }
+		#endregion
 
-        #region Properties
-        /// <summary>
-        /// Singleton instance of the class.
-        /// </summary>
-        public static WorkQueueServerManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new WorkQueueServerManager("WorkQueue");
+		#region Properties
+		/// <summary>
+		/// Singleton instance of the class.
+		/// </summary>
+		public static WorkQueueServerManager Instance
+		{
+			get
+			{
+				if (_instance == null)
+					_instance = new WorkQueueServerManager("WorkQueue");
 
-                return _instance;
-            }
-            set
-            {
-                _instance = value;
-            }
-        }
-        #endregion
+				return _instance;
+			}
+			set
+			{
+				_instance = value;
+			}
+		}
+		#endregion
 
         
 		#region Protected Methods
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
 				{
 				}
 
-				_theProcessor = new WorkQueueProcessor( ImageServerServicesShredSettings.Default.WorkQueueThreadCount, ThreadStop); // 5 threads for processor
+				_theProcessor = new WorkQueueProcessor( WorkQueueSettings.Default.WorkQueueThreadCount, ThreadStop); // 5 threads for processor
 			}
 		}
 
@@ -110,6 +110,6 @@ namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
 				_theProcessor = null;
 			}
 		}
-        #endregion
-    }
+		#endregion
+	}
 }

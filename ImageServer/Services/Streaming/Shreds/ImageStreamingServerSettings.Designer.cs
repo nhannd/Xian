@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer {
+namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer {
         [global::System.Configuration.DefaultSettingValueAttribute("65536")]
         public int StreamBufferSize {
             get {
-                return ((int)(this["ReadBufferSize"]));
+                return ((int)(this["StreamBufferSize"]));
             }
         }
     }

@@ -33,48 +33,48 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.ServiceLock;
 
-namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
+namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
 {
-    public class ServiceLockServerManager : ThreadedService
-    {
-        #region Private Members
-        private static ServiceLockServerManager _instance;
-        private ServiceLockProcessor _theProcessor;
-        #endregion
+	public class ServiceLockServerManager : ThreadedService
+	{
+		#region Private Members
+		private static ServiceLockServerManager _instance;
+		private ServiceLockProcessor _theProcessor;
+		#endregion
 
-        #region Constructors
-        /// <summary>
-        /// **** For internal use only***
-        /// </summary>
-        private ServiceLockServerManager(string name) : base(name)
-        { }
-        #endregion
+		#region Constructors
+		/// <summary>
+		/// **** For internal use only***
+		/// </summary>
+		private ServiceLockServerManager(string name) : base(name)
+		{ }
+		#endregion
 
-        #region Properties
-        /// <summary>
-        /// Singleton instance of the class.
-        /// </summary>
-        public static ServiceLockServerManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new ServiceLockServerManager("ServiceLock");
+		#region Properties
+		/// <summary>
+		/// Singleton instance of the class.
+		/// </summary>
+		public static ServiceLockServerManager Instance
+		{
+			get
+			{
+				if (_instance == null)
+					_instance = new ServiceLockServerManager("ServiceLock");
 
-                return _instance;
-            }
-            set
-            {
-                _instance = value;
-            }
-        }
-        #endregion
+				return _instance;
+			}
+			set
+			{
+				_instance = value;
+			}
+		}
+		#endregion
 
-        #region Protected Methods
-        protected override void Initialize()
-        {
-            if (_theProcessor == null)
-            {
+		#region Protected Methods
+		protected override void Initialize()
+		{
+			if (_theProcessor == null)
+			{
 				// Force a read context to be opened.  When developing the retry mechanism 
 				// for startup when the DB was down, there were problems when the type
 				// initializer for enumerated values were failng first.  For some reason,
@@ -85,23 +85,23 @@ namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
 				{
 				}
 
-                _theProcessor = new ServiceLockProcessor(1, ThreadStop); // 1 threads for processor
-            }
-        }
+				_theProcessor = new ServiceLockProcessor(1, ThreadStop); // 1 threads for processor
+			}
+		}
 
 		protected override void Run()
 		{
 			_theProcessor.Run();
 		}
 
-        protected override void Stop()
-        {
-            if (_theProcessor != null)
-            {
-                _theProcessor.Stop();
-                _theProcessor = null;
-            }
-        }
-        #endregion
-    }
+		protected override void Stop()
+		{
+			if (_theProcessor != null)
+			{
+				_theProcessor.Stop();
+				_theProcessor = null;
+			}
+		}
+		#endregion
+	}
 }

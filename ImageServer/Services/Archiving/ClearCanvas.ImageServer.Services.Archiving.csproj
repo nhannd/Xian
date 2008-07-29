@@ -84,10 +84,6 @@
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Shreds\ClearCanvas.ImageServer.Services.Shreds.csproj">
-      <Project>{9CE68574-CA73-43A3-9B33-8E26CECBC527}</Project>
-      <Name>ClearCanvas.ImageServer.Services.Shreds</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

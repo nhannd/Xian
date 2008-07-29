@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Shreds {
+namespace ClearCanvas.ImageServer.Services.WorkQueue {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Services.Shreds.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Services.WorkQueue.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,78 +57,6 @@ namespace ClearCanvas.ImageServer.Services.Shreds {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dicom Server.
-        /// </summary>
-        internal static string DicomServer {
-            get {
-                return ResourceManager.GetString("DicomServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Dicom Server.
-        /// </summary>
-        internal static string DicomServerDescription {
-            get {
-                return ResourceManager.GetString("DicomServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Provide DICOM header streaming service.
-        /// </summary>
-        internal static string HeaderStreamingServerDescription {
-            get {
-                return ResourceManager.GetString("HeaderStreamingServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Study header Streaming Server.
-        /// </summary>
-        internal static string HeaderStreamingServerDisplayName {
-            get {
-                return ResourceManager.GetString("HeaderStreamingServerDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image Streaming Server.
-        /// </summary>
-        internal static string ImageStreamingServerDescription {
-            get {
-                return ResourceManager.GetString("ImageStreamingServerDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image Streaming Server.
-        /// </summary>
-        internal static string ImageStreamingServerDisplayName {
-            get {
-                return ResourceManager.GetString("ImageStreamingServerDisplayName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ServiceLock Server.
-        /// </summary>
-        internal static string ServiceLockServer {
-            get {
-                return ResourceManager.GetString("ServiceLockServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to ServiceLock Server.
-        /// </summary>
-        internal static string ServiceLockServerDescription {
-            get {
-                return ResourceManager.GetString("ServiceLockServerDescription", resourceCulture);
             }
         }
         

@@ -72,6 +72,20 @@
     <Compile Include="ImageStreaming\WADORequestProcessor.cs" />
     <Compile Include="ImageStreaming\StandardWADORequestTypeHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shreds\HeaderStreamingServer.cs" />
+    <Compile Include="Shreds\HeaderStreamingServerSettings.cs" />
+    <Compile Include="Shreds\HeaderStreamingServerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>HeaderStreamingServerSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Shreds\ImageStreamingServer.cs" />
+    <Compile Include="Shreds\ImageStreamingServerSettings.cs" />
+    <Compile Include="Shreds\ImageStreamingServerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ImageStreamingServerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <DependentUpon>SR.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -124,6 +138,14 @@
     <None Include="HeaderRetrieval\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Shreds\HeaderStreamingServerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>HeaderStreamingServerSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Shreds\ImageStreamingServerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImageStreamingServerSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

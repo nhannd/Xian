@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Shreds.StreamingServer {
+namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class HeaderStreamingServerSetings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class HeaderStreamingServerSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static HeaderStreamingServerSetings defaultInstance = ((HeaderStreamingServerSetings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new HeaderStreamingServerSetings())));
+        private static HeaderStreamingServerSettings defaultInstance = ((HeaderStreamingServerSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new HeaderStreamingServerSettings())));
         
-        public static HeaderStreamingServerSetings Default {
+        public static HeaderStreamingServerSettings Default {
             get {
                 return defaultInstance;
             }

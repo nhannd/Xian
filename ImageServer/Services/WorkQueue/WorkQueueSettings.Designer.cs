@@ -116,5 +116,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
                 return ((int)(this["MedPriorityMaxBatchSize"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int WorkQueueThreadCount {
+            get {
+                return ((int)(this["WorkQueueThreadCount"]));
+            }
+        }
     }
 }

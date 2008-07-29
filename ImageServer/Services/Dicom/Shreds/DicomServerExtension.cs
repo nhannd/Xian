@@ -33,42 +33,43 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageServer.Services.Shreds.ServiceLockServer
+namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 {
-    /// <summary>
-    /// Plugin to handle ServiceLock processing for the ImageServer.
-    /// </summary>
-    [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class ServiceLockServerExtension : Shred
-    {
-        private readonly string _className;
-      
-        public ServiceLockServerExtension()
-        {
-            _className = this.GetType().ToString();
-        }
-        public override void Start()
-        {
-            Platform.Log(LogLevel.Info, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+	/// <summary>
+	/// Plugin to handle the DICOM Server Shred for the ImageServer.
+	/// </summary>
+	[ExtensionOf(typeof(ShredExtensionPoint))]
+	public class DicomServerExtension : Shred
+	{
+		private readonly string _className;
+   
+		public DicomServerExtension()
+		{
+			_className = this.GetType().ToString();
+		}
 
-            ServiceLockServerManager.Instance.StartService();
-        }
+		public override void Start()
+		{
+			Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-        public override void Stop()
-        {
-            ServiceLockServerManager.Instance.StopService();
+			DicomServerManager.Instance.StartService();
+		}
 
-            Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
-        }
+		public override void Stop()
+		{
+			DicomServerManager.Instance.StopService();
 
-        public override string GetDisplayName()
-        {
-            return SR.ServiceLockServer;
-        }
+			Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+		}
 
-        public override string GetDescription()
-        {
-            return SR.ServiceLockServerDescription;
-        }
-    }
+		public override string GetDisplayName()
+		{
+			return SR.DicomServer;
+		}
+
+		public override string GetDescription()
+		{
+			return SR.DicomServerDescription;
+		}
+	}
 }

@@ -33,55 +33,55 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.ImageServer.Services.Shreds.WorkQueueServer
+namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 {
-    /// <summary>
-    /// Plugin to handle WorkQueue processing for the ImageServer.
-    /// </summary>
-    [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class WorkQueueServerExtension : Shred
-    {
-        #region Private Members
+	/// <summary>
+	/// Plugin to handle WorkQueue processing for the ImageServer.
+	/// </summary>
+	[ExtensionOf(typeof(ShredExtensionPoint))]
+	public class WorkQueueServerExtension : Shred
+	{
+		#region Private Members
 
-        private readonly string _className;
+		private readonly string _className;
 
-        #endregion
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        public WorkQueueServerExtension()
-        {
-            _className = this.GetType().ToString();
-        }
+		public WorkQueueServerExtension()
+		{
+			_className = GetType().ToString();
+		}
 
-        #endregion
+		#endregion
 
-        #region IShred Implementation Shred Override
+		#region IShred Implementation Shred Override
 
-        public override void Start()
-        {
-            Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+		public override void Start()
+		{
+			Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            WorkQueueServerManager.Instance.StartService();
-        }
+			WorkQueueServerManager.Instance.StartService();
+		}
 
-        public override void Stop()
-        {        
-            WorkQueueServerManager.Instance.StopService();
+		public override void Stop()
+		{        
+			WorkQueueServerManager.Instance.StopService();
 
-            Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
-        }
+			Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
+		}
 
-        public override string GetDisplayName()
-        {
-            return SR.WorkQueueServer;
-        }
+		public override string GetDisplayName()
+		{
+			return SR.WorkQueueServer;
+		}
 
-        public override string GetDescription()
-        {
-            return SR.WorkQueueServerDescription;
-        }
+		public override string GetDescription()
+		{
+			return SR.WorkQueueServerDescription;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -40,20 +40,19 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.Dicom;
 
-namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
+namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 {
-    /// <summary>
-    /// This class manages the DICOM SCP Shred for the ImageServer.
-    /// </summary>
+	/// <summary>
+	/// This class manages the DICOM SCP Shred for the ImageServer.
+	/// </summary>
 	public class DicomServerManager : ThreadedService
-    {
-        #region Private Members
-        private readonly List<DicomScp<DicomScpContext>> _listenerList = new List<DicomScp<DicomScpContext>>();
-    	private readonly object _syncLock = new object();
-        private static DicomServerManager _instance;
+	{
+		#region Private Members
+		private readonly List<DicomScp<DicomScpContext>> _listenerList = new List<DicomScp<DicomScpContext>>();
+		private readonly object _syncLock = new object();
+		private static DicomServerManager _instance;
 		IList<ServerPartition> _partitions;
-    	private bool _stop = false;
-        #endregion
+		#endregion
 
 		#region Constructor
 		public DicomServerManager(string name) : base(name)
@@ -62,23 +61,23 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 
 		#region Properties
 		/// <summary>
-        /// Singleton instance of the class.
-        /// </summary>
-        public static DicomServerManager Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new DicomServerManager("DICOM Service Manager");
+		/// Singleton instance of the class.
+		/// </summary>
+		public static DicomServerManager Instance
+		{
+			get
+			{
+				if (_instance == null)
+					_instance = new DicomServerManager("DICOM Service Manager");
 
-                return _instance;
-            }
-            set
-            {
-                _instance = value;
-            }
-        }
-        #endregion
+				return _instance;
+			}
+			set
+			{
+				_instance = value;
+			}
+		}
+		#endregion
 
 		#region Private Methods
 		private void LoadPartitions()
@@ -98,7 +97,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 			DicomScpContext parms =
 				new DicomScpContext(part, monitor, new FilesystemSelector(monitor));
 
-			if (ImageServerServicesShredSettings.Default.ListenIPV4)
+			if (DicomSettings.Default.ListenIPV4)
 			{
 				DicomScp<DicomScpContext> ipV4Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify);
 
@@ -117,7 +116,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 				}
 			}
 
-			if (ImageServerServicesShredSettings.Default.ListenIPV6)
+			if (DicomSettings.Default.ListenIPV6)
 			{
 				DicomScp<DicomScpContext> ipV6Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify);
 
@@ -137,7 +136,7 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 			}
 		}
 
-    	private void CheckPartitions(FilesystemMonitor monitor)
+		private void CheckPartitions(FilesystemMonitor monitor)
 		{
     	
 			lock (_syncLock)
@@ -204,29 +203,29 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 			LoadPartitions();
 		}
 
-        /// <summary>
-        /// Method called when starting the DICOM SCP.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// The method starts a <see cref="DicomScp{DicomScpParameters}"/> instance for each server partition configured in
-        /// the database.  It assumes that the combination of the configured AE Title and Port for the 
-        /// partition is unique.  
-        /// </para>
-        /// </remarks>
-        protected override void Run()
-        {
+		/// <summary>
+		/// Method called when starting the DICOM SCP.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The method starts a <see cref="DicomScp{DicomScpParameters}"/> instance for each server partition configured in
+		/// the database.  It assumes that the combination of the configured AE Title and Port for the 
+		/// partition is unique.  
+		/// </para>
+		/// </remarks>
+		protected override void Run()
+		{
         
-            FilesystemMonitor monitor = new FilesystemMonitor("Dicom Server");
-            monitor.Load();
+			FilesystemMonitor monitor = new FilesystemMonitor("Dicom Server");
+			monitor.Load();
             
-            foreach (ServerPartition part in _partitions)
-            {
-                if (part.Enabled)
-                {
-                	StartListeners(part, monitor);
-                }
-            }
+			foreach (ServerPartition part in _partitions)
+			{
+				if (part.Enabled)
+				{
+					StartListeners(part, monitor);
+				}
+			}
 
 			while (!CheckStop(60000))
 			{
@@ -234,22 +233,21 @@ namespace ClearCanvas.ImageServer.Services.Shreds.DicomServer
 
 				CheckPartitions(monitor);
 			}
-        }
+		}
 
-        /// <summary>
-        /// Method called when stopping the DICOM SCP.
-        /// </summary>
-        protected override void Stop()
-        {
+		/// <summary>
+		/// Method called when stopping the DICOM SCP.
+		/// </summary>
+		protected override void Stop()
+		{
 			lock (_syncLock)
 			{
-				_stop = true;
 				foreach (DicomScp<DicomScpContext> scp in _listenerList)
 				{
 					scp.Stop();
 				}
 			}
-        }
-        #endregion
-    }
+		}
+		#endregion
+	}
 }
