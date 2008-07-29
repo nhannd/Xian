@@ -69,6 +69,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
             _cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
+
+			this.AcceptButton = _okButton;
         }
 
         private void _staffs_Load(object sender, EventArgs e)
@@ -102,5 +104,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             _component.Cancel();
         }
+
+		private void _field_Enter(object sender, EventArgs e)
+		{
+			this.AcceptButton = _searchButton;
+		}
+
+		private void _field_Leave(object sender, EventArgs e)
+		{
+			this.AcceptButton = _okButton;
+		}
     }
 }

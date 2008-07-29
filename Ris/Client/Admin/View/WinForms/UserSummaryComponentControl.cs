@@ -65,5 +65,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			_name.Value = "";
 			_component.Search();
 		}
+
+		private void _field_Enter(object sender, EventArgs e)
+		{
+			this.AcceptButton = _searchButton;
+		}
+
+		private void _field_Leave(object sender, EventArgs e)
+		{
+			this.AcceptButton = _okButton;
+		}
 	}
 }

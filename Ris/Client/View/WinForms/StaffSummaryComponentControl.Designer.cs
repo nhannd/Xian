@@ -68,9 +68,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._staffTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.panel1 = new System.Windows.Forms.Panel();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this._clearButton = new System.Windows.Forms.Button();
 			this._searchButton = new System.Windows.Forms.Button();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.flowLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _firstName
 			// 
 			this._firstName.LabelText = "First Name";
-			this._firstName.Location = new System.Drawing.Point(156, 2);
+			this._firstName.Location = new System.Drawing.Point(149, 5);
 			this._firstName.Margin = new System.Windows.Forms.Padding(2);
 			this._firstName.Mask = "";
 			this._firstName.Name = "_firstName";
@@ -99,6 +99,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._firstName.TabIndex = 1;
 			this._firstName.ToolTip = null;
 			this._firstName.Value = null;
+			this._firstName.Leave += new System.EventHandler(this._field_Leave);
+			this._firstName.Enter += new System.EventHandler(this._field_Enter);
 			// 
 			// flowLayoutPanel1
 			// 
@@ -127,7 +129,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _lastName
 			// 
 			this._lastName.LabelText = "Last Name";
-			this._lastName.Location = new System.Drawing.Point(0, 2);
+			this._lastName.Location = new System.Drawing.Point(0, 5);
 			this._lastName.Margin = new System.Windows.Forms.Padding(2);
 			this._lastName.Mask = "";
 			this._lastName.Name = "_lastName";
@@ -136,6 +138,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._lastName.TabIndex = 0;
 			this._lastName.ToolTip = null;
 			this._lastName.Value = null;
+			this._lastName.Leave += new System.EventHandler(this._field_Leave);
+			this._lastName.Enter += new System.EventHandler(this._field_Enter);
 			// 
 			// _staffTableView
 			// 
@@ -184,7 +188,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._clearButton.FlatAppearance.BorderSize = 0;
 			this._clearButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.ClearFilterSmall;
-			this._clearButton.Location = new System.Drawing.Point(339, 15);
+			this._clearButton.Location = new System.Drawing.Point(332, 18);
 			this._clearButton.Margin = new System.Windows.Forms.Padding(0);
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -202,7 +206,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._searchButton.FlatAppearance.BorderSize = 0;
 			this._searchButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.SearchToolSmall;
-			this._searchButton.Location = new System.Drawing.Point(308, 15);
+			this._searchButton.Location = new System.Drawing.Point(301, 18);
 			this._searchButton.Margin = new System.Windows.Forms.Padding(0);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(30, 30);

@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					_facility = (FacilitySummary)value;
 
 				Search();
-				this.Modified = true;
+
 				if (value == _filterNone)
 					_facility = _filterNone;
 			}
