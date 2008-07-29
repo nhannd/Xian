@@ -124,8 +124,12 @@ namespace ClearCanvas.Ris.Client.Admin
 			set
 			{
 				_selectedCategory = value;
-				Search();
 			}
+		}
+
+		public EnumValueInfo NullFilter
+		{
+			get { return _filterNone; }
 		}
 
 		#endregion

@@ -36,6 +36,20 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			_cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 		}
 
+		private void _searchButton_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.Search();
+			}
+		}
+
+		private void _clearButton_Click(object sender, EventArgs e)
+		{
+			_component.SelectedCategory = _component.NullFilter;
+			_component.Search();
+		}
+
 		private void _okButton_Click(object sender, EventArgs e)
 		{
 			_component.Accept();

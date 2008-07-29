@@ -142,8 +142,6 @@ namespace ClearCanvas.Ris.Client.Admin
 				else
 					_facility = (FacilitySummary)value;
 
-				Search();
-
 				if (value == _filterNone)
 					_facility = _filterNone;
 			}

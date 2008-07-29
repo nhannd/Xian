@@ -31,10 +31,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._procedureTypeGroupTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.panel1 = new System.Windows.Forms.Panel();
+			this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
-			this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._clearButton = new System.Windows.Forms.Button();
+			this._searchButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -72,11 +74,26 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this._clearButton);
+			this.panel1.Controls.Add(this._searchButton);
 			this.panel1.Controls.Add(this._category);
 			this.panel1.Location = new System.Drawing.Point(3, 3);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(455, 54);
+			this.panel1.Size = new System.Drawing.Size(513, 54);
 			this.panel1.TabIndex = 0;
+			// 
+			// _category
+			// 
+			this._category.DataSource = null;
+			this._category.DisplayMember = "";
+			this._category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._category.LabelText = "Category Filter";
+			this._category.Location = new System.Drawing.Point(2, 2);
+			this._category.Margin = new System.Windows.Forms.Padding(2);
+			this._category.Name = "_category";
+			this._category.Size = new System.Drawing.Size(261, 41);
+			this._category.TabIndex = 0;
+			this._category.Value = null;
 			// 
 			// flowLayoutPanel1
 			// 
@@ -113,18 +130,37 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
-			// _category
+			// _clearButton
 			// 
-			this._category.DataSource = null;
-			this._category.DisplayMember = "";
-			this._category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._category.LabelText = "Category Filter";
-			this._category.Location = new System.Drawing.Point(2, 2);
-			this._category.Margin = new System.Windows.Forms.Padding(2);
-			this._category.Name = "_category";
-			this._category.Size = new System.Drawing.Size(261, 41);
-			this._category.TabIndex = 0;
-			this._category.Value = null;
+			this._clearButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._clearButton.BackColor = System.Drawing.Color.Transparent;
+			this._clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this._clearButton.FlatAppearance.BorderSize = 0;
+			this._clearButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.ClearFilterSmall;
+			this._clearButton.Location = new System.Drawing.Point(296, 15);
+			this._clearButton.Margin = new System.Windows.Forms.Padding(0);
+			this._clearButton.Name = "_clearButton";
+			this._clearButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
+			this._clearButton.Size = new System.Drawing.Size(30, 30);
+			this._clearButton.TabIndex = 5;
+			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+			this._clearButton.UseVisualStyleBackColor = false;
+			this._clearButton.Click += new System.EventHandler(this._clearButton_Click);
+			// 
+			// _searchButton
+			// 
+			this._searchButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._searchButton.BackColor = System.Drawing.Color.Transparent;
+			this._searchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+			this._searchButton.FlatAppearance.BorderSize = 0;
+			this._searchButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.SearchToolSmall;
+			this._searchButton.Location = new System.Drawing.Point(265, 15);
+			this._searchButton.Margin = new System.Windows.Forms.Padding(0);
+			this._searchButton.Name = "_searchButton";
+			this._searchButton.Size = new System.Drawing.Size(30, 30);
+			this._searchButton.TabIndex = 4;
+			this._searchButton.UseVisualStyleBackColor = false;
+			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
 			// 
 			// ProcedureTypeGroupSummaryComponentControl
 			// 
@@ -149,5 +185,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Panel panel1;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
+		private System.Windows.Forms.Button _clearButton;
+		private System.Windows.Forms.Button _searchButton;
     }
 }
