@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -55,7 +56,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         private int _studiesDeleted = 0;
         private int _studiesMigrated = 0;
 		private int _studiesPurged = 0;
-		#endregion
+        #endregion
 
         #region Private Methods
 
@@ -463,7 +464,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 			ServiceLockSettings settings = ServiceLockSettings.Default;
 
             ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(item.FilesystemKey);
-
+            
             InitializeScheduleTime();
 
             _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
@@ -509,6 +510,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             _monitor = null;
 
         }
+
+        
 
         public new void Dispose()
         {

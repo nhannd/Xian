@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -87,6 +88,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                                      "Failing {0} WorkQueue entry ({1}): {2}", 
                                      item.WorkQueueTypeEnum, 
                                      item.GetKey(), failureDescription);
+
+                        if (_storageLocationList!=null && _storageLocationList.Count>0)
+                        {
+                            Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Tier Migration",
+                                           "Unable to process tier-migration on study {0}: {1}",
+                                           _storageLocationList[0].StudyInstanceUid,
+                                           failureDescription
+                                );
+                        }
+                        else
+                        {
+                            Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Tier Migration",
+                                           "Unable to process tier-migration entry {0}:{1}",
+                                           item.GetKey().Key,
+                                           failureDescription
+                                );
+                        }
+
                         parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                         parms.ScheduledTime = Platform.Time;
                         parms.ExpirationTime = Platform.Time.AddDays(1);
@@ -148,7 +167,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             if (newFilesystem == null)
             {
             	// this entry shouldn't have been scheduled in the first place.
-                throw new ApplicationException("No writable filesystem found in lower tiers.");
+                String msg =
+                    String.Format(
+                        "Study '{0}' cannot be migrated: no writable filesystem can be found in lower tiers for filesystem '{1}'",
+                        storage.StudyInstanceUid,
+                        currFilesystem.Filesystem.Description);
+
+                Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "TierMigration",msg);
+
+                throw new ApplicationException(msg);
             }
 
             ServerCommandProcessor _processor;

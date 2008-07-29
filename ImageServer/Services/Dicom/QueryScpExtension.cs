@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
@@ -979,6 +980,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             if (!Device.AllowQuery)
             {
+                Platform.Alert(AlertCategory.Security, AlertLevel.Warning, "Query SCP",
+                        "Remote device {0} attempted to query and was rejected due to device settings.", Device.AeTitle);
+
                 return DicomPresContextResult.RejectUser;
             }
 

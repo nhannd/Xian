@@ -45,6 +45,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         private ServerPartition _partition;
 
+        protected ServerPartition Partition
+        {
+            get { return _partition; }
+        }
+
         #endregion
 
         #region Private Methods
@@ -88,7 +93,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 if (false == delete.Execute(parms))
                 {
                     Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0} on partition {1}",
-                                 StorageLocation.StudyInstanceUid, _partition.Description);
+                                 StorageLocation.StudyInstanceUid, Partition.Description);
                 }
                 else
                     updateContext.Commit();
@@ -106,7 +111,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
             _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
             Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
-                         _partition.Description);
+                         Partition.Description);
             
             RemoveFilesystem();
 

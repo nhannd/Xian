@@ -29,13 +29,30 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Scripting;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications
 {
+    public class NoSuchDicomTagException : Exception
+    {
+        private string _tagName;
+
+        public NoSuchDicomTagException(string tagName)
+        {
+            _tagName = tagName;
+        }
+
+        public string TagName
+        {
+            get { return _tagName; }
+        }
+    }
     /// <summary>
     /// Expression factory for evaluating expressions that reference attributes within a <see cref="DicomMessageBase"/>.
     /// </summary>
@@ -96,7 +113,10 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 
                 DicomTag tag = DicomTagDictionary.GetDicomTag(Text.Substring(1));
                 if (tag == null)
-                    return null;
+                {
+                    throw new NoSuchDicomTagException(Text.Substring(1));
+                }
+                    
 
                 if (msg != null)
                 {

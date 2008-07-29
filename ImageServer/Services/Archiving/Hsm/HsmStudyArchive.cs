@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
@@ -178,6 +179,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					Platform.Log(LogLevel.Error, "Unexpected failure archiving study");
 
 					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
+
+				    Platform.Alert(AlertCategory.Application, AlertLevel.Error, "HsmStudyArchive",
+				                   "Unexpected failure archiving study '{0}' in '{1}' : {2}",
+                                    _storageLocation.StudyInstanceUid,
+                                    studyFolder,
+                                    commandProcessor.FailureReason);
+
+
 				}
 				else
 					Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
@@ -185,8 +194,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception archiving study: {0} on {1}",
+                String msg = String.Format("Unexpected exception archiving study: {0} on {1}",
 				             _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+
+			    Platform.Log(LogLevel.Error, e, msg);
+			    Platform.Alert(AlertCategory.Application, AlertLevel.Error, "HsmStudyArchive", msg);
+
 				_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
 			}
 		}

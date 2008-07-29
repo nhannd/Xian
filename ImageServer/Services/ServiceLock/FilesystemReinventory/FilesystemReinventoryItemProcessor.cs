@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -198,6 +199,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         public void Process(Model.ServiceLock item)
         {
             _monitor = new FilesystemMonitor("Filesystem reinventory");
+            
             _monitor.Load();
             _store = PersistentStoreRegistry.GetDefaultStore();
 
@@ -208,15 +210,36 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
+            Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reinventory",
+                           "Filesystem Reinventory started for filesystem '{0}'",
+                           info.Filesystem.Description);
 
             ReinventoryFilesystem(info.Filesystem);
 
             Platform.Log(LogLevel.Info, "Completed reinventory of filesystem: {0}", info.Filesystem.Description);
+            Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reinventory",
+                                       "Filesystem Reinventory completed for filesystem '{0}'",
+                                       info.Filesystem.Description);
 
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
 
             UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+            
+
         }
+
+        
         #endregion
+
+        public new void Dispose()
+        {
+            if (_monitor != null)
+            {
+                _monitor.Dispose();
+                _monitor = null;
+            }
+
+            base.Dispose();
+        }
     }
 }

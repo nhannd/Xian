@@ -1,8 +1,10 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Rules.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules
 {
@@ -245,10 +247,18 @@ namespace ClearCanvas.ImageServer.Rules
             {
                 return Evaluate<T>(expression, context);
             }
+            catch(NoSuchDicomTagException e)
+            {
+                Platform.Alert(AlertCategory.Application, AlertLevel.Critical, "ServerRule",
+                               "Bad server rule configuration: specified tag '{0}' is invalid",
+                               expression.Text
+                    );
+
+                return defaultValue;
+            }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Error, e, "Unable to evaluate expression {0}. Using default value={1}",
-                             expression.Text, defaultValue);
+                Platform.Log(LogLevel.Error, e, "Unable to evaluate expression {0}. Using default value={1}", expression.Text, defaultValue);
                 return defaultValue;
             }
         }

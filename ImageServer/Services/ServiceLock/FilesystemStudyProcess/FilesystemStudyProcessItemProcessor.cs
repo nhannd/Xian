@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
@@ -225,29 +226,42 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="item"></param>
         public void Process(Model.ServiceLock item)
         {
-            _monitor = new FilesystemMonitor("Filesystem Reprocess");
-            _monitor.Load();
+            using(_monitor = new FilesystemMonitor("Filesystem Reprocess"))
+            {
+                _monitor.Load();
 
-            LoadRulesEngine();
+                LoadRulesEngine();
 
-            ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
+                ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
 
-            _stats.StudyRate.Start();
-            _stats.Filesystem = info.Filesystem.Description;
+                _stats.StudyRate.Start();
+                _stats.Filesystem = info.Filesystem.Description;
 
-            Platform.Log(LogLevel.Info, "Starting reprocess of filesystem: {0}", info.Filesystem.Description);
+                Platform.Log(LogLevel.Info, "Starting reprocess of filesystem: {0}", info.Filesystem.Description);
+                Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reprocess",
+                               "Filesystem Reprocess started for filesystem '{0}'",
+                               info.Filesystem.Description);
 
-            ReprocessFilesystem(info.Filesystem);
+                ReprocessFilesystem(info.Filesystem);
 
-            Platform.Log(LogLevel.Info, "Completed reprocess of filesystem: {0}", info.Filesystem.Description);
-            _stats.StudyRate.SetData(_stats.NumStudies);
-            _stats.StudyRate.End();
 
-            StatisticsLogger.Log(LogLevel.Info, _stats);
+                Platform.Log(LogLevel.Info, "Completed reprocess of filesystem: {0}", info.Filesystem.Description);
+                Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reprocess",
+                               "Filesystem Reprocess completed for filesystem '{0}': {1} studies affected",
+                               info.Filesystem.Description,
+                               _stats.NumStudies
+                               );
 
-            item.ScheduledTime = item.ScheduledTime.AddDays(1);
+                _stats.StudyRate.SetData(_stats.NumStudies);
+                _stats.StudyRate.End();
 
-            UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+                StatisticsLogger.Log(LogLevel.Info, _stats);
+
+                item.ScheduledTime = item.ScheduledTime.AddDays(1);
+
+                UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+            }
+            
         }
 
         public new void Dispose()

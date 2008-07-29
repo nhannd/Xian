@@ -35,6 +35,7 @@ using System.IO;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
@@ -247,6 +248,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             if (filesystem == null)
             {
                 Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
+                    
                 return null;
             }
 
