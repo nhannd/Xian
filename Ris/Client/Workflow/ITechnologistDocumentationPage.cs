@@ -53,11 +53,8 @@ namespace ClearCanvas.Ris.Client.Workflow
     /// <summary>
     /// Defines an interface to a custom documentation page.
     /// </summary>
-    public interface ITechnologistDocumentationPage
+    public interface ITechnologistDocumentationPage : IExtensionPage
     {
-        Path Path { get; }
-        IApplicationComponent GetComponent();
-
         bool Save(bool complete);
     }
 }

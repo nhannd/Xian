@@ -36,22 +36,29 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	/// Defines an interface for providing a custom report editor.
+	/// <summary>
+	/// Defines an interface for providing custom pages to be displayed in the reporting component.
 	/// </summary>
-	public interface IReportEditorProvider
+	public interface IReportingPageProvider : IExtensionPageProvider<IReportingPage, IReportingContext>
 	{
-		IReportEditor GetEditor(IReportingContext context);
 	}
 
 	/// <summary>
-	/// Defines an interface for providing a custom report editor page with access to the reporting
-	/// context.
+	/// Defines an interface to a custom reporting page.
+	/// </summary>
+	public interface IReportingPage : IExtensionPage
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom page with access to the reporting context.
 	/// </summary>
 	public interface IReportingContext
 	{
@@ -62,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		/// <summary>
 		/// Gets the report associated with the worklist item.  Modifications made to this object
-		/// will not be persisted.  Use the <see cref="ReportContent"/> property to update the report content.
+		/// will not be persisted.
 		/// </summary>
 		ReportDetail Report { get; }
 
@@ -70,7 +77,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Gets the index of the active report part (the part that is being edited).
 		/// </summary>
 		int ActiveReportPartIndex { get; }
+	}
 
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the reporting component.
+	/// </summary>
+	[ExtensionPoint]
+	public class ReportingPageProviderExtensionPoint : ExtensionPoint<IReportingPageProvider>
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom report editor.
+	/// </summary>
+	public interface IReportEditorProvider
+	{
+		IReportEditor GetEditor();
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom report editor page with access to the reporting
+	/// context.
+	/// </summary>
+	public interface IReportEditorContext : IReportingContext
+	{
 		/// <summary>
 		/// Gets a value indicating whether the Verify operation is enabled.
 		/// </summary>
@@ -160,7 +190,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Sets the context of the report editor.
 		/// </summary>
 		/// <param name="context"></param>
-		void SetContext(IReportingContext context);
+		void SetContext(IReportEditorContext context);
 
 		/// <summary>
 		/// Instructs the report editor to save the report content and any other data.
@@ -179,6 +209,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 	{
 	}
 
+
+
+
+
 	/// <summary>
 	/// Extension point for views onto <see cref="ReportingComponent"/>
 	/// </summary>
@@ -193,7 +227,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[AssociateView(typeof(ReportingComponentViewExtensionPoint))]
 	public class ReportingComponent : ApplicationComponent
 	{
-		#region IReportingContext implementation
+
+		#region ReportingContext
 
 		class ReportingContext : IReportingContext
 		{
@@ -219,50 +254,67 @@ namespace ClearCanvas.Ris.Client.Workflow
 				get { return _owner._activeReportPartIndex; }
 			}
 
+			protected ReportingComponent Owner
+			{
+				get { return _owner; }
+			}
+		}
+
+		#endregion
+
+		#region IReportEditorContext implementation
+
+		class ReportEditorContext : ReportingContext, IReportEditorContext
+		{
+			public ReportEditorContext(ReportingComponent owner)
+				:base(owner)
+			{
+			}
+
 			public bool CanVerify
 			{
-				get { return _owner.CanVerify; }
+				get { return Owner.CanVerify; }
 			}
 
 			public bool CanSendToBeVerified
 			{
-				get { return _owner.CanSendToBeVerified; }
+				get { return Owner.CanSendToBeVerified; }
 			}
 
 			public bool CanSendToTranscription
 			{
-				get { return _owner.CanSendToTranscription; }
+				get { return Owner.CanSendToTranscription; }
 			}
 
 			public bool CanSaveReport
 			{
-				get { return _owner.SaveReportEnabled; }
+				get { return Owner.SaveReportEnabled; }
 			}
 
             public string ReportContent
             {
-                get { return _owner.ReportContent; }
-                set { _owner.ReportContent = value; }
+				get { return Owner.ReportContent; }
+				set { Owner.ReportContent = value; }
             }
     
             public Dictionary<string, string> ExtendedProperties
 			{
-				get { return _owner._reportPartExtendedProperties; }
-				set { _owner._reportPartExtendedProperties = value; }
+				get { return Owner._reportPartExtendedProperties; }
+				set { Owner._reportPartExtendedProperties = value; }
 			}
 
 			public StaffSummary Supervisor
 			{
-				get { return _owner._supervisor; }
+				get { return Owner._supervisor; }
 				set
 				{
-					_owner.SetSupervisor(value);
+					Owner.SetSupervisor(value);
 				}
 			}
 
 			public void RequestClose(ReportEditorCloseReason reason)
 			{
-				_owner.RequestClose(reason);
+				Owner.RequestClose(reason);
 			}
 		}
 
@@ -273,9 +325,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private IReportEditor _reportEditor;
 		private ChildComponentHost _reportEditorHost;
 		private ChildComponentHost _bannerHost;
-		private ChildComponentHost _priorReportHost;
-		private ChildComponentHost _orderDetailHost;
-		private ChildComponentHost _orderAdditionalInfoHost;
+
+		private ChildComponentHost _rightHandComponentContainerHost;
+		private TabComponentContainer _rightHandComponentContainer;
 
 		private bool _canCompleteInterpretationAndVerify;
 		private bool _canCompleteVerification;
@@ -289,6 +341,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private StaffSummary _supervisor;
 		private Dictionary<string, string> _orderExtendedProperties;
 		private Dictionary<string, string> _reportPartExtendedProperties;
+
+		private PriorReportComponent _priorReportComponent;
+		private ReportingOrderDetailViewComponent _orderComponent;
+		private OrderAdditionalInfoSummaryComponent _additionalInfoComponent;
+
+		private List<IReportingPage> _extensionPages;
 
 		/// <summary>
 		/// Constructor
@@ -308,15 +366,35 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 			_bannerHost.StartComponent();
 
-			_priorReportHost = new ChildComponentHost(this.Host, new PriorReportComponent(this.WorklistItem));
-			_priorReportHost.StartComponent();
+			_rightHandComponentContainer = new TabComponentContainer();
+			_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
-			_orderDetailHost = new ChildComponentHost(this.Host, new ReportingOrderDetailViewComponent(this.WorklistItem.OrderRef));
-			_orderDetailHost.StartComponent();
+			_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.OrderRef);
+			_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
 
-			_orderAdditionalInfoHost = new ChildComponentHost(this.Host, new OrderAdditionalInfoSummaryComponent());
-			_orderAdditionalInfoHost.StartComponent();
-			((OrderAdditionalInfoSummaryComponent)_orderAdditionalInfoHost.Component).OrderExtendedProperties = _orderExtendedProperties;
+			_priorReportComponent = new PriorReportComponent(this.WorklistItem);
+			_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
+
+			_additionalInfoComponent = new OrderAdditionalInfoSummaryComponent();
+			_additionalInfoComponent.OrderExtendedProperties = _orderExtendedProperties;
+			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
+
+			// instantiate all extension pages
+			_extensionPages = new List<IReportingPage>();
+			foreach (IReportingPageProvider pageProvider in new ReportingPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetPages(new ReportingContext(this)));
+			}
+
+			// add extension pages to container and set initial context
+			// the container will start those components if the user goes to that page
+			foreach (IReportingPage page in _extensionPages)
+			{
+				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+			}
+
+			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+			_rightHandComponentContainerHost.StartComponent();
 
 			// create supervisor lookup handler, using filters supplied in application settings
 			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
@@ -329,7 +407,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
 													new ReportEditorProviderExtensionPoint().CreateExtensions());
 
-			_reportEditor = provider == null ? new ReportEditorComponent(new ReportingContext(this)) : provider.GetEditor(new ReportingContext(this));
+			_reportEditor = provider == null ? new ReportEditorComponent() : provider.GetEditor();
+			_reportEditor.SetContext(new ReportEditorContext(this));
 			_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
 			_reportEditorHost.StartComponent();
 
@@ -371,19 +450,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _reportEditorHost; }
 		}
 
-		public ApplicationComponentHost PriorReportsHost
+		public ApplicationComponentHost RightHandComponentContainerHost
 		{
-			get { return _priorReportHost; }
-		}
-
-		public ApplicationComponentHost OrderDetailsHost
-		{
-			get { return _orderDetailHost; }
-		}
-
-		public ApplicationComponentHost OrderAdditionalInfoHost
-		{
-			get { return _orderAdditionalInfoHost; }
+			get { return _rightHandComponentContainerHost; }
 		}
 
 		public string StatusText
@@ -852,11 +921,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void UpdateChildComponents()
 		{
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
-			((PriorReportComponent)_priorReportHost.Component).WorklistItem = this.WorklistItem;
-			((OrderDetailViewComponent)_orderDetailHost.Component).Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
-			((OrderAdditionalInfoSummaryComponent)_orderAdditionalInfoHost.Component).OrderExtendedProperties = _orderExtendedProperties;
+			_priorReportComponent.WorklistItem = this.WorklistItem;
+			_orderComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
+			_additionalInfoComponent.OrderExtendedProperties = _orderExtendedProperties;
 
-			((IReportEditor)_reportEditorHost.Component).SetContext(new ReportingContext(this));
+			// update context of extension pages
+			foreach (IReportingPage page in _extensionPages)
+			{
+				//page.SetContext(new ReportingContext(this));
+			}
+
+			// update context of report editor
+			((IReportEditor)_reportEditorHost.Component).SetContext(new ReportEditorContext(this));
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 

@@ -64,6 +64,7 @@
     <Compile Include="FolderTreeNode.cs" />
     <Compile Include="Formatting\StaffNameAndRoleFormat.cs" />
     <Compile Include="HeaderFooterSettings.cs" />
+    <Compile Include="IExtensionPageProvider.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderAdditionalInfoSummaryComponent.cs" />

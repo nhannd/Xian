@@ -51,9 +51,8 @@ namespace ClearCanvas.Ris.Client.Workflow
     /// <summary>
     /// Defines an interface for providing custom documentation pages to be displayed in the documentation workspace.
     /// </summary>
-    public interface ITechnologistDocumentationPageProvider
+    public interface ITechnologistDocumentationPageProvider : IExtensionPageProvider<ITechnologistDocumentationPage, ITechnologistDocumentationContext>
     {
-        ITechnologistDocumentationPage[] GetDocumentationPages(ITechnologistDocumentationContext context);
     }
 
     /// <summary>
@@ -519,7 +518,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             // create extension pages
             foreach (ITechnologistDocumentationPageProvider pageProvider in (new TechnologistDocumentationPageProviderExtensionPoint()).CreateExtensions())
             {
-                _extensionPages.AddRange(pageProvider.GetDocumentationPages(context));
+                _extensionPages.AddRange(pageProvider.GetPages(context));
             }
 
             foreach (ITechnologistDocumentationPage page in _extensionPages)

@@ -44,9 +44,8 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// Defines an interface for providing custom editing pages to be displayed in the visit editor.
 	/// </summary>
-	public interface IVisitEditorPageProvider
+	public interface IVisitEditorPageProvider : IExtensionPageProvider<IVisitEditorPage, IVisitEditorContext>
 	{
-		IVisitEditorPage[] GetEditorPages(IVisitEditorContext context);
 	}
 
 	/// <summary>
@@ -63,11 +62,8 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// Defines an interface to a custom visit editor page.
 	/// </summary>
-	public interface IVisitEditorPage
+	public interface IVisitEditorPage : IExtensionPage
 	{
-		Path Path { get; }
-		IApplicationComponent GetComponent();
-
 		void Save();
 	}
 
@@ -192,7 +188,7 @@ namespace ClearCanvas.Ris.Client
 			_extensionPages = new List<IVisitEditorPage>();
 			foreach (IVisitEditorPageProvider pageProvider in new VisitEditorPageProviderExtensionPoint().CreateExtensions())
 			{
-				_extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
+				_extensionPages.AddRange(pageProvider.GetPages(new EditorContext(this)));
 			}
 
 			// add extension pages to navigator

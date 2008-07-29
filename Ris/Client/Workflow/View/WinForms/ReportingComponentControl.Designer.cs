@@ -71,19 +71,15 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._saveButton = new System.Windows.Forms.Button();
 			this._btnSkip = new System.Windows.Forms.Button();
 			this._reportNextItem = new System.Windows.Forms.CheckBox();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this._orderDetailsTab = new System.Windows.Forms.TabPage();
-			this._priorReportsTab = new System.Windows.Forms.TabPage();
-			this._orderAdditionalInfoTab = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._statusText = new System.Windows.Forms.Label();
 			this._bannerPanel = new System.Windows.Forms.Panel();
+			this._rightHandPanel = new System.Windows.Forms.Panel();
 			this._reportEditorSplitContainer.Panel1.SuspendLayout();
 			this._reportEditorSplitContainer.Panel2.SuspendLayout();
 			this._reportEditorSplitContainer.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
-			this.tabControl1.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -99,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _reportEditorSplitContainer.Panel2
 			// 
-			this._reportEditorSplitContainer.Panel2.Controls.Add(this.tabControl1);
+			this._reportEditorSplitContainer.Panel2.Controls.Add(this._rightHandPanel);
 			this._reportEditorSplitContainer.Size = new System.Drawing.Size(977, 801);
 			this._reportEditorSplitContainer.SplitterDistance = 461;
 			this._reportEditorSplitContainer.TabIndex = 0;
@@ -239,48 +235,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportNextItem.Text = "Report Next Order";
 			this._reportNextItem.UseVisualStyleBackColor = true;
 			// 
-			// tabControl1
-			// 
-			this.tabControl1.Controls.Add(this._orderDetailsTab);
-			this.tabControl1.Controls.Add(this._priorReportsTab);
-			this.tabControl1.Controls.Add(this._orderAdditionalInfoTab);
-			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.tabControl1.Location = new System.Drawing.Point(0, 0);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(512, 801);
-			this.tabControl1.TabIndex = 0;
-			// 
-			// _orderDetailsTab
-			// 
-			this._orderDetailsTab.Location = new System.Drawing.Point(4, 22);
-			this._orderDetailsTab.Name = "_orderDetailsTab";
-			this._orderDetailsTab.Padding = new System.Windows.Forms.Padding(3);
-			this._orderDetailsTab.Size = new System.Drawing.Size(504, 775);
-			this._orderDetailsTab.TabIndex = 1;
-			this._orderDetailsTab.Text = "Order Details";
-			this._orderDetailsTab.UseVisualStyleBackColor = true;
-			// 
-			// _priorReportsTab
-			// 
-			this._priorReportsTab.Location = new System.Drawing.Point(4, 22);
-			this._priorReportsTab.Name = "_priorReportsTab";
-			this._priorReportsTab.Padding = new System.Windows.Forms.Padding(3);
-			this._priorReportsTab.Size = new System.Drawing.Size(504, 775);
-			this._priorReportsTab.TabIndex = 0;
-			this._priorReportsTab.Text = "Prior Reports";
-			this._priorReportsTab.UseVisualStyleBackColor = true;
-			// 
-			// _orderAdditionalInfoTab
-			// 
-			this._orderAdditionalInfoTab.Location = new System.Drawing.Point(4, 22);
-			this._orderAdditionalInfoTab.Name = "_orderAdditionalInfoTab";
-			this._orderAdditionalInfoTab.Padding = new System.Windows.Forms.Padding(3);
-			this._orderAdditionalInfoTab.Size = new System.Drawing.Size(504, 775);
-			this._orderAdditionalInfoTab.TabIndex = 2;
-			this._orderAdditionalInfoTab.Text = "Additional Info";
-			this._orderAdditionalInfoTab.UseVisualStyleBackColor = true;
-			// 
 			// tableLayoutPanel1
 			// 
 			this.tableLayoutPanel1.ColumnCount = 1;
@@ -322,6 +276,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Size = new System.Drawing.Size(977, 79);
 			this._bannerPanel.TabIndex = 0;
 			// 
+			// _rightHandPanel
+			// 
+			this._rightHandPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rightHandPanel.Location = new System.Drawing.Point(0, 0);
+			this._rightHandPanel.Name = "_rightHandPanel";
+			this._rightHandPanel.Size = new System.Drawing.Size(512, 801);
+			this._rightHandPanel.TabIndex = 0;
+			// 
 			// ReportingComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -337,7 +299,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel2.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.flowLayoutPanel1.PerformLayout();
-			this.tabControl1.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
@@ -346,10 +307,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
         #endregion
 
-        private System.Windows.Forms.SplitContainer _reportEditorSplitContainer;
-        private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage _priorReportsTab;
-        private System.Windows.Forms.TabPage _orderDetailsTab;
+		private System.Windows.Forms.SplitContainer _reportEditorSplitContainer;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel _bannerPanel;
         private System.Windows.Forms.Panel _reportEditorPanel;
@@ -358,12 +316,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private System.Windows.Forms.Button _sendToTranscriptionButton;
         private System.Windows.Forms.Button _saveButton;
         private System.Windows.Forms.Button _cancelButton;
-        private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
-        private System.Windows.Forms.TabPage _orderAdditionalInfoTab;
+		private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Label _statusText;
 		private System.Windows.Forms.Button _btnSkip;
 		private System.Windows.Forms.CheckBox _reportNextItem;
+		private System.Windows.Forms.Panel _rightHandPanel;
     }
 }

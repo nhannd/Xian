@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			protected override DataContractBase GetHealthcareContext()
 			{
-				return _owner._reportingContext.WorklistItem;
+				return _owner._reportEditorContext.WorklistItem;
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			protected override DataContractBase GetHealthcareContext()
 			{
-				return _owner._reportingContext.Report;
+				return _owner._reportEditorContext.Report;
 			}
 		}
 
@@ -126,12 +126,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly PreviewComponent _previewComponent;
 		private ChildComponentHost _previewHost;
 
-		private IReportingContext _reportingContext;
+		private IReportEditorContext _reportEditorContext;
 
 
-		public ReportEditorComponent(IReportingContext context)
+		public ReportEditorComponent()
 		{
-			_reportingContext = context;
 			_editingComponent = new EditingComponent(this);
 			_previewComponent = new PreviewComponent(this);
 		}
@@ -156,9 +155,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return this;
 		}
 
-		public void SetContext(IReportingContext context)
+		public void SetContext(IReportEditorContext context)
 		{
-			_reportingContext = context;
+			_reportEditorContext = context;
 			_editingComponent.Refresh();
 			_previewComponent.Refresh();
 			NotifyAllPropertiesChanged();
@@ -191,8 +190,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string ReportContent
 		{
-			get { return _reportingContext.ReportContent; }
-			set { _reportingContext.ReportContent = value; }
+			get { return _reportEditorContext.ReportContent; }
+			set { _reportEditorContext.ReportContent = value; }
 		}
 
 		#endregion
@@ -217,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool IsAddendum
 		{
-			get { return _reportingContext.ActiveReportPartIndex > 0; }
+			get { return _reportEditorContext.ActiveReportPartIndex > 0; }
 		}
 
 	}

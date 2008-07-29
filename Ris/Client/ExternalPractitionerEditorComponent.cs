@@ -41,11 +41,10 @@ using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 namespace ClearCanvas.Ris.Client
 {
 	/// <summary>
-	/// Defines an interface for providing custom editing pages to be displayed in the staff editor.
+	/// Defines an interface for providing custom editing pages to be displayed in the practitioner editor.
 	/// </summary>
-	public interface IExternalPractitionerEditorPageProvider
+	public interface IExternalPractitionerEditorPageProvider : IExtensionPageProvider<IExternalPractitionerEditorPage, IExternalPractitionerEditorContext>
 	{
-		IExternalPractitionerEditorPage[] GetEditorPages(IExternalPractitionerEditorContext context);
 	}
 
 	/// <summary>
@@ -60,13 +59,10 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
-	/// Defines an interface to a custom staff editor page.
+	/// Defines an interface to a custom practitioner editor page.
 	/// </summary>
-	public interface IExternalPractitionerEditorPage
+	public interface IExternalPractitionerEditorPage : IExtensionPage
 	{
-		Path Path { get; }
-		IApplicationComponent GetComponent();
-
 		void Save();
 	}
 
@@ -184,7 +180,7 @@ namespace ClearCanvas.Ris.Client
 			_extensionPages = new List<IExternalPractitionerEditorPage>();
 			foreach (IExternalPractitionerEditorPageProvider pageProvider in new ExternalPractitionerEditorPageProviderExtensionPoint().CreateExtensions())
 			{
-				_extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
+				_extensionPages.AddRange(pageProvider.GetPages(new EditorContext(this)));
 			}
 
 			// add extension pages to navigator

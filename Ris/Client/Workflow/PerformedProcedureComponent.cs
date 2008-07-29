@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// <summary>
 	/// Defines an interface for providing custom editing pages to capture information about a performed procedure step.
 	/// </summary>
-	public interface IPerformedStepEditorPageProvider
+	public interface IPerformedStepEditorPageProvider : IExtensionPageProvider<IPerformedStepEditorPage, IPerformedStepEditorContext>
 	{
 		IPerformedStepEditorPage[] GetEditorPages(IPerformedStepEditorContext context);
 	}
@@ -84,11 +84,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// <summary>
 	/// Defines an interface to a custom performed procedure step editor page.
 	/// </summary>
-	public interface IPerformedStepEditorPage
+	public interface IPerformedStepEditorPage : IExtensionPage
 	{
-		Path Path { get; }
-		IApplicationComponent GetComponent();
-
 		void Save();
 	}
 
@@ -172,12 +169,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			#region IPerformedStepEditorPage Members
 
-			Path IPerformedStepEditorPage.Path
+			Path IExtensionPage.Path
 			{
 				get { return new Path("Details", new ResourceResolver(this.GetType().Assembly)); }
 			}
 
-			IApplicationComponent IPerformedStepEditorPage.GetComponent()
+			IApplicationComponent IExtensionPage.GetComponent()
 			{
 				return this;
 			}

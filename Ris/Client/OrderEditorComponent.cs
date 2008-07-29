@@ -51,9 +51,8 @@ namespace ClearCanvas.Ris.Client
     /// <summary>
     /// Defines an interface for providing custom editing pages to be displayed in the order editor.
     /// </summary>
-    public interface IOrderEditorPageProvider
+    public interface IOrderEditorPageProvider : IExtensionPageProvider<IOrderEditorPage, IOrderEditorContext>
     {
-        IOrderEditorPage[] GetEditorPages(IOrderEditorContext context);
     }
 
     /// <summary>
@@ -87,11 +86,8 @@ namespace ClearCanvas.Ris.Client
     /// <summary>
     /// Defines an interface to a custom order editor page.
     /// </summary>
-    public interface IOrderEditorPage
+    public interface IOrderEditorPage : IExtensionPage
     {
-        Path Path { get; }
-        IApplicationComponent GetComponent();
-
         void Save();
     }
 
@@ -1069,7 +1065,7 @@ namespace ClearCanvas.Ris.Client
             _extensionPages = new List<IOrderEditorPage>();
             foreach (IOrderEditorPageProvider pageProvider in new OrderEditorPageProviderExtensionPoint().CreateExtensions())
             {
-                _extensionPages.AddRange(pageProvider.GetEditorPages(new OrderEditorContext(this)));
+				_extensionPages.AddRange(pageProvider.GetPages(new OrderEditorContext(this)));
             }
 
             // add extension pages to navigator

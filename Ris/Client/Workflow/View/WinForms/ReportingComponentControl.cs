@@ -59,17 +59,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			reportEditor.Dock = DockStyle.Fill;
 			_reportEditorPanel.Controls.Add(reportEditor);
 
-			Control priorReports = (Control)_component.PriorReportsHost.ComponentView.GuiElement;
-			priorReports.Dock = DockStyle.Fill;
-			_priorReportsTab.Controls.Add(priorReports);
-
-			Control orderDetails = (Control)_component.OrderDetailsHost.ComponentView.GuiElement;
-			orderDetails.Dock = DockStyle.Fill;
-			_orderDetailsTab.Controls.Add(orderDetails);
-
-			Control orderAdditionalInfo = (Control)_component.OrderAdditionalInfoHost.ComponentView.GuiElement;
-			orderAdditionalInfo.Dock = DockStyle.Fill;
-			_orderAdditionalInfoTab.Controls.Add(orderAdditionalInfo);
+			Control rightHandContent = (Control)_component.RightHandComponentContainerHost.ComponentView.GuiElement;
+			rightHandContent.Dock = DockStyle.Fill;
+			_rightHandPanel.Controls.Add(rightHandContent);
 
 			_statusText.DataBindings.Add("Text", _component, "StatusText", true, DataSourceUpdateMode.OnPropertyChanged);
 			_statusText.DataBindings.Add("Visible", _component, "StatusTextVisible", true, DataSourceUpdateMode.OnPropertyChanged);

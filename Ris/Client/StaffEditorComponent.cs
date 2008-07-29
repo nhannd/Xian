@@ -45,9 +45,8 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// Defines an interface for providing custom editing pages to be displayed in the staff editor.
 	/// </summary>
-	public interface IStaffEditorPageProvider
+	public interface IStaffEditorPageProvider : IExtensionPageProvider<IStaffEditorPage, IStaffEditorContext>
 	{
-		IStaffEditorPage[] GetEditorPages(IStaffEditorContext context);
 	}
 
 	/// <summary>
@@ -64,11 +63,8 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// Defines an interface to a custom staff editor page.
 	/// </summary>
-	public interface IStaffEditorPage
+	public interface IStaffEditorPage : IExtensionPage
 	{
-		Path Path { get; }
-		IApplicationComponent GetComponent();
-
 		void Save();
 	}
 
@@ -200,7 +196,7 @@ namespace ClearCanvas.Ris.Client
 			_extensionPages = new List<IStaffEditorPage>();
 			foreach (IStaffEditorPageProvider pageProvider in new StaffEditorPageProviderExtensionPoint().CreateExtensions())
 			{
-				_extensionPages.AddRange(pageProvider.GetEditorPages(new EditorContext(this)));
+				_extensionPages.AddRange(pageProvider.GetPages(new EditorContext(this)));
 			}
 
 			// add extension pages to navigator
