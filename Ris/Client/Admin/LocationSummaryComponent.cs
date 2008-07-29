@@ -112,6 +112,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					GetLocationEditFormDataResponse response = service.GetLocationEditFormData(new GetLocationEditFormDataRequest());
 					_filterNone.Name = SR.DummyItemNone;
 					_facilityList.Add(_filterNone);
+					response.FacilityChoices.Sort(delegate(FacilitySummary x, FacilitySummary y) { return x.Name.CompareTo(y.Name); });
 					_facilityList.AddRange(response.FacilityChoices);
 				});
 			base.Start();
@@ -150,7 +151,10 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public IList FacilityChoices
 		{
-			get { return _facilityList; }
+			get
+			{
+				return _facilityList;
+			}
 		}
 
 		public string FormatFacilityListItem(object item)

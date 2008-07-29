@@ -72,6 +72,14 @@ namespace ClearCanvas.Ris.Client.Admin
 					{
 						GetWorklistEditFormDataResponse response = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
 						_worklistClassChoices.Add(_filterNone);
+						response.WorklistClasses.Sort(
+							delegate(WorklistClassSummary x, WorklistClassSummary y)
+							{
+								if (x.CategoryName.Equals(y.CategoryName))
+									return x.DisplayName.CompareTo(y.DisplayName);
+								else
+									return x.CategoryName.CompareTo(y.CategoryName);
+							});
 						_worklistClassChoices.AddRange(response.WorklistClasses);
 					});
 			base.Start();

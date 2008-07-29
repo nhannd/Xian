@@ -90,6 +90,7 @@ namespace ClearCanvas.Ris.Client.Admin
 						GetProcedureTypeGroupSummaryFormDataResponse response =
 							service.GetProcedureTypeGroupSummaryFormData(new GetProcedureTypeGroupSummaryFormDataRequest());
 						_categoryChoices.AddRange(response.CategoryChoices);
+						_categoryChoices.Sort(delegate(EnumValueInfo x, EnumValueInfo y) { return x.Value.CompareTo(y.Value); });
 					});
 
 
@@ -100,7 +101,10 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public IList CategoryChoices
 		{
-			get { return _categoryChoices; }
+			get 
+			{
+				return _categoryChoices;
+			}
 		}
 
 		public string FormatCategory(object item)
@@ -120,6 +124,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			set
 			{
 				_selectedCategory = value;
+				Search();
 			}
 		}
 
@@ -157,6 +162,7 @@ namespace ClearCanvas.Ris.Client.Admin
 				delegate(IProcedureTypeGroupAdminService service)
 				{
 					request.CategoryFilter = (_selectedCategory == _filterNone) ? null : _selectedCategory;
+
 					listResponse = service.ListProcedureTypeGroups(request);
 				});
 
