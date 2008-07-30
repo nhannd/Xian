@@ -569,9 +569,6 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			VerifyLoad(numberOfImages, failedImages);
-
-			if (studyLoader.PrefetchingStrategy != null)
-				studyLoader.PrefetchingStrategy.Start(this);
 		}
 
 		/// <summary>
@@ -684,7 +681,9 @@ namespace ClearCanvas.ImageViewer
 			                    		imageViewer.Dispose();
 			                    	};
 			imageViewer.Layout();
-			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();			
+			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+
+			imageViewer.StartPrefetching();
 		}
 
 		#endregion
@@ -768,6 +767,15 @@ namespace ClearCanvas.ImageViewer
 			ex.TotalImages = totalImages;
 			ex.FailedImages = failedImages;
 			throw ex;
+		}
+
+		private void StartPrefetching()
+		{
+			foreach (IStudyLoader loader in _studyLoaders)
+			{
+				if (loader.PrefetchingStrategy != null)
+					loader.PrefetchingStrategy.Start(this);
+			}
 		}
 
 		private void StopPrefetching()
