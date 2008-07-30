@@ -790,6 +790,33 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Printing downtime form  {0} of {1} cancelled.
+        /// </summary>
+        internal static string MessagePrintDowntimeFormCancelled {
+            get {
+                return ResourceManager.GetString("MessagePrintDowntimeFormCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Printing of {0} downtime forms completed.
+        /// </summary>
+        internal static string MessagePrintDowntimeFormCompleted {
+            get {
+                return ResourceManager.GetString("MessagePrintDowntimeFormCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Printing downtime form {0} of {1}.
+        /// </summary>
+        internal static string MessagePrintDowntimeFormProgress {
+            get {
+                return ResourceManager.GetString("MessagePrintDowntimeFormProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will cancel/discontinue the current order.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageReplaceOrder {
@@ -1209,6 +1236,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitlePreview {
             get {
                 return ResourceManager.GetString("TitlePreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Print Downtime Forms.
+        /// </summary>
+        internal static string TitlePrintDowntimeForms {
+            get {
+                return ResourceManager.GetString("TitlePrintDowntimeForms", resourceCulture);
             }
         }
         

@@ -254,6 +254,12 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow creation of Preliminary Diagnosis conversations.")]
 				public const string Create = "Workflow/Preliminary Diagnosis/Create";
 			}
+
+			public static class Downtime
+			{
+				[AuthorityToken(Description = "Allow printing of downtime forms.")]
+				public const string PrintForms = "Workflow/Downtime/Print Forms";
+			}
 		}
 
 		/// <summary>

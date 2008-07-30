@@ -324,6 +324,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 			return new TimeShiftOrderResponse(orderAssembler.CreateOrderSummary(order, PersistenceContext));
 		}
 
+		[UpdateOperation]
+		public ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request)
+		{
+			// obtain a new acc number
+			IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
+			string accNum = broker.GetNextAccessionNumber();
+
+			return new ReserveAccessionNumberResponse(accNum);
+		}
+
     	#endregion
 
         private void ValidateOrderModifiable(Order order)

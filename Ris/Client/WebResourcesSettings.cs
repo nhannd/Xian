@@ -81,6 +81,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("downtime-form-template.htm")]
+		public string DowntimeFormTemplatePageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DowntimeFormTemplatePageUrl"]));
+			}
+		}
+
 		#region Home Page Preview settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]

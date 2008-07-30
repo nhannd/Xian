@@ -360,6 +360,15 @@
   <data name="MessagePatientNotFound" xml:space="preserve">
     <value>Patient not found</value>
   </data>
+  <data name="MessagePrintDowntimeFormCancelled" xml:space="preserve">
+    <value>Printing downtime form  {0} of {1} cancelled</value>
+  </data>
+  <data name="MessagePrintDowntimeFormCompleted" xml:space="preserve">
+    <value>Printing of {0} downtime forms completed</value>
+  </data>
+  <data name="MessagePrintDowntimeFormProgress" xml:space="preserve">
+    <value>Printing downtime form {0} of {1}</value>
+  </data>
   <data name="MessageReplaceOrder" xml:space="preserve">
     <value>This will cancel/discontinue the current order.  Are you sure you want to continue?</value>
   </data>
@@ -500,6 +509,9 @@
   </data>
   <data name="TitlePreview" xml:space="preserve">
     <value>Preview</value>
+  </data>
+  <data name="TitlePrintDowntimeForms" xml:space="preserve">
+    <value>Print Downtime Forms</value>
   </data>
   <data name="TitlePrintReport" xml:space="preserve">
     <value>Print Report</value>

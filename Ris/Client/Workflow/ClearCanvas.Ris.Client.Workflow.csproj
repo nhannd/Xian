@@ -43,6 +43,7 @@
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="DowntimePrintFormsComponent.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />

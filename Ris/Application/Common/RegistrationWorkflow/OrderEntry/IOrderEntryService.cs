@@ -155,5 +155,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
+
+		/// <summary>
+		/// Reserve an accession number.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
     }
 }
