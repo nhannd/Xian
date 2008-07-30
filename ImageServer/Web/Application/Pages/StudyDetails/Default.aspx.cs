@@ -134,7 +134,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails
 
             StudyDetailsPanel.Study = _study;
             StudyDetailsPanel.DataBind();
-            
         }
 
         protected override void OnPreRender(EventArgs e)

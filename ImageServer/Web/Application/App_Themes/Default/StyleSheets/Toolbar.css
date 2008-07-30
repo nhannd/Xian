@@ -3,3 +3,23 @@
 {
 	margin: 10px 0px 9px 5px;
 }
+
+.ToolbarButtonPanel
+{
+    background: #B8D9EE url(../images/MainContent/ToolbarButtonPanelBackground.png) repeat-x;
+    height: 28px;
+    padding-top: 4px;
+    margin-top: 1px;
+}
+
+.ToolbarButtons
+{
+    padding-top: 3px;
+    padding-left: 6px;
+}
+
+.ToolbarButtonsRight
+{
+    text-align: right;
+    padding-right: 5px;
+}

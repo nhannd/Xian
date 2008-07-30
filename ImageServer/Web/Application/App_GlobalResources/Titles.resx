@@ -117,7 +117,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Archive" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="ArchiveQueue" xml:space="preserve">
+    <value>Archive Queue</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Configure</value>
+  </data>
+  <data name="Devices" xml:space="preserve">
+    <value>Devices</value>
+  </data>
   <data name="EditStudyDialog" xml:space="preserve">
     <value>Edit Study Details</value>
+  </data>
+  <data name="FileSystemQueue" xml:space="preserve">
+    <value>File System Queue</value>
+  </data>
+  <data name="FileSystems" xml:space="preserve">
+    <value>File Systems</value>
+  </data>
+  <data name="Queues" xml:space="preserve">
+    <value>Queues</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Series" xml:space="preserve">
+    <value>Series</value>
+  </data>
+  <data name="SeriesDetails" xml:space="preserve">
+    <value>Series Details</value>
+  </data>
+  <data name="ServerPartitions" xml:space="preserve">
+    <value>Server Partitions</value>
+  </data>
+  <data name="ServerRules" xml:space="preserve">
+    <value>Server Rules</value>
+  </data>
+  <data name="ServiceScheduling" xml:space="preserve">
+    <value>Service Scheduling</value>
+  </data>
+  <data name="StudyDetails" xml:space="preserve">
+    <value>Study Details</value>
+  </data>
+  <data name="StudyStorage" xml:space="preserve">
+    <value>Study Storage</value>
+  </data>
+  <data name="WorkQueue" xml:space="preserve">
+    <value>Work Queue</value>
   </data>
 </root>

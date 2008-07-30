@@ -255,19 +255,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
   
             </script>";
 
-			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
-
-            //Add the CodeMirror Javascript for text highlighting of the Server Rules
-           /* ScriptManager.RegisterClientScriptBlock(this, GetType(), "CodeMirrorSrc", "<script language=javascript src='/Scripts/CodeMirror/js/codemirror.js' />", false);
-
-            ScriptManager.RegisterStartupScript(this, GetType(), "CodeMirrorScript", "<script type=\"text/javascript\">" +
-                    "alert(\"Hi\"); var editor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + "',{" +
-                        "height: \"350px\"," +
-                        "parserfile: \"parsexml.js\"," +
-                        "stylesheet: \"" + Page.ResolveClientUrl("~/Scripts/CodeMirror/css/xmlcolors.css") + "\"," + 
-                        "path: \"" + Page.ResolveClientUrl("~/Scripts/CodeMirror/js/") + "\")," +
-                        "continuousScanning: 500" +
-                        "}); alert(editor.toString());</script>", false);*/
+			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);             
 		}
 
 		protected void Page_Load(object sender, EventArgs e)

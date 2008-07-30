@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientBirthDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox PatientBirthDate;
         
         /// <summary>
         /// ClearPatientBirthDateButton control.
@@ -350,7 +350,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientAge;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox PatientAge;
         
         /// <summary>
         /// PatientAgeHelp control.
@@ -638,7 +638,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox StudyInstanceUID;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox StudyInstanceUID;
         
         /// <summary>
         /// ChangeStudyInstanceUIDButton control.
@@ -665,7 +665,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox StudyDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox StudyDate;
         
         /// <summary>
         /// StudyTimeHours control.
@@ -674,7 +674,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox StudyTimeHours;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox StudyTimeHours;
         
         /// <summary>
         /// StudyTimeMinutes control.

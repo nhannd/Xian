@@ -31,7 +31,7 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;
                                                 <asp:LinkButton ID="ClearScheduleDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
-                                                <asp:TextBox ID="ScheduleDate" runat="server" ReadOnly="true" CssClass="SearchTextBox" BackColor="White" ToolTip="Search the list by Schedule Date [dd/mm/yyyy]" />
+                                                <ccUI:TextBox ID="ScheduleDate" runat="server" ReadOnly="true" CssClass="SearchTextBox" ToolTip="Search the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Type" CssClass="SearchTextBoxLabel"

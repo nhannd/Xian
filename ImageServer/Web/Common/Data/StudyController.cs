@@ -33,8 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -171,6 +175,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return IsStudyInWorkQueue(study, WorkQueueTypeEnum.WebDeleteStudy);
         }
 
+        private ServerEntityKey GetStudyStorageGUID(Study study)
+        {
+            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+
+            return studyStorageAdaptor.GetFirst(criteria).GetKey();
+        }
+
         /// <summary>
         /// Returns a value indicating whether the specified study has been scheduled for delete.
         /// </summary>
@@ -251,6 +265,60 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			return modalitiesInStudy;
 		}
+
+        public IList<WorkQueue> GetWorkQueueItems(Study study)
+        {
+            Platform.CheckForNullReference(study, "Study");
+
+            WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+
+            return adaptor.Get(workQueueCriteria);
+        }
+
+        public IList<FilesystemQueue> GetFileSystemQueueItems(Study study)
+        {
+            Platform.CheckForNullReference(study, "Study");
+
+            FileSystemQueueAdaptor adaptor = new FileSystemQueueAdaptor();
+            FilesystemQueueSelectCriteria fileSystemQueueCriteria = new FilesystemQueueSelectCriteria();
+            fileSystemQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+
+            return adaptor.Get(fileSystemQueueCriteria);
+        }
+
+        public IList<StudyStorageLocation> GetStudyStorageLocation(Study study)
+        {
+            Platform.CheckForNullReference(study, "Study");
+
+            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                IQueryStudyStorageLocation select = ctx.GetBroker<IQueryStudyStorageLocation>();
+                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+
+                parms.StudyStorageKey = GetStudyStorageGUID(study);
+
+                IList<StudyStorageLocation> storage = select.Execute(parms);
+
+                if (storage == null || storage.Count == 0)
+                {
+                    Platform.Log(LogLevel.Error, "Unable to find storage location for Study item: {0}",
+                                 study.GetKey().ToString());
+                    throw new ApplicationException("Unable to find storage location for Study item.");
+                }
+
+                if (storage.Count > 1)
+                {
+                    Platform.Log(LogLevel.Warn,
+                                 "StudyController:GetStudyStorageLocation: multiple study storage found for study {0}",
+                                 study.GetKey().Key);
+                }
+
+                return storage;
+            }
+        }
+
         #endregion
     }
 }

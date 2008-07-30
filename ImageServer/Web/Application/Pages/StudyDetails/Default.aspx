@@ -4,6 +4,7 @@
 <%@ Register Src="Controls/PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="localAsp" %>
 <%@ Register Src="Controls/StudyDetailsPanel.ascx" TagName="StudyDetailsPanel" TagPrefix="localAsp" %>
 <%@ Register Src="Controls/EditStudyDetailsDialog.ascx" TagName="EditStudyDetailsDialog" TagPrefix="localAsp" %>
+<%@ Register Src="Controls/StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
 
 <asp:Content runat="server" ID="MainMenuContent" contentplaceholderID="MainMenuPlaceHolder">
     <asp:Table ID="Table1" runat="server"><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" OnClientClick="javascript: window.close(); return false;" /></asp:TableCell></asp:TableRow></asp:Table>

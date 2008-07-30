@@ -79,20 +79,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         #region Protected Methods
 
         [ExtenderControlProperty]
-        [ClientPropertyName("ViewSeriesButtonClientID")]
-        public string ViewSeriesButtonClientID
-        {
-            get { return this.ViewSeriesButton.ClientID; }
-        }
-
-        [ExtenderControlProperty]
-        [ClientPropertyName("SeriesListClientID")]
-        public string SeriesListClientID
-        {
-            get { return SeriesGridView.SeriesListControl.ClientID; }
-        }
-
-        [ExtenderControlProperty]
         [ClientPropertyName("OpenSeriesPageUrl")]
         public string OpenSeriesPageUrl
         {
@@ -109,7 +95,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            ConfirmDialog.Confirmed += new MessageBox.ConfirmedEventHandler(ConfirmDialog_Confirmed);
+            ConfirmDialog.Confirmed += ConfirmDialog_Confirmed;
         }
 
         public override void DataBind()
@@ -121,11 +107,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 ServerPartition partition = adaptor.Get(Study.ServerPartitionKey);
 
                 PatientSummaryPanel.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(Study);
-
-                StudyDetailsView.Studies.Add(Study);
-             
-                SeriesGridView.Partition = partition;
-                SeriesGridView.Study = Study;
+          
+                StudyDetailsTabs.Partition = partition;
+                StudyDetailsTabs.Study = Study;                
             } 
             
             base.DataBind();
@@ -162,9 +146,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 {
                     MessagePanel.Visible = false;
                 }
-
-                int[] selectedSeriesIndices = SeriesGridView.SeriesListControl.SelectedIndices;
-                ViewSeriesButton.Enabled = selectedSeriesIndices != null && selectedSeriesIndices.Length > 0;             
             }
            
         }

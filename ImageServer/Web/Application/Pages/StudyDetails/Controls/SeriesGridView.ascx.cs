@@ -91,18 +91,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         public string SeriesListClientID
         {
             get { return GridView1.ClientID; }
-        }
-
-
-        
+        }   
 
         [ExtenderControlProperty]
         [ClientPropertyName("OpenSeriesPageUrl")]
         public string OpenSeriesPageUrl
         {
-            get { return  Page.ResolveClientUrl("~/SeriesDetails/SeriesDetailsPage.aspx"); }
-        }
-        
+            get { return  Page.ResolveClientUrl(App_GlobalResources.ImageServerPageURLs.SeriesDetailsPage); }
+        }      
 
         public Web.Common.WebControls.UI.GridView SeriesListControl
         {
@@ -124,13 +120,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 
             
         #region Protected methods
-
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-           
-            
-        }
 
         public override void DataBind()
         {

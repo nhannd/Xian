@@ -3,7 +3,7 @@
     font-family: Sans-Serif;
     font-size: 12px;
     background: #ffffff;
-    border: solid 1px #3d98d1; 
+    border: solid 1px #3D98D1;
 }
 
 .GlobalGridViewHeader
@@ -48,6 +48,13 @@
     padding-left: 3px;
 }
 
+.GlobalGridViewEmptyText
+{
+    color: #205F87;
+    font-weight: bold;
+    font-size: 12px;
+}
+
 /*==========================================
  * Grid Pager
  *==========================================*/
@@ -63,7 +70,7 @@
     font-family: Sans-Serif;
     font-size: 12px;
     font-weight: bold;
-    color: #D13D4D; 
+    color: #55be50;
     padding-left: 5px;
     padding-bottom: 2px;
     vertical-align: middle;
@@ -75,7 +82,7 @@
     font-size: 12px;
     font-weight: bold;
     text-decoration: none;
-    color: #D13D4D; 
+    color: #55be50; 
     vertical-align: middle;
 }
 
@@ -85,6 +92,6 @@
     font-size: 12px;
     font-weight: bold;
     text-decoration: none;
-    color: #B8D8EE; 
+    color: #dddddd; 
     vertical-align: middle;
 }

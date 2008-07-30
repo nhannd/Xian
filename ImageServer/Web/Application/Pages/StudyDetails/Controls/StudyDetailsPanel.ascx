@@ -1,9 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="StudyDetailsPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel" %>
 
-<%@ Register Src="SeriesGridView.ascx" TagName="SeriesGridView" TagPrefix="localAsp" %>
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="localAsp" %>
-<%@ Register Src="StudyDetailsView.ascx" TagName="StudyDetailsView" TagPrefix="localAsp" %>
+<%@ Register Src="StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
     <ContentTemplate>
@@ -15,7 +14,7 @@
                 </td>
             </tr>
             <tr>
-                <td colspan="2" class="PatientInfo">
+                <td class="PatientInfo" colspan="2">
                     <table width="100%" cellpadding="0" cellspacing="0" class="PatientSummaryTable">
                         <tr><td>
                             <asp:Panel CssClass="StudyDetailsMessage" runat="server" ID="MessagePanel" ><asp:Label ID="ConfirmationMessage" runat="Server" Text="" /></asp:Panel>
@@ -28,24 +27,17 @@
                     </table>
                 </td>
             </tr>
-            <tr>
-                <td colspan="2">                  
-                    <localAsp:StudyDetailsView ID="StudyDetailsView" runat="server" />
-                </td>
+                        <tr>
+                <td class="Spacer" colspan="2"><asp:Image runat="server" SkinID="Spacer" Height="3px"/></td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
-                        <tr><td class="MainContentSubTitle" >Series</td><td class="ButtonPanel"><ccUI:ToolbarButton runat="server" ID="ViewSeriesButton" SkinID="ViewDetailsButton" /></td></tr>
-                        <tr><td colspan="2"><localAsp:SeriesGridView ID="SeriesGridView" runat="server" /></td></tr>
-                    </table>
+                <td colspan="2">                  
+                    <localAsp:StudyDetailsTabs ID="StudyDetailsTabs" runat="server" />
                 </td>
             </tr>
             </table>
-
-  </div>
-    
-               
+    </div>
+                  
         <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
         
     </ContentTemplate>

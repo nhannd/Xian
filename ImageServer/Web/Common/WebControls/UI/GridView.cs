@@ -29,17 +29,14 @@
 
 #endregion
 
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView.js", "text/javascript")]
 
@@ -104,6 +101,46 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             get { return _onClientRowDblClick; }
             set { _onClientRowDblClick = value; }
+        }
+
+        /// <summary>
+        /// Sets or gets the Mouseover highlighting enabled/disabled.
+        /// </summary>
+        /// <remark>
+        /// 
+        /// </remark>
+        public bool MouseHoverRowHighlightEnabled
+        {
+            get
+            {
+                if (ViewState["MouseHoverRowHighlightEnabled"] != null)
+                    return (bool)ViewState["MouseHoverRowHighlightEnabled"];
+                else
+                    return false;
+            }
+            set { ViewState["MouseHoverRowHighlightEnabled"] = value; }
+        }
+
+        /// <summary>
+        /// Sets or gets the Highlight color of a row  
+        /// </summary>
+        /// <remark>
+        /// 
+        /// </remark>
+        public Color RowHighlightColor
+        {
+            get
+            {
+                if (ViewState["RowHighlightColor"] != null)
+                    return (Color)ViewState["RowHighlightColor"];
+                else
+                {
+                    // default color
+                    return Color.Yellow;
+                }
+            }
+
+            set { ViewState["RowHighlightColor"] = value; }
         }
 
 
@@ -215,7 +252,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         
         public IEnumerable<ScriptDescriptor> GetScriptDescriptors()
         {
-            ScriptControlDescriptor desc = new ScriptControlDescriptor(this.GetType().FullName, ClientID);
+            ScriptControlDescriptor desc = new ScriptControlDescriptor(GetType().FullName, ClientID);
 
             desc.AddProperty("clientStateFieldID", ClientID + "SelectedRowIndices");
             desc.AddProperty("SelectionMode", SelectionMode.ToString());
@@ -245,10 +282,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
             
             if (OnClientRowClick!=null)
-                desc.AddEvent("onClientRowClick", this.OnClientRowClick);
+                desc.AddEvent("onClientRowClick", OnClientRowClick);
 
             if (OnClientRowDblClick!=null)
-                desc.AddEvent("onClientRowDblClick", this.OnClientRowDblClick);
+                desc.AddEvent("onClientRowDblClick", OnClientRowDblClick);
             
             return new ScriptDescriptor[] { desc };
         }
@@ -359,6 +396,20 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
                     
         }
+
+        protected override void OnRowCreated(GridViewRowEventArgs e)
+        {
+            base.OnRowCreated(e);
+
+            // only apply changes if its DataRow
+            if (e.Row.RowType == DataControlRowType.DataRow && MouseHoverRowHighlightEnabled)
+            {
+                string onMouseOver = string.Format("this.style.cursor='pointer';this.originalstyle=this.style.backgroundColor;this.style.backgroundColor='{0}';", ColorTranslator.ToHtml(RowHighlightColor));
+                string onMouseOut = "this.style.backgroundColor=this.originalstyle;";
+                e.Row.Attributes.Add("onmouseover", onMouseOver);
+                e.Row.Attributes.Add("onmouseout", onMouseOut);
+            }
+        }
         
         #endregion Protected Methods
 
@@ -391,7 +442,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 
             #region -- Font General --
             if (s.Font.Size != FontUnit.Empty)
-                sb.Append("font-size:" + s.Font.Size.ToString() + ";");
+                sb.Append("font-size:" + s.Font.Size + ";");
             if (s.Font.Bold == true)
                 sb.Append("font-weight:Bold;");
             if (s.Font.Italic == true)

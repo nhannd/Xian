@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox ScheduleDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox ScheduleDate;
         
         /// <summary>
         /// Label5 control.

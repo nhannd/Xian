@@ -453,12 +453,40 @@
     <Compile Include="Pages\StudyDetails\Code\StudyDetailsAssembler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\StudyStorageView.ascx.cs">
+      <DependentUpon>StudyStorageView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\StudyStorageView.ascx.designer.cs">
+      <DependentUpon>StudyStorageView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx.cs">
+      <DependentUpon>FileSystemQueueGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx.designer.cs">
+      <DependentUpon>FileSystemQueueGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx.cs">
+      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx.designer.cs">
+      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx.cs">
       <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx.designer.cs">
       <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx.cs">
+      <DependentUpon>StudyDetailsTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx.designer.cs">
+      <DependentUpon>StudyDetailsTabs.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\StudyDetails\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -672,6 +700,12 @@
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabActiveRight.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabHeaderBackgroundTop.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabHoverLeft.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabHoverMiddle.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabHoverRight.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabInactiveLeft.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabInactiveMiddle.png" />
+    <Content Include="App_Themes\Default\images\Controls\Tabs\TabInactiveRight.png" />
     <Content Include="App_Themes\Default\images\Error\ErrorMessageBackground.png" />
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
@@ -729,7 +763,6 @@
     <Content Include="Controls\ModalDialog.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
-    <Content Include="Controls\ServerPartitionTabs.js" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Common\BarChart.aspx" />
@@ -787,11 +820,17 @@
     <Content Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx" />
     <Content Include="Pages\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\StudyStorageView.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx" />
     <Content Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx" />
     <Content Include="Pages\StudyDetails\Default.aspx" />
     <Content Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx" />
     <Content Include="Pages\StudyDetails\Controls\SeriesGridView.ascx" />
     <Content Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\WorkQueueGridView.js" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\FileSystemQueueGridView.js" />
     <Content Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
     <Content Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
     <Content Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
@@ -910,7 +949,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3358</DevelopmentServerPort>
+          <DevelopmentServerPort>3702</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

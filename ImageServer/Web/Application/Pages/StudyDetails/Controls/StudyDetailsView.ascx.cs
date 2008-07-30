@@ -81,21 +81,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             StudyDetailView.DataBind();
         }
 
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-
-            Study study = (StudyDetailView.DataItem) as Study;
-            if (study != null)
-            {
-                
-
-            }
-
-        }
-
-
         protected void StudyDetailView_DataBound(object sender, EventArgs e)
         {
             Study study = (StudyDetailView.DataItem) as Study;

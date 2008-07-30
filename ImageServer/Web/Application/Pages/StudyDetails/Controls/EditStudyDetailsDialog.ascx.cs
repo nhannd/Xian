@@ -74,11 +74,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                                                                             "} } else { var iYear = Math.floor(diff/365);" +
                                                                             "document.getElementById('" + PatientAge.ClientID + "').value=iYear + ' Year(s)';} }", true);
 
-            
-            PatientBirthDate.Attributes.Add("OnKeyDown", "return false;");
-            StudyDate.Attributes.Add("OnKeyDown", "return false;");
-            PatientAge.Attributes.Add("OnKeyDown", "return false;");
-
         }
 
         private XmlNode createChildNode(XmlNode setNode, string tagName, string value)
@@ -305,10 +300,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 StudyDate.Text = studyDate.ToString(ImageServerConstants.MMDDYYY);
             } else
             {
-                StudyDate.Text = App_GlobalResources.SR.Unknown;
+                StudyDate.Text = string.Empty;
             }
 
-            if (!string.IsNullOrEmpty(study.StudyTime))
+            if (!string.IsNullOrEmpty(study.StudyTime) && study.StudyTime.Length == 6)
             {
                 StudyTimeHours.Text = study.StudyTime.Substring(0, 2);
                 StudyTimeMinutes.Text = study.StudyTime.Substring(2, 2);

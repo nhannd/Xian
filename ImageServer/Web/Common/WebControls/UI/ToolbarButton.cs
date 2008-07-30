@@ -77,9 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             {
                 ViewState["EnabledHoverImageURL"] = inspectURL(value);
             }
-        }
-
-       
+        }     
 
         /// <summary>
         /// Sets or gets the url of the image to be used when the button is disabled.
@@ -168,7 +166,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
             base.Render(writer);
         }
-
        
     }
 }

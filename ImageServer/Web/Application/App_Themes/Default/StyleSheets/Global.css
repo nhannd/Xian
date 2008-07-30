@@ -26,7 +26,7 @@ Global.css - Defines the global styles for the entire web application relating
 .MainContentPanel 
 {
 	background-color: white;
-	padding: 5px 0px 0px 0px;
+	padding: 7px 5px 5px 5px;
 }
 
 .MainContentTable
@@ -80,9 +80,12 @@ Global.css - Defines the global styles for the entire web application relating
     padding-left: 5px;
 }
 
-/*=======================================
- * Rounded Corner Items
- *======================================*/
+.MainContentTitleButtonPanel
+{
+    text-align: right;
+    background: url(../images/MainContent/MainContentTitleBackground.png) repeat-x;
+    padding-right: 4px; 
+}
 
 .MainContentCorners{display:block}
 .MainContentCorners *{
@@ -121,47 +124,10 @@ Global.css - Defines the global styles for the entire web application relating
 .MainContentCornersFG{
   background:#3d98d1}
 
-.ToolbarButtonPanel
-{
-    background: #B8D9EE url(../images/MainContent/ToolbarButtonPanelBackground.png) repeat-x;
-    height: 28px;
-    padding-top: 4px;
-    margin-top: 1px;
-}
-
-.ToolbarButtons
-{
-    padding-top: 3px;
-    padding-left: 1px;
-}
-
-
-/*================================
- * Buttons 
- *================================*/
-
-.ButtonStyle
-{
-    width: 65px;
-    font-size: 12px;
-    font-weight: bold;
-    color: #336699;
-    margin-left: 1px;
-}
-
 .ButtonPanel
 {
     text-align: right;
 }
-
-.MainContentTitleButtonPanel
-{
-    text-align: right;
-    background: url(../images/MainContent/MainContentTitleBackground.png) repeat-x;
-    padding-right: 5px; 
-    vertical-align: bottom;
-}
-
 
 /*================================
  * About 

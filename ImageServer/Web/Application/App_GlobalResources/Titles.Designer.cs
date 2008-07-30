@@ -61,11 +61,164 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        internal static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive.
+        /// </summary>
+        internal static string Archive {
+            get {
+                return ResourceManager.GetString("Archive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive Queue.
+        /// </summary>
+        internal static string ArchiveQueue {
+            get {
+                return ResourceManager.GetString("ArchiveQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Configure.
+        /// </summary>
+        internal static string Configure {
+            get {
+                return ResourceManager.GetString("Configure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Devices.
+        /// </summary>
+        internal static string Devices {
+            get {
+                return ResourceManager.GetString("Devices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Study Details.
         /// </summary>
         internal static string EditStudyDialog {
             get {
                 return ResourceManager.GetString("EditStudyDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File System Queue.
+        /// </summary>
+        internal static string FileSystemQueue {
+            get {
+                return ResourceManager.GetString("FileSystemQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File Systems.
+        /// </summary>
+        internal static string FileSystems {
+            get {
+                return ResourceManager.GetString("FileSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Queues.
+        /// </summary>
+        internal static string Queues {
+            get {
+                return ResourceManager.GetString("Queues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string Search {
+            get {
+                return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series.
+        /// </summary>
+        internal static string Series {
+            get {
+                return ResourceManager.GetString("Series", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Series Details.
+        /// </summary>
+        internal static string SeriesDetails {
+            get {
+                return ResourceManager.GetString("SeriesDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Partitions.
+        /// </summary>
+        internal static string ServerPartitions {
+            get {
+                return ResourceManager.GetString("ServerPartitions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Rules.
+        /// </summary>
+        internal static string ServerRules {
+            get {
+                return ResourceManager.GetString("ServerRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service Scheduling.
+        /// </summary>
+        internal static string ServiceScheduling {
+            get {
+                return ResourceManager.GetString("ServiceScheduling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Details.
+        /// </summary>
+        internal static string StudyDetails {
+            get {
+                return ResourceManager.GetString("StudyDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Storage.
+        /// </summary>
+        internal static string StudyStorage {
+            get {
+                return ResourceManager.GetString("StudyStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Work Queue.
+        /// </summary>
+        internal static string WorkQueue {
+            get {
+                return ResourceManager.GetString("WorkQueue", resourceCulture);
             }
         }
     }

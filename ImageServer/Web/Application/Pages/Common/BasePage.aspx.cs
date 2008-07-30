@@ -46,4 +46,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
             Page.Theme = ImageServerConstants.Default;
         }
     }
+
+
 }

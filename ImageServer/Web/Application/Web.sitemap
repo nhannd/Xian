@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" >
+<siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" enableLocalization="true">
 	<siteMapNode url="" title="Root"  description="">
-		<siteMapNode url="~/Pages/Search/Default.aspx" title="Search"  />
-		<siteMapNode url="~/Pages/WorkQueue/SearchPage.aspx" title="Work Queue"  />
+		<siteMapNode url="~/Pages/Search/Default.aspx" title="$Resources: Titles, Search"  />
+
+    <siteMapNode url="" title="$Resources: Titles, Queues">
+      <siteMapNode url="~/Pages/WorkQueue/SearchPage.aspx" title="$Resources: Titles, WorkQueue"  />
+      <siteMapNode url="~/Pages/Queues/FileSystemQueue/Default.aspx" title="$Resources: Titles, FileSystemQueue"  />
+      <siteMapNode url="~/Pages/Queues/ArchiveQueue/Default.aspx" title="$Resources: Titles, ArchiveQueue"  />
+    </siteMapNode>
 	
-		<siteMapNode url="" title="Configure">
-				<siteMapNode url="~/Pages/Configure/Devices/DevicePage.aspx" title="Devices"  />
-				<siteMapNode url="~/Pages/Configure/ServerPartitions/ServerPartitionPage.aspx" title="Server Partitions"  />
-				<siteMapNode url="~/Pages/Configure/FileSystems/FileSystemsPage.aspx" title="Filesystems"  />
-			<siteMapNode url="~/Pages/Configure/ServerRules/ServerRulePage.aspx" title="Server Rules" />
-			<siteMapNode url="~/Pages/Configure/ServiceLocks/ServiceLockPage.aspx" title="Service Scheduling" />
+		<siteMapNode url="" title="$Resources: Titles, Configure">
+				<siteMapNode url="~/Pages/Configure/Devices/DevicePage.aspx" title="$Resources: Titles, Devices"  />
+				<siteMapNode url="~/Pages/Configure/ServerPartitions/ServerPartitionPage.aspx" title="$Resources: Titles, ServerPartitions"  />
+				<siteMapNode url="~/Pages/Configure/FileSystems/FileSystemsPage.aspx" title="$Resources: Titles, FileSystems"  />
+			<siteMapNode url="~/Pages/Configure/ServerRules/ServerRulePage.aspx" title="$Resources: Titles, ServerRules" />
+			<siteMapNode url="~/Pages/Configure/ServiceLocks/ServiceLockPage.aspx" title="$Resources: Titles, ServiceScheduling" />
 		</siteMapNode>
 
-    <siteMapNode url="~/Pages/Help/About.aspx" title="About"  />
+    <siteMapNode url="~/Pages/Help/About.aspx" title="$Resources: Titles, About"  />
   </siteMapNode>
 </siteMap>

@@ -74,31 +74,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.PatientSummaryPanel PatientSummaryPanel;
         
         /// <summary>
-        /// StudyDetailsView control.
+        /// StudyDetailsTabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsView StudyDetailsView;
-        
-        /// <summary>
-        /// ViewSeriesButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewSeriesButton;
-        
-        /// <summary>
-        /// SeriesGridView control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.SeriesGridView SeriesGridView;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs StudyDetailsTabs;
         
         /// <summary>
         /// ConfirmDialog control.

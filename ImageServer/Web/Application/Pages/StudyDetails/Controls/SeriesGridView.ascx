@@ -10,7 +10,10 @@
                         AutoGenerateColumns="False" CssClass="GlobalGridView" 
                         CellPadding="0" CaptionAlign="Top" Width="100%" 
                         OnPageIndexChanged="GridView1_PageIndexChanged" 
-                        OnPageIndexChanging="GridView1_PageIndexChanging" SelectionMode="Multiple"
+                        OnPageIndexChanging="GridView1_PageIndexChanging" 
+                        MouseHoverRowHighlightEnabled = "true"
+                        RowHighlightColor = "#EEEEEE"
+                        SelectionMode="Multiple"
                         GridLines="Horizontal" BackColor="White">
                         <Columns>
                             <asp:BoundField DataField="SeriesNumber" HeaderText="Series #">
@@ -34,18 +37,22 @@
                                     <ccUI:TMLabel ID="PerformedTime" runat="server" Text="{0}" Value='<%# Eval("PerformedProcedureStepStartTime") %>' InvalidValueText="<i style='color:red'>[Invalid time:{0}]</i>"></ccUI:TMLabel>
                                 </ItemTemplate>
                                 <HeaderStyle Wrap="False" />  
-                            </asp:TemplateField>
-                             
+                            </asp:TemplateField>                            
                         </Columns>
                         <EmptyDataTemplate>
-                            <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0">
-                                <asp:TableHeaderRow>
+                            <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" >
+                                <asp:TableHeaderRow CssClass="GlobalGridViewHeader">
                                     <asp:TableHeaderCell>Series#</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Modality</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Instances</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Series Instance UID</asp:TableHeaderCell>
                                     <asp:TableHeaderCell>Performed On</asp:TableHeaderCell>
                                 </asp:TableHeaderRow>
+                                <asp:TableRow>
+                                    <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
+                                        <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No Series Items for this study.</asp:panel>
+                                    </asp:TableCell>
+                                </asp:TableRow>
                             </asp:Table>
                         </EmptyDataTemplate>
                         
@@ -54,6 +61,5 @@
                         <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
                         <SelectedRowStyle  CssClass="GlobalGridViewSelectedRow" />
                     </ccUI:GridView>
-                    
     </ContentTemplate>
 </asp:UpdatePanel>
