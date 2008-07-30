@@ -42,9 +42,11 @@ namespace ClearCanvas.Ris.Application.Services
 		public ProtocolDetail CreateProtocolDetail(Protocol protocol, IPersistenceContext context)
 		{
 			ProtocolDetail detail = new ProtocolDetail();
+			StaffAssembler assembler = new StaffAssembler();
 
 			detail.ProtocolRef = protocol.GetRef();
-			detail.Author = protocol.Author != null ? new StaffAssembler().CreateStaffSummary(protocol.Author, context) : null;
+			detail.Author = protocol.Author != null ? assembler.CreateStaffSummary(protocol.Author, context) : null;
+			detail.Supervisor = protocol.Supervisor != null ? assembler.CreateStaffSummary(protocol.Supervisor, context) : null;
 			detail.Status = EnumUtils.GetEnumValueInfo(protocol.Status, context);
 			detail.Urgency = EnumUtils.GetEnumValueInfo(protocol.Urgency);
 			detail.RejectReason = EnumUtils.GetEnumValueInfo(protocol.RejectReason);
@@ -71,6 +73,7 @@ namespace ClearCanvas.Ris.Application.Services
 		public void UpdateProtocol(Protocol protocol, ProtocolDetail detail, IPersistenceContext context)
 		{
 			protocol.Urgency = EnumUtils.GetEnumValue<ProtocolUrgencyEnum>(detail.Urgency, context);
+			protocol.Supervisor = detail.Supervisor != null ? context.Load<Staff>(detail.Supervisor.StaffRef) : null;
 
 			protocol.Codes.Clear();
 			foreach (ProtocolCodeSummary item in detail.Codes)

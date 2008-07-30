@@ -88,9 +88,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
-			_supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
-
 			_component.PropertyChanged += _component_PropertyChanged;
 		}
 

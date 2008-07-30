@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -167,8 +168,15 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			if (request.ShouldClaim)
 			{
-				ProtocollingOperations.StartProtocolOperation op = new ProtocollingOperations.StartProtocolOperation();
-				op.Execute(order, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed);
+				try
+				{
+					ProtocollingOperations.StartProtocolOperation op = new ProtocollingOperations.StartProtocolOperation();
+					op.Execute(order, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed);
+				}
+				catch(Exception e)
+				{
+					throw new RequestValidationException(e.Message);
+				}
 			}
 
 			List<OrderNoteDetail> noteDetails = GetNoteDetails(order, request.NoteCategory);
@@ -272,7 +280,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		public SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			Staff supervisor = request.Supervisor == null ? null : this.PersistenceContext.Load<Staff>(request.Supervisor);
+			Staff supervisor = GetSupervisor(request.Protocols);
 
 			ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
 			op.Execute(order, supervisor);
@@ -283,6 +291,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			this.PersistenceContext.SynchState();
 
 			return new SubmitProtocolForApprovalResponse();
+		}
+
+		private Staff GetSupervisor(List<ProtocolDetail> protocols)
+		{
+			ProtocolDetail supervisedDetail = CollectionUtils.SelectFirst(
+				protocols, delegate(ProtocolDetail detail) { return detail.Supervisor != null; });
+			EntityRef supervisorRef = supervisedDetail == null ? null : supervisedDetail.Supervisor.StaffRef;
+			return supervisorRef == null ? null : this.PersistenceContext.Load<Staff>(supervisorRef);
 		}
 
 		#endregion

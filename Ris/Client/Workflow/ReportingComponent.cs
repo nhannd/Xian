@@ -351,9 +351,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef)
+		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
-			_worklistItemManager = new ReportingComponentWorklistItemManager(worklistItem, folderName, worklistRef);
+			_worklistItemManager = new ReportingComponentWorklistItemManager(worklistItem, folderName, worklistRef, worklistClassName);
 			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
 		}
 

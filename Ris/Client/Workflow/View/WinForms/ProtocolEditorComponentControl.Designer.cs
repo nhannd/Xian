@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._urgency = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._author = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._tableLayoutInner.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -50,6 +51,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._tableLayoutInner.ColumnCount = 1;
 			this._tableLayoutInner.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutInner.Controls.Add(this._supervisor, 0, 4);
 			this._tableLayoutInner.Controls.Add(this.groupBox1, 0, 2);
 			this._tableLayoutInner.Controls.Add(this._grpProcedures, 0, 0);
 			this._tableLayoutInner.Controls.Add(this._urgency, 0, 1);
@@ -58,10 +60,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._tableLayoutInner.Location = new System.Drawing.Point(0, 0);
 			this._tableLayoutInner.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayoutInner.Name = "_tableLayoutInner";
-			this._tableLayoutInner.RowCount = 4;
+			this._tableLayoutInner.RowCount = 5;
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.Size = new System.Drawing.Size(527, 695);
 			this._tableLayoutInner.TabIndex = 3;
@@ -75,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.groupBox1.Location = new System.Drawing.Point(0, 145);
 			this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(527, 506);
+			this.groupBox1.Size = new System.Drawing.Size(527, 461);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Codes";
@@ -96,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.RowCount = 2;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 487);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 442);
 			this.tableLayoutPanel3.TabIndex = 0;
 			// 
 			// _protocolCodesSelector
@@ -112,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolCodesSelector.SelectedItemsTable = null;
 			this._protocolCodesSelector.ShowColumnHeading = false;
 			this._protocolCodesSelector.ShowToolbars = false;
-			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 436);
+			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 391);
 			this._protocolCodesSelector.TabIndex = 2;
 			// 
 			// _protocolGroup
@@ -193,7 +196,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._author.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._author.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._author.LabelText = "Author";
-			this._author.Location = new System.Drawing.Point(2, 653);
+			this._author.Location = new System.Drawing.Point(2, 608);
 			this._author.Margin = new System.Windows.Forms.Padding(2);
 			this._author.Mask = "";
 			this._author.Name = "_author";
@@ -203,6 +206,19 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._author.TabIndex = 3;
 			this._author.ToolTip = null;
 			this._author.Value = null;
+			// 
+			// _supervisor
+			// 
+			this._supervisor.AutoSize = true;
+			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
+			this._supervisor.Location = new System.Drawing.Point(2, 652);
+			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+			this._supervisor.Name = "_supervisor";
+			this._supervisor.Size = new System.Drawing.Size(523, 41);
+			this._supervisor.TabIndex = 4;
+			this._supervisor.Value = null;
 			// 
 			// ProtocolEditorComponentControl
 			// 
@@ -236,5 +252,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _btnSetDefault;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _urgency;
 		private ClearCanvas.Desktop.View.WinForms.TextField _author;
+		private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
     }
 }

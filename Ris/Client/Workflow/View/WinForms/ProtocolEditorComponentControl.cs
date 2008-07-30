@@ -74,7 +74,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
 			_protocolCodesSelector.DataBindings.Add("SelectedItemsTableSelection", _component, "SelectedProtocolCodesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
 			_protocolCodesSelector.DataBindings.Add("Enabled", _component, "CanEdit", true, DataSourceUpdateMode.OnPropertyChanged);
-			//_protocolCodesSelector.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
+			_supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
+			_supervisor.DataBindings.Add("Enabled", _component, "CanEdit", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

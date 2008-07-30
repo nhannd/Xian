@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly ReportingComponentMode _componentMode;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
+		private readonly string _worklistClassName;
 		private int _completedItems = 0;
 		private bool _isInitialItem = true;
 
@@ -77,12 +78,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <param name="worklistItem">The initial worklist item for the <see cref="ReportingComponent"/></param>
 		/// <param name="folderName">Folder system name, displayed in status text</param>
 		/// <param name="worklistRef">An <see cref="EntityRef"/> for the folder from which additional worklist items should be loaded.</param>
-		public ReportingComponentWorklistItemManager(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef)
+		public ReportingComponentWorklistItemManager(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
 			_worklistItem = worklistItem;
 			_componentMode = GetMode(_worklistItem);
 			_folderName = folderName;
 			_worklistRef = worklistRef;
+			_worklistClassName = worklistClassName;
 
 			_reportNextItem = this.ReportNextItemEnabled;
 
@@ -231,16 +233,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					}
 					else
 					{
-						switch (_componentMode)
-						{
-							case ReportingComponentMode.Verify:
-								request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeReviewedReportWorklist, true, true);
-								break;
-							case ReportingComponentMode.Create:
-							default:
-								request = new QueryWorklistRequest(WorklistClassNames.ReportingToBeReportedWorklist, true, true);
-								break;
-						}
+						request = new QueryWorklistRequest(_worklistClassName, true, true);
 					}
 
 					QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);

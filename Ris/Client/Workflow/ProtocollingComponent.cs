@@ -62,15 +62,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly ProtocollingComponentMode _componentMode;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
+		private readonly string _worklistClassName;
 		private int _completedItems = 0;
 		private bool _isInitialItem = true;
 
 		private ReportingWorklistItem _worklistItem;
 		private EntityRef _orderRef;
 		private List<OrderNoteDetail> _notes;
-
-		private ILookupHandler _supervisorLookupHandler;
-		private StaffSummary _supervisor;
 
 		private readonly List<ReportingWorklistItem> _skippedItems;
 		private readonly Stack<ReportingWorklistItem> _worklistCache;
@@ -95,12 +93,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode, string folderName, EntityRef worklistRef)
+		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
 			_worklistItem = worklistItem;
 			_componentMode = mode;
 			_folderName = folderName;
 			_worklistRef = worklistRef;
+			_worklistClassName = worklistClassName;
 
 			_protocolNextItem = _componentMode == ProtocollingComponentMode.Assign;
 
@@ -134,13 +133,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem.OrderRef));
 			_orderDetailViewComponentHost.StartComponent();
-
-			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
-			string[] staffTypes = string.IsNullOrEmpty(filters)
-				? new string[] { }
-				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
-			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			base.Start();
 		}
@@ -207,28 +199,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get { return _componentMode == ProtocollingComponentMode.Assign; }
 		}
-
-		#region Supervisor
-
-		public StaffSummary Supervisor
-		{
-			get { return _supervisor; }
-			set
-			{
-				if (!Equals(value, _supervisor))
-				{
-					_supervisor = value;
-					NotifyPropertyChanged("Supervisor");
-				}
-			}
-		}
-
-		public ILookupHandler SupervisorLookupHandler
-		{
-			get { return _supervisorLookupHandler; }
-		}
-
-		#endregion
 
 		#region Accept
 
@@ -297,8 +267,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 							new SubmitProtocolForApprovalRequest(
 								_orderRef, 
 								this.ProtocolDetails, 
-								_notes,
-								_supervisor == null ? null : _supervisor.StaffRef));
+								_notes));
 					});
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.AwaitingApprovalProtocolFolder));
@@ -537,7 +506,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						QueryWorklistRequest request = _worklistRef != null
 							? new QueryWorklistRequest(_worklistRef, true, true)
-							: new QueryWorklistRequest(WorklistClassNames.ReportingToBeProtocolledWorklist, true, true);
+							: new QueryWorklistRequest(_worklistClassName, true, true);
 
 						QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
 

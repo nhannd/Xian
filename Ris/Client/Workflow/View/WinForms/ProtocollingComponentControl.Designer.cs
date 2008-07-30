@@ -31,7 +31,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this._tableLayouOuter = new System.Windows.Forms.TableLayoutPanel();
-			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._protocolEditorPanel = new System.Windows.Forms.Panel();
 			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
 			this._btnAccept = new System.Windows.Forms.Button();
@@ -107,34 +106,19 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._tableLayouOuter.ColumnCount = 2;
 			this._tableLayouOuter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayouOuter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayouOuter.Controls.Add(this._supervisor, 0, 1);
 			this._tableLayouOuter.Controls.Add(this._protocolEditorPanel, 0, 0);
-			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel2, 0, 2);
-			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel3, 1, 2);
+			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel2, 0, 1);
+			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel3, 1, 1);
 			this._tableLayouOuter.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayouOuter.Location = new System.Drawing.Point(0, 0);
 			this._tableLayouOuter.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayouOuter.Name = "_tableLayouOuter";
-			this._tableLayouOuter.RowCount = 3;
+			this._tableLayouOuter.RowCount = 2;
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableLayouOuter.Size = new System.Drawing.Size(562, 613);
 			this._tableLayouOuter.TabIndex = 1;
-			// 
-			// _supervisor
-			// 
-			this._supervisor.AutoSize = true;
-			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._tableLayouOuter.SetColumnSpan(this._supervisor, 2);
-			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
-			this._supervisor.Location = new System.Drawing.Point(2, 512);
-			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
-			this._supervisor.Name = "_supervisor";
-			this._supervisor.Size = new System.Drawing.Size(558, 41);
-			this._supervisor.TabIndex = 3;
-			this._supervisor.Value = null;
 			// 
 			// _protocolEditorPanel
 			// 
@@ -145,7 +129,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 0);
 			this._protocolEditorPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._protocolEditorPanel.Name = "_protocolEditorPanel";
-			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 510);
+			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 555);
 			this._protocolEditorPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel2
@@ -403,6 +387,5 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.CheckBox _protocolNextItem;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
 		private System.Windows.Forms.Button _btnClose;
-		private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
     }
 }

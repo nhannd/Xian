@@ -108,6 +108,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ProtocolCodeDetail _selectedProtocolCodesSelection;
 		private bool _canEdit;
 
+		private ILookupHandler _supervisorLookupHandler;
+
 		#endregion
 
 		/// <summary>
@@ -128,6 +130,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Start()
 		{
+			// create supervisor lookup handler, using filters supplied in application settings
+			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
+			string[] staffTypes = string.IsNullOrEmpty(filters)
+				? new string[] { }
+				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
+
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 					{
@@ -188,6 +197,46 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		#region Presentation Model
+
+		#region Supervisor
+
+		public StaffSummary Supervisor
+		{
+			get
+			{
+				if (_selectedProcodurePlanSummaryTableItem != null)
+				{
+					return _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Supervisor;
+				}
+				else
+				{
+					return null;
+				}
+			}
+			set
+			{
+				SetSupervisor(value);
+				NotifyPropertyChanged("Supervisor");
+			}
+		}
+
+		private void SetSupervisor(StaffSummary supervisor)
+		{
+			if (_selectedProcodurePlanSummaryTableItem != null)
+			{
+				_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Supervisor = supervisor;
+				SupervisorSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
+				SupervisorSettings.Default.Save();
+			}
+		}
+
+		public ILookupHandler SupervisorLookupHandler
+		{
+			get { return _supervisorLookupHandler; }
+		}
+
+		#endregion
+
 
 		public string Author
 		{
@@ -361,6 +410,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 								_selectedProtocolCodes.Items.Clear();
 								_selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
 							});
+
+					if (item.ProtocolDetail.Supervisor == null)
+					{
+						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
+						if (!String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID))
+						{
+							object supervisor;
+							if (_supervisorLookupHandler.Resolve(SupervisorSettings.Default.SupervisorID, false, out supervisor))
+							{
+								item.ProtocolDetail.Supervisor = (StaffSummary)supervisor;
+							}
+						}
+					}
 				}
 				catch (Exception e)
 				{

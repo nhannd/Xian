@@ -50,6 +50,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public StaffSummary Author;
 
 		[DataMember]
+		public StaffSummary Supervisor;
+
+		[DataMember]
 		public EnumValueInfo Status;
 
 		[DataMember]
