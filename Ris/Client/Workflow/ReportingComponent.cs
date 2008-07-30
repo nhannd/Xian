@@ -68,6 +68,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		ReportingWorklistItem WorklistItem { get; }
 
 		/// <summary>
+		/// Occurs to indicate that the <see cref="WorklistItem"/> property has changed,
+		/// meaning the entire reporting context is now focused on a different report.
+		/// </summary>
+		event EventHandler WorklistItemChanged;
+
+		/// <summary>
 		/// Gets the report associated with the worklist item.  Modifications made to this object
 		/// will not be persisted.
 		/// </summary>
@@ -92,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// </summary>
 	public interface IReportEditorProvider
 	{
-		IReportEditor GetEditor();
+		IReportEditor GetEditor(IReportEditorContext context);
 	}
 
 	/// <summary>
@@ -187,12 +193,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		IApplicationComponent GetComponent();
 
 		/// <summary>
-		/// Sets the context of the report editor.
-		/// </summary>
-		/// <param name="context"></param>
-		void SetContext(IReportEditorContext context);
-
-		/// <summary>
 		/// Instructs the report editor to save the report content and any other data.
 		/// The report editor may be veto the action by returning false.
 		/// </summary>
@@ -244,6 +244,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				get { return _owner.WorklistItem; }
 			}
 
+			public event EventHandler WorklistItemChanged
+			{
+				add { _owner._worklistItemManager.WorklistItemChanged += value; }
+				remove { _owner._worklistItemManager.WorklistItemChanged -= value; }
+			}
+
 			public ReportDetail Report
 			{
 				get { return _owner._report; }
@@ -262,7 +268,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		#region IReportEditorContext implementation
+		#region ReportEditorContext
 
 		class ReportEditorContext : ReportingContext, IReportEditorContext
 		{
@@ -407,8 +413,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
 													new ReportEditorProviderExtensionPoint().CreateExtensions());
 
-			_reportEditor = provider == null ? new ReportEditorComponent() : provider.GetEditor();
-			_reportEditor.SetContext(new ReportEditorContext(this));
+			_reportEditor = provider == null ? new ReportEditorComponent(new ReportEditorContext(this)) : provider.GetEditor(new ReportEditorContext(this));
 			_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
 			_reportEditorHost.StartComponent();
 
@@ -924,15 +929,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_priorReportComponent.WorklistItem = this.WorklistItem;
 			_orderComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
 			_additionalInfoComponent.OrderExtendedProperties = _orderExtendedProperties;
-
-			// update context of extension pages
-			foreach (IReportingPage page in _extensionPages)
-			{
-				//page.SetContext(new ReportingContext(this));
-			}
-
-			// update context of report editor
-			((IReportEditor)_reportEditorHost.Component).SetContext(new ReportEditorContext(this));
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 

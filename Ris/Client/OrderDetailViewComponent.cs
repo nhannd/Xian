@@ -80,7 +80,10 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_context = value;
-				NotifyAllPropertiesChanged();
+				if(this.IsStarted)
+				{
+					NotifyAllPropertiesChanged();
+				}
 			}
 		}
 	}

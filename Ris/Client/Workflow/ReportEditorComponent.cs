@@ -126,11 +126,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly PreviewComponent _previewComponent;
 		private ChildComponentHost _previewHost;
 
-		private IReportEditorContext _reportEditorContext;
+		private readonly IReportEditorContext _reportEditorContext;
 
 
-		public ReportEditorComponent()
+		public ReportEditorComponent(IReportEditorContext context)
 		{
+			_reportEditorContext = context;
 			_editingComponent = new EditingComponent(this);
 			_previewComponent = new PreviewComponent(this);
 		}
@@ -145,6 +146,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_previewHost = new ChildComponentHost(this.Host, _previewComponent);
 			_previewHost.StartComponent();
 
+			_reportEditorContext.WorklistItemChanged += WorklistItemChangedEventHandler;
+
 			base.Start();
 		}
 
@@ -153,14 +156,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		IApplicationComponent IReportEditor.GetComponent()
 		{
 			return this;
-		}
-
-		public void SetContext(IReportEditorContext context)
-		{
-			_reportEditorContext = context;
-			_editingComponent.Refresh();
-			_previewComponent.Refresh();
-			NotifyAllPropertiesChanged();
 		}
 
 		bool IReportEditor.Save(ReportEditorCloseReason reason)
@@ -218,6 +213,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get { return _reportEditorContext.ActiveReportPartIndex > 0; }
 		}
+
+		private void WorklistItemChangedEventHandler(object sender, System.EventArgs e)
+		{
+			_editingComponent.Refresh();
+			_previewComponent.Refresh();
+			NotifyAllPropertiesChanged();
+		}
+
 
 	}
 }

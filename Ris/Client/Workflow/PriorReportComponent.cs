@@ -207,10 +207,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				_worklistItem = value;
 
-				_relevantPriors = null;
-				_allPriors = null;
-				UpdateReportList();
-				((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
+				if(this.IsStarted)
+				{
+					_relevantPriors = null;
+					_allPriors = null;
+					UpdateReportList();
+					((ReportViewComponent)_reportViewComponentHost.Component).Refresh();
+				}
 			}
 		}
 	}
