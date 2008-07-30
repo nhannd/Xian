@@ -45,13 +45,12 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 	public interface IDicomServerService
 	{
 		/// <summary>
-		/// Send an arbitrary set of Dicom Instances (by Uid) to another Dicom Server.  The Uids can be at the
-		/// Study, Series or Image level.
+		/// Send studies to another Dicom Server.
 		/// </summary>
-		/// <param name="destinationAEInformation">The Dicom server to send to</param>
-		/// <param name="uids">The Instances to send</param>
+		/// <param name="destinationAEInformation">The Dicom server to send to.</param>
+		/// <param name="studyInstanceUids">The studies to send.</param>
 		[OperationContract]
-		void Send(AEInformation destinationAEInformation, IEnumerable<string> uids);
+		void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids);
 
 		/// <summary>
 		/// Performs a study level retrieve from another Dicom Server.  Series and Image level retrieves will not

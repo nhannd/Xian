@@ -31,216 +31,116 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using Iesi.Collections;
-using Iesi.Collections.Generic;
+using ClearCanvas.DicomServices.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-	public class Series : PersistentDicomObject, ISeries, IEquatable<Series>
+	internal class Series : ISeries
     {
 		#region Private Fields
 
-    	private Guid _seriesOid;
-    	private string _seriesInstanceUid;
-		private string _frameOfReferenceUid;
-    	private string _modality;
-    	private string _laterality;
-    	private int _seriesNumber;
-    	private string _seriesDescription;
-		private string _specificCharacterSet;
-		private Study _parentStudy;
-		private ISet<SopInstance> _internalSopInstances;
-
-		private LoadAssociationDelegate _loadAssociationDelegate;
+		private readonly Study _parentStudy;
+		private readonly SeriesXml _seriesXml;
+		private List<ISopInstance> _sopInstances;
 
 		#endregion
 
-		protected internal Series()
+		internal Series(Study parentStudy, SeriesXml seriesXml)
         {
-			_internalSopInstances = new HashedSet<SopInstance>();
-        }
+			_parentStudy = parentStudy;
+			_seriesXml = seriesXml;
+		}
 
-		#region NHibernate Persistent Properties
+		#region Private Members
 
-		protected virtual Guid SeriesOid
-        {
-            get { return _seriesOid; }
-			set { _seriesOid = value; }
-        }
-
-        public virtual string SeriesInstanceUid
-        {
-            get { return _seriesInstanceUid; }
-			set { SetClassMember(ref _seriesInstanceUid, value); }
-        }
-
-		public virtual string FrameOfReferenceUid
+		private List<ISopInstance> SopInstances
 		{
-			get { return _frameOfReferenceUid; }
-			set { SetClassMember(ref _frameOfReferenceUid, value); }
+			get
+			{
+				if (_sopInstances == null)
+				{
+					_sopInstances = new List<ISopInstance>();
+					foreach (InstanceXml instanceXml in _seriesXml)
+						_sopInstances.Add(new SopInstance(this, instanceXml));
+				}
+
+				return _sopInstances;
+			}	
 		}
 
-        public virtual string Modality
-        {
-            get { return _modality; }
-			set { SetClassMember(ref _modality, value); }
-        }
+		private InstanceXml GetFirstSopInstanceXml()
+		{
+			using (IEnumerator<InstanceXml> iterator = _seriesXml.GetEnumerator())
+			{
+				if (!iterator.MoveNext())
+				{
+					string message = String.Format("There are no instances in this series ({0}).", SeriesInstanceUid);
+					throw new InvalidOperationException(message);
+				}
 
-    	public virtual string Laterality
-    	{
-    		get { return _laterality; }
-			set { SetClassMember(ref _laterality, value); }
-    	}
-
-    	public virtual int SeriesNumber
-        {
-            get { return _seriesNumber; }
-			set { SetValueTypeMember(ref _seriesNumber, value); }
-        }
-
-    	public virtual string SeriesDescription
-        {
-            get { return _seriesDescription; }
-			set { SetClassMember(ref _seriesDescription, value); }
-        }
-
-        public virtual string SpecificCharacterSet
-        {
-            get { return _specificCharacterSet; }
-			set { SetClassMember(ref _specificCharacterSet, value); }
-        }
-
-        public virtual Study Study
-        {
-            get { return _parentStudy; }
-			set { SetClassMember(ref _parentStudy, value); }
-		}
-
-        protected virtual ISet<SopInstance> InternalSopInstances
-        {
-            get { return _internalSopInstances; }
+				return iterator.Current;
+			}
 		}
 
 		#endregion
-
-		internal protected virtual LoadAssociationDelegate LoadAssociationDelegate
-		{
-			get { return _loadAssociationDelegate; }
-			set { _loadAssociationDelegate = value; }
-		}
-
-		public virtual ISet<SopInstance> SopInstances
-        {
-            get
-            {
-				if (null != LoadAssociationDelegate)
-					LoadAssociationDelegate(this, _internalSopInstances);
-
-                return _internalSopInstances;
-            }
-        }
-
-    	#region IEquatable<Series> Members
-
-    	public bool Equals(Series other)
-    	{
-			if (other == null)
-				return false;
-
-			return (this.SeriesInstanceUid == other.SeriesInstanceUid);
-    	}
-
-    	#endregion
-
-    	public override bool Equals(object obj)
-        {
-            if (this == obj)
-                return true;
-
-			if (obj is Series)
-				return this.Equals((Series) obj);
-
-			return false;
-        }
-
-        public override int GetHashCode()
-        {
-            int accumulator = 0;
-            foreach (char character in this.SeriesInstanceUid)
-            {
-                if ('.' != character)
-                    accumulator += Convert.ToInt32(character);
-                else
-                    accumulator -= 17;
-            }
-            return accumulator;
-        }
 
 		#region ISeries Members
 
-		public string GetSeriesInstanceUid()
-		{
-			return this.SeriesInstanceUid;
-		}
-
 		public IStudy GetParentStudy()
 		{
-			return this.Study;
+			return _parentStudy;
 		}
 
-		public int GetNumberOfSopInstances()
+		[QueryableProperty(DicomTags.StudyInstanceUid, IsComputed = true, ReturnAlways = true, ReturnOnly = true)]
+		public string StudyInstanceUid
 		{
-			return this.SopInstances.Count;
+			get { return _parentStudy.StudyInstanceUid; }
+		}
+
+		[QueryableProperty(DicomTags.SeriesInstanceUid, IsComputed = true, ReturnAlways = true)]
+		public string SeriesInstanceUid
+		{
+			get { return _seriesXml.SeriesInstanceUid; }
+		}
+
+		[QueryableProperty(DicomTags.Modality, IsComputed = true)]
+		public string Modality
+		{
+			get
+			{
+				return GetFirstSopInstanceXml()[DicomTags.Modality].GetString(0, "");
+			}
+		}
+
+		[QueryableProperty(DicomTags.SeriesDescription, IsComputed = true)]
+		public string SeriesDescription
+		{
+			get
+			{
+				return GetFirstSopInstanceXml()[DicomTags.SeriesDescription].GetString(0, "");
+			}
+		}
+
+		[QueryableProperty(DicomTags.SeriesNumber, IsComputed = true, ReturnOnly = true)]
+		public int SeriesNumber
+		{
+			get
+			{
+				return GetFirstSopInstanceXml()[DicomTags.SeriesNumber].GetInt32(0, 0);
+			}
+		}
+
+		[QueryableProperty(DicomTags.NumberOfSeriesRelatedInstances, IsComputed = true, ReturnOnly = true)]
+		public int NumberOfSeriesRelatedInstances
+		{
+			get { return SopInstances.Count; }
 		}
 
     	public IEnumerable<ISopInstance> GetSopInstances()
         {
-            foreach (SopInstance sop in this.SopInstances)
-            {
-            	yield return sop;
-            }
+    		return SopInstances;
         }
 
         #endregion
-
-		#region Helper Methods
-
-		protected internal virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
-		{
-			DicomAttribute attribute = sopInstanceDataset[DicomTags.SeriesInstanceUid];
-			if (!String.IsNullOrEmpty(SeriesInstanceUid) && SeriesInstanceUid != attribute.ToString())
-			{
-				throw new InvalidOperationException(SR.ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid);
-			}
-			else
-			{
-				this.SeriesInstanceUid = attribute.ToString();
-			}
-
-			Platform.CheckForEmptyString(SeriesInstanceUid, "SeriesInstanceUid");
-
-			attribute = sopInstanceDataset[DicomTags.FrameOfReferenceUid];
-			FrameOfReferenceUid = attribute.ToString();
-
-			attribute = sopInstanceDataset[DicomTags.Modality];
-			Modality = attribute.ToString();
-
-			attribute = sopInstanceDataset[DicomTags.Laterality];
-			Laterality = attribute.ToString();
-
-			attribute = sopInstanceDataset[DicomTags.SeriesNumber];
-			int intValue;
-			attribute.TryGetInt32(0, out intValue);
-			SeriesNumber = intValue;
-
-			attribute = sopInstanceDataset[DicomTags.SeriesDescription];
-			SeriesDescription = attribute.ToString();
-
-			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
-			SpecificCharacterSet = attribute.ToString();
-		}
-
-    	#endregion
 	}
 }

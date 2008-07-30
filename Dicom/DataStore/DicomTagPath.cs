@@ -31,8 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -52,7 +52,7 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 
 		public DicomTagPath(string path)
-			: this(DicomTagPath.GetTags(path))
+			: this(GetTags(path))
 		{
 		}
 
@@ -62,7 +62,7 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 
 		public DicomTagPath(IEnumerable<uint> tags)
-			: this(DicomTagPath.GetTags(tags))
+			: this(GetTags(tags))
 		{
 		}
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _path; }
 			protected set 
 			{
-				this.BuildPath(GetTags(value));
+				BuildPath(GetTags(value));
 			}
 		}
 
@@ -90,8 +90,13 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _tags.AsReadOnly(); }
 			protected set
 			{
-				this.BuildPath(value);
+				BuildPath(value);
 			}
+		}
+
+		public DicomVr ValueRepresentation
+		{
+			get { return _tags[_tags.Count - 1].VR; }	
 		}
 
 		public override bool Equals(object obj)
@@ -100,13 +105,13 @@ namespace ClearCanvas.Dicom.DataStore
 				return true;
 
 			if (obj is DicomTagPath)
-				return this.Equals(obj as DicomTagPath);
+				return Equals(obj as DicomTagPath);
 			if (obj is DicomTag)
-				return this.Equals(obj as DicomTag);
+				return Equals(obj as DicomTag);
 			if (obj is string)
-				return this.Equals(obj as string);
+				return Equals(obj as string);
 			if (obj is uint)
-				return this.Equals((uint)obj);
+				return Equals((uint)obj);
 
 			return false;
 		}
@@ -118,7 +123,7 @@ namespace ClearCanvas.Dicom.DataStore
 			if (other == null)
 				return false;
 
-			return other.Path.Equals(this.Path);
+			return other.Path.Equals(Path);
 		}
 
 		#endregion	
@@ -142,7 +147,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public bool Equals(string other)
 		{
-			return this.Path.Equals(other);
+			return Path.Equals(other);
 		}
 
 		#endregion
@@ -169,6 +174,37 @@ namespace ClearCanvas.Dicom.DataStore
 			return _path;
 		}
 
+		public static DicomTagPath operator +(DicomTagPath left, DicomTagPath right)
+		{
+			List<DicomTag> tags = new List<DicomTag>(left.TagsInPath);
+			tags.AddRange(right.TagsInPath);
+			return new DicomTagPath(tags);
+		}
+
+		public static DicomTagPath operator +(DicomTagPath left, DicomTag right)
+		{
+			List<DicomTag> tags = new List<DicomTag>(left.TagsInPath);
+			tags.Add(right);
+			return new DicomTagPath(tags);
+		}
+
+		public static DicomTagPath operator +(DicomTagPath left, uint right)
+		{
+			List<DicomTag> tags = new List<DicomTag>(left.TagsInPath);
+			tags.Add(DicomTagDictionary.GetDicomTag(right));
+			return new DicomTagPath(tags);
+		}
+		
+		public static implicit operator DicomTagPath(DicomTag tag)
+		{
+			return new DicomTagPath(tag);
+		}
+
+		public static implicit operator DicomTagPath(uint tag)
+		{
+			return new DicomTagPath(tag);
+		}
+
 		/// <summary>
 		/// Implicit cast to a String object, for ease of use.
 		/// </summary>
@@ -181,7 +217,7 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 			Platform.CheckForNullReference(dicomTags, "dicomTags");
 			_tags = new List<DicomTag>(dicomTags);
-			_path = StringUtilities.Combine<DicomTag>(dicomTags, "\\", delegate(DicomTag tag) { return String.Format("({0:x4},{1:x4})", tag.Group, tag.Element); });
+			_path = StringUtilities.Combine(dicomTags, "\\", delegate(DicomTag tag) { return String.Format("({0:x4},{1:x4})", tag.Group, tag.Element); });
 		}
 
 		private static IEnumerable<DicomTag> GetTags(string path)
@@ -211,7 +247,7 @@ namespace ClearCanvas.Dicom.DataStore
 					ushort groupValue = Convert.ToUInt16(group.TrimStart('('), 16);
 					ushort elementValue = Convert.ToUInt16(element.TrimEnd(')'), 16);
 
-					dicomTags.Add(DicomTagPath.NewTag(DicomTag.GetTagValue(groupValue, elementValue)));
+					dicomTags.Add(NewTag(DicomTag.GetTagValue(groupValue, elementValue)));
 
 				}
 				catch
@@ -225,7 +261,7 @@ namespace ClearCanvas.Dicom.DataStore
 			return dicomTags;
 		}
 
-		private static void ValidatePath(List<DicomTag> dicomTags)
+		private static void ValidatePath(IList<DicomTag> dicomTags)
 		{
 			for (int i = 0; i < dicomTags.Count - 1; ++i)
 			{
@@ -236,12 +272,8 @@ namespace ClearCanvas.Dicom.DataStore
 
 		private static IEnumerable<DicomTag> GetTags(IEnumerable<uint> tags)
 		{
-			List<DicomTag> dicomTags = new List<DicomTag>();
-
 			foreach (uint tag in tags)
-				dicomTags.Add(NewTag(tag));
-
-			return dicomTags;
+				yield return NewTag(tag);
 		}
 
 		private static DicomTag NewTag(uint tag)

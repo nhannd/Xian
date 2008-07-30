@@ -34,18 +34,10 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface IDataStoreReader : IDisposable
+	public interface IDataStoreReader : IDisposable
     {
-		bool StudyExists(string referencedUid);
-		bool SeriesExists(string referencedUid);
-		bool SopInstanceExists(string referencedUid);
-
-		IStudy GetStudy(string referenceUid);
-		ISeries GetSeries(string referenceUid);
-		ISopInstance GetSopInstance(string referencedUid);
-
+		IStudy GetStudy(string studyInstanceUid);
         IEnumerable<IStudy> GetStudies();
-
-		ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey);
+		IEnumerable<DicomAttributeCollection> PerformStudyRootQuery(DicomAttributeCollection queryCriteria);
     }
 }

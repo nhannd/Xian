@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -141,11 +142,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public static void OpenStudies(OpenStudyArgs openStudyArgs)
 		{
+			CodeClock codeClock = new CodeClock();
+			codeClock.Start();
+
 			ImageViewerComponent imageViewer = null;
 			BlockingOperation.Run(delegate { imageViewer = OpenStudiesInternal(openStudyArgs); });
 
 			if (imageViewer != null)
 				Launch(imageViewer, openStudyArgs.WindowBehaviour);
+
+			codeClock.Stop();
+			string message = String.Format("TTFI: {0}", codeClock.ToString());
+			Platform.Log(LogLevel.Info, message);
 		}
 
 		private static ImageViewerComponent OpenStudiesInternal(OpenStudyArgs openStudyArgs)

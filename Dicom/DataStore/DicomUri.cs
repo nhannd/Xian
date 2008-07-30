@@ -38,14 +38,12 @@ namespace ClearCanvas.Dicom.DataStore
     {
 		private Uri _internalUriObject;
 
-		/// <summary>
-		/// Constructor for NHibernate.
-		/// </summary>
-        private DicomUri()
-        {
-        }
+		//for NHibernate.
+		private DicomUri()
+		{
+		}
 
-        /// <summary>
+    	/// <summary>
         /// Constructor.
         /// </summary>
 		public DicomUri(string uri)
@@ -59,7 +57,7 @@ namespace ClearCanvas.Dicom.DataStore
 		public DicomUri(Uri newUri)
 		{
 			Platform.CheckForNullReference(newUri, "newUri");
-			this.InternalUriObject = newUri;
+			InternalUriObject = newUri;
 		}
 
 		/// <summary>
@@ -67,16 +65,16 @@ namespace ClearCanvas.Dicom.DataStore
 		/// </summary>
 		protected virtual string InternalUri
 		{
-			get { return this.InternalUriObject.AbsoluteUri; }
+			get { return InternalUriObject.AbsoluteUri; }
 			set { SetInternalUri(value); }
 		}
 
 		private void SetInternalUri(string uri)
 		{
 			if (String.IsNullOrEmpty(uri))
-				throw new System.ArgumentNullException("uri", SR.ExceptionUriCannotBeNullOrEmpty);
+				throw new ArgumentNullException("uri", "Uri cannot be null or empty.");
 
-			this.InternalUriObject = new Uri(uri);
+			InternalUriObject = new Uri(uri);
 		}
 
 		private Uri InternalUriObject
@@ -89,8 +87,8 @@ namespace ClearCanvas.Dicom.DataStore
         {
             get 
             {
-                if (null != this.InternalUriObject)
-                    return this.InternalUriObject.IsFile;
+                if (null != InternalUriObject)
+                    return InternalUriObject.IsFile;
                 else
                     return false;
             }
@@ -100,8 +98,8 @@ namespace ClearCanvas.Dicom.DataStore
         {
             get 
             {
-                if (null != this.InternalUriObject)
-                    return this.InternalUriObject.LocalPath;
+                if (null != InternalUriObject)
+                    return InternalUriObject.LocalPath;
                 else
                     return null;
             }
@@ -111,8 +109,8 @@ namespace ClearCanvas.Dicom.DataStore
         {
             get
             {
-                if (null != this.InternalUriObject && this.InternalUriObject.IsFile)
-                    return this.InternalUriObject.LocalPath.Substring(12);      // remove the "\\localhost\" part
+                if (null != InternalUriObject && InternalUriObject.IsFile)
+                    return InternalUriObject.LocalPath.Substring(12);      // remove the "\\localhost\" part
                 else
                     return null;
             }
@@ -136,7 +134,7 @@ namespace ClearCanvas.Dicom.DataStore
                 return true;
 
 			if (obj is DicomUri)
-				return this.Equals((DicomUri) obj);
+				return Equals((DicomUri) obj);
 
             return false;
         }

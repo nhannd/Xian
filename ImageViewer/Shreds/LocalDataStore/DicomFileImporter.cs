@@ -40,6 +40,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.DicomServices.Xml;
+using System.Xml;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -73,10 +75,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				ImportStage CompletedStage { set; }
 				Exception Error { set; }
 				bool BadFile { set; }
-				string StoredFile { set; }
-
-				DicomAttributeCollection MetaInfo { get; set; }
-				DicomAttributeCollection DataSet { get; set; }
+                DicomFile File { get; set; }
 			}
 
 			#endregion
@@ -100,15 +99,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				private ImportStage _completedStage;
 				private Exception _error;
 				private bool _badFile;
-				private string _storedFile;
 
 				#endregion
 
 				#region Parsed File Information
 
-				private DicomAttributeCollection _metaInfo;
-				private DicomAttributeCollection _dataSet;
-
+                DicomFile _file;
 				#endregion
 
 				#endregion
@@ -164,19 +160,25 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					get { return _badFile; }
 				}
 
-				public string StoredFile
+				public string FileName
 				{
-					get { return _storedFile; }
+					get
+					{
+                        if (_file == null)
+                            return "";
+
+                        return _file.Filename;
+					}
 				}
 
 				public string PatientId
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
-						
-						return _dataSet[DicomTags.PatientId] ?? "";
+
+                        return _file.DataSet[DicomTags.PatientId] ?? "";
 					}
 				}
 
@@ -184,10 +186,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
 
-						return _dataSet[DicomTags.PatientsName] ?? "";
+                        return _file.DataSet[DicomTags.PatientsName] ?? "";
 					}
 				}
 
@@ -195,10 +197,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
 
-						return _dataSet[DicomTags.StudyDate] ?? "";
+                        return _file.DataSet[DicomTags.StudyDate] ?? "";
 					}
 				}
 
@@ -206,10 +208,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
 
-						return _dataSet[DicomTags.StudyDescription] ?? "";
+                        return _file.DataSet[DicomTags.StudyDescription] ?? "";
 					}
 				}
 
@@ -217,10 +219,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
 
-						return _dataSet[DicomTags.StudyInstanceUid] ?? "";
+                        return _file.DataSet[DicomTags.StudyInstanceUid] ?? "";
 					}
 
 				}
@@ -229,10 +231,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
 
-						return _dataSet[DicomTags.SeriesInstanceUid] ?? "";
+                        return _file.DataSet[DicomTags.SeriesInstanceUid] ?? "";
 					}
 				}
 
@@ -240,10 +242,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					get
 					{
-						if (_dataSet == null)
+						if (_file == null)
 							return "";
 
-						return _dataSet[DicomTags.SopInstanceUid] ?? "";
+                        return _file.DataSet[DicomTags.SopInstanceUid] ?? "";
 					}
 				}
 
@@ -264,22 +266,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					set { _badFile = value; }
 				}
 
-				string IFileImportInformation.StoredFile
+				DicomFile IFileImportInformation.File
 				{
-					set { _storedFile = value; }
+                    get { return _file; }
+					set { _file = value; }
 				}	
-
-				DicomAttributeCollection IFileImportInformation.MetaInfo
-				{
-					get { return _metaInfo; }
-					set { _metaInfo = value; }
-				}
-
-				DicomAttributeCollection IFileImportInformation.DataSet
-				{
-					get { return _dataSet; }
-					set { _dataSet = value; }
-				}
 
 				#endregion
 			}
@@ -506,12 +497,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				try
 				{
-					DicomFile dicomFile = new DicomFile(fileImportInformation.SourceFile);
-					dicomFile.Load(DicomTags.PixelData, DicomReadOptions.Default);
+					setImportInformation.File = new DicomFile(fileImportInformation.SourceFile);
+					setImportInformation.File.Load(DicomTags.PixelData, DicomReadOptions.Default);
 
-					Validator.Validate(dicomFile.MetaInfo, dicomFile.DataSet);
-					setImportInformation.MetaInfo = dicomFile.MetaInfo;
-					setImportInformation.DataSet = dicomFile.DataSet;
+					Validator.Validate(setImportInformation.File);
 					setImportInformation.CompletedStage = ImportStage.FileParsed;
 				}
 				catch (Exception e)
@@ -526,7 +515,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							string storedFile =
 								String.Format("{0}{1}", LocalDataStoreService.Instance.BadFileDirectory, System.IO.Path.GetRandomFileName());
 							System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
-							((IFileImportInformation) fileImportInformation).StoredFile = storedFile;
+                            setImportInformation.File.Filename = storedFile;
 
 							errorString.AppendFormat(SR.FormatFileHasBeenMoved, storedFile);
 						}
@@ -622,7 +611,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						ReleaseLockUri(storedUri);
 					}
 
-					importerInformation.StoredFile = storedFile;
+                    importerInformation.File.Filename = storedFile;
 					importerInformation.CompletedStage = ImportStage.FileMoved;
 				}
 				catch (Exception e)
@@ -708,9 +697,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						foreach (ImportJobInformation item in items)
 						{
-							IFileImportInformation info = (IFileImportInformation)item.FileImportInformation;
-								store.UpdateSopInstance(info.MetaInfo, info.DataSet, item.FileImportInformation.StoredFile);
-							}
+                            IFileImportInformation info = item.FileImportInformation;
+                            store.UpdateSopInstance(info.File);
+						}
 
 						store.Commit();
 					}
@@ -725,7 +714,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					foreach (ImportJobInformation item in items)
 					{
-						string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
+						string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.FileName);
 						((IFileImportInformation)item.FileImportInformation).Error = new Exception(error, e);
 						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
 					}

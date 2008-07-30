@@ -60,23 +60,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 			public int Compare(IStudy x, IStudy y)
 			{
-				Study xStudy = x as Study;
-				Study yStudy = y as Study;
-
-				if (xStudy == null)
+				if (x == null)
 				{
-					if (yStudy == null)
+					if (y == null)
 						return 0;
 					else
 						return -1;
 				}
 				else
 				{
-					if (yStudy == null)
+					if (y == null)
 						return 1;
 				}
 
-				return (xStudy.StoreTime < yStudy.StoreTime) ? -1 : 1;
+				return (x.GetStoreTime() < y.GetStoreTime()) ? -1 : 1;
 			}
 
 			#endregion
@@ -235,7 +232,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 					totalExpectedFreeSpace += expectedFreeSpace;
 
-					deleteStudyUids.Add(study.GetStudyInstanceUid());
+					deleteStudyUids.Add(study.StudyInstanceUid);
 
 					if (totalExpectedFreeSpace >= _currentDriveInfo.BytesOverLowWaterMark)
 						break;

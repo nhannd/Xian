@@ -58,6 +58,7 @@
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs" />
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
+    <Compile Include="LocalDataStore\FileRemover.cs" />
     <Compile Include="LocalDataStore\ImportProcessor.cs" />
     <Compile Include="LocalDataStore\ImportProcessorBase.cs" />
     <Compile Include="LocalDataStore\InstanceDeletionProcessor.cs" />

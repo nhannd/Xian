@@ -697,19 +697,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		internal void Load()
 		{
-			if (_loaded)
-				return;
+            if (_loaded)
+                return;
 
-			lock (_syncLock)
-			{
-				if (_loaded)
-					return;
+            lock (_syncLock)
+            {
+                if (_loaded)
+                    return;
 
-				CheckIsDisposed();
+                CheckIsDisposed();
 
-				LoadInternal();
-				_loaded = true;
-			}
+                LoadInternal();
+                _loaded = true;
+            }
 
 		}
 
@@ -737,6 +737,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out ushort value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
@@ -755,6 +756,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out ushort value, uint position, out bool tagExists)
 		{
 			GetTag<ushort>(tag, out value, position, out tagExists, GetUint16FromAttribute);
@@ -772,6 +774,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out int value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
@@ -790,6 +793,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out int value, uint position, out bool tagExists)
 		{
 			GetTag<int>(tag, out value, position, out tagExists, GetInt32FromAttribute);
@@ -807,6 +811,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out double value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
@@ -825,6 +830,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out double value, uint position, out bool tagExists)
 		{
 			GetTag<double>(tag, out value, position, out tagExists, GetFloat64FromAttribute);
@@ -842,6 +848,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out string value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
@@ -860,6 +867,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out string value, uint position, out bool tagExists)
 		{
 			GetTag<string>(tag, out value, position, out tagExists, GetStringFromAttribute);
@@ -878,6 +886,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out byte[] value, out bool tagExists)
 		{
 			GetTag<byte[]>(tag, out value, 0, out tagExists, GetAttributeValueOBOW);
@@ -895,10 +904,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists)
 		{
 			GetTag<string>(tag, out value, 0, out tagExists, GetStringArrayFromAttribute);
 			value = value ?? "";
+		}
+
+		//TODO: not sure about returning the attribute directly.
+
+		public DicomAttribute this[DicomTag tag]
+		{
+			get { return this[tag.TagValue]; }
+		}
+
+		public virtual DicomAttribute this[uint tag]
+		{
+			get
+			{
+				Load();
+
+				DicomAttribute dicomAttribute = null;
+				if (_dicomMessage.DataSet.Contains(tag))
+				{
+					dicomAttribute = _dicomMessage.DataSet[tag];
+					if (!dicomAttribute.IsEmpty)
+						return dicomAttribute;
+				}
+
+				if (_dicomMessage.MetaInfo.Contains(tag))
+					dicomAttribute = _dicomMessage.MetaInfo[tag];
+
+				return dicomAttribute;
+			}
 		}
 
 		private static void GetUint16FromAttribute(DicomAttribute attribute, uint position, out ushort value)
@@ -936,26 +974,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void GetTag<T>(uint tag, out T value, uint position, out bool tagExists, GetTagDelegate<T> getter)
 		{
-			Load();
-
 			value = default(T);
 			tagExists = false;
 
-			DicomAttribute dicomAttribute;
-			if(_dicomMessage.DataSet.Contains(tag))
+			DicomAttribute dicomAttribute = this[tag];
+			if (dicomAttribute != null)
 			{
-				dicomAttribute = _dicomMessage.DataSet[tag];
-				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
-				if (tagExists)
-				{
-					getter(dicomAttribute, position, out value);
-					return;
-				}
-			}
-
-			if (_dicomMessage.MetaInfo.Contains(tag))
-			{
-				dicomAttribute = _dicomMessage.MetaInfo[tag];
 				tagExists = !dicomAttribute.IsEmpty && dicomAttribute.Count > position;
 				if (tagExists)
 					getter(dicomAttribute, position, out value);

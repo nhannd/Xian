@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
@@ -40,11 +41,8 @@ namespace ClearCanvas.Dicom.DataStore
 		private sealed class DicomPersistentStore : IDicomPersistentStore
 		{
 			private readonly Dictionary<string, Study> _existingStudyCache = new Dictionary<string, Study>();
-			private readonly Dictionary<string, Series> _existingSeriesCache = new Dictionary<string, Series>();
-
-			private readonly Dictionary<string, Study> _studiesToUpdate = new Dictionary<string, Study>();
-			private readonly Dictionary<string, Series> _seriesToUpdate = new Dictionary<string, Series>();
-			private readonly Dictionary<string, SopInstance> _sopInstancesToUpdate = new Dictionary<string, SopInstance>();
+			private readonly Dictionary<string, Study> _studiesToUpdateInDatastore = new Dictionary<string, Study>();
+			private readonly Dictionary<string, Study> _studiesToUpdateInXml = new Dictionary<string, Study>();
 
 			private IDataStoreReader _dataStoreReader;
 			private IDicomPersistentStoreValidator _validator;
@@ -53,51 +51,11 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 			}
 
-			~DicomPersistentStore()
-			{
-				try
-				{
-					DisposeReader();
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-				}
-			}
-
-			private Dictionary<string, Study> ExistingStudyCache
-			{
-				get { return _existingStudyCache; }
-			}
-
-			private Dictionary<string, Series> ExistingSeriesCache
-			{
-				get { return _existingSeriesCache; }
-			}
-
-			private Dictionary<string, SopInstance> SopInstancesToUpdate
-			{
-				get { return _sopInstancesToUpdate; }
-			}
-
-			private Dictionary<string, Study> StudiesToUpdate
-			{
-				get { return _studiesToUpdate; }
-			}
-
-			private Dictionary<string, Series> SeriesToUpdate
-			{
-				get { return _seriesToUpdate; }
-			}
-
 			private void ClearCache()
 			{
-				this.ExistingStudyCache.Clear();
-				this.ExistingSeriesCache.Clear();
-
-				this.SopInstancesToUpdate.Clear();
-				this.StudiesToUpdate.Clear();
-				this.SeriesToUpdate.Clear();
+				_existingStudyCache.Clear();
+				_studiesToUpdateInXml.Clear();
+				_studiesToUpdateInDatastore.Clear();
 			}
 
 			private IDataStoreReader GetIDataStoreReader()
@@ -118,158 +76,84 @@ namespace ClearCanvas.Dicom.DataStore
 
 			private Study GetStudy(string studyInstanceUid)
 			{
-				if (this.ExistingStudyCache.ContainsKey(studyInstanceUid))
-					return this.ExistingStudyCache[studyInstanceUid];
+				if (_existingStudyCache.ContainsKey(studyInstanceUid))
+					return _existingStudyCache[studyInstanceUid];
 
-				if (this.StudiesToUpdate.ContainsKey(studyInstanceUid))
-					return this.StudiesToUpdate[studyInstanceUid];
+				//everything gets added for xml update
+				if (_studiesToUpdateInXml.ContainsKey(studyInstanceUid))
+					return _studiesToUpdateInXml[studyInstanceUid];
 
 				Study existingStudy = (Study)GetIDataStoreReader().GetStudy(studyInstanceUid);
 				if (existingStudy != null)
-				{
-					this.ExistingStudyCache[existingStudy.GetStudyInstanceUid()] = existingStudy;
-					foreach (Series series in existingStudy.GetSeries())
-						this.ExistingSeriesCache[series.GetSeriesInstanceUid()] = series;
-				}
+					_existingStudyCache[existingStudy.StudyInstanceUid] = existingStudy;
 
 				return existingStudy;
 			}
 
-			private Series GetSeries(string seriesInstanceUid)
-			{
-				if (this.ExistingSeriesCache.ContainsKey(seriesInstanceUid))
-					return this.ExistingSeriesCache[seriesInstanceUid];
-
-				if (this.SeriesToUpdate.ContainsKey(seriesInstanceUid))
-					return this.SeriesToUpdate[seriesInstanceUid];
-
-				Series existingSeries = (Series)GetIDataStoreReader().GetSeries(seriesInstanceUid);
-				if (existingSeries != null)
-					this.ExistingSeriesCache[seriesInstanceUid] = existingSeries;
-
-				return existingSeries;
-			}
-
-			private SopInstance GetSopInstance(string sopInstanceUid)
-			{
-				if (this.SopInstancesToUpdate.ContainsKey(sopInstanceUid))
-					return this.SopInstancesToUpdate[sopInstanceUid];
-
-				return (SopInstance)GetIDataStoreReader().GetSopInstance(sopInstanceUid);
-			}
-
 			#region IDicomPersistentStore Members
 
-			public void UpdateSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
+			public void UpdateSopInstance(DicomFile file)
 			{
-				GetValidator().Validate(metaInfo, sopInstanceDataset);
+				GetValidator().Validate(file);
 
-				string studyInstanceUid = sopInstanceDataset[DicomTags.StudyInstanceUid];
-				string seriesInstanceUid = sopInstanceDataset[DicomTags.SeriesInstanceUid];
-				string sopInstanceUid = sopInstanceDataset[DicomTags.SopInstanceUid];
-
+				string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid];
 				Study study = GetStudy(studyInstanceUid);
-				Series series = GetSeries(seriesInstanceUid);
-				SopInstance image = GetSopInstance(sopInstanceUid);
 
 				bool newStudy = false;
-				bool newSeries = false;
-				bool newSop = false;
-
 				bool studyDirty = false;
-				bool seriesDirty = false;
-				bool sopDirty = false;
 
 				if (study == null)
 				{
 					study = new Study();
 					study.StoreTime = Platform.Time;
-					newStudy = true;
-				}
 
-				if (series == null)
-				{
-					series = new Series();
-					series.Study = study;
-					newSeries = true;
-				}
-				else
-				{
-					if (series.Study != study)
-					{
-						series.Study = study;
-						seriesDirty = true;
-					}
-				}
+					string fileName = String.Format("{0}\\{1}.xml",
+						_studyStorageLocator.GetStudyStoragePath(studyInstanceUid), studyInstanceUid);
 
-				if (image == null)
-				{
-					image = new ImageSopInstance();
-					image.Series = series;
-					newSop = true;
-				}
-				else
-				{
-					if (image.Series != series)
-					{
-						image.Series = series;
-						sopDirty = true;
-					}
-				}
-
-				EventHandler studyDirtyDelegate = delegate { studyDirty = true; };
-				EventHandler seriesDirtyDelegate = delegate { seriesDirty = true; };
-				EventHandler sopDirtyDelegate = delegate { sopDirty = true; };
-
-				study.Changed += studyDirtyDelegate;
-				series.Changed += seriesDirtyDelegate;
-				image.Changed += sopDirtyDelegate;
-
-				try
-				{
-					study.Update(metaInfo, sopInstanceDataset);
-					series.Update(metaInfo, sopInstanceDataset);
-					image.Update(metaInfo, sopInstanceDataset);
-
-					if (!System.IO.Path.IsPathRooted(fileName))
-						fileName = System.IO.Path.GetFullPath(fileName);
+					if (!Path.IsPathRooted(fileName))
+						fileName = Path.GetFullPath(fileName);
 
 					UriBuilder uriBuilder = new UriBuilder();
 					uriBuilder.Scheme = "file";
 					uriBuilder.Path = fileName;
-					image.LocationUri = new DicomUri(uriBuilder.Uri);
+
+					study.StudyXmlUri = new DicomUri(uriBuilder.Uri);
+					newStudy = true;
+				}
+
+				EventHandler studyDirtyDelegate = delegate { studyDirty = true; };
+				study.Changed += studyDirtyDelegate;
+
+				try
+				{
+					study.Update(file);
 				}
 				finally
 				{
 					study.Changed -= studyDirtyDelegate;
-					series.Changed -= seriesDirtyDelegate;
-					image.Changed -= sopDirtyDelegate;
 				}
 
 				if (studyDirty || newStudy)
-					StudiesToUpdate[study.StudyInstanceUid] = study;
+					_studiesToUpdateInDatastore[study.StudyInstanceUid] = study;
 
-				if (seriesDirty || newSeries)
-					SeriesToUpdate[series.SeriesInstanceUid] = series;
-
-				if (sopDirty || newSop)
-					SopInstancesToUpdate[image.SopInstanceUid] = image;
+				_studiesToUpdateInXml[study.StudyInstanceUid] = study;
 			}
 
 			public void Commit()
 			{
 				try
 				{
-					using (IDataStoreWriter writer = DataAccessLayer.GetIDataStoreWriter())
+					using (IDataStoreWriter writer = GetIDataStoreWriter())
 					{
-						writer.StoreStudies(this.StudiesToUpdate.Values);
-						writer.StoreSeries(this.SeriesToUpdate.Values);
-						writer.StoreSopInstances(this.SopInstancesToUpdate.Values);
+						foreach (Study study in _studiesToUpdateInXml.Values)
+							study.Flush();
+
+						writer.StoreStudies(_studiesToUpdateInDatastore.Values);
 					}
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException(SR.ExceptionFailedToCommitImagesToDatastore, e);
+					throw new DataStoreException("Failed to commit files to data store.", e);
 				}
 				finally
 				{
@@ -298,6 +182,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
+
 					DisposeReader();
 				}
 				catch (Exception e)

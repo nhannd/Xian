@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.DicomServices.Scu;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -77,20 +79,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public readonly IEnumerable<string> SopInstanceUids;
 	}
 
-	internal class SendInstancesRequest : SendRequest
-	{
-		public SendInstancesRequest(
-			AEInformation destinationAEInformation, 
-			IEnumerable<string> sendUids, 
-			SendOperationProgressCallback callback)
-			: base(destinationAEInformation, callback)
-		{
-			SendUids = sendUids;
-		}
-
-		public readonly IEnumerable<string> SendUids;
-	}
-
 	#endregion
 	#endregion
 
@@ -115,9 +103,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		Guid SendStudies(SendStudiesRequest request);
 		Guid SendSeries(SendSeriesRequest request);
 		Guid SendSopInstances(SendSopInstancesRequest request);
-
-		//TODO: later, remove this.  We only need it for compatibility with the existing IDicomServerService interface.
-		Guid SendInstances(SendInstancesRequest request);
 
 		void Cancel(Guid operationIdentifier);
 	}
@@ -183,21 +168,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			private void AddStudy(IStudy study)
 			{
-				if (_studies.ContainsKey(study.GetStudyInstanceUid()))
+				if (_studies.ContainsKey(study.StudyInstanceUid))
 					return;
 				
-				Study s = (Study) study;
 				SendStudyInformation info = new SendStudyInformation();
 				info.ToAETitle = RemoteAE;
 
 				info.StudyInformation = new StudyInformation();
-				info.StudyInformation.PatientId = s.PatientId;
-				info.StudyInformation.PatientsName = s.PatientsName;
-				info.StudyInformation.StudyDate = s.StudyDate;
-				info.StudyInformation.StudyDescription = s.StudyDescription;
-				info.StudyInformation.StudyInstanceUid = s.StudyInstanceUid;
+				info.StudyInformation.PatientId = study.PatientId;
+				info.StudyInformation.PatientsName = study.PatientsName;
+				info.StudyInformation.StudyDate = DateParser.Parse(study.StudyDate);
+				info.StudyInformation.StudyDescription = study.StudyDescription;
+				info.StudyInformation.StudyInstanceUid = study.StudyInstanceUid;
 
-				_studies[study.GetStudyInstanceUid()] = info;
+				_studies[study.StudyInstanceUid] = info;
 			}
 
 			private void SendInternal()
@@ -327,11 +311,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static void ValidateParentStudy(ISeries series, string studyInstanceUid)
 		{
-			if (series.GetParentStudy().GetStudyInstanceUid() != studyInstanceUid)
+			if (series.GetParentStudy().StudyInstanceUid != studyInstanceUid)
 			{
 				string message = String.Format("The given series exists in the database ({0}), " +
 											   "but the provided study uid differs from the one in the local database (local = {1}, provided = {2}).",
-											   series.GetSeriesInstanceUid(), series.GetParentStudy().GetStudyInstanceUid(), studyInstanceUid);
+											   series.SeriesInstanceUid, series.GetParentStudy().StudyInstanceUid, studyInstanceUid);
 
 				throw new ArgumentException(message);
 			}
@@ -339,20 +323,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static void ValidateParentSeriesAndStudy(ISopInstance sop, string seriesInstanceUid, string studyInstanceUid)
 		{
-			if (sop.GetParentSeries().GetSeriesInstanceUid() != seriesInstanceUid)
+			if (sop.GetParentSeries().SeriesInstanceUid != seriesInstanceUid)
 			{
 				string message = String.Format("The given sop exists in the database ({0}), " +
 											   "but the provided series uid differs from the one in the local database (local = {1}, provided = {2}).",
-											   sop.GetSopInstanceUid(), sop.GetParentSeries().GetSeriesInstanceUid(), seriesInstanceUid);
+											   sop.SopInstanceUid, sop.GetParentSeries().SeriesInstanceUid, seriesInstanceUid);
 
 				throw new ArgumentException(message);
 			}
 
-			if (sop.GetParentSeries().GetParentStudy().GetStudyInstanceUid() != studyInstanceUid)
+			if (sop.GetParentSeries().GetParentStudy().StudyInstanceUid != studyInstanceUid)
 			{
 				string message = String.Format("The given sop exists in the database ({0}), " +
 											   "but the provided study uid differs from the one in the local database (local = {1}, provided = {2}).",
-											   sop.GetSopInstanceUid(), sop.GetParentSeries().GetParentStudy().GetStudyInstanceUid(), studyInstanceUid);
+											   sop.SopInstanceUid, sop.GetParentSeries().GetParentStudy().StudyInstanceUid, studyInstanceUid);
 
 				throw new ArgumentException(message);
 			}
@@ -381,15 +365,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
-				foreach (string seriesInstanceUid in seriesInstanceUids)
+				IStudy study = reader.GetStudy(studyInstanceUid);
+				if (study == null)
 				{
-					ISeries series = reader.GetSeries(seriesInstanceUid);
-					if (series == null)
-					{
-						string message = String.Format("The specified series does not exist in the database (uid = {0}).", seriesInstanceUid);
-						throw new ArgumentException(message);
-					}
+					string message = String.Format("The specified study does not exist in the database (uid = {0}).", studyInstanceUid);
+					throw new ArgumentException(message);
+				}
 
+				foreach (ISeries series in study.GetSeries())
+				{
 					ValidateParentStudy(series, studyInstanceUid);
 					foreach (ISopInstance sop in series.GetSopInstances())
 						yield return sop;
@@ -401,49 +385,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
-				foreach (string sopInstanceUid in sopInstanceUids)
+				IStudy study = reader.GetStudy(studyInstanceUid);
+				if (study == null)
 				{
-					ISopInstance sop = reader.GetSopInstance(sopInstanceUid);
-					if (sop == null)
-					{
-						string message = String.Format("The specified sop instance does not exist in the database (uid = {0}).", sopInstanceUid);
-						throw new ArgumentException(message);
-					}
+					string message = String.Format("The specified study does not exist in the database (uid = {0}).", studyInstanceUid);
+					throw new ArgumentException(message);
+				}
 
+				foreach (ISopInstance sop in study.GetSopInstances())
+				{
 					ValidateParentSeriesAndStudy(sop, seriesInstanceUid, studyInstanceUid);
 					yield return sop;
-				}
-			}
-		}
-
-		private static IEnumerable<ISopInstance> GetSopInstancesFromUnknownLevels(IEnumerable<string> uids)
-		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				foreach (string uid in uids)
-				{
-					if (reader.StudyExists(uid))
-					{
-						IStudy study = reader.GetStudy(uid);
-						foreach (ISopInstance sop in study.GetSopInstances())
-							yield return sop;
-					}
-					else if (reader.SeriesExists(uid))
-					{
-						ISeries series = reader.GetSeries(uid);
-						foreach (ISopInstance sop in series.GetSopInstances())
-							yield return sop;
-					}
-					else if (reader.SopInstanceExists(uid))
-					{
-						ISopInstance sop = reader.GetSopInstance(uid);
-						yield return sop;
-					}
-					else
-					{
-						string message = String.Format("The specified uid does not exist in the database at any level (uid = {0}).", uid);
-						throw new ArgumentException(message);
-					}
 				}
 			}
 		}
@@ -516,12 +468,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			return Send(request.DestinationAEInformation,
 				GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), request.Callback);
-		}
-
-		public Guid SendInstances(SendInstancesRequest request)
-		{
-			return Send(request.DestinationAEInformation, 
-				GetSopInstancesFromUnknownLevels(request.SendUids), request.Callback);
 		}
 
 		public void Cancel(Guid operationIdentifier)

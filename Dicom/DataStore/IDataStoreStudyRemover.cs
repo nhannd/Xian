@@ -37,7 +37,7 @@ namespace ClearCanvas.Dicom.DataStore
 	public interface IDataStoreStudyRemover : IDisposable
 	{
 		void ClearAllStudies();
-		void RemoveStudies(IEnumerable<string> studyUids);
-		void RemoveStudy(string studyUid);
+		void RemoveStudies(IEnumerable<string> studyInstanceUids);
+		void RemoveStudy(string studyInstanceUid);
 	}
 }

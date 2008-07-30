@@ -34,14 +34,13 @@
 using System.Reflection;
 using NHibernate.Cfg;
 using NUnit.Framework;
-using System.IO;
 
 namespace ClearCanvas.Dicom.DataStore.Tests
 {
 	[TestFixture]
 	public class ValidationTests
 	{
-		private PersistenObjectValidator _validator;
+		private PersistentObjectValidator _validator;
 
 		public ValidationTests()
 		{
@@ -55,10 +54,10 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 			configuration.Configure(@"..\" + assemblyName + ".cfg.xml");
 			configuration.AddAssembly(assemblyName);
 
-			_validator = new PersistenObjectValidator(configuration);
+			_validator = new PersistentObjectValidator(configuration);
 		}
 
-		private Study NewStudy()
+		private static Study NewStudy()
 		{
 			Study study = new Study();
 			study.StudyInstanceUid = "123";
@@ -108,88 +107,6 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 			Study study = NewStudy(); 
 			study.PatientId = "A string that is more than 64 characters in length should throw an exception";
 			_validator.ValidatePersistentObject(study);
-		}
-
-		#endregion
-
-		#region Series Tests
-
-		[Test]
-		[ExpectedException(typeof(DataStoreException))]
-		public void TestNullSeriesInstanceUid()
-		{
-			Series series = new Series();
-			series.SeriesInstanceUid = null;
-			_validator.ValidatePersistentObject(series);
-		}
-
-		[Test]
-		[ExpectedException(typeof(DataStoreException))]
-		public void TestEmptySeriesInstanceUid()
-		{
-			Series series = new Series();
-			series.SeriesInstanceUid = "";
-			_validator.ValidatePersistentObject(series);
-		}
-
-		#endregion
-
-		#region Image Tests
-
-		[Test]
-		public void TestValidSopInstance()
-		{
-			ImageSopInstance sop = new ImageSopInstance();
-			sop.SopInstanceUid = "123";
-			sop.TransferSyntaxUid = "1.2.3.4"; //obviously not real
-			sop.SopClassUid = "1.2.3";
-			sop.InstanceNumber = 1;
-			sop.SpecificCharacterSet = "";
-			sop.LocationUri = new DicomUri("c:\\somewhere");
-
-			sop.BitsAllocated = 16;
-			sop.BitsStored = 16;
-			sop.HighBit = 15;
-			sop.PixelRepresentation = 1;
-			sop.SamplesPerPixel = 1;
-			sop.PlanarConfiguration = 0;
-			sop.PhotometricInterpretation = PhotometricInterpretation.Monochrome2;
-			sop.Rows = 256;
-			sop.Columns = 256;
-			sop.PixelSpacing = new PixelSpacing(1, 1);
-			sop.PixelAspectRatio = new PixelAspectRatio(64, 64);
-			sop.RescaleIntercept = 0;
-			sop.RescaleSlope = 1;
-
-			_validator.ValidatePersistentObject(sop);
-		}
-
-		[Test]
-		[ExpectedException(typeof(DataStoreException))]
-		public void TestNullSopInstanceUid()
-		{
-			ImageSopInstance sop = new ImageSopInstance();
-			sop.SopInstanceUid = null;
-			_validator.ValidatePersistentObject(sop);
-		}
-
-		[Test]
-		[ExpectedException(typeof(DataStoreException))]
-		public void TestEmptySopInstanceUid()
-		{
-			ImageSopInstance sop = new ImageSopInstance();
-			sop.SopInstanceUid = "";
-			_validator.ValidatePersistentObject(sop);
-		}
-
-		[Test]
-		[ExpectedException(typeof(DataStoreException))]
-		public void TestSopFieldTooLong()
-		{
-			ImageSopInstance sop = new ImageSopInstance();
-			sop.SopInstanceUid = "123";
-			sop.TransferSyntaxUid = "A string that is more than 64 characters in length should throw an exception";
-			_validator.ValidatePersistentObject(sop);
 		}
 
 		#endregion

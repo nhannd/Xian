@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		protected override void LoadInternal()
 		{
-			DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
+            DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 		}
 	}
 }

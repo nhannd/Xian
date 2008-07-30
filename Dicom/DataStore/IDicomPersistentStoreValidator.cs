@@ -46,6 +46,6 @@ namespace ClearCanvas.Dicom.DataStore
 		/// Validates the input data and insures it is appropriate for insertion into the datastore.
 		/// </summary>
 		/// <remarks>An exception is thrown when the data is invalid.</remarks>
-		void Validate(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset);
+		void Validate(DicomFile file);
 	}
 }

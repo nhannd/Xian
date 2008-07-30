@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
@@ -59,48 +56,40 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
         {
 			Platform.CheckForNullReference(queryParams, "queryParams");
 
-            QueryKey queryKey = new QueryKey();
-            queryKey.Add(DicomTags.PatientId, queryParams["PatientId"]);
-            queryKey.Add(DicomTags.AccessionNumber, queryParams["AccessionNumber"]);
-            queryKey.Add(DicomTags.PatientsName, queryParams["PatientsName"]);
-            queryKey.Add(DicomTags.StudyDate, queryParams["StudyDate"]);
-            queryKey.Add(DicomTags.StudyDescription, queryParams["StudyDescription"]);
-            queryKey.Add(DicomTags.PatientsBirthDate, "");
-            queryKey.Add(DicomTags.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
-            queryKey.Add(DicomTags.SpecificCharacterSet, "");
-			queryKey.Add(DicomTags.StudyInstanceUid, queryParams["StudyInstanceUid"]);
-
-            ReadOnlyQueryResultCollection results = Query(queryKey);
-            if (null == results)
-                return null;
+			DicomAttributeCollection collection = new DicomAttributeCollection();
+        	collection[DicomTags.QueryRetrieveLevel].SetStringValue("STUDY");
+            collection[DicomTags.PatientId].SetStringValue(queryParams["PatientId"]);
+            collection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
+            collection[DicomTags.PatientsName].SetStringValue(queryParams["PatientsName"]);
+            collection[DicomTags.StudyDate].SetStringValue(queryParams["StudyDate"]);
+            collection[DicomTags.StudyDescription].SetStringValue(queryParams["StudyDescription"]);
+        	collection[DicomTags.PatientsBirthDate].SetStringValue("");
+            collection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
+            collection[DicomTags.SpecificCharacterSet].SetStringValue("");
+			collection[DicomTags.StudyInstanceUid].SetStringValue(queryParams["StudyInstanceUid"]);
 
             StudyItemList studyItemList = new StudyItemList();
-            foreach (QueryResult result in results)
-            {
-                StudyItem item = new StudyItem();
-                item.SpecificCharacterSet = result.SpecificCharacterSet;
-                item.PatientId = result.PatientId.ToString();
-                item.PatientsName = result.PatientsName;
-                item.PatientsBirthDate = result[DicomTags.PatientsBirthDate];
-                item.StudyDate = result.StudyDate;
-                item.StudyDescription = result.StudyDescription;
-                item.ModalitiesInStudy = result.ModalitiesInStudy;
-                item.AccessionNumber = result.AccessionNumber;
-                item.StudyInstanceUID = result.StudyInstanceUid.ToString();
-                item.StudyLoaderName = this.Name;
+			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+			{
+				foreach (DicomAttributeCollection result in reader.PerformStudyRootQuery(collection))
+				{
+					StudyItem item = new StudyItem();
+					item.SpecificCharacterSet = result.SpecificCharacterSet;
+					item.PatientId = result[DicomTags.PatientId].ToString();
+					item.PatientsName = new PersonName(result[DicomTags.PatientsName].ToString());
+					item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].ToString();
+					item.StudyDate = result[DicomTags.StudyDate].ToString();
+					item.StudyDescription = result[DicomTags.StudyDescription].ToString();
+					item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
+					item.AccessionNumber = result[DicomTags.AccessionNumber].ToString();
+					item.StudyInstanceUID = result[DicomTags.StudyInstanceUid].ToString();
+					item.StudyLoaderName = this.Name;
 
-                studyItemList.Add(item);
-            }
+					studyItemList.Add(item);
+				}
+			}
 
             return studyItemList;
         }
-
-        protected ReadOnlyQueryResultCollection Query(QueryKey queryKey)
-        {
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				return reader.StudyQuery(queryKey);
-			}
-        }       
     }
 }

@@ -43,9 +43,9 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		{
 		}
 
-		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
+		public void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
-			base.Channel.Send(destinationAEInformation, uids);
+			base.Channel.Send(destinationAEInformation, studyInstanceUids);
 		}
 
 		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)

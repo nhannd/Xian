@@ -35,11 +35,16 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface ISeries
     {
-		string GetSeriesInstanceUid();
-
 		IStudy GetParentStudy();
 
-    	int GetNumberOfSopInstances();
+		string SeriesInstanceUid { get; }
+
+		string Modality { get; }
+		string SeriesDescription { get; }
+		int SeriesNumber { get; }
+		
+		int NumberOfSeriesRelatedInstances { get; }
+
 		IEnumerable<ISopInstance> GetSopInstances();
     }
 }

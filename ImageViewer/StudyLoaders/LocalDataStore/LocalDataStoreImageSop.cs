@@ -29,47 +29,35 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
 	public class LocalDataStoreImageSop : LocalImageSop
 	{
-        private readonly ImageSopInstance _dataStoreImageSopInstance;
-        private readonly Dicom.DataStore.Study _dataStoreStudy;
-        private readonly Dicom.DataStore.Series _dataStoreSeries;
+		private readonly ISopInstance _sop;
 
-		public LocalDataStoreImageSop(ImageSopInstance sop)
-			: base(sop.LocationUri.LocalDiskPath)
+		public LocalDataStoreImageSop(ISopInstance sop)
+			: base(sop.GetLocationUri().LocalDiskPath)
 		{
-            _dataStoreImageSopInstance = sop;
-            _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as Dicom.DataStore.Study;
-            _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as Dicom.DataStore.Series;
+			_sop = sop;
 		}
-
-        private ImageSopInstance DataStoreImageSopInstance
-        {
-            get { return _dataStoreImageSopInstance; }
-        }
-
-        private Dicom.DataStore.Study DataStoreStudy
-        {
-            get { return _dataStoreStudy; }
-        }
-
-        private Dicom.DataStore.Series DataStoreSeries
-        {
-            get { return _dataStoreSeries; }
-        }
 
 		public override string TransferSyntaxUID
 		{
 			get
 			{
-				return this.DataStoreImageSopInstance.TransferSyntaxUid ?? "";
+				return _sop.TransferSyntaxUid;
+			}
+		}
+
+		public override string SopClassUID
+		{
+			get
+			{
+				return _sop.SopClassUid;
 			}
 		}
 
@@ -77,145 +65,24 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				return this.DataStoreImageSopInstance.SopInstanceUid ?? "";
+				return _sop.SopInstanceUid;
 			}
 		}
 
-		public override PersonName PatientsName
-		{
-			get 
-            {
-				return new PersonName(this.DataStoreStudy.PatientsName ?? "");
-            }
-		}
-
-        public override string PatientId
+		public override DicomAttribute this[uint tag]
         {
-            get 
-            {
-				return this.DataStoreStudy.PatientId ?? "";
-            }
+			get
+			{
+				//the _sop indexer is not thread-safe.
+				lock (_sop)
+				{
+					DicomAttribute attribute = _sop[tag];
+					if (attribute != null)
+						return attribute;
+				}
+
+				return base[tag];
+			}
         }
-
-		public override string PatientsBirthDate
-		{
-            get 
-            {
-                return this.DataStoreStudy.PatientsBirthDateRaw ?? "";
-            }
-		}
-
-		public override string PatientsSex
-		{
-            get 
-            {
-                return this.DataStoreStudy.PatientsSex ?? "";
-            }
-		}
-
-		public override string StudyInstanceUID
-		{
-            get 
-            {
-				return this.DataStoreStudy.StudyInstanceUid ?? "";
-            }
-		}
-
-		public override string StudyDate
-		{
-            get 
-            {
-				return this.DataStoreStudy.StudyDateRaw ?? "";
-            }
-		}
-
-		public override string StudyTime
-		{
-            get 
-            {
-				return this.DataStoreStudy.StudyTimeRaw ?? "";
-            }
-        }
-
-		public override string AccessionNumber
-		{
-            get 
-            {
-				return this.DataStoreStudy.AccessionNumber ?? "";
-            }
-		}
-
-		public override string StudyDescription
-		{
-            get 
-            {
-				return this.DataStoreStudy.StudyDescription ?? "";
-            }
-		}
-
-		public override string Modality
-		{
-            get 
-            {
-				return this.DataStoreSeries.Modality ?? "";
-            }
-		}
-
-		public override string SeriesInstanceUID
-		{
-            get 
-            {
-				return this.DataStoreSeries.SeriesInstanceUid ?? "";
-            }
-		}
-
-		public override int SeriesNumber
-		{
-            get 
-            {
-                return DataStoreSeries.SeriesNumber;
-            }
-		}
-
-		public override string SeriesDescription
-		{
-			get
-			{
-				return this.DataStoreSeries.SeriesDescription ?? "";
-			}
-		}
-
-		public override string Laterality
-		{
-            get 
-            {
-				return this.DataStoreSeries.Laterality ?? "";
-            }
-		}
-
-		public override int InstanceNumber
-		{
-			get
-			{
-    			return DataStoreImageSopInstance.InstanceNumber;
-			}
-		}
-
-		public override int NumberOfFrames
-		{
-			get
-			{
-				return Math.Max(DataStoreImageSopInstance.NumberOfFrames, 1);
-			}
-		}
-
-		/// <summary>
-		/// Factory method that creates a <see cref="LocalDataStoreFrame"/>.
-		/// </summary>
-		/// <param name="index">The <b>one-based</b> index of the frame to create.</param>
-		protected override Frame CreateFrame(int index)
-		{
-			return new LocalDataStoreFrame(_dataStoreImageSopInstance, this, index);
-		}
 	}
 }

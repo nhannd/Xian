@@ -38,7 +38,7 @@ namespace ClearCanvas.Dicom.DataStore
 	{
 		private event EventHandler _changed;
 
-		protected PersistentDicomObject()
+		internal PersistentDicomObject()
 		{
 		}
 

@@ -31,14 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom;
-using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
@@ -77,38 +74,17 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
 				IStudy study = reader.GetStudy(studyLoaderArgs.StudyInstanceUid);
-				_sops = new List<ISopInstance>(study.GetSopInstances()).GetEnumerator();
-				_sops.Reset();
-
-				return study.GetNumberOfSopInstances();
+				_sops = study.GetSopInstances().GetEnumerator();
+				return study.NumberOfStudyRelatedInstances;
 			}
 		}
 
 		public ImageSop LoadNextImage()
         {
-			ImageSopInstance imageObject;
+			if (!_sops.MoveNext())
+				return null;
 
-			while (true)
-			{
-				bool moreImages = _sops.MoveNext();
-
-				if (!moreImages)
-					return null;
-
-				imageObject = _sops.Current as ImageSopInstance;
-				
-				// TODO: don't just skip non-image sop instances
-				if (imageObject != null)
-				{
-					// Skip non-local images
-					if (imageObject.LocationUri.IsFile)
-						break;
-				}
-			}
-
-			LocalDataStoreImageSop localImage = new LocalDataStoreImageSop(imageObject);
-
-			return localImage;
+			return new LocalDataStoreImageSop(_sops.Current);
         }
     }
 }

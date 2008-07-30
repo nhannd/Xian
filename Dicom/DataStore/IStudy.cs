@@ -29,18 +29,30 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.DataStore
 {
     public interface IStudy
     {
-		string GetStudyInstanceUid();
+		string StudyInstanceUid { get; }
 
-		int GetNumberOfSeries();
+		string PatientId { get; }
+		PersonName PatientsName { get; }
+
+		string StudyDescription { get; }
+		string StudyId { get; }
+		string StudyDate { get; }
+		string StudyTime { get; }
+
+		string AccessionNumber { get; }
+
+		int NumberOfStudyRelatedSeries { get; }
+		int NumberOfStudyRelatedInstances { get; }
+
+    	DateTime? GetStoreTime();
 		IEnumerable<ISeries> GetSeries();
-
-		int GetNumberOfSopInstances(); 
 		IEnumerable<ISopInstance> GetSopInstances();
     }
 }

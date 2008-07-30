@@ -63,12 +63,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
     	#region IDicomServerService Members
 
-		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
+		public void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
 			try
 			{
-				SendInstancesRequest request = new SendInstancesRequest(destinationAEInformation, uids, null);
-				DicomSendManager.Instance.SendInstances(request);
+				SendStudiesRequest request = new SendStudiesRequest(destinationAEInformation, studyInstanceUids, null);
+				DicomSendManager.Instance.SendStudies(request);
 			}
 			catch (Exception e)
 			{

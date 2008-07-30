@@ -39,12 +39,12 @@ using NHibernate.Type;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-	internal class PersistenObjectValidator
+	internal class PersistentObjectValidator
 	{
 		private readonly Configuration _configuration;
 		private Dictionary<Type, Dictionary<string, PropertyInfo>> _persistentTypesPropertyInfo = null;
 
-		public PersistenObjectValidator(Configuration configuration)
+		public PersistentObjectValidator(Configuration configuration)
 		{
 			_configuration = configuration;
 		}
@@ -77,11 +77,11 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				string value = info.GetValue(sourceObject, null) as string;
 				if (value == null && !column.IsNullable)
-					throw new DataStoreException(String.Format(SR.FormatColumnIsNotNullable, column.Name, value));
+					throw new DataStoreException(String.Format("The specified column is not nullable ({0}).", column.Name));
 				else if (String.IsNullOrEmpty(value) && column.IsUnique)
-					throw new DataStoreException(String.Format(SR.FormatColumnMustBeUnique, column.Name, value));
+					throw new DataStoreException(String.Format("The specified column value must be unique ({0}).", column.Name));
 				else if (value != null && value.Length > column.Length)
-					throw new DataStoreException(String.Format(SR.FormatValueExceedsMaximumLength, value, column.Length, column.Name));
+					throw new DataStoreException(String.Format("The specified value exceeds the maximum length (column={0}:{1}, value='{2}').", column.Name, column.Length, value));
 			}
 		}
 		public void ValidatePersistentObject(object obj)

@@ -46,18 +46,6 @@ namespace ClearCanvas.Dicom.DataStore
 				_sessionManager = sessionManager;
 			}
 
-			~SessionConsumer()
-			{
-				try
-				{
-					Dispose(false);
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Warn, e);
-				}
-			}
-
 			protected ISessionManager SessionManager
 			{
 				get { return _sessionManager; }

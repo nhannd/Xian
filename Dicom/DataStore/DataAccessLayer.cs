@@ -30,9 +30,9 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using ClearCanvas.Common;
 using NHibernate;
 using NHibernate.Cfg;
 
@@ -42,9 +42,7 @@ namespace ClearCanvas.Dicom.DataStore
     {
 	    private static readonly Configuration _hibernateConfiguration;
 		private static readonly ISessionFactory _sessionFactory;
-
-		private static readonly object _syncLock = new object();
-		private static readonly Dictionary<string, IDicomDictionary> _dicomDictionaries;
+		private static volatile IStudyStorageLocator _studyStorageLocator;
 
 		private DataAccessLayer()
 		{
@@ -57,8 +55,6 @@ namespace ClearCanvas.Dicom.DataStore
 			_hibernateConfiguration.Configure(assemblyName + ".cfg.xml");
 			_hibernateConfiguration.AddAssembly(assemblyName);
 			_sessionFactory = _hibernateConfiguration.BuildSessionFactory();
-
-			_dicomDictionaries = new Dictionary<string, IDicomDictionary>();
 		}
 
 		internal static Configuration HibernateConfiguration
@@ -69,6 +65,11 @@ namespace ClearCanvas.Dicom.DataStore
 		private static ISessionFactory SessionFactory
 		{
 			get { return _sessionFactory; }
+		}
+
+		public static void SetStudyStorageLocator(IStudyStorageLocator locator)
+		{
+			_studyStorageLocator = locator;
 		}
 
 		public static IDataStoreReader GetIDataStoreReader()
@@ -83,6 +84,9 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public static IDicomPersistentStore GetIDicomPersistentStore()
 		{
+			if (_studyStorageLocator == null)
+				throw new InvalidOperationException("Cannot use the persistent store without setting a valid study storage locator.");
+
 			return new DicomPersistentStore();
 		}
 
@@ -95,44 +99,21 @@ namespace ClearCanvas.Dicom.DataStore
         {
 			return new DataStoreWriter(SessionManager.Get());
         }
-		
-		internal static IDicomDictionary GetIDicomDictionary(string dictionaryName)
-		{
-			lock (_syncLock)
-			{
-				if (_dicomDictionaries.ContainsKey(dictionaryName))
-					return _dicomDictionaries[dictionaryName];
 
-				DicomDictionary newDictionary = new DicomDictionary(SessionManager.Get(), dictionaryName);
-				_dicomDictionaries[dictionaryName] = newDictionary;
-				return newDictionary;
-			}
+		internal static IStudyStorageLocator GetStudyStorageLocator()
+		{
+			if (_studyStorageLocator == null)
+				throw new InvalidOperationException("Cannot use the persistent store without setting a valid study storage locator.");
+
+			return _studyStorageLocator;
 		}
 
-		#region IInitializeAssociatedObject Members
+		#region Helper Methods
 
-		public static void InitializeAssociatedObject(object entity, object association)
+		internal static IEnumerable<T> Cast<T>(IEnumerable original)
 		{
-			Platform.CheckForNullReference(entity, "entity");
-			Platform.CheckForNullReference(association, "association");
-
-			using (ISessionManager sessionManager = SessionManager.Get())
-			{
-				try
-				{
-					if (sessionManager.Session.Contains(association))
-						return;
-
-					sessionManager.BeginReadTransaction();
-					sessionManager.Session.Lock(entity, LockMode.Read);
-					NHibernateUtil.Initialize(association);
-				}
-				catch (Exception e)
-				{
-					string message = String.Format(SR.ExceptionFormatFailedToInitializeAssociation, association.GetType(), entity.GetType());
-					throw new DataStoreException(message, e);
-				}
-			}
+			foreach (T item in original)
+				yield return item;
 		}
 
 		#endregion

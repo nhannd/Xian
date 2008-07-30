@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						importedSopInformation.StudyInstanceUid = receivedFileImportInformation.StudyInstanceUid;
 						importedSopInformation.SeriesInstanceUid = receivedFileImportInformation.SeriesInstanceUid;
 						importedSopInformation.SopInstanceUid = receivedFileImportInformation.SopInstanceUid;
-						importedSopInformation.SopInstanceFileName = receivedFileImportInformation.StoredFile;
+						importedSopInformation.SopInstanceFileName = receivedFileImportInformation.FileName;
 					}
 
 					if (importedSopInformation != null)

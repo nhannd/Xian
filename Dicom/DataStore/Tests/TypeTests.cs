@@ -29,14 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
+using NUnit.Framework;
+
 #if UNIT_TESTS
 
 namespace ClearCanvas.Dicom.DataStore.Tests
 {
-    using System.Collections.Generic;
-    using NUnit.Framework;
-    using ClearCanvas.Dicom;
-
 	internal class PathTest : DicomTagPath
 	{
 		public PathTest()

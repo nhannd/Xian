@@ -13,9 +13,15 @@
     <property name="AccessionNumber" column="AccessionNumber_" type="string" length="16" />
     <property name="StudyInstanceUid" column="StudyInstanceUid_" type="string" length="64" not-null="true" unique="true" />	
     <property name="StudyDescription" column="StudyDescription_" type="string" length="64" />
+    <property name="ModalitiesInStudy" column="ModalitiesInStudy_" type="string" length="256" /> <!-- arbitrary length chosen -->
+    <property name="NumberOfStudyRelatedSeries" column="NumberOfStudyRelatedSeries_" type="Int32" />
+    <property name="NumberOfStudyRelatedInstances" column="NumberOfStudyRelatedInstances_" type="Int32" />
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
     <property name="ProcedureCodeSequenceCodeValue" column="ProcedureCodeSequenceCodeValue_" type="string" length="16" />
     <property name="StoreTime" column="StoreTime_" type="DateTime" />
+    <component name="StudyXmlUri" class="DicomUri">
+      <property name="InternalUri" column="StudyXmlUri_" type="string" length="1024" />
+    </component>
     <property name="PatientsNameRaw" column="PatientsNameRaw_" type="string" length="256"/>
     <component name="PatientsName" class="ClearCanvas.Dicom.PersonName, ClearCanvas.Dicom"> <!-- class attribute optional -->
       <property name="InternalPersonName" column="PatientsName_" type="string" length="256" />
@@ -23,9 +29,5 @@
     <property name="PatientId" column="PatientId_" type="string" length="64"/>
     <property name="PatientsSex" column="PatientsSex_" type="string" length="16" />
     <property name="PatientsBirthDateRaw" column="PatientsBirthDateRaw_" type="string" length="16" />
-    <set name="InternalSeries" table="Series_" lazy="false" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
-      <key column="StudyOid_" />
-      <one-to-many class="Series" />
-    </set>
   </class>
 </hibernate-mapping>

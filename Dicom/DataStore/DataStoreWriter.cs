@@ -31,12 +31,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {
 	public sealed partial class DataAccessLayer
 	{
+		internal interface IDataStoreWriter : IDisposable
+		{
+			void StoreStudies(IEnumerable<Study> studies);
+		}
+
 		private class DataStoreWriter : SessionConsumer, IDataStoreWriter, IDataStoreStudyRemover
 		{
 			public DataStoreWriter(ISessionManager sessionManager)
@@ -46,48 +52,18 @@ namespace ClearCanvas.Dicom.DataStore
 
 			#region IDataStoreWriter Members
 
-			public void StoreSopInstances(IEnumerable<SopInstance> sops)
-			{
-				try
-				{
-					base.SessionManager.BeginWriteTransaction();
-					foreach (SopInstance sop in sops)
-						Session.SaveOrUpdate(sop);
-				}
-				catch (Exception e)
-				{
-					base.SessionManager.Rollback();
-					throw new DataStoreException(SR.ExceptionFailedToStoreSopInstances, e);
-				}
-			}
-
-			public void StoreSeries(IEnumerable<Series> series)
-			{
-				try
-				{
-					base.SessionManager.BeginWriteTransaction();
-					foreach (Series saveSeries in series)
-						Session.SaveOrUpdate(saveSeries);
-				}
-				catch (Exception e)
-				{
-					base.SessionManager.Rollback();
-					throw new DataStoreException(SR.ExceptionFailedToStoreSeries, e);
-				}
-			}
-
 			public void StoreStudies(IEnumerable<Study> studies)
 			{
 				try
 				{
-					base.SessionManager.BeginWriteTransaction();
+					SessionManager.BeginWriteTransaction();
 					foreach (Study study in studies)
 						Session.SaveOrUpdate(study);
 				}
 				catch (Exception e)
 				{
-					base.SessionManager.Rollback();
-					throw new DataStoreException(SR.ExceptionFailedToStoreStudies, e);
+					SessionManager.Rollback();
+					throw new DataStoreException("Failed to commit studies to the data store.", e);
 				}
 			}
 
@@ -99,36 +75,53 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					base.SessionManager.BeginWriteTransaction();
+					using (IDataStoreReader reader = GetIDataStoreReader())
+					{
+						foreach (Study study in reader.GetStudies())
+							File.Delete(study.StudyXmlUri.LocalDiskPath);
+					}
+
+					SessionManager.BeginWriteTransaction();
 					Session.Delete("from Study");
-					base.SessionManager.Commit();
+					SessionManager.Commit();
 				}
 				catch (Exception e)
 				{
-					base.SessionManager.Rollback();
-					throw new DataStoreException(SR.ExceptionFailedToClearAllStudies, e);
+					SessionManager.Rollback();
+					throw new DataStoreException("Failed to clear all studies from the data store.", e);
 				}
 			}
 
-			public void RemoveStudy(string studyUid)
+			public void RemoveStudy(string studyInstanceUid)
 			{
-				RemoveStudies(new string[] { studyUid });
+				RemoveStudies(new string[] { studyInstanceUid });
 			}
 
-			public void RemoveStudies(IEnumerable<string> studyUids)
+			public void RemoveStudies(IEnumerable<string> studyInstanceUids)
 			{
 				try
 				{
-					base.SessionManager.BeginWriteTransaction();
-					foreach (string uid in studyUids)
-						Session.Delete("from Study where StudyInstanceUid_ = ?", uid.ToString(), NHibernateUtil.String);
+					using (IDataStoreReader reader = GetIDataStoreReader())
+					{
+						foreach (string studyUid in studyInstanceUids)
+						{
+							Study study = (Study)reader.GetStudy(studyUid);
+							File.Delete(study.StudyXmlUri.LocalDiskPath);
+						}
+					}
 
-					base.SessionManager.Commit();
+					SessionManager.BeginWriteTransaction();
+					foreach (string uid in studyInstanceUids)
+					{
+						Session.Delete("from Study where StudyInstanceUid_ = ?", uid, NHibernateUtil.String);
+					}
+
+					SessionManager.Commit();
 				}
 				catch (Exception e)
 				{
-					base.SessionManager.Rollback();
-					throw new DataStoreException(SR.ExceptionFailedToClearStudies, e);
+					SessionManager.Rollback();
+					throw new DataStoreException("Failed to clear specified studies from the data store.", e);
 				}
 			}
 
@@ -136,7 +129,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			protected override void Dispose(bool disposing)
 			{
-				base.SessionManager.Commit();
+				SessionManager.Commit();
 				base.Dispose(disposing);
 			}
 		}

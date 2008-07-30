@@ -110,7 +110,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			public static ISessionManager Get()
 			{
-				SessionManager manager = null;
+				SessionManager manager;
 				lock (_syncLock)
 				{
 					manager = _sessionManagers.Find(
@@ -134,7 +134,7 @@ namespace ClearCanvas.Dicom.DataStore
 				get
 				{
 					if (!Thread.Equals(Thread.CurrentThread))
-						throw new DataStoreException(SR.ExceptionSessionsCanOnlyBeUsedOnOneThread);
+						throw new DataStoreException("Sessions can only be used from a single thread.");
 
 					if (_session == null)
 					{
@@ -150,7 +150,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				if (_writeTransaction)
 				{
-					throw new DataStoreException(SR.ExceptionAllWriteTransactionsMustBeCommittedBeforeReading);
+					throw new DataStoreException("All write transactions must be committed before reading.");
 				}
 				
 				if (_transaction == null)
@@ -205,7 +205,7 @@ namespace ClearCanvas.Dicom.DataStore
 				try
 				{
 					DecrementReferenceCount();
-					if (this.ReferenceCount <= 0)
+					if (ReferenceCount <= 0)
 					{
 						lock (_syncLock)
 						{

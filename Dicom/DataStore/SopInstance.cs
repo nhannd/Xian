@@ -30,173 +30,101 @@
 #endregion
 
 using System;
-using ClearCanvas.Common;
+using ClearCanvas.DicomServices.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public abstract class SopInstance : PersistentDicomObject, ISopInstance, IEquatable<SopInstance>
+    internal class SopInstance : ISopInstance
     {
-    	private Guid _oid;
-		private string _sopInstanceUid;
-		private string _sopClassUid;
-    	private string _transferSyntaxUid;
-    	private int _instanceNumber;
-    	private string _specificCharacterSet;
-    	private DicomUri _locationUri;
-    	private Series _parentSeries;
+		private readonly Series _parentSeries;
+		private readonly InstanceXml _xml;
 
-		protected SopInstance()
+		internal SopInstance(Series parentSeries, InstanceXml instanceXml)
 		{
+			_parentSeries = parentSeries;
+			_xml = instanceXml;
 		}
 
-		#region NHibernate Persistent Properties
+		#region ISopInstance Members
 
-		protected virtual Guid Oid
-        {
-            get { return _oid; }
-			set { _oid = value; }
-        }
-
-        public virtual string SopInstanceUid
-        {
-            get { return _sopInstanceUid; }
-			set { SetClassMember(ref _sopInstanceUid, value); }
-        }
-
-        public virtual string SopClassUid
-        {
-            get { return _sopClassUid; }
-			set { SetClassMember(ref _sopClassUid, value); }
-        }
-
-    	public virtual string TransferSyntaxUid
-    	{
-    		get { return _transferSyntaxUid; }
-			set { SetClassMember(ref _transferSyntaxUid, value); }
-    	}
-
-    	public virtual int InstanceNumber
-        {
-            get { return _instanceNumber; }
-			set { SetValueTypeMember(ref _instanceNumber, value); }
-        }
-
-        public virtual string SpecificCharacterSet
-        {
-            get { return _specificCharacterSet; }
-			set { SetClassMember(ref _specificCharacterSet, value); }
-        }
-
-    	public virtual DicomUri LocationUri
-    	{
-    		get { return _locationUri; }
-			set { SetClassMember(ref _locationUri, value); }
-    	}
-
-    	public virtual Series Series
+		public ISeries GetParentSeries()
 		{
-			get { return _parentSeries; }
-			set { SetClassMember(ref _parentSeries, value); }
+			return _parentSeries;
+		}
+
+		[QueryableProperty(DicomTags.StudyInstanceUid, IsComputed = true, ReturnAlways = true, ReturnOnly = true)]
+		public string StudyInstanceUid
+		{
+			get { return _parentSeries.GetParentStudy().StudyInstanceUid; }
+		}
+
+		[QueryableProperty(DicomTags.SeriesInstanceUid, IsComputed = true, ReturnAlways = true, ReturnOnly = true)]
+		public string SeriesInstanceUid
+		{
+			get { return _parentSeries.SeriesInstanceUid; }
+		}
+
+		[QueryableProperty(DicomTags.SopInstanceUid, IsComputed = true, ReturnAlways = true)]
+		public string SopInstanceUid
+		{
+			get { return _xml.SopInstanceUid; }
+		}
+
+		[QueryableProperty(DicomTags.InstanceNumber, IsComputed = true, ReturnOnly = true)]
+		public int InstanceNumber
+		{
+			get { return _xml[DicomTags.InstanceNumber].GetInt32(0, 0); }
+		}
+
+		[QueryableProperty(DicomTags.SopClassUid, IsComputed = true)]
+		public string SopClassUid
+		{
+			get
+			{
+				if (_xml.SopClass == null)
+					return ""; //shouldn't happen.
+
+				return _xml.SopClass.Uid;
+			}
+		}
+
+		public string TransferSyntaxUid
+		{
+			get { return _xml.TransferSyntax.UidString; }
+		}
+
+		public DicomUri GetLocationUri()
+		{
+			UriBuilder uriBuilder = new UriBuilder();
+			uriBuilder.Scheme = "file";
+			uriBuilder.Path = _xml.SourceFileName;
+			return new DicomUri(uriBuilder.Uri);
+		}
+
+    	public DicomAttribute this[DicomTag tag]
+    	{
+			get
+			{
+				if (tag == null)
+					return null;
+
+				bool isBinary = tag.VR == DicomVr.OBvr || tag.VR == DicomVr.OWvr || tag.VR == DicomVr.OFvr;
+				//we don't store these in the xml.
+				if (isBinary || tag.IsPrivate || tag.VR == DicomVr.UNvr)
+					return null;
+
+				return _xml[tag];
+			}
+    	}
+
+		public DicomAttribute this[uint tag]
+		{
+			get
+			{
+				return this[DicomTagDictionary.GetDicomTag(tag)];
+			}
 		}
 
 		#endregion
-
-		#region IEquatable<SopInstance> Members
-
-		public bool Equals(SopInstance other)
-		{
-			if (other == null)
-				return false;
-
-			return (this.SopInstanceUid == other.SopInstanceUid);
-		}
-
-		#endregion
-
-		public override bool Equals(object obj)
-		{
-			if (this == obj)
-				return true;
-
-			if (obj is SopInstance)
-				return this.Equals((SopInstance) obj);
-
-			return false; // null or not a sop
-		}
-
-		public override int GetHashCode()
-		{
-			int accumulator = 0;
-			foreach (char character in this.SopInstanceUid)
-			{
-				if ('.' != character)
-					accumulator += Convert.ToInt32(character);
-				else
-					accumulator -= 19;
-			}
-			return accumulator;
-		}
-		
-        #region ISopInstance Members
-
-		public string GetSopInstanceUid()
-    	{
-    		return this.SopInstanceUid;
-    	}
-
-		public string GetSopClassUid()
-    	{
-    		return this.SopClassUid;
-    	}
-
-		public string GetTransferSyntaxUid()
-        {
-			return this.TransferSyntaxUid;
-        }
-
-    	public ISeries GetParentSeries()
-    	{
-    		return this.Series;
-    	}
-
-    	public DicomUri GetLocationUri()
-        {
-            return this.LocationUri;
-        }
-
-		#endregion
-
-		#region Helper Methods
-
-		protected internal virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
-		{
-			DicomAttribute attribute = sopInstanceDataset[DicomTags.SopInstanceUid];
-			if (!String.IsNullOrEmpty(SopInstanceUid) && SopInstanceUid != attribute.ToString())
-			{
-				throw new InvalidOperationException(SR.ExceptionCanOnlyUpdateExistingSopWithSameSopInstanceUid);
-			}
-			else
-			{
-				this.SopInstanceUid = attribute.ToString();
-			}
-
-			Platform.CheckForEmptyString(SopInstanceUid, "SopInstanceUid");
-
-			attribute = sopInstanceDataset[DicomTags.SopClassUid];
-			SopClassUid = attribute.ToString();
-
-			attribute = metaInfo[DicomTags.TransferSyntaxUid];
-			TransferSyntaxUid = attribute.ToString();
-
-			int intValue;
-			attribute = sopInstanceDataset[DicomTags.InstanceNumber];
-			attribute.TryGetInt32(0, out intValue);
-			InstanceNumber = intValue;
-			
-			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
-			SpecificCharacterSet = attribute.ToString();
-		}
-
-    	#endregion
 	}
 }

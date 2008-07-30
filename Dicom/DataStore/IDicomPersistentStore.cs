@@ -51,9 +51,9 @@ namespace ClearCanvas.Dicom.DataStore
 	public interface IDicomPersistentStore : IDisposable
     {
 		/// <summary>
-		/// Adds/Updates a Sop Instance to be committed.
+		/// Adds/Updates a Sop Instance in the data store.
 		/// </summary>
-    	void UpdateSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName);
+    	void UpdateSopInstance(DicomFile dicomFile);
     	
 		/// <summary>
 		/// Commits a batch set of updates, from previous calls to <see cref="UpdateSopInstance"/>.

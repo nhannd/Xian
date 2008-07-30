@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -305,7 +306,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					lock (_syncLock)
 					{
-						((ReindexProcessor)reindexProcessor).Import(_activeJobInformation, filePaths, new List<string>(), true);
+						// there are now xml files in the datastore, and everything in there should have a dcm extension, 
+						// so just look for that.  Otherwise, the study xml files would be treated as 'bad' files.
+						List<string> extensions = new List<string>();
+						extensions.Add(".dcm");
+						((ReindexProcessor)reindexProcessor).Import(_activeJobInformation, filePaths, extensions, true);
 					}
 				};
 

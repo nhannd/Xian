@@ -34,10 +34,12 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal sealed partial class LocalDataStoreService : ILocalDataStoreService
+	internal sealed partial class LocalDataStoreService : ILocalDataStoreService, IStudyStorageLocator
 	{
 		public enum ServiceState
 		{ 
@@ -84,6 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private LocalDataStoreService()
 		{
 			_disabled = false;
+			DataAccessLayer.SetStudyStorageLocator(this);
 		}
 
 		public static LocalDataStoreService Instance
@@ -477,6 +480,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			CheckDisabled();
 			_reindexProcessor.Reindex();
+		}
+
+		#endregion
+
+		#region IStudyStorageLocator Members
+
+		public string GetStudyStoragePath(string studyInstanceUid)
+		{
+			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
+			return String.Format("{0}\\{1}", StorageDirectory, studyInstanceUid);
 		}
 
 		#endregion

@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 								using (IDataStoreStudyRemover studyRemover = DataAccessLayer.GetIDataStoreStudyRemover())
 								{
-									studyRemover.RemoveStudy(study.GetStudyInstanceUid());
+									studyRemover.RemoveStudy(study.StudyInstanceUid);
 								}
 							}
 							catch (Exception e)
