@@ -78,7 +78,7 @@ namespace ClearCanvas.Dicom
         private readonly SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
         private String _specificCharacterSet = String.Empty;
         private readonly uint _startTag = 0x00000000;
-        private readonly uint _endTag = 0xFFFFFFFF;       
+        private readonly uint _endTag = 0xFFFFFFFF;
         #endregion
 
         #region Constructors
@@ -128,7 +128,7 @@ namespace ClearCanvas.Dicom
                     && !(attrib is DicomFragmentSequence)
                     && !(attrib is DicomAttributeUN)))
                 {
-                    this[attrib.Tag] = attrib.Copy();
+                    this[attrib.Tag] = attrib.Copy(copyBinary);
                 }
             }
         }

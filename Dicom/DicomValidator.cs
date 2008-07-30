@@ -43,6 +43,20 @@ namespace ClearCanvas.Dicom
 	/// </summary>
 	public static class DicomValidator
 	{
+		//Regex construction is expensive.
+		[ThreadStatic] private static Regex _uidValidationRegex;
+
+		private static Regex UidValidationRegex
+		{
+			get
+			{
+				if (_uidValidationRegex == null)
+					_uidValidationRegex = new Regex("^[0-9]+([\\.][0-9]+)*$");
+
+				return _uidValidationRegex;
+			}	
+		}
+
 		#region Image Validation
 
 		/// <summary>
@@ -213,7 +227,23 @@ namespace ClearCanvas.Dicom
 
 		}
 
-        /// <summary>
+		public static void ValidateSopClassUid(string uid)
+		{
+
+			try
+			{
+				ValidateUid(uid);
+			}
+			catch (DicomValidationException e)
+			{
+				throw new DicomValidationException(String.Format("Invalid sop class: {0} ", e.Message));
+			}
+
+			if (String.IsNullOrEmpty(uid) || uid.TrimEnd(' ').Length == 0)
+				throw new DicomValidationException("The sop class uid cannot be empty.");
+		}
+		
+		/// <summary>
         /// Validate the specified uid conforms to Dicom standard.
         /// </summary>
         public static void ValidateUid(string uid)
@@ -224,8 +254,7 @@ namespace ClearCanvas.Dicom
             if (uid.Length > 64)
                 throw new DicomValidationException(String.Format(SR.ExceptionGeneralUIDLength, uid));
 
-            Regex regex = new Regex("^[0-9]+([\\.][0-9]+)*$");
-            if (!regex.IsMatch(uid))
+			if (!UidValidationRegex.IsMatch(uid))
             {
                 throw new DicomValidationException(String.Format(SR.ExceptionGeneralUIDFormat, uid));
             }
