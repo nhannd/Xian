@@ -11,6 +11,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[MenuAction("launch", "global-menus/MenuTools/Print Downtime Forms", "Launch")]
+	[IconSet("launch", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.PrintForms)]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class DowntimePrintFormsTool : Tool<IDesktopToolContext>
@@ -174,15 +175,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void CancelPrinting()
 		{
-			if (_isPrinting)
-			{
-				_printCancelRequested = true;
-			}
-			else
-			{
-				this.ExitCode = ApplicationComponentExitCode.None;
-				this.Host.Exit();
-			}
+			_printCancelRequested = true;
 		}
 
 		#endregion

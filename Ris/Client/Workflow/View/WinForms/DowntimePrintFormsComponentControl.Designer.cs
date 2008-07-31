@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._printButton = new System.Windows.Forms.Button();
 			this._numberOfForms = new System.Windows.Forms.NumericUpDown();
 			this._formPreviewPanel = new System.Windows.Forms.Panel();
-			this._cancelButton = new System.Windows.Forms.Button();
+			this._cancelPrintingButton = new System.Windows.Forms.Button();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this._statusStrip = new System.Windows.Forms.StatusStrip();
@@ -80,15 +80,15 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._formPreviewPanel.Size = new System.Drawing.Size(774, 663);
 			this._formPreviewPanel.TabIndex = 7;
 			// 
-			// _cancelButton
+			// _cancelPrintingButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(264, 20);
-			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 4;
-			this._cancelButton.Text = "Cancel";
-			this._cancelButton.UseVisualStyleBackColor = true;
-			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
+			this._cancelPrintingButton.Location = new System.Drawing.Point(264, 20);
+			this._cancelPrintingButton.Name = "_cancelPrintingButton";
+			this._cancelPrintingButton.Size = new System.Drawing.Size(97, 23);
+			this._cancelPrintingButton.TabIndex = 4;
+			this._cancelPrintingButton.Text = "Cancel Printing";
+			this._cancelPrintingButton.UseVisualStyleBackColor = true;
+			this._cancelPrintingButton.Click += new System.EventHandler(this._cancelPrintingButton_Click);
 			// 
 			// groupBox1
 			// 
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.groupBox1.Controls.Add(this.label1);
 			this.groupBox1.Controls.Add(this._numberOfForms);
-			this.groupBox1.Controls.Add(this._cancelButton);
+			this.groupBox1.Controls.Add(this._cancelPrintingButton);
 			this.groupBox1.Controls.Add(this._printButton);
 			this.groupBox1.Location = new System.Drawing.Point(0, 4);
 			this.groupBox1.Name = "groupBox1";
@@ -128,9 +128,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _statusText
 			// 
 			this._statusText.Name = "_statusText";
-			this._statusText.Size = new System.Drawing.Size(444, 17);
+			this._statusText.Size = new System.Drawing.Size(482, 17);
 			this._statusText.Spring = true;
-			this._statusText.Text = "Printing Status";
+			this._statusText.Text = "Select number of forms to print";
 			this._statusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// _progressBar
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.AcceptButton = this._printButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.CancelButton = this._cancelButton;
+			this.CancelButton = this._cancelPrintingButton;
 			this.Controls.Add(this._statusStrip);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this._formPreviewPanel);
@@ -164,7 +164,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _printButton;
 		private System.Windows.Forms.NumericUpDown _numberOfForms;
 		private System.Windows.Forms.Panel _formPreviewPanel;
-		private System.Windows.Forms.Button _cancelButton;
+		private System.Windows.Forms.Button _cancelPrintingButton;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.StatusStrip _statusStrip;

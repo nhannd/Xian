@@ -27,14 +27,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			formPreview.Dock = DockStyle.Fill;
 			this._formPreviewPanel.Controls.Add(formPreview);
 
-			_component.AllPropertiesChanged += delegate
-				{
-					_statusText.Text = _component.StatusText;
-					_progressBar.Maximum = _component.NumberOfFormsToPrint;
-					_progressBar.Value = _component.NumberOfFormsPrinted;
-					_numberOfForms.Enabled = !_component.IsPrinting;
-					_printButton.Enabled = !_component.IsPrinting;
-				};
+			UpdateStatus();
+			_component.AllPropertiesChanged += delegate { UpdateStatus(); };
 		}
 
 		private void _printButton_Click(object sender, EventArgs e)
@@ -42,9 +36,20 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_component.StartPrinting();
 		}
 
-		private void _cancelButton_Click(object sender, EventArgs e)
+		private void _cancelPrintingButton_Click(object sender, EventArgs e)
 		{
 			_component.CancelPrinting();
+		}
+
+		private void UpdateStatus()
+		{
+			_statusText.Text = _component.StatusText;
+			_progressBar.Maximum = _component.NumberOfFormsToPrint;
+			_progressBar.Value = _component.NumberOfFormsPrinted;
+			_numberOfForms.Enabled = !_component.IsPrinting;
+			_progressBar.Visible = _component.IsPrinting;
+			_printButton.Enabled = !_component.IsPrinting;
+			_cancelPrintingButton.Enabled = _component.IsPrinting;
 		}
     }
 }
