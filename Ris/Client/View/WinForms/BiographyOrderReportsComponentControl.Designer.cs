@@ -69,9 +69,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._reportPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._reportPreviewPanel.Location = new System.Drawing.Point(3, 77);
+			this._reportPreviewPanel.Location = new System.Drawing.Point(3, 84);
 			this._reportPreviewPanel.Name = "_reportPreviewPanel";
-			this._reportPreviewPanel.Size = new System.Drawing.Size(337, 354);
+			this._reportPreviewPanel.Size = new System.Drawing.Size(337, 347);
 			this._reportPreviewPanel.TabIndex = 1;
 			// 
 			// _reports
@@ -91,14 +91,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _toolstrip
 			// 
+			this._toolstrip.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
 			this._toolstrip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._toolstrip.AutoSize = false;
 			this._toolstrip.Dock = System.Windows.Forms.DockStyle.None;
+			this._toolstrip.GripMargin = new System.Windows.Forms.Padding(0);
 			this._toolstrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+			this._toolstrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._toolstrip.Location = new System.Drawing.Point(3, 49);
 			this._toolstrip.Name = "_toolstrip";
-			this._toolstrip.Size = new System.Drawing.Size(337, 25);
+			this._toolstrip.Size = new System.Drawing.Size(337, 32);
 			this._toolstrip.TabIndex = 3;
 			this._toolstrip.Text = "toolStrip1";
 			// 
@@ -111,7 +114,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._reports);
 			this.Controls.Add(this._reportPreviewPanel);
 			this.Name = "BiographyOrderReportsComponentControl";
-			this.Size = new System.Drawing.Size(343, 434);
+			this.Size = new System.Drawing.Size(343, 498);
 			this.ResumeLayout(false);
 
         }

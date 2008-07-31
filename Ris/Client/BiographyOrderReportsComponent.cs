@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client
 
 		public CommonReportListItem SelectedReport
 		{
-			get { return null; }
+			get { return _selectedReport; }
 			set
 			{
 				if(!Equals(_selectedReport, value))
