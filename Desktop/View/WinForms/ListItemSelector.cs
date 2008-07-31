@@ -220,6 +220,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void AddSelection(object sender, EventArgs e)
         {
+			int oldFirstSelectedIndex = 0;
+			if (_availableItems.Table.Items.Count != 0)
+				oldFirstSelectedIndex = _availableItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex;
+
             ISelection selection = _availableItems.Selection;
             ISelection originalSelectedSelection = _selectedItems.Selection;
             ISelection availableSelectionAfterRemove = GetSelectionAfterRemove(_availableItemsTable, selection);
@@ -238,11 +242,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             _selectedItems.Selection = originalSelectedSelection;
             _availableItems.Selection = availableSelectionAfterRemove;
 
+			if (oldFirstSelectedIndex != 0)
+				_availableItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex = oldFirstSelectedIndex;
+
             EventsHelper.Fire(_itemAdded, this, EventArgs.Empty);
         }
 
         private void RemoveSelection(object sender, EventArgs e)
         {
+			int oldFirstSelectedIndex = 0;
+			if(_selectedItems.Table.Items.Count != 0)
+				oldFirstSelectedIndex = _selectedItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex;
+
             ISelection selection = _selectedItems.Selection;
             ISelection originalAvailableSelection = _availableItems.Selection;
             ISelection selectedSelectionAfterRemove = GetSelectionAfterRemove(_selectedItemsTable, selection);
@@ -260,6 +271,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _availableItems.Selection = originalAvailableSelection;
             _selectedItems.Selection = selectedSelectionAfterRemove;
+
+			if (oldFirstSelectedIndex != 0)
+				_selectedItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex = oldFirstSelectedIndex;
 
             EventsHelper.Fire(_itemRemoved, this, EventArgs.Empty);
         }

@@ -153,6 +153,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { }
 		}
 
+		public int FirstSelectedIndex
+		{
+			get { return _firstDisplayedIndex; }
+			set { _firstDisplayedIndex = value; }
+		}
+
         [DefaultValue(true)]
         public bool ShowToolbar
         {
