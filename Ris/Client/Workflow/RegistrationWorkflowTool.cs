@@ -36,6 +36,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -73,6 +74,24 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 
 			this.Context.RegisterDropHandler(typeof(Folders.Registration.CheckedInFolder), this);
+		}
+
+		public event EventHandler EnabledChanged
+		{
+			add { this.Context.SelectionChanged += value; }
+			remove { this.Context.SelectionChanged -= value; }
+		}
+
+		public bool Enabled
+		{
+			get
+			{
+				if (this.Context.Selection.Items.Length != 1)
+					return false;
+				RegistrationWorklistItem item =
+					(RegistrationWorklistItem)CollectionUtils.FirstElement(this.Context.Selection.Items);
+				return item.OrderRef != null;
+			}
 		}
 
 		protected override bool Execute(RegistrationWorklistItem item)
