@@ -33,6 +33,7 @@ namespace ClearCanvas.Ris.Client
 				PrintReportComponent component = new PrintReportComponent(
 					this.Context.PatientProfileRef,
 					this.Context.OrderRef,
+					null,
 					this.Context.ReportRef);
 
 				ApplicationComponent.LaunchAsDialog(

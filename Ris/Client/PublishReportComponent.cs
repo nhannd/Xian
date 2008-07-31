@@ -68,11 +68,13 @@ namespace ClearCanvas.Ris.Client
 				public PublishReportPreviewContext(
 					EntityRef patientProfileRef,
 					EntityRef orderRef,
+					EntityRef procedureRef,
 					EntityRef reportRef,
 					ResultRecipientDetail selectedResultRecipient)
 				{
 					this.PatientProfileRef = patientProfileRef;
 					this.OrderRef = orderRef;
+					this.ProcedureRef = procedureRef;
 					this.ReportRef = reportRef;
 					this.SelectedResultRecipient = selectedResultRecipient;
 				}
@@ -84,6 +86,9 @@ namespace ClearCanvas.Ris.Client
 				public EntityRef OrderRef;
 
 				[DataMember]
+				public EntityRef ProcedureRef;
+
+				[DataMember]
 				public EntityRef ReportRef;
 
 				[DataMember]
@@ -92,13 +97,12 @@ namespace ClearCanvas.Ris.Client
 
 			private PublishReportPreviewContext _context;
 
-			public PublishReportPreviewComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
+			public PublishReportPreviewComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
 			{
 				Platform.CheckForNullReference(patientProfileRef, "patientProfileRef");
 				Platform.CheckForNullReference(orderRef, "orderRef");
-				Platform.CheckForNullReference(reportRef, "reportRef");
 
-				_context = new PublishReportPreviewContext(patientProfileRef, orderRef, reportRef, null);
+				_context = new PublishReportPreviewContext(patientProfileRef, orderRef, procedureRef, reportRef, null);
 			}
 
 			public override void Start()
@@ -135,6 +139,7 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly EntityRef _patientProfileRef;
 		private readonly EntityRef _orderRef;
+		private readonly EntityRef _procedureRef;
 		private readonly EntityRef _reportRef;
 
 		private readonly Table<Checkable<ResultRecipientDetail>> _recipientsTable;
@@ -153,14 +158,15 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PublishReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
+		public PublishReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
 		{
 			Platform.CheckForNullReference(patientProfileRef, "patientProfileRef");
 			Platform.CheckForNullReference(orderRef, "orderRef");
-			Platform.CheckForNullReference(reportRef, "reportRef");
+
 
 			_patientProfileRef = patientProfileRef;
 			_orderRef = orderRef;
+			_procedureRef = procedureRef;
 			_reportRef = reportRef;
 
 			_recipientsTable = new Table<Checkable<ResultRecipientDetail>>();
@@ -190,7 +196,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public override void Start()
 		{
-			_publishReportPreviewComponent = new PublishReportPreviewComponent(_patientProfileRef, _orderRef, _reportRef);
+			_publishReportPreviewComponent = new PublishReportPreviewComponent(_patientProfileRef, _orderRef, _procedureRef, _reportRef);
 			_publishReportPreviewComponentHost = new ChildComponentHost(this.Host, _publishReportPreviewComponent);
 			_publishReportPreviewComponentHost.StartComponent();
 
@@ -237,6 +243,11 @@ namespace ClearCanvas.Ris.Client
 		protected EntityRef OrderRef
 		{
 			get { return _orderRef; }
+		}
+
+		protected EntityRef ProcedureRef
+		{
+			get { return _procedureRef; }
 		}
 
 		protected EntityRef PatientProfileRef
@@ -374,6 +385,7 @@ namespace ClearCanvas.Ris.Client
 			_publishReportPreviewComponent.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
 				_patientProfileRef,
 				_orderRef,
+				_procedureRef,
 				_reportRef,
 				_selectedRecipient != null ? _selectedRecipient.Item : null);
 		}
@@ -404,8 +416,8 @@ namespace ClearCanvas.Ris.Client
 
 	public class PrintReportComponent : PublishReportComponent
 	{
-		public PrintReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
-			: base(patientProfileRef, orderRef, reportRef)
+		public PrintReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
+			: base(patientProfileRef, orderRef, procedureRef, reportRef)
 		{
 		}
 
@@ -419,7 +431,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						ResultRecipientDetail detail = checkable.Item;
 
-						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ReportRef);
+						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
 						ChildComponentHost host = new ChildComponentHost(this.Host, component);
 						host.StartComponent();
 						object view = host.ComponentView.GuiElement;
@@ -427,6 +439,7 @@ namespace ClearCanvas.Ris.Client
 						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
 							this.PatientProfileRef,
 							this.OrderRef,
+							this.ProcedureRef,
 							this.ReportRef,
 							detail);
 
@@ -447,8 +460,8 @@ namespace ClearCanvas.Ris.Client
 
 	public class FaxReportComponent : PublishReportComponent
 	{
-		public FaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef reportRef)
-			: base(patientProfileRef, orderRef, reportRef)
+		public FaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
+			: base(patientProfileRef, orderRef, procedureRef, reportRef)
 		{
 		}
 

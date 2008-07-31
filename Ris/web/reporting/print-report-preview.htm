@@ -47,7 +47,10 @@
 							IncludeVisit: true
 						},
 					// only request the report detail if there is a report     
-					GetReportDetailRequest: worklistItem.ReportRef == null ? null : { ReportRef: worklistItem.ReportRef }
+					GetReportDetailRequest: 
+						worklistItem.ReportRef == null 
+							? { ProcedureRef: worklistItem.ProcedureRef }
+							: { ReportRef: worklistItem.ReportRef }
 				};
 
 				var service = Ris.getPatientDataService();

@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				PrintReportComponent component = new PrintReportComponent(
 					item.PatientProfileRef,
 					item.OrderRef,
+					item.ProcedureRef,
 					item.ReportRef);
 
 				ApplicationComponent.LaunchAsDialog(
@@ -61,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 
 				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-				if (item.ReportRef == null)
+				if (item.ReportRef == null && item.ProcedureRef == null)
 				{
 					return false;
 				}
