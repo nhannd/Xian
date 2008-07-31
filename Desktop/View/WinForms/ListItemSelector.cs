@@ -220,9 +220,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void AddSelection(object sender, EventArgs e)
         {
-			int oldFirstSelectedIndex = 0;
+			int oldFirstDisplayedScrollingRowIndex = 0;
 			if (_availableItems.Table.Items.Count != 0)
-				oldFirstSelectedIndex = _availableItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex;
+				oldFirstDisplayedScrollingRowIndex = _availableItems.FirstDisplayedScrollingRowIndex;
 
             ISelection selection = _availableItems.Selection;
             ISelection originalSelectedSelection = _selectedItems.Selection;
@@ -242,17 +242,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             _selectedItems.Selection = originalSelectedSelection;
             _availableItems.Selection = availableSelectionAfterRemove;
 
-			if (oldFirstSelectedIndex != 0)
-				_availableItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex = oldFirstSelectedIndex;
+			if (oldFirstDisplayedScrollingRowIndex != 0 && _availableItems.Table.Items.Count != 0)
+				_availableItems.FirstDisplayedScrollingRowIndex = oldFirstDisplayedScrollingRowIndex;
 
             EventsHelper.Fire(_itemAdded, this, EventArgs.Empty);
         }
 
         private void RemoveSelection(object sender, EventArgs e)
         {
-			int oldFirstSelectedIndex = 0;
+			int oldFirstDisplayedScrollingRowIndex = 0;
 			if(_selectedItems.Table.Items.Count != 0)
-				oldFirstSelectedIndex = _selectedItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex;
+				oldFirstDisplayedScrollingRowIndex = _selectedItems.FirstDisplayedScrollingRowIndex;
 
             ISelection selection = _selectedItems.Selection;
             ISelection originalAvailableSelection = _availableItems.Selection;
@@ -272,8 +272,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             _availableItems.Selection = originalAvailableSelection;
             _selectedItems.Selection = selectedSelectionAfterRemove;
 
-			if (oldFirstSelectedIndex != 0)
-				_selectedItems.DataGridViewWDS.FirstDisplayedScrollingRowIndex = oldFirstSelectedIndex;
+			if (oldFirstDisplayedScrollingRowIndex != 0 && _selectedItems.Table.Items.Count != 0)
+				_selectedItems.FirstDisplayedScrollingRowIndex = oldFirstDisplayedScrollingRowIndex;
 
             EventsHelper.Fire(_itemRemoved, this, EventArgs.Empty);
         }

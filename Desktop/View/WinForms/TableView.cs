@@ -61,8 +61,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private const int CELL_SUBROW_HEIGHT = 18;
         private readonly int _rowHeight = 0;
 
-		private int _firstDisplayedIndex = 0;
-
         public TableView()
 		{
 			InitializeComponent();
@@ -78,12 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += OutlineCell;
         }
 
-        #region Design Time properties and Events                                                                 
-
-		public ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport DataGridViewWDS
-		{
-			get { return _dataGridView; }
-		}
+        #region Design Time properties and Events
 
 	    [DefaultValue(false)]
 	    public bool SortButtonVisible
@@ -153,10 +146,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { }
 		}
 
-		public int FirstSelectedIndex
+		public int FirstDisplayedScrollingRowIndex
 		{
-			get { return _firstDisplayedIndex; }
-			set { _firstDisplayedIndex = value; }
+			get { return _dataGridView.FirstDisplayedScrollingRowIndex; }
+			set { _dataGridView.FirstDisplayedScrollingRowIndex = value; }
 		}
 
         [DefaultValue(true)]
@@ -258,7 +251,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get
 			{
-				_firstDisplayedIndex = _dataGridView.FirstDisplayedScrollingRowIndex;
 				return _table;
 			}
             set
@@ -335,7 +327,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                             row.Selected = true;
                     }
 
-					ForceSelectionDisplay(_firstDisplayedIndex);
+					ForceSelectionDisplay();
 
                     NotifySelectionChanged();
                 }
@@ -348,7 +340,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// be visible on the control.
 		/// </summary>
 		/// <param name="oldSelectedIndex"></param>
-		private void ForceSelectionDisplay(int oldFirstDisplayedIndex)
+		private void ForceSelectionDisplay()
 		{
 			// check if ALL the selected entries are not visible to the user
 			if (CollectionUtils.TrueForAll<DataGridViewRow>(_dataGridView.SelectedRows,
@@ -395,8 +387,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// intended to preserve the current index if there are displayable items already on screen
 			else
 			{
-				if (oldFirstDisplayedIndex != 0)
-					_dataGridView.FirstDisplayedScrollingRowIndex = oldFirstDisplayedIndex;
+				if (FirstDisplayedScrollingRowIndex != 0)
+					_dataGridView.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
 			}
 		}
 
