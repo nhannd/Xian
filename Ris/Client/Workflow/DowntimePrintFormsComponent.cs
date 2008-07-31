@@ -15,27 +15,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class DowntimePrintFormsTool : Tool<IDesktopToolContext>
 	{
-		private IWorkspace _workspace;
-
 		public void Launch()
 		{
 			try
 			{
-				if (_workspace == null)
-				{
-					DowntimePrintFormsComponent component = new DowntimePrintFormsComponent();
+				DowntimePrintFormsComponent component = new DowntimePrintFormsComponent();
 
-					_workspace = ApplicationComponent.LaunchAsWorkspace(
-						this.Context.DesktopWindow,
-						component,
-						SR.TitlePrintDowntimeForms);
-
-					_workspace.Closed += delegate { _workspace = null; };
-				}
-				else
-				{
-					_workspace.Activate();
-				}
+				ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow,
+					component,
+					SR.TitlePrintDowntimeForms);
 			}
 			catch (Exception e)
 			{
@@ -185,7 +174,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void CancelPrinting()
 		{
-			_printCancelRequested = true;
+			if (_isPrinting)
+			{
+				_printCancelRequested = true;
+			}
+			else
+			{
+				this.ExitCode = ApplicationComponentExitCode.None;
+				this.Host.Exit();
+			}
 		}
 
 		#endregion

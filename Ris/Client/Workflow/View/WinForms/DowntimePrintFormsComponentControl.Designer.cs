@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._formPreviewPanel.Location = new System.Drawing.Point(3, 65);
 			this._formPreviewPanel.Name = "_formPreviewPanel";
-			this._formPreviewPanel.Size = new System.Drawing.Size(348, 328);
+			this._formPreviewPanel.Size = new System.Drawing.Size(774, 663);
 			this._formPreviewPanel.TabIndex = 7;
 			// 
 			// _cancelButton
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.groupBox1.Controls.Add(this._printButton);
 			this.groupBox1.Location = new System.Drawing.Point(0, 4);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(351, 55);
+			this.groupBox1.Size = new System.Drawing.Size(777, 55);
 			this.groupBox1.TabIndex = 8;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Print downtime forms";
@@ -119,16 +119,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this._statusText,
             this._progressBar});
-			this._statusStrip.Location = new System.Drawing.Point(0, 396);
+			this._statusStrip.Location = new System.Drawing.Point(0, 731);
 			this._statusStrip.Name = "_statusStrip";
-			this._statusStrip.Size = new System.Drawing.Size(354, 22);
+			this._statusStrip.Size = new System.Drawing.Size(780, 22);
 			this._statusStrip.TabIndex = 9;
 			this._statusStrip.Text = "statusStrip1";
 			// 
 			// _statusText
 			// 
 			this._statusText.Name = "_statusText";
-			this._statusText.Size = new System.Drawing.Size(206, 17);
+			this._statusText.Size = new System.Drawing.Size(444, 17);
 			this._statusText.Spring = true;
 			this._statusText.Text = "Printing Status";
 			this._statusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -136,17 +136,19 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _progressBar
 			// 
 			this._progressBar.Name = "_progressBar";
-			this._progressBar.Size = new System.Drawing.Size(100, 16);
+			this._progressBar.Size = new System.Drawing.Size(250, 16);
 			// 
 			// DowntimePrintFormsComponentControl
 			// 
+			this.AcceptButton = this._printButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.CancelButton = this._cancelButton;
 			this.Controls.Add(this._statusStrip);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this._formPreviewPanel);
 			this.Name = "DowntimePrintFormsComponentControl";
-			this.Size = new System.Drawing.Size(354, 418);
+			this.Size = new System.Drawing.Size(780, 753);
 			((System.ComponentModel.ISupportInitialize)(this._numberOfForms)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
