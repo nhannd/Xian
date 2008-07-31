@@ -135,7 +135,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// The Date VR.
         /// </summary>
-        public static readonly DicomVr DAvr = new DicomVr("DA", true, false, true, 10, true, ' ', 1,
+        public static readonly DicomVr DAvr = new DicomVr("DA", true, false, true, 8, true, ' ', 1,
             delegate(DicomTag tag, ByteBuffer bb)
             {
                 if (bb == null) return new DicomAttributeDA(tag);

@@ -463,6 +463,7 @@ namespace ClearCanvas.Dicom.DataStore
 		internal void Update(DicomFile file)
 		{
 			Initialize(file);
+			StudyXml.AddFile(file);
 
 			//NOTE: important!  These need the study xml to exist first, so they must be set here.
 			//The Initialize method is used by the validator to validate the lengths of all the column values.
@@ -471,8 +472,6 @@ namespace ClearCanvas.Dicom.DataStore
 			ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(ComputeModalitiesInStudy());
 			NumberOfStudyRelatedInstances = ComputeNumberOfSopInstances();
 			NumberOfStudyRelatedSeries = Series.Count;
-
-			StudyXml.AddFile(file);
 		}
 
 		internal void Flush()
