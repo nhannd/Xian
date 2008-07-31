@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Application.Services
             if(request.QueryItems)
             {
                 // get the first page, up to the default max number of items per page
-                results = worklist.GetWorklistItems(new WorklistQueryContext(this, page));
+                results = worklist.GetWorklistItems(new WorklistQueryContext(this, page, request.DowntimeRecoveryMode));
             }
 
             int count = -1;
@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Application.Services
                 if (results != null && results.Count < page.MaxRows)
                     count = results.Count;
                 else
-                    count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null));
+                    count = worklist.GetWorklistItemCount(new WorklistQueryContext(this, null, request.DowntimeRecoveryMode));
             }
 
             return new QueryWorklistResponse<TSummary>(

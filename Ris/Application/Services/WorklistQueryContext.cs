@@ -14,16 +14,19 @@ namespace ClearCanvas.Ris.Application.Services
     {
         private readonly ApplicationServiceBase _applicationService;
         private readonly SearchResultPage _page;
+    	private readonly bool _downtimeRecoveryMode;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="service"></param>
         /// <param name="page"></param>
-        public WorklistQueryContext(ApplicationServiceBase service, SearchResultPage page)
+        /// <param name="downtimeRecoveryMode"></param>
+        public WorklistQueryContext(ApplicationServiceBase service, SearchResultPage page, bool downtimeRecoveryMode)
         {
             _applicationService = service;
             _page = page;
+        	_downtimeRecoveryMode = downtimeRecoveryMode;
         }
 
         #region IWorklistQueryContext Members
@@ -49,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Services
     	/// </summary>
     	public bool DowntimeRecoveryMode
     	{
-    		get { return false; }
+    		get { return _downtimeRecoveryMode; }
     	}
 
     	/// <summary>

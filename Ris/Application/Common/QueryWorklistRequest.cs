@@ -37,19 +37,21 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class QueryWorklistRequest : DataContractBase
     {
-        public QueryWorklistRequest(string worklistType, bool queryItems, bool queryCount)
+        public QueryWorklistRequest(string worklistType, bool queryItems, bool queryCount, bool downtimeRecoveryMode)
         {
             this.WorklistClass = worklistType;
             this.QueryItems = queryItems;
             this.QueryCount = queryCount;
+        	this.DowntimeRecoveryMode = downtimeRecoveryMode;
         }
 
-        public QueryWorklistRequest(EntityRef worklistRef, bool queryItems, bool queryCount)
+		public QueryWorklistRequest(EntityRef worklistRef, bool queryItems, bool queryCount, bool downtimeRecoveryMode)
         {
             this.WorklistRef = worklistRef;
             this.QueryItems = queryItems;
             this.QueryCount = queryCount;
-        }
+			this.DowntimeRecoveryMode = downtimeRecoveryMode;
+		}
 
         /// <summary>
         /// Specifies the worklist instance to query, for instanced worklists.
@@ -74,5 +76,11 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         [DataMember]
         public bool QueryItems;
-    }
+
+		/// <summary>
+		/// Specifies whether to return the list of items in the notebox.
+		/// </summary>
+		[DataMember]
+		public bool DowntimeRecoveryMode;
+	}
 }

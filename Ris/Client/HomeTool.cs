@@ -45,27 +45,46 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (_workspace == null)
 			{
-				try
-				{
-					IApplicationComponent component = CreateComponent();
-
-					if (component != null)
-					{
-						WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, this.Title, null);
-						args.UserClosable = this.IsUserClosableWorkspace;
-						_workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
-						_workspace.Closed += delegate { _workspace = null; };
-					}
-				}
-				catch (Exception e)
-				{
-					// could not launch component
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				}
+				Open();
 			}
 			else
 			{
 				_workspace.Activate();
+			}
+		}
+
+		/// <summary>
+		/// Re-starts the homepage, close any existing open homepage.
+		/// </summary>
+		protected void Restart()
+		{
+			if (_workspace != null)
+			{
+				_workspace.Close();
+				_workspace = null;
+			}
+
+			Open();
+		}
+
+		private void Open()
+		{
+			try
+			{
+				IApplicationComponent component = CreateComponent();
+
+				if (component != null)
+				{
+					WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, this.Title, null);
+					args.UserClosable = this.IsUserClosableWorkspace;
+					_workspace = ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow, args);
+					_workspace.Closed += delegate { _workspace = null; };
+				}
+			}
+			catch (Exception e)
+			{
+				// could not launch component
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 	}

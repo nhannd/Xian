@@ -505,8 +505,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IReportingWorkflowService service)
 					{
 						QueryWorklistRequest request = _worklistRef != null
-							? new QueryWorklistRequest(_worklistRef, true, true)
-							: new QueryWorklistRequest(_worklistClassName, true, true);
+							? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
+							: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
 
 						QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
 

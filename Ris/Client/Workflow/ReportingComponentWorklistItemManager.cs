@@ -231,11 +231,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 					QueryWorklistRequest request;
 					if (_worklistRef != null)
 					{
-						request = new QueryWorklistRequest(_worklistRef, true, true);
+						request = new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
 					}
 					else
 					{
-						request = new QueryWorklistRequest(_worklistClassName, true, true);
+						request = new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
 					}
 
 					QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);

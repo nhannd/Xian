@@ -22,10 +22,12 @@ namespace ClearCanvas.Ris.Application.Common
 		/// <param name="textQuery"></param>
 		/// <param name="specificityThreshold"></param>
 		/// <param name="procedureStepClassName"></param>
-		public WorklistItemTextQueryRequest(string textQuery, int specificityThreshold, string procedureStepClassName)
+		/// <param name="downtimeRecoveryMode"></param>
+		public WorklistItemTextQueryRequest(string textQuery, int specificityThreshold, string procedureStepClassName, bool downtimeRecoveryMode)
 			: base(textQuery, specificityThreshold)
 		{
 			ProcedureStepClassName = procedureStepClassName;
+			DowntimeRecoveryMode = downtimeRecoveryMode;
 		}
 
 		/// <summary>

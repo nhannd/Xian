@@ -208,7 +208,9 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<TWorklistService>(
                 delegate(TWorklistService service)
                 {
-                    response = service.SearchWorklists(new WorklistItemTextQueryRequest(query, specificityThreshold, ProcedureStepClassName));
+                    response = service.SearchWorklists(
+						new WorklistItemTextQueryRequest(
+							query, specificityThreshold, ProcedureStepClassName, DowntimeRecovery.InDowntimeRecoveryMode));
                 });
             return response;
         }

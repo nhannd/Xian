@@ -259,6 +259,9 @@ namespace ClearCanvas.Ris.Application.Common
 			{
 				[AuthorityToken(Description = "Allow printing of downtime forms.")]
 				public const string PrintForms = "Workflow/Downtime/Print Forms";
+
+				[AuthorityToken(Description = "Allow printing of downtime forms.")]
+				public const string RecoveryOperations = "Workflow/Downtime/Recovery Operations";
 			}
 		}
 

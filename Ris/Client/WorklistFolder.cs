@@ -111,8 +111,8 @@ namespace ClearCanvas.Ris.Client
 				delegate(TWorklistService service)
 				{
 					QueryWorklistRequest request = this.WorklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, true, true)
-						: new QueryWorklistRequest(this.WorklistRef, true, true);
+						? new QueryWorklistRequest(this.WorklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
+						: new QueryWorklistRequest(this.WorklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
 
 					QueryWorklistResponse<TItem> response = service.QueryWorklist(request);
 					result = new QueryItemsResult(response.WorklistItems, response.ItemCount);
@@ -134,8 +134,8 @@ namespace ClearCanvas.Ris.Client
 				delegate(TWorklistService service)
 				{
 					QueryWorklistRequest request = this.WorklistRef == null
-						? new QueryWorklistRequest(this.WorklistClassName, false, true)
-						: new QueryWorklistRequest(this.WorklistRef, false, true);
+						? new QueryWorklistRequest(this.WorklistClassName, false, true, DowntimeRecovery.InDowntimeRecoveryMode)
+						: new QueryWorklistRequest(this.WorklistRef, false, true, DowntimeRecovery.InDowntimeRecoveryMode);
 
 					QueryWorklistResponse<TItem> response = service.QueryWorklist(request);
 					count = response.ItemCount;
