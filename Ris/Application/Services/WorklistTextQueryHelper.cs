@@ -44,20 +44,7 @@ namespace ClearCanvas.Ris.Application.Services
         where TSummary : DataContractBase
     {
     	private readonly Type _procedureStepClass;
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="summaryAssembler"></param>
-		/// <param name="specificityCallback"></param>
-		/// <param name="queryCallback"></param>
-        public WorklistTextQueryHelper(
-			Converter<TDomainItem, TSummary> summaryAssembler,
-			TestCriteriaSpecificityDelegate specificityCallback, 
-            DoQueryDelegate queryCallback)
-            : base(null, summaryAssembler, specificityCallback, queryCallback)
-        {
-        }
+    	private readonly bool _downtimeRecoveryMode;
 
 		/// <summary>
 		/// Constructor.
@@ -66,14 +53,17 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <param name="specificityCallback"></param>
 		/// <param name="queryCallback"></param>
 		/// <param name="procedureStepClass"></param>
+		/// <param name="downtimeRecoveryMode"></param>
 		public WorklistTextQueryHelper(
 			Converter<TDomainItem, TSummary> summaryAssembler,
 			TestCriteriaSpecificityDelegate specificityCallback,
 			DoQueryDelegate queryCallback,
-			Type procedureStepClass)
+			Type procedureStepClass,
+			bool downtimeRecoveryMode)
 			: base(null, summaryAssembler, specificityCallback, queryCallback)
 		{
 			_procedureStepClass = procedureStepClass;
+			_downtimeRecoveryMode = downtimeRecoveryMode;
 		}
 
 
@@ -121,6 +111,9 @@ namespace ClearCanvas.Ris.Application.Services
                     c.Order.AccessionNumber.StartsWith(word);
                     return c;
                 }));
+
+			// add constraint for downtime vs live procedures
+			criteria.ForEach(delegate (WorklistItemSearchCriteria c) { c.Procedure.DowntimeRecoveryMode.EqualTo(_downtimeRecoveryMode); });
 
             return criteria.ToArray();
         }

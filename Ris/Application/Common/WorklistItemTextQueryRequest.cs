@@ -33,5 +33,11 @@ namespace ClearCanvas.Ris.Application.Common
 		/// </summary>
 		[DataMember]
 		public string ProcedureStepClassName;
+
+		/// <summary>
+		/// Indicates whether the search is invoked from downtime recovery mode.
+		/// </summary>
+		[DataMember]
+		public bool DowntimeRecoveryMode;
 	}
 }

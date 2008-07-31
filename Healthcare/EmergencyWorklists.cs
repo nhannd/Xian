@@ -11,13 +11,13 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("EmergencyScheduledWorklistDescription")]
 	public class EmergencyScheduledWorklist : RegistrationWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			// this is slightly different than the registration scheduled worklist, because we include
 			// 'checked in' items here, rather than having a separate 'checked in' worklist
 			RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
 			criteria.Order.Status.EqualTo(OrderStatus.SC);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 	}

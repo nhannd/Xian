@@ -22,6 +22,11 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         Facility WorkingFacility { get; }
 
+		/// <summary>
+		/// Gets a value indicating whether the worklist is being invoked in downtime recovery mode.
+		/// </summary>
+		bool DowntimeRecoveryMode { get; }
+
         /// <summary>
         /// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
         /// </summary>

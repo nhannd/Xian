@@ -44,7 +44,15 @@ namespace ClearCanvas.Ris.Application.Services
             get { return _applicationService.WorkingFacility; }
         }
 
-        /// <summary>
+    	/// <summary>
+    	/// Gets a value indicating whether the worklist is being invoked in downtime recovery mode.
+    	/// </summary>
+    	public bool DowntimeRecoveryMode
+    	{
+    		get { return false; }
+    	}
+
+    	/// <summary>
         /// Gets the <see cref="SearchResultPage"/> that specifies which page of the worklist is requested.
         /// </summary>
         public SearchResultPage Page

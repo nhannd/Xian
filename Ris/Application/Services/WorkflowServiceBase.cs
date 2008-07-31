@@ -204,7 +204,8 @@ namespace ClearCanvas.Ris.Application.Services
 					{
 						return broker.GetSearchResults(criteria);
 					},
-					procedureStepClass);
+					procedureStepClass,
+					request.DowntimeRecoveryMode);
 
 			return helper.Query(request);
 		}

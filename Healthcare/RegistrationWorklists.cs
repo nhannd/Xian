@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare
     [WorklistClassDescription("RegistrationToBeScheduledWorklistDescription")]
     public class RegistrationToBeScheduledWorklist : RegistrationWorklist
     {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.In(new OrderStatus[] { OrderStatus.SC });
@@ -69,7 +69,7 @@ namespace ClearCanvas.Healthcare
             // only unscheduled items should appear in this list
             criteria.Procedure.ScheduledStartTime.IsNull();
 
-            ApplyTimeCriteria(criteria, WorklistTimeField.OrderSchedulingRequestTime, null, WorklistOrdering.PrioritizeOldestItems);
+            ApplyTimeCriteria(criteria, WorklistTimeField.OrderSchedulingRequestTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -82,12 +82,12 @@ namespace ClearCanvas.Healthcare
     [WorklistClassDescription("RegistrationScheduledWorklistDescription")]
     public class RegistrationScheduledWorklist : RegistrationWorklist
     {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.EqualTo(OrderStatus.SC);
             criteria.ProcedureCheckIn.CheckInTime.IsNull();     // exclude anything already checked-in
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -100,13 +100,13 @@ namespace ClearCanvas.Healthcare
     [WorklistClassDescription("RegistrationCheckedInWorklistDescription")]
     public class RegistrationCheckedInWorklist : RegistrationWorklist
     {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.EqualTo(OrderStatus.SC);
             criteria.ProcedureCheckIn.CheckInTime.IsNotNull();  // include only items that have been checked-in
             criteria.ProcedureCheckIn.CheckOutTime.IsNull();
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckInTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckInTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -119,12 +119,12 @@ namespace ClearCanvas.Healthcare
     [WorklistClassDescription("RegistrationInProgressWorklistDescription")]
     public class RegistrationInProgressWorklist : RegistrationWorklist
     {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.EqualTo(OrderStatus.IP);
             criteria.ProcedureCheckIn.CheckOutTime.IsNull();    // exclude any item already checked-out
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -137,14 +137,14 @@ namespace ClearCanvas.Healthcare
     [WorklistClassDescription("RegistrationCompletedWorklistDescription")]
     public class RegistrationCompletedWorklist : RegistrationWorklist
     {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {
             // "completed" in this context just means the patient has checked-out
             // the order may still be in progress
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.In(new OrderStatus[] { OrderStatus.IP, OrderStatus.CM });
             criteria.ProcedureCheckIn.CheckOutTime.IsNotNull();
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckOutTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureCheckOutTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
@@ -157,13 +157,13 @@ namespace ClearCanvas.Healthcare
     [WorklistClassDescription("RegistrationCancelledWorklistDescription")]
     public class RegistrationCancelledWorklist : RegistrationWorklist
     {
-        public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {
             RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
             criteria.Order.Status.In(new OrderStatus[] { OrderStatus.DC, OrderStatus.CA, OrderStatus.RP });
 
             // apply filter to the end-time (time procedure was was cancelled)
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }

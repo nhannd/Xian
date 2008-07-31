@@ -372,21 +372,38 @@ namespace ClearCanvas.Healthcare
         /// Gets the criteria that define the invariant aspects of this worklist.
         /// </summary>
         /// <param name="wqc"></param>
-        /// <remarks>
-        /// This method is called by the worklist brokers and is not intended for use by application code.
-        /// </remarks>
         /// <returns></returns>
-        public abstract WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc);
+        protected abstract WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc);
 
         #endregion
 
         #region Helpers
 
-        protected void ApplyTimeCriteria(WorklistItemSearchCriteria criteria, WorklistTimeField timeField, WorklistTimeRange defaultValue, WorklistOrdering ordering)
+		/// <summary>
+		/// Gets the criteria that define the invariant aspects of this worklist.
+		/// </summary>
+		/// <param name="wqc"></param>
+		/// <remarks>
+		/// This method is called by the worklist brokers and is not intended for use by application code.
+		/// </remarks>
+		/// <returns></returns>
+		public WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		{
+			WorklistItemSearchCriteria[] criteria = GetInvariantCriteriaCore(wqc);
+
+			// augment the criteria with the downtime flag
+			foreach (WorklistItemSearchCriteria criterion in criteria)
+			{
+				criterion.Procedure.DowntimeRecoveryMode.EqualTo(wqc.DowntimeRecoveryMode);
+			}
+			return criteria;
+		}
+
+		protected void ApplyTimeCriteria(WorklistItemSearchCriteria criteria, WorklistTimeField timeField, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
         {
             criteria.TimeField = timeField;
             ISearchCondition searchCondition = timeField.GetSearchCondition(criteria);
-            ApplyTimeRange(searchCondition, defaultValue, ordering);
+            ApplyTimeRange(searchCondition, defaultValue, ordering, wqc);
         }
 
         /// <summary>
@@ -399,7 +416,9 @@ namespace ClearCanvas.Healthcare
         /// </remarks>
         /// <param name="condition"></param>
         /// <param name="defaultValue"></param>
-        private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering)
+		/// <param name="ordering"></param>
+		/// <param name="wqc"></param>
+		private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
         {
             // apply ordering
             if (ordering == WorklistOrdering.PrioritizeOldestItems)
@@ -408,7 +427,8 @@ namespace ClearCanvas.Healthcare
                 condition.SortDesc(0);
 
             // apply range filtering, if supported by this class
-            if (GetSupportsTimeFilter(this.GetClass()))
+			// note: time filter is not applied in downtime recovery mode
+            if (GetSupportsTimeFilter(this.GetClass()) && !wqc.DowntimeRecoveryMode)
             {
                 WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;
                 if (range != null)

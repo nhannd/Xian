@@ -23,6 +23,9 @@
     <property name="Portable" type="Boolean" column="Portable_"/>
     <many-to-one name="ProcedureCheckIn" column="ProcedureCheckInOID_" class="ProcedureCheckIn" cascade="all" fetch="join"/>
     
+    <!-- Specifies whether the procedure is currently in downtime recovery mode -->
+    <property name="DowntimeRecoveryMode" column="DowntimeRecoveryMode_" type="Boolean" not-null="true"/>
+
     <!-- Radiology Reports : a Procedure should only ever have one Report in a status other than X.
           The collection may contain multiple entries, because a report may have been cancelled by the author
           for whatever reason.

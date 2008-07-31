@@ -339,15 +339,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         private void ValidateOrderModifiable(Order order)
         {
             if(order.Status != OrderStatus.SC && order.Status != OrderStatus.IP)
-                throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified or replaced.",
+                throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified.",
                     EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
         }
 
 		private void ValidateOrderReplacable(Order order)
 		{
 			if (order.Status != OrderStatus.SC)
-				throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified or replaced.",
+				throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be replaced.",
 					EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
+
+			if(CollectionUtils.Contains(order.Procedures,
+				delegate (Procedure p) { return p.DowntimeRecoveryMode;}))
+				throw new RequestValidationException("Downtime orders cannot be replaced.  You must cancel the order and create a new one.");
 		}
 
         // TODO: ideally this should be done in the model layer
@@ -373,6 +377,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ExternalPractitioner orderingPhysician = PersistenceContext.Load<ExternalPractitioner>(requisition.OrderingPractitioner.PractitionerRef, EntityLoadFlags.Proxy);
             DiagnosticService diagnosticService = PersistenceContext.Load<DiagnosticService>(requisition.DiagnosticService.DiagnosticServiceRef);
             OrderPriority priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
+
+        	bool isDowntimeOrder = !string.IsNullOrEmpty(requisition.DowntimeAccessionNumber);
             
             Facility orderingFacility = PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 
@@ -396,12 +402,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
                         Procedure rp = new Procedure(rpt);
                         mapProcToReq.Add(rp, req);
+                    	rp.DowntimeRecoveryMode = isDowntimeOrder;
                         return rp;
                     });
 
-            // obtain a new acc number
-            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
-            string accNum = broker.GetNextAccessionNumber();
+            // obtain a new acc number, or use the downtime accession number if provided
+        	string accNum = isDowntimeOrder
+        	                	? requisition.DowntimeAccessionNumber
+        	                	: PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNextAccessionNumber();
 
             // generate a new order with the default set of procedures
             Order order = Order.NewOrder(
@@ -456,6 +464,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             OrderEntryAssembler assembler = new OrderEntryAssembler();
 
+			// if any procedure is in downtime recovery mode, assume the entire order is a "downtime order"
+        	bool isDowntime =
+        		CollectionUtils.Contains(order.Procedures, delegate(Procedure p) { return p.DowntimeRecoveryMode; });
+
             // deletions - remove any procedure not in the requisition
             List<Procedure> proceduresCopy = new List<Procedure>(order.Procedures);
             foreach (Procedure rp in proceduresCopy)
@@ -488,6 +500,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 {
                     // create a new procedure for this requisition
                     rp = new Procedure(requestedType);
+                	rp.DowntimeRecoveryMode = isDowntime;
                     order.AddProcedure(rp);
 
                     // note: need to lock the new procedure now, prior to creating the procedure steps

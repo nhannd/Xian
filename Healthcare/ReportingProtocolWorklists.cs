@@ -19,14 +19,14 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingToBeProtocolledWorklistDescription")]
 	public class ReportingToBeProtocolledWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
 			criteria.ProcedureStep.Scheduling.Performer.Staff.IsNull();
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.PN);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 		}
 	}
@@ -36,14 +36,14 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingToBeReviewedProtocolWorklist")]
 	public class ReportingToBeReviewedProtocolWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
 			criteria.ProcedureStep.Scheduling.Performer.Staff.IsNull();
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 		}
 	}
@@ -54,14 +54,14 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingAssignedReviewProtocolWorklist")]
 	public class ReportingAssignedReviewProtocolWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
 			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 		}
 	}
@@ -72,13 +72,13 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingDraftProtocolWorklistDescription")]
 	public class ReportingDraftProtocolWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
 			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 	}
@@ -89,14 +89,14 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingCompletedProtocolWorklistDescription")]
 	public class ReportingCompletedProtocolWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
 			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.PR);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 	}
@@ -107,14 +107,14 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingRejectedProtocolWorklistDescription")]
 	public class ReportingRejectedProtocolWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.DC);
 			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.RJ);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 	}
@@ -125,14 +125,14 @@ namespace ClearCanvas.Healthcare
 	[WorklistClassDescription("ReportingAwaitingApprovalProtocolWorklistDescription")]
 	public class ReportingAwaitingApprovalProtocolWorklist : ProtocolingWorklist
 	{
-		public override WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
 			criteria.Protocol.Author.EqualTo(wqc.Staff);
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.AA);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
 	}

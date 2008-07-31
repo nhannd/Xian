@@ -128,5 +128,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public Dictionary<string, string> ExtendedProperties;
+
+		/// <summary>
+		/// A downtime accession number, if this requisition represents an order that was performed during downtime. Optional.
+		/// If this field is populated, the order will use this accession number instead of generating a new accession number.
+		/// </summary>
+		[DataMember]
+    	public string DowntimeAccessionNumber;
     }
 }
