@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._facility.FormattingEnabled = true;
 			this._facility.Location = new System.Drawing.Point(446, 344);
 			this._facility.Name = "_facility";
-			this._facility.Size = new System.Drawing.Size(47, 21);
+			this._facility.Size = new System.Drawing.Size(54, 21);
 			this._facility.TabIndex = 5;
 			this._facility.SelectedValueChanged += new System.EventHandler(this._facility_SelectedValueChanged);
 			// 
