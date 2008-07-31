@@ -189,8 +189,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return _worklistRef != null &&
-					(_componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.Verify);
+				return (_worklistRef != null 
+						|| String.Equals(_worklistClassName, WorklistClassNames.ReportingToBeReportedWorklist)
+						|| String.Equals(_worklistClassName, WorklistClassNames.ReportingToBeReviewedReportWorklist)) 
+					&& (_componentMode == ReportingComponentMode.Create || _componentMode == ReportingComponentMode.Verify);
 			}
 		}
 
