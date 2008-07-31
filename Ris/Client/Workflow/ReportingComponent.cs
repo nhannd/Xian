@@ -83,6 +83,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Gets the index of the active report part (the part that is being edited).
 		/// </summary>
 		int ActiveReportPartIndex { get; }
+
+		/// <summary>
+		/// Gets the order detail associated with the report.
+		/// </summary>
+		OrderDetail Order { get; }
 	}
 
 	/// <summary>
@@ -260,6 +265,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				get { return _owner._activeReportPartIndex; }
 			}
 
+			public OrderDetail Order
+			{
+				get { return _owner._orderDetail; }
+			}
+
 			protected ReportingComponent Owner
 			{
 				get { return _owner; }
@@ -342,10 +352,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _canSaveReport;
 
 		private ReportDetail _report;
+		private OrderDetail _orderDetail;
 		private int _activeReportPartIndex;
 		private ILookupHandler _supervisorLookupHandler;
 		private StaffSummary _supervisor;
-		private Dictionary<string, string> _orderExtendedProperties;
 		private Dictionary<string, string> _reportPartExtendedProperties;
 
 		private PriorReportComponent _priorReportComponent;
@@ -382,7 +392,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
 
 			_additionalInfoComponent = new OrderAdditionalInfoSummaryComponent();
-			_additionalInfoComponent.OrderExtendedProperties = _orderExtendedProperties;
+			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
 
 			// instantiate all extension pages
@@ -898,7 +908,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(this.WorklistItem.ProcedureStepRef));
 					_report = response.Report;
 					_activeReportPartIndex = response.ReportPartIndex;
-					_orderExtendedProperties = response.OrderExtendedProperties;
+					_orderDetail = response.Order;
 
 					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
 					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
@@ -928,7 +938,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
 			_priorReportComponent.WorklistItem = this.WorklistItem;
 			_orderComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
-			_additionalInfoComponent.OrderExtendedProperties = _orderExtendedProperties;
+			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 

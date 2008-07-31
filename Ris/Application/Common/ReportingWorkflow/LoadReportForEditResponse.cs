@@ -38,13 +38,34 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class LoadReportForEditResponse : DataContractBase
     {
-        [DataMember]
-        public int ReportPartIndex;
+		public LoadReportForEditResponse()
+		{
 
+		}
+
+    	public LoadReportForEditResponse(ReportDetail report, int reportPartIndex, OrderDetail order)
+    	{
+    		Report = report;
+    		ReportPartIndex = reportPartIndex;
+    		Order = order;
+    	}
+
+    	/// <summary>
+		/// Gets the report detail.
+		/// </summary>
         [DataMember]
         public ReportDetail Report;
 
-        [DataMember]
-        public Dictionary<string, string> OrderExtendedProperties;
+		/// <summary>
+		/// Gets the index of the active report part.
+		/// </summary>
+		[DataMember]
+		public int ReportPartIndex;
+
+		/// <summary>
+		/// Gets the order detail.
+		/// </summary>
+		[DataMember]
+		public OrderDetail Order;
     }
 }

@@ -53,6 +53,9 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public List<ReportPartDetail> Parts;
 
+		/// <summary>
+		/// Gets the procedures associated with the report.
+		/// </summary>
         [DataMember]
         public List<ProcedureDetail> Procedures;
 

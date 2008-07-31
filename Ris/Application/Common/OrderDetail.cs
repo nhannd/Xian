@@ -106,5 +106,8 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public List<ResultRecipientDetail> ResultRecipients;
-    }
+
+		[DataMember]
+		public Dictionary<string, string> ExtendedProperties;
+	}
 }

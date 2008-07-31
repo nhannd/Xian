@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 			this.IncludeAlerts = includeAlerts;
 			this.IncludeNotes = includeNotes;
 			this.IncludeAttachments = includeAttachments;
-			this.includeResultRecipients = includeResultRecipients;
+			this.IncludeResultRecipients = includeResultRecipients;
 		}
 
 		public GetOrderDetailRequest()
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 		/// Include order result recipients.
 		/// </summary>
 		[DataMember]
-		public bool includeResultRecipients;
+		public bool IncludeResultRecipients;
 
 		/// <summary>
 		/// A list of filters that determine which categories of order notes are returned. Optional, defaults to all.
@@ -104,5 +104,11 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 		/// </summary>
 		[DataMember]
 		public List<string> NoteCategoriesFilter;
+
+		/// <summary>
+		/// Include order extended properties.
+		/// </summary>
+		[DataMember]
+		public bool IncludeExtendedProperties;
 	}
 }

@@ -292,12 +292,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             ReportAssembler assembler = new ReportAssembler();
+			OrderAssembler orderAssembler = new OrderAssembler();
 
-            LoadReportForEditResponse response = new LoadReportForEditResponse();
-            response.Report = assembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext);
-            response.ReportPartIndex = step.ReportPart.Index;
-
-            response.OrderExtendedProperties = new Dictionary<string, string>(step.Procedure.Order.ExtendedProperties);
+        	LoadReportForEditResponse response = new LoadReportForEditResponse(
+        		assembler.CreateReportDetail(step.ReportPart.Report, false, this.PersistenceContext),
+        		step.ReportPart.Index,
+        		orderAssembler.CreateOrderDetail(step.Procedure.Order, PersistenceContext, false, false, false, null, false,
+        		                                 false, true));
 
             return response;
         }

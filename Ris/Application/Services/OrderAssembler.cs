@@ -39,18 +39,29 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class OrderAssembler
     {
+		/// <summary>
+		/// Creates fully verbose order detail document.
+		/// </summary>
+		/// <param name="order"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
         {
-            return CreateOrderDetail(order, context, true, true, true, true, true, null);
+            return CreateOrderDetail(order, context, true, true, true, null, true, true, true);
         }
 
+		/// <summary>
+		/// Creates order detail document including only specified parts.
+		/// </summary>
         public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context,
             bool includeVisit,
             bool includeProcedures,
             bool includeNotes,
+			IList<string> noteCategoriesFilter,
 			bool includeAttachments,
 			bool includeResultRecipients,
-            IList<string> noteCategoriesFilter)
+			bool includeExtendedProperties
+            )
         {
             OrderDetail detail = new OrderDetail();
 
@@ -146,6 +157,11 @@ namespace ClearCanvas.Ris.Application.Services
 					{
 						return resultRecipientAssembler.CreateResultRecipientDetail(r, context);
 					});
+			}
+
+			if(includeExtendedProperties)
+			{
+				detail.ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties);
 			}
 
             return detail;

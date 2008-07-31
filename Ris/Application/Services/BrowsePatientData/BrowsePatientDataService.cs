@@ -196,9 +196,10 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 				request.IncludeVisit,
 				request.IncludeProcedures,
 				request.IncludeNotes,
+				request.NoteCategoriesFilter,
 				request.IncludeAttachments,
-				request.includeResultRecipients,
-				request.NoteCategoriesFilter);
+				request.IncludeResultRecipients,
+				request.IncludeExtendedProperties);
 
 			if (request.IncludeAlerts)
 			{
