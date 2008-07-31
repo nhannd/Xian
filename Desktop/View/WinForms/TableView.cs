@@ -37,6 +37,7 @@ using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using System.Collections;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -60,6 +61,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private const int CELL_SUBROW_HEIGHT = 18;
         private readonly int _rowHeight = 0;
 
+		private int _firstDisplayedIndex = 0;
+
         public TableView()
 		{
 			InitializeComponent();
@@ -75,7 +78,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPostPaint += OutlineCell;
         }
 
-        #region Design Time properties and Events
+        #region Design Time properties and Events                                                                 
+
+		public ClearCanvas.Desktop.View.WinForms.DataGridViewWithDragSupport DataGridViewWDS
+		{
+			get { return _dataGridView; }
+		}
 
 	    [DefaultValue(false)]
 	    public bool SortButtonVisible
@@ -242,7 +250,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ITable Table
         {
-            get { return _table; }
+            get
+			{
+				_firstDisplayedIndex = _dataGridView.FirstDisplayedScrollingRowIndex;
+				return _table;
+			}
             set
             {
 				UnsubscribeFromOldTable();
@@ -317,10 +329,70 @@ namespace ClearCanvas.Desktop.View.WinForms
                             row.Selected = true;
                     }
 
+					ForceSelectionDisplay(_firstDisplayedIndex);
+
                     NotifySelectionChanged();
                 }
             }
         }
+
+		/// <summary>
+		/// Whenever the table is refreshed/modified by a component it tends to jump the DataGridView display
+		/// to the top of the list, this isn't desirable. The following method forces the given selection to
+		/// be visible on the control.
+		/// </summary>
+		/// <param name="oldSelectedIndex"></param>
+		private void ForceSelectionDisplay(int oldFirstDisplayedIndex)
+		{
+			// check if ALL the selected entries are not visible to the user
+			if (CollectionUtils.TrueForAll<DataGridViewRow>(_dataGridView.SelectedRows,
+					delegate(DataGridViewRow row)
+					{
+						return !row.Displayed; 
+					})&& _table.Items.Count != 0)
+			{
+				// create an array to capture the indicies of the selection collection (lol)
+				// indicies needed for index position calculation of viewable index
+				int[] selectedRows = new int[_dataGridView.SelectedRows.Count];
+				int i = 0;
+				foreach (DataGridViewRow row in _dataGridView.SelectedRows)
+				{
+					selectedRows[i] = row.Index;
+					i++;
+				}
+
+				// create variables for the index of the last row and the number of rows displayable
+				// by the control without scrolling
+				int lastRow = _dataGridView.Rows.GetLastRow(new DataGridViewElementStates());
+				int displayedRows = _dataGridView.DisplayedRowCount(false) - 1;
+				int rowDifferential = lastRow - displayedRows; // calculate the differential 
+
+				// pre-existing tables
+				if (selectedRows.Length != 0)
+				{
+					// if the first selection is less than the boundary last range of displayable
+					// rows, then set the first viewable row to the first selection, if not, set it
+					// to the boundary
+					if (selectedRows[0] < rowDifferential)
+						_dataGridView.FirstDisplayedScrollingRowIndex = selectedRows[0];
+					else if (selectedRows[0] > rowDifferential)
+						_dataGridView.FirstDisplayedScrollingRowIndex = rowDifferential;
+				}
+				// new tables obviously will have no entries in selectedRows therefore
+				// automatically set it to the row differential which will probably be 0
+				else
+				{
+					_dataGridView.FirstDisplayedScrollingRowIndex = rowDifferential;
+				}
+			}
+			// strange oddity, this part actually never gets activated for some strange reason
+			// intended to preserve the current index if there are displayable items already on screen
+			else
+			{
+				if (oldFirstDisplayedIndex != 0)
+					_dataGridView.FirstDisplayedScrollingRowIndex = oldFirstDisplayedIndex;
+			}
+		}
 
 		/// <summary>
 		/// Exposes the KeyDown event of the underlying data grid view.
