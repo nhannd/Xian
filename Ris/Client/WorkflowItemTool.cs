@@ -28,7 +28,8 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return this.Context.GetOperationEnablement(_operationName);
+                return this.Context.SelectedItems.Count == 1 &&
+					this.Context.GetOperationEnablement(_operationName);
             }
         }
 

@@ -69,6 +69,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
+				if(this.Context.SelectedItems.Count != 1)
+					return false;
+
 				ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
 				return item != null && item.ProcedureStepName == "Protocol";
 			}

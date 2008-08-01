@@ -96,6 +96,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				ReportingWorklistItem item = GetSelectedItem();
+
+				if (this.Context.SelectedItems.Count != 1)
+					return false;
+
 				return
 					this.Context.GetOperationEnablement("StartInterpretation") ||
 					this.Context.GetOperationEnablement("StartVerification") ||
