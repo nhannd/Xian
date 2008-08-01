@@ -71,6 +71,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 int rows = command.ExecuteNonQuery();
 
+				GetOutputParameters(command, criteria);
             }
             catch (Exception e)
             {

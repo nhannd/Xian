@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
@@ -49,9 +48,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         #region Private members
         private ServerPartition _serverPartition;
         private StudyController _controller = new StudyController();
-        private string STUDYDATE_DATEFORMAT = "yyyyMMdd";
 
-        #endregion Private members
+    	#endregion Private members
 
         #region Public Properties
 
@@ -145,55 +143,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
         #region Protected Methods
 
-        protected void LoadStudies()
-        {
-            StudySelectCriteria criteria = new StudySelectCriteria();
-
-            // only query for device in this partition
-            criteria.ServerPartitionKey.EqualTo(ServerPartition.GetKey());
-
-            if (!String.IsNullOrEmpty(PatientId.Text))
-            {
-                string key = PatientId.Text + "%";
-                key = key.Replace("*", "%");
-                criteria.PatientId.Like(key);
-            }
-            if (!String.IsNullOrEmpty(PatientName.Text))
-            {
-                string key = PatientName.Text + "%";
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.PatientsName.Like(key);
-            }
-            criteria.PatientsName.SortAsc(0);
-
-            if (!String.IsNullOrEmpty(AccessionNumber.Text))
-            {
-                string key = AccessionNumber.Text + "%";
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.AccessionNumber.Like(key);
-            }
-
-            if (!String.IsNullOrEmpty(StudyDate.Text))
-            {
-                string key = DateTime.ParseExact(StudyDate.Text, StudyDateCalendarExtender.Format, null).ToString(STUDYDATE_DATEFORMAT);
-                criteria.StudyDate.Like(key); 
-            }
-
-            if (!String.IsNullOrEmpty(StudyDescription.Text))
-            {
-                string key = StudyDescription.Text + "%";
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.StudyDescription.Like(key);
-            }
-
-            StudyListGridView.Studies = _controller.GetStudies(criteria);
-            
-            DataBind();
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -214,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             GridPagerTop.Target = StudyListGridView.StudyListGrid;
             GridPagerTop.GetRecordCountMethod = delegate
                               {
-                                  return StudyListGridView.Studies== null ? 0:StudyListGridView.Studies.Count;
+								  return StudyListGridView.ResultCount;
                               };
 
 
@@ -234,7 +183,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                                     _controller.DeleteStudy(study);
                                 }
 
-                                LoadStudies();
+                                DataBind();
                                 UpdatePanel.Update(); // force refresh
                             };
 
@@ -254,10 +203,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 									_controller.RestoreStudy(study);
 								}
 
-								LoadStudies();
+								DataBind();
 								UpdatePanel.Update(); // force refresh
 							};
-            
+
+			StudyListGridView.DataSourceCreated += delegate(StudyDataSource source)
+										{
+											source.Partition = ServerPartition;
+
+											if (!String.IsNullOrEmpty(PatientId.Text))
+												source.PatientId = PatientId.Text;
+											if (!String.IsNullOrEmpty(PatientName.Text))
+												source.PatientName = PatientName.Text;
+											if (!String.IsNullOrEmpty(AccessionNumber.Text))
+												source.AccessionNumber = AccessionNumber.Text;
+											if (!String.IsNullOrEmpty(StudyDate.Text))
+												source.StudyDate = StudyDate.Text;
+											if (!String.IsNullOrEmpty(StudyDescription.Text))
+												source.StudyDescription = StudyDescription.Text;
+										};
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -267,17 +231,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                 StudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(StudyDate.Text, StudyDateCalendarExtender.Format, null);
             else
                 StudyDateCalendarExtender.SelectedDate = null;
-            
-            if (StudyListGridView.IsPostBack)
-            {
-                LoadStudies();
-            }        
+
+			if (StudyListGridView.IsPostBack)
+			{
+				DataBind();
+			} 
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            UpdateUI();
-            base.OnPreRender(e);
+
+			UpdateUI();
+			base.OnPreRender(e);
         }
 
         protected void UpdateUI()
@@ -289,6 +254,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyListGridView.StudyListGrid.ClearSelections();
+        	StudyListGridView.StudyListGrid.PageIndex = 0;
+			DataBind();
         }
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)

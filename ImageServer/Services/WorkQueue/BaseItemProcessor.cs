@@ -416,7 +416,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 						if (false == update.Execute(parms))
 						{
-							Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
+							Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue Key: {1}", item.WorkQueueTypeEnum, item.Key.ToString());
 						}
 						else
 							updateContext.Commit();

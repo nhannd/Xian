@@ -73,8 +73,9 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         /// <param name="criteria">The criteria.</param>
         /// <param name="maxRows">Number of  rows to return.</param>
+        /// <param name="startIndex">The start index (zero based) from which rows should be returned.</param>
         /// <returns>A list of <see cref="ServerEntity"/> objects.</returns>
-        IList<TServerEntity> Find(TSelectCriteria criteria, int maxRows);
+        IList<TServerEntity> Find(TSelectCriteria criteria, int startIndex, int maxRows);
 
         /// <summary>
         /// Retrieves all entities matching the specified criteria.
@@ -90,8 +91,9 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// </summary>
         /// <param name="criteria">The criteria.</param>
         /// <param name="maxRows">Number of  rows to return.</param>
-        /// <param name="callback">A callback which is called for each result found.</param>
-        void Find(TSelectCriteria criteria, int maxRows, SelectCallback<TServerEntity> callback);
+		/// <param name="startIndex">The start index (zero based) from which rows should be returned.</param>
+		/// <param name="callback">A callback which is called for each result found.</param>
+		void Find(TSelectCriteria criteria, int startIndex, int maxRows, SelectCallback<TServerEntity> callback);
 
         /// <summary>
         /// Retrieves a count of the entities within the persistent store that

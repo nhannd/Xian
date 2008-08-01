@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             ServiceLock dev = _adapter.AddServiceLock(service);
 
             if (dev!=null)
-                Platform.Log(LogLevel.Info, "New service added by user : {guid={0}, type={1}, filesystem={2}", service.GetKey(), service.ServiceLockTypeEnum, service.FilesystemKey);
+                Platform.Log(LogLevel.Info, "New service added by user : {Key={0}, type={1}, filesystem={2}", service.Key, service.ServiceLockTypeEnum, service.FilesystemKey);
             else
                 Platform.Log(LogLevel.Info, "Failed to add new service : {  type={1}, filesystem={2} }", service.ServiceLockTypeEnum, service.FilesystemKey);
 
@@ -85,11 +85,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns><b>true</b> if the record is deleted successfully. <b>false</b> otherwise.</returns>
         public bool DeleteServiceLock(ServiceLock service)
         {
-            Platform.Log(LogLevel.Info, "User deleting service lock {0}", service.GetKey());
+            Platform.Log(LogLevel.Info, "User deleting service lock {0}", service.Key);
 
             bool ok = _adapter.DeleteServiceLock(service);
 
-            Platform.Log(LogLevel.Info, "User delete service lock {0}: {1}", service.GetKey(), ok ? "Successful" : "Failed");
+            Platform.Log(LogLevel.Info, "User delete service lock {0}: {1}", service.Key, ok ? "Successful" : "Failed");
 
             return ok;
         }
@@ -99,16 +99,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// </summary>
         /// <param name="key"></param>
         /// <returns><b>true</b> if the record is updated successfully. <b>false</b> otherwise.</returns>
+        /// <param name="enabled"></param>
+        /// <param name="scheduledDateTime"></param>
         public bool UpdateServiceLock(ServerEntityKey key, bool enabled, DateTime scheduledDateTime)
         {
-            Platform.Log(LogLevel.Info, "User updating service GUID={0}", key.Key);
+            Platform.Log(LogLevel.Info, "User updating service Key={0}", key.Key);
             ServiceLockUpdateColumns columns = new ServiceLockUpdateColumns();
             columns.Enabled = enabled;
             columns.ScheduledTime = scheduledDateTime;
 
             bool ok = _adapter.Update(key, columns);
 
-            Platform.Log(LogLevel.Info, "ServiceLock GUID={0} {1}", key.Key, ok ? "updated by user" : " failed to update");
+            Platform.Log(LogLevel.Info, "ServiceLock Key={0} {1}", key.Key, ok ? "updated by user" : " failed to update");
 
             return ok;
         

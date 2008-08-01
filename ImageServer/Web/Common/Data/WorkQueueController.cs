@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         		if (storages == null || storages.Count == 0)
         		{
         			Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}",
-        			             item.GetKey().ToString());
+        			             item.Key.ToString());
         			throw new ApplicationException("Unable to find storage location for WorkQueue item.");
         		}
 
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         		{
         			Platform.Log(LogLevel.Warn,
         			             "WorkQueueController:LoadStorageLocation: multiple study storage found for work queue item {0}",
-        			             item.GetKey().Key);
+        			             item.Key.Key);
         		}
 
         		return storages[0];
@@ -197,6 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             catch(Exception e)
             {
                 Platform.Log(LogLevel.Error, "FindWorkQueue failed", e);
+            	return new List<WorkQueue>();
             }
 
             return null;
@@ -230,7 +231,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     WorkQueueDeleteParameters parms = new WorkQueueDeleteParameters();
                     parms.ServerPartitionKey = item.ServerPartitionKey;
                     parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.WorkQueueKey = item.GetKey();
+                    parms.WorkQueueKey = item.Key;
                     parms.WorkQueueTypeEnum = item.WorkQueueTypeEnum;
 
                     if (!delete.Execute(parms))
@@ -276,7 +277,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
                 foreach (WorkQueue item in items)
                 {
-                    result = workQueueBroker.Update(item.GetKey(), updatedColumns);
+                    result = workQueueBroker.Update(item.Key, updatedColumns);
                     if (!result)
                     {
                         break;
@@ -321,7 +322,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 
                 foreach(WorkQueue item in items)
                 {
-                    if (!workQueueBroker.Update(item.GetKey(), columns))
+                    if (!workQueueBroker.Update(item.Key, columns))
                     {
                         result = false;
                         break;

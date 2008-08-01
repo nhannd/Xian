@@ -44,28 +44,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
     //
     public partial class StudyListGridView : System.Web.UI.UserControl
     {
-        #region private members
-        // server partitions lookup table based on server key
-        private Dictionary<string, ServerPartition> _DictionaryPartitions = new Dictionary<string, ServerPartition>();
-        // list of devices to display
-        private IList<Model.Study> _studies;
-        private ServerPartition _partition;
-        private StudyController _controller = new StudyController();
+		#region Delegates
+		public delegate void StudyDataSourceCreated(StudyDataSource theSource);
+		public event StudyDataSourceCreated DataSourceCreated;
+		#endregion
 
+        #region Private members
+        // list of studies to display
+        private IList<StudySummary> _studies;
+        private ServerPartition _partition;
         private Unit _height;
+    	private StudyDataSource _dataSource;
         #endregion Private members
 
-        #region protected properties
+        #region Public properties
 
-        protected Dictionary<string, ServerPartition> DictionaryPartitions
-        {
-            get { return _DictionaryPartitions; }
-            set { _DictionaryPartitions = value; }
-        }
+		public int ResultCount
+		{
+			get
+			{
+				if (_dataSource == null)
+				{
+					_dataSource = new StudyDataSource();
 
-        #endregion protected properties
+					_dataSource.StudyFoundSet += delegate(IList<StudySummary> newlist)
+											{
+												Studies = newlist;
+											};
+					if (DataSourceCreated != null)
+						DataSourceCreated(_dataSource);
+					_dataSource.SelectCount();
+				}
+				if (_dataSource.ResultCount == 0)
+				{
+					if (DataSourceCreated != null)
+						DataSourceCreated(_dataSource);
 
-        #region public properties
+					_dataSource.SelectCount();
+				}
+				return _dataSource.ResultCount;
+			}
+		}
 
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
@@ -96,13 +115,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                 if (rows == null || rows.Length == 0)
                     return null;
 
-                IList<Study> studies = new List<Study>();
+				IList<Study> studies = new List<Study>();
                 for(int i=0; i<rows.Length; i++)
                 {
-                    // SelectedIndex is for the current page. Must convert to the index of the entire list
-                    int index = StudyListControl.PageIndex * StudyListControl.PageSize + rows[i];
-                    if (index >=0 && index<Studies.Count)
-                        studies.Add(Studies[index]);
+                    studies.Add(Studies[rows[i]].TheStudy);
                 }
 
                 return studies;
@@ -112,7 +128,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         /// <summary>
         /// Gets/Sets the list of devices rendered on the screen.
         /// </summary>
-        public IList<Study> Studies
+        public IList<StudySummary> Studies
         {
             get
             {
@@ -162,15 +178,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         public event StudySelectedEventHandler OnStudySelectionChanged;
 
         #endregion // Events
-
         
         #region protected methods
 
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
-            StudyListControl.DataBind();
+			StudyListControl.DataBind();
         }
         
         protected override void OnInit(EventArgs e)
@@ -184,40 +198,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             StudyListControl.SelectedIndexChanged += new EventHandler(StudyListControl_SelectedIndexChanged);
-
-        }
-
-        protected void StudyListControl_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            StudySummary studySummary = e.Row.DataItem as StudySummary;
-            if (studySummary!=null)
-            {
-                Label statusLabel = e.Row.FindControl("Status") as Label;
-                if (statusLabel!=null)
-                {
-                    statusLabel.Text = studySummary.StudyStatusEnum.Description;
-                }
-            }
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
 
+			if (Studies == null)
+				return;
+
             foreach (GridViewRow row in StudyListControl.Rows)
             {
                 if (row.RowType==DataControlRowType.DataRow)
                 {
-                    int index = StudyListControl.PageIndex * StudyListControl.PageSize + row.RowIndex;
-                    Study study = Studies[index];
+					StudySummary study = Studies[row.RowIndex];
                     
                     if (study!=null)
                     {
-
-                        row.Attributes.Add("instanceuid", study.StudyInstanceUid);
-                        row.Attributes.Add("serverae", Partition.AeTitle);
+                        row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
+                        row.Attributes.Add("serverae", study.ThePartition.AeTitle);
                         StudyController controller = new StudyController();
-                        bool deleted = controller.IsScheduledForDelete(study);
+                        bool deleted = controller.IsScheduledForDelete(study.TheStudy);
                         if (deleted)
                             row.Attributes.Add("deleted", "true");
 						if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
@@ -233,13 +234,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             IList<Study> studies = SelectedStudies;
             if (studies != null)
                 if (OnStudySelectionChanged != null)
-                    OnStudySelectionChanged(this, studies);
-            
-        }
-
-        protected void StudyListControl_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
-            
+                    OnStudySelectionChanged(this, studies);            
         }
 
         protected void StudyListControl_PageIndexChanged(object sender, EventArgs e)
@@ -277,10 +272,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
             DataBind();
         }
-        
+
+		protected void DisposeStudyDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
+		{
+			e.Cancel = true;
+		}
+
+		protected void GetStudyDataSource(object sender, ObjectDataSourceEventArgs e)
+		{
+			if (_dataSource == null)
+			{
+				_dataSource = new StudyDataSource();
+
+				_dataSource.StudyFoundSet += delegate(IList<StudySummary> newlist)
+										{
+											Studies = newlist;
+										};
+			}
+
+			e.ObjectInstance = _dataSource;
+
+			if (DataSourceCreated != null)
+				DataSourceCreated(_dataSource);
+
+		}
         #endregion
 
-        
         #region public methods
         /// <summary>
         /// Binds the list to the control.
@@ -290,16 +307,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         /// </remarks>
         public override void DataBind()
         {
-            IList<StudySummary> studySummaries = new List<StudySummary>();
-            foreach(Study study in Studies)
-            {
-                studySummaries.Add(StudySummaryAssembler.CreateStudySummary(study));
-            }
+			//StudyListControl.PageIndex = PageIndex;
 
-            StudyListControl.DataSource = studySummaries;
-            StudyListControl.DataBind();
             StudyListControl.PagerSettings.Visible = false;
-
         }
 
         #endregion // public methods

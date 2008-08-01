@@ -32,12 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
-using System.Xml;
-using System.Xml.Serialization;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using GridView=System.Web.UI.WebControls.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 {
@@ -45,48 +45,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
     /// A specialized panel that displays a list of <see cref="WorkQueue"/> entries.
     /// </summary>
     /// <remarks>
-    /// <see cref="WorkQueueItemListPanel"/> wraps around <see cref="GridView"/> control to specifically display
+    /// <see cref="WorkQueueItemListPanel"/> wraps around <see cref="System.Web.UI.WebControls.GridView"/> control to specifically display
     /// <see cref="WorkQueue"/> entries on a web page. The <see cref="WorkQueue"/> entries are set through <see cref="WorkQueueItems"/>. 
     /// User of this control can set the <see cref="Height"/> of the panel. The panel always expands to fit the width of the
-    /// parent control. To enable paging, <see cref="AllowPaging"/> must be set to <b>true</b> and the page size is set through <see cref="PageSize"/>.
+    /// parent control. 
     /// 
     /// By default, <see cref="AutoRefresh"/> is on. The panel periodically refreshes the list automatically. Any item that no longer
     /// exists in the system will not be rendered on the screen.
     /// 
     /// </remarks>
     public partial class WorkQueueItemListPanel : System.Web.UI.UserControl
-    {
-        #region Private Members
-        private WorkQueueItemCollection _workQueueItems;
-        private int _pageIndex;
-        private int _pageSize=20;
-        private Unit _height;
-        private bool _allowPaging;
+	{
+		#region Delegates
+		public delegate void WorkQueueDataSourceCreated(WorkQueueDataSource theSource);
+		public event WorkQueueDataSourceCreated DataSourceCreated;
+		#endregion
 
+		#region Private Members
+		private WorkQueueItemCollection _workQueueItems;
+        private Unit _height;
+    	private WorkQueueDataSource _dataSource;
         #endregion Private Members
 
 
         #region Public Properties
-
-        /// <summary>
-        /// Sets/Gets the page index
-        /// </summary>
-        public int PageIndex
-        {
-            set
-            {
-                _pageIndex = value;
-                if (WorkQueueListView != null)
-                    WorkQueueListView.PageIndex = value;
-            }
-            get
-            {
-                if (WorkQueueListView != null)
-                    return WorkQueueListView.PageIndex;
-                else
-                    return _pageIndex;
-            }
-        }
+		public int ResultCount
+		{
+			get
+			{
+				if (_dataSource == null) return 0;
+				return _dataSource.ResultCount;
+			}
+		}
 
         /// <summary>
         /// Gets/Sets the height of the panel
@@ -109,47 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         }
 
         /// <summary>
-        /// Gets/Sets the number of rows displayed on each page
-        /// </summary>
-        public int PageSize
-        {
-            set
-            {
-                _pageSize = value;
-                if (WorkQueueListView != null)
-                    WorkQueueListView.PageSize = value;
-            }
-            get
-            {
-                if (WorkQueueListView != null)
-                    return WorkQueueListView.PageSize;
-                else
-                    return _pageSize;
-            }
-        }
-
-        /// <summary>
-        /// Gets/Sets a value indicating paging is enabled.
-        /// </summary>
-        public bool AllowPaging
-        {
-            get
-            {
-                if (WorkQueueListView != null)
-                    return WorkQueueListView.AllowPaging;
-                else
-                    return _allowPaging;
-            }
-            set
-            {
-                _allowPaging = value;
-                if (WorkQueueListView != null)
-                    WorkQueueListView.AllowPaging = value; 
-            }
-        }
-
-        /// <summary>
-        /// Gets a reference to the work queue item list <see cref="GridView"/>
+        /// Gets a reference to the work queue item list <see cref="System.Web.UI.WebControls.GridView"/>
         /// </summary>
         public GridView WorkQueueItemListControl
         {
@@ -182,7 +132,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             set
             {
 
-                SelectedWorkQueueItemKey = value.GetKey();
+                SelectedWorkQueueItemKey = value.Key;
                 WorkQueueListView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueListView);
             }
         }
@@ -209,19 +159,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            WorkQueueListView.DataKeyNames = new string[] { "WorkQueueGuid" };
+            WorkQueueListView.DataKeyNames = new string[] { "Key" };
 
-            RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds*1000, 5000);// max refresh rate: every 5 sec 
+            RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds*1000, 5000);// min refresh rate: every 5 sec 
 
             if (_height!=Unit.Empty)
                 ListContainerTable.Height = _height;
-
-            WorkQueueListView.PageIndex = _pageIndex;
-            WorkQueueListView.AllowPaging = _allowPaging;
-            if (_allowPaging)
-            {
-                WorkQueueListView.PageSize = _pageSize;
-            }
         }
 
         protected override void OnLoad(EventArgs e)
@@ -270,7 +213,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected override void OnPreRender(EventArgs e)
         {
-            RefreshTimer.Enabled = AutoRefresh && Visible;
+			RefreshTimer.Enabled = AutoRefresh && Visible;
             if (RefreshTimer.Enabled)
             {
                 if (WorkQueueItems!=null)
@@ -284,16 +227,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected ServerEntityKey GetRowItemKey(int rowIndex)
         {
-            int index = rowIndex;
-            if (WorkQueueListView.AllowPaging)
-            {
-                index = WorkQueueListView.PageIndex * WorkQueueListView.PageSize + rowIndex;
-            }
-
-            if (index < 0 || index >= WorkQueueItems.Count)
-                return null;
-
-            return WorkQueueItems[index].GetKey();
+			if (WorkQueueItems == null) return null;
+	
+			return WorkQueueItems[rowIndex].Key;
         }
 
         protected void WorkQueueListView_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -311,7 +247,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                     row.Style["cursor"] = "hand";
 
                     Model.WorkQueue item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
-                    row.Attributes["uid"] = item.GetKey().ToString();
+                    row.Attributes["uid"] = item.Key.ToString();
 
                     CustomizeColumns(e.Row);
                 }
@@ -321,7 +257,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         private void CustomizeColumns(GridViewRow row)
         {
-            WorkQueueSummary item = row.DataItem as WorkQueueSummary;
+            Model.WorkQueue item = row.DataItem as Model.WorkQueue;
+
+        	WorkQueueSummary summary = WorkQueueSummaryAssembler.CreateWorkQueueSummary(item);
 
             if (item!=null)
             {
@@ -329,20 +267,36 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                 Label typeLabel = row.FindControl("Type") as Label;
                 if (typeLabel != null)
                 {
-                    typeLabel.Text = item.Type.Description;
+					typeLabel.Text = summary.Type.Description;
                 }
 
                 Label priorityLabel = row.FindControl("Priority") as Label;
                 if (priorityLabel != null)
                 {
-                    priorityLabel.Text = item.Priority.Description;
+					priorityLabel.Text = summary.Priority.Description;
                 }
 
                 Label statusLabel = row.FindControl("Status") as Label;
                 if (statusLabel != null)
                 {
-                    statusLabel.Text = item.Status.Description;
+					statusLabel.Text = summary.Status.Description;
                 }
+
+				Label notesLabel = row.FindControl("Notes") as Label;
+				if (notesLabel != null)
+				{
+					notesLabel.Text = summary.Notes;
+				}
+
+				Label patientIdLabel = row.FindControl("PatientId") as Label;
+				if (patientIdLabel != null)
+				{
+					patientIdLabel.Text = summary.PatientID;
+				}
+
+            	PersonNameLabel nameLabel = row.FindControl("PatientName") as PersonNameLabel;
+				if (nameLabel != null)
+            		nameLabel.PersonName = summary.PatientName;
             }
             
         }
@@ -369,41 +323,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             DataBind();
         }
 
-
         protected void RefreshTimer_Tick(object sender, EventArgs e)
         {
             DataBind();
         }
 
-        #endregion Protected Methods
-
-
-        #region Public Methods
-
-        public override void DataBind()
-        {
-            if (WorkQueueItems != null)
-            {
-                List<WorkQueueSummary> workQueueItemSummaryList = new List<WorkQueueSummary>();
-                foreach(Model.WorkQueue item in WorkQueueItems.Values)
-                {
-                    workQueueItemSummaryList.Add(WorkQueueSummaryAssembler.CreateWorkQueueSummary(item));
-                }
-                WorkQueueListView.DataSource = workQueueItemSummaryList;
-            }
-
-
-            WorkQueueListView.PageIndex = PageIndex;
-            base.DataBind();
-        }
-
-
-        #endregion Public Methods
-
         protected void Page_Load(object sender, EventArgs e)
         {
 
         }
+
+    	protected void GetWorkQueueDataSource(object sender, ObjectDataSourceEventArgs e)
+    	{
+			if (_dataSource == null)
+			{
+				_dataSource = new WorkQueueDataSource();
+				_dataSource.WorkQueueFoundSet += delegate(IList<Model.WorkQueue> newlist)
+				                                 	{
+				                                 		WorkQueueItems = new WorkQueueItemCollection(newlist);
+				                                 	};
+			}
+
+    		e.ObjectInstance = _dataSource;
+
+			if (DataSourceCreated != null)
+				DataSourceCreated(_dataSource);
+    	}
+
+    	protected void DisposeWorkQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
+    	{
+			// Don't dispose the object.
+    		e.Cancel = true;
+		}
+		#endregion Protected Methods
 
     }
 }

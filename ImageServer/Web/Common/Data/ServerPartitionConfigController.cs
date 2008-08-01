@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                     IDeleteServerPartition broker = ctx.GetBroker<IDeleteServerPartition>();
                     ServerPartitionDeleteParameters parms = new ServerPartitionDeleteParameters();
-                    parms.ServerPartitionKey = partition.GetKey();
+                    parms.ServerPartitionKey = partition.Key;
                     if (!broker.Execute(parms))
                         throw new Exception("Unable to delete server partition from database");
                     ctx.Commit();

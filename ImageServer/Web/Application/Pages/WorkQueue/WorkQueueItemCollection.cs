@@ -35,19 +35,20 @@ using ClearCanvas.ImageServer.Web.Application.App_Code;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 {
-    /// <summary>
-    /// Encapsulates a collection of <see cref="WorkQueueSummary"/> which can be accessed based on the <see cref="ServerEntityKey"/>
-    /// </summary>
-    public class WorkQueueItemCollection : KeyedCollectionBase<Model.WorkQueue, ServerEntityKey>
-    {
+	/// <summary>
+	/// Encapsulates a collection of <see cref="WorkQueue"/> which can be accessed based on the <see cref="ServerEntityKey"/>
+	/// </summary>
+	public class WorkQueueItemCollection : KeyedCollectionBase<Model.WorkQueue, ServerEntityKey>
+	{
 
-        public WorkQueueItemCollection(IList<Model.WorkQueue> list):base(list)
-        {
-        }
+		public WorkQueueItemCollection(IList<Model.WorkQueue> list)
+			: base(list)
+		{
+		}
 
-        protected override ServerEntityKey GetKey(Model.WorkQueue item)
-        {
-            return item.GetKey();
-        }
-    }
+		protected override ServerEntityKey GetKey(Model.WorkQueue item)
+		{
+			return item.Key;
+		}
+	}
 }

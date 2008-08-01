@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool DeleteServiceLock(ServiceLock dev)
         {
-            return base.Delete(dev.GetKey());
+            return base.Delete(dev.Key);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.ScheduledTime = service.ScheduledTime;
             param.ServiceLockTypeEnum = service.ServiceLockTypeEnum;
 
-            ok = base.Update(service.GetKey(), param);
+            ok = base.Update(service.Key,param);
 
             return ok;
         }

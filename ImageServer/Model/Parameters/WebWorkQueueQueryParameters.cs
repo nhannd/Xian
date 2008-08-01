@@ -39,6 +39,8 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         public WebWorkQueueQueryParameters()
             : base("WebQueryWorkQueue")
         {
+			//Declare output parameters here
+			SubCriteria["ResultCount"] = new ProcedureParameter<int>("ResultCount");
         }
 
         public ServerEntityKey ServerPartitionKey
@@ -80,5 +82,21 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["Priority"] = new ProcedureParameter<ServerEnum>("Priority", value); }
         }
+
+		public int StartIndex
+        {
+			set { SubCriteria["StartIndex"] = new ProcedureParameter<int>("StartIndex", value); }
+	    }
+
+		public int MaxRowCount
+		{
+			set { SubCriteria["MaxRowCount"] = new ProcedureParameter<int>("MaxRowCount", value); }
+		}
+
+		public int ResultCount
+		{
+			get { return (SubCriteria["ResultCount"] as ProcedureParameter<int>).Value; }
+		}
+		
     }
 }

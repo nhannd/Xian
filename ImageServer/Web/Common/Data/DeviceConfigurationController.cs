@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             Device dev = _adapter.AddDevice(device);
 
             if (dev!=null)
-                Platform.Log(LogLevel.Info, "New device added :AE={0}, GUID={1}",dev.AeTitle, dev.GUID);
+                Platform.Log(LogLevel.Info, "New device added :AE={0}, Key={1}",dev.AeTitle, dev.Key);
             else
                 Platform.Log(LogLevel.Info, "Failed to add new device : AETitle={0}", dev.AeTitle);
 
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns><b>true</b> if the record is deleted successfully. <b>false</b> otherwise.</returns>
         public bool DeleteDevice(Device device)
         {
-            Platform.Log(LogLevel.Info, "Deleting {0}, GUID={1}", device.AeTitle, device.GetKey());
+            Platform.Log(LogLevel.Info, "Deleting {0}, Key={1}", device.AeTitle, device.Key);
 
             bool ok = _adapter.DeleteDevice(device);
 
@@ -99,9 +99,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns><b>true</b> if the record is updated successfully. <b>false</b> otherwise.</returns>
         public bool UpdateDevice(Device device)
         {
-            Platform.Log(LogLevel.Info, "Updating device GUID={1} : AETitle={0}", device.GetKey(), device.AeTitle);
+            Platform.Log(LogLevel.Info, "Updating device Key={1} : AETitle={0}", device.Key, device.AeTitle);
             bool ok = _adapter.Update(device);
-            Platform.Log(LogLevel.Info, "Device GUID={0} {1}", device.GetKey(), ok ? "updated" : " failed to update");
+            Platform.Log(LogLevel.Info, "Device Key={0} {1}", device.Key, ok ? "updated" : " failed to update");
 
             return ok;
         }

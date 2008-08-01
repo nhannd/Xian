@@ -57,12 +57,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             return _adaptor.Get(criteria);
         }
+		public IList<Study> GetRangeStudies(StudySelectCriteria criteria, int startIndex, int maxRows)
+		{
+			return _adaptor.GetRange(criteria,startIndex,maxRows);
+		}
+
+		public int GetStudyCount(StudySelectCriteria criteria)
+		{
+			return _adaptor.GetCount(criteria);
+		}
 
         public IList<Series> GetSeries(Study study)
         {
             SeriesSelectCriteria criteria = new SeriesSelectCriteria();
 
-            criteria.StudyKey.EqualTo(study.GetKey());
+            criteria.StudyKey.EqualTo(study.Key);
 
             return _seriesAdaptor.Get(criteria);
         }
@@ -90,7 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             foreach(StudyStorage storage in storages)
             {
                 counter++;
-                columns.StudyStorageKey = storage.GetKey();
+                columns.StudyStorageKey = storage.Key;
                 columns.ScheduledTime = DateTime.Now.AddSeconds(60 + (counter)*15); // spread by 15 seconds
                 columns.ExpirationTime = DateTime.Now.AddDays(1);
                 columns.FailureCount = 0;
@@ -126,12 +135,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
-            columns.StudyStorageKey = storage.GetKey();
+            columns.StudyStorageKey = storage.Key;
             DateTime time = Platform.Time.AddSeconds(60);
             columns.ScheduledTime = time;
             columns.ExpirationTime = time;
             columns.FailureCount = 0;
-            columns.DeviceKey = device.GetKey();
+            columns.DeviceKey = device.Key;
 
             workqueueAdaptor.Add(columns);
 
@@ -153,7 +162,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
-            columns.StudyStorageKey = storage.GetKey();
+            columns.StudyStorageKey = storage.Key;
             DateTime time = Platform.Time.AddSeconds(60);
             columns.ScheduledTime = time;
             columns.ExpirationTime = time;
@@ -207,7 +216,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
                 workQueueCriteria.WorkQueueTypeEnum.EqualTo(workQueueType);
                 workQueueCriteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-                workQueueCriteria.StudyStorageKey.EqualTo(storage.GetKey());
+                workQueueCriteria.StudyStorageKey.EqualTo(storage.Key);
 
                 workQueueCriteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.Pending);
 
@@ -237,7 +246,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			SeriesSelectCriteria criteria = new SeriesSelectCriteria();
 			
 			criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-			criteria.StudyKey.EqualTo(study.GetKey());
+			criteria.StudyKey.EqualTo(study.Key);
 
 			IList<Series> seriesList = seriesAdaptor.Get(criteria);
 

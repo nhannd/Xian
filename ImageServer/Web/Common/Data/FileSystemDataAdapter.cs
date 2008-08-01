@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.LowWatermark = filesystem.LowWatermark;
 
 
-            return Update(filesystem.GetKey(), parms);
+            return Update(filesystem.Key, parms);
         }
 
         public IList<FilesystemTierEnum> GetFileSystemTiers()

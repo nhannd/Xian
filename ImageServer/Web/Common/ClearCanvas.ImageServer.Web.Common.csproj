@@ -68,9 +68,11 @@
     <Compile Include="Data\ServerRuleController.cs" />
     <Compile Include="Data\StudyAdaptor.cs" />
     <Compile Include="Data\StudyController.cs" />
+    <Compile Include="Data\StudyDataSource.cs" />
     <Compile Include="Data\StudyStorageAdaptor.cs" />
     <Compile Include="Data\WorkQueueAdaptor.cs" />
     <Compile Include="Data\WorkQueueController.cs" />
+    <Compile Include="Data\WorkQueueDataSource.cs" />
     <Compile Include="Data\WorkQueueUidAdaptor.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

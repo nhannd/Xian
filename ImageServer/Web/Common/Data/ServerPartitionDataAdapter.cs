@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.DefaultRemotePort = partition.DefaultRemotePort;
             parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
 
-            return Update(partition.GetKey(), parms);
+            return Update(partition.Key, parms);
         }
 
         #endregion Public methods

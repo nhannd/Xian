@@ -1,6 +1,36 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -205,7 +235,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     EntitySelectCriteria notExistsSubCriteria = (EntitySelectCriteria) values[0];
 
                     string sql;
-                    sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria, null,
+                    sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria, null, null,
                                        String.Format("{0}.GUID = {1}.{0}GUID", variable, notExistsSubCriteria.GetKey()));
                     sb.AppendFormat("NOT EXISTS ({0})", sql);
                     break;
@@ -224,7 +254,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     string existsSql;
 
-                    existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null,
+                    existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null, null,
                                              String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
                                                            baseTableColumn, relatedTableColumn));
                     sb.AppendFormat("EXISTS ({0})", existsSql);
@@ -286,16 +316,34 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <param name="entityName">The entity that is being selected from.</param>
         /// <param name="command">The SqlCommand to use.</param>
         /// <param name="criteria">The criteria for the select</param>
+        /// <param name="startIndex">The start index from within the result set</param>
+        /// <param name="maxRows">The max rows.</param>
         /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
         /// <returns>The SQL string.</returns>
-        private static string GetSelectSql(string entityName, SqlCommand command, EntitySelectCriteria criteria, int? maxRows, String subWhere)
+        private static string GetSelectSql(string entityName, SqlCommand command, EntitySelectCriteria criteria, int? startIndex, int? maxRows, String subWhere)
         {
-            StringBuilder sb = new StringBuilder();
-            if (maxRows == null)
-                sb.AppendFormat("SELECT * FROM {0}", entityName);
-            else
-                sb.AppendFormat("SELECT TOP {0} * FROM {1}", maxRows, entityName);
+			/*
+			 * Here's the general select format for querying a subset of rows
+			   SELECT WorkQueueDetails.*
+				FROM
+				(SELECT WorkQueue.*, 
+					ROW_NUMBER() OVER(ORDER BY ScheduledTime ASC) as RowNum
+					FROM WorkQueue
+				) AS WorkQueueDetails
+				WHERE RowNum BETWEEN @startRowIndex AND (@startRowIndex + @maximumRows) - 1
+			 */
+			string orderBy = GetSelectOrderBy(entityName, criteria);
 
+            StringBuilder sb = new StringBuilder();
+            if (maxRows == null || startIndex == null)
+                sb.AppendFormat("SELECT * FROM {0}", entityName);
+            else if (startIndex.Value == 0)
+                sb.AppendFormat("SELECT TOP {0} * FROM {1}", maxRows, entityName);
+			else
+            {
+				if (orderBy.Length > 0)
+					sb.AppendFormat("SELECT {0}.*,ROW_NUMBER() OVER({1}) as RowNum FROM {0}", entityName, orderBy);
+            }
             // Generate an array of the WHERE clauses to be used.
             String[] where = GetWhereSearchCriteria(entityName, criteria, command);
 
@@ -318,11 +366,26 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     sb.AppendFormat(" AND {0}", clause);
             }
 
-            string orderBy = GetSelectOrderBy(entityName, criteria);
-            if (orderBy.Length > 0)
-                sb.AppendFormat(" {0}", orderBy);
-
-            return sb.ToString();
+			if (maxRows == null || startIndex == null)
+			{
+				if (orderBy.Length > 0)
+					sb.AppendFormat(" {0}", orderBy);
+			}
+			else if (startIndex.Value == 0)
+			{
+				if (orderBy.Length > 0)
+					sb.AppendFormat(" {0}", orderBy);
+			}
+			else
+			{
+				StringBuilder sb2 = new StringBuilder();
+				sb2.AppendFormat("SELECT {0}Details.* FROM ({1}) AS {0}Details ", entityName, sb);
+				sb2.AppendFormat("WHERE RowNum BETWEEN @StartRowIndex AND (@StartRowIndex + @MaximumRows) - 1");
+				command.Parameters.AddWithValue("@StartRowIndex", startIndex.Value);
+				command.Parameters.AddWithValue("@MaximumRows", maxRows.Value);
+				return sb2.ToString();
+			}
+        	return sb.ToString();
         }
 
         /// <summary>
@@ -511,10 +574,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <summary>
         /// Proves an UPDATE SQL statement based on the supplied input entity.
         /// </summary>
-        /// <param name="entityName">The entity that is being selected from.</param>
+        /// <param name="entity">The entity that is being selected from.</param>
         /// <param name="command">The SqlCommand to use.</param>
-        /// <param name="key">The GUID of the table row to update</param>
-        /// <param name="parameters">The columns to update.</param>
         /// <returns>The SQL string.</returns>
         private static string GetUpdateSql(TServerEntity entity, SqlCommand command)
         {
@@ -569,7 +630,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             
             
             StringBuilder sql = new StringBuilder();
-            sql.AppendFormat("UPDATE {0} SET {1} WHERE {2}", entity.Name, set.ToString(), where.ToString());
+            sql.AppendFormat("UPDATE {0} SET {1} WHERE {2}", entity.Name, set, where);
 
             return sql.ToString();
         }
@@ -765,14 +826,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         {
             IList<TServerEntity> list = new List<TServerEntity>();
 
-            _Find(criteria, null, delegate(TServerEntity row) { list.Add(row); });
+            _Find(criteria, null, null, delegate(TServerEntity row) { list.Add(row); });
 
             return list;
         }
 
         public void Find(TSelectCriteria criteria, SelectCallback<TServerEntity> callback)
         {
-            _Find(criteria, null, callback);
+            _Find(criteria, null, null, callback);
         }
 
         public int Count(TSelectCriteria criteria)
@@ -1039,21 +1100,21 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         #region IEntityBroker<TServerEntity,TSelectCriteria,TUpdateColumns> Members
 
 
-        public IList<TServerEntity> Find(TSelectCriteria criteria, int maxRows)
+        public IList<TServerEntity> Find(TSelectCriteria criteria, int startIndex, int maxRows)
         {
             IList<TServerEntity> list = new List<TServerEntity>();
 
-            Find(criteria, maxRows, delegate(TServerEntity row) { list.Add(row); });
+            Find(criteria, startIndex, maxRows, delegate(TServerEntity row) { list.Add(row); });
 
             return list;
         }
 
-        public void Find(TSelectCriteria criteria, int maxRows, SelectCallback<TServerEntity> callback)
+        public void Find(TSelectCriteria criteria, int startIndex, int maxRows, SelectCallback<TServerEntity> callback)
         {
-            _Find(criteria, maxRows, callback);
+            _Find(criteria, startIndex, maxRows, callback);
         }
 
-        private void _Find(TSelectCriteria criteria, int? maxRows, SelectCallback<TServerEntity> callback)
+        private void _Find(TSelectCriteria criteria, int? startIndex, int? maxRows, SelectCallback<TServerEntity> callback)
         {
             SqlDataReader myReader = null;
             SqlCommand command = null;
@@ -1068,7 +1129,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
-                command.CommandText = sql = GetSelectSql(_entityName, command, criteria, maxRows, null);
+                command.CommandText = sql = GetSelectSql(_entityName, command, criteria, startIndex, maxRows, null);
 
                 myReader = command.ExecuteReader();
                 if (myReader == null)

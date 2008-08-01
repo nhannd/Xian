@@ -31,6 +31,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.IO;
@@ -67,50 +68,95 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (parm is ProcedureParameter<DateTime?>)
                 {
                     ProcedureParameter<DateTime?> parm2 = (ProcedureParameter<DateTime?>)parm;
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					else
+					{
+						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.DateTime);
+						sqlParm.IsNullable = true;
+						sqlParm.Direction = ParameterDirection.Output;
+					}
                 }
                 else if (parm is ProcedureParameter<DateTime>)
                 {
                     ProcedureParameter<DateTime> parm2 = (ProcedureParameter<DateTime>)parm;
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
-                }
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					else
+					{
+						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.DateTime);
+						sqlParm.Direction = ParameterDirection.Output;
+					}
+				}
                 else if (parm is ProcedureParameter<int>)
                 {
                     ProcedureParameter<int> parm2 = (ProcedureParameter<int>)parm;
 
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
-                }
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					else
+					{
+						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.Int);
+						sqlParm.Direction = ParameterDirection.Output;
+					}
+				}
                 else if (parm is ProcedureParameter<ServerEntityKey>)
                 {
                     sqlParmName = sqlParmName.Replace("Key", "GUID");
                     ProcedureParameter<ServerEntityKey> parm2 = (ProcedureParameter<ServerEntityKey>)parm;
 
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value.Key);
-                }
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value.Key);
+					else
+					{
+						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.UniqueIdentifier);
+						sqlParm.Direction = ParameterDirection.Output;
+					}
+				}
                 else if (parm is ProcedureParameter<bool>)
                 {
                     ProcedureParameter<bool> parm2 = (ProcedureParameter<bool>)parm;
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
-                }
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					else
+					{
+						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.Bit);
+						sqlParm.Direction = ParameterDirection.Output;
+					}
+				}
                 else if (parm is ProcedureParameter<string>)
                 {
                     ProcedureParameter<string> parm2 = (ProcedureParameter<string>)parm;
 
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
-                }
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					else
+						throw new PersistenceException("Unsupported output parameter type: string",null);
+				}
                 else if (parm is ProcedureParameter<ServerEnum>)
                 {
                     ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
-                    if (parm2.Value == null)
-                        command.Parameters.AddWithValue(sqlParmName, null);
-                    else
-                        command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
+					if (parm2.Value == null)
+						command.Parameters.AddWithValue(sqlParmName, null);
+					else
+					{
+						if (parm2.Output)												
+							throw new PersistenceException("Unsupported output parameter type: ServerEnum",null);
+
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
+					}
                 }
                 else if (parm is ProcedureParameter<Decimal>)
                 {
                     ProcedureParameter<Decimal> parm2 = (ProcedureParameter<Decimal>)parm;
 
-                    command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					if (!parm2.Output)
+						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+					else
+					{
+						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.Decimal);
+						sqlParm.Direction = ParameterDirection.Output;
+					}
                 }
                 else if (parm is ProcedureParameter<XmlDocument>)
                 {
@@ -119,6 +165,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                         command.Parameters.AddWithValue(sqlParmName, null);
                     else
                     {
+						if (parm2.Output)
+							throw new PersistenceException("Unsupported output parameter type: XmlDocument", null);
+
                         MemoryStream sw = new MemoryStream();
 
                         XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
@@ -143,6 +192,88 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
 
         }
+
+		protected static void GetOutputParameters(SqlCommand command, ProcedureParameters parms)
+		{
+			foreach (SearchCriteria parm in parms.SubCriteria.Values)
+			{
+				String sqlParmName = "@" + parm.GetKey();
+
+				if (parm is ProcedureParameter<DateTime?>)
+				{
+					ProcedureParameter<DateTime?> parm2 = (ProcedureParameter<DateTime?>)parm;
+					if (!parm2.Output)
+						continue;
+					else
+					{
+						SqlParameter sqlParm = command.Parameters[sqlParmName];
+						parm2.Value = (DateTime?)sqlParm.Value;
+					}
+				}
+				else if (parm is ProcedureParameter<DateTime>)
+				{
+					ProcedureParameter<DateTime> parm2 = (ProcedureParameter<DateTime>)parm;
+					if (!parm2.Output)
+						continue;
+					else
+					{
+						SqlParameter sqlParm = command.Parameters[sqlParmName];
+						parm2.Value = (DateTime)sqlParm.Value;
+					}
+				}
+				else if (parm is ProcedureParameter<int>)
+				{
+					ProcedureParameter<int> parm2 = (ProcedureParameter<int>)parm;
+
+					if (!parm2.Output)
+						continue;
+					else
+					{
+						
+						SqlParameter sqlParm = command.Parameters[sqlParmName];
+						//object o = command.Connection.Get
+						if (sqlParm.Value != null)
+							parm2.Value = (int)sqlParm.Value;
+					}
+				}
+				else if (parm is ProcedureParameter<ServerEntityKey>)
+				{
+					sqlParmName = sqlParmName.Replace("Key", "GUID");
+					ProcedureParameter<ServerEntityKey> parm2 = (ProcedureParameter<ServerEntityKey>)parm;
+
+					if (!parm2.Output)
+						continue;
+					else
+					{
+						SqlParameter sqlParm = command.Parameters[sqlParmName];
+						parm2.Value = new ServerEntityKey("", sqlParm.Value);
+					}
+				}
+				else if (parm is ProcedureParameter<bool>)
+				{
+					ProcedureParameter<bool> parm2 = (ProcedureParameter<bool>)parm;
+					if (!parm2.Output)
+						continue;
+					else
+					{
+						SqlParameter sqlParm = command.Parameters[sqlParmName];
+						parm2.Value = (bool)sqlParm.Value;
+					}
+				}
+				else if (parm is ProcedureParameter<Decimal>)
+				{
+					ProcedureParameter<Decimal> parm2 = (ProcedureParameter<Decimal>)parm;
+
+					if (!parm2.Output)
+						continue;
+					else
+					{
+						SqlParameter sqlParm = command.Parameters[sqlParmName];
+						parm2.Value = (Decimal)sqlParm.Value;
+					}
+				}
+			}
+		}
         protected static void PopulateEntity(SqlDataReader reader, ServerEntity entity, Type entityType)
         {
             PropertyDescriptorCollection props = TypeDescriptor.GetProperties(entity);
@@ -150,6 +281,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 String columnName = reader.GetName(i);
+
+				// Special case for when we select a range of values with an EntityBroker, just ignore
+				if (columnName.Equals("RowNum"))
+					continue;
+
                 if (columnName.Equals("GUID"))
                 {
                     Guid uid = reader.GetGuid(i);

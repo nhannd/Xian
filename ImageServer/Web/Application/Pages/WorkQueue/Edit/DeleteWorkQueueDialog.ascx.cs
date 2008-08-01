@@ -41,7 +41,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         
         #endregion Events
 
-
         #region Public Properties
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         successful = controller.DeleteWorkQueueItems(items);
                         if (successful)
                         {
-                            Platform.Log(LogLevel.Info, "Work Queue item deleted by user : Item GUID={0}", item.GetKey().Key);
+                            Platform.Log(LogLevel.Info, "Work Queue item deleted by user : Item Key={0}", item.GetKey().Key);
 
                             if (WorkQueueItemDeleted != null)
                                 WorkQueueItemDeleted(item);
@@ -139,7 +138,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         }
 
         #endregion Private Methods
-
 
         #region Public Methods
 

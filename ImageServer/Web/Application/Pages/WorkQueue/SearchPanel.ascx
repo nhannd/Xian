@@ -26,7 +26,7 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
+                                                <asp:TextBox ID="StudyDescription" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Study Description"/>
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;
@@ -49,7 +49,7 @@
                                                 <asp:DropDownList ID="PriorityDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>               
                                         </tr>
                                     </table>
@@ -79,7 +79,7 @@
                          <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                  <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
-                                <tr><td style="background-color: white;"><localAsp:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" AllowPaging="true" PageSize="20" runat="server"></localAsp:WorkQueueSearchResultPanel></td></tr>
+                                <tr><td style="background-color: white;"><localAsp:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" runat="server"></localAsp:WorkQueueSearchResultPanel></td></tr>
                                 <tr><td style="border-top: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>                    
                             </table>
                          

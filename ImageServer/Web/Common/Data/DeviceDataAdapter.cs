@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public bool DeleteDevice(Device dev)
         {
-            return Delete(dev.GetKey());
+            return Delete(dev.Key);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowStorage = dev.AllowStorage;
             param.AllowAutoRoute = dev.AllowAutoRoute;
 
-            Update(dev.GetKey(), param);
+            Update(dev.Key, param);
 
             return ok;
         }

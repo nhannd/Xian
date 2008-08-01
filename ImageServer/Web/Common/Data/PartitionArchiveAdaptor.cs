@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
 
 				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-				parms.StudyStorageKey = list[0].GetKey();
+				parms.StudyStorageKey = list[0].Key;
 
 				IList<RestoreQueue> storageList = broker.Execute(parms);
 

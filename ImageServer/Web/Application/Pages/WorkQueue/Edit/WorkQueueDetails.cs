@@ -51,11 +51,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
         private WorkQueuePriorityEnum _priority;
         private string _failureDescription;
     	private string _storageLocationPath;
-
         private string _serverDescription;
         private int _numSeriesPending;
         private int _numInstancesPending;
-
         private StudyDetails _study;
 
         #endregion Private members
@@ -92,7 +90,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             set { _status = value; }
         }
 
-
         public StudyDetails Study
         {
             get { return _study; }
@@ -104,8 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             get { return _serverDescription; }
             set { _serverDescription = value; }
         }
-
-
+		
         public int NumInstancesPending
         {
             get { return _numInstancesPending; }
@@ -118,7 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             set { _numSeriesPending = value; }
         }
 
-        public ServerEntityKey GUID
+        public ServerEntityKey Key
         {
             get { return _workQueueUid; }
             set { _workQueueUid = value; }

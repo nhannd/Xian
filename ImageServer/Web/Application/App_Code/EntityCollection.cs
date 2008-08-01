@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Web.Application.App_Code
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_Code
     {
         protected override ServerEntityKey GetKey(T item)
         {
-            return item.GUID;
+            return item.Key;
         }
     }
 }

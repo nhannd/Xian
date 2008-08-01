@@ -30,19 +30,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
         }
 
 
-        public override void DataBind()
-        {
-            IList<StudySummary> studySummaries = new List<StudySummary>();
-            foreach (Study study in StudyList)
-            {
-                studySummaries.Add(StudySummaryAssembler.CreateStudySummary(study));
-            }
-
-            StudyListControl.DataSource = studySummaries;
-            StudyListControl.DataBind();
-            StudyListControl.PagerSettings.Visible = false;
-
-        }
         protected void Page_Load(object sender, EventArgs e)
         {
             DataBind();

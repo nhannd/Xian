@@ -41,16 +41,39 @@ namespace ClearCanvas.ImageServer.Enterprise
     public class ProcedureParameter<T> : SearchCriteria
     {
         private T _value;
+		private bool _output = false;
 
+		/// <summary>
+		/// Constructor for input parameters.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
         public ProcedureParameter(String key, T value)
             : base(key)
         {
             _value = value;
         }
 
-        public T Value
-        {
-            get { return _value; }
-        }
+		/// <summary>
+		/// Contructor for output parameters.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="output"></param>
+		public ProcedureParameter(String key)
+			: base(key)
+		{
+			_output = true;
+		}
+
+		public bool Output
+		{
+			get { return _output; }
+		}
+
+		public T Value
+		{
+			get { return _value; }
+			set { _value = value; }
+		}
     }
 }

@@ -95,6 +95,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 }
                 else
                 {
+
                     if (myReader.HasRows)
                     {
                         while (myReader.Read())
@@ -105,7 +106,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                             callback(row);
                         }
-                    }
+						myReader.Close();
+						myReader = null;
+					}
+					// Note:  The retrieving of output parameters must occur after
+					// the reader has been closed.
+					GetOutputParameters(command, criteria);
                 }
             }
             catch (Exception e)

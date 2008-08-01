@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
@@ -49,12 +48,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         #region Private Members
 
         private ServerPartition _serverPartition;
-        private WorkQueueController _searchController;
         private SearchPage _enclosingPage;
-
-        private WorkQueueItemCollection _workQueueItems;
         #endregion Private Members
-
 
         #region Static Class Initializer
 
@@ -78,27 +73,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             set { _enclosingPage = value; }
         }
 
-        /// <summary>
-        /// Gets the <see cref="WorkQueueItemCollection"/> associated with this search panel.
-        /// </summary>
-        public WorkQueueItemCollection WorkQueueItems
-        {
-            get { return _workQueueItems; }
-            set { _workQueueItems = value; }
-        }
-
         #endregion Public Properties
 
         #region Protected Methods
 
         protected override void OnInit(EventArgs e)
         {
-            
+
             base.OnInit(e);
 
-            // initialize the controller
-            _searchController = new WorkQueueController();
+			// Setup the calendar for schedule date
+			if (!Page.IsPostBack)
+			{
+				// first time load
+				ScheduleCalendarExtender.SelectedDate = DateTime.Today;
+			}
+			else
+			{
+				ScheduleDate.Text = Request[ScheduleDate.UniqueID];
+				if (!String.IsNullOrEmpty(ScheduleDate.Text))
+					ScheduleCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
+				else
+					ScheduleCalendarExtender.SelectedDate = null;
 
+			}
+       
             ScheduleCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
             ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
@@ -111,13 +110,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             GridPagerTop.Target = workQueueItemListPanel.WorkQueueItemListControl;
             GridPagerTop.GetRecordCountMethod = delegate
                                                   {
-                                                      return workQueueItemListPanel.WorkQueueItems == null ? 0 : workQueueItemListPanel.WorkQueueItems.Count;
+													  return workQueueItemListPanel.ResultCount;
                                                   };
 
             GridPagerBottom.PageCountVisible = true;
             GridPagerBottom.ItemCountVisible = false;
             GridPagerBottom.Target = workQueueItemListPanel.WorkQueueItemListControl;
-            
+
+        	workQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
+        	                                            	{
+        	                                            		source.AccessionNumber = AccessionNumber.Text;
+																source.Partition = ServerPartition;
+																source.PatientId = PatientId.Text;
+																source.ScheduledDate = ScheduleDate.Text;
+																source.StudyDescription = StudyDescription.Text;
+        	                                            		source.DateFormats = ScheduleCalendarExtender.Format;
+																if (TypeDropDownList.SelectedValue != string.Empty)
+																	source.TypeEnum = WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
+
+																if (StatusDropDownList.SelectedValue != string.Empty)
+																	source.StatusEnum = WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
+
+																if (PriorityDropDownList.SelectedValue != string.Empty)
+																	source.PriorityEnum = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
+
+        	                                            	};
+			
         }
 
         /// <summary>
@@ -127,29 +145,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         /// <param name="e"></param>
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            workQueueItemListPanel.PageIndex = 0;
+            workQueueItemListPanel.WorkQueueItemListControl.PageIndex = 0;
             DataBind();
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!Page.IsPostBack)
-            {
-                // first time load
-                ScheduleCalendarExtender.SelectedDate = DateTime.Today;
-            }
-            else
-            {
-                ScheduleDate.Text = Request[ScheduleDate.UniqueID];
-                if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                    ScheduleCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
-                else
-                    ScheduleCalendarExtender.SelectedDate = null;
 
-            }
-
-            //
-            
             // re-populate the drop down lists and restore their states
             IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
             IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
@@ -176,46 +178,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)
                 PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
-
-            
-           
-        }
-
-
-        protected void LoadWorkQueues()
-        {
-        
-            if (ServerPartition != null)
-            {
-                WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
-                parameters.ServerPartitionKey = ServerPartition.GetKey();
-                parameters.Accession = AccessionNumber.Text;
-                parameters.PatientID = PatientId.Text;
-                if (String.IsNullOrEmpty(ScheduleDate.Text ))
-                    parameters.ScheduledTime = null;
-                else
-                    parameters.ScheduledTime = DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);// CalendarExtender1.SelectedDate;
-
-                parameters.Accession = AccessionNumber.Text;
-                parameters.StudyDescription = StudyDescription.Text;
-
-                if (TypeDropDownList.SelectedValue != string.Empty)
-                    parameters.Type = WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
-
-                if (StatusDropDownList.SelectedValue != string.Empty)
-                    parameters.Status = WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
-
-                if (PriorityDropDownList.SelectedValue!=string.Empty)
-                    parameters.Priority = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
-
-                IList<Model.WorkQueue> list = _searchController.FindWorkQueue(parameters);
-
-                WorkQueueItems = new WorkQueueItemCollection(list);
-
-                workQueueItemListPanel.WorkQueueItems = WorkQueueItems;
-               
-            }
-            
+                      
         }
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
@@ -223,41 +186,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
             {
-               EnclosingPage.ViewWorkQueueItem(item.GetKey());
+               EnclosingPage.ViewWorkQueueItem(item.Key);
             }
         }
 
 
         protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
-
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
             {
-                EnclosingPage.ResetWorkQueueItem(item.GetKey());
+                EnclosingPage.ResetWorkQueueItem(item.Key);
             }
-
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
-
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
             {
-                EnclosingPage.DeleteWorkQueueItem(item.GetKey());
+                EnclosingPage.DeleteWorkQueueItem(item.Key);
             }
-
         }
 
-
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
-        {
-            
+        {            
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
             if (item != null)
             {
-               EnclosingPage.RescheduleWorkQueueItem(item.GetKey());
+               EnclosingPage.RescheduleWorkQueueItem(item.Key);
             }
             else 
             {
@@ -276,7 +233,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             UpdateToolBarButtons(); 
             
             base.OnPreRender(e);
-
         }
 
         protected void UpdateToolBarButtons()
@@ -288,23 +244,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             DeleteItemButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem);
             ResetItemButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem);
         }
-
-
             
         #endregion Protected Methods
 
-
-        #region Public Methods
-
-        public override void DataBind()
-        {
-
-            if (workQueueItemListPanel.IsPostBack)
-                LoadWorkQueues();
-
-            base.DataBind();
-        }
-
-        #endregion
     }
 }

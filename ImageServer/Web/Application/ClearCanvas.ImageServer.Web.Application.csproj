@@ -390,8 +390,6 @@
     <Compile Include="Pages\Search\StudyListGridView.ascx.designer.cs">
       <DependentUpon>StudyListGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\StudySummary.cs" />
-    <Compile Include="Pages\Search\StudySummaryAssembler.cs" />
     <Compile Include="Pages\SeriesDetails\PatientSummary.cs" />
     <Compile Include="Pages\SeriesDetails\PatientSummaryAssembler.cs" />
     <Compile Include="Pages\SeriesDetails\PatientSummaryPanel.ascx.cs">

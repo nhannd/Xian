@@ -89,6 +89,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 return select.Find(criteria);
             }
         }
+		public IList<TServerEntity> GetRange(TCriteria criteria, int startIndex, int maxRows)
+		{
+			using (IReadContext ctx = PersistentStore.OpenReadContext())
+			{
+				TIEntity select = ctx.GetBroker<TIEntity>();
+				return select.Find(criteria, startIndex, maxRows);
+			}
+		}
+
+		public int GetCount(TCriteria criteria)
+		{
+			using (IReadContext ctx = PersistentStore.OpenReadContext())
+			{
+				TIEntity select = ctx.GetBroker<TIEntity>();
+				return select.Count(criteria);
+			}
+		}
 
 		public TServerEntity GetFirst(TCriteria criteria)
 		{

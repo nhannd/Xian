@@ -486,7 +486,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
 
             _statistics = new StudyProcessStatistics();
-            _statistics.Description = String.Format("{0}[GUID={1}]", item.WorkQueueTypeEnum, item.GetKey().Key);
+            _statistics.Description = String.Format("{0}[Key={1}]", item.WorkQueueTypeEnum, item.Key.Key);
         }
         
         protected override void ProcessItem(Model.WorkQueue item)

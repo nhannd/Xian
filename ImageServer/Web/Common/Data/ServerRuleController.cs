@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool DeleteServerRule(ServerRule rule)
         {
-            return _adaptor.Delete(rule.GetKey());
+            return _adaptor.Delete(rule.Key);
         }
 
         public ServerRule AddServerRule(ServerRule rule)
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.ServerRuleTypeEnum = rule.ServerRuleTypeEnum;
 			parms.ExemptRule = rule.ExemptRule;
 
-            return _adaptor.Update(rule.GetKey(), parms);
+            return _adaptor.Update(rule.Key, parms);
         }
 
         #endregion

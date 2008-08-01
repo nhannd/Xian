@@ -146,15 +146,19 @@ CREATE PROCEDURE [dbo].[WebQueryWorkQueue]
 	@ScheduledTime datetime = null,
 	@Type smallint = null,
 	@Status smallint = null,
-	@Priority smallint = null
+	@Priority smallint = null,
+	@StartIndex int,
+	@MaxRowCount int = 25,
+	@ResultCount int OUTPUT
 AS
 BEGIN
 	Declare @stmt nvarchar(1024);
 	Declare @where nvarchar(1024);
+	Declare @count nvarchar(1024);
 
 	-- Build SELECT statement based on the paramters
 	
-	SET @stmt =			''SELECT WorkQueue.* FROM WorkQueue ''
+	SET @stmt =			''SELECT WorkQueue.*, ROW_NUMBER() OVER(ORDER BY ScheduledTime ASC) as RowNum FROM WorkQueue ''
 	SET @stmt = @stmt + ''LEFT JOIN StudyStorage on StudyStorage.GUID = WorkQueue.StudyStorageGUID ''
 	SET @stmt = @stmt + ''LEFT JOIN Study on Study.ServerPartitionGUID=StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid=StudyStorage.StudyInstanceUid ''
 	
@@ -231,11 +235,22 @@ BEGIN
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where
 
-	SET @stmt = @stmt + '' ORDER BY WorkQueue.ScheduledTime ASC''
-
 	--PRINT @stmt
+	SET @stmt = ''SELECT W.GUID, W.ServerPartitionGUID, W.StudyStorageGUID, W.DeviceGUID, W.WorkQueueTypeEnum, W.WorkQueueStatusEnum, W.WorkQueuePriorityEnum, W.ProcessorID, W.ExpirationTime, W.ScheduledTime, W.InsertTime, W.FailureCount, W.FailureDescription, W.Data FROM ('' + @stmt
+	SET @stmt = @stmt + '') AS W WHERE W.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
+
+	if (@where<>'''')
+		SET @count = ''SELECT @recordCount = count(*) FROM WorkQueue WHERE '' + @where
+	else
+		SET @count = ''SELECT @recordCount = count(*) FROM WorkQueue''
+
+	DECLARE @recCount int
+	
+	EXEC sp_executesql  @count, N''@recordCount int OUT'', @recCount OUT
+
+	set @ResultCount = @recCount
 
 END
 ' 

@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         static public WorkQueueSummary CreateWorkQueueSummary(Model.WorkQueue item)
         {
             WorkQueueSummary summary = new WorkQueueSummary();
-            summary.WorkQueueGuid = item.GUID;
+            summary.WorkQueueKey = item.Key;
             summary.ScheduledDateTime = item.ScheduledTime;
             summary.Type = item.WorkQueueTypeEnum;
             summary.Status = item.WorkQueueStatusEnum;
@@ -96,9 +96,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 			else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
 					&& item.FailureDescription != null)
 			{
-				summary.Notes = item.FailureDescription.Substring(0, 60);
-				if (summary.Notes.Length != item.FailureDescription.Length)
+				if (item.FailureDescription.Length > 60)
+				{
+					summary.Notes = item.FailureDescription.Substring(0, 60);
 					summary.Notes += " ...";
+				}
+				else
+					summary.Notes = item.FailureDescription;
 			}
 
         	return summary;

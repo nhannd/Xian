@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 workQueueSearchCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress });
                 workQueueSearchCriteria.ScheduledTime.SortDesc(0);
 
-                IList<WorkQueue> migrateItems = workQueueBroker.Find(workQueueSearchCriteria, 1);
+                IList<WorkQueue> migrateItems = workQueueBroker.Find(workQueueSearchCriteria, 0, 1);
 
                 if (migrateItems != null && migrateItems.Count > 0)
                 {

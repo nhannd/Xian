@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         successful = controller.ResetWorkQueueItems(items, scheduledTime, expirationTime);
                         if (successful)
                         {
-                            Platform.Log(LogLevel.Info, "Work Queue item reset by user :  GUID={0}", item.GetKey());
+                            Platform.Log(LogLevel.Info, "Work Queue item reset by user :  Key={0}", item.GetKey());
 
                             if (WorkQueueItemReseted != null)
                                 WorkQueueItemReseted(item);
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                         else
                         {
                             Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. GUID={0}", item.GetKey());
+                                         "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. Key={0}", item.GetKey());
 
                             MessageBox.Message = App_GlobalResources.SR.WorkQueueResetFailed;
                             MessageBox.MessageType =
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     catch (Exception e)
                     {
                         Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. GUID={0}. Error: {1}", item.GetKey().Key, e.StackTrace);
+                                         "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. Key={0}. Error: {1}", item.GetKey().Key, e.StackTrace);
 
                         MessageBox.Message = App_GlobalResources.SR.WorkQueueResetFailed;
                         MessageBox.MessageType =
