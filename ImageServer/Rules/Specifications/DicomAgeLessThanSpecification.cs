@@ -35,7 +35,7 @@ using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
-using SR=ClearCanvas.Common.SR;
+using CommonSR=ClearCanvas.Common.SR;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications
 {
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
                 DateTime comparisonTime = Platform.Time;
                 double time;
                 if (false == double.TryParse(_refValue, out time))
-                    throw new SpecificationException(SR.ExceptionCastExpressionString);
+                    throw new SpecificationException(CommonSR.ExceptionCastExpressionString);
 
                 if (_units.Equals("weeks"))
                     comparisonTime = comparisonTime.AddDays(time*-7f);
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             }
             else
             {
-                throw new SpecificationException(SR.ExceptionCastExpressionString);
+                throw new SpecificationException(CommonSR.ExceptionCastExpressionString);
             }
         }
     }

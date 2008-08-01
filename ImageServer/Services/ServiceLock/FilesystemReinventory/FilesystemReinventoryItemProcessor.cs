@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -49,6 +48,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
     /// </summary>
     class FilesystemReinventoryItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
+        private const string COMPONENT_NAME = "Filesystem Reinventory";
+
         #region Private Members
         private FilesystemMonitor _monitor;
         private IPersistentStore _store;
@@ -228,16 +229,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
-            Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reinventory",
-                           "Filesystem Reinventory started for filesystem '{0}'",
-                           info.Filesystem.Description);
 
             ReinventoryFilesystem(info.Filesystem, priority);
-
-            Platform.Log(LogLevel.Info, "Completed reinventory of filesystem: {0}", info.Filesystem.Description);
-            Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reinventory",
-                                       "Filesystem Reinventory completed for filesystem '{0}'",
-                                       info.Filesystem.Description);
 
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
 

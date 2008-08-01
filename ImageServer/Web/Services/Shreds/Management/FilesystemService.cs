@@ -3,6 +3,7 @@ using System.IO;
 using System.ServiceModel;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.Server.ShredHost;
 
@@ -40,7 +41,8 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds.Management
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, "Failed to start {0} : {1}", SR.FilesystemServiceDisplayName, e.StackTrace);
-
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, SR.FilesystemServiceDisplayName,
+                                     AlertTypeCodes.UnableToStart, SR.AlertFilesystemUnableToStart, e.Message);
             }
         }
 

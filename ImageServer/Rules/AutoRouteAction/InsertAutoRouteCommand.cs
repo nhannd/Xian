@@ -30,12 +30,11 @@
 #endregion
 
 using System;
-using System.Xml.Serialization;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -85,8 +84,10 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 				             "Device '{0}' on partition {1} not in database for autoroute request!  Ignoring request.", _deviceAe,
 				             _context.ServerPartition.AeTitle);
 
-			    Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "AutoRoute Rule",
-			                   "Unknown device '{0}' on partition '{1}'", _deviceAe, _context.ServerPartition.AeTitle);
+                ServerPlatform.Alert(
+                                AlertCategory.Application, AlertLevel.Warning,
+                                SR.AlertComponentAutorouteRule, AlertTypeCodes.UnableToProcess, TimeSpan.FromMinutes(5),
+                                SR.AlertAutoRouteUnknownDestination, _deviceAe, _context.ServerPartition.AeTitle);
 
                 return;
 			}
@@ -96,8 +97,8 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                              "Auto-route attempted to device {0} on partition {1} with autoroute support disabled.  Ignoring request.",
                              dev.AeTitle, _context.ServerPartition.AeTitle);
 
-                Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "AutoRoute Rule",
-                            "Device {0} on partition {1} has autoroute support disabled.", dev.AeTitle, _context.ServerPartition.AeTitle);
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, SR.AlertComponentAutorouteRule, AlertTypeCodes.UnableToProcess, TimeSpan.FromMinutes(5),
+                            SR.AlertAutoRouteDestinationAEDisabled, dev.AeTitle, _context.ServerPartition.AeTitle);
                 
                 return;
             }

@@ -55,7 +55,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 		public virtual IWorkQueueItemProcessor GetItemProcessor()
 		{
-			return new PurgeStudyItemProcessor();
+			PurgeStudyItemProcessor processor =  new PurgeStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.PurgeStudy.ToString();
+            return processor;
 		}
 		#endregion
 	}

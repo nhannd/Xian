@@ -35,7 +35,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
@@ -53,6 +52,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// </summary>
     public abstract class BaseItemProcessor : IWorkQueueItemProcessor
     {
+        private string _name = "Work Queue";
         private IReadContext _readContext;
 
         //private WorkQueueProcessorStatistics _statistics;
@@ -117,11 +117,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             set { _processTime = value; }
         }
 
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
         #endregion
 
         #region Contructors
 
-        public BaseItemProcessor()
+        protected BaseItemProcessor()
         {
             _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
         }
@@ -464,7 +470,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now		
 
-							    Platform.Alert(AlertCategory.Application, AlertLevel.Critical, "Study Process",
+							    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, Name, AlertTypeCodes.UnableToProcess,
 							                   "Failing {0} WorkQueue entry ({1}), fatal error",
 							                   item.WorkQueueTypeEnum, item.GetKey());
 							}
@@ -478,7 +484,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.ExpirationTime = Platform.Time; // expire now
 
 
-							    Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process",
+                                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
 							                   "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
 							                   item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
 							}
@@ -541,8 +547,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 parms.ExpirationTime = Platform.Time.AddDays(1);
 
 
-                                Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process", 
-                                                "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error, Name, AlertTypeCodes.UnableToProcess,
+                                                "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}", 
                                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
                             }
                             else

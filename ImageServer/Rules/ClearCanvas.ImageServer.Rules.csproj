@@ -64,6 +64,11 @@
     <Compile Include="Specifications\DicomExpression.cs" />
     <Compile Include="ActionOperatorCompilerBase.cs" />
     <Compile Include="ServerActionItemBase.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="StudyDeleteAction\StudyDeleteActionItem.cs" />
     <Compile Include="StudyDeleteAction\StudyDeleteActionOperator.cs" />
     <Compile Include="StudyDeleteAction\Sample_StudyDelete.cs" />
@@ -120,6 +125,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="OnlineRetentionAction\Sample_OnlineRetentionSimple.xml" />
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

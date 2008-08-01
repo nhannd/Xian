@@ -21,7 +21,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         public IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new TierMigrateItemProcessor();
+            TierMigrateItemProcessor processor = new TierMigrateItemProcessor();
+            processor.Name = WorkQueueTypeEnum.MigrateStudy.ToString();
+            return processor;
         }
 
         #endregion

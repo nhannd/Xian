@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -44,13 +44,63 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
     /// <summary>
+    /// Provide a convenient means to track duration of an event 
+    /// </summary>
+    class TimeTracker<T>
+    {
+        #region Delegates
+        public delegate object ObjectKeyDelegate(T obj);
+        #endregion
+
+        private readonly Dictionary<object, DateTime> _lutObjectTrackingTime = new Dictionary<object, DateTime>();
+        private ObjectKeyDelegate _del;
+
+        public TimeTracker(ObjectKeyDelegate del)
+        {
+            _del = del;
+        }
+    
+        public bool IsTracking(T obj)
+        {
+            return _lutObjectTrackingTime.ContainsKey(_del(obj));
+        }
+
+        public void StartTracking(T obj)
+        {
+            _lutObjectTrackingTime.Add(_del(obj), Platform.Time);
+        }
+
+        public void ResetTracking(T obj)
+        {
+            _lutObjectTrackingTime[_del(obj)] = Platform.Time;
+        }
+
+
+        public TimeSpan GetTrackingDuration(T obj)
+        {
+            if (!IsTracking(obj))
+                return TimeSpan.Zero;
+
+            return Platform.Time - _lutObjectTrackingTime[_del(obj)];
+        }
+
+        public void StopTracking(T obj)
+        {
+            _lutObjectTrackingTime.Remove(_del(obj));
+        }
+    }
+
+    /// <summary>
     /// Class for processing 'FilesystemDelete' <see cref="Model.ServiceLock"/> rows.
     /// </summary>
     public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
+        private static TimeTracker<ServerFilesystemInfo> _fsTracker = new TimeTracker<ServerFilesystemInfo>(
+                    delegate(ServerFilesystemInfo fs) { return fs.Filesystem.GetKey().Key; });
+
         #region Private Members
-        static DateTime? _scheduledMigrateTime = null;
-            
+        static private DateTime? _scheduledMigrateTime = null;
+        
         private FilesystemMonitor _monitor;
         private float _bytesToRemove;
         private int _studiesDeleted = 0;
@@ -59,6 +109,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #endregion
 
         #region Private Methods
+
 
         /// <summary>
         /// Initializes the scheduled time based on the last entry in the queue.
@@ -452,6 +503,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         #region Public Methods
 
+        
 		/// <summary>
 		/// Main <see cref="ServiceLock"/> processing routine.
 		/// </summary>
@@ -494,14 +546,19 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 					if (_bytesToRemove > 0)
 						PurgeStudies(item, fs);
+
 					scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
 				}
+
+                OnAboveHighWatermark(fs);
 			}
 			else
 			{
 				Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
 				             fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 				scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval);
+
+			    OnBelowLowWatermark(fs);
 			}
 
 			UnlockServiceLock(item, true, scheduledTime);            
@@ -511,7 +568,31 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         }
 
-        
+
+
+        private void OnAboveHighWatermark(ServerFilesystemInfo fs)
+        {
+            if (!_fsTracker.IsTracking(fs))
+            {
+                _fsTracker.StartTracking(fs);
+            }
+
+            TimeSpan duration = _fsTracker.GetTrackingDuration(fs);
+            if (duration > TimeSpan.FromMinutes(ServiceLockSettings.Default.HighWatermarkAlertInterval))
+            {
+                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Warning, SR.AlertNameFilesystemDelete, AlertTypeCodes.LowResources,
+                                            SR.AlertFilesystemAboveHW,  fs.Filesystem.Description, TimeSpanFormatter.Format(duration));
+            }
+        }
+
+        private void OnBelowLowWatermark(ServerFilesystemInfo fs)
+        {
+            if (_fsTracker.IsTracking(fs))
+            {
+                _fsTracker.StopTracking(fs);
+            }
+        }
+
 
         public new void Dispose()
         {

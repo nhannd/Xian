@@ -63,6 +63,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<AlertLevelEnum>)SubCriteria["AlertLevelEnum"];
             } 
         }
+        public ISearchCondition<System.String> Component
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Component"))
+              {
+                 SubCriteria["Component"] = new SearchCondition<System.String>("Component");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["Component"];
+            } 
+        }
         public ISearchCondition<System.Xml.XmlDocument> Content
         {
             get
@@ -72,17 +83,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Content"] = new SearchCondition<System.Xml.XmlDocument>("Content");
               }
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["Content"];
-            } 
-        }
-        public ISearchCondition<System.DateTime> ExpirationTime
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ExpirationTime"))
-              {
-                 SubCriteria["ExpirationTime"] = new SearchCondition<System.DateTime>("ExpirationTime");
-              }
-              return (ISearchCondition<System.DateTime>)SubCriteria["ExpirationTime"];
             } 
         }
         public ISearchCondition<System.DateTime> InsertTime
@@ -105,6 +105,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Source"] = new SearchCondition<System.String>("Source");
               }
               return (ISearchCondition<System.String>)SubCriteria["Source"];
+            } 
+        }
+        public ISearchCondition<System.Int32> TypeCode
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("TypeCode"))
+              {
+                 SubCriteria["TypeCode"] = new SearchCondition<System.Int32>("TypeCode");
+              }
+              return (ISearchCondition<System.Int32>)SubCriteria["TypeCode"];
             } 
         }
     }

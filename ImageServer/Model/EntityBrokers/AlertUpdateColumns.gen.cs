@@ -48,13 +48,13 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["AlertLevelEnum"] = new EntityUpdateColumn<AlertLevelEnum>("AlertLevelEnum", value); }
         }
+        public System.String Component
+        {
+            set { SubParameters["Component"] = new EntityUpdateColumn<System.String>("Component", value); }
+        }
         public System.Xml.XmlDocument Content
         {
             set { SubParameters["Content"] = new EntityUpdateColumn<System.Xml.XmlDocument>("Content", value); }
-        }
-        public System.DateTime ExpirationTime
-        {
-            set { SubParameters["ExpirationTime"] = new EntityUpdateColumn<System.DateTime>("ExpirationTime", value); }
         }
         public System.DateTime InsertTime
         {
@@ -63,6 +63,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public System.String Source
         {
             set { SubParameters["Source"] = new EntityUpdateColumn<System.String>("Source", value); }
+        }
+        public System.Int32 TypeCode
+        {
+            set { SubParameters["TypeCode"] = new EntityUpdateColumn<System.Int32>("TypeCode", value); }
         }
     }
 }

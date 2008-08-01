@@ -30,17 +30,71 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Net;
+using System.Threading;
 using ClearCanvas.Common;
 namespace ClearCanvas.ImageServer.Common
 {
     public static class ServiceTools
     {
         #region Static Private Members
+
+        private static string _hostId;
+        private static string _serverInstanceId;
         private static string _processorId;
         #endregion
 
         #region Static Properties
+
+        /// <summary>
+        /// Returns a string that can be used to identify the host machine where the server is running
+        /// </summary>
+        public static string HostId
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_hostId))
+                {
+                    String strHostName = Dns.GetHostName();
+                    if (String.IsNullOrEmpty(strHostName) == false)
+                        _hostId = strHostName;
+                    else
+                    {
+                        // Find host by name
+                        IPHostEntry iphostentry = Dns.GetHostEntry(strHostName);
+
+                        // Enumerate IP addresses, pick an IPv4 address first
+                        foreach (IPAddress ipaddress in iphostentry.AddressList)
+                        {
+                            if (ipaddress.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                            {
+                                _hostId = ipaddress.ToString();
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                return _hostId;
+            }
+            
+        }
+
+
+        public static string ServerInstanceId
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_serverInstanceId))
+                {
+                    _serverInstanceId = String.Format("Host={0}/Pid={1}", HostId, Process.GetCurrentProcess().Id);
+                }
+
+                return _serverInstanceId;
+            }
+        }
+
         /// <summary>
         /// A string representing the ID of the work queue processor.
         /// </summary>

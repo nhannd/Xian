@@ -31,7 +31,6 @@
 
 using System;
 using System.Text;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Auditing;
 using log4net;
 using ClearCanvas.Common.Utilities;
@@ -1014,92 +1013,6 @@ namespace ClearCanvas.Common
 				throw new InvalidOperationException(String.Format(SR.ExceptionMemberNotSetVerbose, variableName, detailedMessage));
 		}
 
-
-        /// <summary>
-        /// Generates an alert message from a specified object, without an expiration time.
-        /// </summary>
-        /// <param name="category">An alert category</param>
-        /// <param name="level">Alert level</param>
-        /// <param name="source">Name of the source where the alert is raised</param>
-        /// <param name="data">Refernece to the object that can be used for the alert message.</param>
-        /// <remarks>
-        /// How <param name="data"/> is used is the discretion of the alert service actual implementation.
-        /// </remarks>
-        public static void Alert(AlertCategory category, AlertLevel level, String source, object data)
-        {
-            CheckForNullReference(source, "source");
-            CheckForNullReference(data, "data");
-
-            IAlertService service = GetService<IAlertService>();
-            if (service != null)
-            {
-                service.GenerateAlert(category, level, source, data);
-            }
-        }
-
-
-        /// <summary>
-        /// Generates an alert message from a specified object, with the specified expiration time.
-        /// </summary>
-        /// <param name="category">An alert category</param>
-        /// <param name="level">Alert level</param>
-        /// <param name="source">Name of the source where the alert is raised</param>
-        /// <param name="expirationTime">Expiration time for the alert</param>
-        /// <param name="data">Refernece to the object that can be used for the alert message.</param>
-        /// <remarks>
-        /// How <param name="data"/> is used is the discretion of the alert service actual implementation.
-        /// </remarks>
-        public static void Alert(AlertCategory category, AlertLevel level, String source, DateTime expirationTime, object data)
-        {
-            CheckForNullReference(source, "source");
-            CheckForNullReference(data, "data");
-
-            IAlertService service = GetService<IAlertService>();
-            if (service != null)
-            {
-                service.GenerateAlert(category, level, source, data);
-            }
-        }
-
-        /// <summary>
-        /// Generates an alert message with specified expiration time.
-        /// </summary>
-        /// <param name="category">An alert category</param>
-        /// <param name="level">Alert level</param>
-        /// <param name="source">Name of the source where the alert is raised</param>
-        /// <param name="expirationTime">Expiration time for the alert.</param>
-        /// <param name="message">The alert message</param>
-        /// <param name="args">Paramaters used in the alert message, when specified.</param>
-        public static void Alert(AlertCategory category, AlertLevel level, String source, DateTime expirationTime, String message, params object[] args)
-        {
-            CheckForNullReference(source, "source");
-            CheckForNullReference(message, "message");
-
-            IAlertService service = GetService<IAlertService>();
-            if (service != null)
-            {
-                service.GenerateAlert(category, level, source, String.Format(message, args), expirationTime);
-            }
-        }
-
-        /// <summary>
-        /// Generates an alert message without an expiration time.
-        /// </summary>
-        /// <param name="category">An alert category</param>
-        /// <param name="level">Alert level</param>
-        /// <param name="source">Name of the source where the alert is raised</param>
-        /// <param name="message">The alert message or formatted message.</param>
-        /// <param name="args">Paramaters used in the alert message, when specified.</param>
-        public static void Alert(AlertCategory category, AlertLevel level, String source, String message, params object[] args)
-        {
-            CheckForNullReference(source, "source");
-            CheckForNullReference(message, "message");
-            IAlertService service = GetService<IAlertService>();
-            if (service != null)
-            {
-                service.GenerateAlert(category, level, source, String.Format(message, args));
-            }
-        }
 
         
     }

@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageServer.Services.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dicom.
+        /// </summary>
+        internal static string AlertComponentDICOM {
+            get {
+                return ResourceManager.GetString("AlertComponentDICOM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No writable storage for incoming images on server partition &apos;{0}&apos;.
+        /// </summary>
+        internal static string AlertNoWritableStorage {
+            get {
+                return ResourceManager.GetString("AlertNoWritableStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dicom Server.
         /// </summary>
         internal static string DicomServer {

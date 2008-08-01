@@ -49,10 +49,11 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private AlertCategoryEnum _alertCategoryEnum;
         private AlertLevelEnum _alertLevelEnum;
+        private System.String _component;
         private System.Xml.XmlDocument _content;
-        private System.DateTime _expirationTime;
         private System.DateTime _insertTime;
         private System.String _source;
+        private System.Int32 _typeCode;
         #endregion
 
         #region Public Properties
@@ -68,17 +69,17 @@ namespace ClearCanvas.ImageServer.Model
         get { return _alertLevelEnum; }
         set { _alertLevelEnum = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
+        public System.String Component
+        {
+        get { return _component; }
+        set { _component = value; }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
         public System.Xml.XmlDocument Content
         {
         get { return _content; }
         set { _content = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="ExpirationTime")]
-        public System.DateTime ExpirationTime
-        {
-        get { return _expirationTime; }
-        set { _expirationTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
         public System.DateTime InsertTime
@@ -91,6 +92,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _source; }
         set { _source = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
+        public System.Int32 TypeCode
+        {
+        get { return _typeCode; }
+        set { _typeCode = value; }
         }
         #endregion
 

@@ -46,7 +46,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 
         public virtual IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new WebMoveStudyItemProcessor();
+            WebMoveStudyItemProcessor processor = new WebMoveStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.WebMoveStudy.ToString();
+            return processor;
         }
 
         #endregion

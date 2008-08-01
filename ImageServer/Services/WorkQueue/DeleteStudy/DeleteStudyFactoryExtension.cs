@@ -54,7 +54,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         public virtual IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new DeleteStudyItemProcessor();
+            DeleteStudyItemProcessor processor = new DeleteStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.DeleteStudy.ToString();
+            return processor;
         }
 
         #endregion

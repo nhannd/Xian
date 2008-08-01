@@ -57,7 +57,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         public IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new StudyProcessItemProcessor();
+            StudyProcessItemProcessor processor = new StudyProcessItemProcessor();
+            processor.Name = WorkQueueTypeEnum.StudyProcess.ToString();
+            return processor;
         }
 
         #endregion

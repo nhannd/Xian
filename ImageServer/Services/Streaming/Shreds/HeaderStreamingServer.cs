@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval;
 using ClearCanvas.Server.ShredHost;
 
@@ -43,6 +44,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 	[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class HeaderStreamingServer : WcfShred
 	{
+
 		#region Private Members
 
 		private readonly string _className;
@@ -87,7 +89,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Fatal, e, "Unexpected exception starting Streaming Server Shred");
-				throw;
+
+			    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, SR.HeaderStreamingServerDisplayName,
+			                         AlertTypeCodes.UnableToStart,
+			                         SR.AlertUnableToStart, e.Message);
 			}
 		}
 

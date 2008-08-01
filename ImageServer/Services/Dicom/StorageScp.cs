@@ -33,11 +33,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -56,8 +56,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </remarks>
     public abstract class StorageScp : BaseScp
     {
-        private static Dictionary<ServerEntityKey, DateTime> _mapLastNoStorageAlertTime = new Dictionary<ServerEntityKey, DateTime>();
-
         #region Abstract Properties
         public abstract string StorageScpType { get; }
         #endregion
@@ -115,6 +113,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     returnList.Add(syntax);
             }
             return returnList;
+        }
+        #endregion
+
+        #region Private Methods
+
+        private void RaiseNoStorageAlert()
+        {
+            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical,
+                                SR.AlertComponentDICOM, AlertTypeCodes.NoResources,
+                                TimeSpan.FromMinutes(15), // don't repeat this alert again for another 15 min
+                                SR.AlertNoWritableStorage,
+                                Partition.AeTitle
+                    );
         }
         #endregion
 
@@ -265,36 +276,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, returnStatus);
 
             return true;
-        }
-
-
-        
-        private void RaiseNoStorageAlert()
-        {
-            // We don't want to raise the alert on every image. This will flood the system.
-            // Instead, we only raise the alert if 15 minute has passed since last alert and it has not been addressed.
-            if (_mapLastNoStorageAlertTime.ContainsKey(Partition.GetKey()))
-            {
-                DateTime prevAlertTime = _mapLastNoStorageAlertTime[Partition.GetKey()];
-                TimeSpan elapse = Platform.Time.Subtract(prevAlertTime);
-                if (elapse > TimeSpan.FromMinutes(15))
-                {
-                    Platform.Alert(AlertCategory.Application, AlertLevel.Critical, "StorageScp",
-                               "Could not find any writable storage for incoming images on server partition '{0}'",
-                               Partition.AeTitle
-                    );
-                    _mapLastNoStorageAlertTime[Partition.GetKey()] = Platform.Time;
-                }
-            }
-            else
-            {
-                Platform.Alert(AlertCategory.Application, AlertLevel.Critical, "StorageScp",
-                               "Could not find any writable storage for incoming images on server partition '{0}'",
-                               Partition.AeTitle
-                    );
-                _mapLastNoStorageAlertTime.Add(Partition.GetKey(), Platform.Time);
-            }
-            
         }
 
         #endregion

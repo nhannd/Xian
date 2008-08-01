@@ -32,11 +32,11 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
@@ -48,6 +48,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     public class StudyProcessItemProcessor : BaseItemProcessor
     {
+        private const int ALERT_STUDYPROCESS_STUDYRULE_FAILED = 100;
+        private const int ALERT_STUDYPROCESS_SERIESRULE_FAILED = 200;
+        private const int ALERT_STUDYPROCESS_SOP_DUPLICATE = 300;
+        private const string COMPONENT_NAME = "Study Process";
+
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
         private ServerRulesEngine _studyProcessedRulesEngine;
@@ -96,12 +101,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (false == context.CommandProcessor.Execute())
             {
                 Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules");
-
-                Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process",
-                                    "Unexpected failure processing Study level rules. Study UID={0} SOP={1}",
-                                    file.DataSet[DicomTags.StudyInstanceUid].GetString(0,""),
-                                    file.DataSet[DicomTags.SopInstanceUid].GetString(0,"")
-                               );
             }
         }
 
@@ -133,11 +132,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (false == context.CommandProcessor.Execute())
             {
                 Platform.Log(LogLevel.Error,"Error processing Series level rules StudyStorage {0}",item.StudyStorageKey);
-                Platform.Alert(AlertCategory.Application, AlertLevel.Error, "Study Process",
-                                    "Unexpected failure processing Series level rules. Study UID={0} SOP={1}",
-                                    file.DataSet[DicomTags.StudyInstanceUid].GetString(0, ""),
-                                    file.DataSet[DicomTags.SopInstanceUid].GetString(0, "")
-                               );
             }
         }
 
@@ -163,11 +157,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                              baseFile.MediaStorageSopInstanceUid);
 
                 File.Delete(duplicatePath);
-
-                Platform.Alert(AlertCategory.Application, AlertLevel.Warning, "Study Process",
-                                   "Duplicate SOP being processed is identical.  Removed SOP: {0}",
-                                   baseFile.MediaStorageSopInstanceUid
-                              );
                 
                 return;
             }

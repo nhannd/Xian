@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Services.Shreds {
+namespace ClearCanvas.ImageServer.Rules {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Web.Services.Shreds.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Rules.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,47 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to start: {0}.
+        ///   Looks up a localized string similar to Attempted to autoroute to Device {0} with autoroute support disabled on partition {1}.
         /// </summary>
-        internal static string AlertFilesystemUnableToStart {
+        internal static string AlertAutoRouteDestinationAEDisabled {
             get {
-                return ResourceManager.GetString("AlertFilesystemUnableToStart", resourceCulture);
+                return ResourceManager.GetString("AlertAutoRouteDestinationAEDisabled", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allows clients to determine the properties of a storage filesystem.
+        ///   Looks up a localized string similar to Attempted to autoroute to unknown device &apos;{0}&apos; on partition &apos;{1}.
         /// </summary>
-        internal static string FilesystemServiceDisplayDescription {
+        internal static string AlertAutoRouteUnknownDestination {
             get {
-                return ResourceManager.GetString("FilesystemServiceDisplayDescription", resourceCulture);
+                return ResourceManager.GetString("AlertAutoRouteUnknownDestination", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filesystem Service.
+        ///   Looks up a localized string similar to Auto Route Rule.
         /// </summary>
-        internal static string FilesystemServiceDisplayName {
+        internal static string AlertComponentAutorouteRule {
             get {
-                return ResourceManager.GetString("FilesystemServiceDisplayName", resourceCulture);
+                return ResourceManager.GetString("AlertComponentAutorouteRule", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server Rules.
+        /// </summary>
+        internal static string AlertComponentRules {
+            get {
+                return ResourceManager.GetString("AlertComponentRules", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bad server rule configuration: specified tag &apos;{0}&apos; is invalid.
+        /// </summary>
+        internal static string AlertRuleInvalid {
+            get {
+                return ResourceManager.GetString("AlertRuleInvalid", resourceCulture);
             }
         }
     }

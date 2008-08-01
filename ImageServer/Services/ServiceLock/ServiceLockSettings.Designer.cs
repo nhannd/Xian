@@ -80,5 +80,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock {
                 return ((string)(this["ReinventoryWorkQueuePriority"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int HighWatermarkAlertInterval {
+            get {
+                return ((int)(this["HighWatermarkAlertInterval"]));
+            }
+        }
     }
 }

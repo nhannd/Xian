@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -54,6 +53,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		private readonly ItemProcessingThreadPool<Model.WorkQueue> _threadPool;
         private readonly ManualResetEvent _threadStop;
         private bool _stop = false;
+
         #endregion
 
         #region Constructor
@@ -304,8 +304,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
 
-                                                            Platform.Alert(AlertCategory.Application, AlertLevel.Error, queueItem.WorkQueueTypeEnum.ToString(),
-                                                                                "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+                                                            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
+                                                                                processor.Name, AlertTypeCodes.UnableToProcess,
+                                                                                "Work Queue item failed: Type={0}, GUID={1}",
                                                                                  queueItem.WorkQueueTypeEnum,
                                                                                  queueItem.GetKey());
                                                         }

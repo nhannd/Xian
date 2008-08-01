@@ -1080,8 +1080,9 @@ END
 GO
 SET ANSI_PADDING OFF
 
+
 GO
-/****** Object:  Table [dbo].[Alert]    Script Date: 07/24/2008 16:05:32 ******/
+/****** Object:  Table [dbo].[Alert]    Script Date: 08/01/2008 12:35:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1092,18 +1093,18 @@ IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Al
 BEGIN
 CREATE TABLE [dbo].[Alert](
 	[GUID] [uniqueidentifier] NOT NULL,
-	[Source] [nvarchar](128) NOT NULL,
-	[Content] [xml] NOT NULL,
 	[InsertTime] [datetime] NOT NULL,
-	[ExpirationTime] [datetime] NULL,
+	[Component] [nvarchar](50)  NOT NULL,
+	[TypeCode] [int] NOT NULL,
+	[Source] [nvarchar](256) NOT NULL,
 	[AlertLevelEnum] [smallint] NOT NULL,
 	[AlertCategoryEnum] [smallint] NOT NULL,
+	[Content] [xml] NOT NULL,
  CONSTRAINT [PK_SystemAlert] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-
 END
 GO
 

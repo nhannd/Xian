@@ -1,9 +1,9 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Rules.Specifications;
 
 namespace ClearCanvas.ImageServer.Rules
@@ -247,11 +247,10 @@ namespace ClearCanvas.ImageServer.Rules
             {
                 return Evaluate<T>(expression, context);
             }
-            catch(NoSuchDicomTagException e)
+            catch(NoSuchDicomTagException)
             {
-                Platform.Alert(AlertCategory.Application, AlertLevel.Critical, "ServerRule",
-                               "Bad server rule configuration: specified tag '{0}' is invalid",
-                               expression.Text
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, SR.AlertComponentRules, AlertTypeCodes.InvalidConfiguration,
+                               SR.AlertRuleInvalid, expression.Text
                     );
 
                 return defaultValue;

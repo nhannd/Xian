@@ -117,16 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AlertComponentDICOM" xml:space="preserve">
-    <value>Dicom</value>
+  <data name="AlertComponentName" xml:space="preserve">
+    <value>Shred Host Service</value>
   </data>
-  <data name="AlertNoWritableStorage" xml:space="preserve">
-    <value>No writable storage for incoming images on server partition '{0}'</value>
+  <data name="AlertShredHostServiceStarting" xml:space="preserve">
+    <value>Image Server Shred Host Service is starting</value>
   </data>
-  <data name="DicomServer" xml:space="preserve">
-    <value>Dicom Server</value>
-  </data>
-  <data name="DicomServerDescription" xml:space="preserve">
-    <value>Dicom Server</value>
+  <data name="AlertShredHostServiceStopped" xml:space="preserve">
+    <value>Image Server Shred Host Service has stopped</value>
   </data>
 </root>

@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
@@ -226,7 +225,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="item"></param>
         public void Process(Model.ServiceLock item)
         {
-            using(_monitor = new FilesystemMonitor("Filesystem Reprocess"))
+            using(_monitor = new FilesystemMonitor("Filesystem Study Reprocess"))
             {
                 _monitor.Load();
 
@@ -238,19 +237,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 _stats.Filesystem = info.Filesystem.Description;
 
                 Platform.Log(LogLevel.Info, "Starting reprocess of filesystem: {0}", info.Filesystem.Description);
-                Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reprocess",
-                               "Filesystem Reprocess started for filesystem '{0}'",
-                               info.Filesystem.Description);
 
                 ReprocessFilesystem(info.Filesystem);
 
-
                 Platform.Log(LogLevel.Info, "Completed reprocess of filesystem: {0}", info.Filesystem.Description);
-                Platform.Alert(AlertCategory.Application, AlertLevel.Informational, "Filesystem Reprocess",
-                               "Filesystem Reprocess completed for filesystem '{0}': {1} studies affected",
-                               info.Filesystem.Description,
-                               _stats.NumStudies
-                               );
 
                 _stats.StudyRate.SetData(_stats.NumStudies);
                 _stats.StudyRate.End();

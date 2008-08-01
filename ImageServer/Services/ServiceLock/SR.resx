@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AlertFilesystemAboveHW" xml:space="preserve">
+    <value>Filesystem '{0}' has been above the high watermark level for the last {1}</value>
+  </data>
+  <data name="AlertNameFilesystemDelete" xml:space="preserve">
+    <value>Filesystem</value>
+  </data>
   <data name="ServiceLockServer" xml:space="preserve">
     <value>ServiceLock Server</value>
   </data>

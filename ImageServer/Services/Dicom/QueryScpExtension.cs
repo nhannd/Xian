@@ -33,11 +33,11 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -54,6 +54,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     [ExtensionOf(typeof (DicomScpExtensionPoint<DicomScpContext>))]
     public class QueryScpExtension : BaseScp, IDicomScp<DicomScpContext>
     {
+        private const int ALERT_DICOM_QUERY_NOTALLOWED = 100;
+        private const string COMPONENT_NAME = "Query SCP";
+
         #region Private members
 
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
@@ -980,9 +983,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             if (!Device.AllowQuery)
             {
-                Platform.Alert(AlertCategory.Security, AlertLevel.Warning, "Query SCP",
-                        "Remote device {0} attempted to query and was rejected due to device settings.", Device.AeTitle);
-
                 return DicomPresContextResult.RejectUser;
             }
 

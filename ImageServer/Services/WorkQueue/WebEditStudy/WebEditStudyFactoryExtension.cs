@@ -46,7 +46,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         public virtual IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new WebEditStudyItemProcessor();
+            WebEditStudyItemProcessor processor = new WebEditStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.WebEditStudy.ToString();
+            return processor;
         }
 
         #endregion

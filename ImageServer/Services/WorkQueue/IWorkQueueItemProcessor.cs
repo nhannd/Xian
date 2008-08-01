@@ -38,6 +38,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// </summary>
     public interface IWorkQueueItemProcessor : IDisposable
     {
+        #region Properties
+
+        string Name { get;}
+        #endregion
         #region Methods
 
         void Process(Model.WorkQueue item);

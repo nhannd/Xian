@@ -54,7 +54,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         public IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new AutoRouteItemProcessor();
+            AutoRouteItemProcessor processor = new AutoRouteItemProcessor();
+            processor.Name = WorkQueueTypeEnum.AutoRoute.ToString();
+            return processor;
         }
 
         #endregion

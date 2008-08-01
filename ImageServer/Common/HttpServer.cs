@@ -37,12 +37,14 @@ namespace ClearCanvas.ImageServer.Common
     /// </summary>
     public abstract class HttpServer : HttpListenerShred
     {
-        
+
         #region Public Delegates
         public delegate void HttpListenerHandlerDelegate(object sender, HttpRequestReceivedEventArg args);
         #endregion
 
         #region Private Members
+
+        private string _name;
         private event HttpListenerHandlerDelegate _httpRequestReceived;
         #endregion
 
@@ -63,9 +65,11 @@ namespace ClearCanvas.ImageServer.Common
         /// <summary>
         /// Creates an instance of <see cref="HttpServer"/> on a specified address.
         /// </summary>
-        /// <param name="uri"></param>
-        public HttpServer(string uri) : base(uri)
+        /// <param name="serverName">Name of the Http server</param>
+        /// <param name="uri">The Uri where the server will listen at</param>
+        public HttpServer(string serverName, string uri) : base(uri)
         {
+            _name = serverName;
         }
         #endregion
 
@@ -73,7 +77,16 @@ namespace ClearCanvas.ImageServer.Common
 
         public override void Start()
         {
-            StartListening(ListenerCallback);
+            try
+            {
+                StartListening(ListenerCallback);
+            }
+            catch(Exception e)
+            {
+                Platform.Log(LogLevel.Fatal, e, "Unable to start {0}", _name);
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, _name, AlertTypeCodes.UnableToStart, "Unable to start {0}: {1}", _name, e.Message);
+            }
+            
         }
 
         #endregion

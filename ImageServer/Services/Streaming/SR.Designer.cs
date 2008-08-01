@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to start : {0}.
+        /// </summary>
+        internal static string AlertUnableToStart {
+            get {
+                return ResourceManager.GetString("AlertUnableToStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dicom Server.
         /// </summary>
         internal static string DicomServer {

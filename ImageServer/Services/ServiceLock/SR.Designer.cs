@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filesystem &apos;{0}&apos; has been above the high watermark level for the last {1}.
+        /// </summary>
+        internal static string AlertFilesystemAboveHW {
+            get {
+                return ResourceManager.GetString("AlertFilesystemAboveHW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filesystem.
+        /// </summary>
+        internal static string AlertNameFilesystemDelete {
+            get {
+                return ResourceManager.GetString("AlertNameFilesystemDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ServiceLock Server.
         /// </summary>
         internal static string ServiceLockServer {

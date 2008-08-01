@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Common.Scripting;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;

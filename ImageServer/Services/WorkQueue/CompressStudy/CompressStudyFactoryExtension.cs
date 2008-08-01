@@ -50,7 +50,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 		public IWorkQueueItemProcessor GetItemProcessor()
 		{
-			return new CompressStudyItemProcessor();
+			CompressStudyItemProcessor processor =  new CompressStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.CompressStudy.ToString();
+            return processor;
 		}
 
 		#endregion

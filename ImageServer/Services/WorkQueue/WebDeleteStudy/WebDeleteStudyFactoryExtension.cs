@@ -55,7 +55,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy
 
         public override IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new WebDeleteStudyItemProcessor();
+            WebDeleteStudyItemProcessor processor = new WebDeleteStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.WebDeleteStudy.ToString();
+            return processor;
         }
 
         #endregion

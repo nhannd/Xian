@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Services.Shreds {
+namespace ClearCanvas.ImageServer.ShredHostService {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Web.Services.Shreds.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.ShredHostService.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,29 @@ namespace ClearCanvas.ImageServer.Web.Services.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to start: {0}.
+        ///   Looks up a localized string similar to Shred Host Service.
         /// </summary>
-        internal static string AlertFilesystemUnableToStart {
+        internal static string AlertComponentName {
             get {
-                return ResourceManager.GetString("AlertFilesystemUnableToStart", resourceCulture);
+                return ResourceManager.GetString("AlertComponentName", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Allows clients to determine the properties of a storage filesystem.
+        ///   Looks up a localized string similar to Image Server Shred Host Service is starting.
         /// </summary>
-        internal static string FilesystemServiceDisplayDescription {
+        internal static string AlertShredHostServiceStarting {
             get {
-                return ResourceManager.GetString("FilesystemServiceDisplayDescription", resourceCulture);
+                return ResourceManager.GetString("AlertShredHostServiceStarting", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filesystem Service.
+        ///   Looks up a localized string similar to Image Server Shred Host Service has stopped.
         /// </summary>
-        internal static string FilesystemServiceDisplayName {
+        internal static string AlertShredHostServiceStopped {
             get {
-                return ResourceManager.GetString("FilesystemServiceDisplayName", resourceCulture);
+                return ResourceManager.GetString("AlertShredHostServiceStopped", resourceCulture);
             }
         }
     }

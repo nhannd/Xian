@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 		/// Creates an instance of <see cref="ImageStreamingServer"/>
 		/// </summary>
 		public ImageStreamingServer()
-			: base(ImageStreamingServerSettings.Default.Address)
+			: base(SR.ImageStreamingServerDisplayName, ImageStreamingServerSettings.Default.Address)
 		{
 			HttpRequestReceived += OnHttpRequestReceived;
             
@@ -27,6 +27,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 
 
 		#endregion
+
+  
 
 		#region Protected Methods
 

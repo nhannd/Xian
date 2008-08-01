@@ -54,7 +54,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 
         public IWorkQueueItemProcessor GetItemProcessor()
         {
-            return new CleanupStudyItemProcessor();
+            CleanupStudyItemProcessor processor= new CleanupStudyItemProcessor();
+            processor.Name = WorkQueueTypeEnum.CleanupStudy.ToString();
+            return processor;
         }
 
         #endregion

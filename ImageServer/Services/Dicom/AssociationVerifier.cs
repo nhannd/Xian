@@ -32,9 +32,9 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Alert;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -46,7 +46,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </summary>
     public static class AssociationVerifier
     {
-        
         /// <summary>
         /// Do the actual verification if an association is acceptable.
         /// </summary>
@@ -77,10 +76,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 Platform.Log(LogLevel.Error,
                              "Rejecting association from {0} to {1}.  Device is disabled.",
                              assocParms.CallingAE, assocParms.CalledAE);
-
-                Platform.Alert(AlertCategory.Security, AlertLevel.Warning, "Query SCP",
-                        "Remote device {0} attempted to connect and was rejected due to device settings.", device.AeTitle);
-
                 
                 reason = DicomRejectReason.CallingAENotRecognized;
                 result = DicomRejectResult.Permanent;
