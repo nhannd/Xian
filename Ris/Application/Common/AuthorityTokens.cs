@@ -47,6 +47,9 @@ namespace ClearCanvas.Ris.Application.Common
 			{
 				[AuthorityToken(Description = "Allow administration of User-Interface validation rules.")]
 				public const string UIValidationRules = "Admin/System/UI Validation Rules";
+
+				[AuthorityToken(Description = "Allow administration of the work queue.")]
+				public const string WorkQueue = "Admin/System/Work Queue";
 			}
 
 			public static class Security

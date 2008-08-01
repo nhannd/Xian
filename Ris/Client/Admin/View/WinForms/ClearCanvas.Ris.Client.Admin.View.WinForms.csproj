@@ -251,6 +251,13 @@
       <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistTimeWindowEditorComponentView.cs" />
+    <Compile Include="WorkQueueSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorkQueueSummaryComponentControl.Designer.cs">
+      <DependentUpon>WorkQueueSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorkQueueSummaryComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -411,6 +418,10 @@
     <EmbeddedResource Include="WorklistTimeWindowEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkQueueSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorkQueueSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

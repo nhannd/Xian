@@ -84,6 +84,8 @@
     <Compile Include="VisitLocationRoleEnumHbm.gen.cs" />
     <Compile Include="VisitPractitionerRoleEnumHbm.gen.cs" />
     <Compile Include="VisitStatusEnumHbm.gen.cs" />
+    <Compile Include="WorkQueueStatusEnumHbm.gen.cs" />
+    <Compile Include="WorkQueueTypeEnumHbm.gen.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -232,6 +234,9 @@
     <EmbeddedResource Include="Mappings\ProtocolUrgencyEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientNote.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
+    <EmbeddedResource Include="Mappings\WorkQueue.hbm.xml" />
+    <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\WorkQueueTypeEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientNoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
   </ItemGroup>

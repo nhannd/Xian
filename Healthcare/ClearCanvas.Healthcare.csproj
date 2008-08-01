@@ -271,6 +271,9 @@
     <Compile Include="WorklistTimeField.cs" />
     <Compile Include="WorklistTimePoint.cs" />
     <Compile Include="WorklistTimeRange.cs" />
+    <Compile Include="WorkQueue.cs" />
+    <Compile Include="WorkQueueStatus.cs" />
+    <Compile Include="WorkQueueType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

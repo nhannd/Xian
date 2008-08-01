@@ -489,4 +489,7 @@
   <data name="TitleWorklists" xml:space="preserve">
     <value>Worklists</value>
   </data>
+  <data name="TitleWorkQueue" xml:space="preserve">
+    <value>Work Queue</value>
+  </data>
 </root>

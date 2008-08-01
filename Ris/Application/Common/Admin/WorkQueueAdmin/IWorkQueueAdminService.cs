@@ -1,0 +1,49 @@
+using System.ServiceModel;
+
+namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
+{
+	/// <summary>
+	/// Provides services for administering the work queue.
+	/// </summary>
+	[RisServiceProvider]
+	[ServiceContract]
+	public interface IWorkQueueAdminService
+	{
+		[OperationContract]
+		GetWorkQueueFormDataResponse GetWorkQueueFormData(GetWorkQueueFormDataRequest request);
+
+		/// <summary>
+		/// Lists all items in the work queue.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		ListWorkQueueItemsResponse ListWorkQueueItems(ListWorkQueueItemsRequest request);
+
+		/// <summary>
+		/// Purges all completed work queue items.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		PurgeCompletedWorkQueueItemsResponse PurgeCompletedWorkQueueItems(PurgeCompletedWorkQueueItemsRequest request);
+
+		/// <summary>
+		/// Resubmits the specified work queue item for processing.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		ResubmitWorkQueueItemResponse ResubmitWorkQueueItem(ResubmitWorkQueueItemRequest request);
+
+		/// <summary>
+		/// Removes the specified work queue item.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		RemoveWorkQueueItemResponse RemoveWorkQueueItem(RemoveWorkQueueItemRequest request);
+	}
+}
