@@ -169,6 +169,11 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
+		protected override bool SupportsDelete
+		{
+			get { return true; }
+		}
+
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
@@ -193,14 +198,25 @@ namespace ClearCanvas.Ris.Client
 			ExternalPractitionerContactPointDetail contactPoint = new ExternalPractitionerContactPointDetail();
 			contactPoint.PreferredResultCommunicationMode = _resultCommunicationModeChoices.Count > 0 ? _resultCommunicationModeChoices[0] : null;
 
-			ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
-				contactPoint, 
-				_addressTypeChoices, 
-				_phoneTypeChoices, 
-				_resultCommunicationModeChoices);
+			// Keep looping until user enters an unique contact point name, or cancel the add operation
+			ApplicationComponentExitCode exitCode;
+			while (true)
+			{
+				ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
+					contactPoint,
+					_addressTypeChoices,
+					_phoneTypeChoices,
+					_resultCommunicationModeChoices);
 
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, editor, SR.TitleAddContactPoint + " - " + _practitionerName);
+				exitCode = LaunchAsDialog(
+					this.Host.DesktopWindow, editor, SR.TitleAddContactPoint + " - " + _practitionerName);
+
+				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointUnique(contactPoint))
+					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageExternalPractitionerContactPointNotUnique, contactPoint.Name), MessageBoxActions.Ok);
+				else
+					break;
+			}
+
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(contactPoint);
@@ -227,16 +243,26 @@ namespace ClearCanvas.Ris.Client
 
 			ExternalPractitionerContactPointDetail contactPoint = (ExternalPractitionerContactPointDetail)item.Clone();
 
-			ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
-				contactPoint, 
-				_addressTypeChoices, 
-				_phoneTypeChoices, 
-				_resultCommunicationModeChoices);
+			// Keep looping until user enters an unique contact point name, or cancel the edit operation
+			ApplicationComponentExitCode exitCode;
+			while (true)
+			{
+				ExternalPractitionerContactPointEditorComponent editor = new ExternalPractitionerContactPointEditorComponent(
+					contactPoint,
+					_addressTypeChoices,
+					_phoneTypeChoices,
+					_resultCommunicationModeChoices);
 
-			ApplicationComponentExitCode exitCode = LaunchAsDialog(
-				this.Host.DesktopWindow, 
-				editor, 
-				string.Format(SR.TitleUpdateContactPoint + " - " + _practitionerName, contactPoint.Name));
+				exitCode = LaunchAsDialog(
+					this.Host.DesktopWindow,
+					editor,
+					string.Format(SR.TitleUpdateContactPoint + " - " + _practitionerName, contactPoint.Name));
+
+				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointUnique(contactPoint))
+					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageExternalPractitionerContactPointNotUnique, contactPoint.Name), MessageBoxActions.Ok);
+				else
+					break;
+			}
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -259,8 +285,15 @@ namespace ClearCanvas.Ris.Client
 		/// <returns>True if items were deleted, false otherwise.</returns>
 		protected override bool DeleteItems(IList<ExternalPractitionerContactPointDetail> items, out IList<ExternalPractitionerContactPointDetail> deletedItems, out string failureMessage)
 		{
-			// not allowed?
-			throw new NotImplementedException();
+			failureMessage = null;
+			deletedItems = new List<ExternalPractitionerContactPointDetail>();
+
+			foreach (ExternalPractitionerContactPointDetail item in items)
+			{
+				deletedItems.Add(item);
+			}
+
+			return deletedItems.Count > 0;
 		}
 
 		/// <summary>
@@ -315,6 +348,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
+				ExternalPractitionerContactPointDetail newItem = CollectionUtils.SelectFirst(this.SelectedItems,
+					delegate(ExternalPractitionerContactPointDetail item) { return item.ContactPointRef == null; });
+				if (newItem != null)
+				{
+					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageCannotMergeNewContactPoints, newItem.Name), MessageBoxActions.Ok);
+					return;
+				}
+
 				ExternalPractitionerContactPointDetail firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
 				ExternalPractitionerContactPointDetail secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
 
@@ -341,6 +382,18 @@ namespace ClearCanvas.Ris.Client
 				// failed to launch editor
 				ExceptionHandler.Report(e, this.Host.DesktopWindow);
 			}
+		}
+
+		private bool IsContactPointUnique(ExternalPractitionerContactPointDetail detail)
+		{
+			return CollectionUtils.Contains(this.Table.Items,
+				delegate(ExternalPractitionerContactPointDetail item)
+					{
+						if (IsSameItem(item, detail))
+							return false;
+
+						return Equals(item.Name, detail.Name);
+					});
 		}
 	}
 }

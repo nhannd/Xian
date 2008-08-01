@@ -432,6 +432,9 @@
   <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
     <value>{0} has unreconciled records</value>
   </data>
+  <data name="MessageCannotMergeNewContactPoints" xml:space="preserve">
+    <value>New contact points cannot be merged.  Please deselect '{0}' and select another item.</value>
+  </data>
   <data name="MessageCommunicationError" xml:space="preserve">
     <value>A communication error occured while attempting to contact the server.  See log for details.</value>
   </data>
@@ -456,6 +459,9 @@
   <data name="MessageCopyToClipboard" xml:space="preserve">
     <value>Copy to clipboard</value>
   </data>
+  <data name="MessageExternalPractitionerContactPointNotUnique" xml:space="preserve">
+    <value>A contact point with the name '{0}' already exist.  Please enter a different name.</value>
+  </data>
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login</value>
   </data>
@@ -470,6 +476,7 @@
   </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
+    <comment>{0</comment>
   </data>
   <data name="MessageSearchMessage" xml:space="preserve">
     <value>Enter search criteria (MRN#, Name, Healthcard ID, or A#)</value>

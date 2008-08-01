@@ -1006,6 +1006,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New contact points cannot be merged.  Please deselect &apos;{0}&apos; and select another item..
+        /// </summary>
+        internal static string MessageCannotMergeNewContactPoints {
+            get {
+                return ResourceManager.GetString("MessageCannotMergeNewContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A communication error occured while attempting to contact the server.  See log for details..
         /// </summary>
         internal static string MessageCommunicationError {
@@ -1074,6 +1083,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageCopyToClipboard {
             get {
                 return ResourceManager.GetString("MessageCopyToClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A contact point with the name &apos;{0}&apos; already exist.  Please enter a different name..
+        /// </summary>
+        internal static string MessageExternalPractitionerContactPointNotUnique {
+            get {
+                return ResourceManager.GetString("MessageExternalPractitionerContactPointNotUnique", resourceCulture);
             }
         }
         
