@@ -39,8 +39,6 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using System.Threading;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -51,7 +49,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[Tooltip("apply", "Create a new patient record")]
 	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Patient.Create)]
-	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
@@ -90,58 +87,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, desktopWindow);
-			}
-		}
-
-		public event EventHandler EnabledChanged
-		{
-			add 
-			{
-				if (this.Context is IRegistrationWorkflowItemToolContext)
-				{
-					IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.Context;
-					context.SelectionChanged += value;
-				}
-				else if (this.Context is IPatientSearchToolContext)
-				{
-					IPatientSearchToolContext context = (IPatientSearchToolContext)this.Context;
-					context.SelectedProfileChanged += value;
-				}
-			}
-			remove 
-			{ 
-				if (this.Context is IRegistrationWorkflowItemToolContext)
-				{
-					IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.Context;
-					context.SelectionChanged -= value;
-				}
-				else if (this.Context is IPatientSearchToolContext)
-				{
-					IPatientSearchToolContext context = (IPatientSearchToolContext)this.Context;
-					context.SelectedProfileChanged -= value;
-				} 
-			}
-		}
-
-		public bool Enabled
-		{
-			get{
-				if (this.Context is IRegistrationWorkflowItemToolContext)
-				{
-					IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.Context;
-					if (context.Selection.Items.Length != 1)
-						return false;
-					RegistrationWorklistItem item =
-						(RegistrationWorklistItem)CollectionUtils.FirstElement(context.Selection.Items);
-					return item.OrderRef != null;
-				}
-				else if (this.Context is IPatientSearchToolContext)
-				{
-					IPatientSearchToolContext context = (IPatientSearchToolContext)this.Context;
-					return context.SelectedProfile.PatientProfileRef != null;
-				}
-				else
-					return false;
 			}
 		}
     }

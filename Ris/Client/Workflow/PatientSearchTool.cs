@@ -36,15 +36,12 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	[MenuAction("launch", "folderexplorer-items-contextmenu/Patient Search", "Launch")]
 	[IconSet("launch", IconScheme.Colour, "Icons.SearchPatientToolSmall.png", "Icons.SearchPatientToolMedium.png", "Icons.SearchPatientToolLarge.png")]
 	[Tooltip("launch", "Patient Search")]
-	[EnabledStateObserver("launch", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	public class PatientSearchTool : Tool<IRegistrationWorkflowItemToolContext>
@@ -75,23 +72,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		}
 
-		public event EventHandler EnabledChanged
-		{
-			add { this.Context.SelectionChanged += value; }
-			remove { this.Context.SelectionChanged -= value; }
-		}
-
-		public bool Enabled
-		{
-			get
-			{
-				if (this.Context.Selection.Items.Length != 1)
-					return false;
-				RegistrationWorklistItem item =
-					(RegistrationWorklistItem)CollectionUtils.FirstElement(this.Context.Selection.Items);
-				return item.OrderRef != null;
-			}
-		}
 
 		private IWorkspace _workspace;
 

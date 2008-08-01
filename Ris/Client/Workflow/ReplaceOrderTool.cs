@@ -39,8 +39,6 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
