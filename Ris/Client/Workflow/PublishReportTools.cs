@@ -8,12 +8,9 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Print Report", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Print Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class PrintReportTool : Tool<IToolContext>
+	public abstract class PublishReportTool<TPublishReportComponent> : Tool<IToolContext>
+		where TPublishReportComponent : PublishReportComponent
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
@@ -31,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		public abstract TPublishReportComponent GetComponent(ReportingWorklistItem item);
+
 		public void Apply()
 		{
 			if (this.ContextBase is IReportingWorkflowItemToolContext)
@@ -38,11 +37,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
 				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
 
-				PrintReportComponent component = new PrintReportComponent(
-					item.PatientProfileRef,
-					item.OrderRef,
-					item.ProcedureRef,
-					item.ReportRef);
+				TPublishReportComponent component = GetComponent(item);
 
 				ApplicationComponent.LaunchAsDialog(
 					context.DesktopWindow,
@@ -94,6 +89,37 @@ namespace ClearCanvas.Ris.Client.Workflow
 			add { _enabledChanged += value; }
 			remove { _enabledChanged -= value; }
 		}
+	}
 
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Print Report", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Print Report", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+	public class PrintReportTool : PublishReportTool<PrintReportComponent>
+	{
+		public override PrintReportComponent GetComponent(ReportingWorklistItem item)
+		{
+			return new PrintReportComponent(
+					item.PatientProfileRef,
+					item.OrderRef,
+					item.ProcedureRef,
+					item.ReportRef);
+		}
+	}
+
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Fax Report", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Fax Report", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+	public class FaxReportTool : PublishReportTool<FaxReportComponent>
+	{
+		public override FaxReportComponent GetComponent(ReportingWorklistItem item)
+		{
+			return new FaxReportComponent(
+					item.PatientProfileRef,
+					item.OrderRef,
+					item.ProcedureRef,
+					item.ReportRef);
+		}
 	}
 }

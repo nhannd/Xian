@@ -48,7 +48,7 @@
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
-    <Compile Include="BiographyPrintReportTool.cs" />
+    <Compile Include="BiographyPublishReportTools.cs" />
     <Compile Include="BiographyVisitDetailViewComponent.cs" />
     <Compile Include="BiographyVisitHistoryComponent.cs" />
     <Compile Include="BiographyOrderDetailViewComponent.cs" />

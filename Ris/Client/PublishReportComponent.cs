@@ -42,6 +42,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
@@ -467,7 +468,26 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Accept()
 		{
-			throw new System.NotImplementedException();
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					FaxReportRequest request = new FaxReportRequest(this.ReportRef);
+					foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+					{
+						if (checkable.IsChecked)
+						{
+							ResultRecipientDetail detail = checkable.Item;
+							request.Recipients.Add(new FaxRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
+						}
+					}
+
+					if (request.Recipients.Count > 0)
+					{
+						service.FaxReport(request);
+					}
+				});
+
+			this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 	}
 }

@@ -411,6 +411,21 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     }));
         }
 
+		[UpdateOperation]
+		public FaxReportResponse FaxReport(FaxReportRequest request)
+		{
+			foreach (FaxRecipientDetail detail in request.Recipients)
+			{
+				WorkQueue workQueue = new WorkQueue(WorkQueueType.FXR);
+				workQueue.ExtendedProperties.Add("ReportOID", request.ReportRef.ToString(false, false));
+				workQueue.ExtendedProperties.Add("ExternalPractitionerOID", detail.PractitionerRef.ToString(false, false));
+				workQueue.ExtendedProperties.Add("ExternalPractitionerContactPointOID", detail.ContactPointRef.ToString(false, false));
+				this.PersistenceContext.Lock(workQueue, DirtyState.New);
+			}
+			return new FaxReportResponse();
+		}
+
+
         #endregion
 
         #region OperationEnablement Helpers

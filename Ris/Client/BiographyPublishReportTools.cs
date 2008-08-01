@@ -7,11 +7,9 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
-	[ButtonAction("apply", "biography-reports-toolbar/Print Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
-	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	public class BiographyPrintReportTool : Tool<IBiographyOrderReportsToolContext>
+	public abstract class BiographyPublishReportTool<TPublishReportComponent> : Tool<IBiographyOrderReportsToolContext>
+		where TPublishReportComponent : PublishReportComponent
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
@@ -26,15 +24,13 @@ namespace ClearCanvas.Ris.Client
 			};
 		}
 
+		public abstract TPublishReportComponent GetComponent();
+
 		public void Apply()
 		{
 			try
 			{
-				PrintReportComponent component = new PrintReportComponent(
-					this.Context.PatientProfileRef,
-					this.Context.OrderRef,
-					null,
-					this.Context.ReportRef);
+				TPublishReportComponent component = GetComponent();
 
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
@@ -78,6 +74,35 @@ namespace ClearCanvas.Ris.Client
 			add { _enabledChanged += value; }
 			remove { _enabledChanged -= value; }
 		}
+	}
 
+	[ButtonAction("apply", "biography-reports-toolbar/Print Report", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
+	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
+	public class BiographyPrintReportTool : BiographyPublishReportTool<PrintReportComponent>
+	{
+		public override PrintReportComponent GetComponent()
+		{
+			return new PrintReportComponent(
+					this.Context.PatientProfileRef,
+					this.Context.OrderRef,
+					null,
+					this.Context.ReportRef);
+		}
+	}
+
+	[ButtonAction("apply", "biography-reports-toolbar/Fax Report", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
+	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
+	public class BiographyFaxReportTool : BiographyPublishReportTool<FaxReportComponent>
+	{
+		public override FaxReportComponent GetComponent()
+		{
+			return new FaxReportComponent(
+					this.Context.PatientProfileRef,
+					this.Context.OrderRef,
+					null,
+					this.Context.ReportRef);
+		}
 	}
 }

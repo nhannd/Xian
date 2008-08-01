@@ -69,7 +69,7 @@
     <Compile Include="PatientReconciliation.cs" />
     <Compile Include="PerformedProcedureComponent.cs" />
     <Compile Include="PreliminaryDiagnosis.cs" />
-    <Compile Include="PrintReportTool.cs" />
+    <Compile Include="PublishReportTools.cs" />
     <Compile Include="PriorReportComponent.cs" />
     <Compile Include="PriorSummaryTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -184,5 +184,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <returns><see cref="GetPriorsResponse"/></returns>
         [OperationContract]
         GetPriorsResponse GetPriors(GetPriorsRequest request);
-    }
+
+		[OperationContract]
+    	FaxReportResponse FaxReport(FaxReportRequest request);
+	}
 }
