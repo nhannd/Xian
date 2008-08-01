@@ -146,6 +146,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { }
 		}
 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public int FirstDisplayedScrollingRowIndex
 		{
 			get { return _dataGridView.FirstDisplayedScrollingRowIndex; }
