@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             float usage = GetFilesystemUsedPercentage(fs);
             if (img != null)
             {
-                img.ImageUrl = string.Format(App_GlobalResources.ImageServerPageURLs.BarChartPage,
+                img.ImageUrl = string.Format(ImageServerConstants.PageURLs.BarChartPage,
                                              usage,
                                              fs.HighWatermark,
                                              fs.LowWatermark);
@@ -257,11 +257,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 bool active = Convert.ToBoolean(DataBinder.Eval(row.DataItem, fieldName));
                 if (active)
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
                 }
             }
         }
@@ -304,11 +304,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canRead)
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
                 }
             }
         }
@@ -331,11 +331,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
 
                 if (canWrite)
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
                 }
             }
         }

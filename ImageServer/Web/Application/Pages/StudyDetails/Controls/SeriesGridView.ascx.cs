@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         [ClientPropertyName("OpenSeriesPageUrl")]
         public string OpenSeriesPageUrl
         {
-            get { return  Page.ResolveClientUrl(App_GlobalResources.ImageServerPageURLs.SeriesDetailsPage); }
+            get { return  Page.ResolveClientUrl(ImageServerConstants.PageURLs.SeriesDetailsPage); }
         }      
 
         public Web.Common.WebControls.UI.GridView SeriesListControl

@@ -135,5 +135,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.TabPanel TabPanel2;
+        
+        /// <summary>
+        /// ArchivePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.ArchivePanel ArchivePanel;
     }
 }

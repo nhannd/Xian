@@ -48,6 +48,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ArchiveQueueAdaptor.cs" />
+    <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
     <Compile Include="Data\FileSystemQueueController.cs" />
     <Compile Include="Data\FileSystemQueueAdapter.cs" />
     <Compile Include="Data\PartitionArchiveAdaptor.cs" />
@@ -76,6 +78,7 @@
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
     <Compile Include="Utilities\NameFormatter.cs" />
+    <Compile Include="Utilities\XmlUtilities.cs" />
     <Compile Include="WebControls\UI\PersonNameLabel.cs" />
     <Compile Include="Utilities\DateTimeFormatter.cs" />
     <Compile Include="WebControls\UI\TextBox.cs" />

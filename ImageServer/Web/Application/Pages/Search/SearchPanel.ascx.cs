@@ -94,14 +94,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
         [ClientPropertyName("OpenStudyPageUrl")]
         public string OpenStudyPageUrl
         {
-            get { return Page.ResolveClientUrl(App_GlobalResources.ImageServerPageURLs.StudyDetailsPage); }
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage); }
         }
 
         [ExtenderControlProperty]
         [ClientPropertyName("SendStudyPageUrl")]
         public string SendStudyPageUrl
         {
-            get { return Page.ResolveClientUrl(App_GlobalResources.ImageServerPageURLs.MoveStudyPage); }
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.MoveStudyPage); }
         }
 
         public ServerPartition ServerPartition

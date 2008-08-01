@@ -6,6 +6,7 @@
 <%@ Register Src="WorkQueueGridView.ascx" TagName="WorkQueueGridView" TagPrefix="localAsp" %>
 <%@ Register Src="FileSystemQueueGridView.ascx" TagName="FileSystemQueueGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyStorageView.ascx" TagName="StudyStorageView" TagPrefix="localAsp" %>
+<%@ Register Src="ArchivePanel.ascx" TagName="ArchivePanel" TagPrefix="localAsp" %>
 
 <aspAjax:TabContainer ID="StudyDetailsTabContainer" runat="server" ActiveTabIndex="0"
     CssClass="TabControl" Width="100%">
@@ -83,7 +84,7 @@
             <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
                 <tr>
                     <td>
-
+                        <localAsp:ArchivePanel ID="ArchivePanel" runat="server" />
                     </td>
                 </tr>
             </table>

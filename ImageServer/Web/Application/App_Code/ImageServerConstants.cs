@@ -1,5 +1,18 @@
+using System.Web.UI;
+
 public class ImageServerConstants
 {
+    private static string _theme;
+
+    /// <summary>
+    /// Sets or gets the theme for the web application.
+    /// </summary>
+    public static string Theme
+    {
+        set { _theme = value; }
+        get { return _theme; }
+    }
+
     public const string High = "high";
     public const string Low = "low";
     public const string ImagePng = "image/png";
@@ -28,4 +41,30 @@ public class ImageServerConstants
         public const string StudyInstanceUID = "0020000D";
         public const string StudyID = "00200010";
     }
+
+    public class PageURLs
+    {
+        public const string BarChartPage = "~/Pages/Common/BarChart.aspx?pct={0}&high={1}&low={2}";
+        public const string MoveStudyPage = "~/Pages/Search/Move/Default.aspx";
+        public const string SeriesDetailsPage = "~/Pages/SeriesDetails/SeriesDetailsPage.aspx";
+        public const string StudyDetailsPage = "~/Pages/StudyDetails/Default.aspx";
+    }
+
+    public class ImageURLs
+    {
+        public const string AddButtonDisabled = "images/Buttons/AddDisabled.png";
+        public const string AddButtonEnabled = "images/Buttons/AddEnabled.png";
+        public const string UpdateButtonDisabled = "images/Buttons/UpdateDisabled.png";
+        public const string UpdateButtonEnabled = "images/Buttons/UpdateEnabled.png";
+        public static readonly string AutoRouteFeature = string.Format("~/App_Themes/{0}/images/Indicators/AutoRouteFeature.png", Theme);
+        public static readonly string Blank = string.Format("~/App_Themes/{0}/images/blank.gif", Theme);
+        public static readonly string Checked = string.Format("~/App_Themes/{0}/images/Indicators/checked.png", Theme);
+        public static readonly string QueryFeature = string.Format("~/App_Themes/{0}/images/Indicators/QueryFeature.png", Theme);
+        public static readonly string RetrieveFeature = string.Format("~/App_Themes/{0}/images/Indicators/RetrieveFeature.png", Theme);
+        public static readonly string StoreFeature = string.Format("~/App_Themes/{0}/images/Indicators/StoreFeature.png", Theme);
+        public static readonly string Unchecked = string.Format("~/App_Themes/{0}/images/Indicators/unchecked.png", Theme);
+        public static readonly string UsageBar = string.Format("~/App_Themes/{0}/images/Indicators/usage.png", Theme);
+        public static readonly string Watermark = string.Format("~/App_Themes/{0}/images/Indicators/Watermark.gif", Theme);
+    }
+
 }

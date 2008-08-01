@@ -29,25 +29,12 @@
 
 #endregion
 
-using System;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Common
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    /// <summary>
-    /// Base class for all the pages.
-    /// </summary>
-    /// <remarks>
-    /// Derive new page from this class to ensure consistent look across all pages.
-    /// </remarks>
-    public partial class BasePage : System.Web.UI.Page
+    public class ArchiveQueueAdaptor : BaseAdaptor<ArchiveQueue, IArchiveQueueEntityBroker, ArchiveQueueSelectCriteria, ArchiveQueueUpdateColumns>
     {
-        protected void Page_PreInit(object sender, EventArgs e)
-        {
-            //Set the Page Theme, then set the Page object on the ImageServerConstants
-            Page.Theme = ImageServerConstants.Default;
-            ImageServerConstants.Theme = Page.Theme;
-        }
     }
-
-
 }

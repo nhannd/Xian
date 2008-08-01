@@ -34,9 +34,14 @@ using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Scripts.StudyDetailsTabs.js", "application/x-javascript")]
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
-{  
-    public partial class StudyDetailsTabs : UserControl
+{
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs",
+                          ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Scripts.StudyDetailsTabs.js")]
+    
+    public partial class StudyDetailsTabs : ScriptUserControl
     {
 
         #region Private Members
@@ -61,14 +66,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         {
             get { return SeriesGridView.SeriesListControl.ClientID; }
         }
-       
+        
+        [ExtenderControlProperty]       
         [ClientPropertyName("OpenSeriesPageUrl")]
         public string OpenSeriesPageUrl
         {
-            get { return Page.ResolveClientUrl(App_GlobalResources.ImageServerPageURLs.SeriesDetailsPage); }
+            get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.SeriesDetailsPage); }
         }
-
-        #endregion Public Members
 
         /// <summary>
         /// Sets or gets the displayed study
@@ -82,8 +86,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         public ServerPartition Partition
         {
             get { return _partition; }
-            set { _partition = value; }            
+            set { _partition = value; }
         }
+
+        #endregion Public Members
 
         #region Protected Methods
 
@@ -97,10 +103,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 
         #endregion Protected Methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
+        public StudyDetailsTabs()
+            : base(false, HtmlTextWriterTag.Div)
+            {
+            }
 
         public override void DataBind()
         {
@@ -115,6 +121,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 WorkQueueGridView.Study = Study;
                 FSQueueGridView.Study = Study;
                 StudyStorageView.Study = Study;
+                ArchivePanel.Study = Study;
             }
 
             base.DataBind();

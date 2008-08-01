@@ -37,18 +37,12 @@ using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Code;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
-
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Scripts.StudyDetailsPanel.js", "application/x-javascript")]
-
-
 namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 {
     /// <summary>
     /// Main panel within the <see cref="Default"/>
     /// </summary>
-    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel",
-                          ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Scripts.StudyDetailsPanel.js")]
-    public partial class StudyDetailsPanel : ScriptUserControl
+    public partial class StudyDetailsPanel : UserControl
     {
         #region Private Members
         private Study _study;
@@ -75,22 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         
         #endregion Public Properties
 
-
         #region Protected Methods
-
-        [ExtenderControlProperty]
-        [ClientPropertyName("OpenSeriesPageUrl")]
-        public string OpenSeriesPageUrl
-        {
-            get { return Page.ResolveClientUrl(App_GlobalResources.ImageServerPageURLs.SeriesDetailsPage); }
-        }
-        
-
-        public StudyDetailsPanel()
-            : base(false, HtmlTextWriterTag.Div)
-            {
-            }
-
 
         protected override void OnInit(EventArgs e)
         {

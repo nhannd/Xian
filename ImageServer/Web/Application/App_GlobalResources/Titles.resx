@@ -144,6 +144,9 @@
   <data name="Queues" xml:space="preserve">
     <value>Queues</value>
   </data>
+  <data name="RestoreQueue" xml:space="preserve">
+    <value>Restore Queue</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
   </data>

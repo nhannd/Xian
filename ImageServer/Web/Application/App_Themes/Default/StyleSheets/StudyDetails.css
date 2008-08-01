@@ -66,6 +66,15 @@
     padding-left: 10px;
 }
 
+.StudyDetailsSubTitle
+{
+    font-size: 14;
+    font-weight: bold;
+    color: #205F87;
+    padding-left: 2px;
+    padding-bottom: 3px;
+}
+
 .CloseButton
 {
     color: White;

@@ -288,6 +288,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return adaptor.Get(fileSystemQueueCriteria);
         }
 
+        public IList<ArchiveQueue> GetArchiveQueueItems(Study study)
+        {
+            Platform.CheckForNullReference(study, "Study");
+
+            ArchiveQueueAdaptor adaptor = new ArchiveQueueAdaptor();
+            ArchiveQueueSelectCriteria archiveQueueCriteria = new ArchiveQueueSelectCriteria();
+            archiveQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+
+            return adaptor.Get(archiveQueueCriteria);
+        }
+
+        public IList<ArchiveStudyStorage> GetArchiveStudyStorage(Study study)
+        {
+            Platform.CheckForNullReference(study, "Study");
+
+            ArchiveStudyStorageAdaptor adaptor = new ArchiveStudyStorageAdaptor();
+            ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
+            archiveStudyStorageCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+
+            return adaptor.Get(archiveStudyStorageCriteria);
+        }
+
         public IList<StudyStorageLocation> GetStudyStorageLocation(Study study)
         {
             Platform.CheckForNullReference(study, "Study");

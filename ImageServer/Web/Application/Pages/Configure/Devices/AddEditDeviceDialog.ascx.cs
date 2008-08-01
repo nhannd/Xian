@@ -235,12 +235,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (EditMode)
             {
                 ModalDialog1.Title  = App_GlobalResources.SR.DialogEditDeviceTitle;
-                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.UpdateButtonEnabled;
+                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
             }
             else
             {
                 ModalDialog1.Title = App_GlobalResources.SR.DialogAddDeviceTitle;
-                OKButton.EnabledImageURL = App_GlobalResources.ImageFileLocation.AddButtonEnabled;
+                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
             }
 
             // Update the rest of the fields

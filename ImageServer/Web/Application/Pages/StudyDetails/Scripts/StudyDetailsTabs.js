@@ -11,7 +11,7 @@
 // is RE-define for the 2nd instance but registerClass() will fail so the type will be essential undefined when the object
 // is instantiated.
 //
-if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel']==null)
+if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs']==null)
 {
     Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls');
 
@@ -20,8 +20,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
     // Constructor
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel = function(element) { 
-        ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel.initializeBase(this, [element]);
+    ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs = function(element) { 
+        ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs.initializeBase(this, [element]);
        
     }
 
@@ -30,10 +30,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
     // Create the prototype for the control.
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel.prototype = 
+    ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs.prototype = 
     {
         initialize : function() {
-            ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel.callBaseMethod(this, 'initialize');        
+            ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs.callBaseMethod(this, 'initialize');        
             
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
             this._OnSeriesListClickedHandler = Function.createDelegate(this,this._OnSeriesListClicked);
@@ -46,7 +46,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         dispose : function() {
             $clearHandlers(this.get_element());
 
-            ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel.callBaseMethod(this, 'dispose');
+            ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs.callBaseMethod(this, 'dispose');
             
             var serieslist = $find(this._SeriesListClientID);
             if (serieslist!=null)
@@ -114,7 +114,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                            this._getServerAE(rows[i]),
                            this._getStudyUid(rows[i]),
                            this._getSeriesUid(rows[i]));
-                           
                     window.open(url);
                 }
             }
@@ -190,49 +189,9 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
 
     // Register the class as a type that inherits from Sys.UI.Control.
 
-    ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsPanel', Sys.UI.Control);
+    ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls.StudyDetailsTabs', Sys.UI.Control);
      
 
     if (typeof(Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
 
 }
-
-//When the BirthDate Changes, set the Age and change the textbox.
-
-/*function BirthDate_Changed()
-{
-    birthDateTextBox = get_PatientBrithDateClientID());
-    
-    if (birthDateTextBox != null && birthDateTextBox != "")
-    {
-        alert(birthDateTextBox.value);
-    }
-}
-*/
-    /*
-    if (!string.IsNullOrEmpty(study.PatientsBirthDate))
-            {
-                DateTime birthDate = DateTime.ParseExact(study.StudyDate, ImageServerConstants.DicomDate, null);
-
-                PatientBirthDate.Text = birthDate.ToString(ImageServerConstants.MMDDYYY);
-
-                TimeSpan age = DateTime.Now - birthDate;
-                if (age > TimeSpan.FromDays(365))
-                {
-                    PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
-                }
-                else if (age > TimeSpan.FromDays(30))
-                {
-                    PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
-                }
-                else
-                {
-                    PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
-                }
-            }
-            else
-            {
-                PatientBirthDate.Text = App_GlobalResources.SR.Unknown;
-                PatientAge.Text = App_GlobalResources.SR.Unknown;
-            }
-            */

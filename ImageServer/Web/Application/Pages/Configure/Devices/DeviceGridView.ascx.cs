@@ -216,12 +216,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowRetrieve")))
             {
                 img = new Image();
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.RetrieveFeature;
+                img.ImageUrl = ImageServerConstants.ImageURLs.RetrieveFeature;
                 img.AlternateText = "Retrieve";
             }
             else
             {
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
+                img.ImageUrl = ImageServerConstants.ImageURLs.Blank;
                 img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
@@ -234,12 +234,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowQuery")))
             {
                 img = new Image();
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.QueryFeature;
+                img.ImageUrl = ImageServerConstants.ImageURLs.QueryFeature;
                 img.AlternateText = "Query";
             }
             else
             {
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
+                img.ImageUrl = ImageServerConstants.ImageURLs.Blank;
                 img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
@@ -250,12 +250,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowStorage")))
             {
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.StoreFeature;
+                img.ImageUrl = ImageServerConstants.ImageURLs.StoreFeature;
                 img.AlternateText = "Store";
             }
             else
             {
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
+                img.ImageUrl = ImageServerConstants.ImageURLs.Blank;
                 img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
@@ -266,13 +266,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.AutoRouteFeature;
+                img.ImageUrl = ImageServerConstants.ImageURLs.AutoRouteFeature;
                 img.AlternateText = "Auto Route";
             }
             else
             {
                 //img.Visible = false;
-                img.ImageUrl = App_GlobalResources.ImageFileLocation.Blank;
+                img.ImageUrl = ImageServerConstants.ImageURLs.Blank;
                 img.AlternateText = string.Empty;
             }
             placeHolder.Controls.Add(img);
@@ -286,11 +286,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "DHCP"));
                 if (active)
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
                 }
             }
         }
@@ -304,11 +304,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                 bool active = Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "Enabled"));
                 if (active)
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Checked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Checked;
                 }
                 else
                 {
-                    img.ImageUrl = App_GlobalResources.ImageFileLocation.Unchecked;
+                    img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
                 }
             }
         }

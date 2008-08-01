@@ -18,9 +18,11 @@
   <td class="PatientInfo"><localAsp:PatientSummaryPanel ID="PatientSummary" runat="server" /></td>
   </tr>
   
+  <tr><td style="background-color: #3D98D1"><asp:Image runat="server" SkinID="Spacer" Height="4" /></td></tr>
+  
   <tr>
   <td>
-      <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+      <table width="100%" cellpadding="2" cellspacing="0" class="SeriesDetailsPanel">
         <tr><td class="MainContentSubTitle">Study Summary</td></tr>
         <tr><td>
         <localAsp:StudySummaryPanel ID="StudySummary" runat="server" />
@@ -28,9 +30,12 @@
     </table>
   </td>
   </tr>
+  
+  <tr><td style="background-color: #3D98D1"><asp:Image ID="Image1" runat="server" SkinID="Spacer" Height="4" /></td></tr>
+  
   <tr>
   <td>
-    <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel" style="margin-top: 3px;">
+    <table width="100%" cellpadding="2" cellspacing="0" class="SeriesDetailsPanel">
         <tr><td class="MainContentSubTitle">Series Summary</td></tr>
         <tr><td>
         <localAsp:SeriesDetailsView ID="SeriesDetails" runat="server" />

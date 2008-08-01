@@ -62,18 +62,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ErrorMessages.resx</DependentUpon>
     </Compile>
-    <Compile Include="App_GlobalResources\ImageFileLocation.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ImageFileLocation.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_Code\KeyedCollectionBase.cs" />
     <Compile Include="App_Code\EntityCollection.cs" />
-    <Compile Include="App_GlobalResources\ImageServerPageURLs.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ImageServerPageURLs.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_GlobalResources\Labels.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -453,6 +443,13 @@
     <Compile Include="Pages\StudyDetails\Code\StudyDetailsAssembler.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\ArchivePanel.ascx.cs">
+      <DependentUpon>ArchivePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\StudyDetails\Controls\ArchivePanel.ascx.designer.cs">
+      <DependentUpon>ArchivePanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\StudyDetails\Controls\StudyStorageView.ascx.cs">
       <DependentUpon>StudyStorageView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -746,11 +743,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorMessages.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="App_GlobalResources\ImageFileLocation.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ImageFileLocation.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <Content Include="App_Themes\Default\images\Indicators\checked.png" />
     <Content Include="App_Themes\Default\images\Indicators\unchecked.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
@@ -772,11 +764,6 @@
     <Content Include="Pages\Configure\Devices\DevicePage.aspx" />
     <Content Include="Pages\Configure\Devices\DevicePanel.ascx" />
     <Content Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
-    <EmbeddedResource Include="App_GlobalResources\ImageServerPageURLs.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ImageServerPageURLs.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Titles.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -820,6 +807,7 @@
     <Content Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx" />
     <Content Include="Pages\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\ArchivePanel.ascx" />
     <Content Include="Pages\StudyDetails\Controls\StudyStorageView.ascx" />
     <Content Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx" />
     <Content Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx" />
@@ -844,7 +832,7 @@
     <Content Include="Pages\WorkQueue\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\StudyDetails\Scripts\SeriesGridView.js" />
     <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsPanel.js" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsTabs.js" />
     <EmbeddedResource Include="Pages\WorkQueue\SearchPanel.js" />
     <Content Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />

@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (img!=null && item != null)
             {
-                img.ImageUrl = item.Enabled ? App_GlobalResources.ImageFileLocation.Checked : App_GlobalResources.ImageFileLocation.Unchecked;
+                img.ImageUrl = item.Enabled ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
             }
         }
         protected void CustomizeLockColumn(GridViewRow row)
@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             ServiceLock item = row.DataItem as ServiceLock;
             if (img != null && item != null)
             {
-                img.ImageUrl = item.Lock ? App_GlobalResources.ImageFileLocation.Checked : App_GlobalResources.ImageFileLocation.Unchecked;
+                img.ImageUrl = item.Lock ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
             }
         }
         protected void CustomizeFilesystemColumn(GridViewRow row)

@@ -30,74 +30,75 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 {
     /// <summary>
     /// Study level detailed information panel within the <see cref="StudyDetailsPanel"/>
     /// </summary>
-    public partial class StudyDetailsView : System.Web.UI.UserControl
+    public partial class ArchivePanel : System.Web.UI.UserControl
     {
         #region Private members
 
         private Unit _width;
-
-        private IList<Model.Study> _studies = new List<Model.Study>();
-
-        
+        private Study _study;
 
         #endregion Private members
-
-
+        
         #region Public Properties
 
         /// <summary>
-        /// Sets or gets the list of studies whose information are displayed
+        /// Sets or gets the Study
         /// </summary>
-        public IList<Study> Studies
+        public Study Study
         {
-            get { return _studies; }
-            set { _studies = value; }
+            get { return _study; }
+            set { _study = value; }
         }
 
         public Unit Width
         {
             get { return _width; }
-            set { _width = value;
-
-                StudyDetailView.Width = value;
-            }
+            set { _width = value; }
         }
-
 
         #endregion Public Properties
 
-        #region Protected Methods
-
-        protected void Page_Load(object sender, EventArgs e)
+        public override void DataBind()
         {
-            StudyDetailView.DataSource = Studies;
-            StudyDetailView.DataBind();
+            StudyController studyController = new StudyController();
+            ArchiveQueueGridView.DataSource = studyController.GetArchiveQueueItems(_study);
+            ArchiveStudyStorageDetailsView.DataSource = studyController.GetArchiveStudyStorage(_study);
+            base.DataBind();
         }
 
-        protected void StudyDetailView_DataBound(object sender, EventArgs e)
+        protected void ArchiveQueueGridView_PageIndexChanged(object sender, EventArgs e)
         {
-            Study study = (StudyDetailView.DataItem) as Study;
-            if (study != null)
-            {
-                Label statusLabel = StudyDetailView.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-                    statusLabel.Text = study.StudyStatusEnum.Description;
-                }
+            DataBind();
+        }
 
+        protected void ArchiveQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        {
+            ArchiveQueueGridView.PageIndex = e.NewPageIndex;
+            DataBind();
+        }
+
+        protected void ArchiveStudyStorageDetailsView_DataBound(object sender, EventArgs e)
+        {
+            ArchiveStudyStorage archiveStudyStorage = ArchiveStudyStorageDetailsView.DataItem as ArchiveStudyStorage;
+            if (archiveStudyStorage != null)
+            {
+                Label xmlText = ArchiveStudyStorageDetailsView.FindControl("XmlText") as Label;
+                if (xmlText != null && archiveStudyStorage.ArchiveXml != null)
+                {
+                    xmlText.Text = XmlUtilities.GetXmlDocumentAsString(archiveStudyStorage.ArchiveXml, true);
+                }
             }
         }
-
-        #endregion Protected Methods
-
     }
 }

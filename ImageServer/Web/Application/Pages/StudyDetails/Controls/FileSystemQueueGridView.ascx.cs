@@ -38,6 +38,7 @@ using System.Xml;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Scripts.FileSystemQueueGridView.js", "application/x-javascript")]
 
@@ -107,11 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 Label xmlText = e.Row.FindControl("XmlText") as Label;
                 if (xmlText != null && fsq.QueueXml != null)
                 {
-                    StringWriter sw = new StringWriter();
-
-                    XmlTextWriter xw = new XmlTextWriter(sw);
-                    fsq.QueueXml.WriteTo(xw);
-                    xmlText.Text = SecurityElement.Escape(sw.ToString()); 
+                    xmlText.Text = XmlUtilities.GetXmlDocumentAsString(fsq.QueueXml, true);
                 }
             }
         }

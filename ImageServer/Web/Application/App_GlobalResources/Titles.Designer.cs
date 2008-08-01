@@ -142,6 +142,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore Queue.
+        /// </summary>
+        internal static string RestoreQueue {
+            get {
+                return ResourceManager.GetString("RestoreQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string Search {

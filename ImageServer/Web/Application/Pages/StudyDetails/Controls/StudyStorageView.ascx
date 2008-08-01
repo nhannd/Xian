@@ -18,7 +18,7 @@
                 <asp:Label ID="Status" runat="server" />
             </ItemTemplate>
         </asp:TemplateField>
-        <asp:TemplateField HeaderText="Server Transfer Syntax UID: ">
+        <asp:TemplateField HeaderText="Transfer Syntax: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>
                 <asp:Label ID="TransferSyntaxUID" runat="server" />
