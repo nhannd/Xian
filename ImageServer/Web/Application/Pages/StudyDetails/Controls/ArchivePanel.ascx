@@ -60,6 +60,7 @@
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>
         <asp:TemplateField HeaderText="Archive XML: ">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>
                 <asp:Label ID="XmlText" runat="server"></asp:Label>
             </ItemTemplate>
