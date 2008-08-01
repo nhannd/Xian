@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyServerFiles;AppConfigs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="CopyServerFiles;AppConfigs;ShredHostAppConfigs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- RisClient specific postbuild step -->
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -20,6 +20,7 @@
     <FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
     <FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
     <ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
+	<ShredHostServiceDirectory>$(SolutionDir)..\..\Server\ShredHostService</ShredHostServiceDirectory>
     <PublicationShredDirectory>$(SolutionDir)..\Shreds\Publication</PublicationShredDirectory>
     <TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
   </PropertyGroup>
@@ -83,6 +84,11 @@
   </ItemGroup>
 
   <ItemGroup>
+	<ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
+	<ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
     <AppConfigSourceFiles Include="$(SolutionDir)\Executable\app.config" />
   </ItemGroup>
@@ -95,6 +101,10 @@
 
   <Target Name="AppConfigs" DependsOnTargets="Build BuildTasks">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Ris.Server.Executable.exe.config" />
+  </Target>
+
+  <Target Name="ShredHostAppConfigs" DependsOnTargets="Build BuildTasks">
+	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(ShredHostServiceDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHostService.exe.config" />
   </Target>
 
   <Target Name="CopyServerFiles">
