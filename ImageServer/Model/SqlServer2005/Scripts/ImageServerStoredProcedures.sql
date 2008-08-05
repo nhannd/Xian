@@ -413,6 +413,7 @@ BEGIN
 	DECLARE  @Tier1RetentionServerRuleTypeEnum smallint
 	DECLARE  @OnlineRetentionServerRuleTypeEnum smallint
 	DECLARE  @StudyRestoreServerRuleApplyTimeEnum smallint
+	DECLARE  @StudyCompressServerRuleTypeEnum smallint
 
 	-- Get the Study Processed Rule Apply Time
 	SELECT @StudyServerRuleApplyTimeEnum = Enum FROM ServerRuleApplyTimeEnum WHERE Lookup = ''StudyProcessed''
@@ -423,6 +424,7 @@ BEGIN
 	SELECT @StudyDeleteServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''StudyDelete''
 	SELECT @Tier1RetentionServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''Tier1Retention''
 	SELECT @OnlineRetentionServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''OnlineRetention''
+	SELECT @StudyCompressServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = ''StudyCompress''
 
 	-- Insert a default StudyDelete rule
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
@@ -468,6 +470,32 @@ BEGIN
 					<action><online-retention time="4" unit="weeks"/></action>
 				</rule>'' )
 
+	-- Insert an exempt rule for Compression
+	INSERT INTO [ImageServer].[dbo].[ServerRule]
+			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[ExemptRule],[RuleXml])
+		 VALUES
+			   (newid(),''Compression Exempt Rule'',@ServerPartitionGUID, @StudyServerRuleApplyTimeEnum, @StudyCompressServerRuleTypeEnum, 1, 0, 1,
+				''<rule>
+				  <condition expressionLanguage="dicom">
+					<or>
+					  <!-- RLE -->
+					  <equal test="$TransferSyntaxUid" refValue="1.2.840.10008.1.2.5" />
+					  <!-- JPEG Baseline -->
+					  <equal test="$TransferSyntaxUid" refValue="1.2.840.10008.1.2.4.50" />
+					  <!-- JPEG Extended -->
+					  <equal test="$TransferSyntaxUid" refValue="1.2.840.10008.1.2.4.51" />
+					  <!-- JPEG Lossless -->
+					  <equal test="$TransferSyntaxUid" refValue="1.2.840.10008.1.2.4.70" />
+					  <!-- JPEG 2000 Lossless -->
+					  <equal test="$TransferSyntaxUid" refValue="1.2.840.10008.1.2.4.90" />
+					  <!-- JPEG 2000 Lossless/Lossy -->
+					  <equal test="$TransferSyntaxUid" refValue="1.2.840.10008.1.2.4.91" />
+					</or>
+				  </condition>
+				  <action>
+					<no-op />
+				  </action>
+				</rule>'' )
 	COMMIT TRANSACTION
 
 	SELECT * from ServerPartition

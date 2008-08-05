@@ -236,7 +236,7 @@ namespace ClearCanvas.Dicom
 
                 bb = new ByteBuffer();
                 bb.CopyFrom(fs, (int)_reference.Length);
-                fs.Close();
+				fs.Close();
             }
 
             if (ByteBuffer.LocalMachineEndian != _reference.Endian)
@@ -273,7 +273,7 @@ namespace ClearCanvas.Dicom
 
                     bb = new ByteBuffer();
                     bb.CopyFrom(fs, (int)_reference.Length);
-                    fs.Close();
+					fs.Close();
                 }
 
                 if (syntax.Endian != _reference.Endian)
@@ -1549,7 +1549,7 @@ namespace ClearCanvas.Dicom
 
                     bb = new ByteBuffer();
                     bb.CopyFrom(fs, (int)_reference.Length);
-                    fs.Close();
+					fs.Close();
                 }
 
                 if (syntax.Endian != _reference.Endian)
@@ -1817,7 +1817,7 @@ namespace ClearCanvas.Dicom
 
                 bb = new ByteBuffer();
                 bb.CopyFrom(fs, (int)_reference.Length);
-                fs.Close();
+				fs.Close();
             }
 
             if (ByteBuffer.LocalMachineEndian != _reference.Endian)
@@ -1849,7 +1849,7 @@ namespace ClearCanvas.Dicom
 
                     bb = new ByteBuffer();
                     bb.CopyFrom(fs, (int)_reference.Length);
-                    fs.Close();
+					fs.Close();
                 }
 
                 if (syntax.Endian != _reference.Endian)

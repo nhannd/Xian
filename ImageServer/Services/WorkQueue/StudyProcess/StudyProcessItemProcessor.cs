@@ -36,7 +36,6 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
@@ -96,7 +95,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
 
-            _studyProcessedRulesEngine.Execute(context);
+			_studyProcessedRulesEngine.Execute(context);
+
+			// This is a bit kludgy, but we had a problem with studies with only 1 image incorectlly
+			// having archive requests inserted when they were scheduled for deletion.  Calling
+			// this command here so that if a delete is inserted at the study level, we will remove
+			// the previously inserted archive request for the study.  Note also this has to be done
+			// after the rules engine is executed.
+			context.CommandProcessor.AddCommand(new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, true));
 
             if (false == context.CommandProcessor.Execute())
             {
@@ -220,9 +226,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _sopProcessedRulesEngine.Execute(context);
 
 				// Do insert into the archival queue.  Note that we re-run this with each object processed
-				// so that the scheduled time is pushed back each time.
+				// so that the scheduled time is pushed back each time.  Note, however, if the study only 
+				// has one image, we could incorrectly insert an ArchiveQueue request, since the 
+				// study rules haven't been run.  We re-run the command when the study processed
+				// rules are run to remove out the archivequeue request again, if it isn't needed.
             	context.CommandProcessor.AddCommand(
-            		new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, false));
+            		new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, true));
 
                 // Do the actual processing
                 if (!processor.Execute())
@@ -266,8 +275,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             finally
             {
-
-
                 if (insertInstanceCommand != null && insertInstanceCommand.Statistics.IsSet)
                     _instanceStats.InsertDBTime.Add(insertInstanceCommand.Statistics);
                 if (insertStudyXmlCommand != null && insertStudyXmlCommand.Statistics.IsSet)
@@ -535,7 +542,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				PostProcessing(item, batchProcessed, false);
 			else
 			{
-                bool allFailedDuplicate = CollectionUtils.TrueForAll<WorkQueueUid>(WorkQueueUidList, delegate(WorkQueueUid uid)
+                bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, delegate(WorkQueueUid uid)
                                                                                {
                                                                                    return uid.Duplicate && uid.Failed;
                                                                                });

@@ -122,6 +122,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			try
 			{
 				file = new DicomFile(path);
+
 				file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
 
 				// Get the Patients Name for processing purposes.
@@ -153,13 +154,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					return;
 				}
 
-				RenameFileCommand rename = new RenameFileCommand(file.Filename, path + "_save");
-				processor.AddCommand(rename);
-
+				file.Filename = path + "_saveNew";
 				SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file);
 				processor.AddCommand(save);
 
-				FileDeleteCommand delete = new FileDeleteCommand(path + "_save", false);
+				RenameFileCommand renameOld = new RenameFileCommand(path, path + "_saveOld");
+				processor.AddCommand(renameOld);
+
+				RenameFileCommand renameNew = new RenameFileCommand(path + "_saveNew", path);
+				processor.AddCommand(renameNew);
+
+				FileDeleteCommand delete = new FileDeleteCommand(path + "_saveOld", false);
 				processor.AddCommand(delete);
 
 				// Do the actual processing

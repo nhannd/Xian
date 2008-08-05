@@ -82,21 +82,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
             base.OnInit(e);
 
-			// Setup the calendar for schedule date
-			if (!Page.IsPostBack)
-			{
-				// first time load
-				ScheduleCalendarExtender.SelectedDate = DateTime.Today;
-			}
-			else
-			{
-				ScheduleDate.Text = Request[ScheduleDate.UniqueID];
-				if (!String.IsNullOrEmpty(ScheduleDate.Text))
-					ScheduleCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
-				else
-					ScheduleCalendarExtender.SelectedDate = null;
-
-			}
        
             ScheduleCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
@@ -151,8 +136,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
+			// Setup the calendar for schedule date
+			if (!Page.IsPostBack)
+			{
+				// first time load
+				ScheduleCalendarExtender.SelectedDate = DateTime.Today;
+			}
+			else
+			{
+				ScheduleDate.Text = Request[ScheduleDate.UniqueID];
+				if (!String.IsNullOrEmpty(ScheduleDate.Text))
+					ScheduleCalendarExtender.SelectedDate =
+						DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
+				else
+					ScheduleCalendarExtender.SelectedDate = null;
+			}
 
-            // re-populate the drop down lists and restore their states
+        	// re-populate the drop down lists and restore their states
             IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();
             IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
             IList<WorkQueuePriorityEnum> workQueuePriorities = WorkQueuePriorityEnum.GetAll();

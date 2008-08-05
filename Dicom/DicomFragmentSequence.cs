@@ -117,7 +117,7 @@ namespace ClearCanvas.Dicom
                     bb = new ByteBuffer();
                     bb.Endian = _reference.Endian;
                     bb.CopyFrom(fs, (int)_reference.Length);
-                    fs.Close();
+					fs.Close();
                 }
                 return bb;
             }

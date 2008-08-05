@@ -419,18 +419,19 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         /// <param name="stopTag"></param>
         /// <param name="options">The options to use when reading the file.</param>
-        public void Load(DicomTag stopTag, DicomReadOptions options)
+		public void Load(DicomTag stopTag, DicomReadOptions options)
         {
-            if (!File.Exists(Filename))
-                throw new FileNotFoundException(Filename);
+        	if (!File.Exists(Filename))
+        		throw new FileNotFoundException(Filename);
 
-              using (FileStream fs = File.OpenRead(Filename))
-              {
-                Load(fs, stopTag, options);
-              }
+        	using (FileStream fs = File.OpenRead(Filename))
+        	{
+        		Load(fs, stopTag, options);
+				fs.Close();
+        	}
         }
 
-        /// <summary>
+    	/// <summary>
         /// Load a DICOM file from an input stream.
         /// </summary>
         /// <remarks>
@@ -570,7 +571,9 @@ namespace ClearCanvas.Dicom
 
             using (FileStream fs = File.Create(Filename))
             {
-                return Save(fs, options);
+				bool b = Save(fs, options);
+				fs.Close();
+            	return b;
             }
         }
         /// <summary>
@@ -598,7 +601,9 @@ namespace ClearCanvas.Dicom
 
             using (FileStream fs = File.Create(Filename))
             {
-                return Save(fs, options);
+                bool b = Save(fs, options);
+				fs.Close();
+            	return b;
             }
         }
 

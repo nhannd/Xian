@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// </summary>
         /// <param name="location">The storage location of the study.</param>
         /// <returns></returns>
-        private DicomMessage LoadInstance(StudyStorageLocation location)
+        private DicomFile LoadInstance(StudyStorageLocation location)
         {
             string studyXml = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
 
@@ -88,9 +88,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 if (instanceEnumerator.MoveNext())
                 {
                     InstanceXml instance = instanceEnumerator.Current;
-                    DicomMessage msg = new DicomMessage(new DicomAttributeCollection(), instance.Collection);
-                    msg.TransferSyntax = instance.TransferSyntax;
-                    return msg;
+					DicomFile file = new DicomFile("file.dcm",new DicomAttributeCollection(), instance.Collection);
+                    file.TransferSyntax = instance.TransferSyntax;
+                    return file;
                 }
             }
 
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="engine">The rules engine to use when processing the study.</param>
         private void ProcessStudy(StudyStorageLocation location, ServerRulesEngine engine)
         {
-            DicomMessage msg = LoadInstance(location);
+            DicomFile msg = LoadInstance(location);
             if (msg == null)
             {
                 Platform.Log(LogLevel.Error, "Unable to load file for study {0}", location.StudyInstanceUid);
@@ -118,13 +118,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
             // be reinserted by the rules engine.
             context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey()));
 
+			// Execute the rules engine, insert commands to update the database into the command processor.
+            engine.Execute(context);
+
 			// Re-do insert into the archive queue.  Note the "update" flag must be set,
 			// so that we don't insert a new record if the study has been already archived
-        	context.CommandProcessor.AddCommand(
-        		new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey(), true));
-
-            // Execute the rules engine, insert commands to update the database into the command processor.
-            engine.Execute(context);
+			// Note also this should be done after the rules engine, so we don't insert into
+			// the archive queue if a study delete has been input.
+			context.CommandProcessor.AddCommand(
+				new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey(), true));
 
 
             // Do the actual database updates.

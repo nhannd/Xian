@@ -176,7 +176,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 else
                     criteria.Enabled.EqualTo(false);
             }
-            
+
+        	criteria.AeTitle.SortAsc(0);
+
             Partitions =
                 _theController.GetPartitions(criteria);
         }

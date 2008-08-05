@@ -557,7 +557,7 @@ namespace ClearCanvas.Dicom
                         bb = new ByteBuffer();
                         bb.CopyFrom(fs, UncompressedFrameSize);
                         bb.Endian = obAttrib._reference.Endian;
-                        fs.Close();
+						fs.Close();
                     }
 
                     return bb.ToBytes();
@@ -593,7 +593,7 @@ namespace ClearCanvas.Dicom
                             bb = new ByteBuffer();
                             bb.CopyFrom(fs, UncompressedFrameSize + 1);
                             bb.Endian = owAttrib._reference.Endian;
-                            fs.Close();
+							fs.Close();
                         }
 
                         bb.Swap(owAttrib._reference.Vr.UnitSize);
@@ -611,7 +611,7 @@ namespace ClearCanvas.Dicom
                         bb = new ByteBuffer();
                         bb.CopyFrom(fs, UncompressedFrameSize);
                         bb.Endian = owAttrib._reference.Endian;
-                        fs.Close();
+						fs.Close();
                     }
 
                     if (owAttrib._reference.Endian != ByteBuffer.LocalMachineEndian)

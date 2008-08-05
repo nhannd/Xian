@@ -108,7 +108,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
         public IList<ServerPartition> GetAllPartitions()
         {
-            return GetPartitions(new ServerPartitionSelectCriteria());
+        	ServerPartitionSelectCriteria searchCriteria = new ServerPartitionSelectCriteria();
+        	searchCriteria.AeTitle.SortAsc(0);
+			return GetPartitions(searchCriteria);
         }
 
         /// <summary>

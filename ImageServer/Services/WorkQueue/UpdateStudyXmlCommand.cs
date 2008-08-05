@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         protected override void OnUndo()
         {
-            _stream.RemoveFile(_file);
+            _stream.AddFile(_file);
 
             WriteStudyStream(
                 Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
@@ -112,9 +112,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     if (File.Exists(streamFile))
                         File.Delete(streamFile);
 
-                    using (Stream fileStream = new FileStream(streamFile, FileMode.CreateNew))
+                    using (Stream fs = new FileStream(streamFile, FileMode.CreateNew))
                     {
-                        StudyXmlIo.Write(doc, fileStream);
+                        StudyXmlIo.Write(doc, fs);
+                    	fs.Close();
                     }
                     return;
                 }

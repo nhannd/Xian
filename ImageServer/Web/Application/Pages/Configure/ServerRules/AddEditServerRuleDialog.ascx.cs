@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyProcessed};
 
 		private static readonly ServerRuleApplyTimeEnum[] _tier1RetentionList =
-			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyArchived, ServerRuleApplyTimeEnum.StudyRestored};
+			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyProcessed, ServerRuleApplyTimeEnum.StudyArchived, ServerRuleApplyTimeEnum.StudyRestored };
 
 		private static readonly ServerRuleApplyTimeEnum[] _onlineRetentionList =
 			new ServerRuleApplyTimeEnum[] {ServerRuleApplyTimeEnum.StudyArchived, ServerRuleApplyTimeEnum.StudyRestored};

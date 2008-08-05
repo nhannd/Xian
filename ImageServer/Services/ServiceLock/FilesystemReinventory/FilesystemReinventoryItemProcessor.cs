@@ -77,9 +77,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                         StudyStorageLocation location;
                         if (false == GetStudyStorageLocation(partition, studyInstanceUid, out location))
                         {
-							if (location == null)
+                        	StudyStorage storage;
+							if (GetStudyStorage(partition, studyInstanceUid, out storage))
 							{
-								Platform.Log(LogLevel.Warn, "Study {0} on partition {1} does not have an online location",studyInstanceUid, partition.Description);
+								Platform.Log(LogLevel.Warn, "Study {0} on filesystem partition {1} is offline {2}",studyInstanceUid, partition.Description, studyDir.ToString());
 							}
 							else
 							{
@@ -92,6 +93,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 										fileList.Add(sopFile);
 								}
 
+								if (fileList.Count == 0)
+								{
+									Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
+									continue;
+								}
 								FileInfo firstFile = fileList[0];
 
 
@@ -181,7 +187,25 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             partition = null;
             return false;
         }
-        private bool GetStudyStorageLocation(ServerPartition partition, string studyInstanceUid, out StudyStorageLocation location)
+
+		private bool GetStudyStorage(ServerPartition partition, string studyInstanceUid, out StudyStorage storage)
+		{
+			IStudyStorageEntityBroker broker = ReadContext.GetBroker<IStudyStorageEntityBroker>();
+			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+			criteria.ServerPartitionKey.EqualTo(partition.GetKey());
+			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
+			IList<StudyStorage> storageList = broker.Find(criteria);
+
+			if (storageList.Count > 0)
+			{
+				storage = storageList[0];
+				return true;
+			}
+			storage = null;
+			return false;
+		}
+
+    	private bool GetStudyStorageLocation(ServerPartition partition, string studyInstanceUid, out StudyStorageLocation location)
         {
             IQueryStudyStorageLocation procedure = ReadContext.GetBroker<IQueryStudyStorageLocation>();
             StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
@@ -224,6 +248,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
             ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+        	criteria.AeTitle.SortAsc(0);
+
             _partitions = broker.Find(criteria);
 
             ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
@@ -235,8 +261,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
 
             UnlockServiceLock(item, false, Platform.Time.AddDays(1));
-            
-
         }
 
         
