@@ -18,6 +18,14 @@ xmlns="http://www.w3.org/TR/REC-html40">
 <script type="text/javascript" >
 	function onBodyLoad()
 	{
+		/************************************************************
+		Four things to change when updating the downtime-form-template
+		1.  include the jsx.js, jsml.js, ui.js and ris.js in the header
+		2. add the onBodyLoad javascript function in the header
+		3. add    onload="javascript: onBodyLoad()"    to the body tag
+		4. add <span id="AccessionNumber"/> to where the accession number  should be inserted
+		*************************************************************/
+
 		if(!Ris)
 			return;
 		
@@ -52,16 +60,16 @@ w\:* {behavior:url(#default#VML);}
   <o:Author>UHN</o:Author>
   <o:LastAuthor>JLiu</o:LastAuthor>
   <o:Revision>2</o:Revision>
-  <o:TotalTime>139</o:TotalTime>
-  <o:Created>2008-07-29T21:36:00Z</o:Created>
-  <o:LastSaved>2008-07-29T21:36:00Z</o:LastSaved>
+  <o:TotalTime>185</o:TotalTime>
+  <o:Created>2008-08-05T16:29:00Z</o:Created>
+  <o:LastSaved>2008-08-05T16:29:00Z</o:LastSaved>
   <o:Pages>1</o:Pages>
-  <o:Words>221</o:Words>
-  <o:Characters>1264</o:Characters>
+  <o:Words>230</o:Words>
+  <o:Characters>1312</o:Characters>
   <o:Company>UHN</o:Company>
   <o:Lines>10</o:Lines>
-  <o:Paragraphs>2</o:Paragraphs>
-  <o:CharactersWithSpaces>1483</o:CharactersWithSpaces>
+  <o:Paragraphs>3</o:Paragraphs>
+  <o:CharactersWithSpaces>1539</o:CharactersWithSpaces>
   <o:Version>12.00</o:Version>
  </o:DocumentProperties>
 </xml><![endif]-->
@@ -274,12 +282,12 @@ href="downtime-form-template_files/colorschememapping.xml">
 	mso-font-pitch:variable;
 	mso-font-signature:0 0 0 0 0 0;}
 @font-face
-	{font-family:"Wingdings 2";
-	panose-1:5 2 1 2 1 5 7 7 7 7;
-	mso-font-charset:2;
-	mso-generic-font-family:roman;
+	{font-family:"Arial \(W1\)";
+	panose-1:2 11 6 4 2 2 2 2 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
 	mso-font-pitch:variable;
-	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+	mso-font-signature:536881799 -2147483648 8 0 511 0;}
  /* Style Definitions */
  p.MsoNormal, li.MsoNormal, div.MsoNormal
 	{mso-style-unhide:no;
@@ -384,31 +392,22 @@ div.Section1
 </v:shape><![endif]--><![if !vml]><img width=288 height=128
 src="downtime-form-template_files/image002.gif" align=left hspace=12
 alt="Text Box:  " v:shapes="_x0000_s1026"><![endif]><span lang=EN-CA
-style='font-family:"Arial","sans-serif"'>
-
-<span style='mso-tab-count:1'>           </span><b style='mso-bidi-font-weight:normal'>DOWNTIME ACCESSION: </b>
-<span id="AccessionNumber"/>
-</span></p>
+style='font-family:"Arial","sans-serif"'><span style='mso-tab-count:1'>            </span></span><span
+class=GramE><b style='mso-bidi-font-weight:normal'><span lang=EN-CA
+style='font-size:14.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span id="AccessionNumber"/></span></b></span><b
+style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-size:14.0pt;
+line-height:150%;font-family:"Arial","sans-serif"'><o:p></o:p></span></b></p>
 
 <p class=MsoNormal style='line-height:150%'><span lang=EN-CA style='font-family:
 "Arial","sans-serif"'><span style='mso-tab-count:1'>            </span></span><b
 style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-size:11.0pt;
 line-height:150%;font-family:"Arial","sans-serif"'>PRIORITY: </span></b><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'> </span></span><span lang=EN-CA style='font-size:11.0pt;
-line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span>ROUTINE<span style='mso-spacerun:yes'>  
-</span><span style='mso-spacerun:yes'>  </span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:
-Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:
-symbol;mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span>STAT<span style='mso-tab-count:1'>         </span><o:p></o:p></span></p>
+style='mso-spacerun:yes'> </span>[ <span style='mso-spacerun:yes'> </span><span
+class=GramE>]<span style='mso-spacerun:yes'>  </span>ROUTINE</span><span
+style='mso-spacerun:yes'>   </span><span style='mso-spacerun:yes'>  </span>[ <span
+style='mso-spacerun:yes'> </span>]<span style='mso-spacerun:yes'>  </span>STAT<span
+style='mso-tab-count:1'>       </span><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%'><!--[if gte vml 1]><v:line id="_x0000_s1078"
  style='position:absolute;z-index:23' from="36.5pt,16.45pt" to="308.8pt,16.45pt"/><![endif]--><![if !vml]><span
@@ -417,7 +416,7 @@ margin-top:21px;width:365px;height:2px'><img width=365 height=2
 src="downtime-form-template_files/image003.gif" v:shapes="_x0000_s1078"></span><![endif]><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
 style='mso-tab-count:1'>            </span>DATE:<span
-style='mso-spacerun:yes'>    </span><span style='color:#999999'>dd / mm <span
+style='mso-spacerun:yes'>    </span><span style='color:silver'>dd / mm <span
 class=GramE>/<span style='mso-spacerun:yes'>  </span>yyyy</span></span><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%'><!--[if gte vml 1]><v:line id="_x0000_s1080"
@@ -427,7 +426,8 @@ margin-top:19px;width:366px;height:2px'><img width=366 height=2
 src="downtime-form-template_files/image004.gif" v:shapes="_x0000_s1080"></span><![endif]><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
 style='mso-tab-count:1'>            </span>Arrival Time:<span style='mso-tab-count:
-3'>                           </span>Sched. Time:<o:p></o:p></span></p>
+2'>               </span><span style='mso-spacerun:yes'>       </span><span
+class=SpellE>Sched</span>. Time:<o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%'><!--[if gte vml 1]><v:line id="_x0000_s1077"
  style='position:absolute;z-index:22' from="38.15pt,16.25pt" to="306.65pt,16.25pt"/><![endif]--><![if !vml]><span
@@ -453,67 +453,44 @@ style='font-size:14.0pt;font-family:"Arial","sans-serif";mso-ansi-language:
 EN-US'>DOWNTIME FORM</span></b><span lang=EN-CA style='font-size:11.0pt;
 font-family:"Arial","sans-serif"'><o:p></o:p></span></p>
 
-<p class=MsoNormal style='line-height:150%;background:#0C0C0C'><!--[if gte vml 1]><v:line
+<p class=MsoNormal style='line-height:150%'><!--[if gte vml 1]><v:line id="_x0000_s1095"
+ style='position:absolute;z-index:31' from="-.2pt,14.55pt" to="546.4pt,14.55pt"/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout;position:absolute;z-index:31;margin-left:-1px;
+margin-top:18px;width:731px;height:2px'><img width=731 height=2
+src="downtime-form-template_files/image007.gif" v:shapes="_x0000_s1095"></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1038" style='position:absolute;z-index:2' from="104.8pt,14.85pt"
  to="104.8pt,46.35pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:2;margin-left:139px;margin-top:19px;width:2px;
 height:44px'><img width=2 height=44
-src="downtime-form-template_files/image007.gif" v:shapes="_x0000_s1038"></span><![endif]><b
-style='mso-bidi-font-weight:normal'><span style='font-family:"Arial","sans-serif";
-color:white'><span style='mso-spacerun:yes'> </span><span lang=EN-CA>PATIENT
-INFORMATION (REGISTRATION)<o:p></o:p></span></span></b></p>
+src="downtime-form-template_files/image008.gif" v:shapes="_x0000_s1038"></span><![endif]><b
+style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'>PATIENT
+INFORMATION (REGISTRATION)<u><o:p></o:p></u></span></b></p>
 
 <p class=MsoNormal style='line-height:150%'><!--[if gte vml 1]><v:line id="_x0000_s1085"
  style='position:absolute;flip:y;z-index:25' from="292.45pt,12.8pt" to="438.7pt,12.8pt"
  strokecolor="gray"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:25;margin-left:389px;margin-top:16px;width:197px;
 height:2px'><img width=197 height=2
-src="downtime-form-template_files/image008.gif" v:shapes="_x0000_s1085"></span><![endif]><b
+src="downtime-form-template_files/image009.gif" v:shapes="_x0000_s1085"></span><![endif]><b
 style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-size:11.0pt;
 line-height:150%;font-family:"Arial","sans-serif"'>MRN:</span></b><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-tab-count:1'>  </span><span style='mso-tab-count:2'>                        </span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";
-mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:
-Arial;mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'><span
-style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span>OP<span style='mso-tab-count:1'> </span> <span
-style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span><span
-style='mso-spacerun:yes'> </span></span><span lang=EN-CA style='font-size:11.0pt;
-line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'> <span
+style='mso-tab-count:1'>  </span><span style='mso-tab-count:2'>                        </span>[
+<span class=GramE>]<span style='mso-spacerun:yes'>  </span>OP</span><span
+style='mso-tab-count:1'>  </span> <span style='mso-spacerun:yes'> </span><span
+style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span>[ ] <span
 style='mso-spacerun:yes'> </span>EP<span style='mso-spacerun:yes'>  </span><span
-style='mso-spacerun:yes'>   </span><span style='mso-spacerun:yes'> </span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";
-mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:
-Arial;mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'><span
-style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-IP <span style='mso-spacerun:yes'>  </span><span
-style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span><span
-style='mso-spacerun:yes'> </span></span><span lang=EN-CA style='font-size:11.0pt;
-line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'> <span
-style='mso-spacerun:yes'> </span>Other <span
-style='mso-spacerun:yes'>    </span><span style='mso-tab-count:1'>       </span><span
+style='mso-spacerun:yes'>   </span><span style='mso-spacerun:yes'> </span>[ ] <span
+style='mso-spacerun:yes'> </span>IP <span style='mso-spacerun:yes'>   </span><span
+style='mso-spacerun:yes'> </span><span style='mso-spacerun:yes'> </span>[ ] Other
+<span style='mso-spacerun:yes'>    </span><span style='mso-tab-count:1'>       </span><span
 style='mso-spacerun:yes'>        </span><span
 style='mso-spacerun:yes'>  </span><span style='mso-tab-count:2'>              </span><span
 style='mso-spacerun:yes'>   </span><span style='mso-spacerun:yes'> </span><span
 style='mso-tab-count:1'>        </span><span
-style='mso-spacerun:yes'>    </span></span><span lang=EN-CA style='font-size:
-11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span>Portable<o:p></o:p></span></p>
+style='mso-spacerun:yes'>    </span>[ ]<span style='mso-spacerun:yes'> 
+</span>Portable<o:p></o:p></span></p>
 
 <p class=MsoNormal style='tab-stops:138.0pt'><span lang=EN-CA style='font-size:
 11.0pt;font-family:"Arial","sans-serif"'><span
@@ -527,12 +504,12 @@ style='mso-tab-count:3'>               </span>Room:<span style='mso-tab-count:
  to="547.35pt,-.3pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:relative;z-index:26'><span style='position:absolute;left:-1px;
 top:-1px;width:732px;height:2px'><img width=732 height=2
-src="downtime-form-template_files/image009.gif" v:shapes="_x0000_s1089"></span></span><![endif]><!--[if gte vml 1]><v:line
+src="downtime-form-template_files/image010.gif" v:shapes="_x0000_s1089"></span></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1047" style='position:absolute;z-index:4' from=".55pt,18.45pt"
  to="548.1pt,18.45pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:4;margin-left:0px;margin-top:24px;width:732px;
 height:2px'><img width=732 height=2
-src="downtime-form-template_files/image009.gif" v:shapes="_x0000_s1047"></span><![endif]><span
+src="downtime-form-template_files/image010.gif" v:shapes="_x0000_s1047"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>SURNAME:</span><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
 style='mso-tab-count:4'>                                                       </span></span><span
@@ -545,47 +522,37 @@ font-family:"Arial","sans-serif"'><o:p></o:p></span></p>
  to="548.8pt,19.75pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:3;margin-left:-1px;margin-top:25px;width:734px;
 height:2px'><img width=734 height=2
-src="downtime-form-template_files/image010.gif" v:shapes="_x0000_s1041"></span><![endif]><span
+src="downtime-form-template_files/image011.gif" v:shapes="_x0000_s1041"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Date
 of Birth:</span><span lang=EN-CA style='font-size:11.0pt;line-height:150%;
 font-family:"Arial","sans-serif"'><span style='mso-spacerun:yes'>  </span><span
-style='mso-spacerun:yes'>      </span></span><span lang=EN-CA style='font-family:
-"Arial","sans-serif";color:#999999'>dd / mm <span class=GramE>/<span
-style='mso-spacerun:yes'>  </span>yyyy</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-tab-count:2'>                  </span></span><span lang=EN-CA
+style='mso-spacerun:yes'>      </span></span><span lang=EN-CA style='font-size:
+11.0pt;mso-bidi-font-size:12.0pt;line-height:150%;font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:.1pt'>dd / mm <span
+class=GramE>/<span style='mso-spacerun:yes'>  </span>yyyy</span></span><span
+lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
+style='mso-tab-count:2'>                   </span></span><span lang=EN-CA
 style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Gender:</span><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span></span><span lang=EN-CA style='font-size:
-11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span></span><span lang=EN-CA style='font-size:
-10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Male</span><span
+style='mso-spacerun:yes'>  </span>[ ]<span style='mso-spacerun:yes'>  </span></span><span
+lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Male</span><span
 lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-tab-count:1'>          </span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:
-Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:
-symbol;mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span></span><span lang=EN-CA style='font-size:
-10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Female</span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><o:p></o:p></span></p>
+style='mso-tab-count:1'>          </span>[ ]<span style='mso-spacerun:yes'> 
+</span></span><span lang=EN-CA style='font-size:10.0pt;line-height:150%;
+font-family:"Arial","sans-serif"'>Female</span><span lang=EN-CA
+style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:200%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
- id="_x0000_s1050" style='position:absolute;z-index:6' from="271.3pt,20.65pt"
- to="271.3pt,62.5pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
-position:absolute;z-index:6;margin-left:361px;margin-top:27px;width:2px;
+ id="_x0000_s1050" style='position:absolute;z-index:6' from="269.05pt,21.4pt"
+ to="269.05pt,63.25pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:absolute;z-index:6;margin-left:358px;margin-top:28px;width:2px;
 height:57px'><img width=2 height=57
-src="downtime-form-template_files/image011.gif" v:shapes="_x0000_s1050"></span><![endif]><!--[if gte vml 1]><v:line
+src="downtime-form-template_files/image012.gif" v:shapes="_x0000_s1050"></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1048" style='position:absolute;z-index:5' from="-.2pt,20.1pt"
  to="547.3pt,20.1pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:5;margin-left:-1px;margin-top:26px;width:732px;
 height:2px'><img width=732 height=2
-src="downtime-form-template_files/image012.gif" v:shapes="_x0000_s1048"></span><![endif]><span
+src="downtime-form-template_files/image013.gif" v:shapes="_x0000_s1048"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:200%;font-family:"Arial","sans-serif"'>Address:</span><span
 lang=EN-CA style='font-size:11.0pt;line-height:200%;font-family:"Arial","sans-serif"'><span
 style='mso-tab-count:1'>                                 </span></span><span
@@ -606,32 +573,19 @@ style='mso-bidi-font-style:normal'><span lang=EN-CA style='font-size:8.0pt;
 line-height:150%;font-family:"Arial","sans-serif"'>Billing Information:<o:p></o:p></span></i></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
- id="_x0000_s1052" style='position:absolute;flip:y;z-index:8' from="405.7pt,9.25pt"
+ id="_x0000_s1052" style='position:absolute;flip:y;z-index:8' from="397.45pt,9.25pt"
  to="546.7pt,9.25pt" strokecolor="gray"/><![endif]--><![if !vml]><span
-style='mso-ignore:vglayout;position:absolute;z-index:8;margin-left:540px;
-margin-top:11px;width:190px;height:2px'><img width=190 height=2
-src="downtime-form-template_files/image013.gif" v:shapes="_x0000_s1052"></span><![endif]><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";
-mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:
-Arial;mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'><span
-style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-</span><span lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:
-"Arial","sans-serif"'><span style='mso-spacerun:yes'> </span>OHIP<span
-style='mso-spacerun:yes'>    </span></span><span lang=EN-CA style='font-size:
-11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'> </span><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>WSIB<span
-style='mso-spacerun:yes'>    </span></span><span lang=EN-CA style='font-size:
-11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>  </span>Self-Pay<span style='mso-tab-count:2'>                     </span><span
+style='mso-ignore:vglayout;position:absolute;z-index:8;margin-left:529px;
+margin-top:11px;width:201px;height:2px'><img width=201 height=2
+src="downtime-form-template_files/image014.gif" v:shapes="_x0000_s1052"></span><![endif]><span
+lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>[
+<span class=GramE>]<span style='font-size:11.0pt;line-height:150%'> </span><span
+style='mso-spacerun:yes'> </span>OHIP</span><span style='mso-spacerun:yes'>   
+</span>[ ]</span><span lang=EN-CA style='font-size:11.0pt;line-height:150%;
+font-family:"Arial","sans-serif"'> </span><span lang=EN-CA style='font-size:
+10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>WSIB<span
+style='mso-spacerun:yes'>    </span>[ ]<span style='mso-spacerun:yes'> 
+</span>Self-Pay<span style='mso-tab-count:2'>                     </span><span
 style='mso-tab-count:2'>                        </span>OHIP / CLAIM / Policy # <o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
@@ -639,37 +593,23 @@ style='mso-tab-count:2'>                        </span>OHIP / CLAIM / Policy # <
  to="263.7pt,10.5pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:10;margin-left:251px;
 margin-top:13px;width:102px;height:2px'><img width=102 height=2
-src="downtime-form-template_files/image014.gif" v:shapes="_x0000_s1057"></span><![endif]><!--[if gte vml 1]><v:line
+src="downtime-form-template_files/image015.gif" v:shapes="_x0000_s1057"></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1051" style='position:absolute;z-index:7' from="-.2pt,14.85pt"
  to="548.8pt,14.85pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:7;margin-left:-1px;margin-top:19px;width:734px;
 height:2px'><img width=734 height=2
-src="downtime-form-template_files/image015.gif" v:shapes="_x0000_s1051"></span><![endif]><!--[if gte vml 1]><v:line
+src="downtime-form-template_files/image016.gif" v:shapes="_x0000_s1051"></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1053" style='position:absolute;flip:y;z-index:9' from="345.55pt,11.25pt"
  to="549.55pt,11.25pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:9;margin-left:460px;
 margin-top:14px;width:274px;height:2px'><img width=274 height=2
-src="downtime-form-template_files/image016.gif" v:shapes="_x0000_s1053"></span><![endif]><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";
-mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:
-Arial;mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'><span
-style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'><span
-style='mso-spacerun:yes'>   </span>IFH<span style='mso-spacerun:yes'>     
-</span></span><span lang=EN-CA style='font-size:11.0pt;line-height:150%;
-font-family:"Wingdings 2";mso-ascii-font-family:Arial;mso-hansi-font-family:
-Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;mso-symbol-font-family:
-"Wingdings 2"'><span style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-</span><span lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:
-"Arial","sans-serif"'><span style='mso-spacerun:yes'> </span>Out of
-Province<span style='mso-spacerun:yes'>    </span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:
-Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:
-symbol;mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-Other:<span style='mso-tab-count:3'>                                 </span>Expiry
+src="downtime-form-template_files/image017.gif" v:shapes="_x0000_s1053"></span><![endif]><span
+lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>[
+]<span style='mso-spacerun:yes'>   </span>IFH<span
+style='mso-spacerun:yes'>      </span>[ <span class=GramE>]<span
+style='font-size:11.0pt;line-height:150%'> </span><span
+style='mso-spacerun:yes'> </span>Out</span> of Province<span
+style='mso-spacerun:yes'>    </span>[ ] Other:<span style='mso-tab-count:3'>                                  </span>Expiry
 Date: <o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
@@ -677,7 +617,7 @@ Date: <o:p></o:p></span></p>
  to="548.8pt,13.85pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:13;margin-left:-1px;margin-top:17px;width:734px;
 height:2px'><img width=734 height=2
-src="downtime-form-template_files/image010.gif" v:shapes="_x0000_s1063"></span><![endif]><span
+src="downtime-form-template_files/image011.gif" v:shapes="_x0000_s1063"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Ordering
 Physician / Address:<o:p></o:p></span></p>
 
@@ -686,39 +626,40 @@ Physician / Address:<o:p></o:p></span></p>
  to="549.55pt,14.65pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:12;margin-left:0px;margin-top:19px;width:734px;
 height:2px'><img width=734 height=2
-src="downtime-form-template_files/image017.gif" v:shapes="_x0000_s1062"></span><![endif]><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Copies
-to:<o:p></o:p></span></p>
+src="downtime-form-template_files/image018.gif" v:shapes="_x0000_s1062"></span><![endif]><span
+lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Copy
+of report to:<o:p></o:p></span></p>
 
-<p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><b
+<p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
+ id="_x0000_s1094" style='position:absolute;z-index:30' from=".55pt,13.9pt"
+ to="549.55pt,13.9pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:absolute;z-index:30;margin-left:0px;margin-top:18px;width:734px;
+height:2px'><img width=734 height=2
+src="downtime-form-template_files/image018.gif" v:shapes="_x0000_s1094"></span><![endif]><b
 style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-size:10.0pt;
 line-height:150%;font-family:"Arial","sans-serif"'>Procedure Requested:<o:p></o:p></span></b></p>
 
-<p class=MsoNormal style='line-height:150%;background:#0C0C0C'><b
-style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial","sans-serif";
-color:white'><span style='mso-spacerun:yes'> </span>TECHNOLOGIST DOCUMENTATION:<o:p></o:p></span></b></p>
+<p class=MsoNormal style='line-height:150%'><b style='mso-bidi-font-weight:
+normal'><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'>TECHNOLOGIST
+DOCUMENTATION:<o:p></o:p></span></b></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
  id="_x0000_s1093" style='position:absolute;flip:y;z-index:29' from="63.7pt,11.8pt"
- to="325.2pt,12.05pt" strokecolor="gray"/><![endif]--><![if !vml]><span
-style='mso-ignore:vglayout;position:absolute;z-index:29;margin-left:84px;
-margin-top:15px;width:351px;height:2px'><img width=351 height=2
-src="downtime-form-template_files/image018.gif" v:shapes="_x0000_s1093"></span><![endif]><span
+ to="385.3pt,12.05pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:absolute;z-index:29;margin-left:84px;margin-top:15px;width:431px;
+height:2px'><img width=431 height=2
+src="downtime-form-template_files/image019.gif" v:shapes="_x0000_s1093"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Exam
-Room: <span style='mso-tab-count:9'>                                                                                                                </span></span><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Wingdings 2";
-mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:
-Arial;mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'><span
-style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-Sent to Downtime PACS<o:p></o:p></span></p>
+Room: <span style='mso-tab-count:9'>                                                                                                                </span>[
+] Sent to Downtime PACS<o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
  id="_x0000_s1092" style='position:absolute;z-index:28' from="-.2pt,12.2pt"
  to="548.8pt,12.2pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:28;margin-left:-1px;margin-top:15px;width:734px;
 height:2px'><img width=734 height=2
-src="downtime-form-template_files/image010.gif" v:shapes="_x0000_s1092"></span><![endif]><span
+src="downtime-form-template_files/image011.gif" v:shapes="_x0000_s1092"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Exam
 Start Time:<span style='mso-tab-count:2'>                       </span>Exam
 Stop Time:<span style='mso-tab-count:3'>                                  </span>#
@@ -729,20 +670,19 @@ Views / Series:<o:p></o:p></span></p>
  to="548.8pt,15.95pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:14;margin-left:-1px;margin-top:20px;width:734px;
 height:2px'><img width=734 height=2
-src="downtime-form-template_files/image010.gif" v:shapes="_x0000_s1066"></span><![endif]><b
+src="downtime-form-template_files/image011.gif" v:shapes="_x0000_s1066"></span><![endif]><b
 style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-size:10.0pt;
 line-height:150%;font-family:"Arial","sans-serif"'>Procedure Performed:<span
 style='mso-tab-count:4'>                                      </span><span
-style='mso-tab-count:2'>                        </span></span></b><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Technologist
+style='mso-tab-count:1'>            </span></span></b><span lang=EN-CA
+style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Technologist
 Name(s):<o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><span lang=EN-CA
 style='font-size:9.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Information:</span><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-<i style='mso-bidi-font-style:normal'>(include film size, contrast type,
-injection site, volume, anesthetic, radiopharmaceutical, activity, billing,
-etc)</i><o:p></o:p></span></p>
+<i style='mso-bidi-font-style:normal'>(include contrast type, injection site,
+volume, anesthetic, radiopharmaceutical, activity, billing, etc)</i><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><span lang=EN-CA
 style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'><o:p>&nbsp;</o:p></span></p>
@@ -753,45 +693,41 @@ style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'><o:p>
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><span lang=EN-CA
 style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'><o:p>&nbsp;</o:p></span></p>
 
-<p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><span
+<p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
+ id="_x0000_s1097" style='position:absolute;z-index:32' from="-.95pt,13.7pt"
+ to="548.05pt,13.7pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:absolute;z-index:32;margin-left:-2px;margin-top:17px;width:734px;
+height:2px'><img width=734 height=2
+src="downtime-form-template_files/image011.gif" v:shapes="_x0000_s1097"></span><![endif]><span
 class=SpellE><span lang=EN-CA style='font-size:10.0pt;line-height:150%;
 font-family:"Arial","sans-serif"'>Fluoro</span></span><span lang=EN-CA
 style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
 Time:<span style='mso-tab-count:1'>                            </span>RAD Dose:<span
 style='mso-tab-count:2'>                     </span><span
 style='mso-spacerun:yes'>  </span>WLU / Time Spent:<span style='mso-tab-count:
-1'>      </span><span style='mso-spacerun:yes'>                 </span></span><span
-lang=EN-CA style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";
-mso-ascii-font-family:Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:
-Arial;mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'><span
-style='mso-char-type:symbol;mso-symbol-font-family:"Wingdings 2"'>£</span></span><span
-lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-Sedation<span style='mso-spacerun:yes'>   </span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:150%;font-family:"Wingdings 2";mso-ascii-font-family:
-Arial;mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:
-symbol;mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>
-Isolation<o:p></o:p></span></p>
+1'>      </span><span style='mso-spacerun:yes'>                 </span>[ ]
+Sedation<span style='mso-spacerun:yes'>   </span>[ ] Isolation<o:p></o:p></span></p>
 
-<p class=MsoNormal style='line-height:150%;tab-stops:112.5pt;background:#0C0C0C'><b
-style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial","sans-serif";
-color:white'><span style='mso-spacerun:yes'> </span>RADIOLOGIST REPORT: </span></b><span
-lang=EN-CA style='font-family:"Arial","sans-serif";color:white'><o:p></o:p></span></p>
+<p class=MsoNormal style='line-height:150%;tab-stops:112.5pt'><b
+style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'>RADIOLOGIST REPORT:
+<span style='mso-spacerun:yes'>                                </span></span></b><span
+lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>[
+<span class=GramE>]<span style='font-size:11.0pt;line-height:150%'><span
+style='mso-spacerun:yes'>  </span></span><span style='mso-bidi-font-size:11.0pt;
+line-height:150%'>Dictated</span></span></span><span lang=EN-CA
+style='font-size:10.0pt;mso-bidi-font-size:11.0pt;line-height:150%;font-family:
+"Arial","sans-serif"'> on Device</span><span lang=EN-CA style='font-size:10.0pt;
+line-height:150%;font-family:"Arial","sans-serif"'><span
+style='mso-spacerun:yes'>   </span></span><span lang=EN-CA style='font-family:
+"Arial (W1)","sans-serif";mso-bidi-font-family:Arial;color:silver;letter-spacing:
+3.0pt'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:200%;tab-stops:138.0pt'><span lang=EN-CA
 style='font-size:11.0pt;line-height:200%;font-family:"Arial","sans-serif"'><span
-style='mso-tab-count:9'>                                                                                                                                    </span><span
-style='mso-spacerun:yes'>     </span></span><span lang=EN-CA style='font-size:
-11.0pt;line-height:200%;font-family:"Wingdings 2";mso-ascii-font-family:Arial;
-mso-hansi-font-family:Arial;mso-bidi-font-family:Arial;mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'><span style='mso-char-type:symbol;
-mso-symbol-font-family:"Wingdings 2"'>£</span></span><span lang=EN-CA
-style='font-size:11.0pt;line-height:200%;font-family:"Arial","sans-serif"'> <span
-style='mso-spacerun:yes'> </span></span><span lang=EN-CA style='font-size:10.0pt;
-mso-bidi-font-size:11.0pt;line-height:200%;font-family:"Arial","sans-serif"'>Dictated
-on Device</span><span lang=EN-CA style='font-size:10.0pt;line-height:200%;
-font-family:"Arial","sans-serif"'><span style='mso-spacerun:yes'>   </span></span><span
+style='mso-tab-count:9'>                                                                                                                                    </span></span><span
+lang=EN-CA style='font-size:10.0pt;line-height:200%;font-family:"Arial","sans-serif"'><span
+style='mso-spacerun:yes'>   </span><span style='mso-spacerun:yes'> </span></span><span
 lang=EN-CA style='font-size:11.0pt;line-height:200%;font-family:"Arial","sans-serif"'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:200%;tab-stops:138.0pt'><span lang=EN-CA
@@ -805,51 +741,64 @@ style='font-size:11.0pt;line-height:200%;font-family:"Arial","sans-serif"'><o:p>
  strokecolor="gray"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:11;margin-left:469px;margin-top:8px;width:260px;
 height:3px'><img width=260 height=3
-src="downtime-form-template_files/image019.gif" v:shapes="_x0000_s1058"></span><![endif]><span
+src="downtime-form-template_files/image020.gif" v:shapes="_x0000_s1058"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;font-family:"Arial","sans-serif"'>VERBAL
 Result Given to:<span style='mso-tab-count:6'>                                                          </span><span
 style='mso-spacerun:yes'>   </span>Radiologist:<span style='mso-tab-count:5'>                                                   </span><span
 style='mso-tab-count:1'>            </span> <o:p></o:p></span></p>
 
-<p class=MsoNormal style='line-height:150%;tab-stops:112.5pt;background:#0C0C0C'><b
-style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial","sans-serif";
-color:white'><span style='mso-spacerun:yes'> </span>DOWNTIME TRANSCRIPTION
-(Secretary)</span></b><span lang=EN-CA style='font-family:"Arial","sans-serif";
-color:white'><o:p></o:p></span></p>
+<p class=MsoNormal style='line-height:150%;tab-stops:112.5pt'><!--[if gte vml 1]><v:line
+ id="_x0000_s1098" style='position:absolute;z-index:33' from="-.2pt,-.3pt"
+ to="548.8pt,-.3pt"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+position:relative;z-index:33'><span style='position:absolute;left:-1px;
+top:-1px;width:734px;height:2px'><img width=734 height=2
+src="downtime-form-template_files/image018.gif" v:shapes="_x0000_s1098"></span></span><![endif]><b
+style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'>DOWNTIME TRANSCRIPTION
+(Secretary)</span></b><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'><o:p></o:p></span></p>
 
-<p class=MsoNormal style='line-height:200%;tab-stops:138.0pt'><span lang=EN-CA
-style='font-size:10.0pt;line-height:200%;font-family:"Arial","sans-serif"'><o:p>&nbsp;</o:p></span></p>
+<p class=MsoNormal style='tab-stops:138.0pt'><span lang=EN-CA style='font-size:
+10.0pt;font-family:"Arial","sans-serif"'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='tab-stops:138.0pt'><span lang=EN-CA style='font-size:
+10.0pt;font-family:"Arial","sans-serif"'><o:p>&nbsp;</o:p></span></p>
 
 <p class=MsoNormal style='tab-stops:138.0pt'><!--[if gte vml 1]><v:line id="_x0000_s1069"
  style='position:absolute;z-index:15' from="368.2pt,8.4pt" to="546.7pt,8.4pt"
  strokecolor="gray"/><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
 position:absolute;z-index:15;margin-left:490px;margin-top:10px;width:240px;
 height:2px'><img width=240 height=2
-src="downtime-form-template_files/image020.gif" v:shapes="_x0000_s1069"></span><![endif]><span
+src="downtime-form-template_files/image021.gif" v:shapes="_x0000_s1069"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;font-family:"Arial","sans-serif"'>Transcribed
 Date:<span style='mso-tab-count:6'>                                                                      </span><span
 style='mso-spacerun:yes'>    </span>Transcribed by:<o:p></o:p></span></p>
 
-<p class=MsoNormal style='line-height:150%;tab-stops:112.5pt;background:#0C0C0C'><b
-style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial","sans-serif";
-color:white'><span style='mso-spacerun:yes'> </span>RECOVERY DOCUMENTATION:</span></b><span
-lang=EN-CA style='font-family:"Arial","sans-serif";color:white'><o:p></o:p></span></p>
+<p class=MsoNormal style='tab-stops:112.5pt'><!--[if gte vml 1]><v:line id="_x0000_s1099"
+ style='position:absolute;z-index:34' from="-.2pt,.75pt" to="548.8pt,.75pt"/><![endif]--><![if !vml]><span
+style='mso-ignore:vglayout;position:absolute;z-index:34;margin-left:-1px;
+margin-top:0px;width:734px;height:2px'><img width=734 height=2
+src="downtime-form-template_files/image016.gif" v:shapes="_x0000_s1099"></span><![endif]><b
+style='mso-bidi-font-weight:normal'><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'>RECOVERY
+DOCUMENTATION:</span></b><span lang=EN-CA style='font-family:"Arial (W1)","sans-serif";
+mso-bidi-font-family:Arial;color:silver;letter-spacing:3.0pt'><o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
- id="_x0000_s1076" style='position:absolute;flip:y;z-index:21' from="82.45pt,11.7pt"
- to="542.95pt,13.2pt" strokecolor="gray"/><![endif]--><![if !vml]><span
+ id="_x0000_s1076" style='position:absolute;flip:y;z-index:21' from="82.45pt,13.2pt"
+ to="551.2pt,13.2pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:21;margin-left:109px;
-margin-top:15px;width:616px;height:4px'><img width=616 height=4
-src="downtime-form-template_files/image021.gif" v:shapes="_x0000_s1076"></span><![endif]><span
+margin-top:17px;width:627px;height:2px'><img width=627 height=2
+src="downtime-form-template_files/image022.gif" v:shapes="_x0000_s1076"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Date
 of Recovery:<o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
  id="_x0000_s1073" style='position:absolute;flip:y;z-index:18' from="122.95pt,10.95pt"
- to="545.95pt,12.45pt" strokecolor="gray"/><![endif]--><![if !vml]><span
+ to="549.7pt,12.45pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:18;margin-left:163px;
-margin-top:14px;width:566px;height:4px'><img width=566 height=4
-src="downtime-form-template_files/image022.gif" v:shapes="_x0000_s1073"></span><![endif]><span
+margin-top:14px;width:571px;height:4px'><img width=571 height=4
+src="downtime-form-template_files/image023.gif" v:shapes="_x0000_s1073"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Registration
 completed by:<o:p></o:p></span></p>
 
@@ -858,26 +807,26 @@ completed by:<o:p></o:p></span></p>
  to="549.7pt,10.95pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:19;margin-left:240px;
 margin-top:13px;width:494px;height:3px'><img width=494 height=3
-src="downtime-form-template_files/image023.gif" v:shapes="_x0000_s1074"></span><![endif]><span
+src="downtime-form-template_files/image024.gif" v:shapes="_x0000_s1074"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Technologist
 documentation entered by:<o:p></o:p></span></p>
 
 <p class=MsoNormal style='line-height:150%;tab-stops:138.0pt'><!--[if gte vml 1]><v:line
  id="_x0000_s1075" style='position:absolute;flip:y;z-index:20' from="135.7pt,10.2pt"
- to="282.7pt,10.2pt" strokecolor="gray"/><![endif]--><![if !vml]><span
+ to="278.75pt,10.2pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:20;margin-left:180px;
-margin-top:13px;width:198px;height:2px'><img width=198 height=2
-src="downtime-form-template_files/image024.gif" v:shapes="_x0000_s1075"></span><![endif]><!--[if gte vml 1]><v:line
+margin-top:13px;width:193px;height:2px'><img width=193 height=2
+src="downtime-form-template_files/image025.gif" v:shapes="_x0000_s1075"></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1071" style='position:absolute;z-index:16' from="470.95pt,10.15pt"
  to="545.95pt,10.15pt" strokecolor="gray"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:16;margin-left:627px;
 margin-top:13px;width:102px;height:2px'><img width=102 height=2
-src="downtime-form-template_files/image014.gif" v:shapes="_x0000_s1071"></span><![endif]><!--[if gte vml 1]><v:line
+src="downtime-form-template_files/image015.gif" v:shapes="_x0000_s1071"></span><![endif]><!--[if gte vml 1]><v:line
  id="_x0000_s1072" style='position:absolute;z-index:17' from="-.95pt,20.4pt"
  to="548.05pt,20.4pt" strokeweight="1.25pt"/><![endif]--><![if !vml]><span
 style='mso-ignore:vglayout;position:absolute;z-index:17;margin-left:-3px;
 margin-top:26px;width:735px;height:3px'><img width=735 height=3
-src="downtime-form-template_files/image025.gif" v:shapes="_x0000_s1072"></span><![endif]><span
+src="downtime-form-template_files/image026.gif" v:shapes="_x0000_s1072"></span><![endif]><span
 lang=EN-CA style='font-size:10.0pt;line-height:150%;font-family:"Arial","sans-serif"'>Transcribed
 report entered by:<span style='mso-tab-count:6'>                                                   </span>Final
 Review (Charge Tech/ Supervisor):<o:p></o:p></span></p>
