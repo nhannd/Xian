@@ -101,19 +101,42 @@ namespace ClearCanvas.Ris.Client
                                  delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.Modality.Name; },
                                  0.5f));
 
-			this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?>(
+			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?> sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?>(
 								 "Scheduled Start Time",
 								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.ScheduledStartTime; },
-								 0.5f));
+								 0.5f);
 
-            ITableColumn sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
+			// New comparison for a nullable DateTime because .NET doesn't have a comparison by default for that type
+			sortColumn.Comparison = delegate(Checkable<ProcedurePlanSummaryTableItem> x, Checkable<ProcedurePlanSummaryTableItem> y)
+			{
+				if (x.Item.mpsDetail.ScheduledStartTime != null && y.Item.mpsDetail.ScheduledStartTime == null)
+					return -1;
+				if (x.Item.mpsDetail.ScheduledStartTime == null && y.Item.mpsDetail.ScheduledStartTime != null)
+					return 1;
+				if (x.Item.mpsDetail.ScheduledStartTime == null && y.Item.mpsDetail.ScheduledStartTime == null)
+					return 0;
+				else
+				{
+					if (x.Item.mpsDetail.ScheduledStartTime.Value > y.Item.mpsDetail.ScheduledStartTime.Value)
+						return 1;
+					else if (x.Item.mpsDetail.ScheduledStartTime.Value < y.Item.mpsDetail.ScheduledStartTime.Value)
+						return -1;
+					else if (x.Item.mpsDetail.ScheduledStartTime.Value.Equals(y.Item.mpsDetail.ScheduledStartTime.Value))
+						return 0;
+					else
+						return 0;
+				}
+			};
+
+			this.Columns.Add(sortColumn);
+
+            this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                                     {
                                         return string.Format("{0} - {1}", checkable.Item.rpDetail.Type.Name, checkable.Item.mpsDetail.ProcedureStepName);
                                     },
                                 0.5f,
-                                ProcedureDescriptionRow);
-            this.Columns.Add(sortColumn);
+                                ProcedureDescriptionRow));
 
             this.Sort(new TableSortParams(sortColumn, true));
         }
