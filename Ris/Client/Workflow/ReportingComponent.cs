@@ -446,6 +446,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Stop();
 		}
 
+		public override bool HasValidationErrors
+		{
+			get
+			{
+				return _reportEditorHost.Component.HasValidationErrors || base.HasValidationErrors;
+			}
+		}
+
+		public override void ShowValidation(bool show)
+		{
+			_reportEditorHost.Component.ShowValidation(show);
+			base.ShowValidation(show);
+		}
+
 		#endregion
 
 		private ReportingWorklistItem WorklistItem
@@ -547,6 +561,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				if(this.HasValidationErrors)
+				{
+					this.ShowValidation(true);
+					return;
+				}
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
 					return;
 
@@ -616,6 +636,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				if (this.HasValidationErrors)
+				{
+					this.ShowValidation(true);
+					return;
+				}
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
@@ -670,6 +696,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				if (this.HasValidationErrors)
+				{
+					this.ShowValidation(true);
+					return;
+				}
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
 					return;
 
