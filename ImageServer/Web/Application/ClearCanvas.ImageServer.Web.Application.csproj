@@ -605,20 +605,18 @@
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\WorkQueue\WorkQueueItemCollection.cs" />
-    <Compile Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx.cs">
-      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
+    <Compile Include="Pages\WorkQueue\WorkQueueGridView.ascx.cs">
+      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx.designer.cs">
-      <DependentUpon>WorkQueueItemListPanel.ascx</DependentUpon>
+    <Compile Include="Pages\WorkQueue\WorkQueueGridView.ascx.designer.cs">
+      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\WorkQueue\WorkQueueSettings.Designer.cs">
       <DependentUpon>WorkQueueSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Pages\WorkQueue\WorkQueueSummary.cs" />
-    <Compile Include="Pages\WorkQueue\WorkQueueSummaryAssembler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
@@ -832,7 +830,7 @@
     <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
     <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsTabs.js" />
     <EmbeddedResource Include="Pages\WorkQueue\SearchPanel.js" />
-    <Content Include="Pages\WorkQueue\WorkQueueItemListPanel.ascx" />
+    <Content Include="Pages\WorkQueue\WorkQueueGridView.ascx" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />
     <Content Include="Scripts\CodeMirror\css\jscolors.css" />
     <Content Include="Scripts\CodeMirror\css\xmlcolors.css" />

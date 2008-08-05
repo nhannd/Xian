@@ -2,9 +2,7 @@
 Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.StudyGridView" %>
 
             <asp:GridView ID="StudyListControl" runat="server" AutoGenerateColumns="False"
-                CssClass="GlobalGridView" Width="100%" OnRowDataBound="StudyListControl_RowDataBound"
-                OnDataBound="StudyListControl_DataBound" EmptyDataText="" CellPadding="0" OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
-                OnSelectedIndexChanging="StudyListControl_SelectedIndexChanging" OnPageIndexChanging="StudyListControl_PageIndexChanging"
+                CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" 
                 PageSize="10" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="0px">
                 <Columns>

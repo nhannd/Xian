@@ -48,7 +48,8 @@ public class ImageServerConstants
         public const string MoveStudyPage = "~/Pages/Search/Move/Default.aspx";
         public const string SeriesDetailsPage = "~/Pages/SeriesDetails/SeriesDetailsPage.aspx";
         public const string StudyDetailsPage = "~/Pages/StudyDetails/Default.aspx";
-    }
+		public const string SearchPage = "~/Pages/Search";
+	}
 
     public class ImageURLs
     {

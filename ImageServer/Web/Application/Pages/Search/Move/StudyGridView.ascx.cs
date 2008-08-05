@@ -1,13 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -56,37 +49,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
                         bool deleted = controller.IsScheduledForDelete(study);
                         if (deleted)
                             row.Attributes.Add("deleted", "true");
-
                     }
-
                 }
-
             }
-        }
-
-        protected void StudyListControl_RowDataBound(object sender, GridViewRowEventArgs e)
-        {
-            
-        }
-
-        protected void StudyListControl_DataBound(object sender, EventArgs e)
-        {
-       //     DataBind();
-        }
-
-        protected void StudyListControl_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected void StudyListControl_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected void StudyListControl_PageIndexChanging(object sender, GridViewPageEventArgs e)
-        {
-            throw new NotImplementedException();
         }
     }
 }

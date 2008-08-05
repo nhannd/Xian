@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
+			Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
             if (item != null)
             {
                EnclosingPage.ViewWorkQueueItem(item.Key);
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
             if (item != null)
             {
                 EnclosingPage.ResetWorkQueueItem(item.Key);
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
             if (item != null)
             {
                 EnclosingPage.DeleteWorkQueueItem(item.Key);
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {            
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem;
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
             if (item != null)
             {
                EnclosingPage.RescheduleWorkQueueItem(item.Key);
@@ -237,12 +237,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         protected void UpdateToolBarButtons()
         {
-            Model.WorkQueue selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
+            WorkQueueSummary selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
 
             ViewItemDetailsButton.Enabled = selectedItem != null;
-            RescheduleItemButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem);
-            DeleteItemButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem);
-            ResetItemButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem);
+            RescheduleItemButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem.TheWorkQueueItem);
+            DeleteItemButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem.TheWorkQueueItem);
+            ResetItemButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem.TheWorkQueueItem);
         }
             
         #endregion Protected Methods

@@ -1,5 +1,5 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueItemListPanel.ascx.cs"
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="WorkQueueGridView.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.WorkQueueItemListPanel" %>
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
 	<ContentTemplate>
@@ -8,7 +8,7 @@
 			<asp:TableRow VerticalAlign="top">
 				<asp:TableCell ID="ListContainerCell" CssClass="GlobalGridViewPanelContent" VerticalAlign="top">
 					<asp:ObjectDataSource ID="WorkQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.WorkQueueDataSource"
-						DataObjectTypeName="ClearCanvas.ImageServer.Model.WorkQueue" EnablePaging="true"
+						DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.WorkQueueSummary" EnablePaging="true"
 						SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetWorkQueueDataSource"
 						OnObjectDisposing="DisposeWorkQueueDataSource"></asp:ObjectDataSource>
 					<asp:GridView ID="WorkQueueListView" runat="server" CssClass="GlobalGridView" AutoGenerateColumns="false"
@@ -18,48 +18,24 @@
 						Height="100%" OnSelectedIndexChanged="WorkQueueListView_SelectedIndexChanged"
 						DataSourceID="WorkQueueDataSourceObject">
 						<Columns>
-							<asp:TemplateField HeaderText="Patient ID">
+						<asp:BoundField HeaderText="Patient ID" DataField="PatientId" HeaderStyle-HorizontalAlign="Left"/>
+						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 								<HeaderStyle Wrap="false" HorizontalAlign="Left" />
 								<ItemStyle Wrap="false" />
-								<ItemTemplate>
-									<asp:Label ID="PatientId" runat="server"></asp:Label>
-								</ItemTemplate>
-							</asp:TemplateField>
-							<asp:TemplateField HeaderText="Patient Name">
-								<HeaderStyle Wrap="false" HorizontalAlign="Left" />
-								<ItemStyle Wrap="false" />
-								<ItemTemplate>
-									<ccUI:PersonNameLabel ID="PatientName" runat="server" PersonNameType="Dicom"></ccUI:PersonNameLabel>
-								</ItemTemplate>
-							</asp:TemplateField>
-							<asp:TemplateField HeaderText="Type">
-								<HeaderStyle Wrap="false" HorizontalAlign="Left" />
-								<ItemStyle Wrap="false" HorizontalAlign="Left" />
-								<ItemTemplate>
-									<asp:Label ID="Type" runat="server"></asp:Label>
-								</ItemTemplate>
-							</asp:TemplateField>
+							<itemtemplate>
+                            <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
+                        </itemtemplate>
+						</asp:TemplateField>
+						<asp:BoundField HeaderText="Type" DataField="TypeString" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left"/>
 							<asp:TemplateField HeaderText="Schedule">
 								<HeaderStyle Wrap="false" HorizontalAlign="Center" />
 								<ItemStyle Wrap="false" HorizontalAlign="Center" />
 								<ItemTemplate>
-									<asp:Label ID="Schedule" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("ScheduledTime")) %>'></asp:Label>
+									<asp:Label ID="Schedule" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("ScheduledDateTime")) %>'></asp:Label>
 								</ItemTemplate>
 							</asp:TemplateField>
-							<asp:TemplateField HeaderText="Priority">
-								<HeaderStyle Wrap="false" HorizontalAlign="Center" />
-								<ItemStyle Wrap="false" HorizontalAlign="Center" />
-								<ItemTemplate>
-									<asp:Label ID="Priority" runat="server"></asp:Label>
-								</ItemTemplate>
-							</asp:TemplateField>
-							<asp:TemplateField HeaderText="Status">
-								<HeaderStyle Wrap="false" HorizontalAlign="Center" />
-								<ItemStyle Wrap="false" HorizontalAlign="Center" />
-								<ItemTemplate>
-									<asp:Label ID="Status" runat="server"></asp:Label>
-								</ItemTemplate>
-							</asp:TemplateField>
+						<asp:BoundField HeaderText="Type" DataField="PriorityString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+						<asp:BoundField HeaderText="Status" DataField="StatusString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
 							<asp:TemplateField HeaderText="Processing Server">
 								<HeaderStyle Wrap="false" HorizontalAlign="Center" />
 								<ItemStyle Wrap="false" HorizontalAlign="Center" />
@@ -67,13 +43,7 @@
 									<asp:Label ID="ServerInfoLabel" runat="server" Text='<%# Eval("ProcessorID") %>'></asp:Label>
 								</ItemTemplate>
 							</asp:TemplateField>
-							<asp:TemplateField HeaderText="Notes">
-								<HeaderStyle Wrap="false" HorizontalAlign="Left" />
-								<ItemStyle Wrap="true" HorizontalAlign="Left" />
-								<ItemTemplate>
-									<asp:Label ID="Notes" runat="server"></asp:Label>
-								</ItemTemplate>
-							</asp:TemplateField>
+						<asp:BoundField HeaderText="Notes" DataField="Notes" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left"/>
 						</Columns>
 						<EmptyDataTemplate>
 							<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"

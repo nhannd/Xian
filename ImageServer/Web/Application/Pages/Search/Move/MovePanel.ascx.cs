@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
 
             TimedDialog.Confirmed += delegate(object data)
                  {
-                     Response.Redirect("~/Pages/Search/SearchPage.aspx"); 
+                     Response.Redirect(ImageServerConstants.PageURLs.SearchPage); 
                  };
 
         }

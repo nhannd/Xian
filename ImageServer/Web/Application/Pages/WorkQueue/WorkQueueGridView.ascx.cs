@@ -67,7 +67,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
     	private WorkQueueDataSource _dataSource;
         #endregion Private Members
 
-
         #region Public Properties
 		public int ResultCount
 		{
@@ -118,7 +117,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
         /// <summary>
         /// Gets/Sets a key of the selected work queue item.
         /// </summary>
-        public Model.WorkQueue SelectedWorkQueueItem
+        public WorkQueueSummary SelectedWorkQueueItem
         {
             get
             {
@@ -197,9 +196,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             if (WorkQueueItems!=null)
             {
                 // the refresh rate should be high if the item was scheduled to start soon..
-                foreach(Model.WorkQueue item in WorkQueueItems.Values)
+                foreach(WorkQueueSummary item in WorkQueueItems.Values)
                 {
-                    TimeSpan span = item.ScheduledTime.Subtract(Platform.Time);
+                    TimeSpan span = item.TheWorkQueueItem.ScheduledTime.Subtract(Platform.Time);
                     if (span < TimeSpan.FromMinutes(1))
                     {
                         interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds * 1000; 
@@ -246,8 +245,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
                         Page.ClientScript.GetPostBackEventReference(WorkQueueListView, "Select$" + e.Row.RowIndex);
                     row.Style["cursor"] = "hand";
 
-                    Model.WorkQueue item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
-                    row.Attributes["uid"] = item.Key.ToString();
+                    WorkQueueSummary item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
+					row.Attributes["uid"] = item.Key.ToString();
 
                     CustomizeColumns(e.Row);
                 }
@@ -257,48 +256,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 
         private void CustomizeColumns(GridViewRow row)
         {
-            Model.WorkQueue item = row.DataItem as Model.WorkQueue;
+			WorkQueueSummary summary = row.DataItem as WorkQueueSummary;
 
-        	WorkQueueSummary summary = WorkQueueSummaryAssembler.CreateWorkQueueSummary(item);
-
-            if (item!=null)
+			if (summary != null)
             {
-
-                Label typeLabel = row.FindControl("Type") as Label;
-                if (typeLabel != null)
-                {
-					typeLabel.Text = summary.Type.Description;
-                }
-
-                Label priorityLabel = row.FindControl("Priority") as Label;
-                if (priorityLabel != null)
-                {
-					priorityLabel.Text = summary.Priority.Description;
-                }
-
-                Label statusLabel = row.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-					statusLabel.Text = summary.Status.Description;
-                }
-
-				Label notesLabel = row.FindControl("Notes") as Label;
-				if (notesLabel != null)
-				{
-					notesLabel.Text = summary.Notes;
-				}
-
-				Label patientIdLabel = row.FindControl("PatientId") as Label;
-				if (patientIdLabel != null)
-				{
-					patientIdLabel.Text = summary.PatientID;
-				}
-
             	PersonNameLabel nameLabel = row.FindControl("PatientName") as PersonNameLabel;
 				if (nameLabel != null)
-            		nameLabel.PersonName = summary.PatientName;
+            		nameLabel.PersonName = summary.PatientsName;
             }
-            
         }
 
         protected void WorkQueueListView_PageIndexChanged(object sender, EventArgs e)
@@ -338,7 +303,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 			if (_dataSource == null)
 			{
 				_dataSource = new WorkQueueDataSource();
-				_dataSource.WorkQueueFoundSet += delegate(IList<Model.WorkQueue> newlist)
+				_dataSource.WorkQueueFoundSet += delegate(IList<WorkQueueSummary> newlist)
 				                                 	{
 				                                 		WorkQueueItems = new WorkQueueItemCollection(newlist);
 				                                 	};
@@ -356,6 +321,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
     		e.Cancel = true;
 		}
 		#endregion Protected Methods
-
     }
 }

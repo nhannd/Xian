@@ -32,21 +32,22 @@
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Web.Application.App_Code;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
 {
 	/// <summary>
 	/// Encapsulates a collection of <see cref="WorkQueue"/> which can be accessed based on the <see cref="ServerEntityKey"/>
 	/// </summary>
-	public class WorkQueueItemCollection : KeyedCollectionBase<Model.WorkQueue, ServerEntityKey>
+	public class WorkQueueItemCollection : KeyedCollectionBase<WorkQueueSummary, ServerEntityKey>
 	{
 
-		public WorkQueueItemCollection(IList<Model.WorkQueue> list)
+		public WorkQueueItemCollection(IList<WorkQueueSummary> list)
 			: base(list)
 		{
 		}
 
-		protected override ServerEntityKey GetKey(Model.WorkQueue item)
+		protected override ServerEntityKey GetKey(WorkQueueSummary item)
 		{
 			return item.Key;
 		}

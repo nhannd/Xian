@@ -31,18 +31,100 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
+	/// <summary>
+	/// Summary view of a <see cref="WorkQueue"/> item in the WorkQueue configuration UI.
+	/// </summary>
+	/// <remarks>
+	/// A <see cref="WorkQueueSummary"/> contains the summary of a <see cref="WorkQueue"/> and related information and is displayed
+	/// in the WorkQueue configuration UI.
+	/// </remarks>
+	public class WorkQueueSummary
+	{
+		#region Private members
+
+		private string _patientID;
+		private string _patientName;
+		private string _notes;
+		private ServerPartition _thePartition;
+		private WorkQueue _theWorkQueueItem;
+		#endregion Private members
+
+		#region Public Properties
+
+		public DateTime ScheduledDateTime
+		{
+			get { return _theWorkQueueItem.ScheduledTime; }
+		}
+
+		public string TypeString
+		{
+			get { return _theWorkQueueItem.WorkQueueTypeEnum.Description; }
+		}
+
+		public string StatusString
+		{
+			get { return _theWorkQueueItem.WorkQueueStatusEnum.Description; }
+		}
+
+		public string PriorityString
+		{
+			get { return _theWorkQueueItem.WorkQueuePriorityEnum.Description; }
+		}
+
+		public string PatientId
+		{
+			get { return _patientID; }
+			set { _patientID = value; }
+		}
+
+		public string PatientsName
+		{
+			get { return _patientName; }
+			set { _patientName = value; }
+		}
+
+		public ServerEntityKey Key
+		{
+			get { return _theWorkQueueItem.Key; }
+		}
+
+		public string Notes
+		{
+			get { return _notes; }
+			set { _notes = value; }
+		}
+
+		public string ProcessorID
+		{
+			get { return _theWorkQueueItem.ProcessorID; }
+		}
+		public WorkQueue TheWorkQueueItem
+		{
+			get { return _theWorkQueueItem; }
+			set { _theWorkQueueItem = value; }
+		}
+		public ServerPartition ThePartition
+		{
+			get { return _thePartition; }
+			set { _thePartition = value; }
+		}
+		#endregion Public Properties
+	}
+
 	/// <summary>
 	/// Datasource for use with the ObjectDataSource to select a subset of results
 	/// </summary>
 	public class WorkQueueDataSource
 	{
 		#region Public Delegates
-		public delegate void WorkQueueFoundSetDelegate(IList<WorkQueue> list);
+		public delegate void WorkQueueFoundSetDelegate(IList<WorkQueueSummary> list);
 
 		public WorkQueueFoundSetDelegate WorkQueueFoundSet;
 		#endregion
@@ -59,7 +141,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private WorkQueueStatusEnum _statusEnum;
 		private WorkQueuePriorityEnum _priorityEnum;
 		private string _dateFormats;
-		private IList<WorkQueue> _list = new List<WorkQueue>();
+		private IList<WorkQueueSummary> _list = new List<WorkQueueSummary>();
+		private IList<ServerEntityKey> _searchKeys;
 		#endregion
 
 		#region Public Properties
@@ -115,7 +198,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _dateFormats = value; }
 		}
 
-		public IList<WorkQueue> List
+		public IList<WorkQueueSummary> List
 		{
 			get { return _list; }
 		}
@@ -125,6 +208,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _resultCount; }
 			set { _resultCount = value; }
 		}
+
+		public IList<ServerEntityKey> SearchKeys
+		{
+			get { return _searchKeys; }
+			set { _searchKeys = value; }
+		}
+
 		#endregion
 
 		#region Private Methods
@@ -133,6 +223,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			resultCount = 0;
 
 			if (maximumRows == 0) return new List<WorkQueue>();
+
+			if (SearchKeys != null)
+			{
+				IList<WorkQueue> workQueueList = new List<WorkQueue>();
+				foreach (ServerEntityKey key in SearchKeys)
+					workQueueList.Add(WorkQueue.Load(key));
+
+				resultCount = workQueueList.Count;
+
+				return workQueueList;
+			}
 
 			WebWorkQueueQueryParameters parameters = new WebWorkQueueQueryParameters();
 			parameters.StartIndex = startRowIndex;
@@ -167,9 +268,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		#region Public Methods
-		public IEnumerable<WorkQueue> Select(int startRowIndex, int maximumRows)
+		public IEnumerable<WorkQueueSummary> Select(int startRowIndex, int maximumRows)
 		{
-			_list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+			IList<WorkQueue> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+
+			_list = new List<WorkQueueSummary>();
+			foreach (WorkQueue item in list)
+				_list.Add(CreateWorkQueueSummary(item));
 
 			if (WorkQueueFoundSet != null)
 				WorkQueueFoundSet(_list);
@@ -185,6 +290,70 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			InternalSelect(0, 1, out _resultCount);
 
 			return ResultCount;
+		}
+		#endregion
+
+		#region Private Methods
+		/// <summary>
+		/// Constructs an instance of <see cref="WorkQueueSummary"/> based on a <see cref="WorkQueue"/> object.
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		/// <remark>
+		/// 
+		/// </remark>
+		private WorkQueueSummary CreateWorkQueueSummary(WorkQueue item)
+		{
+			WorkQueueSummary summary = new WorkQueueSummary();
+			summary.TheWorkQueueItem = item;
+			summary.ThePartition = Partition;
+
+			// Fetch the patient info:
+			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
+			StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
+			if (storages == null)
+			{
+				summary.PatientId = "N/A";
+				summary.PatientsName = "N/A";
+				return summary;
+			}
+			StudyAdaptor studyAdaptor = new StudyAdaptor();
+			StudySelectCriteria studycriteria = new StudySelectCriteria();
+			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
+			IList<Study> studyList = studyAdaptor.Get(studycriteria);
+
+			if (studyList == null || studyList.Count == 0)
+			{
+				summary.PatientId = "N/A";
+				summary.PatientsName = "N/A";
+			}
+			else
+			{
+				summary.PatientId = studyList[0].PatientId;
+				summary.PatientsName = studyList[0].PatientsName;
+			}
+
+			if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy
+			 || item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
+			{
+				DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
+				Device dest = deviceAdaptor.Get(item.DeviceKey);
+
+				summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
+			}
+			else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
+					&& item.FailureDescription != null)
+			{
+				if (item.FailureDescription.Length > 60)
+				{
+					summary.Notes = item.FailureDescription.Substring(0, 60);
+					summary.Notes += " ...";
+				}
+				else
+					summary.Notes = item.FailureDescription;
+			}
+
+			return summary;
 		}
 		#endregion
 	}

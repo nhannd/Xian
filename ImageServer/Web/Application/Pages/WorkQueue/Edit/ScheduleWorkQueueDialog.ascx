@@ -2,7 +2,7 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit.ScheduleWorkQueueDialog" %>
 
 <%@ Register Src="WorkQueueSettingsPanel.ascx" TagName="WorkQueueSettingsPanel" TagPrefix="localAsp" %>
-<%@ Register Src="../WorkQueueItemListPanel.ascx" TagName="WorkQueueItemListPanel" TagPrefix="localAsp" %>
+<%@ Register Src="../WorkQueueGridView.ascx" TagName="WorkQueueItemListPanel" TagPrefix="localAsp" %>
 
 <ccAsp:ModalDialog id="ModalDialog" runat="server" title="Schedule Work Queue Item" Width="800px">
 <ContentTemplate>

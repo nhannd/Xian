@@ -1,7 +1,7 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.SearchPanel" %>
-<%@ Register Src="WorkQueueItemListPanel.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="localAsp" %>
+<%@ Register Src="WorkQueueGridView.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="localAsp" %>
     
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>

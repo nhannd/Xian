@@ -127,6 +127,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             PreApplyChangeConfirmDialog.Confirmed += PreApplyChangeConfirmDialog_Confirmed;
 
             WorkQueueItemListPanel.WorkQueueItemListControl.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
+
+			WorkQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
+														{
+															source.SearchKeys = WorkQueueKeys;
+														};
+       
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -148,11 +154,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
                     MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                     MessageDialog.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
-                    MessageDialog.Show();
-                    
+                    MessageDialog.Show();                    
                 }
             }
-
         }
 
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
@@ -206,14 +210,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             if (!prompt)
             {
                 ApplyChanges();
-            }
-
-            
+            }           
         }
 
         protected void ApplyChanges()
         {
-
             if (WorkQueues != null)
             {
                 
@@ -321,18 +322,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         #region Public Methods
 
-        public override void DataBind()
-        {
-            if (WorkQueues!=null)   
-            {
-                WorkQueueItemCollection collection = new WorkQueueItemCollection(WorkQueues);
-                WorkQueueItemListPanel.WorkQueueItems = collection;
-            }
-
-            base.DataBind();
-
-        }
-
         /// <summary>
         /// Hides this dialog box
         /// </summary>
@@ -363,10 +352,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         }
 
-
         #endregion Public Methods
-
-
-
     }
 }
