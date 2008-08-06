@@ -61,10 +61,19 @@
 						var ambulatoryStatuses = String.combine(visitDetail.AmbulatoryStatuses.map(function(status) { return status.Value; }), ", ");
 						Field.setValue($("AmbulatoryStatuses"), ambulatoryStatuses);
 
-						Field.setValue($("AttendingPhysician"), visitDetail.ExtendedProperties.AttendingPhysician);
-						Field.setValue($("ReferringPhysician"), visitDetail.ExtendedProperties.ReferringPhysician);
-						Field.setValue($("ConsultingPhysician"), visitDetail.ExtendedProperties.ConsultingPhysician);
-						Field.setValue($("AdmittingPhysician"), visitDetail.ExtendedProperties.AdmittingPhysician);
+						if (visitDetail.ExtendedProperties)
+						{
+							Field.setValue($("AttendingPhysician"), visitDetail.ExtendedProperties.AttendingPhysician);
+							Field.setValue($("ReferringPhysician"), visitDetail.ExtendedProperties.ReferringPhysician);
+							Field.setValue($("ConsultingPhysician"), visitDetail.ExtendedProperties.ConsultingPhysician);
+							Field.setValue($("AdmittingPhysician"), visitDetail.ExtendedProperties.AdmittingPhysician);
+
+							Field.setValue($("InsurancePlanId"), visitDetail.ExtendedProperties.InsurancePlanId);
+							Field.setValue($("NameOfInsured"), visitDetail.ExtendedProperties.NameOfInsured);
+							Field.setValue($("InsuranceCompanyId"), visitDetail.ExtendedProperties.InsuranceCompanyId);
+							Field.setValue($("InsuredsRelationshipToPatient"), visitDetail.ExtendedProperties.InsuredsRelationshipToPatient);
+							Field.setValue($("PolicyNumber"), visitDetail.ExtendedProperties.PolicyNumber);
+						}
 					}
 				}
 				catch(e)

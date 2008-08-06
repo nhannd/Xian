@@ -125,10 +125,6 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 					return  item.ProcedureStatus.Value; 
 				}
 			},
-			{   label: "Insurance",
-				cellType: "text",
-				getValue: function(item) { return ""; }
-			},
 			{   label: "Ordering Facility",
 				cellType: "text",
 				getValue: function(item) { return item.OrderingFacility.Code; }
