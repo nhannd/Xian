@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Client.Formatting;
@@ -74,7 +75,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			this.Context.RegisterDropHandler(typeof(Folders.Registration.CheckedInFolder), this);
 		}
-
+/* TODO: is this needed?
+		public override bool Enabled
+		{
+			get
+			{
+				if (this.Context.Selection.Items.Length != 1)
+					return false;
+				RegistrationWorklistItem item =
+					(RegistrationWorklistItem)CollectionUtils.FirstElement(this.Context.Selection.Items);
+				return item.OrderRef != null && base.Enabled;
+			}
+		}
+*/
 		protected override bool Execute(RegistrationWorklistItem item)
 		{
 			CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);
@@ -85,12 +98,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				Platform.GetService<IRegistrationWorkflowService>(
-					delegate(IRegistrationWorkflowService service)
-					{
-						service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedProcedures));
-					});
-
 				this.Context.InvalidateFolders(typeof(Folders.Registration.CheckedInFolder));
 				return true;
 			}

@@ -57,7 +57,7 @@ namespace ClearCanvas.Workflow
         /// Constructor
         /// </summary>
         public PerformedStep()
-            :this(null, new PerformedStepStatusTransitionLogic())
+            :this(null, null, new PerformedStepStatusTransitionLogic())
         {
         }
 
@@ -66,20 +66,31 @@ namespace ClearCanvas.Workflow
         /// </summary>
         /// <param name="performer"></param>
         public PerformedStep(ActivityPerformer performer)
-            :this(performer, new PerformedStepStatusTransitionLogic())
+            :this(performer, null, new PerformedStepStatusTransitionLogic())
         {
         }
+
+		/// <summary>
+		/// Constructor that allows the performer to be set, and the start-time to be specified.
+		/// </summary>
+		/// <param name="performer"></param>
+		/// <param name="startTime"></param>
+		public PerformedStep(ActivityPerformer performer, DateTime? startTime)
+			: this(performer, startTime, new PerformedStepStatusTransitionLogic())
+		{
+		}
 
         /// <summary>
         /// Protected constructor
         /// </summary>
         /// <param name="performer"></param>
+        /// <param name="startTime"></param>
         /// <param name="transitionLogic"></param>
-        protected PerformedStep(ActivityPerformer performer, IFsmTransitionLogic<PerformedStepStatus> transitionLogic)
+        protected PerformedStep(ActivityPerformer performer, DateTime? startTime, IFsmTransitionLogic<PerformedStepStatus> transitionLogic)
             : base(PerformedStepStatus.IP, transitionLogic)
         {
             _activities = new HashedSet<Activity>();
-            _startTime = Platform.Time;
+			_startTime = startTime ?? Platform.Time;
             _performer = performer;
         }
 
@@ -127,17 +138,33 @@ namespace ClearCanvas.Workflow
         /// </summary>
         public virtual void Discontinue()
         {
-            ChangeState(PerformedStepStatus.DC);
-            _endTime = Platform.Time;
+			Discontinue((DateTime?)null);
         }
 
-        /// <summary>
+		/// <summary>
+		/// Discontinues this step
+		/// </summary>
+		public virtual void Discontinue(DateTime? endTime)
+		{
+			ChangeState(PerformedStepStatus.DC);
+			_endTime = endTime ?? Platform.Time;
+		}
+
+		        /// <summary>
         /// Completes this step
         /// </summary>
-        public virtual void Complete()
+		public virtual void Complete()
+        {
+			Complete((DateTime?)null);
+        }
+
+    	/// <summary>
+        /// Completes this step
+        /// </summary>
+        public virtual void Complete(DateTime? endTime)
         {
             ChangeState(PerformedStepStatus.CM);
-            _endTime = Platform.Time;
-        }
+			_endTime = endTime ?? Platform.Time;
+		}
     }
 }

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
@@ -46,9 +47,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
         public class CheckIn : RegistrationOperation
         {
-            public void Execute(Procedure rp, Staff checkInStaff, IWorkflow workflow)
+            public void Execute(Procedure rp, Staff checkInStaff, DateTime? checkInTime, IWorkflow workflow)
             {
-                rp.ProcedureCheckIn.CheckIn();
+				rp.ProcedureCheckIn.CheckIn(checkInTime);
             }
         }
 

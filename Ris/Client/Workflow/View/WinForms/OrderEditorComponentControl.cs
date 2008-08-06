@@ -114,7 +114,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             _reorderReason.DataSource = _component.CancelReasonChoices;
             _reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
             _reorderReason.DataBindings.Add("Visible", _component, "IsCancelReasonVisible");
-        }
+
+        	_downtimeAccession.DataBindings.Add("Visible", _component, "IsDowntimeAccessionNumberVisible");
+			_downtimeAccession.DataBindings.Add("Value", _component, "DowntimeAccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
 
         private void _placeOrderButton_Click(object sender, EventArgs e)
         {

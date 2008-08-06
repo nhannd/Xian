@@ -19,11 +19,22 @@ namespace ClearCanvas.Ris.Client
     {
         private readonly string _operationName;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="operationName">Specifies the name of the workflow operation that this tool invokes.</param>
         protected WorkflowItemTool(string operationName)
         {
             _operationName = operationName;
         }
 
+		/// <summary>
+		/// Gets a value indicating whether this tool is currently enabled.
+		/// </summary>
+		/// <remarks>
+		/// The default implmentation is based on the workflow operation enablement. Subclasses may
+		/// override this property to modify this behaviour.
+		/// </remarks>
         public virtual bool Enabled
         {
             get
@@ -33,13 +44,19 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public virtual event EventHandler EnabledChanged
+		/// <summary>
+		/// Occurs when the value of <see cref="Enabled"/> changes.
+		/// </summary>
+        public event EventHandler EnabledChanged
         {
             add { this.Context.SelectionChanged += value; }
             remove { this.Context.SelectionChanged -= value; }
         }
 
-        public virtual void Apply()
+		/// <summary>
+		/// Invokes the workflow operation.
+		/// </summary>
+        public void Apply()
         {
             TItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
 			try
@@ -56,21 +73,44 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		#region Protected API
+
+		/// <summary>
+		/// Gets the name of the workflow operation that this tool invokes.
+		/// </summary>
         protected string OperationName
         {
             get { return _operationName; }
         }
 
+		/// <summary>
+		/// Called to invoke the workflow operation.
+		/// </summary>
+		/// <remarks>
+		/// The method should return true if the operation was completed, in order to invalidate the currently selected folder.
+		/// A return value of false implies that either the user cancelled, or the operation failed.  
+		/// </remarks>
+		/// <param name="item"></param>
+		/// <returns></returns>
         protected abstract bool Execute(TItem item);
 
-        #region IDropHandler<TItem> Members
+		#endregion
 
-        public virtual bool CanAcceptDrop(ICollection<TItem> items)
+		#region IDropHandler<TItem> Members
+
+		/// <summary>
+		/// Asks the handler if it can accept the specified items.  This value is used to provide visual feedback
+		/// to the user to indicate that a drop is possible.
+		/// </summary>
+		public virtual bool CanAcceptDrop(ICollection<TItem> items)
         {
             return this.Context.GetOperationEnablement(this.OperationName);
         }
 
-        public virtual bool ProcessDrop(ICollection<TItem> items)
+		/// <summary>
+		/// Asks the handler to process the specified items, and returns true if the items were successfully processed.
+		/// </summary>
+		public virtual bool ProcessDrop(ICollection<TItem> items)
         {
             TItem item = CollectionUtils.FirstElement(items);
 			try

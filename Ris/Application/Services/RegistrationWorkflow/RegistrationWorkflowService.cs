@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             foreach (EntityRef rpRef in request.Procedures)
             {
                 Procedure rp = broker.Load(rpRef, EntityLoadFlags.CheckVersion);
-                op.Execute(rp, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+                op.Execute(rp, this.CurrentUserStaff, request.CheckInTime, new PersistentWorkflow(this.PersistenceContext));
             }
 
             return new CheckInProcedureResponse();
@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 						if (rp.IsTerminated)
 							return false;
 						else
-							return rp.ProcedureCheckIn.IsNotCheckIn;
+							return rp.ProcedureCheckIn.IsPreCheckIn;
 					});
 			}
 

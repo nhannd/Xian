@@ -242,6 +242,8 @@ namespace ClearCanvas.Ris.Client
         private List<IOrderEditorPage> _extensionPages;
         private Dictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
+    	private string _downtimeAccessionNumber;
+
         /// <summary>
         /// Constructor for creating a new order.
         /// </summary>
@@ -326,9 +328,16 @@ namespace ClearCanvas.Ris.Client
                 delegate
                 {
                     // if replacing the order, ensure cancel reason selected
-                    return new ValidationResult(_mode != Mode.ReplaceOrder || _selectedCancelReason != null,
-                        SR.MessageMissingCancellationReason);
+                    return new ValidationResult(!(_mode == Mode.ReplaceOrder && _selectedCancelReason == null),
+						SR.MessageCancellationReasonRequired);
                 }));
+			this.Validation.Add(new ValidationRule("DowntimeAccessionNumber",
+				delegate
+				{
+
+					return new ValidationResult(!(this.IsDowntimeAccessionNumberVisible && string.IsNullOrEmpty(_downtimeAccessionNumber)),
+						SR.MessageDowntimeAccessionNumberRequired);
+				}));
 
             _noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
             _attachmentSummaryComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
@@ -435,6 +444,17 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _mode == Mode.ReplaceOrder; }
         }
+
+    	public bool IsDowntimeAccessionNumberVisible
+    	{
+			get { return DowntimeRecovery.InDowntimeRecoveryMode && _mode == Mode.NewOrder; }
+    	}
+
+    	public string DowntimeAccessionNumber
+    	{
+			get { return _downtimeAccessionNumber; }
+			set { _downtimeAccessionNumber = value; }
+    	}
 
         public IList ActiveVisits
         {
@@ -914,6 +934,9 @@ namespace ClearCanvas.Ris.Client
             requisition.Notes = new List<OrderNoteDetail>(_noteSummaryComponent.Notes);
             requisition.ExtendedProperties = _extendedProperties;
             requisition.ResultRecipients = new List<ResultRecipientDetail>(_recipientsTable.Items);
+
+			// only send the downtime number if a new downtime order is being entered
+        	requisition.DowntimeAccessionNumber = this.IsDowntimeAccessionNumberVisible ? _downtimeAccessionNumber : null;
 
             // there should always be a selected contact point, unless the ordering practitioner has 0 contact points
             if (_selectedOrderingPractitionerContactPoint != null)

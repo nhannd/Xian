@@ -53,6 +53,12 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             _component = component;
 
 			_orderTableView.Table = _component.OrderTable;
+
+        	_checkInDate.DataBindings.Add("Value", _component, "CheckInTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_checkInDate.DataBindings.Add("Visible", _component, "IsCheckInTimeVisible");
+			_checkInTime.DataBindings.Add("Value", _component, "CheckInTime", true, DataSourceUpdateMode.OnPropertyChanged);
+			_checkInTime.DataBindings.Add("Visible", _component, "IsCheckInTimeVisible");
+
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 

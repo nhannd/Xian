@@ -61,6 +61,8 @@ namespace ClearCanvas.Ris.Client.Workflow
         private bool _acceptEnabled;
         private event EventHandler _acceptEnabledChanged;
 
+    	private DateTime _checkInTime;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -73,6 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             _selectedProcedures = new List<EntityRef>();
             _checkInOrderTable = new CheckInOrderTable();
+        	_checkInTime = Platform.Time;
 
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
@@ -105,6 +108,17 @@ namespace ClearCanvas.Ris.Client.Workflow
             get { return _selectedProcedures; }
         }
 
+    	public DateTime CheckInTime
+    	{
+			get { return _checkInTime; }
+			set { _checkInTime = value; }
+    	}
+
+    	public bool IsCheckInTimeVisible
+    	{
+			get { return DowntimeRecovery.InDowntimeRecoveryMode; }
+    	}
+
         #endregion
 
         public void Accept()
@@ -114,10 +128,29 @@ namespace ClearCanvas.Ris.Client.Workflow
             {
                 if (entry.Checked)
                     _selectedProcedures.Add(entry.Procedure.ProcedureRef);
-            }      
+            }
 
-            this.Exit(ApplicationComponentExitCode.Accepted);
-        }
+			try
+			{
+				Platform.GetService<IRegistrationWorkflowService>(
+					delegate(IRegistrationWorkflowService service)
+					{
+						service.CheckInProcedure(
+							new CheckInProcedureRequest(_selectedProcedures,
+								DowntimeRecovery.InDowntimeRecoveryMode ? (DateTime?)_checkInTime : null));
+					});
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, "Unable to check-in procedures", this.Host.DesktopWindow,
+					delegate
+					{
+						this.Exit(ApplicationComponentExitCode.Error);
+					});
+			}
+		}
 
         public void Cancel()
         {

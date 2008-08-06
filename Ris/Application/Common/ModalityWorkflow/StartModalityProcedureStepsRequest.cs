@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
@@ -45,5 +46,11 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [DataMember]
         public List<EntityRef> ModalityProcedureSteps;
+
+		/// <summary>
+		/// Optional. Specifies the start time.  If null, the current time is assumed.
+		/// </summary>
+		[DataMember]
+    	public DateTime? StartTime;
     }
 }

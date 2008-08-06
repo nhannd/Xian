@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
@@ -47,7 +48,13 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         [DataMember]
         public EntityRef MppsRef;
 
-        [DataMember]
+		/// <summary>
+		/// Optional. Specifies the completed time.  If null, the current time is assumed.
+		/// </summary>
+		[DataMember]
+		public DateTime? CompletedTime;
+
+		[DataMember]
         public Dictionary<string, string> ExtendedProperties;
     }
 }

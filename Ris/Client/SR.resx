@@ -432,6 +432,9 @@
   <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
     <value>{0} has unreconciled records</value>
   </data>
+  <data name="MessageCancellationReasonRequired" xml:space="preserve">
+    <value>A cancellation reason is required to replace an order.</value>
+  </data>
   <data name="MessageCannotMergeNewContactPoints" xml:space="preserve">
     <value>New contact points cannot be merged.  Please deselect '{0}' and select another item.</value>
   </data>
@@ -459,6 +462,9 @@
   <data name="MessageCopyToClipboard" xml:space="preserve">
     <value>Copy to clipboard</value>
   </data>
+  <data name="MessageDowntimeAccessionNumberRequired" xml:space="preserve">
+    <value>A dowtime accession number is required.</value>
+  </data>
   <data name="MessageExternalPractitionerContactPointNotUnique" xml:space="preserve">
     <value>A contact point with the name '{0}' already exist.  Please enter a different name.</value>
   </data>
@@ -467,9 +473,6 @@
   </data>
   <data name="MessageMergeIdenticalItems" xml:space="preserve">
     <value>You cannot merge two identical items.</value>
-  </data>
-  <data name="MessageMissingCancellationReason" xml:space="preserve">
-    <value>A cancellation reason is required to replace an order.</value>
   </data>
   <data name="MessageNoProcedures" xml:space="preserve">
     <value>You must have at least one procedure.</value>

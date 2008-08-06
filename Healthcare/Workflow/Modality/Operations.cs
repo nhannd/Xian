@@ -29,52 +29,63 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
 	public abstract class ModalityOperation
 	{
-		protected void UpdateCheckInStep(Procedure rp, bool procedureAborted, IWorkflow workflow)
+		/// <summary>
+		/// Helper method implements some fuzzy logic to try and determine whether the procedure
+		/// should be checked-in, and check it in if necessary.
+		/// </summary>
+		/// <param name="rp"></param>
+		/// <param name="timestamp"></param>
+		protected void TryAutoCheckIn(Procedure rp, DateTime? timestamp)
 		{
-			// Note: auto check-in is disabled
-			//AutoCheckIn(rp);
-
-			// Note: auto check-out behaviour may need to be disabled in future - ideally it should be done explicitly by the user
-			AutoCheckOut(rp);
-		}
-
-		private static void AutoCheckIn(Procedure rp)
-		{
-			bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
-				delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
-
-			if (!allMpsScheduled)
+			if(rp.ProcedureCheckIn.IsPreCheckIn)
 			{
-				// check-in this procedure, since some mps has started
-				rp.ProcedureCheckIn.CheckIn();
+				bool allMpsScheduled = rp.ModalityProcedureSteps.TrueForAll(
+					delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.SC; });
+
+				if (!allMpsScheduled)
+				{
+					// check-in this procedure, since some mps has started
+					rp.ProcedureCheckIn.CheckIn(timestamp);
+				}
 			}
 		}
 
-		private static void AutoCheckOut(Procedure rp)
+		/// <summary>
+		/// Helper method implements some fuzzy logic to try and determine whether the procedure
+		/// should be checked-out, and check it out if necessary.
+		/// </summary>
+		/// <param name="rp"></param>
+		/// <param name="timestamp"></param>
+		protected void TryAutoCheckOut(Procedure rp, DateTime? timestamp)
 		{
-			bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
-				delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
-
-			if (allMpsTerminated)
+			if (rp.ProcedureCheckIn.IsCheckedIn)
 			{
-				// auto check-out
-				rp.ProcedureCheckIn.CheckOut();
+				bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
+						delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
+
+				if (allMpsTerminated)
+				{
+					// auto check-out
+					rp.ProcedureCheckIn.CheckOut(timestamp);
+				}
 			}
 		}
 	}
 
 	public class StartModalityProcedureStepsOperation : ModalityOperation
 	{
-		public ModalityPerformedProcedureStep Execute(IList<ModalityProcedureStep> modalitySteps, Staff technologist, IWorkflow workflow, IPersistenceContext context)
+		public ModalityPerformedProcedureStep Execute(IList<ModalityProcedureStep> modalitySteps, DateTime? startTime, Staff technologist, IWorkflow workflow, IPersistenceContext context)
 		{
 			if (modalitySteps.Count == 0)
 				throw new WorkflowException("At least one procedure step is required.");
@@ -92,10 +103,11 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
 			foreach (ModalityProcedureStep mps in modalitySteps)
 			{
-				mps.Start(technologist);
+				mps.Start(technologist, startTime);
 				mps.AddPerformedStep(mpps);
 
-				UpdateCheckInStep(mps.Procedure, false, workflow);
+				//note: this feature was disabled by request (see #2138) - they want to enforce explicit check-in
+				//AutoCheckIn(mps.Procedure, startTime);
 			}
 
 			// Create Documentation Step for each RP that has an MPS started by this service call
@@ -104,7 +116,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 				if (step.Procedure.DocumentationProcedureStep == null)
 				{
 					ProcedureStep docStep = new DocumentationProcedureStep(step.Procedure);
-					docStep.Start(technologist);
+					docStep.Start(technologist, startTime);
 					context.Lock(docStep, DirtyState.New);
 				}
 			}
@@ -115,19 +127,19 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
 	public class DiscontinueModalityProcedureStepOperation : ModalityOperation
 	{
-		public void Execute(ModalityProcedureStep mps, bool procedureAborted, IWorkflow workflow)
+		public void Execute(ModalityProcedureStep mps, DateTime? discontinueTime, IWorkflow workflow)
 		{
-			mps.Discontinue();
-			UpdateCheckInStep(mps.Procedure, procedureAborted, workflow);
+			mps.Discontinue(discontinueTime);
+			TryAutoCheckOut(mps.Procedure, discontinueTime);
 		}
 	}
 
 	public class CompleteModalityPerformedProcedureStepOperation : ModalityOperation
 	{
-		public void Execute(ModalityPerformedProcedureStep mpps, IWorkflow workflow)
+		public void Execute(ModalityPerformedProcedureStep mpps, DateTime? completedTime, IWorkflow workflow)
 		{
 			// complete mpps
-			mpps.Complete();
+			mpps.Complete(completedTime);
 
 			ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
 			Order order = oneMps.Procedure.Order;
@@ -143,9 +155,11 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 							delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
 
 					if (!mps.IsTerminated && allPerformedStepsDone)
-						mps.Complete();
+					{
+						mps.Complete(completedTime);
+					}
 
-					UpdateCheckInStep(mps.Procedure, false, workflow);
+					TryAutoCheckOut(mps.Procedure, completedTime);
 				}
 			}
 		}
@@ -153,9 +167,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
 	public class DiscontinueModalityPerformedProcedureStepOperation : ModalityOperation
 	{
-		public void Execute(ModalityPerformedProcedureStep mpps, IWorkflow workflow)
+		public void Execute(ModalityPerformedProcedureStep mpps, DateTime? discontinuedTime, IWorkflow workflow)
 		{
-			mpps.Discontinue();
+			mpps.Discontinue(discontinuedTime);
 
 			foreach (ModalityProcedureStep mps in mpps.Activities)
 			{
@@ -166,8 +180,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 							delegate(PerformedProcedureStep pps) { return pps.State == PerformedStepStatus.DC; });
 
 					if (allMppsDiscontinued)
-						mps.Discontinue();
+					{
+						mps.Discontinue(discontinuedTime);
+					}
 				}
+
+				TryAutoCheckOut(mps.Procedure, discontinuedTime);
 			}
 		}
 	}

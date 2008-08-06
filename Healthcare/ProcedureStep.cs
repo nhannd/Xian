@@ -141,10 +141,20 @@ namespace ClearCanvas.Healthcare
         /// <param name="performer"></param>
         public virtual void Start(Staff performer)
         {
-            Platform.CheckForNullReference(performer, "performer");
-
-            Start(new ProcedureStepPerformer(performer));
+			Start(performer, null);
         }
+
+		/// <summary>
+		/// Starts the step using the specified staff as the performer, recording the specified startTime.
+		/// </summary>
+		/// <param name="performer"></param>
+		/// <param name="startTime"></param>
+		public virtual void Start(Staff performer, DateTime? startTime)
+		{
+			Platform.CheckForNullReference(performer, "performer");
+
+			Start(new ProcedureStepPerformer(performer), startTime);
+		}
 
         /// <summary>
         /// Completes the step using the specified staff as the performer, assuming a performer has not already been assigned

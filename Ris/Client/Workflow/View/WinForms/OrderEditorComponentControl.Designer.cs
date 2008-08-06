@@ -70,7 +70,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
 			this._visit = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._visitSummaryButton = new System.Windows.Forms.Button();
-			this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this._proceduresTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -80,17 +79,20 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._recipientsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.panel2 = new System.Windows.Forms.Panel();
 			this._consultantContactPoint = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._addConsultantButton = new System.Windows.Forms.Button();
 			this._schedulingRequestTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._schedulingRequestDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._indication = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this._downtimeAccession = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._rightHandPanel = new System.Windows.Forms.Panel();
 			this._bannerPanel = new System.Windows.Forms.Panel();
-			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -103,6 +105,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabPage2.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel2.SuspendLayout();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _cancelButton
@@ -189,7 +192,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
 			this.tableLayoutPanel3.Controls.Add(this._orderingPractitionerContactPoint, 0, 3);
 			this.tableLayoutPanel3.Controls.Add(this.tableLayoutPanel4, 0, 5);
-			this.tableLayoutPanel3.Controls.Add(this._reorderReason, 1, 0);
 			this.tableLayoutPanel3.Controls.Add(this.tabControl1, 0, 7);
 			this.tableLayoutPanel3.Controls.Add(this._schedulingRequestTime, 1, 6);
 			this.tableLayoutPanel3.Controls.Add(this._diagnosticService, 0, 1);
@@ -198,6 +200,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.Controls.Add(this._orderingPractitioner, 1, 2);
 			this.tableLayoutPanel3.Controls.Add(this._indication, 0, 4);
 			this.tableLayoutPanel3.Controls.Add(this._orderingFacility, 0, 0);
+			this.tableLayoutPanel3.Controls.Add(this.panel1, 1, 0);
 			this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel3.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel3.Margin = new System.Windows.Forms.Padding(0);
@@ -273,22 +276,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._visitSummaryButton.TabIndex = 1;
 			this._visitSummaryButton.UseVisualStyleBackColor = true;
 			this._visitSummaryButton.Click += new System.EventHandler(this._visitSummaryButton_Click);
-			// 
-			// _reorderReason
-			// 
-			this._reorderReason.AutoSize = true;
-			this._reorderReason.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._reorderReason.DataSource = null;
-			this._reorderReason.DisplayMember = "";
-			this._reorderReason.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reorderReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this._reorderReason.LabelText = "Re-order Reason";
-			this._reorderReason.Location = new System.Drawing.Point(249, 2);
-			this._reorderReason.Margin = new System.Windows.Forms.Padding(2);
-			this._reorderReason.Name = "_reorderReason";
-			this._reorderReason.Size = new System.Drawing.Size(244, 41);
-			this._reorderReason.TabIndex = 1;
-			this._reorderReason.Value = null;
 			// 
 			// tabControl1
 			// 
@@ -410,6 +397,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._consultantContactPoint.TabIndex = 6;
 			this._consultantContactPoint.Value = null;
 			// 
+			// _consultantLookup
+			// 
+			this._consultantLookup.LabelText = "Find Practitioner";
+			this._consultantLookup.Location = new System.Drawing.Point(2, 5);
+			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
+			this._consultantLookup.Name = "_consultantLookup";
+			this._consultantLookup.Size = new System.Drawing.Size(382, 45);
+			this._consultantLookup.TabIndex = 4;
+			this._consultantLookup.Value = null;
+			// 
 			// _addConsultantButton
 			// 
 			this._addConsultantButton.Location = new System.Drawing.Point(400, 42);
@@ -438,6 +435,20 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._schedulingRequestTime.Size = new System.Drawing.Size(244, 40);
 			this._schedulingRequestTime.TabIndex = 9;
 			this._schedulingRequestTime.Value = null;
+			// 
+			// _diagnosticService
+			// 
+			this._diagnosticService.AutoSize = true;
+			this._diagnosticService.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel3.SetColumnSpan(this._diagnosticService, 2);
+			this._diagnosticService.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._diagnosticService.LabelText = "Imaging Service";
+			this._diagnosticService.Location = new System.Drawing.Point(2, 47);
+			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
+			this._diagnosticService.Name = "_diagnosticService";
+			this._diagnosticService.Size = new System.Drawing.Size(491, 41);
+			this._diagnosticService.TabIndex = 2;
+			this._diagnosticService.Value = null;
 			// 
 			// _schedulingRequestDate
 			// 
@@ -470,6 +481,19 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._priority.Size = new System.Drawing.Size(243, 41);
 			this._priority.TabIndex = 3;
 			this._priority.Value = null;
+			// 
+			// _orderingPractitioner
+			// 
+			this._orderingPractitioner.AutoSize = true;
+			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._orderingPractitioner.LabelText = "Ordering Practitioner";
+			this._orderingPractitioner.Location = new System.Drawing.Point(249, 92);
+			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
+			this._orderingPractitioner.Name = "_orderingPractitioner";
+			this._orderingPractitioner.Size = new System.Drawing.Size(244, 41);
+			this._orderingPractitioner.TabIndex = 4;
+			this._orderingPractitioner.Value = null;
 			// 
 			// _indication
 			// 
@@ -505,6 +529,44 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderingFacility.ToolTip = null;
 			this._orderingFacility.Value = null;
 			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this._downtimeAccession);
+			this.panel1.Controls.Add(this._reorderReason);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(250, 3);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(242, 39);
+			this.panel1.TabIndex = 11;
+			// 
+			// _downtimeAccession
+			// 
+			this._downtimeAccession.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._downtimeAccession.LabelText = "Downtime Accession #";
+			this._downtimeAccession.Location = new System.Drawing.Point(0, 0);
+			this._downtimeAccession.Margin = new System.Windows.Forms.Padding(2);
+			this._downtimeAccession.Mask = "";
+			this._downtimeAccession.Name = "_downtimeAccession";
+			this._downtimeAccession.PasswordChar = '\0';
+			this._downtimeAccession.Size = new System.Drawing.Size(242, 39);
+			this._downtimeAccession.TabIndex = 1;
+			this._downtimeAccession.ToolTip = null;
+			this._downtimeAccession.Value = null;
+			// 
+			// _reorderReason
+			// 
+			this._reorderReason.DataSource = null;
+			this._reorderReason.DisplayMember = "";
+			this._reorderReason.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._reorderReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._reorderReason.LabelText = "Re-order Reason";
+			this._reorderReason.Location = new System.Drawing.Point(0, 0);
+			this._reorderReason.Margin = new System.Windows.Forms.Padding(2);
+			this._reorderReason.Name = "_reorderReason";
+			this._reorderReason.Size = new System.Drawing.Size(242, 39);
+			this._reorderReason.TabIndex = 0;
+			this._reorderReason.Value = null;
+			// 
 			// _rightHandPanel
 			// 
 			this._rightHandPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -520,43 +582,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Name = "_bannerPanel";
 			this._bannerPanel.Size = new System.Drawing.Size(1019, 79);
 			this._bannerPanel.TabIndex = 0;
-			// 
-			// _consultantLookup
-			// 
-			this._consultantLookup.LabelText = "Find Practitioner";
-			this._consultantLookup.Location = new System.Drawing.Point(2, 5);
-			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
-			this._consultantLookup.Name = "_consultantLookup";
-			this._consultantLookup.Size = new System.Drawing.Size(382, 45);
-			this._consultantLookup.TabIndex = 4;
-			this._consultantLookup.Value = null;
-			// 
-			// _diagnosticService
-			// 
-			this._diagnosticService.AutoSize = true;
-			this._diagnosticService.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel3.SetColumnSpan(this._diagnosticService, 2);
-			this._diagnosticService.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._diagnosticService.LabelText = "Imaging Service";
-			this._diagnosticService.Location = new System.Drawing.Point(2, 47);
-			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
-			this._diagnosticService.Name = "_diagnosticService";
-			this._diagnosticService.Size = new System.Drawing.Size(491, 41);
-			this._diagnosticService.TabIndex = 2;
-			this._diagnosticService.Value = null;
-			// 
-			// _orderingPractitioner
-			// 
-			this._orderingPractitioner.AutoSize = true;
-			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._orderingPractitioner.LabelText = "Ordering Practitioner";
-			this._orderingPractitioner.Location = new System.Drawing.Point(249, 92);
-			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
-			this._orderingPractitioner.Name = "_orderingPractitioner";
-			this._orderingPractitioner.Size = new System.Drawing.Size(244, 41);
-			this._orderingPractitioner.TabIndex = 4;
-			this._orderingPractitioner.Value = null;
 			// 
 			// OrderEditorComponentControl
 			// 
@@ -582,6 +607,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabPage2.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel2.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -603,8 +629,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _consultantLookup;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _visit;
         private ClearCanvas.Ris.Client.View.WinForms.LookupField _orderingPractitioner;
-        private ClearCanvas.Desktop.View.WinForms.TextField _indication;
-        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _reorderReason;
+		private ClearCanvas.Desktop.View.WinForms.TextField _indication;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _priority;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestTime;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestDate;
@@ -620,6 +645,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private System.Windows.Forms.Panel _rightHandPanel;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingPractitionerContactPoint;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _consultantContactPoint;
+		private System.Windows.Forms.Panel panel1;
+		private ClearCanvas.Desktop.View.WinForms.TextField _downtimeAccession;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _reorderReason;
 
     }
 }

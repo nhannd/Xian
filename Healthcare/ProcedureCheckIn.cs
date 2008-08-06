@@ -35,6 +35,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare {
 
@@ -54,38 +55,53 @@ namespace ClearCanvas.Healthcare {
 
         #region Public Operations
 
-        /// <summary>
-        /// Check in the procedure
-        /// </summary>
-        public virtual void CheckIn()
-        {
-            if (_checkInTime == null)
-                _checkInTime = Platform.Time;
-        }
+		/// <summary>
+		/// Check in the procedure, optionally specifying a check-in time.  If not specified,
+		/// the current time is assumed.
+		/// </summary>
+		public virtual void CheckIn(DateTime? checkInTime)
+		{
+			if (_checkInTime != null)
+				throw new WorkflowException("Procedure already checked-in.");
+
+			_checkInTime = checkInTime ?? Platform.Time;
+		}
 
         /// <summary>
-        /// Check out the procedure
+		/// Check out the procedure, optionally specifying a check-out time.  If not specified,
+		/// the current time is assumed.
         /// </summary>
-        public virtual void CheckOut()
+		public virtual void CheckOut(DateTime? checkOutTime)
         {
-            if (_checkOutTime == null)
-                _checkOutTime = Platform.Time;
-        }
+			if (_checkOutTime != null)
+				throw new WorkflowException("Procedure already checked-in.");
 
-        public virtual bool IsNotCheckIn
+			_checkOutTime = checkOutTime ?? Platform.Time;
+		}
+
+		/// <summary>
+		/// Returns true if this procedure is pre check-in (patient has not yet checked-in).
+		/// </summary>
+        public virtual bool IsPreCheckIn
         {
             get { return _checkInTime == null; }
         }
 
-        public virtual bool IsCheckIn
-        {
-            get { return _checkInTime != null && _checkOutTime == null; }
-        }
+		/// <summary>
+		/// Returns true if the patient is currently checked-in for this procedure.
+		/// </summary>
+    	public virtual bool IsCheckedIn
+    	{
+			get { return !IsPreCheckIn && !IsCheckedOut; }
+    	}
 
-        public virtual bool IsCheckOut
-        {
-            get { return _checkOutTime != null; }
-        }
+		/// <summary>
+		/// Returns true if the patient has checked-out for this procedure.
+		/// </summary>
+		public virtual bool IsCheckedOut
+		{
+			get { return _checkOutTime != null; }
+		}
 
         #endregion
 

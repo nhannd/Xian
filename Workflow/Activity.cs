@@ -174,12 +174,23 @@ namespace ClearCanvas.Workflow
         /// <param name="performer"></param>
         public virtual void Start(ActivityPerformer performer)
         {
-            Platform.CheckForNullReference(performer, "performer");
-
-            _performer = performer;
-            _startTime = Platform.Time;
-            ChangeState(ActivityStatus.IP);
+			this.Start(performer, (DateTime?)null);
         }
+
+		/// <summary>
+		/// Starts the activity, setting the state to <see cref="ActivityStatus.IP"/> and recording the specified performer
+		/// and start-time.  If start-time is null, the current time is used.
+		/// </summary>
+		/// <param name="performer"></param>
+		/// <param name="startTime"></param>
+		public virtual void Start(ActivityPerformer performer, DateTime? startTime)
+		{
+			Platform.CheckForNullReference(performer, "performer");
+
+			_performer = performer;
+			_startTime = startTime ?? Platform.Time;
+			ChangeState(ActivityStatus.IP);
+		}
 
         /// <summary>
         /// Suspends the activity, setting the state to <see cref="ActivityStatus.SU"/>
@@ -206,48 +217,87 @@ namespace ClearCanvas.Workflow
         /// </summary>
         public virtual void Discontinue()
         {
-            _endTime = Platform.Time;
-            ChangeState(ActivityStatus.DC);
+			this.Discontinue((DateTime?)null);
         }
 
+		/// <summary>
+		/// Discontinues the activity, setting the state to <see cref="ActivityStatus.DC"/>,
+		/// and recording the specified end-time.  If end-time is null the current time is used.
+		/// </summary>
+		public virtual void Discontinue(DateTime? endTime)
+		{
+			_endTime = endTime ?? Platform.Time;
+			ChangeState(ActivityStatus.DC);
+		}
+
         /// <summary>
-        /// Completes the activity, setting the state to <see cref="ActivityStatus.CM"/>.  An exception will be thrown
-        /// if the performer was not previously specified in the <see cref="Start"/> method.
+        /// Completes the activity, setting the state to <see cref="ActivityStatus.CM"/>.
         /// </summary>
+        /// <remarks>
+		/// An exception will be thrown if the performer was not previously specified in the <see cref="Start"/> method.
+        /// </remarks>
         public virtual void Complete()
         {
-            if (_performer == null)
-                throw new WorkflowException("Performer must be assigned");
-
-            _endTime = Platform.Time;
-
-            // if start-time was never set, make it equal to the end time
-            if(_startTime == null)
-                _startTime = _endTime;
-
-            ChangeState(ActivityStatus.CM);
+			Complete((DateTime?)null);
         }
+
+		/// <summary>
+		/// Completes the activity, setting the state to <see cref="ActivityStatus.CM"/>, and recording the specified
+		/// end-time.  If end-time is null, the current time is used.
+		/// </summary>
+		/// <remarks>
+		/// An exception will be thrown if the performer was not previously specified in the <see cref="Start"/> method.
+		/// </remarks>
+		public virtual void Complete(DateTime? endTime)
+		{
+			if (_performer == null)
+				throw new WorkflowException("Performer must be assigned");
+
+			_endTime = endTime ?? Platform.Time;
+
+			// if start-time was never set, make it equal to the end time
+			if (_startTime == null)
+				_startTime = _endTime;
+
+			ChangeState(ActivityStatus.CM);
+		}
 
         /// <summary>
-        /// Completes the activity, setting the state to <see cref="ActivityStatus.CM"/>.  This overload
-        /// allows the performer to be specified, which is necessary if the activity is being completed directly
-        /// from the scheduled state, and hence the performer was not previously established.  Note that if a performer
-        /// has been previously established, and the specified performer is different, an exception will be thrown.
+        /// Completes the activity, setting the state to <see cref="ActivityStatus.CM"/>.
         /// </summary>
+        /// <remarks>
+		/// This overload allows the performer to be specified, which is necessary if the activity is being completed directly
+		/// from the scheduled state, and hence the performer was not previously established.  Note that if a performer
+		/// has been previously established, and the specified performer is different, an exception will be thrown.
+        /// </remarks>
         public virtual void Complete(ActivityPerformer performer)
         {
-            Platform.CheckForNullReference(performer, "performer");
-            if (_performer == null)
-            {
-                _performer = performer;
-            }
-            else if (!_performer.Equals(performer))
-            {
-                throw new WorkflowException("Peformer already assigned");
-            }
-
-            this.Complete();
+			Complete(performer, Platform.Time);
         }
+
+		/// <summary>
+		/// Completes the activity, setting the state to <see cref="ActivityStatus.CM"/>, and recording the specified end-time.
+		/// If end-time is null, the current time is used.
+		/// </summary>
+		/// <remarks>
+		/// This overload allows the performer to be specified, which is necessary if the activity is being completed directly
+		/// from the scheduled state, and hence the performer was not previously established.  Note that if a performer
+		/// has been previously established, and the specified performer is different, an exception will be thrown.
+		/// </remarks>
+		public virtual void Complete(ActivityPerformer performer, DateTime? endTime)
+		{
+			Platform.CheckForNullReference(performer, "performer");
+			if (_performer == null)
+			{
+				_performer = performer;
+			}
+			else if (!_performer.Equals(performer))
+			{
+				throw new WorkflowException("Peformer already assigned");
+			}
+
+			this.Complete(endTime);
+		}
 
         /// <summary>
         /// Adds the specified performed step to the set of <see cref="PerformedStep"/> objects associated with this activity,

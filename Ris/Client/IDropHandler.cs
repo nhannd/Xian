@@ -42,12 +42,13 @@ namespace ClearCanvas.Ris.Client
     public interface IDropHandler<TItem>
     {
         /// <summary>
-        /// Return true if the specified items can be accepted by this handler
+        /// Asks the handler if it can accept the specified items.  This value is used to provide visual feedback
+        /// to the user to indicate that a drop is possible.
         /// </summary>
         bool CanAcceptDrop(ICollection<TItem> items);
 
         /// <summary>
-        /// Return true if the specified items were successfully processed by this handler
+        /// Asks the handler to process the specified items, and returns true if the items were successfully processed.
         /// </summary>
         bool ProcessDrop(ICollection<TItem> items);
     }

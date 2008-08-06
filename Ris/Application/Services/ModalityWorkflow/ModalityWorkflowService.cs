@@ -147,12 +147,12 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
 
 			bool hasProcedureNotCheckedIn = CollectionUtils.Contains(modalitySteps,
-				delegate(ModalityProcedureStep mps) { return mps.Procedure.ProcedureCheckIn.IsNotCheckIn; });
+				delegate(ModalityProcedureStep mps) { return mps.Procedure.ProcedureCheckIn.IsPreCheckIn; });
 			if (hasProcedureNotCheckedIn)
 				throw new RequestValidationException(SR.ExceptionProcedureNotCheckedIn);
 
             StartModalityProcedureStepsOperation op = new StartModalityProcedureStepsOperation();
-            ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext), PersistenceContext);
+            ModalityPerformedProcedureStep mpps = op.Execute(modalitySteps, request.StartTime, this.CurrentUserStaff, new PersistentWorkflow(PersistenceContext), PersistenceContext);
 
             this.PersistenceContext.SynchState();
 
@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             foreach (ModalityProcedureStep step in modalitySteps)
             {
                 DiscontinueModalityProcedureStepOperation op = new DiscontinueModalityProcedureStepOperation();
-                op.Execute(step, false, new PersistentWorkflow(PersistenceContext));
+                op.Execute(step, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));
             }
 
             this.PersistenceContext.SynchState();
@@ -215,7 +215,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             }
 
             CompleteModalityPerformedProcedureStepOperation op = new CompleteModalityPerformedProcedureStepOperation();
-            op.Execute(mpps, new PersistentWorkflow(PersistenceContext));
+            op.Execute(mpps, request.CompletedTime, new PersistentWorkflow(PersistenceContext));
 
             this.PersistenceContext.SynchState();
 
@@ -243,7 +243,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
             // TODO determine procedureAborted logic
             DiscontinueModalityPerformedProcedureStepOperation op = new DiscontinueModalityPerformedProcedureStepOperation();
-            op.Execute(mpps, new PersistentWorkflow(PersistenceContext));
+            op.Execute(mpps, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));
 
             this.PersistenceContext.SynchState();
 

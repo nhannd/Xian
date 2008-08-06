@@ -62,11 +62,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._orderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+			this._checkInDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+			this._checkInTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this.SuspendLayout();
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(320, 241);
+			this._okButton.Location = new System.Drawing.Point(325, 254);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 1;
@@ -76,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(401, 241);
+			this._cancelButton.Location = new System.Drawing.Point(401, 254);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -96,17 +98,45 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderTableView.Size = new System.Drawing.Size(477, 231);
 			this._orderTableView.TabIndex = 3;
 			// 
+			// _checkInDate
+			// 
+			this._checkInDate.LabelText = "Check-in Date";
+			this._checkInDate.Location = new System.Drawing.Point(4, 237);
+			this._checkInDate.Margin = new System.Windows.Forms.Padding(2);
+			this._checkInDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+			this._checkInDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+			this._checkInDate.Name = "_checkInDate";
+			this._checkInDate.Size = new System.Drawing.Size(150, 41);
+			this._checkInDate.TabIndex = 4;
+			this._checkInDate.Value = new System.DateTime(2008, 8, 5, 10, 14, 18, 62);
+			// 
+			// _checkInTime
+			// 
+			this._checkInTime.LabelText = "Check-in Time";
+			this._checkInTime.Location = new System.Drawing.Point(158, 236);
+			this._checkInTime.Margin = new System.Windows.Forms.Padding(2);
+			this._checkInTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+			this._checkInTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+			this._checkInTime.Name = "_checkInTime";
+			this._checkInTime.ShowDate = false;
+			this._checkInTime.ShowTime = true;
+			this._checkInTime.Size = new System.Drawing.Size(150, 41);
+			this._checkInTime.TabIndex = 5;
+			this._checkInTime.Value = new System.DateTime(2008, 8, 5, 10, 14, 18, 62);
+			// 
 			// CheckInOrderComponentControl
 			// 
 			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._checkInTime);
+			this.Controls.Add(this._checkInDate);
 			this.Controls.Add(this._orderTableView);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Name = "CheckInOrderComponentControl";
-			this.Size = new System.Drawing.Size(484, 272);
+			this.Size = new System.Drawing.Size(484, 280);
 			this.ResumeLayout(false);
 
         }
@@ -116,5 +146,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
 		private ClearCanvas.Desktop.View.WinForms.TableView _orderTableView;
+		private ClearCanvas.Desktop.View.WinForms.DateTimeField _checkInDate;
+		private ClearCanvas.Desktop.View.WinForms.DateTimeField _checkInTime;
     }
 }
