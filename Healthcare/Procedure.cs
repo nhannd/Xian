@@ -307,8 +307,9 @@ namespace ClearCanvas.Healthcare {
             if (_status == ProcedureStatus.SC || _status == ProcedureStatus.IP)
             {
                 // if all steps are discontinued, this procedure is automatically discontinued
-                if (CollectionUtils.TrueForAll(_procedureSteps,
-                    delegate(ProcedureStep step) { return step.State == ActivityStatus.DC; }))
+				// Bug: #2471 only consider Modality Procedure Steps for now, although in the long run this is not a good solution
+                if (CollectionUtils.TrueForAll(this.ModalityProcedureSteps,
+                    delegate(ModalityProcedureStep step) { return step.State == ActivityStatus.DC; }))
                 {
                     SetStatus(ProcedureStatus.DC);
                 }
@@ -317,12 +318,12 @@ namespace ClearCanvas.Healthcare {
             // check if the procedure should be auto-started
             if (_status == ProcedureStatus.SC)
             {
-                // the condition for auto-starting the procedure is that it has a procedure step that has
+                // the condition for auto-starting the procedure is that it has a (non-pre) procedure step that has
                 // moved out of the scheduled status but not into the discontinued status
                 bool anyStepStartedNotDiscontinued = CollectionUtils.Contains(_procedureSteps,
                     delegate(ProcedureStep step)
                     {
-                        return !step.IsInitial && step.State != ActivityStatus.DC;
+                        return !step.IsPreStep && !step.IsInitial && step.State != ActivityStatus.DC;
                     });
 
                 if (anyStepStartedNotDiscontinued)

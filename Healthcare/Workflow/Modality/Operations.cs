@@ -81,6 +81,32 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 				}
 			}
 		}
+
+		protected void TryAutoTerminateProcedureSteps(Procedure procedure, DateTime? time, IWorkflow workflow)
+		{
+			foreach (ModalityProcedureStep mps in procedure.ModalityProcedureSteps)
+			{
+				// if the MPS is not terminated and has some MPPS
+				if(!mps.IsTerminated && !mps.PerformedSteps.IsEmpty)
+				{
+					bool allMppsDiscontinued = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
+							delegate(PerformedProcedureStep pps) { return pps.State == PerformedStepStatus.DC; });
+					bool allMppsTerminated = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
+							delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
+
+					if (allMppsDiscontinued)
+					{
+						// discontinue MPS, since all MPPS are discontinued
+						mps.Discontinue(time);
+					}
+					else if (allMppsTerminated)
+					{
+						// all MPPS are terminated, and at least one MPPS must be completed, so complete MPS
+						mps.Complete(time);
+					}
+				}
+			}
+		}
 	}
 
 	public class StartModalityProcedureStepsOperation : ModalityOperation
@@ -134,12 +160,11 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 		}
 	}
 
-	public class CompleteModalityPerformedProcedureStepOperation : ModalityOperation
+	public abstract class TerminateModalityPerformedProcedureStepOperation : ModalityOperation
 	{
-		public void Execute(ModalityPerformedProcedureStep mpps, DateTime? completedTime, IWorkflow workflow)
+		public void Execute(ModalityPerformedProcedureStep mpps, DateTime? time, IWorkflow workflow)
 		{
-			// complete mpps
-			mpps.Complete(completedTime);
+			TerminatePerformedProcedureStep(mpps, time);
 
 			ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
 			Order order = oneMps.Procedure.Order;
@@ -147,47 +172,31 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 			// try to complete any mps that have all mpps completed
 			foreach (Procedure rp in order.Procedures)
 			{
-				foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
-				{
-					bool allPerformedStepsDone =
-						!mps.PerformedSteps.IsEmpty
-						&& CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
-							delegate(PerformedProcedureStep pps) { return pps.IsTerminated; });
+				if (rp.Status != ProcedureStatus.IP)
+					continue;
 
-					if (!mps.IsTerminated && allPerformedStepsDone)
-					{
-						mps.Complete(completedTime);
-					}
-
-					TryAutoCheckOut(mps.Procedure, completedTime);
-				}
+				TryAutoTerminateProcedureSteps(rp, time, workflow);
+				TryAutoCheckOut(rp, time);
 			}
 		}
+
+		protected abstract void TerminatePerformedProcedureStep(ModalityPerformedProcedureStep mpps, DateTime? time);
+
 	}
 
-	public class DiscontinueModalityPerformedProcedureStepOperation : ModalityOperation
+	public class CompleteModalityPerformedProcedureStepOperation : TerminateModalityPerformedProcedureStepOperation
 	{
-		public void Execute(ModalityPerformedProcedureStep mpps, DateTime? discontinuedTime, IWorkflow workflow)
+		protected override void TerminatePerformedProcedureStep(ModalityPerformedProcedureStep mpps, DateTime? time)
 		{
-			mpps.Discontinue(discontinuedTime);
-
-			foreach (ModalityProcedureStep mps in mpps.Activities)
-			{
-				// Any MPS can have multiple MPPS's, so discontinue the MPS only if all MPPS's are discontinued
-				if (mps.PerformedSteps.Count > 1)
-				{
-					bool allMppsDiscontinued = CollectionUtils.TrueForAll<PerformedProcedureStep>(mps.PerformedSteps,
-							delegate(PerformedProcedureStep pps) { return pps.State == PerformedStepStatus.DC; });
-
-					if (allMppsDiscontinued)
-					{
-						mps.Discontinue(discontinuedTime);
-					}
-				}
-
-				TryAutoCheckOut(mps.Procedure, discontinuedTime);
-			}
+			mpps.Complete(time);
 		}
 	}
 
+	public class DiscontinueModalityPerformedProcedureStepOperation : TerminateModalityPerformedProcedureStepOperation
+	{
+		protected override void TerminatePerformedProcedureStep(ModalityPerformedProcedureStep mpps, DateTime? time)
+		{
+			mpps.Discontinue(time);
+		}
+	}
 }

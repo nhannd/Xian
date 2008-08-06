@@ -98,6 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 			if(!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept))
 				return new CanCompleteOrderDocumentationResponse(false);
 
+			// order documentation can be completed if all modality steps have been terminated
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 			return new CanCompleteOrderDocumentationResponse(CollectionUtils.TrueForAll(order.Procedures,
 				delegate(Procedure p) { return AreAllModalityStepsTerminated(p); }));
@@ -131,10 +132,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 				: PersistenceContext.Load<Staff>(request.AssignedInterpreter.StaffRef, EntityLoadFlags.Proxy);
 			foreach (Procedure procedure in order.Procedures)
 			{
-				InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
-				if (interpretationStep != null)
+				if(IsProcedurePerformed(procedure))
 				{
-					interpretationStep.Assign(interpreter);
+					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
+					if (interpretationStep != null)
+					{
+						interpretationStep.Assign(interpreter);
+					}
 				}
 			}
 

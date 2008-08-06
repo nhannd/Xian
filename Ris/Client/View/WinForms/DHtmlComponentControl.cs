@@ -69,9 +69,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 
             _component.Validation.Add(new ValidationRule("DUMMY_PROPERTY",
-                delegate(IApplicationComponent c)
+                delegate
                 {
-                    object result = _webBrowser.Document.InvokeScript("hasValidationErrors");
+					object result = _webBrowser.Document != null ? _webBrowser.Document.InvokeScript("hasValidationErrors") : null;
 
                     // if result == null, the hasValidationErrors method is not implemented by the page
                     // in this case, assume there are no errors
@@ -92,12 +92,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _component_DataSaving(object sender, EventArgs e)
         {
-            _webBrowser.Document.InvokeScript("saveData", new object[] { _component.ValidationVisible });
+			if(_webBrowser.Document != null)
+			{
+				_webBrowser.Document.InvokeScript("saveData", new object[] { _component.ValidationVisible });
+			}
         }
 
         private void _component_ValidationVisibleChanged(object sender, EventArgs e)
         {
-            _webBrowser.Document.InvokeScript("showValidation", new object[] { _component.ValidationVisible });
+			if (_webBrowser.Document != null)
+			{
+				_webBrowser.Document.InvokeScript("showValidation", new object[] {_component.ValidationVisible});
+			}
         }
 
         private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
