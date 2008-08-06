@@ -853,7 +853,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				 return (_canCompleteInterpretationAndVerify || _canCompleteVerification)
-					 && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify) && ReportContent != null;
+					 && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify);
 			}
 		}
 
@@ -876,7 +876,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool CanSaveReport
 		{
-			get { return _canSaveReport && ReportContent != null; }
+			get { return _canSaveReport; }
 		}
 
 
