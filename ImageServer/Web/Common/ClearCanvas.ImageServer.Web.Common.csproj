@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\ArchiveQueueAdaptor.cs" />
+    <Compile Include="Data\ArchiveQueueController.cs" />
+    <Compile Include="Data\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
     <Compile Include="Data\FileSystemQueueController.cs" />
     <Compile Include="Data\FileSystemQueueAdapter.cs" />

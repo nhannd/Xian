@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Rules
 
                     if (ruleApplied)
                     {
-                        Platform.Log(LogLevel.Info, "Exempt rule found that applies, ignoring action.");
+                        Platform.Log(LogLevel.Info, "Exempt rule found that applies for {0}, ignoring action.", Type.Description);
                         return;
                     }
                 }

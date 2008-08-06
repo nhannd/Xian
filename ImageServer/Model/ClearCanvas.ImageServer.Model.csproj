@@ -56,6 +56,7 @@
     <Compile Include="Brokers\IQueryServerPartitionTransferSyntaxes.cs" />
     <Compile Include="Brokers\IUpdateArchiveQueue.cs" />
     <Compile Include="Brokers\IUpdateRestoreQueue.cs" />
+    <Compile Include="Brokers\IWebQueryArchiveQueue.cs" />
     <Compile Include="Brokers\IWebQueryWorkQueue.cs" />
     <Compile Include="Brokers\IDeleteStudyStorage.cs" />
     <Compile Include="Brokers\IInsertFilesystemQueue.cs" />
@@ -175,6 +176,7 @@
     <Compile Include="Parameters\FilesystemInsertParameters.cs" />
     <Compile Include="Parameters\PartitionTransferSyntaxQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionDeleteParameters.cs" />
+    <Compile Include="Parameters\WebQueryArchiveQueueParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
     <Compile Include="PartitionArchive.gen.cs" />

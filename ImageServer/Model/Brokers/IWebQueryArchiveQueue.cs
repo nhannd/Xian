@@ -34,7 +34,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IWebQueryWorkQueue : IProcedureQueryBroker<WebWorkQueueQueryParameters, WorkQueue>
+	public interface IWebQueryArchiveQueue : IProcedureQueryBroker<WebQueryArchiveQueueParameters, ArchiveQueue>
     {
     }
 }

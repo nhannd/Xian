@@ -124,6 +124,11 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertRestoreQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertRestoreQueue]
 GO
+/****** Object:  StoredProcedure [dbo].[WebQueryArchiveQueue]    Script Date: 08/05/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryArchiveQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[WebQueryArchiveQueue]
+GO
+
 
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
@@ -2620,6 +2625,117 @@ BEGIN
 	COMMIT TRANSACTION
 
 	SELECT * FROM RestoreQueue WHERE GUID = @RestoreQueueGUID
+END
+' 
+END
+GO
+
+/****** Object:  StoredProcedure [dbo].[WebQueryArchiveQueue]    Script Date: 08/05/2008 17:35:56 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryArchiveQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Steve Wranovsky
+-- Create date: August 5, 2008
+-- Description:	Query ArchiveQueue entries based on criteria
+--				
+-- =============================================
+CREATE PROCEDURE [dbo].[WebQueryArchiveQueue] 
+	@ServerPartitionGUID uniqueidentifier = null,
+	@PatientId nvarchar(64) = null,
+	@PatientsName nvarchar(64) = null,
+	@AccessionNumber nvarchar(16) = null,
+	@ScheduledTime datetime = null,
+	@ArchiveQueueStatusEnum smallint = null,
+	@StartIndex int,
+	@MaxRowCount int = 25,
+	@ResultCount int OUTPUT
+AS
+BEGIN
+	Declare @stmt nvarchar(1024);
+	Declare @where nvarchar(1024);
+	Declare @count nvarchar(1024);
+
+	-- Build SELECT statement based on the paramters
+	
+	SET @stmt =			''SELECT ArchiveQueue.*, ROW_NUMBER() OVER(ORDER BY ScheduledTime ASC) as RowNum FROM ArchiveQueue ''
+	SET @stmt = @stmt + ''LEFT JOIN StudyStorage on StudyStorage.GUID = ArchiveQueue.StudyStorageGUID ''
+	SET @stmt = @stmt + ''LEFT JOIN Study on Study.ServerPartitionGUID = StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid = StudyStorage.StudyInstanceUid ''
+	
+	SET @where = ''''
+
+	IF (@ServerPartitionGUID IS NOT NULL)
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''ArchiveQueue.ServerPartitionGUID = '''''' +  CONVERT(varchar(250),@ServerPartitionGUID) +''''''''
+	END
+	
+	IF (@ArchiveQueueStatusEnum IS NOT NULL)
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''ArchiveQueue.ArchiveQueueStatusEnum = '' +  CONVERT(varchar(10),@ArchiveQueueStatusEnum)
+	END
+
+	IF (@ScheduledTime IS NOT NULL)
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''ArchiveQueue.ScheduledTime between '''''' +  CONVERT(varchar(30), @ScheduledTime, 101 ) +'''''' and '''''' + CONVERT(varchar(30), DATEADD(DAY, 1, @ScheduledTime), 101 ) + ''''''''
+	END
+
+	IF (@PatientsName IS NOT NULL and @PatientsName<>'''')
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''Study.PatientsName Like ''''%'' + @PatientsName + ''%'''' ''
+	END
+
+	IF (@PatientId IS NOT NULL and @PatientId<>'''')
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''Study.PatientId Like ''''%'' + @PatientId + ''%'''' ''
+	END
+
+	IF (@AccessionNumber IS NOT NULL and @AccessionNumber<>'''')
+	BEGIN
+		IF (@where<>'''')
+			SET @where = @where + '' AND ''
+
+		SET @where = @where + ''Study.AccessionNumber Like ''''%'' + @AccessionNumber + ''%'''' ''
+	END
+
+
+	if (@where<>'''')
+		SET @stmt = @stmt + '' WHERE '' + @where
+
+	--PRINT @stmt
+	SET @stmt = ''SELECT A.GUID, A.PartitionArchiveGUID, A.ScheduledTime, A.StudyStorageGUID, A.ArchiveQueueStatusEnum, A.ProcessorId FROM ('' + @stmt
+	SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
+
+	EXEC(@stmt)
+
+	if (@where<>'''')
+		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue WHERE '' + @where
+	else
+		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue''
+
+	DECLARE @recCount int
+	
+	EXEC sp_executesql  @count, N''@recordCount int OUT'', @recCount OUT
+	--print @count
+	set @ResultCount = @recCount
+
 END
 ' 
 END

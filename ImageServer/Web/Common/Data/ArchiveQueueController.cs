@@ -29,12 +29,45 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
+using System;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-    public interface IWebQueryWorkQueue : IProcedureQueryBroker<WebWorkQueueQueryParameters, WorkQueue>
-    {
-    }
+	public class ArchiveQueueController
+	{
+
+		/// <summary>
+		/// Gets a list of <see cref="ArchiveQueue"/> items with specified criteria
+		/// </summary>
+		/// <param name="parameters"></param>
+		/// <returns></returns>
+		public IList<ArchiveQueue> FindArchiveQueue(WebQueryArchiveQueueParameters parameters)
+		{
+			try
+			{
+				IList<ArchiveQueue> list;
+
+				IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
+
+				using (IReadContext ctx = _store.OpenReadContext())
+				{
+					IWebQueryArchiveQueue broker = ctx.GetBroker<IWebQueryArchiveQueue>();
+					list = broker.Execute(parameters);
+				}
+
+				return list;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, "FindArchiveQueue failed", e);
+				return new List<ArchiveQueue>();
+			}
+		}
+	}
 }

@@ -43,6 +43,7 @@
     <Compile Include="Brokers\QueryRestoreQueue.cs" />
     <Compile Include="Brokers\UpdateArchiveQueue.cs" />
     <Compile Include="Brokers\UpdateRestoreQueue.cs" />
+    <Compile Include="Brokers\WebQueryArchiveQueue.cs" />
     <Compile Include="Brokers\WebQueryWorkQueue.cs" />
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />

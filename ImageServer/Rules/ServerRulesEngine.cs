@@ -175,6 +175,8 @@ namespace ClearCanvas.ImageServer.Rules
                     {
                         Rule theRule = new Rule();
                         theRule.Name = serverRule.RuleName;
+                    	theRule.IsDefault = serverRule.DefaultRule;
+                    	theRule.IsExempt = serverRule.ExemptRule;
                         theRule.Description = serverRule.ServerRuleApplyTimeEnum.Description;
 
                         XmlNode ruleNode =
