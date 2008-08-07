@@ -442,7 +442,7 @@ namespace ClearCanvas.Dicom.Network
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(true);
+            GC.SuppressFinalize(this);
         }
 
         ///
