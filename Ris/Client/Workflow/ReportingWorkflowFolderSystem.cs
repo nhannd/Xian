@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -69,7 +70,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ReportingSettings.Default.EnableTranscriptionWorkflow)
 				this.Folders.Add(new Folders.Reporting.InTranscriptionFolder());
 
-			this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
+			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
+				this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());
+
 			this.Folders.Add(new Folders.Reporting.VerifiedFolder());
 		}
 

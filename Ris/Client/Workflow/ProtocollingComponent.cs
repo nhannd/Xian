@@ -286,6 +286,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _submitForApprovalEnabled; }
 		}
 
+		public bool SubmitForApprovalVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview); }
+		}
+
 		#endregion
 
 		#region Reject

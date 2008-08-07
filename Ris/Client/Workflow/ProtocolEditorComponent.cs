@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -235,6 +236,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _supervisorLookupHandler; }
 		}
 
+		public bool SupervisorVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview); }
+		}
+
 		#endregion
 
 
@@ -411,7 +417,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 								_selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
 							});
 
-					if (item.ProtocolDetail.Supervisor == null)
+					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+						&& item.ProtocolDetail.Supervisor == null)
 					{
 						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
 						if (!String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID))

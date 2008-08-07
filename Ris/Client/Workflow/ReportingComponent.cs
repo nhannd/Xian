@@ -553,6 +553,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _supervisorLookupHandler; }
 		}
 
+		public bool SupervisorVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview); }
+		}
+
 		#endregion
 
 		#region Verify
@@ -687,6 +692,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get { return CanSendToBeVerified; }
 		}
+
+		public bool SendToVerifyVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview); }
+		}
+
 
 		#endregion
 
@@ -949,7 +960,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						// active part already has a supervisor assigned
 						_supervisor = activePart.Supervisor;
 					}
-					else
+					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview))
 					{
 						// active part does not have a supervisor assigned
 						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null

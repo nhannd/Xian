@@ -161,6 +161,9 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow verification of radiology reports.")]
 				public const string Verify = "Workflow/Report/Verify";
 
+				[AuthorityToken(Description = "Allow radiology reports to be submitted for review.")]
+				public const string SubmitForReview = "Workflow/Report/Submit for Review";
+
 				[AuthorityToken(Description = "Allow radiology reports to be cancelled and returned to the communal worklist.")]
 				public const string Cancel = "Workflow/Report/Cancel";
 
@@ -170,14 +173,17 @@ namespace ClearCanvas.Ris.Application.Common
 
 			public static class Protocol
 			{
-				[AuthorityToken(Description = "Allow access to the Protocol Editor and creation of procedure Protocols.")]
+				[AuthorityToken(Description = "Allow access to the Protocol Editor and creation of procedure protocols.")]
 				public const string Create = "Workflow/Protocol/Create";
 
-				[AuthorityToken(Description = "Allow acceptance of procedure Protocols.")]
+				[AuthorityToken(Description = "Allow acceptance of procedure protocols.")]
 				public const string Accept = "Workflow/Protocol/Accept";
 
 				[AuthorityToken(Description = "Allow orders that were rejected/suspended by the protocolling radiologist to be cancelled, or re-submitted for protocoling.")]
 				public const string Resubmit = "Workflow/Protocol/Resolve";
+
+				[AuthorityToken(Description = "Allow procedure protocols to be submitted for review.")]
+				public const string SubmitForReview = "Workflow/Protocol/Submit for Review";
 
 				[AuthorityToken(Description = "Allow protocolling without specifying a supervisor")]
 				public const string OmitSupervisor = "Workflow/Protocol/Omit Supervisor";

@@ -83,6 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_btnAccept.DataBindings.Add("Visible", _component, "AcceptVisible", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_btnSubmitForApproval.DataBindings.Add("Enabled", _component, "SubmitForApprovalEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_btnSubmitForApproval.Visible = _component.SubmitForApprovalVisible;
 
 			_btnReject.DataBindings.Add("Enabled", _component, "RejectEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);

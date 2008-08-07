@@ -185,14 +185,13 @@ namespace ClearCanvas.Healthcare
 			ReportingWorklistItemSearchCriteria unsupervised = new ReportingWorklistItemSearchCriteria();
 			unsupervised.ProcedureStepClass = typeof(PublicationStep);
 			unsupervised.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-			unsupervised.ReportPart.Supervisor.IsNull();
 			unsupervised.ReportPart.Verifier.EqualTo(wqc.Staff);
 			ApplyTimeCriteria(unsupervised, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
 
 			ReportingWorklistItemSearchCriteria supervised = new ReportingWorklistItemSearchCriteria();
 			supervised.ProcedureStepClass = typeof(PublicationStep);
 			supervised.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-			supervised.ReportPart.Supervisor.IsNotNull();
+			supervised.ReportPart.Verifier.NotEqualTo(wqc.Staff);
 			supervised.ReportPart.Interpreter.EqualTo(wqc.Staff);
 
 			return new WorklistItemSearchCriteria[] { unsupervised, supervised };
