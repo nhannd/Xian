@@ -34,19 +34,15 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    [DataContract]
-    public class ReviseUnpublishedReportResponse : DataContractBase
-    {
-        /// <summary>
-        /// Reference to the discontinued publication step.
-        /// </summary>
-        [DataMember]
-        public EntityRef PublicationStepRef;
+	[DataContract]
+	public class ReviseUnpublishedReportResponse : DataContractBase
+	{
+		public ReviseUnpublishedReportResponse(ReportingWorklistItem replacementVerificationStep)
+		{
+			this.ReplacementVerificationStep = replacementVerificationStep;
+		}
 
-        /// <summary>
-        /// Reference to the newly created verification step.
-        /// </summary>
-        [DataMember]
-        public EntityRef VerificationStepRef;
-    }
+		[DataMember]
+		public ReportingWorklistItem ReplacementVerificationStep;
+	}
 }

@@ -34,19 +34,15 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    [DataContract]
-    public class ReviseResidentReportResponse : DataContractBase
-    {
-        /// <summary>
-        /// Updated reference to the verification step that was discontinued.
-        /// </summary>
-        [DataMember]
-        public EntityRef VerificationStepRef;
+	[DataContract]
+	public class ReviseResidentReportResponse : DataContractBase
+	{
+		public ReviseResidentReportResponse(ReportingWorklistItem replacementInterpretationStep)
+		{
+			this.ReplacementInterpretationStep = replacementInterpretationStep;
+		}
 
-        /// <summary>
-        /// Reference to the new interpretation step that was created.
-        /// </summary>
-        [DataMember]
-        public EntityRef InterpretationStepRef;
-    }
+		[DataMember]
+		public ReportingWorklistItem ReplacementInterpretationStep;
+	}
 }

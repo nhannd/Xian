@@ -29,94 +29,88 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Revise Report", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Revise Report", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-    public class ReviseReportTool : ReportingWorkflowItemTool
-    {
+	public class ReviseReportTool : ReportingWorkflowItemTool
+	{
 
-        public ReviseReportTool()
-            : base("ReviseReport")
-        {
-        }
+		public ReviseReportTool()
+			: base("ReviseReport")
+		{
+		}
 
-        public override bool Enabled
-        {
-            get
-            {
-                return this.Context.GetOperationEnablement("ReviseResidentReport") ||
-                    this.Context.GetOperationEnablement("ReviseUnpublishedReport");
-            }
-        }
+		public override bool Enabled
+		{
+			get
+			{
+				return this.Context.GetOperationEnablement("ReviseResidentReport") ||
+					this.Context.GetOperationEnablement("ReviseUnpublishedReport");
+			}
+		}
 
-        public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
-        {
-            return this.Context.GetOperationEnablement("ReviseResidentReport") ||
-                    this.Context.GetOperationEnablement("ReviseUnpublishedReport");
-        }
+		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
+		{
+			return this.Context.GetOperationEnablement("ReviseResidentReport") ||
+					this.Context.GetOperationEnablement("ReviseUnpublishedReport");
+		}
 
 		protected override bool Execute(ReportingWorklistItem item)
-        {
-            // check if the document is already open
-            if(ActivateIfAlreadyOpen(item))
-                return true;
+		{
+			// check if the document is already open
+			if (ActivateIfAlreadyOpen(item))
+				return true;
 
-            if(this.Context.GetOperationEnablement("ReviseResidentReport"))
-            {
-                // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-                item.ProcedureStepRef = ReviseResidentReport(item);
-            }
-            else if (this.Context.GetOperationEnablement("ReviseUnpublishedReport"))
-            {
-                // note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-                item.ProcedureStepRef = ReviseUnpublishedReport(item);
-            }
+			ReportingWorklistItem replacementItem = null;
 
-            OpenReportEditor(item);
+			if (this.Context.GetOperationEnablement("ReviseResidentReport"))
+			{
+				replacementItem = ReviseResidentReport(item);
+			}
+			else if (this.Context.GetOperationEnablement("ReviseUnpublishedReport"))
+			{
+				replacementItem = ReviseUnpublishedReport(item);
+			}
 
-            return true;
-        }
+			OpenReportEditor(replacementItem);
 
-        private EntityRef ReviseResidentReport(ReportingWorklistItem item)
-        {
-            EntityRef result = null;
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    ReviseResidentReportResponse response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
-                    result = response.InterpretationStepRef;
-                });
+			return true;
+		}
 
-            return result;
-        }
+		private ReportingWorklistItem ReviseResidentReport(ReportingWorklistItem item)
+		{
+			ReportingWorklistItem result = null;
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					ReviseResidentReportResponse response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
+					result = response.ReplacementInterpretationStep;
+				});
 
-        private EntityRef ReviseUnpublishedReport(ReportingWorklistItem item)
-        {
-            EntityRef result = null;
-            Platform.GetService<IReportingWorkflowService>(
-                delegate(IReportingWorkflowService service)
-                {
-                    ReviseUnpublishedReportResponse response = service.ReviseUnpublishedReport(new ReviseUnpublishedReportRequest(item.ProcedureStepRef));
-                    result = response.VerificationStepRef;
-                });
+			return result;
+		}
 
-            return result;
-        }
-    }
+		private ReportingWorklistItem ReviseUnpublishedReport(ReportingWorklistItem item)
+		{
+			ReportingWorklistItem result = null;
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					ReviseUnpublishedReportResponse response = service.ReviseUnpublishedReport(new ReviseUnpublishedReportRequest(item.ProcedureStepRef));
+					result = response.ReplacementVerificationStep;
+				});
+
+			return result;
+		}
+	}
 }

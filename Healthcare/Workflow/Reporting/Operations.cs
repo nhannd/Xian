@@ -337,11 +337,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.State != ActivityStatus.SC)
 					return false;
 
-				if (step.AssignedStaff != null && Equals(executingStaff, step.ReportPart.Interpreter)) return true;
-				if (step.ReportPart.Supervisor != null && Equals(executingStaff, step.ReportPart.Supervisor)) return true;
-				if (step.AssignedStaff == null && step.ReportPart.Supervisor == null) return true;
+				if (step.AssignedStaff != null && !Equals(executingStaff, step.AssignedStaff))
+					return false;
 
-				return false;
+				if (step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
+					return false;
+
+				return true;
 			}
 		}
 
@@ -367,11 +369,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.IsTerminated)
 					return false;
 
-				if (step.AssignedStaff != null && Equals(executingStaff, step.ReportPart.Interpreter)) return true;
-				if (step.ReportPart.Supervisor != null && Equals(executingStaff, step.ReportPart.Supervisor)) return true;
-				if (step.AssignedStaff == null && step.ReportPart.Supervisor == null) return true;
+				if (step.AssignedStaff != null && !Equals(executingStaff, step.AssignedStaff))
+					return false;
 
-				return false;
+				if (step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
+					return false;
+
+				return true;
 			}
 		}
 
