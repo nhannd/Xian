@@ -377,6 +377,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Start()
 		{
+			// create supervisor lookup handler, using filters supplied in application settings
+			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
+			string[] staffTypes = string.IsNullOrEmpty(filters)
+				? new string[] { }
+				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
+
 			StartReportingWorklistItem();
 
 			_bannerHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
@@ -411,13 +418,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
-
-			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
-			string[] staffTypes = string.IsNullOrEmpty(filters) 
-				? new string[] { } 
-				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
-			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			// check for a report editor provider.  If not found, use the default one
 			IReportEditorProvider provider = CollectionUtils.FirstElement<IReportEditorProvider>(
