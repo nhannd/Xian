@@ -27,9 +27,11 @@
 
 					// construct request object
 					var request = {
-						GetOrderDetailRequest:
-							 { 
-								OrderRef: context.OrderRef
+						GetOrderDetailRequest: context.OrderRef == null ? null : 
+                            { 
+								OrderRef: context.OrderRef,
+                                IncludeNotes: true,
+								NoteCategoriesFilter: ["General"]
 							}
 					};
 
@@ -45,6 +47,15 @@
 					var orderDetail = data.GetOrderDetailResponse.Order;
 
 					Field.setValue($("Indications"), orderDetail.ReasonForStudy);
+
+					if(orderDetail.Notes.length)
+					{
+						createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+						createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+						createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+					}
+					else
+						Field.show($("notesSection"), false);
 				}
 				catch(e)
 				{
@@ -56,14 +67,40 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
+			<p class="sectionheading">Indications</p>
 			<table width="95%" border="0">
-				<tr>
-					<td class="sectionheading">Indications</td>
-				</tr>
 				<tr>
 					<td><div id="Indications"/></td>
 				</tr>
 			</table>
+			
+			<div id="notesSection">
+				<p class="sectionheading">Order Notes</p>
+				<table id="generaNotesTable">
+					<tr><td class="sectionheading" colspan="3">General</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="protocolNotesTable">
+					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="prelimNotesTable">
+					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+			</div>
 		</form>
 	</body>
 </html>
