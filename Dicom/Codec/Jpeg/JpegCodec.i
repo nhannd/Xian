@@ -354,7 +354,7 @@ namespace IJGVERS {
 		// if we already have the next buffer, switch buffers
 		if (src->next_buffer) {
 			src->pub.next_input_byte    = src->next_buffer;
-			src->pub.bytes_in_buffer    = (unsigned int) src->next_buffer_size;
+			src->pub.bytes_in_buffer    = (size_t) src->next_buffer_size;
 			src->next_buffer            = NULL;
 			src->next_buffer_size       = 0;
 
@@ -406,7 +406,7 @@ void JPEGCODEC::Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressed
 	array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
 	pin_ptr<unsigned char> jpegPin = &jpegData[0];
 	unsigned char* jpegPtr = jpegPin;
-	unsigned int jpegSize = jpegData->Length;
+	size_t jpegSize = jpegData->Length;
 	
 	jpeg_decompress_struct dinfo;
 	memset(&dinfo, 0, sizeof(dinfo));
