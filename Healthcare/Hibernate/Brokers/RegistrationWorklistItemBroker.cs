@@ -95,7 +95,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return new HqlProjectionQuery(GetFromClause(procedureStepClass), DefaultCountProjection);
         }
 
-		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
+		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
 		{
 			Type procedureStepClass = CollectionUtils.FirstElement(where).ProcedureStepClass;
 
@@ -114,9 +114,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
 				});
 
-			HqlProjectionQuery query = CreateBaseItemQuery(where);
+			HqlProjectionQuery query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
 			query.Conditions.Add(ConditionActiveProcedureStep);
-			AddConditions(query, where, true, false);
+			AddConditions(query, where, true, !countQuery);
 
 			return query;
 		}

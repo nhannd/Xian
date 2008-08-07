@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region Private Helpers
 
-		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
+		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
 		{
 			// need to set the correct time field
 			// ProcedureScheduledStartTime seems like a reasonable choice for tech homepage search,
@@ -61,10 +61,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					sc.TimeField = WorklistTimeField.ProcedureScheduledStartTime;
 				});
 
-			HqlProjectionQuery query = CreateBaseItemQuery(where);
+			HqlProjectionQuery query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
 			query.Conditions.Add(ConditionActiveProcedureStep);
 
-			AddConditions(query, where, true, false);
+			AddConditions(query, where, true, !countQuery);
 
 			return query;
 		}

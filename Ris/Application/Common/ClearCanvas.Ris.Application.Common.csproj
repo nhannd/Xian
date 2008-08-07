@@ -139,6 +139,7 @@
     <Compile Include="ReportingWorkflow\FaxReportResponse.cs" />
     <Compile Include="ReportingWorkflow\ReassignProcedureStepRequest.cs" />
     <Compile Include="ReportingWorkflow\ReassignProcedureStepResponse.cs" />
+    <Compile Include="WorklistItemTextQueryOptions.cs" />
     <Compile Include="WorkQueueItemSummary.cs" />
     <Compile Include="BrowsePatientData\GetVisitDetailRequest.cs" />
     <Compile Include="BrowsePatientData\GetVisitDetailResponse.cs" />

@@ -253,78 +253,91 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     	/// <summary>
     	/// Performs a search using the specified criteria.
     	/// </summary>
-    	/// <param name="where"></param>
-    	/// <returns></returns>
-    	public IList<TItem> GetSearchResults(WorklistItemSearchCriteria[] where)
+    	public IList<TItem> GetSearchResults(WorklistItemSearchCriteria[] where, bool includeDegenerate)
     	{
 			List<TItem> results = new List<TItem>();
 
 			// search for worklist items, delegating the task of designing the query to the subclass
-			HqlProjectionQuery worklistItemQuery = BuildWorklistItemSearchQuery(where);
+			HqlProjectionQuery worklistItemQuery = BuildWorklistItemSearchQuery(where, false);
     		List<TItem> worklistItems = worklistItemQuery != null ? DoQuery(worklistItemQuery) : new List<TItem>();
 			results.AddRange(worklistItems);
 
-    		// search for procedures, and add any procedures for which there is no worklist item
-			HqlProjectionQuery procedureQuery = BuildProcedureSearchQuery(where, false);
-			List<TItem> procedures = DoQuery(procedureQuery);
-			foreach (TItem procedure in procedures)
+			if (includeDegenerate)
 			{
-				if (!CollectionUtils.Contains(worklistItems,
-					delegate(TItem item) { return item.ProcedureRef.Equals(procedure.ProcedureRef, true); }))
-					results.Add(procedure);
+				// search for procedures, and add any procedures for which there is no worklist item
+				HqlProjectionQuery procedureQuery = BuildProcedureSearchQuery(where, false);
+				List<TItem> procedures = DoQuery(procedureQuery);
+				foreach (TItem procedure in procedures)
+				{
+					if (!CollectionUtils.Contains(worklistItems,
+					                              delegate(TItem item)
+					                              { return item.ProcedureRef.Equals(procedure.ProcedureRef, true); }))
+						results.Add(procedure);
+				}
+
+				// add any patients for which there is no worklist item
+				worklistItems = new List<TItem>(results);
+				HqlProjectionQuery patientQuery = BuildPatientSearchQuery(where, false);
+				List<TItem> patients = DoQuery(patientQuery);
+				foreach (TItem patient in patients)
+				{
+					if (!CollectionUtils.Contains(worklistItems,
+					                              delegate(TItem item) { return item.PatientRef.Equals(patient.PatientRef, true); }))
+						results.Add(patient);
+				}
 			}
 
-			// add any patients for which there is no worklist item
-			worklistItems = new List<TItem>(results);
-			HqlProjectionQuery patientQuery = BuildPatientSearchQuery(where, false);
-			List<TItem> patients = DoQuery(patientQuery);
-			foreach (TItem patient in patients)
-			{
-				if (!CollectionUtils.Contains(worklistItems,
-					delegate(TItem item) { return item.PatientRef.Equals(patient.PatientRef, true); }))
-					results.Add(patient);
-			}
-
-			return results;
+    		return results;
 		}
 
     	/// <summary>
     	/// Gets an approximate count of the results that a search using the specified criteria would return.
     	/// </summary>
-    	public bool EstimateSearchResultsCount(WorklistItemSearchCriteria[] where, int threshold, out int count)
+		public bool EstimateSearchResultsCount(WorklistItemSearchCriteria[] where, int threshold, bool includeDegenerate, out int count)
     	{
     		count = 0;
 
-			// Strategy:
-			// Assume that only 4 search fields are really valid: Patient name, MRN, Healthcard, and Accession #.
-			// The approach taken here is to perform a patient count query and a procedure count query.
-			// The patient query will count all potential patient matches based on Patient name, MRN and Healthcard.
-			// The procedure count query will count all potential procedure matches based on Patient name, MRN and Healthcard, and Accession #.
-			// If either count exceeds the threshold, we can bail immediately.
-			// Otherwise, the counts must be combined.  Note that each count represents a potentially overlapping
-			// set of items, so there is no possible way to determine an 'exact' count (hence the word Estimate).
-			// However, we know that the true count is a) greater than or equal to the maximum of either independent count, and
-			// b) less than or equal to the sum of both counts.  Therefore, choose the midpoint of this number as a
-			// 'good enough' estimate.
+			// if includeDegenerate == true, we don't actually need to do a query for "active worklist items", e.g. ProcedureSteps,
+			// because the degenerate set is by definition a superset of the active items
+			if(includeDegenerate)
+			{
+				// Strategy:
+				// Assume that only 4 search fields are really valid: Patient name, MRN, Healthcard, and Accession #.
+				// The approach taken here is to perform a patient count query and a procedure count query.
+				// The patient query will count all potential patient matches based on Patient name, MRN and Healthcard.
+				// The procedure count query will count all potential procedure matches based on Patient name, MRN and Healthcard, and Accession #.
+				// If either count exceeds the threshold, we can bail immediately.
+				// Otherwise, the counts must be combined.  Note that each count represents a potentially overlapping
+				// set of items, so there is no possible way to determine an 'exact' count (hence the word Estimate).
+				// However, we know that the true count is a) greater than or equal to the maximum of either independent count, and
+				// b) less than or equal to the sum of both counts.  Therefore, choose the midpoint of this number as a
+				// 'good enough' estimate.
 
-			// count number of patient matches
-    		HqlProjectionQuery patientCountQuery = BuildPatientSearchQuery(where, true);
-    		int numPatients = DoQueryCount(patientCountQuery);
+				// count number of patient matches
+				HqlProjectionQuery patientCountQuery = BuildPatientSearchQuery(where, true);
+				int numPatients = DoQueryCount(patientCountQuery);
 
-			// if this number exceeds threshold, bail
-			if(numPatients > threshold)
-				return false;
+				// if this number exceeds threshold, bail
+				if (numPatients > threshold)
+					return false;
 
-			// count number of procedure matches
-			HqlProjectionQuery procedureCountQuery = BuildProcedureSearchQuery(where, true);
-			int numProcedures = DoQueryCount(procedureCountQuery);
+				// count number of procedure matches
+				HqlProjectionQuery procedureCountQuery = BuildProcedureSearchQuery(where, true);
+				int numProcedures = DoQueryCount(procedureCountQuery);
 
-			// if this number exceeds threshold, bail
-			if (numProcedures > threshold)
-				return false;
+				// if this number exceeds threshold, bail
+				if (numProcedures > threshold)
+					return false;
 
-			// combine the two numbers to produce a guess at the actual number of results
-    		count = (Math.Max(numPatients, numProcedures) + numPatients + numProcedures)/2;
+				// combine the two numbers to produce a guess at the actual number of results
+				count = (Math.Max(numPatients, numProcedures) + numPatients + numProcedures) / 2;
+			}
+			else
+			{
+				// search for worklist items, delegating the task of designing the query to the subclass
+				HqlProjectionQuery worklistItemCountQuery = BuildWorklistItemSearchQuery(where, true);
+				count = DoQueryCount(worklistItemCountQuery);
+			}
 
 			// return whether the count exceeded the threshold
     		return count <= threshold;
@@ -514,9 +527,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		/// The implementor must return a query that will find active worklist items - that is, worklist items
 		/// that are in a non-terminal state - or null to indicate that no worklist item query needs to be executed.
 		/// </remarks>
-		/// <param name="where"></param>
-		/// <returns></returns>
-		protected abstract HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where);
+		protected abstract HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
 
 		#endregion
 

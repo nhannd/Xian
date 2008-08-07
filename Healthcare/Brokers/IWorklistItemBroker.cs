@@ -31,24 +31,36 @@ namespace ClearCanvas.Healthcare.Brokers
 		/// <summary>
 		/// Performs a search using the specified criteria.
 		/// </summary>
+		/// <remarks>
+		/// The <paramref name="includeDegenerate"/> flag specifies whether to include results for patients
+		/// and procedures that meet the criteria but do not have an active procedure step.
+		/// </remarks>
 		/// <param name="where"></param>
 		/// <returns></returns>
-		IList<TItem> GetSearchResults(WorklistItemSearchCriteria[] where);
+		/// <param name="includeDegenerate"></param>
+		IList<TItem> GetSearchResults(WorklistItemSearchCriteria[] where, bool includeDegenerate);
 
     	/// <summary>
     	/// Gets an approximate count of the results that a search using the specified criteria would return.
     	/// </summary>
     	/// <remarks>
-    	/// This method will be invoked prior to calling <see cref="GetSearchResults"/>, in order to determine
-    	/// if the search criteria are specific enough to yield an acceptably sized result set.  The method may
-    	/// be implemented such that it does not need to complete the computation, in the case where it determines
-    	/// that the result will exceed the specified threshold.  In this case, the method should simply return false,
-    	/// and the count parameter will be ignored. 
+    	/// <para>
+		/// The <paramref name="includeDegenerate"/> flag specifies whether to include results for patients
+		/// and procedures that meet the criteria but do not have an active procedure step.
+		/// </para>
+		/// <para>
+		/// This method will be invoked prior to calling <see cref="GetSearchResults"/>, in order to determine
+		/// if the search criteria are specific enough to yield an acceptably sized result set.  The method may
+		/// be implemented such that it does not need to complete the computation, in the case where it determines
+		/// that the result will exceed the specified threshold.  In this case, the method should simply return false,
+		/// and the count parameter will be ignored. 
+		/// </para>
     	/// </remarks>
     	/// <param name="where"></param>
     	/// <param name="threshold"></param>
+    	/// <param name="includeDegenerate"></param>
     	/// <param name="count"></param>
 		/// <returns></returns>
-		bool EstimateSearchResultsCount(WorklistItemSearchCriteria[] where, int threshold, out int count);
+		bool EstimateSearchResultsCount(WorklistItemSearchCriteria[] where, int threshold, bool includeDegenerate, out int count);
 	}
 }

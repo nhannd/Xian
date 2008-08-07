@@ -142,7 +142,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return query;
 		}
 
-		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where)
+		protected override HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
 		{
 			// need to set the correct time field
 			// ProcedureStartTime seems like a reasonable choice for rad homepage search,
@@ -153,12 +153,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					sc.TimeField = WorklistTimeField.ProcedureStartTime;
 				});
 
-			HqlProjectionQuery query = CreateBaseItemQuery(where);
+			HqlProjectionQuery query = countQuery ? CreateBaseCountQuery(where) : CreateBaseItemQuery(where);
 
 			// active steps only
 			query.Conditions.Add(ConditionActiveProcedureStep);
 
-			AddConditions(query, where, true, false);
+			AddConditions(query, where, true, !countQuery);
 
 			return query;
 		}

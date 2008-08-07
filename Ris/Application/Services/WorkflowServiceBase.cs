@@ -193,19 +193,8 @@ namespace ClearCanvas.Ris.Application.Services
 			Type procedureStepClass = request.ProcedureStepClassName == null ? null
 				: ProcedureStep.GetSubClass(request.ProcedureStepClassName, PersistenceContext);
 
-			WorklistTextQueryHelper<TItem, TSummary> helper =
-				new WorklistTextQueryHelper<TItem, TSummary>(mapCallback,
-					delegate(WorklistItemSearchCriteria[] criteria, int threshold)
-					{
-						int count;
-						return broker.EstimateSearchResultsCount(criteria, threshold, out count);
-					},
-					delegate(WorklistItemSearchCriteria[] criteria, SearchResultPage page)
-					{
-						return broker.GetSearchResults(criteria);
-					},
-					procedureStepClass,
-					request.DowntimeRecoveryMode);
+			WorklistItemTextQueryHelper<TItem, TSummary> helper =
+				new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, request.Options);
 
 			return helper.Query(request);
 		}

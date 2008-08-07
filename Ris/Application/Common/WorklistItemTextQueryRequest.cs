@@ -22,12 +22,12 @@ namespace ClearCanvas.Ris.Application.Common
 		/// <param name="textQuery"></param>
 		/// <param name="specificityThreshold"></param>
 		/// <param name="procedureStepClassName"></param>
-		/// <param name="downtimeRecoveryMode"></param>
-		public WorklistItemTextQueryRequest(string textQuery, int specificityThreshold, string procedureStepClassName, bool downtimeRecoveryMode)
+		/// <param name="options"></param>
+		public WorklistItemTextQueryRequest(string textQuery, int specificityThreshold, string procedureStepClassName, WorklistItemTextQueryOptions options)
 			: base(textQuery, specificityThreshold)
 		{
 			ProcedureStepClassName = procedureStepClassName;
-			DowntimeRecoveryMode = downtimeRecoveryMode;
+			Options = options;
 		}
 
 		/// <summary>
@@ -40,6 +40,6 @@ namespace ClearCanvas.Ris.Application.Common
 		/// Indicates whether the search is invoked from downtime recovery mode.
 		/// </summary>
 		[DataMember]
-		public bool DowntimeRecoveryMode;
+		public WorklistItemTextQueryOptions Options;
 	}
 }
