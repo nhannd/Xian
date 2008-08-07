@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._assignedRadiologistLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._assignedRadiologistLookup.AutoSize = true;
 			this._assignedRadiologistLookup.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._assignedRadiologistLookup.LabelText = "Supervising Radiologist:";
+			this._assignedRadiologistLookup.LabelText = "Assigned Radiologist:";
 			this._assignedRadiologistLookup.Location = new System.Drawing.Point(576, 2);
 			this._assignedRadiologistLookup.Margin = new System.Windows.Forms.Padding(2);
 			this._assignedRadiologistLookup.Name = "_assignedRadiologistLookup";
