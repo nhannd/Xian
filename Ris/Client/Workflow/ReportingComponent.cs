@@ -378,7 +378,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
+			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
 			string[] staffTypes = string.IsNullOrEmpty(filters)
 				? new string[] { }
 				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();

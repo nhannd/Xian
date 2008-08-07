@@ -29,21 +29,18 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Security.Principal;
-using System.Text;
-using System.Threading;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Ris.Application.Common.Login;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
-using System.ServiceModel;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common.Utilities;
 using System.IdentityModel.Tokens;
+using System.Security.Principal;
+using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Login;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -124,28 +121,20 @@ namespace ClearCanvas.Ris.Application.Services.Login
             settings.Save();
 
 
-            // obtain full name information for the user
-            PersonNameDetail fullName = null;
-        	bool isStaff = false;
+        	StaffSummary staffSummary = null;
             try 
-	        {	
+            {	
                 StaffSearchCriteria where = new StaffSearchCriteria();
                 where.UserName.EqualTo(user);
-	            Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
-                if(staff != null)
-                {
-                    PersonNameAssembler nameAssembler = new PersonNameAssembler();
-                    fullName = nameAssembler.CreatePersonNameDetail(staff.Name);
-                	isStaff = true;
-                }
+                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
+                staffSummary = staff == null ? null : new StaffAssembler().CreateStaffSummary(staff, this.PersistenceContext);
+            }
+            catch (EntityNotFoundException)
+            {
+                // no staff associated to user 
+            }
 
-	        }
-	        catch (EntityNotFoundException)
-	        {
-                // no staff associated to user - can't return full name details to client
-	        }
-
-			return new LoginResponse(token.Id, authorityTokens, fullName, isStaff);
+            return new LoginResponse(token.Id, authorityTokens, staffSummary);
         }
 
         [UpdateOperation]

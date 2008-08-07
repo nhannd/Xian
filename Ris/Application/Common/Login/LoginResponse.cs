@@ -29,37 +29,26 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Login
 {
     [DataContract]
     public class LoginResponse : DataContractBase
     {
-        public LoginResponse(string sessionToken, string[] userAuthorityTokens, PersonNameDetail fullName, bool isStaff)
+        public LoginResponse(string sessionToken, string[] userAuthorityTokens, StaffSummary staffSummary)
         {
             this.SessionToken = sessionToken;
             this.UserAuthorityTokens = userAuthorityTokens;
-            this.FullName = fullName;
-        	this.IsStaff = isStaff;
+            this.StaffSummary = staffSummary;
         }
 
         /// <summary>
-        /// Full name information for the logged-in user. May be null
-        /// if the user is not associated with a RIS staff person.
+        /// Staff Summary for the logged in user.
         /// </summary>
         [DataMember]
-        public PersonNameDetail FullName;
-
-		/// <summary>
-		/// True if the user is associated with a RIS staff person
-		/// </summary>
-		[DataMember]
-		public bool IsStaff;
+        public StaffSummary StaffSummary;
 
         /// <summary>
         /// Set of authority tokens granted to the user

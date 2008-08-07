@@ -29,17 +29,14 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ServiceModel;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common.Login;
-using System.Threading;
-using System.Security.Principal;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
 using System.Net;
+using System.Security.Principal;
+using System.ServiceModel;
+using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Login;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -91,7 +88,7 @@ namespace ClearCanvas.Ris.Client
                             new GenericIdentity(userName), response.UserAuthorityTokens);
 
                         // set the current session before attempting to access other services, as these will require authentication
-                        _current = new LoginSession(userName, response.SessionToken, response.FullName, facility, response.IsStaff);
+                        _current = new LoginSession(userName, response.SessionToken, response.StaffSummary, facility);
                     });
 
                 Platform.Log(LogLevel.Debug, "Login attempt was successful.");
@@ -128,17 +125,15 @@ namespace ClearCanvas.Ris.Client
 
         private readonly string _userName;
         private readonly string _sessionToken;
-        private readonly PersonNameDetail _fullName;
+        private readonly StaffSummary _staff;
         private readonly FacilitySummary _workingFacility;
-    	private readonly bool _isStaff;
 
-        private LoginSession(string userName, string sessionToken, PersonNameDetail fullName, FacilitySummary workingFacility, bool isStaff)
+        private LoginSession(string userName, string sessionToken, StaffSummary staff, FacilitySummary workingFacility)
         {
             _userName = userName;
             _sessionToken = sessionToken;
-            _fullName = fullName;
+            _staff = staff;
             _workingFacility = workingFacility;
-        	_isStaff = isStaff;
         }
 
         /// <summary>
@@ -173,16 +168,24 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public PersonNameDetail FullName
         {
-            get { return _fullName; }
+            get { return _staff == null ? null : _staff.Name; }
         }
 
-		/// <summary>
-		/// Gets if the user is associated with a RIS staff person.
-		/// </summary>
-    	public bool IsStaff
-    	{
-			get { return _isStaff; }
-    	}
+        /// <summary>
+        /// Gets the <see cref="StaffSummary"/> of the logged on user.
+        /// </summary>
+        public StaffSummary Staff
+        {
+            get { return _staff; }
+        }
+
+        /// <summary>
+        /// Gets if the user is associated with a RIS staff person.
+        /// </summary>
+        public bool IsStaff
+        {
+            get { return _staff != null; }
+        }
 
         /// <summary>
         /// Gets the current working facility.

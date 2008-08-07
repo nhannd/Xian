@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
@@ -64,7 +65,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
-			this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
+
+			if(CurrentStaffCanSupervise())
+			{
+				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
+			}
+
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 
 			if (ReportingSettings.Default.EnableTranscriptionWorkflow)
@@ -84,6 +90,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override SearchResultsFolder CreateSearchResultsFolder()
 		{
 			return new Folders.Reporting.ReportingSearchFolder();
+		}
+
+		private bool CurrentStaffCanSupervise()
+		{
+			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
+			List<string> staffTypes = string.IsNullOrEmpty(filters)
+										? new List<string>()
+										: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); });
+			string currentUserStaffType = LoginSession.Current.Staff.StaffType.Code;
+			return staffTypes.Contains(currentUserStaffType);
 		}
 	}
 }

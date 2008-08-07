@@ -349,7 +349,7 @@
     <value>- {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped</value>
   </data>
   <data name="MessageChooseRadiologist" xml:space="preserve">
-    <value>You must choose a radiologist to dictate for.</value>
+    <value>You must choose a supervisor.</value>
   </data>
   <data name="MessageDeleteSelectedVisit" xml:space="preserve">
     <value>Are you sure you want to delete this visit?</value>
