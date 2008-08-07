@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			result = null;
 
-			StaffSummaryComponent staffComponent = new StaffSummaryComponent(true);
+			StaffSummaryComponent staffComponent = new StaffSummaryComponent(true, _staffTypesFilter);
 			if (!string.IsNullOrEmpty(query))
 			{
 				string[] names = query.Split(',');
