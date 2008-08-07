@@ -233,6 +233,7 @@
     <EmbeddedResource Include="Mappings\CannedText.hbm.xml" />
     <EmbeddedResource Include="Mappings\ProtocolUrgencyEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientNote.hbm.xml" />
+    <EmbeddedResource Include="Mappings\RadiologistAdminWorklists.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\WorkQueue.hbm.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />

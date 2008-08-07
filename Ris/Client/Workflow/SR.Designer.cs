@@ -1267,6 +1267,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Radiologist Admin.
+        /// </summary>
+        internal static string TitleRadiologistAdminFolderSystem {
+            get {
+                return ResourceManager.GetString("TitleRadiologistAdminFolderSystem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Radiologist Home.
         /// </summary>
         internal static string TitleRadiologistHome {

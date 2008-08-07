@@ -425,8 +425,23 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return new FaxReportResponse();
 		}
 
+		[UpdateOperation]
+		public ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ProcedureStepRef, "ProcedureStepRef");
+			Platform.CheckMemberIsSet(request.ReassignedRadiologist, "ReassignedRadiologist");
 
-        #endregion
+			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
+			Staff radiologist = PersistenceContext.Load<Staff>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
+
+			step.Assign(radiologist);
+			PersistenceContext.SynchState();
+
+			return new ReassignProcedureStepResponse(step.GetRef());
+		}
+
+    	#endregion
 
         #region OperationEnablement Helpers
 

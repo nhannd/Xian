@@ -519,6 +519,9 @@
   <data name="TitleProtocollingFolderSystem" xml:space="preserve">
     <value>Protocolling</value>
   </data>
+  <data name="TitleRadiologistAdminFolderSystem" xml:space="preserve">
+    <value>Radiologist Admin</value>
+  </data>
   <data name="TitleRadiologistHome" xml:space="preserve">
     <value>Radiologist Home</value>
   </data>

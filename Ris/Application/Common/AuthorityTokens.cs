@@ -293,6 +293,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow access to the Emergency folder system.")]
 			public const string Emergency = "Folder Systems/Emergency";
+
+			[AuthorityToken(Description = "Allow access to the Emergency folder system.")]
+			public const string RadiologistAdmin = "Folder Systems/Radiologist Admin";
 		}
-    }
+	}
 }

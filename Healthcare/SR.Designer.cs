@@ -556,6 +556,24 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Protocolling Admin.
+        /// </summary>
+        internal static string ProtocollingAdminAssignedWorklist {
+            get {
+                return ResourceManager.GetString("ProtocollingAdminAssignedWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists active procedures with protocols that are assigned to a radiologist..
+        /// </summary>
+        internal static string ProtocollingAdminAssignedWorklistDescription {
+            get {
+                return ResourceManager.GetString("ProtocollingAdminAssignedWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reading Group.
         /// </summary>
         internal static string ReadingGroup {
@@ -768,6 +786,24 @@ namespace ClearCanvas.Healthcare {
         internal static string Report {
             get {
                 return ResourceManager.GetString("Report", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reporting Admin.
+        /// </summary>
+        internal static string ReportingAdminAssignedWorklist {
+            get {
+                return ResourceManager.GetString("ReportingAdminAssignedWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists active procedures that have been assigned to a radiologist..
+        /// </summary>
+        internal static string ReportingAdminAssignedWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingAdminAssignedWorklistDescription", resourceCulture);
             }
         }
         
@@ -1029,6 +1065,15 @@ namespace ClearCanvas.Healthcare {
         internal static string WorklistCategoryProtocoling {
             get {
                 return ResourceManager.GetString("WorklistCategoryProtocoling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radiologist Admin.
+        /// </summary>
+        internal static string WorklistCategoryRadiologistAdmin {
+            get {
+                return ResourceManager.GetString("WorklistCategoryRadiologistAdmin", resourceCulture);
             }
         }
         

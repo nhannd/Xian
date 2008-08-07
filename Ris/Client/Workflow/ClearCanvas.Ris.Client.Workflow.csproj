@@ -45,8 +45,12 @@
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
     <Compile Include="EditReportTool.cs" />
+    <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
+    <Compile Include="RadiologistAdminWorkflowFolderSystem.cs" />
+    <Compile Include="RadiologistAdminWorkflowItemTools.cs" />
+    <Compile Include="ReassignComponent.cs" />
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
     <Compile Include="ViewImagesTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />

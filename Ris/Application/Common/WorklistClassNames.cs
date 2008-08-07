@@ -163,5 +163,15 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string EmergencyCancelledWorklist = "EmergencyCancelledWorklist";
 		
 		#endregion
+
+		#region Reporting Worklist Class Names
+
+		[WorklistClassName]
+		public const string ReportingAdminAssignedWorklist = "ReportingAdminAssignedWorklist";
+
+		[WorklistClassName]
+		public const string ProtocollingAdminAssignedWorklist = "ProtocollingAdminAssignedWorklist";
+
+		#endregion
 	}
 }

@@ -108,6 +108,7 @@
     <Compile Include="OrderNoteboxes.cs" />
     <Compile Include="OrderNoteboxItem.cs" />
     <Compile Include="PatientReconciliation\Utility.cs" />
+    <Compile Include="RadiologistAdminWorklists.cs" />
     <Compile Include="ReportingProtocolWorklists.cs" />
     <Compile Include="ExternalPractitionerContactPoint.cs" />
     <Compile Include="IWorklistQueryContext.cs" />

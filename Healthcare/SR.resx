@@ -282,6 +282,12 @@
   <data name="Procedure" xml:space="preserve">
     <value>Procedure</value>
   </data>
+  <data name="ProtocollingAdminAssignedWorklist" xml:space="preserve">
+    <value>Protocolling Admin</value>
+  </data>
+  <data name="ProtocollingAdminAssignedWorklistDescription" xml:space="preserve">
+    <value>Lists active procedures with protocols that are assigned to a radiologist.</value>
+  </data>
   <data name="ReadingGroup" xml:space="preserve">
     <value>Reading Group</value>
   </data>
@@ -353,6 +359,12 @@
   </data>
   <data name="Report" xml:space="preserve">
     <value>Report</value>
+  </data>
+  <data name="ReportingAdminAssignedWorklist" xml:space="preserve">
+    <value>Reporting Admin</value>
+  </data>
+  <data name="ReportingAdminAssignedWorklistDescription" xml:space="preserve">
+    <value>Lists active procedures that have been assigned to a radiologist.</value>
   </data>
   <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
     <value>To be Protocolled</value>
@@ -440,6 +452,9 @@
   </data>
   <data name="WorklistCategoryProtocoling" xml:space="preserve">
     <value>Protocoling</value>
+  </data>
+  <data name="WorklistCategoryRadiologistAdmin" xml:space="preserve">
+    <value>Radiologist Admin</value>
   </data>
   <data name="WorklistCategoryRegistration" xml:space="preserve">
     <value>Registration</value>

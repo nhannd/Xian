@@ -187,5 +187,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
 		[OperationContract]
     	FaxReportResponse FaxReport(FaxReportRequest request);
+
+		/// <summary>
+		/// Reassigning a step to another radiologist.
+		/// </summary>
+		/// <param name="request"><see cref="ReassignProcedureStepRequest"/></param>
+		/// <returns><see cref="ReassignProcedureStepResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request);
 	}
 }
