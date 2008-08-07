@@ -124,7 +124,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 			}
 
 			// create an mpps
-			ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep();
+			ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep(technologist, startTime);
 			context.Lock(mpps, DirtyState.New);
 
 			foreach (ModalityProcedureStep mps in modalitySteps)

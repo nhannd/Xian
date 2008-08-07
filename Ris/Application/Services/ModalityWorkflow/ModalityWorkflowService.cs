@@ -241,6 +241,12 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
 
+			// copy extended properties (should this be in an assembler?)
+			foreach (KeyValuePair<string, string> pair in request.ExtendedProperties)
+			{
+				mpps.ExtendedProperties[pair.Key] = pair.Value;
+			}
+
             // TODO determine procedureAborted logic
             DiscontinueModalityPerformedProcedureStepOperation op = new DiscontinueModalityPerformedProcedureStepOperation();
             op.Execute(mpps, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));

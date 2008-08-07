@@ -124,6 +124,13 @@
       <DependentUpon>ChangePasswordForm.cs</DependentUpon>
     </Compile>
     <Compile Include="ChangePasswordDialog.cs" />
+    <Compile Include="DateTimeEntryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DateTimeEntryComponentControl.Designer.cs">
+      <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DateTimeEntryComponentView.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -578,6 +585,10 @@
     <None Include="Resources\searchtoolsmall.png" />
     <None Include="Resources\UserText.png" />
     <None Include="Resources\PasswordText.png" />
+    <EmbeddedResource Include="DateTimeEntryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Splash.png" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>

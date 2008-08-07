@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -31,21 +31,48 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.Workflow;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Healthcare
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public class ModalityPerformedProcedureStep : PerformedProcedureStep
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="DateTimeEntryComponent"/>
+    /// </summary>
+    public partial class DateTimeEntryComponentControl : ApplicationComponentUserControl
     {
-    	public ModalityPerformedProcedureStep()
-    	{
-    	}
+        private DateTimeEntryComponent _component;
 
-    	public ModalityPerformedProcedureStep(Staff performingStaff, DateTime? startTime)
-			: base(performingStaff, startTime)
-    	{
-    	}
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public DateTimeEntryComponentControl(DateTimeEntryComponent component)
+            :base(component)
+        {
+            InitializeComponent();
+
+            _component = component;
+
+			_date.DataBindings.Add("Nullable", _component, "AllowNull");
+			_date.DataBindings.Add("Value", _component, "DateAndTime", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_time.DataBindings.Add("Nullable", _component, "AllowNull");
+			_time.DataBindings.Add("Value", _component, "DateAndTime", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		private void _okButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
     }
 }

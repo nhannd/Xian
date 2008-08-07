@@ -370,10 +370,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return;
 			}
 
+			// bail on validation errors
 			if (this.HasValidationErrors)
 			{
 				ShowValidation(true);
 				return;
+			}
+
+			// if downtime recovery mode, need to get the time from the user
+			DateTime? endTime = _selectedMpps.StartTime;
+			if(DowntimeRecovery.InDowntimeRecoveryMode)
+			{
+				if(!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
+					return;
 			}
 
 			try
@@ -386,6 +395,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						CompleteModalityPerformedProcedureStepRequest request = new CompleteModalityPerformedProcedureStepRequest(
 								_selectedMpps.ModalityPerformendProcedureStepRef,
 								_selectedMpps.ExtendedProperties);
+						request.CompletedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
 						CompleteModalityPerformedProcedureStepResponse response = service.CompleteModalityPerformedProcedureStep(request);
 
 						RefreshProcedurePlanTree(response.ProcedurePlan);
@@ -417,11 +427,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (selectedMpps != null)
 				{
+					// if downtime recovery mode, need to get the time from the user
+					DateTime? endTime = _selectedMpps.StartTime;
+					if (DowntimeRecovery.InDowntimeRecoveryMode)
+					{
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Completed Time", false, ref endTime))
+							return;
+					}
+
 					Platform.GetService<IModalityWorkflowService>(
 						delegate(IModalityWorkflowService service)
 						{
-							//TODO should save details here too
-							DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
+							DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(
+								selectedMpps.ModalityPerformendProcedureStepRef,
+								selectedMpps.ExtendedProperties);
+							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
+							
 							DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
 
 							RefreshProcedurePlanTree(response.ProcedurePlan);

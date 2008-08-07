@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -32,20 +32,42 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using ClearCanvas.Common;
-using ClearCanvas.Workflow;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public class ModalityPerformedProcedureStep : PerformedProcedureStep
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="DateTimeEntryComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(DateTimeEntryComponentViewExtensionPoint))]
+    public class DateTimeEntryComponentView : WinFormsView, IApplicationComponentView
     {
-    	public ModalityPerformedProcedureStep()
-    	{
-    	}
+        private DateTimeEntryComponent _component;
+        private DateTimeEntryComponentControl _control;
 
-    	public ModalityPerformedProcedureStep(Staff performingStaff, DateTime? startTime)
-			: base(performingStaff, startTime)
-    	{
-    	}
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (DateTimeEntryComponent)component;
+        }
+
+        #endregion
+
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new DateTimeEntryComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

@@ -159,32 +159,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             if(itemKey.OrderRef == null)
                 return false;
 
-			return GetProcedureNotCheckedIn(itemKey.OrderRef).Count > 0;
+        	return GetProcedureNotCheckedIn(itemKey.OrderRef).Count > 0;
         }
 
 		private List<Procedure> GetProcedureNotCheckedIn(EntityRef orderRef)
 		{
-			IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
-			Order order = orderBroker.Load(orderRef, EntityLoadFlags.Proxy);
-			List<Procedure> proceduresNotCheckedIn = new List<Procedure>();
-
-			if (order.IsTerminated == false)
-			{
-				IProcedureBroker rpBroker = PersistenceContext.GetBroker<IProcedureBroker>();
-				ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
-				criteria.Order.EqualTo(order);
-				criteria.ScheduledStartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-				proceduresNotCheckedIn = CollectionUtils.Select(rpBroker.Find(criteria),
-					delegate(Procedure rp)
-					{
-						if (rp.IsTerminated)
-							return false;
-						else
-							return rp.ProcedureCheckIn.IsPreCheckIn;
-					});
-			}
-
-			return proceduresNotCheckedIn;
+			Order order = PersistenceContext.Load<Order>(orderRef, EntityLoadFlags.Proxy);
+			return CollectionUtils.Select(order.Procedures,
+						delegate(Procedure p)
+						{
+							return p.ProcedureCheckIn.IsPreCheckIn;
+						});
 		}
 
     	public bool CanCancelOrder(WorklistItemKey itemKey)

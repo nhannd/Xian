@@ -43,7 +43,6 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class PerformedProcedureStep : PerformedStep
     {
-        private string _documentation;
         private IDictionary<string, string> _extendedProperties = new Dictionary<string, string>();
 
 
@@ -52,23 +51,13 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        public PerformedProcedureStep(Staff performingStaff, string documentation)
-            : base(new ProcedureStepPerformer(performingStaff))
+        public PerformedProcedureStep(Staff performingStaff, DateTime? startTime)
+            : base(new ProcedureStepPerformer(performingStaff), startTime)
         {
-            _documentation = documentation;
         }
 
         public PerformedProcedureStep()
         {
-        }
-
-        /// <summary>
-        /// Placeholder for Documentation pending introduction of "tagging"
-        /// </summary>
-        public virtual string Documentation
-        {
-            get { return _documentation; }
-            set { _documentation = value; }
         }
 
         public virtual IDictionary<string, string> ExtendedProperties

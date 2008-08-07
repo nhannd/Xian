@@ -346,10 +346,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (checkedMpsRefs.Count > 0)
                 {
+					DateTime? startTime = Platform.Time;
+					if (DowntimeRecovery.InDowntimeRecoveryMode)
+					{
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
+							return;
+					}
+
                     Platform.GetService<IModalityWorkflowService>(
                         delegate(IModalityWorkflowService service)
                         {
                             StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
+                        	request.StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null;
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
                             RefreshProcedurePlanSummary(response.ProcedurePlan);
@@ -375,11 +383,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (checkedMpsRefs.Count > 0)
                 {
-                    Platform.GetService<IModalityWorkflowService>(
+                	DateTime? discontinueTime = Platform.Time;
+					if (DowntimeRecovery.InDowntimeRecoveryMode)
+					{
+						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
+							return;
+					}
+
+					Platform.GetService<IModalityWorkflowService>(
                         delegate(IModalityWorkflowService service)
                         {
                             DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
-                            DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
+							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
+							DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
                             RefreshProcedurePlanSummary(response.ProcedurePlan);
                             UpdateActionEnablement();
