@@ -116,10 +116,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ReportingAwaitingReviewWorklist = "ReportingAwaitingReviewWorklist";
 
 		[WorklistClassName]
-		public const string ReportingRadiologistVerifiedWorklist = "ReportingRadiologistVerifiedWorklist";
-
-		[WorklistClassName]
-		public const string ReportingResidentVerifiedWorklist = "ReportingResidentVerifiedWorklist";
+		public const string ReportingVerifiedWorklist = "ReportingVerifiedWorklist";
 
 		#region Protocolling
 

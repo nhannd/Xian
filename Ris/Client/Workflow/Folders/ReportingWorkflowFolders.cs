@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedWorklist)]
-		[FolderPath("Assigned/To be Reported")]
+		[FolderPath("My Items/To be Reported")]
 		public class AssignedFolder : ReportingWorkflowFolder
 		{
 		}
@@ -59,45 +59,33 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewWorklist)]
-		[FolderPath("Assigned/To be Reviewed")]
+		[FolderPath("My Items/To be Reviewed")]
 		public class AssignedForReviewFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingDraftWorklist)]
-		[FolderPath("Draft")]
+		[FolderPath("My Items/Draft")]
 		public class DraftFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingInTranscriptionWorklist)]
-		[FolderPath("In Transcription")]
+		[FolderPath("My Items/In Transcription")]
 		public class InTranscriptionFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingReviewWorklist)]
-		[FolderPath("Awaiting Review")]
+		[FolderPath("My Items/Awaiting Review")]
 		public class AwaitingReviewFolder : ReportingWorkflowFolder
 		{
 		}
 
-		[FolderForWorklistClass(WorklistClassNames.ReportingRadiologistVerifiedWorklist)]
-		[FolderPath("Verified")]
+		[FolderForWorklistClass(WorklistClassNames.ReportingVerifiedWorklist)]
+		[FolderPath("My Items/Verified")]
 		public class VerifiedFolder : ReportingWorkflowFolder
 		{
-			/// <summary>
-			/// Overridden to tweak behaviour based on user permissions.
-			/// </summary>
-			public override string WorklistClassName
-			{
-				get
-				{
-					return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify) ?
-						WorklistClassNames.ReportingRadiologistVerifiedWorklist :
-						WorklistClassNames.ReportingResidentVerifiedWorklist;
-				}
-			}
 		}
 
 		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
@@ -115,31 +103,31 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedReviewProtocolWorklist)]
-		[FolderPath("Assigned/To be Reviewed")]
+		[FolderPath("My Items/To be Reviewed")]
 		public class AssignedForReviewProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingDraftProtocolWorklist)]
-		[FolderPath("Draft")]
+		[FolderPath("My Items/Draft")]
 		public class DraftProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingCompletedProtocolWorklist)]
-		[FolderPath("Completed")]
+		[FolderPath("My Items/Completed")]
 		public class CompletedProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingApprovalProtocolWorklist)]
-		[FolderPath("Awaiting Review")]
+		[FolderPath("My Items/Awaiting Review")]
 		public class AwaitingApprovalProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[FolderForWorklistClass(WorklistClassNames.ReportingRejectedProtocolWorklist)]
-		[FolderPath("Rejected")]
+		[FolderPath("My Items/Rejected")]
 		public class RejectedProtocolFolder : ReportingWorkflowFolder
 		{
 		}

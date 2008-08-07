@@ -157,52 +157,45 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(VerificationStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.Staff);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new WorklistItemSearchCriteria[] { criteria };
+			ReportingWorklistItemSearchCriteria criteriaNotEqual = new ReportingWorklistItemSearchCriteria();
+			criteriaNotEqual.ProcedureStepClass = typeof(VerificationStep);
+			criteriaNotEqual.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+			criteriaNotEqual.ReportPart.Interpreter.EqualTo(wqc.Staff);
+			criteriaNotEqual.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.Staff);
+			ApplyTimeCriteria(criteriaNotEqual, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+
+			ReportingWorklistItemSearchCriteria criteriaNull = new ReportingWorklistItemSearchCriteria();
+			criteriaNull.ProcedureStepClass = typeof(VerificationStep);
+			criteriaNull.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+			criteriaNull.ReportPart.Interpreter.EqualTo(wqc.Staff);
+			criteriaNull.ProcedureStep.Scheduling.Performer.Staff.IsNull();
+
+			return new WorklistItemSearchCriteria[] { criteriaNotEqual, criteriaNull };
 		}
 	}
 
-	public abstract class ReportingVerifiedWorklist : ReportingWorklist
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(true)]
+	[StaticWorklist(true)]
+	[WorklistClassDescription("ReportingVerifiedWorklistDescription")]
+	public class ReportingVerifiedWorklist : ReportingWorklist
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(PublicationStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-			GetStaffSearchCriteria(criteria).EqualTo(wqc.Staff);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
-			return new WorklistItemSearchCriteria[] { criteria };
-		}
+			ReportingWorklistItemSearchCriteria unsupervised = new ReportingWorklistItemSearchCriteria();
+			unsupervised.ProcedureStepClass = typeof(PublicationStep);
+			unsupervised.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
+			unsupervised.ReportPart.Supervisor.IsNull();
+			unsupervised.ReportPart.Verifier.EqualTo(wqc.Staff);
+			ApplyTimeCriteria(unsupervised, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
 
-		protected abstract StaffSearchCriteria GetStaffSearchCriteria(ReportingWorklistItemSearchCriteria criteria);
-	}
+			ReportingWorklistItemSearchCriteria supervised = new ReportingWorklistItemSearchCriteria();
+			supervised.ProcedureStepClass = typeof(PublicationStep);
+			supervised.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
+			supervised.ReportPart.Supervisor.IsNotNull();
+			supervised.ReportPart.Interpreter.EqualTo(wqc.Staff);
 
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
-	[StaticWorklist(true)]
-	[WorklistClassDescription("ReportingRadiologistVerifiedWorklistDescription")]
-	public class ReportingRadiologistVerifiedWorklist : ReportingVerifiedWorklist
-	{
-		protected override StaffSearchCriteria GetStaffSearchCriteria(ReportingWorklistItemSearchCriteria criteria)
-		{
-			return criteria.ReportPart.Verifier;
+			return new WorklistItemSearchCriteria[] { unsupervised, supervised };
 		}
 	}
-
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
-	[StaticWorklist(true)]
-	[WorklistClassDescription("ReportingResidentVerifiedWorklistDescription")]
-	public class ReportingResidentVerifiedWorklist : ReportingVerifiedWorklist
-	{
-		protected override StaffSearchCriteria GetStaffSearchCriteria(ReportingWorklistItemSearchCriteria criteria)
-		{
-			return criteria.ReportPart.Interpreter;
-		}
-	}
-
 }
