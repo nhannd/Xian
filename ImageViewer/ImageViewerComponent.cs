@@ -671,6 +671,8 @@ namespace ClearCanvas.ImageViewer
 
 		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow)
 		{
+			imageViewer.StartPrefetching();
+
 			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
 				desktopWindow,
 				imageViewer,
@@ -682,8 +684,6 @@ namespace ClearCanvas.ImageViewer
 			                    	};
 			imageViewer.Layout();
 			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
-
-			imageViewer.StartPrefetching();
 		}
 
 		#endregion
