@@ -166,7 +166,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 		{
 			TerminatePerformedProcedureStep(mpps, time);
 
-			ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+			ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ProcedureStep>(mpps.Activities).As<ModalityProcedureStep>();
 			Order order = oneMps.Procedure.Order;
 
 			// try to complete any mps that have all mpps completed

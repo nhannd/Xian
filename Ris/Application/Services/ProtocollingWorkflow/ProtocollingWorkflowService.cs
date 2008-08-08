@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			Procedure rp = this.PersistenceContext.Load<Procedure>(request.ProcedureRef);
 			ProtocolAssembler assembler = new ProtocolAssembler();
 
-			ProcedureStep uncastProtocolStep = CollectionUtils.SelectFirst<ProcedureStep>(
+			ProcedureStep uncastProtocolStep = CollectionUtils.SelectFirst(
 				rp.ProcedureSteps,
 				delegate(ProcedureStep ps) { return ps.Is<ProtocolProcedureStep>(); });
 

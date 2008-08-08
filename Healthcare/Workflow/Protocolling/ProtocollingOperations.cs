@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 			protected static T CurrentProcedureStep<T>(Procedure rp, ActivityStatus status) where T : ProcedureStep
 			{
-				ProcedureStep uncastProcedureStep = CollectionUtils.SelectFirst<ProcedureStep>(
+				ProcedureStep uncastProcedureStep = CollectionUtils.SelectFirst(
 					rp.ProcedureSteps,
 					delegate(ProcedureStep ps) { return ps.Is<T>() && ps.State == status; });
 

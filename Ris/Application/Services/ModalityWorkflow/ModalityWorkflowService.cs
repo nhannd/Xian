@@ -254,7 +254,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             this.PersistenceContext.SynchState();
 
             // Drill back to order so we can refresh procedure plan
-            ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+            ProcedureStep oneMps = CollectionUtils.FirstElement(mpps.Activities).As<ProcedureStep>();
             ProcedurePlanAssembler planAssembler = new ProcedurePlanAssembler();
             ModalityPerformedProcedureStepAssembler stepAssembler = new ModalityPerformedProcedureStepAssembler();
 
