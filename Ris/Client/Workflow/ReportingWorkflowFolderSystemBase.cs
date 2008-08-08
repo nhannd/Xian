@@ -29,19 +29,21 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItem>
-    {
-    }
+	public interface IReportingWorkflowItemToolContext : IWorkflowItemToolContext<ReportingWorklistItem>
+	{
+	}
 
-    public interface IReportingWorkflowFolderToolContext : IWorkflowFolderToolContext
-    {
-    }
+	public interface IReportingWorkflowFolderToolContext : IWorkflowFolderToolContext
+	{
+	}
 
 	public abstract class ReportingWorkflowFolderSystemBase<TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint>
 		: WorklistFolderSystem<ReportingWorklistItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, IReportingWorkflowService>
@@ -50,25 +52,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
 	{
 		class ReportingWorkflowItemToolContext : WorkflowItemToolContext, IReportingWorkflowItemToolContext
-        {
-            public ReportingWorkflowItemToolContext(WorkflowFolderSystem owner)
-				:base(owner)
-            {
-            }
-        }
+		{
+			public ReportingWorkflowItemToolContext(WorkflowFolderSystem owner)
+				: base(owner)
+			{
+			}
+		}
 
 		class ReportingWorkflowFolderToolContext : WorkflowFolderToolContext, IReportingWorkflowFolderToolContext
-        {
-            public ReportingWorkflowFolderToolContext(WorkflowFolderSystem owner)
-				:base(owner)
-            {
-            }
-        }
+		{
+			public ReportingWorkflowFolderToolContext(WorkflowFolderSystem owner)
+				: base(owner)
+			{
+			}
+		}
 
-        protected ReportingWorkflowFolderSystemBase(string title)
-            : base(title)
-        {
-        }
+		protected ReportingWorkflowFolderSystemBase(string title)
+			: base(title)
+		{
+		}
 
 		protected override IWorkflowFolderToolContext CreateFolderToolContext()
 		{
@@ -79,5 +81,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			return new ReportingWorkflowItemToolContext(this);
 		}
-    }
+
+		protected static bool CurrentStaffCanSupervise()
+		{
+			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
+			List<string> staffTypes = string.IsNullOrEmpty(filters)
+										? new List<string>()
+										: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); });
+			string currentUserStaffType = LoginSession.Current.Staff.StaffType.Code;
+			return staffTypes.Contains(currentUserStaffType);
+		}
+	}
 }

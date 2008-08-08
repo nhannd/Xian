@@ -33,9 +33,7 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -64,8 +62,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public ProtocolWorkflowFolderSystem()
 			: base(SR.TitleProtocollingFolderSystem)
 		{
-            // add the personal folders, since they are not extensions and will not be automatically added
-			this.Folders.Add(new Folders.Reporting.AssignedForReviewProtocolFolder());
+			// add the personal folders, since they are not extensions and will not be automatically added
+			if (CurrentStaffCanSupervise())
+			{
+				this.Folders.Add(new Folders.Reporting.AssignedForReviewProtocolFolder());
+			}
 			this.Folders.Add(new Folders.Reporting.DraftProtocolFolder());
 
 			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview))
@@ -80,9 +81,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
 		}
 
-        protected override SearchResultsFolder CreateSearchResultsFolder()
-        {
-            return new Folders.Reporting.ProtocollingSearchFolder();
-        }
-    }
+		protected override SearchResultsFolder CreateSearchResultsFolder()
+		{
+			return new Folders.Reporting.ProtocollingSearchFolder();
+		}
+	}
 }
