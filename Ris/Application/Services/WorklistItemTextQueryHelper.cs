@@ -155,8 +155,10 @@ namespace ClearCanvas.Ris.Application.Services
 			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
 				delegate(string word)
 				{
+					// Bug #2577: accession # is guaranteed not to be stored with dash characters
+					// therefore it is safe to strip the dashes out
 					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
-					c.Order.AccessionNumber.StartsWith(word);
+					c.Order.AccessionNumber.StartsWith(word.Replace("-", ""));
 					return c;
 				}));
 

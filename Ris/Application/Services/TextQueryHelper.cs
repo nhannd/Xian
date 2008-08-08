@@ -69,8 +69,8 @@ namespace ClearCanvas.Ris.Application.Services
         public static string[] ParseIdentifiers(string query)
         {
             // define an identifier as anything containing at least 1 digit, and any other alpha-digit chars
-            Regex termDefinition = new Regex(@"\b[A-Za-z\d]*\d[A-Za-z\d]*\b");
-            return ParseTerms(query, termDefinition);
+			Regex termDefinition = new Regex(@"\b[A-Za-z\d]+[\-A-Za-z\d]*\d[\-A-Za-z\d]*[A-Za-z\d]\b");
+			return ParseTerms(query, termDefinition);
         }
 
         public static string[] ParseTerms(string query)
