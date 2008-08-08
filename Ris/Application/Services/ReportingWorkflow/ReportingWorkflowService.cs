@@ -470,14 +470,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Cancel))
                 return false;
-            return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
+
+            // if the submit for review token is present, do not enable cancel.  This ensures items 
+            // submitted with or without a supervisor have a consistent set of operations.
+            return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey, true);
         }
 
         public bool CanReviseResidentReport(WorklistItemKey itemKey)
         {
-            // This may need to change to the "SubmitForApproval" token if that is introduced.
-            // Otherwise, since anyone can currently submit reports for reviw, "Create" seems reasonable.
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.SubmitForReview))
                 return false;
 
             return CanExecuteOperation(new Operations.ReviseResidentReport(), itemKey);
@@ -488,7 +489,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
                 return false;
 
-            return CanExecuteOperation(new Operations.StartVerification(), itemKey);
+            // If the submit for review token is present, do not enable verification, defer to 
+            // revise report.  This ensures items submitted with or without a supervisor have a
+            // consistent set of operations.
+            return CanExecuteOperation(new Operations.StartVerification(), itemKey, true);
         }
 
         public bool CanCompleteVerification(WorklistItemKey itemKey)
@@ -496,7 +500,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Verify))
                 return false;
 
-            return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
+            // If the submit for review token is present, do not enable verification, defer to 
+            // revise report.  This ensures items submitted with or without a supervisor have a
+            // consistent set of operations.
+            return CanExecuteOperation(new Operations.CompleteVerification(), itemKey, true);
         }
 
         public bool CanCreateAddendum(WorklistItemKey itemKey)
@@ -545,6 +552,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
     	private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
         {
+            return CanExecuteOperation(op, itemKey, false);
+        }
+
+        private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey, bool disableIfSubmitForReview)
+        {
             // if there is no proc step ref, operation is not available
             if(itemKey.ProcedureStepRef == null)
                 return false;
@@ -555,6 +567,16 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             // this may need to change in future
             if(!step.Is<ReportingProcedureStep>())
                 return false;
+
+            // Special Case:
+            // If the user has the SubmitForReview token and the step is unassigned, disable the operation
+            if (disableIfSubmitForReview 
+                && step.AssignedStaff == null 
+                && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.SubmitForReview))
+            {
+            	return false;
+            }
+
             return op.CanExecute(step.As<ReportingProcedureStep>(), this.CurrentUserStaff);
         }
 
