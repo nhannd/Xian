@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 				context.CommandProcessor = processor;
 
-	
+
 				if (!processor.Execute())
 				{
 					Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
@@ -138,7 +138,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 				}
 				else
+				{
 					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
+					Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", studyStorage.StudyInstanceUid,_hsmArchive.PartitionArchive.Description);
+				}
 			}
 			catch (Exception e)
 			{

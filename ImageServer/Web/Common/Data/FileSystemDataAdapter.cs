@@ -83,9 +83,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.HighWatermark = filesystem.HighWatermark;
                 parms.LowWatermark = filesystem.LowWatermark;
 
-                IList<Filesystem> list = insert.Execute(parms);
+                Filesystem newFilesystem = insert.FindOne(parms);
 
-                ok = list != null && list.Count > 0;
+				ok = newFilesystem != null;
 
                 if (ok)
                     ctx.Commit();

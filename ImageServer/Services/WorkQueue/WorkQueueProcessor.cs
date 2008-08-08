@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 // failed item expires now (so other process can remove them if desired)
                 parms.FailedExpirationTime = Platform.Time;
 
-                IList<Model.WorkQueue> modifiedList = reset.Execute(parms);
+                IList<Model.WorkQueue> modifiedList = reset.Find(parms);
 
                 if (modifiedList != null)
                 {
@@ -232,71 +232,71 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             while (true)
             {
-                bool foundResult = false;
-
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
                 {
                     try
                     {
-                        IList<Model.WorkQueue> list;
+                        Model.WorkQueue queueListItem;
 
                         using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                         {
                             IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
                             WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
                             parms.ProcessorID = ServiceTools.ProcessorId;
-                            
-                            list = select.Execute(parms);
 
-                            if (list.Count > 0)
+							queueListItem = select.FindOne(parms);
+
+							if (queueListItem != null)
                                 updateContext.Commit();
                         }
 
-                        if (list.Count > 0)
-                            foundResult = true;
+						if (queueListItem == null)
+						{
+							/* No result found */
+							_threadStop.WaitOne(WorkQueueSettings.Default.WorkQueueQueryDelay, false);
+							_threadStop.Reset();
+						}
+						else
+						{
+							if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
+							{
+								Platform.Log(LogLevel.Error,
+											 "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
+											 queueListItem.WorkQueueTypeEnum);
 
-                        foreach (Model.WorkQueue queueListItem in list)
-                        {
-                            if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
-                            {
-                                Platform.Log(LogLevel.Error,
-                                             "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
-                                             queueListItem.WorkQueueTypeEnum);
+								//Just fail the WorkQueue item, not much else we can do
+								FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum);
+								continue;
+							}
 
-                                //Just fail the WorkQueue item, not much else we can do
-                                FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum );
-                                continue;
-                            }
+							IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
 
-                            IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
+							IWorkQueueItemProcessor processor;
+							try
+							{
+								processor = factory.GetItemProcessor();
+							}
+							catch (Exception e)
+							{
+								Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
+								FailQueueItem(queueListItem, "Failure getting WorkQueue processor: " + e.Message);
+								continue;
+							}
 
-                            IWorkQueueItemProcessor processor;
-                            try
-                            {
-                                processor = factory.GetItemProcessor();
-                            }
-                            catch (Exception e)
-                            {
-                                Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
-                                FailQueueItem(queueListItem, "Failure getting WorkQueue processor: " + e.Message);
-                                continue;
-                            }
-
-                            
-                            // Enqueue the actual processing of the item to the 
-                            // thread pool.  
-                            _threadPool.Enqueue(queueListItem,delegate(Model.WorkQueue queueItem)
-                                                    {
-                                                        try
-                                                        {
-                                                            processor.Process(queueItem);
-                                                        }
-                                                        catch (Exception e)
-                                                        {
-                                                            Platform.Log(LogLevel.Error, e,
-                                                                         "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-                                                                         queueItem.WorkQueueTypeEnum,
-                                                                         queueItem.GetKey());
+							// Enqueue the actual processing of the item to the 
+							// thread pool.  
+							_threadPool.Enqueue(queueListItem, delegate(Model.WorkQueue queueItem)
+													{
+														try
+														{
+															processor.Process(queueItem);
+														}
+														catch (Exception e)
+														{
+															Platform.Log(LogLevel.Error, e,
+																		 "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+																		 queueItem.WorkQueueTypeEnum,
+																		 queueItem.GetKey());
 															if (e.InnerException != null)
 																FailQueueItem(queueItem, e.InnerException.Message);
 															else
@@ -304,25 +304,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 
 
-                                                            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
-                                                                                processor.Name, AlertTypeCodes.UnableToProcess,
-                                                                                "Work Queue item failed: Type={0}, GUID={1}",
-                                                                                 queueItem.WorkQueueTypeEnum,
-                                                                                 queueItem.GetKey());
-                                                        }
+															ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
+																				processor.Name, AlertTypeCodes.UnableToProcess,
+																				"Work Queue item failed: Type={0}, GUID={1}",
+																				 queueItem.WorkQueueTypeEnum,
+																				 queueItem.GetKey());
+														}
 
-                                                        // Cleanup the processor
-                                                        processor.Dispose();
-                                                    });
+														// Cleanup the processor
+														processor.Dispose();
+													});
 
-                        }
-
-
-                        if (!foundResult)
-                        {
-                            _threadStop.WaitOne(WorkQueueSettings.Default.WorkQueueQueryDelay, false);
-                            _threadStop.Reset();
-                        }
+						}
                     }
                     catch (Exception e)
                     {

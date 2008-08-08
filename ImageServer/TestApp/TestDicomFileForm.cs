@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageServer.TestApp
 					criteria.FilesystemKey = FilesystemMonitor.Instance.GetFilesystems().GetEnumerator().Current.Filesystem.GetKey();
                     criteria.Folder = "20070101";
 
-                    IList<StudyStorageLocation> storage = insert.Execute(criteria);
+                    IList<StudyStorageLocation> storage = insert.Find(criteria);
 
                     StudyStorageLocation storageEntry = storage[0];
                 }

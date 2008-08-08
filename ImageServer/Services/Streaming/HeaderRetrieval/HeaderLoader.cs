@@ -105,12 +105,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                     StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
                     locParms.StudyInstanceUid = studyInstanceUid;
                     locParms.ServerPartitionKey = partition.GetKey();
-                    IList<StudyStorageLocation> studyLocationList = locQuery.Execute(locParms);
-
-                    if (studyLocationList != null && studyLocationList.Count > 0)
-                    {
-                        location = studyLocationList[0];
-                    }
+                    location = locQuery.FindOne(locParms);
                 }
             }
 

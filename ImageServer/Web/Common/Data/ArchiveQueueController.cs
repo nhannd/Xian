@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				using (IReadContext ctx = _store.OpenReadContext())
 				{
 					IWebQueryArchiveQueue broker = ctx.GetBroker<IWebQueryArchiveQueue>();
-					list = broker.Execute(parameters);
+					list = broker.Find(parameters);
 				}
 
 				return list;

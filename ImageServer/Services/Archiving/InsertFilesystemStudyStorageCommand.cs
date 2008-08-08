@@ -102,7 +102,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				insertParms.StudyStatusEnum = StudyStatusEnum.Online;
 			}
 
-			locInsert.Execute(insertParms);
+			// Find one so we don't uselessly process all the results.
+			locInsert.FindOne(insertParms);
 		}
 	}
 }

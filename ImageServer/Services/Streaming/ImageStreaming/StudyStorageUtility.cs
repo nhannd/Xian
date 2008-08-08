@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -68,16 +67,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                 StudyStorageLocationQueryParameters parameters = new StudyStorageLocationQueryParameters();
                 parameters.ServerPartitionKey = partition.GetKey();
                 parameters.StudyInstanceUid = request.QueryString["studyUID"];
-                IList<StudyStorageLocation> storages = broker.Execute(parameters);
+                StudyStorageLocation storageLocation = broker.FindOne(parameters);
 
-                if (storages == null || storages.Count == 0)
+                if (storageLocation == null)
                 {
                     throw new WADOException(HttpStatusCode.NotFound, String.Format("Requested object doesn't exist on server {0}", serverAE));
                 }
                 else
                 {
                     
-                    return storages[0];
+                    return storageLocation;
                 }
             }
         }

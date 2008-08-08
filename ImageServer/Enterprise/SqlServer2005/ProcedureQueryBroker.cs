@@ -57,11 +57,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         #region IProcedureQueryBroker<TInput,TOutput> Members
 
-        public IList<TOutput> Execute(TInput criteria)
+        public IList<TOutput> Find(TInput criteria)
         {
             IList<TOutput> list = new List<TOutput>();
 
-            Execute(criteria, delegate(TOutput row)
+            InternalFind(criteria, -1, delegate(TOutput row)
             {
                 list.Add(row);
             });
@@ -69,7 +69,24 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             return list;
         }
 
-        public void Execute(TInput criteria, ProcedureQueryCallback<TOutput> callback)
+		public void Find(TInput criteria, ProcedureQueryCallback<TOutput> callback)
+		{
+			InternalFind(criteria, -1, callback);
+		}
+
+    	public TOutput FindOne(TInput criteria)
+    	{
+    		TOutput result = null;
+
+			InternalFind(criteria, 1, delegate(TOutput row)
+			{
+				result = row;
+			});
+
+    		return result;
+    	}
+
+    	private void InternalFind(TInput criteria, int maxResults, ProcedureQueryCallback<TOutput> callback)
         {
             SqlDataReader myReader = null;
             SqlCommand command = null;
@@ -98,6 +115,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     if (myReader.HasRows)
                     {
+                    	int resultCount = 0;
+
                         while (myReader.Read())
                         {
                             TOutput row = new TOutput();
@@ -105,6 +124,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                             PopulateEntity(myReader, row, typeof(TOutput));
 
                             callback(row);
+
+                        	resultCount++;
+							if (maxResults > 0 && resultCount >= maxResults)
+								break;
                         }
 						myReader.Close();
 						myReader = null;

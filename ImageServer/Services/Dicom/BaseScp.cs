@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
                 parms.ServerPartitionKey = Partition.GetKey();
                 parms.StudyInstanceUid = studyInstanceUid;
-                IList<StudyStorageLocation> locationList = procedure.Execute(parms);
+                IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
                 foreach (StudyStorageLocation studyLocation in locationList)
                 {
@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
                 locParms.StudyInstanceUid = studyInstanceUid;
                 locParms.ServerPartitionKey = Partition.GetKey();
-                IList<StudyStorageLocation> studyLocationList = locQuery.Execute(locParms);
+                IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
 
                 if (studyLocationList.Count == 0)
                 {
@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						insertParms.StudyStatusEnum = StudyStatusEnum.Online;
 					}
 
-                    studyLocationList = locInsert.Execute(insertParms);
+                    studyLocationList = locInsert.Find(insertParms);
 
                     updateContext.Commit();
                 }
@@ -311,7 +311,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
         }
         #endregion
-
 
         #region IDicomScp Members
 
@@ -333,6 +332,5 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
 
         #endregion
-
     }
 }

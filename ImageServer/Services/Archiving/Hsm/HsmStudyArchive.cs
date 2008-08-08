@@ -30,14 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -78,13 +76,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
 				parms.StudyStorageKey = queueItem.StudyStorageKey;
-				IList<StudyStorageLocation> locationList = procedure.Execute(parms);
-
-				foreach (StudyStorageLocation studyLocation in locationList)
-				{
-					_storageLocation = studyLocation;
-					return;
-				}
+				_storageLocation = procedure.FindOne(parms);
 				return;
 			}
 		}

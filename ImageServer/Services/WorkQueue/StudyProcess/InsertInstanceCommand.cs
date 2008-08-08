@@ -30,7 +30,6 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -93,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 parms.SpecificCharacterSet = cs;
             }
 
-            _insertKey = CollectionUtils.FirstElement(insert.Execute(parms));
+            _insertKey = insert.FindOne(parms);
 
             // If the Request Attributes Sequence is in the dataset, do an insert.
             if (_file.DataSet.Contains(DicomTags.RequestAttributesSequence))

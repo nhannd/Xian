@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             parms.FilesystemQueueTypeEnum = type;
             parms.Results = ServiceLockSettings.Default.FilesystemQueueResultCount;
 
-            IList<FilesystemQueue> list = query.Execute(parms);
+            IList<FilesystemQueue> list = query.Find(parms);
 
             return list;
         }
@@ -92,16 +92,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             parms.StudyInstanceUid = studyInstanceUid;
             parms.ServerPartitionKey = serverPartitionKey;
 
-            IList<StudyStorageLocation> storageLocationList = select.Execute(parms);
+            StudyStorageLocation storageLocation = select.FindOne(parms);
 
-            if (storageLocationList.Count == 0)
+            if (storageLocation == null)
             {
                 string error = String.Format("Unable to find storage location for study {0} on partition {1}",
                                              studyInstanceUid, serverPartitionKey);
                 Platform.Log(LogLevel.Error, error);
                 throw new ApplicationException(error);
             }
-            return storageLocationList[0];
+            return storageLocation;
         }
 
 		/// <summary>

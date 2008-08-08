@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -90,10 +89,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// <remarks>
 		/// Note that at the current time only one cadidate is returned at a time.
 		/// </remarks>
-		/// <returns>A list of restore candidates.  The list will be empty if no candidates exist.</returns>
-		public IList<RestoreQueue> GetRestoreCandidate()
+		/// <returns>A restore candidate.  null will be returned if no candidates exist.</returns>
+		public RestoreQueue GetRestoreCandidate()
 		{
-			IList<RestoreQueue> list;
+			RestoreQueue queueItem;
 
 			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
@@ -104,22 +103,23 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 
 				IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
 
-				list = broker.Execute(parms);
+				// Stored procedure only returns 1 result.
+				queueItem = broker.FindOne(parms);
 
-				if (list.Count > 0)
+				if (queueItem != null)
 					updateContext.Commit();
 			}
 
-			return list;
+			return queueItem;
 		}
 
 		/// <summary>
 		/// Get candidates for archival on the <see cref="PartitionArchive"/>.
 		/// </summary>
 		/// <returns>A list of archive candidates.  The list will be empty if no candidates exist.</returns>
-		public IList<ArchiveQueue> GetArchiveCandidates()
+		public ArchiveQueue GetArchiveCandidate()
 		{
-			IList<ArchiveQueue> list;
+			ArchiveQueue queueItem;
 
 			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
@@ -130,13 +130,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 
 				IQueryArchiveQueue broker = updateContext.GetBroker<IQueryArchiveQueue>();
 
-				list = broker.Execute(parms);
+				// Stored procedure only returns 1 result.
+				queueItem = broker.FindOne(parms);
 
-				if (list.Count > 0)
+				if (queueItem != null)
 					updateContext.Commit();
 			}
 
-			return list;
+			return queueItem;
 		}
 
 		/// <summary>

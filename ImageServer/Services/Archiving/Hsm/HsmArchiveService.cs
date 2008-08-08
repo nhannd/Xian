@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
@@ -66,27 +65,20 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			while (true)
 			{
-				bool foundResult = false;
-
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
 				{
-					IList<ArchiveQueue> list = _hsmArchive.GetArchiveCandidates();
+					ArchiveQueue queueItem = _hsmArchive.GetArchiveCandidate();
 
-					if (list.Count > 0)
-						foundResult = true;
-
-					foreach (ArchiveQueue queueListItem in list)
+					if (queueItem != null)
 					{
 						HsmStudyArchive archiver = new HsmStudyArchive(_hsmArchive);
-						_threadPool.Enqueue(queueListItem, archiver.Run);
+						_threadPool.Enqueue(queueItem, archiver.Run);
 					}
-
-					if (!foundResult)
-						if (CheckStop(5000))
-						{
-							Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
-							return;
-						}
+					else if (CheckStop(5000))
+					{
+						Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
+						return;
+					}
 				}
 				else
 				{

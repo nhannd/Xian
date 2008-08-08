@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -64,11 +63,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 				IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
 				studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-				IList<StudyStorageLocation> storageList = studyStorageQuery.Execute(studyStorageParms);
+
+				StudyStorageLocation location = studyStorageQuery.FindOne(studyStorageParms);
 
 				// Get the disk usage
-				StudyStorageLocation location = CollectionUtils.FirstElement(storageList);
-
 				StudyXml studyXml = LoadStudyXml(location);
 
 				using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -92,8 +90,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 
 					try
 					{
-						IList<WorkQueue> list = workQueueInsert.Execute(insertParms);
-						WorkQueue entry = CollectionUtils.FirstElement(list);
+						WorkQueue entry = workQueueInsert.FindOne(insertParms);
 
 						InsertWorkQueueUidFromStudyXml(studyXml,update,entry.GetKey());
 

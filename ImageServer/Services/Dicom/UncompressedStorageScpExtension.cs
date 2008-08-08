@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     inputParms.ServerPartitionKey = Partition.GetKey();
 
                     IQueryServerPartitionSopClasses broker = read.GetBroker<IQueryServerPartitionSopClasses>();
-                    IList<PartitionSopClass> sopClasses = broker.Execute(inputParms);
+                    IList<PartitionSopClass> sopClasses = broker.Find(inputParms);
 
                     // Now process the SOP Class List
                     foreach (PartitionSopClass partitionSopClass in sopClasses)

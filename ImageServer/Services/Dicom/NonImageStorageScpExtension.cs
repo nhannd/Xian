@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 using (IReadContext read = _store.OpenReadContext())
                 {
                     IQueryServerPartitionSopClasses broker = read.GetBroker<IQueryServerPartitionSopClasses>();
-                    IList<PartitionSopClass> sopClasses = broker.Execute(inputParms);
+                    IList<PartitionSopClass> sopClasses = broker.Find(inputParms);
                     read.Dispose();
 
                     // Now process the SOP Class list

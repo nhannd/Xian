@@ -330,7 +330,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                 parms.StudyStorageKey = GetStudyStorageGUID(study);
 
-                IList<StudyStorageLocation> storage = select.Execute(parms);
+                IList<StudyStorageLocation> storage = select.Find(parms);
 
                 if (storage == null || storage.Count == 0)
                 {

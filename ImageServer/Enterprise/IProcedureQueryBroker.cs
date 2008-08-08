@@ -49,18 +49,23 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// Retrieves all entities matching the specified criteria.
         /// Caution: this method may return an arbitrarily large result set.
         /// </summary>
-        /// <param name="criteria"></param>
-        /// <returns></returns>
-        IList<TOutput> Execute(TInput criteria);
+        /// <param name="criteria">The search criteria.</param>
+        /// <returns>A list of entities.</returns>
+        IList<TOutput> Find(TInput criteria);
 
         /// <summary>
         /// Retrieves all entities matching the specified criteria,
         /// constrained by the specified page constraint.
         /// </summary>
-        /// <param name="criteria"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        void Execute(TInput criteria, ProcedureQueryCallback<TOutput> callback);
+        /// <param name="criteria">The search criteria.</param>
+        /// <param name="callback">The delegate which is supplied query results.</param>
+        void Find(TInput criteria, ProcedureQueryCallback<TOutput> callback);
 
+		/// <summary>
+		/// Retrieves the first entity matching the specified crtiera.
+		/// </summary>
+		/// <param name="criteria">The search criteria.</param>
+		/// <returns>The entity.</returns>
+    	TOutput FindOne(TInput criteria);
     }
 }

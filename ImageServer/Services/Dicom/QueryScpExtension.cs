@@ -36,15 +36,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices;
+using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.DicomServices.Xml;
-using ClearCanvas.ImageServer.Services.Dicom;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -103,7 +101,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             parms.StudyKey = row.GetKey();
 
-            IList<Series> list = select.Execute(parms);
+            IList<Series> list = select.Find(parms);
 
             string value = "";
             foreach (Series series in list)

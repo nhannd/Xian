@@ -156,11 +156,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
                 StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
                 studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-                IList<StudyStorageLocation> storageList = studyStorageQuery.Execute(studyStorageParms);
+                StudyStorageLocation location = studyStorageQuery.FindOne(studyStorageParms);
                 
                 // Get the disk usage
-                StudyStorageLocation location = storageList[0];
-                
                 float studySize = CalculateFolderSize(location.GetStudyPath());
 
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -177,8 +175,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
 
-                    IList<WorkQueue> insertList = studyDelete.Execute(insertParms);
-					if (insertList.Count == 0)
+                    WorkQueue insertItem = studyDelete.FindOne(insertParms);
+					if (insertItem == null)
                     {
                         Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
                     }
@@ -210,10 +208,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
 				StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
 				studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-				IList<StudyStorageLocation> storageList = studyStorageQuery.Execute(studyStorageParms);
+				StudyStorageLocation location  = studyStorageQuery.FindOne(studyStorageParms);
 
 				// Get the disk usage
-				StudyStorageLocation location = storageList[0]; // TODO: What should we do with other locations?
 				float studySize = CalculateFolderSize(location.GetStudyPath());
 
 				// Update the DB
@@ -232,8 +229,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
 
-					IList<WorkQueue> insertList = studyDelete.Execute(insertParms);
-					if (insertList.Count == 0)
+					WorkQueue insertItem = studyDelete.FindOne(insertParms);
+					if (insertItem == null)
 					{
 						Platform.Log(LogLevel.Error, "Unexpected problem inserting 'PurgeStudy' record into WorkQueue for Study {0}",
 						             location.StudyInstanceUid);
@@ -270,11 +267,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         		IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
         		StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
         		studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-        		IList<StudyStorageLocation> storageList = studyStorageQuery.Execute(studyStorageParms);
+				StudyStorageLocation location = studyStorageQuery.FindOne(studyStorageParms);
 
         		// Get the disk usage
-        		StudyStorageLocation location = storageList[0]; // TODO: What should we do with other locations?
-
         		float studySize = CalculateFolderSize(location.GetStudyPath());
 
         		using (
@@ -294,8 +289,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
         			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledMigrateTime);
-        			IList<WorkQueue> insertList = broker.Execute(insertParms);
-					if (insertList.Count == 0)
+        			WorkQueue insertItem = broker.FindOne(insertParms);
+					if (insertItem == null)
         			{
         				Platform.Log(LogLevel.Error,
         				             "Unexpected problem inserting 'MigrateStudy' record into WorkQueue for Study {0}",

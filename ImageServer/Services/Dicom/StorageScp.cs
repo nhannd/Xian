@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             criteria.ServerPartitionKey = partitionKey;
 
-            list = broker.Execute(criteria);
+            list = broker.Find(criteria);
 
 			List<PartitionTransferSyntax> returnList = new List<PartitionTransferSyntax>();
 			foreach (PartitionTransferSyntax syntax in list)

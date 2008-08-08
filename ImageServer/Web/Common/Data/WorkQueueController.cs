@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         		StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
         		parms.StudyStorageKey = item.StudyStorageKey;
 
-        		IList<StudyStorageLocation> storages = select.Execute(parms);
+        		IList<StudyStorageLocation> storages = select.Find(parms);
 
         		if (storages == null || storages.Count == 0)
         		{
@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 using (IReadContext ctx = _store.OpenReadContext())
                 {
                     IWebQueryWorkQueue broker = ctx.GetBroker<IWebQueryWorkQueue>();
-                    list = broker.Execute(parameters);
+                    list = broker.Find(parameters);
                 }
 
                 return list;

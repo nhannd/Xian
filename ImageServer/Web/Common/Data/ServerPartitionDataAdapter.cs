@@ -70,7 +70,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public bool AddServerPartition(ServerPartition partition)
         {
             bool ok;
-            IList<ServerPartition> list;
 
             using (IUpdateContext ctx = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -88,8 +87,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 
                 try
                 {
-                    list = insert.Execute(parms);
-                    ok = list != null && list.Count > 0;
+                    ServerPartition insertPartition = insert.FindOne(parms);
+					ok = insertPartition != null;
                 }
                 catch (Exception e)
                 {

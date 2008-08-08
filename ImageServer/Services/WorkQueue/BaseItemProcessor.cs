@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
                         parms.StudyStorageKey = item.StudyStorageKey;
 
-                        list = select.Execute(parms);
+                        list = select.Find(parms);
 
                         if (list.Count == 0)
                         {

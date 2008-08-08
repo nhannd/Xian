@@ -101,7 +101,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 								DicomFile file = new DicomFile(firstFile.FullName);
 								file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
 
-								IList<StudyStorageLocation> studyLocationList;
 								using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 								{
 									IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
@@ -126,17 +125,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 										insertParms.StudyStatusEnum = StudyStatusEnum.Online;
 									}
 
-									studyLocationList = studyInsert.Execute(insertParms);
+									location = studyInsert.FindOne(insertParms);
 
 									update.Commit();
 								}
 
-								location = studyLocationList[0];
-
 								string studyXml = Path.Combine(location.GetStudyPath(), studyInstanceUid + ".xml");
 								if (File.Exists(studyXml))
 									File.Delete(studyXml);
-
 
 								foreach (FileInfo sopFile in fileList)
 								{
@@ -208,7 +204,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
             StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
             parms.ServerPartitionKey = partition.GetKey();
             parms.StudyInstanceUid = studyInstanceUid;
-            IList<StudyStorageLocation> locationList = procedure.Execute(parms);
+            IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
             foreach (StudyStorageLocation studyLocation in locationList)
             {

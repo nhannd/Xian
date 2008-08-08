@@ -97,9 +97,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
 				parms.StudyStorageKey = studyStorageKey;
 
-				IList<RestoreQueue> storageList = broker.Execute(parms);
+				RestoreQueue queue = broker.FindOne(parms);
 
-				if (storageList.Count == 0)
+				if (queue == null)
 					return false;
 
 				updateContext.Commit();
@@ -479,8 +479,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               	};
 
                     _theScu.BeginSend(
-                        delegate(IAsyncResult result)
-                            {
+                        delegate
+                        	{
                                 //NOOP
                             },
                         _theScu);

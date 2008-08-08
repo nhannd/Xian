@@ -122,11 +122,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
 			while (true)
 			{
-				bool foundResult = false;
-
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
 				{
-					IList<Model.ServiceLock> list;
+					Model.ServiceLock queueListItem;
 
 					using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 					{
@@ -134,14 +132,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 						ServiceLockQueryParameters parms = new ServiceLockQueryParameters();
 						parms.ProcessorId = ServiceTools.ProcessorId;
 
-						list = select.Execute(parms);
+						queueListItem = select.FindOne(parms);
 						updateContext.Commit();
 					}
 
-					if (list.Count > 0)
-						foundResult = true;
-
-					foreach (Model.ServiceLock queueListItem in list)
+					if (queueListItem == null)
+					{
+						_threadStop.WaitOne(1000 * 30, false); // twice a minute
+						_threadStop.Reset();
+					}
+					else
 					{
 						if (!_extensions.ContainsKey(queueListItem.ServiceLockTypeEnum))
 						{
@@ -188,12 +188,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 													processor.Dispose();
 												});
 					}
-
-					if (!foundResult)
-					{
-						_threadStop.WaitOne(1000 * 30, false); // twice a minute
-						_threadStop.Reset();
-					}
 				}
 				else
 				{
@@ -229,7 +223,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                 ServiceLockResetParameters parms = new ServiceLockResetParameters();
                 parms.ProcessorId = ServiceTools.ProcessorId;
 
-                IList<Model.ServiceLock> modifiedList = reset.Execute(parms);
+                IList<Model.ServiceLock> modifiedList = reset.Find(parms);
 
                 if (modifiedList != null)
                 {
