@@ -169,6 +169,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow reporting without specifying a supervisor")]
 				public const string OmitSupervisor = "Workflow/Report/Omit Supervisor";
+
+				[AuthorityToken(Description = "Allow reassigning of a report to another radiologist.")]
+				public const string Reassign = "Workflow/Report/Reassign";
 			}
 
 			public static class Protocol
@@ -187,6 +190,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow protocolling without specifying a supervisor")]
 				public const string OmitSupervisor = "Workflow/Protocol/Omit Supervisor";
+
+				[AuthorityToken(Description = "Allow reassigning of a protocol to another radiologist.")]
+				public const string Reassign = "Workflow/Protocol/Reassign";
 			}
 
 			public static class Patient

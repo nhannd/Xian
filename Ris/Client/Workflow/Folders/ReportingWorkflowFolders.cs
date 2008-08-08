@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -92,6 +91,12 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		[FolderForWorklistClass(WorklistClassNames.ReportingToBeProtocolledWorklist)]
 		[FolderPath("To be Protocolled", true)]
 		public class ToBeProtocolledFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[FolderForWorklistClass(WorklistClassNames.ReportingAssignedProtocolWorklist)]
+		[FolderPath("My Items/To be Protocolled")]
+		public class AssignedToBeProtocolFolder : ReportingWorkflowFolder
 		{
 		}
 

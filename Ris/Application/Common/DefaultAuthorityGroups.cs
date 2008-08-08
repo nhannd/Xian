@@ -78,6 +78,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Protocol.Accept,
                         AuthorityTokens.Workflow.Protocol.Create,
                         AuthorityTokens.Workflow.Protocol.Resubmit,
+                        AuthorityTokens.Workflow.Protocol.Reassign,
                         AuthorityTokens.Workflow.Documentation.Create,
                         AuthorityTokens.Workflow.Documentation.Accept,
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
@@ -85,6 +86,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.Report.Cancel,
                         AuthorityTokens.Workflow.Report.Verify,
                         AuthorityTokens.Workflow.Report.OmitSupervisor,
+                        AuthorityTokens.Workflow.Report.Reassign,
                         AuthorityTokens.Workflow.ExternalPractitioner.Create,
                         AuthorityTokens.Workflow.ExternalPractitioner.Update,
                         AuthorityTokens.Workflow.ExternalPractitioner.Merge,
@@ -112,6 +114,7 @@ namespace ClearCanvas.Ris.Application.Common
 						AuthorityTokens.FolderSystems.Reporting,
 						AuthorityTokens.FolderSystems.OrderNotes,
 						AuthorityTokens.FolderSystems.Emergency,
+						AuthorityTokens.FolderSystems.RadiologistAdmin,
                     }),
 
                 new AuthorityGroupDefinition(Clerical,

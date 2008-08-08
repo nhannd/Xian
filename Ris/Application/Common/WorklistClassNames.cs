@@ -124,6 +124,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ReportingToBeProtocolledWorklist = "ReportingToBeProtocolledWorklist";
 
 		[WorklistClassName]
+		public const string ReportingAssignedProtocolWorklist = "ReportingAssignedProtocolWorklist";
+
+		[WorklistClassName]
 		public const string ReportingToBeReviewedProtocolWorklist = "ReportingToBeReviewedProtocolWorklist";
 
 		[WorklistClassName]
@@ -161,7 +164,7 @@ namespace ClearCanvas.Ris.Application.Common
 		
 		#endregion
 
-		#region Reporting Worklist Class Names
+		#region Radiologist Admin Worklist Class Names
 
 		[WorklistClassName]
 		public const string ReportingAdminAssignedWorklist = "ReportingAdminAssignedWorklist";

@@ -39,17 +39,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override string GetPreviewUrl(WorkflowFolder folder, ICollection<ReportingWorklistItem> items)
 		{
-			if (items.Count == 0)
+			if (items.Count != 1)
 				return null;
 
 			string stepName = CollectionUtils.FirstElement(items).ProcedureStepName;
-
-			bool hasDifferentStepName = CollectionUtils.Contains(items,
-				delegate(ReportingWorklistItem item) { return !item.ProcedureStepName.Equals(stepName); });
-
-			// Don't show a preview if the items have different type of steps
-			if (hasDifferentStepName)
-				return null;
 
 			return GetPreviewFromStepName(stepName);
 		}
@@ -69,8 +62,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				case "Verification":
 				case "Publication":
 					return WebResourcesSettings.Default.ReportingFolderSystemUrl;
-				case "ProtocolAssignment":
-				case "ProtocolResolution":
+				case "Protocol":
 					return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
 				default:
 					return null;
