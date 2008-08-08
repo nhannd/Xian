@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             InterpretationStep interpretation = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
-            return new ReviseResidentReportResponse(GetWorklistItemSummary(interpretation.Downcast<ReportingProcedureStep>()));
+            return new ReviseResidentReportResponse(GetWorklistItemSummary(interpretation));
         }
 
         [UpdateOperation]
@@ -243,7 +243,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             PersistenceContext.SynchState();
 
             CreateAddendumResponse response = new CreateAddendumResponse();
-            response.ReportingWorklistItem = GetWorklistItemSummary(interpretation.Downcast<ReportingProcedureStep>()); ;
+            response.ReportingWorklistItem = GetWorklistItemSummary(interpretation); ;
             return response;
         }
 
@@ -258,7 +258,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             PersistenceContext.SynchState();
 
-            return new ReviseUnpublishedReportResponse(GetWorklistItemSummary(verification.Downcast<ReportingProcedureStep>()));
+            return new ReviseUnpublishedReportResponse(GetWorklistItemSummary(verification));
         }
 
         [UpdateOperation]
