@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
     class StudyStorageUtility
     {
-    	private static ServerPartitionMonitor _monitor = ServerPartitionMonitor.Singleton;
+    	private static ServerPartitionMonitor _monitor = ServerPartitionMonitor.Instance;
 
         public static StudyStorageLocation GetStudyStorageLocation(string serverAE, HttpListenerRequest request)
         {
@@ -81,6 +81,5 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                 }
             }
         }
-
     }
 }

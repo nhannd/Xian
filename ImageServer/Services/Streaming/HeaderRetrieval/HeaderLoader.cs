@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         #region Private Static Methods
         private static bool IsFileSystemReadable(ServerEntityKey fskey)
         {
-			ServerFilesystemInfo fsInfo = FilesystemMonitor.Singleton.GetFilesystemInfo(fskey);
+			ServerFilesystemInfo fsInfo = FilesystemMonitor.Instance.GetFilesystemInfo(fskey);
             return fsInfo.Readable;
         }
         #endregion

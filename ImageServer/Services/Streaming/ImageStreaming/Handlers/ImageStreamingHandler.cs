@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             Platform.CheckForNullReference(serverAE, "serverAE");
             Platform.CheckForNullReference(httpContext, "httpContext");
             
-            ServerPartition partition = ServerPartitionMonitor.Singleton.GetPartition(serverAE);
+            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(serverAE);
             if (partition== null)
                 throw new WADOException(HttpStatusCode.NotFound, String.Format("Server {0} does not exist", serverAE));
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 throw new WADOException(HttpStatusCode.NotFound, "The requested object does not exist on the specified server");
             }
 
-			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
             if (!fs.Readable)
             {
                 throw new WADOException(HttpStatusCode.Forbidden, "The requested object is not located on readable filesystem");

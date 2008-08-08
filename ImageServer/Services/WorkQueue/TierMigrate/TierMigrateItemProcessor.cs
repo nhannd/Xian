@@ -138,8 +138,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             long size = (long) DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
 
             Platform.Log(LogLevel.Info, "Migrating study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
-			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Singleton.GetFilesystemInfo(storage.FilesystemKey);
-			ServerFilesystemInfo newFilesystem = FilesystemMonitor.Singleton.GetLowerTierFilesystemForStorage(currFilesystem);
+			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(storage.FilesystemKey);
+			ServerFilesystemInfo newFilesystem = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(currFilesystem);
 
             if (newFilesystem == null)
             {

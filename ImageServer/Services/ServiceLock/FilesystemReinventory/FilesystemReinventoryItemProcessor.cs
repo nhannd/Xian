@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             foreach (StudyStorageLocation studyLocation in locationList)
             {
-				if (FilesystemMonitor.Singleton.CheckFilesystemReadable(studyLocation.FilesystemKey))
+				if (FilesystemMonitor.Instance.CheckFilesystemReadable(studyLocation.FilesystemKey))
                 {
                     location = studyLocation;
                     return true;
@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             _partitions = broker.Find(criteria);
 
-			ServerFilesystemInfo info = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo info = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
 

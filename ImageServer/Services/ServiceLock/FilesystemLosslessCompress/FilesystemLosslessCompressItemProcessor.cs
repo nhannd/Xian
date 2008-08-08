@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 		public void Process(Model.ServiceLock item)
 		{
 
-			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 
 			Platform.Log(LogLevel.Info,
 			             "Starting check for studies to lossless compress on filesystem '{0}'.",

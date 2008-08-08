@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		private void StartListeners(ServerPartition part)
 		{
 			DicomScpContext parms =
-				new DicomScpContext(part, new FilesystemSelector(FilesystemMonitor.Singleton));
+				new DicomScpContext(part, new FilesystemSelector(FilesystemMonitor.Instance));
 
 			if (DicomSettings.Default.ListenIPV4)
 			{
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
     	
 			lock (_syncLock)
 			{
-				_partitions = new List<ServerPartition>(ServerPartitionMonitor.Singleton);
+				_partitions = new List<ServerPartition>(ServerPartitionMonitor.Instance);
 				IList<DicomScp<DicomScpContext>> scpsToDelete = new List<DicomScp<DicomScpContext>>();
 
 				foreach (DicomScp<DicomScpContext> scp in _listenerList)
@@ -193,9 +193,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 									{
                                 		CheckPartitions();
                                 	};
-			ServerPartitionMonitor.Singleton.Changed += _changedEvent;
+			ServerPartitionMonitor.Instance.Changed += _changedEvent;
 
-			_partitions = new List<ServerPartition>(ServerPartitionMonitor.Singleton);
+			_partitions = new List<ServerPartition>(ServerPartitionMonitor.Instance);
 		}
 
 		/// <summary>
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 				{
 					scp.Stop();
 				}
-				ServerPartitionMonitor.Singleton.Changed -= _changedEvent;
+				ServerPartitionMonitor.Instance.Changed -= _changedEvent;
 			}
 		}
 		#endregion

@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         {
         	LoadRulesEngine();
 
-        	ServerFilesystemInfo info = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
+        	ServerFilesystemInfo info = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 
         	_stats.StudyRate.Start();
         	_stats.Filesystem = info.Filesystem.Description;

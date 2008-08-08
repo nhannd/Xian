@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 		#region Public Methods
 		public void Process(Model.ServiceLock item)
 		{
-			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 
 			Platform.Log(LogLevel.Info,
 						 "Starting check for studies to lossy compress on filesystem '{0}'.",

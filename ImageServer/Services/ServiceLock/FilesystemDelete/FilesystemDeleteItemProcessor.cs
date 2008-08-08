@@ -440,7 +440,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 		private void MigrateStudies(Model.ServiceLock item, ServerFilesystemInfo fs)
 		{
-			ServerFilesystemInfo newFS = FilesystemMonitor.Singleton.GetLowerTierFilesystemForStorage(fs);
+			ServerFilesystemInfo newFS = FilesystemMonitor.Instance.GetLowerTierFilesystemForStorage(fs);
 			if (newFS == null)
 			{
 				Platform.Log(LogLevel.Warn,
@@ -510,11 +510,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         {
 			ServiceLockSettings settings = ServiceLockSettings.Default;
 
-			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
             
             InitializeScheduleTime();
 
-			_bytesToRemove = FilesystemMonitor.Singleton.CheckFilesystemBytesToRemove(item.FilesystemKey);
+			_bytesToRemove = FilesystemMonitor.Instance.CheckFilesystemBytesToRemove(item.FilesystemKey);
 
 			DateTime scheduledTime;
 

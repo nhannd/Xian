@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.TestApp
                     StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 
                     criteria.StudyInstanceUid = "1.2.3.4";
-					criteria.FilesystemKey = FilesystemMonitor.Singleton.GetFilesystems().GetEnumerator().Current.Filesystem.GetKey();
+					criteria.FilesystemKey = FilesystemMonitor.Instance.GetFilesystems().GetEnumerator().Current.Filesystem.GetKey();
                     criteria.Folder = "20070101";
 
                     IList<StudyStorageLocation> storage = insert.Execute(criteria);

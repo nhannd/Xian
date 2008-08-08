@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <summary>
 		/// Singleton FilesystemMonitor created the first time its referenced.
 		/// </summary>
-		public static FilesystemMonitor Singleton
+		public static FilesystemMonitor Instance
 		{
 			get
 			{

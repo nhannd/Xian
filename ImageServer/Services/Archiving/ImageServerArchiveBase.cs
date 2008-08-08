@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// </summary>
 		protected ImageServerArchiveBase()
 		{
-			_selector = new FilesystemSelector(FilesystemMonitor.Singleton);
+			_selector = new FilesystemSelector(FilesystemMonitor.Instance);
 		}
 
 		public abstract ArchiveTypeEnum ArchiveType { get; }

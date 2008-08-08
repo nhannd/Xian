@@ -71,7 +71,10 @@ namespace ClearCanvas.ImageServer.Common
 		#endregion
 
 		#region Static Properties
-		static public ServerPartitionMonitor Singleton
+		/// <summary>
+		/// Singleton monitor class for the <see cref="ServerPartition"/> table.
+		/// </summary>
+		static public ServerPartitionMonitor Instance
         {
             get
             {

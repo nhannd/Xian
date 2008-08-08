@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 foreach (StudyStorageLocation studyLocation in locationList)
                 {
-					if (FilesystemMonitor.Singleton.CheckFilesystemReadable(studyLocation.FilesystemKey))
+					if (FilesystemMonitor.Instance.CheckFilesystemReadable(studyLocation.FilesystemKey))
                     {
                         location = studyLocation;
                         return true;
@@ -297,7 +297,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
                 else
                 {
-					if (!FilesystemMonitor.Singleton.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
+					if (!FilesystemMonitor.Instance.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
                     {
                         Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}",
                                      studyInstanceUid, _partition.Description);
