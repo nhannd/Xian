@@ -88,11 +88,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 						// and the user is able to accept protocols
 						if (assignmentStep.Protocol.Status == ProtocolStatus.AA)
 						{
-							if (canPerformerAcceptProtocols)
-							{
-								assignmentStep.Protocol.Supervisor = protocolPerformer;
-							}
-							else
+							if (!canPerformerAcceptProtocols)
 							{
 								// User is unable to approve
 								//throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
@@ -127,7 +123,10 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
 			{
-				return step.State == ActivityStatus.SC;
+				if (step.State != ActivityStatus.SC)
+					return false;
+
+				return true;
 			}
 		}
 
@@ -143,17 +142,17 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 					if (existingAssignmentStep != null)
 					{
 						existingAssignmentStep.Discontinue();
-						if (existingAssignmentStep.Protocol.Status == ProtocolStatus.AA)
-						{
-							existingAssignmentStep.Protocol.Supervisor = null;
-						}
-						else
+						if (existingAssignmentStep.Protocol.Status != ProtocolStatus.AA)
 						{
 							existingAssignmentStep.Protocol.Author = null;
 						}
 
 						// Replace with new step scheduled step
 						ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(existingAssignmentStep.Protocol);
+						if (replacementAssignmentStep.Protocol.Supervisor != null)
+						{
+							replacementAssignmentStep.Assign(replacementAssignmentStep.Protocol.Supervisor);
+						}
 						rp.AddProcedureStep(replacementAssignmentStep);
 
 						replacementAssignmentStep.Schedule(DateTime.Now);

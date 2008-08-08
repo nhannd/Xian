@@ -238,7 +238,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SupervisorVisible
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview); }
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+					|| (_canEdit == false && _selectedProcodurePlanSummaryTableItem != null && _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Supervisor != null);
+			}
 		}
 
 		#endregion
