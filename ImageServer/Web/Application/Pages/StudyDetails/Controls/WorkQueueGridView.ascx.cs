@@ -54,9 +54,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         #region Private members
 
         private Study _study = null;
-        private IList<Model.WorkQueue> _workQueueItems;
 
-        #endregion Private members
+    	#endregion Private members
 
         #region Public properties
 

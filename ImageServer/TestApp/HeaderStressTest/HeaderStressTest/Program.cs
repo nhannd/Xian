@@ -4,9 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel;
 using System.ServiceModel.Security;
-using System.Text;
 using System.Threading;
 using System.Xml;
 using ClearCanvas.Common.Statistics;
@@ -186,7 +184,7 @@ namespace HeaderStressTest
                         Console.WriteLine("{3} - {2,-16} {0,-64}... OK {1}", study.StudyUid, ts.FormattedValue, LocalAE, System.Diagnostics.Stopwatch.GetTimestamp());
 
                     }
-                    catch(TimeoutException e)
+                    catch(TimeoutException)
                     {
                         // try again
                         Console.WriteLine("{2} - {1,-16} {0,-64}... TIMEOUT", study.StudyUid, LocalAE, System.Diagnostics.Stopwatch.GetTimestamp());

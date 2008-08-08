@@ -45,7 +45,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 	public class FilesystemLosslessCompressItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
 	{
 		#region Private Members
-		private FilesystemMonitor _monitor;
 		private int _studiesInserted = 0;
 		#endregion
 
@@ -123,10 +122,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 		#region Public Methods
 		public void Process(Model.ServiceLock item)
 		{
-			_monitor = new FilesystemMonitor("Filesystem Lossless Compress");
-			_monitor.Load();
 
-			ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
 
 			Platform.Log(LogLevel.Info,
 			             "Starting check for studies to lossless compress on filesystem '{0}'.",
@@ -164,20 +161,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 				             scheduledTime);
 
 			UnlockServiceLock(item, true, scheduledTime);
-
-
-			_monitor.Dispose();
-			_monitor = null;
 		}
 
 		public new void Dispose()
 		{
-			if (_monitor != null)
-			{
-				_monitor.Dispose();
-				_monitor = null;
-			}
-
 			base.Dispose();
 		}
 		#endregion

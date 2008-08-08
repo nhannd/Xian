@@ -51,8 +51,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
     public class FilesystemStudyProcessItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
         #region Private Members
-        private FilesystemReprocessStatistics _stats = new FilesystemReprocessStatistics();
-        private FilesystemMonitor _monitor;
+        private readonly FilesystemReprocessStatistics _stats = new FilesystemReprocessStatistics();
         private readonly Dictionary<ServerPartition, ServerRulesEngine> _engines = new Dictionary<ServerPartition, ServerRulesEngine>();
         #endregion
 
@@ -63,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// </summary>
         /// <param name="location">The storage location of the study.</param>
         /// <returns></returns>
-        private DicomFile LoadInstance(StudyStorageLocation location)
+        private static DicomFile LoadInstance(StudyStorageLocation location)
         {
             string studyXml = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
 
@@ -225,45 +224,33 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// Process the <see cref="ServiceLock"/> item.
         /// </summary>
         /// <param name="item"></param>
-        public void Process(Model.ServiceLock item)
+		public void Process(Model.ServiceLock item)
         {
-            using(_monitor = new FilesystemMonitor("Filesystem Study Reprocess"))
-            {
-                _monitor.Load();
+        	LoadRulesEngine();
 
-                LoadRulesEngine();
+        	ServerFilesystemInfo info = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
 
-                ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
+        	_stats.StudyRate.Start();
+        	_stats.Filesystem = info.Filesystem.Description;
 
-                _stats.StudyRate.Start();
-                _stats.Filesystem = info.Filesystem.Description;
+        	Platform.Log(LogLevel.Info, "Starting reprocess of filesystem: {0}", info.Filesystem.Description);
 
-                Platform.Log(LogLevel.Info, "Starting reprocess of filesystem: {0}", info.Filesystem.Description);
+        	ReprocessFilesystem(info.Filesystem);
 
-                ReprocessFilesystem(info.Filesystem);
+        	Platform.Log(LogLevel.Info, "Completed reprocess of filesystem: {0}", info.Filesystem.Description);
 
-                Platform.Log(LogLevel.Info, "Completed reprocess of filesystem: {0}", info.Filesystem.Description);
+        	_stats.StudyRate.SetData(_stats.NumStudies);
+        	_stats.StudyRate.End();
 
-                _stats.StudyRate.SetData(_stats.NumStudies);
-                _stats.StudyRate.End();
+        	StatisticsLogger.Log(LogLevel.Info, _stats);
 
-                StatisticsLogger.Log(LogLevel.Info, _stats);
+        	item.ScheduledTime = item.ScheduledTime.AddDays(1);
 
-                item.ScheduledTime = item.ScheduledTime.AddDays(1);
-
-                UnlockServiceLock(item, false, Platform.Time.AddDays(1));
-            }
-            
+        	UnlockServiceLock(item, false, Platform.Time.AddDays(1));
         }
 
-        public new void Dispose()
+    	public new void Dispose()
         {
-            if (_monitor != null)
-            {
-                _monitor.Dispose();
-                _monitor = null;
-            }
-
             base.Dispose();
         }
         #endregion

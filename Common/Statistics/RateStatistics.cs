@@ -48,6 +48,9 @@ namespace ClearCanvas.Common.Statistics
         /// </summary>
         MESSAGES,
 
+		/// <summary>
+		/// Custom rate statistics.
+		/// </summary>
         CUSTOM
     } ;
 
@@ -113,6 +116,11 @@ namespace ClearCanvas.Common.Statistics
             }
         }
 
+		/// <summary>
+		///Creates an instance of <see cref="RateStatistics"/> for type <see cref="RateType.CUSTOM"/>.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="unit"></param>
         public RateStatistics(string name, string unit)
             : base(name)
         {
@@ -144,7 +152,9 @@ namespace ClearCanvas.Common.Statistics
         }
 
         #endregion Constructors
-
+		/// <summary>
+		/// The rate value.
+		/// </summary>
         public override double Value
         {
             get

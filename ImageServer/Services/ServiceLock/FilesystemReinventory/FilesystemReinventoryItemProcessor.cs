@@ -48,10 +48,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
     /// </summary>
     class FilesystemReinventoryItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
-        private const string COMPONENT_NAME = "Filesystem Reinventory";
-
-        #region Private Members
-        private FilesystemMonitor _monitor;
+    	#region Private Members
         private IPersistentStore _store;
         private IList<ServerPartition> _partitions;
         #endregion
@@ -215,7 +212,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             foreach (StudyStorageLocation studyLocation in locationList)
             {
-                if (_monitor.CheckFilesystemReadable(studyLocation.FilesystemKey))
+				if (FilesystemMonitor.Singleton.CheckFilesystemReadable(studyLocation.FilesystemKey))
                 {
                     location = studyLocation;
                     return true;
@@ -241,9 +238,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 				priority = WorkQueuePriorityEnum.Medium;
 			}
 
-        	_monitor = new FilesystemMonitor("Filesystem reinventory");
-            
-            _monitor.Load();
             _store = PersistentStoreRegistry.GetDefaultStore();
 
             IServerPartitionEntityBroker broker = ReadContext.GetBroker<IServerPartitionEntityBroker>();
@@ -252,7 +246,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             _partitions = broker.Find(criteria);
 
-            ServerFilesystemInfo info = _monitor.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo info = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
 
             Platform.Log(LogLevel.Info, "Starting reinventory of filesystem: {0}", info.Filesystem.Description);
 
@@ -268,12 +262,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
         public new void Dispose()
         {
-            if (_monitor != null)
-            {
-                _monitor.Dispose();
-                _monitor = null;
-            }
-
             base.Dispose();
         }
     }

@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("102400")]
+        [global::System.Configuration.DefaultSettingValueAttribute("16384")]
         public ulong StudyHeaderMaxValueLength {
             get {
                 return ((ulong)(this["StudyHeaderMaxValueLength"]));
@@ -56,6 +56,24 @@ namespace ClearCanvas.ImageServer.Common {
         public string DefaultStudyRootFolder {
             get {
                 return ((string)(this["DefaultStudyRootFolder"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public int FilesystemCheckDelaySeconds {
+            get {
+                return ((int)(this["FilesystemCheckDelaySeconds"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("180")]
+        public int DbChangeDelaySeconds {
+            get {
+                return ((int)(this["DbChangeDelaySeconds"]));
             }
         }
     }

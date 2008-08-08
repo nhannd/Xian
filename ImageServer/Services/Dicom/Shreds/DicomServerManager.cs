@@ -29,16 +29,14 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.Codec;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 {
@@ -52,6 +50,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		private readonly object _syncLock = new object();
 		private static DicomServerManager _instance;
 		IList<ServerPartition> _partitions;
+		private EventHandler<ServerPartitionChangedEventArgs> _changedEvent;
 		#endregion
 
 		#region Constructor
@@ -80,22 +79,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		#endregion
 
 		#region Private Methods
-		private void LoadPartitions()
-		{
-			//Get partitions
-			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
 
-			using (IReadContext read = store.OpenReadContext())
-			{
-				IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
-				ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-				_partitions = broker.Find(criteria);
-			}
-		}
-		private void StartListeners(ServerPartition part, FilesystemMonitor monitor)
+		private void StartListeners(ServerPartition part)
 		{
 			DicomScpContext parms =
-				new DicomScpContext(part, monitor, new FilesystemSelector(monitor));
+				new DicomScpContext(part, new FilesystemSelector(FilesystemMonitor.Singleton));
 
 			if (DicomSettings.Default.ListenIPV4)
 			{
@@ -136,11 +124,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 			}
 		}
 
-		private void CheckPartitions(FilesystemMonitor monitor)
+		private void CheckPartitions()
 		{
     	
 			lock (_syncLock)
 			{
+				_partitions = new List<ServerPartition>(ServerPartitionMonitor.Singleton);
 				IList<DicomScp<DicomScpContext>> scpsToDelete = new List<DicomScp<DicomScpContext>>();
 
 				foreach (DicomScp<DicomScpContext> scp in _listenerList)
@@ -187,7 +176,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 					if (!bFound)
 					{
 						Platform.Log(LogLevel.Info, "Detected partition was added, starting listener {0}:{1}", part.AeTitle, part.Port);
-						StartListeners(part, monitor);
+						StartListeners(part);
 					}
 				}
 			}
@@ -200,7 +189,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 			//Load Codecs
 			DicomCodecHelper.RegisterCodecExtensions();
 
-			LoadPartitions();
+			_changedEvent = delegate 
+									{
+                                		CheckPartitions();
+                                	};
+			ServerPartitionMonitor.Singleton.Changed += _changedEvent;
+
+			_partitions = new List<ServerPartition>(ServerPartitionMonitor.Singleton);
 		}
 
 		/// <summary>
@@ -215,23 +210,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		/// </remarks>
 		protected override void Run()
 		{
-        
-			FilesystemMonitor monitor = new FilesystemMonitor("Dicom Server");
-			monitor.Load();
-            
 			foreach (ServerPartition part in _partitions)
 			{
 				if (part.Enabled)
 				{
-					StartListeners(part, monitor);
+					StartListeners(part);
 				}
-			}
-
-			while (!CheckStop(60000))
-			{
-				LoadPartitions();
-
-				CheckPartitions(monitor);
 			}
 		}
 
@@ -246,6 +230,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 				{
 					scp.Stop();
 				}
+				ServerPartitionMonitor.Singleton.Changed -= _changedEvent;
 			}
 		}
 		#endregion

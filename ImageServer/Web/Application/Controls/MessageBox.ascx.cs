@@ -68,9 +68,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         #region Private Members
         private string _message;
         private string _title;
-        private MessageTypeEnum _type = MessageTypeEnum.INFORMATION;
 
-        #endregion Private Members
+    	#endregion Private Members
 
         #region Public Properties
 

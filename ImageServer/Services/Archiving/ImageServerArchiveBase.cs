@@ -54,7 +54,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		protected PartitionArchive _partitionArchive;
 		private ServerPartition _serverPartition;
 		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-		private FilesystemMonitor _fsMonitor;
 		private readonly FilesystemSelector _selector;
 
 		/// <summary>
@@ -63,14 +62,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		public ServerPartition ServerPartition
 		{
 			get { return _serverPartition; }
-		}
-
-		/// <summary>
-		/// A <see cref="FilesystemMonitor"/> to be used by the archive.
-		/// </summary>
-		public FilesystemMonitor Monitor
-		{
-			get { return _fsMonitor; }
 		}
 
 		/// <summary>
@@ -86,9 +77,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// </summary>
 		protected ImageServerArchiveBase()
 		{
-			_fsMonitor = new FilesystemMonitor("Archive");
-			_selector = new FilesystemSelector(_fsMonitor);
-			_fsMonitor.Load();
+			_selector = new FilesystemSelector(FilesystemMonitor.Singleton);
 		}
 
 		public abstract ArchiveTypeEnum ArchiveType { get; }
@@ -217,11 +206,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// </summary>
 		public void Dispose()
 		{
-			if (_fsMonitor != null)
-			{
-				_fsMonitor.Dispose();
-				_fsMonitor = null;
-			}
 		}
 	}
 }

@@ -31,349 +31,430 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using Timer=System.Threading.Timer;
 
 namespace ClearCanvas.ImageServer.Common
 {
-    /// <summary>
-    /// Class for monitoring the status of filesystems.
-    /// </summary>
-    /// <remarks>
-    /// The class creates a background thread that monitors the current usage of the filesystems.  
-    /// The class will also update itself and retrieve updated filesystem information from
-    /// the database periodically.
-    /// </remarks>
-    public class FilesystemMonitor : IDisposable
-    {
-        #region Private Members
-        private List<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
+	/// <summary>
+	/// Event args for partition monitor
+	/// </summary>
+	public class FilesystemChangedEventArgs : EventArgs
+	{
+		private readonly FilesystemMonitor _monitor;
+		public FilesystemChangedEventArgs(FilesystemMonitor theMonitor)
+		{
+			_monitor = theMonitor;
+		}
 
-        private readonly Dictionary<ServerEntityKey, ServerFilesystemInfo> _filesystemList = new Dictionary<ServerEntityKey,ServerFilesystemInfo>();
+		public FilesystemMonitor Monitor
+		{
+			get { return _monitor; }
+		}
+	}
 
-        // tier mapping table, sorted by tier order
-        private Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> _tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+	/// <summary>
+	/// Class for monitoring the status of filesystems.
+	/// </summary>
+	/// <remarks>
+	/// The class creates a background thread that monitors the current usage of the filesystems.  
+	/// The class will also update itself and retrieve updated filesystem information from
+	/// the database periodically.
+	/// </remarks>
+	public class FilesystemMonitor : IDisposable
+	{
+		#region Private Static Members
+		private static FilesystemMonitor _singleton;
+		private static readonly object _lock = new object();
+		#endregion
 
-        private readonly IPersistentStore _store;
-        private Thread _theThread = null;
-        private bool _stop = false;
-        private readonly object _lock = new object();
-    	private string _name;
-        #endregion
+		#region Private Members
+		private List<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
+		private readonly Dictionary<ServerEntityKey, ServerFilesystemInfo> _filesystemList = new Dictionary<ServerEntityKey, ServerFilesystemInfo>();
+		// tier mapping table, sorted by tier order
+		private Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> _tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+		private readonly IPersistentStore _store;
+		private Timer _dbTimer;
+		private Timer _fsTimer;
+		private EventHandler<FilesystemChangedEventArgs> _changedListener;
+		#endregion
 
-        #region Constructors
-        public FilesystemMonitor(string name)
-        {
-            _store = PersistentStoreRegistry.GetDefaultStore();
-        	_name = name;
-        }
-        #endregion
+		#region Private Constructors
+		private FilesystemMonitor()
+		{
+			_store = PersistentStoreRegistry.GetDefaultStore();
+		}
+		#endregion
 
-        #region Public Methods
+		#region Events
+		/// <summary>
+		/// Event handler for changes in filesystems.
+		/// </summary>
+		public event EventHandler<FilesystemChangedEventArgs> Changed
+		{
+			add { _changedListener += value; }
+			remove { _changedListener -= value; }
+		}
+		#endregion
 
-        public IEnumerable<ServerFilesystemInfo> GetFilesystems()
-        {
-            lock (_lock)
-            {
-                return _filesystemList.Values;
-            }
-        }
+		#region Public Static Members
+		/// <summary>
+		/// Singleton FilesystemMonitor created the first time its referenced.
+		/// </summary>
+		public static FilesystemMonitor Singleton
+		{
+			get
+			{
+				lock (_lock)
+				{
+					if (_singleton == null)
+					{
+						_singleton = new FilesystemMonitor();
+						_singleton.Initialize();
+					}
+					return _singleton;
+				}
+			}
+		}
+		#endregion
 
-        public IEnumerable<ServerFilesystemInfo> GetFilesystems(FilesystemTierEnum tier)
-        {
-            lock (_lock)
-            {
-                return _tierMap[tier];
-            }
-        }
+		#region Public Methods
+		/// <summary>
+		/// Return a collection of the currently configured filesystems.
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<ServerFilesystemInfo> GetFilesystems()
+		{
+			lock (_lock)
+			{
+				return _filesystemList.Values;
+			}
+		}
 
-        public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> GetTierMap()
-        {
-            lock (_lock)
-            {
-                return _tierMap;
-            }
-        }
+		/// <summary>
+		/// Returns a collection of the currently configured filesystems associated with a tier.
+		/// </summary>
+		/// <param name="tier"></param>
+		/// <returns></returns>
+		public IEnumerable<ServerFilesystemInfo> GetFilesystems(FilesystemTierEnum tier)
+		{
+			lock (_lock)
+			{
+				return _tierMap[tier];
+			}
+		}
 
-        public ServerFilesystemInfo GetFilesystemInfo(ServerEntityKey filesystemKey)
-        {
-            lock(_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return _filesystemList[filesystemKey];
-                }                
-            }
-            return null;
-        }
-        public bool CheckFilesystemAboveLowWatermark(ServerEntityKey filesystemKey)
-        {
-            lock (_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return _filesystemList[filesystemKey].AboveLowWatermark;
-                }
-            }
-            return false;
-        }
-        public bool CheckFilesystemAboveHighWatermark(ServerEntityKey filesystemKey)
-        {
-            lock (_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return _filesystemList[filesystemKey].AboveHighWatermark;
-                }
-            }
-            return false;
-        }
-        public float CheckFilesystemBytesToRemove(ServerEntityKey filesystemKey)
-        {
-            lock (_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return _filesystemList[filesystemKey].BytesToRemove;
-                }
-            }
-            return 0.0f;
-        }
+		/// <summary>
+		/// Map of filesystems per tier.
+		/// </summary>
+		/// <returns></returns>
+		public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> GetTierMap()
+		{
+			lock (_lock)
+			{
+				return _tierMap;
+			}
+		}
 
-        public Decimal CheckFilesystemPercentFull(ServerEntityKey filesystemKey)
-        {
-            lock (_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return (Decimal)_filesystemList[filesystemKey].UsedSpacePercentage;
-                }
-            }
-            return 0.00M;
-        }
+		/// <summary>
+		/// Get Information regarding a specific filesystem.
+		/// </summary>
+		/// <param name="filesystemKey">The primary key of a filesystem to get info for.</param>
+		/// <returns>A <see cref="ServerFilesystemInfo"/> structure for the filesystem, or null if the filesystem ahs not been found.</returns>
+		public ServerFilesystemInfo GetFilesystemInfo(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return _filesystemList[filesystemKey];
+				}
+			}
+			return null;
+		}
 
-        public bool CheckFilesystemWriteable(ServerEntityKey filesystemKey)
-        {
-            lock (_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return _filesystemList[filesystemKey].Writeable;
-                }
-            }
-            return false;
-        }
+		/// <summary>
+		/// Check if a filesystem is above the configured low watermark.
+		/// </summary>
+		/// <param name="filesystemKey"></param>
+		/// <returns></returns>
+		public bool CheckFilesystemAboveLowWatermark(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return _filesystemList[filesystemKey].AboveLowWatermark;
+				}
+			}
+			return false;
+		}
 
-        public bool CheckFilesystemReadable(ServerEntityKey filesystemKey)
-        {
-            lock (_lock)
-            {
-                if (_filesystemList.ContainsKey(filesystemKey))
-                {
-                    return _filesystemList[filesystemKey].Readable;
-                }
-            }
-            return false;
-        }
+		/// <summary>
+		/// Check if a filesystem is above the configured high watermark.
+		/// </summary>
+		/// <param name="filesystemKey"></param>
+		/// <returns></returns>
+		public bool CheckFilesystemAboveHighWatermark(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return _filesystemList[filesystemKey].AboveHighWatermark;
+				}
+			}
+			return false;
+		}
 
-        public void Load()
-        {
-            lock (_lock)
-            {
-                LoadFilesystems();
+		/// <summary>
+		/// Calculate the number of bytes to remove from a filesystem to get it to the low watermark.
+		/// </summary>
+		/// <param name="filesystemKey"></param>
+		/// <returns></returns>
+		public float CheckFilesystemBytesToRemove(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return _filesystemList[filesystemKey].BytesToRemove;
+				}
+			}
+			return 0.0f;
+		}
 
-                StartThread();
-            }
-        }
+		/// <summary>
+		/// Get the Percent Full for a filesystem.
+		/// </summary>
+		/// <param name="filesystemKey"></param>
+		/// <returns></returns>
+		public Decimal CheckFilesystemPercentFull(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return (Decimal)_filesystemList[filesystemKey].UsedSpacePercentage;
+				}
+			}
+			return 0.00M;
+		}
 
-        public void ReLoad()
-        {
-            LoadFilesystems();
-        }
-        
-        public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
-        {
-            lock(_lock)
-            {
-                
-                Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> map =
-                    new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+		/// <summary>
+		/// Check if a filesystem is writeable.
+		/// </summary>
+		/// <param name="filesystemKey"></param>
+		/// <returns></returns>
+		public bool CheckFilesystemWriteable(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return _filesystemList[filesystemKey].Writeable;
+				}
+			}
+			return false;
+		}
 
-                foreach(FilesystemTierEnum tier in _tiers)
-                {
-                    if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
-                        map.Add(tier, _tierMap[tier]);
-                }
+		/// <summary>
+		/// Check if a filesystem is readable.
+		/// </summary>
+		/// <param name="filesystemKey"></param>
+		/// <returns></returns>
+		public bool CheckFilesystemReadable(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				if (_filesystemList.ContainsKey(filesystemKey))
+				{
+					return _filesystemList[filesystemKey].Readable;
+				}
+			}
+			return false;
+		}
 
-                return map;
-            }
-        }
+		public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
+		{
+			lock (_lock)
+			{
 
-        /// <summary>
-        /// Gets the first filesystem in lower tier for storage purpose.
-        /// </summary>
-        /// <param name="filesystem">The current filesystem</param>
-        /// <returns></returns>
-        public ServerFilesystemInfo GetLowerTierFilesystemForStorage(ServerFilesystemInfo filesystem)
-        {
-            Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> lowerTier = FindLowerTierFilesystems(filesystem);
-            if (lowerTier == null || lowerTier.Count == 0)
-                return null;
+				Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> map =
+					new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
 
-            foreach (List<ServerFilesystemInfo> listFS in lowerTier.Values)
-            {
-                // sort by free space size (descending)
-                listFS.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
-                               {
-                                   if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
-                                   {
-                                       if (fs1.HighwaterMarkMargin < fs2.HighwaterMarkMargin)
-                                           return 1;
-                                       else if (fs1.HighwaterMarkMargin > fs2.HighwaterMarkMargin)
-                                           return -1;
-                                       else
-                                           return 0;
+				foreach (FilesystemTierEnum tier in _tiers)
+				{
+					if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
+						map.Add(tier, _tierMap[tier]);
+				}
 
-                                   }
-                                   else
-                                   {
-                                       return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
-                                   }
-                               });
+				return map;
+			}
+		}
 
-                // first one that's writable
-                ServerFilesystemInfo newFilesystem = listFS.Find(delegate(ServerFilesystemInfo fs)
-                                              {
-                                                  return fs.Writeable;
-                                              });
+		/// <summary>
+		/// Gets the first filesystem in lower tier for storage purpose.
+		/// </summary>
+		/// <param name="filesystem">The current filesystem</param>
+		/// <returns></returns>
+		public ServerFilesystemInfo GetLowerTierFilesystemForStorage(ServerFilesystemInfo filesystem)
+		{
+			Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> lowerTier = FindLowerTierFilesystems(filesystem);
+			if (lowerTier == null || lowerTier.Count == 0)
+				return null;
 
-                if (newFilesystem != null)
-                {
-                    return newFilesystem;
-                }
-            }
+			foreach (List<ServerFilesystemInfo> listFS in lowerTier.Values)
+			{
+				// sort by free space size (descending)
+				listFS.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
+							   {
+								   if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
+								   {
+									   if (fs1.HighwaterMarkMargin < fs2.HighwaterMarkMargin)
+										   return 1;
+									   else if (fs1.HighwaterMarkMargin > fs2.HighwaterMarkMargin)
+										   return -1;
+									   else
+										   return 0;
 
-            return null;
-        }
+								   }
+								   else
+								   {
+									   return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
+								   }
+							   });
 
-        #endregion
+				// first one that's writable
+				ServerFilesystemInfo newFilesystem = listFS.Find(delegate(ServerFilesystemInfo fs)
+											  {
+												  return fs.Writeable;
+											  });
 
-        #region Private Methods
+				if (newFilesystem != null)
+				{
+					return newFilesystem;
+				}
+			}
 
+			return null;
+		}
+		#endregion
 
-        private void LoadFilesystems()
-        {
-            lock (_lock)
-            {
-                _tiers = FilesystemTierEnum.GetAll();
-                
-                // sorted by enum values
-                _tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
-                           {
-                               return tier1.Enum.CompareTo(tier2.Enum);
-                           });
+		#region Private Methods
+		/// <summary>
+		/// Method for intializing.
+		/// </summary>
+		private void Initialize()
+		{
+			lock (_lock)
+			{
+				LoadFilesystems();
 
-                _tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
-                foreach (FilesystemTierEnum tier in _tiers)
-                {
-                    _tierMap.Add(tier, new List<ServerFilesystemInfo>());
-                }
+				_fsTimer = new Timer(CheckFilesystems, this, TimeSpan.FromSeconds(Settings.Default.FilesystemCheckDelaySeconds), TimeSpan.FromSeconds(Settings.Default.FilesystemCheckDelaySeconds));
 
-                using (IReadContext read = _store.OpenReadContext())
-                {
-                    IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
-                    FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
-                    IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
+				_dbTimer = new Timer(ReLoadFilesystems, this, TimeSpan.FromSeconds(Settings.Default.DbChangeDelaySeconds), TimeSpan.FromSeconds(Settings.Default.DbChangeDelaySeconds));
+			}
+		}
 
-                    foreach (Filesystem filesystem in filesystemList)
-                    {
-                        if (_filesystemList.ContainsKey(filesystem.GetKey()))
-                        {
-                            _filesystemList[filesystem.GetKey()].Filesystem = filesystem;
-                            _tierMap[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.GetKey()]);
-                        }
-                        else
-                        {
-                            ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-                            _filesystemList.Add(filesystem.GetKey(), info);
-                            _tierMap[filesystem.FilesystemTierEnum].Add(info);
-                            info.LoadFreeSpace();
-                        }
+		/// <summary>
+		/// Timer delegate for reloading filesystem information from the database.
+		/// </summary>
+		/// <param name="state"></param>
+		private void ReLoadFilesystems(object state)
+		{
+			LoadFilesystems();
+		}
 
+		/// <summary>
+		/// Load filesystem information from the database.
+		/// </summary>
+		private void LoadFilesystems()
+		{
+			bool changed = false;
 
-                    }
-                }
+			lock (_lock)
+			{
+				_tiers = FilesystemTierEnum.GetAll();
 
-            }
-        }
+				// sorted by enum values
+				_tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
+						   {
+							   return tier1.Enum.CompareTo(tier2.Enum);
+						   });
 
+				_tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+				foreach (FilesystemTierEnum tier in _tiers)
+				{
+					_tierMap.Add(tier, new List<ServerFilesystemInfo>());
+				}
 
-        private void StartThread()
-        {
-            if (_theThread == null)
-            {
-                _theThread = new Thread(Run);
-            	_theThread.Name = String.Format("{1} Filesystem Monitor ({0})", _name, _theThread.ManagedThreadId);
+				using (IReadContext read = _store.OpenReadContext())
+				{
+					IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
+					FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
+					IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
 
-                _theThread.Start();
-            }
-        }
+					foreach (Filesystem filesystem in filesystemList)
+					{
+						if (_filesystemList.ContainsKey(filesystem.GetKey()))
+						{
+							_filesystemList[filesystem.GetKey()].Filesystem = filesystem;
+							_tierMap[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.GetKey()]);
+						}
+						else
+						{
+							ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
+							_filesystemList.Add(filesystem.GetKey(), info);
+							_tierMap[filesystem.FilesystemTierEnum].Add(info);
+							info.LoadFreeSpace();
+							changed = true;
+						}
+					}
+				}
 
-        private void StopThread()
-        {
-            if (_theThread != null)
-            {
-                _stop = true;
+				
+			}
 
-                _theThread.Join();
-                _theThread = null;
-            }
-        }
+			if (changed && _changedListener != null)
+				EventsHelper.Fire(_changedListener, this, new FilesystemChangedEventArgs(this));
+		}
 
-        private void Run()
-        {
-            DateTime nextFilesystemCheck = Platform.Time;
-            DateTime nextDbCheck = nextFilesystemCheck.AddMinutes(2);
+		/// <summary>
+		/// Timer callback for checking filesystem status.
+		/// </summary>
+		/// <param name="state"></param>
+		private void CheckFilesystems(object state)
+		{
+			lock (_lock)
+			{
+				foreach (ServerFilesystemInfo info in _filesystemList.Values)
+				{
+					info.LoadFreeSpace();
+				}
+			}
+		}
 
-            while(_stop == false)
-            {
-                DateTime now = Platform.Time;
+		#endregion
 
-                if (now > nextDbCheck)
-                {
-                    nextDbCheck = now.AddMinutes(2);
-                    ReLoad();
-                }
-                else if (now > nextFilesystemCheck)
-                {
-                    // Check very minute
-                    nextFilesystemCheck = now.AddSeconds(30);
-
-                    lock (_lock)
-                    {
-                        foreach (ServerFilesystemInfo info in _filesystemList.Values)
-                        {
-                            info.LoadFreeSpace();
-                        }
-                    }
-                }
-                Thread.Sleep(5000);               
-            }            
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            StopThread();
-        }
-
-        #endregion
-    }
+		#region IDisposable Implementation
+		public void Dispose()
+		{
+			if (_fsTimer != null)
+			{
+				_fsTimer.Dispose();
+				_fsTimer = null;
+			}
+			if (_dbTimer != null)
+			{
+				_dbTimer.Dispose();
+				_dbTimer = null;
+			}
+		}
+		#endregion
+	}
 }

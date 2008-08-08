@@ -35,16 +35,11 @@ using System.IO;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Dicom.Codec.Jpeg2000;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Rules;
-using ClearCanvas.Dicom.Codec.Jpeg;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -61,10 +56,6 @@ namespace ClearCanvas.ImageServer.TestApp
             try
             {
 
-                FilesystemMonitor monitor = new FilesystemMonitor("TestApp");
-
-                monitor.Load();
-
                 WorkQueueTypeEnum t = WorkQueueTypeEnum.CompressStudy;
                 
                 using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
@@ -74,7 +65,7 @@ namespace ClearCanvas.ImageServer.TestApp
                     StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 
                     criteria.StudyInstanceUid = "1.2.3.4";
-                    criteria.FilesystemKey = monitor.GetFilesystems().GetEnumerator().Current.Filesystem.GetKey();
+					criteria.FilesystemKey = FilesystemMonitor.Singleton.GetFilesystems().GetEnumerator().Current.Filesystem.GetKey();
                     criteria.Folder = "20070101";
 
                     IList<StudyStorageLocation> storage = insert.Execute(criteria);

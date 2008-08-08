@@ -75,12 +75,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         #region Private Members
         private Unit _width;
-        private string _cssClass; 
-        private string _headingText;
-        private string _headingCSS;
-        private string _contentAreaCSS;
-        private ITemplate _contentTemplate = null;
-        private SectionContentContainer _contentContainer = new SectionContentContainer();
+        private string _cssClass;
+    	private ITemplate _contentTemplate = null;
+        private readonly SectionContentContainer _contentContainer = new SectionContentContainer();
         #endregion Private Members
 
         #region Public Properties

@@ -1,7 +1,37 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
@@ -10,39 +40,76 @@ using Timer=System.Threading.Timer;
 
 namespace ClearCanvas.ImageServer.Common
 {
-
+	/// <summary>
+	/// Event args for partition monitor
+	/// </summary>
     public class ServerPartitionChangedEventArgs:EventArgs
     {
+    	private readonly ServerPartitionMonitor _monitor;
+		public ServerPartitionChangedEventArgs(ServerPartitionMonitor theMonitor)
+		{
+			_monitor = theMonitor;
+		}
+
+    	public ServerPartitionMonitor Monitor
+    	{
+    		get { return _monitor; }
+    	}
     }
 
-    public class ServerPartitionMonitor :  IEnumerable<ServerPartition>
-    {
-        private object _partitionsLock = new Object();
+	/// <summary>
+	/// Singleton class that monitors the currently loaded server partitions.
+	/// </summary>
+    public class ServerPartitionMonitor :  IEnumerable<ServerPartition>, IDisposable
+	{
+		#region Private Members
+		private readonly object _partitionsLock = new Object();
         private Dictionary<string, ServerPartition> _partitions = new Dictionary<string,ServerPartition>();
         private EventHandler<ServerPartitionChangedEventArgs> _changedListener;
-        private Timer _timer;
-        private static ServerPartitionMonitor _instance = new ServerPartitionMonitor();
+        private readonly Timer _timer;
+        private static readonly ServerPartitionMonitor _instance = new ServerPartitionMonitor();
+		#endregion
 
-        static public ServerPartitionMonitor Instance
+		#region Static Properties
+		static public ServerPartitionMonitor Singleton
         {
             get
             {
                 return _instance;
             }
-        }
+		}
+		#endregion
 
-        /// <summary>
+		#region Private Constructors
+		/// <summary>
         /// ***** internal use only ****
         /// </summary>
         private ServerPartitionMonitor()
         {
             LoadPartitions();
 
-            _timer = new Timer(SynchDB, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(60));
-        }
+            _timer = new Timer(SynchDB, null, TimeSpan.FromSeconds(Settings.Default.DbChangeDelaySeconds), TimeSpan.FromSeconds(Settings.Default.DbChangeDelaySeconds));
+		}
+		#endregion
 
-        
-        public ServerPartition GetPartition(string serverAE)
+		#region Events
+		/// <summary>
+		/// Event for notification when partitions change.
+		/// </summary>
+		public event EventHandler<ServerPartitionChangedEventArgs> Changed
+		{
+			add { _changedListener += value; }
+			remove { _changedListener -= value; }
+		}
+		#endregion
+
+		#region Public Methods
+		/// <summary>
+		/// Get a partition based on an AE Title.
+		/// </summary>
+		/// <param name="serverAE"></param>
+		/// <returns></returns>
+		public ServerPartition GetPartition(string serverAE)
         {
             if (String.IsNullOrEmpty(serverAE))
                 return null;
@@ -54,18 +121,14 @@ namespace ClearCanvas.ImageServer.Common
                 else
                     return null;
             }
-            
-        }
+		}
+		#endregion
 
-        public event EventHandler<ServerPartitionChangedEventArgs>  Changed
-        {
-            add { _changedListener += value; }
-            remove { _changedListener -= value; }
-        }
-
-        
-
-        public void LoadPartitions()
+		#region Private Methods
+		/// <summary>
+		/// Internal method for loading partition information fromt he database.
+		/// </summary>
+		private void LoadPartitions()
         {
             bool changed = false;
             lock(_partitionsLock)
@@ -93,10 +156,14 @@ namespace ClearCanvas.ImageServer.Common
 
             if (changed && _changedListener!=null)
             {
-                EventsHelper.Fire(_changedListener, this, new ServerPartitionChangedEventArgs());
+                EventsHelper.Fire(_changedListener, this, new ServerPartitionChangedEventArgs(this));
             }
         }
 
+		/// <summary>
+		/// Timer method for synchronizing with the database.
+		/// </summary>
+		/// <param name="state"></param>
         private void SynchDB(object state)
         {
             LoadPartitions();
@@ -150,6 +217,7 @@ namespace ClearCanvas.ImageServer.Common
                 return true;
             }
         }
+		#endregion
 
         #region IEnumerable<ServerPartition> Members
 
@@ -169,5 +237,10 @@ namespace ClearCanvas.ImageServer.Common
         }
 
         #endregion
+
+    	public void Dispose()
+    	{
+    		_timer.Dispose();
+    	}
     }
 }

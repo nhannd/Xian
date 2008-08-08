@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -49,7 +48,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
     /// </summary>
     internal class HeaderLoader
     {
-        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor("Header Retrieval");
         private readonly HeaderRetrievalContext _context;
         private readonly HeaderLoaderStatistics _statistics = new HeaderLoaderStatistics();
         private Stream _compressedHeaderStream = null;
@@ -58,12 +56,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         private StudyStorageLocation _studyLocation;
 
         #region Constructor
-
-        static HeaderLoader()
-        {
-            _monitor.Load();
-        }
-
 
         public HeaderLoader(HeaderRetrievalContext context)
         {
@@ -188,7 +180,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         #region Private Static Methods
         private static bool IsFileSystemReadable(ServerEntityKey fskey)
         {
-            ServerFilesystemInfo fsInfo = _monitor.GetFilesystemInfo(fskey);
+			ServerFilesystemInfo fsInfo = FilesystemMonitor.Singleton.GetFilesystemInfo(fskey);
             return fsInfo.Readable;
         }
         #endregion

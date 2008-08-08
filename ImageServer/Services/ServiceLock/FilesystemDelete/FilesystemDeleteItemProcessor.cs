@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #endregion
 
         private readonly Dictionary<object, DateTime> _lutObjectTrackingTime = new Dictionary<object, DateTime>();
-        private ObjectKeyDelegate _del;
+        private readonly ObjectKeyDelegate _del;
 
         public TimeTracker(ObjectKeyDelegate del)
         {
@@ -95,13 +95,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
     /// </summary>
     public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
-        private static TimeTracker<ServerFilesystemInfo> _fsTracker = new TimeTracker<ServerFilesystemInfo>(
+        private static readonly TimeTracker<ServerFilesystemInfo> _fsTracker = new TimeTracker<ServerFilesystemInfo>(
                     delegate(ServerFilesystemInfo fs) { return fs.Filesystem.GetKey().Key; });
 
         #region Private Members
         static private DateTime? _scheduledMigrateTime = null;
-        
-        private FilesystemMonitor _monitor;
         private float _bytesToRemove;
         private int _studiesDeleted = 0;
         private int _studiesMigrated = 0;
@@ -442,7 +440,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 		private void MigrateStudies(Model.ServiceLock item, ServerFilesystemInfo fs)
 		{
-			ServerFilesystemInfo newFS = _monitor.GetLowerTierFilesystemForStorage(fs);
+			ServerFilesystemInfo newFS = FilesystemMonitor.Singleton.GetLowerTierFilesystemForStorage(fs);
 			if (newFS == null)
 			{
 				Platform.Log(LogLevel.Warn,
@@ -510,16 +508,13 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 		/// <param name="item">The <see cref="ServiceLock"/> item to process.</param>
         public void Process(Model.ServiceLock item)
         {
-            _monitor = new FilesystemMonitor("Filesystem Management");
-            _monitor.Load();
-
 			ServiceLockSettings settings = ServiceLockSettings.Default;
 
-            ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
             
             InitializeScheduleTime();
 
-            _bytesToRemove = _monitor.CheckFilesystemBytesToRemove(item.FilesystemKey);
+			_bytesToRemove = FilesystemMonitor.Singleton.CheckFilesystemBytesToRemove(item.FilesystemKey);
 
 			DateTime scheduledTime;
 
@@ -562,10 +557,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 			}
 
 			UnlockServiceLock(item, true, scheduledTime);            
-
-            _monitor.Dispose();
-            _monitor = null;
-
         }
 
 
@@ -596,12 +587,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         public new void Dispose()
         {
-            if (_monitor != null)
-            {
-                _monitor.Dispose();
-                _monitor = null;
-            }
-
             base.Dispose();
         }
         #endregion

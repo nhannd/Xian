@@ -43,25 +43,20 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
-    
+    /// <summary>
+    /// Class for processing TierMigrate <see cref="WorkQueue"/> entries.
+    /// </summary>
     class TierMigrateItemProcessor : BaseItemProcessor
     {
         #region Private static members
         private static int _sessionStudiesMigrate = 0;
         private static TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
-        private static readonly FilesystemMonitor _monitor = new FilesystemMonitor("Tier Migrate");
         #endregion
 
         #region Private Members
         private readonly StatisticsSet _statistics = new StatisticsSet("TierMigration");
         
         #endregion
-
-        static TierMigrateItemProcessor()
-        {
-            _monitor.Load();
-
-        }
 
         /// <summary>
         /// Simple routine for failing a work queue item.
@@ -143,8 +138,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             long size = (long) DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
 
             Platform.Log(LogLevel.Info, "Migrating study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
-            ServerFilesystemInfo currFilesystem = _monitor.GetFilesystemInfo(storage.FilesystemKey);
-            ServerFilesystemInfo newFilesystem = _monitor.GetLowerTierFilesystemForStorage(currFilesystem);
+			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Singleton.GetFilesystemInfo(storage.FilesystemKey);
+			ServerFilesystemInfo newFilesystem = FilesystemMonitor.Singleton.GetLowerTierFilesystemForStorage(currFilesystem);
 
             if (newFilesystem == null)
             {

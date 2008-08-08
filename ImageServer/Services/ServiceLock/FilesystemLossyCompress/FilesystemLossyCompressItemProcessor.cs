@@ -45,7 +45,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 	public class FilesystemLossyCompressItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
 	{
 		#region Private Members
-		private FilesystemMonitor _monitor;
 		private int _studiesInserted = 0;
 		#endregion
 
@@ -54,6 +53,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 		/// Process StudyDelete Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
 		/// </summary>
 		/// <param name="candidateList">The list of candidate studies for deleting.</param>
+		/// <param name="type">The type of compress.</param>
 		private void ProcessCompressCandidates(IEnumerable<FilesystemQueue> candidateList, FilesystemQueueTypeEnum type)
 		{
 			DateTime scheduledTime = Platform.Time.AddSeconds(10);
@@ -114,10 +114,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 		#region Public Methods
 		public void Process(Model.ServiceLock item)
 		{
-			_monitor = new FilesystemMonitor("Filesystem Lossy Compress");
-			_monitor.Load();
-
-			ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(item.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(item.FilesystemKey);
 
 			Platform.Log(LogLevel.Info,
 						 "Starting check for studies to lossy compress on filesystem '{0}'.",
@@ -155,22 +152,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 							 scheduledTime);
 
 			UnlockServiceLock(item, true, scheduledTime);
-
-
-			_monitor.Dispose();
-			_monitor = null;
 		}
 
-		public new void Dispose()
-		{
-			if (_monitor != null)
-			{
-				_monitor.Dispose();
-				_monitor = null;
-			}
-
-			base.Dispose();
-		}
 		#endregion
 	}
 }

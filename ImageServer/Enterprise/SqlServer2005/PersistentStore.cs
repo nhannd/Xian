@@ -32,6 +32,8 @@
 using System;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
@@ -80,6 +82,15 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Fatal, e);
+
+				StackTrace callStack = new StackTrace();
+				Platform.Log(LogLevel.Info,"Stack trace:");
+				foreach (StackFrame frame in callStack.GetFrames())
+				{
+					MethodBase method = frame.GetMethod(); 
+					Platform.Log(LogLevel.Info, "Method: {1}","",method.Name);
+				}
+
                 throw new PersistenceException("Unexpected exception opening database connection", e);
             }
         }
@@ -97,6 +108,16 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Fatal, e);
+				Platform.Log(LogLevel.Fatal, e);
+
+				StackTrace callStack = new StackTrace();
+				Platform.Log(LogLevel.Info, "Stack trace:");
+				foreach (StackFrame frame in callStack.GetFrames())
+				{
+					MethodBase method = frame.GetMethod();
+					Platform.Log(LogLevel.Info, "Method: {1}", "", method.Name);
+				}
+
                 throw new PersistenceException("Unexpected exception opening database connection", e);
             }
         }

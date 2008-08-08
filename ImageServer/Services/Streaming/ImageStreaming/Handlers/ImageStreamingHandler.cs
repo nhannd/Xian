@@ -1,9 +1,39 @@
+#region License
+
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.IO;
 using System.Net;
 using System.Web;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -14,21 +44,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     /// </summary>
     internal class ImageStreamingHandler : IObjectStreamingHandler
     {
-        static FilesystemMonitor _monitor = new FilesystemMonitor("ImageStreaming");
-        
-        static ImageStreamingHandler()
-        {
-            _monitor.Load();
-        }
-
         public WADOResponse Process(string serverAE, HttpListenerContext httpContext)
         {
             Platform.CheckForNullReference(serverAE, "serverAE");
             Platform.CheckForNullReference(httpContext, "httpContext");
             
-            ServerPartitionMonitor partitionMonitor = ServerPartitionMonitor.Instance;
-            partitionMonitor.LoadPartitions();
-            ServerPartition partition = partitionMonitor.GetPartition(serverAE);
+            ServerPartition partition = ServerPartitionMonitor.Singleton.GetPartition(serverAE);
             if (partition== null)
                 throw new WADOException(HttpStatusCode.NotFound, String.Format("Server {0} does not exist", serverAE));
 
@@ -51,7 +72,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 throw new WADOException(HttpStatusCode.NotFound, "The requested object does not exist on the specified server");
             }
 
-            ServerFilesystemInfo fs = _monitor.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
+			ServerFilesystemInfo fs = FilesystemMonitor.Singleton.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
             if (!fs.Readable)
             {
                 throw new WADOException(HttpStatusCode.Forbidden, "The requested object is not located on readable filesystem");
@@ -77,7 +98,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         }
 
 
-        protected bool ClientAcceptable(ImageStreamingContext context, string contentType)
+        protected static bool ClientAcceptable(ImageStreamingContext context, string contentType)
         {
             if (context.Request.AcceptTypes == null)
                 return false;

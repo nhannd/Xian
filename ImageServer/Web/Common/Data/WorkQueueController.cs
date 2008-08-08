@@ -199,9 +199,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 Platform.Log(LogLevel.Error, "FindWorkQueue failed", e);
             	return new List<WorkQueue>();
             }
-
-            return null;
-            
         }
 
         /// <summary>
