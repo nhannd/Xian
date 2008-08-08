@@ -46,6 +46,8 @@
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
+    <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
+    <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />
     <Compile Include="Shreds\WorkQueueServerExtension.cs" />
     <Compile Include="Shreds\WorkQueueServerManager.cs" />
     <Compile Include="SR.Designer.cs">

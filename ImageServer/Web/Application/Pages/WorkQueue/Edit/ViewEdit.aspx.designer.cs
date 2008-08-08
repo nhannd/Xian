@@ -83,13 +83,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit.DeleteWorkQueueDialog DeleteWorkQueueDialog;
         
         /// <summary>
-        /// InformationDialog control.
+        /// MessageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox InformationDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
         
         /// <summary>
         /// Message control.

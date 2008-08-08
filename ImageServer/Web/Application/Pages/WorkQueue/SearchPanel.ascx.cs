@@ -209,6 +209,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             }
         }
 
+        protected void ReprocessItemButton_Click(object sender, EventArgs arg)
+        {
+            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
+            if (item != null)
+            {
+                EnclosingPage.ReprocessWorkQueueItem(item.Key);
+            }
+        }
+        
+
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {            
             Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
@@ -243,6 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             RescheduleItemButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem.TheWorkQueueItem);
             DeleteItemButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem.TheWorkQueueItem);
             ResetItemButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem.TheWorkQueueItem);
+            ReprocessItemButton.Enabled = selectedItem != null && WorkQueueController.CanReprocess(selectedItem.TheWorkQueueItem);
         }
             
         #endregion Protected Methods

@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// <param name="scu">The Storage SCU component doing an autoroute.</param>
         protected virtual void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
-            _storageLocationList =  LoadStorageLocation(item);
+            LoadStorageLocation(item);
             string studyPath = StorageLocation.GetStudyPath();
 
             StudyXml studyXml = LoadStudyXml(StorageLocation);

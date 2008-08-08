@@ -228,6 +228,12 @@
   <data name="NotDefault" xml:space="preserve">
     <value>Not Default</value>
   </data>
+  <data name="ReprocessFailed" xml:space="preserve">
+    <value>The study could not be scheduled for reprocess. Please contact server administrator.</value>
+  </data>
+  <data name="ReprocessOK" xml:space="preserve">
+    <value>The study has been scheduled for reprocess.</value>
+  </data>
   <data name="SelectedWorkQueueNoLongerOnTheList" xml:space="preserve">
     <value>The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list.</value>
   </data>

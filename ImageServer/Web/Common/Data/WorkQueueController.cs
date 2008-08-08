@@ -169,6 +169,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                  item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy);
 		}
 
+
+        static public bool CanReprocess(WorkQueue item)
+        {
+            return
+                item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed && item.WorkQueueTypeEnum == WorkQueueTypeEnum.StudyProcess;
+        }
 		#endregion Static Public Methods
 
 		#region Public Methods
@@ -334,6 +340,44 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return result;
         }
 
+
+        public bool ReprocessWorkQueueItem(WorkQueue item)
+        {
+            WorkQueue newItem = null;
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+
+                // delete current workqueue
+                IWorkQueueUidEntityBroker uidBroker = ctx.GetBroker<IWorkQueueUidEntityBroker>();
+                WorkQueueUidSelectCriteria criteria = new WorkQueueUidSelectCriteria();
+                criteria.WorkQueueKey.EqualTo(item.GetKey());
+                
+                if (uidBroker.Delete(criteria)>=0)
+                {
+                    IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
+                    if (workQueueBroker.Delete(item.GetKey()))
+                    {
+                        WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+                        columns.InsertTime = Platform.Time;
+                        columns.ScheduledTime = Platform.Time;
+                        columns.ServerPartitionKey = item.ServerPartitionKey;
+                        columns.StudyStorageKey = item.StudyStorageKey;
+                        columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+                        columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                        columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
+                        columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(15));
+                        newItem = workQueueBroker.Insert(columns);
+
+                        if (newItem!=null)
+                            ctx.Commit();
+                    }
+
+                }
+            }
+
+            return newItem != null;
+        }
         #endregion
     }
 }

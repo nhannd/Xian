@@ -394,6 +394,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The study could not be scheduled for reprocess. Please contact server administrator..
+        /// </summary>
+        internal static string ReprocessFailed {
+            get {
+                return ResourceManager.GetString("ReprocessFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The study has been scheduled for reprocess..
+        /// </summary>
+        internal static string ReprocessOK {
+            get {
+                return ResourceManager.GetString("ReprocessOK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The item you selected is no longer on the list. It could have been modified by the system or another person. Please refresh the list..
         /// </summary>
         internal static string SelectedWorkQueueNoLongerOnTheList {

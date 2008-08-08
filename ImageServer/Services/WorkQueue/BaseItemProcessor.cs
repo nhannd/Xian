@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private TimeSpanStatistics _studyXmlLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _processTime = new TimeSpanStatistics();
 
-        protected IList<StudyStorageLocation> _storageLocationList;
+        private IList<StudyStorageLocation> _storageLocationList;
         private IList<WorkQueueUid> _uidList;
 
         #region Protected Properties
@@ -77,10 +77,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get { return _storageLocationList[0]; }
         }
 
-        protected IList<StudyStorageLocation> StorageLocationList
-        {
-            get { return _storageLocationList; }
-        }
 
         protected IList<WorkQueueUid> WorkQueueUidList
         {
@@ -121,6 +117,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             get { return _name; }
             set { _name = value; }
+        }
+
+        protected IList<StudyStorageLocation> StorageLocationList
+        {
+            get { 
+                return _storageLocationList; 
+            }
         }
 
         #endregion
@@ -164,6 +167,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             
             Debug.Assert(list != null && list.Count> 0);
+
+            _storageLocationList = list;
             return list;
         }
 

@@ -59,6 +59,11 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),109,'PurgeStudy','Purge Study','Purge archived study and place offline.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),110,'ReprocessStudy','Reprocess Study','Reprocess an entire study.')
+GO
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]

@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 string failure = null;
                 try
                 {
-                    _storageLocationList = LoadStorageLocation(item);
+                    LoadStorageLocation(item);
 
                     LoadEntities(item);
 

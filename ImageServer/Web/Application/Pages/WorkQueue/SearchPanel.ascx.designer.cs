@@ -263,6 +263,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteItemButton;
         
         /// <summary>
+        /// ReprocessItemButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ReprocessItemButton;
+        
+        /// <summary>
         /// Panel2 control.
         /// </summary>
         /// <remarks>

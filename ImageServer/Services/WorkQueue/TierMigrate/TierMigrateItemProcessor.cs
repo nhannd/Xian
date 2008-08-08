@@ -108,8 +108,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             
             try
             {
-                _storageLocationList = LoadStorageLocation(item);
-                DoMigrateStudies(_storageLocationList);
+                LoadStorageLocation(item);
+                DoMigrateStudies(StorageLocationList);
                 PostProcessing(item, false, true);
             }
             catch(Exception e)

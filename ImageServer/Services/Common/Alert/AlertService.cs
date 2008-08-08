@@ -1,3 +1,4 @@
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -38,7 +39,14 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert
             IAlertServiceExtension[] extensions = GetExtensions();
             foreach(IAlertServiceExtension ext in extensions)
             {
-                ext.OnAlert(alert);
+                try
+                {
+                    ext.OnAlert(alert);    
+                }
+                catch(Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Error occurred when calling {0} OnAlert()", ext.GetType());
+                }
             }
 
         }

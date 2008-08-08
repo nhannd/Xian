@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		{
 
 			LoadUids(item);
-            _storageLocationList = LoadStorageLocation(item);
+            LoadStorageLocation(item);
 
 			if (WorkQueueUidList.Count == 0)
 			{

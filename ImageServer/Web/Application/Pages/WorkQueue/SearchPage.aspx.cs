@@ -170,7 +170,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             }
         }
 
-        
+        public void ReprocessWorkQueueItem(ServerEntityKey itemKey)
+        {
+            if (itemKey != null)
+            {
+                Model.WorkQueue item = Model.WorkQueue.Load(itemKey);
+                WorkQueueController controller = new WorkQueueController();
+                if (controller.ReprocessWorkQueueItem(item))
+                {
+                    InformationDialog.Message = App_GlobalResources.SR.ReprocessOK;
+                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                    InformationDialog.Show();
+                }
+                else
+                {
+                    InformationDialog.Message = App_GlobalResources.SR.ReprocessFailed;
+                    InformationDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                    InformationDialog.Show();
+                }
+            }
+        }
 
         #endregion Public Methods
 

@@ -140,5 +140,12 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <param name="entityKey">The key for the entity to delete.</param>
         /// <returns>true on success, false on failure</returns>
         bool Delete(ServerEntityKey entityKey);
+
+        /// <summary>
+        /// Delete entities matching specified criteria.
+        /// </summary>
+        /// <param name="criteria">The criteria for the entities to delete.</param>
+        /// <returns>Number of records deleted</returns>
+        int Delete(TSelectCriteria criteria);
     }
 }

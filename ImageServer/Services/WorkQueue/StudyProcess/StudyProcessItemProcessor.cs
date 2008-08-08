@@ -47,11 +47,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     public class StudyProcessItemProcessor : BaseItemProcessor
     {
-        private const int ALERT_STUDYPROCESS_STUDYRULE_FAILED = 100;
-        private const int ALERT_STUDYPROCESS_SERIESRULE_FAILED = 200;
-        private const int ALERT_STUDYPROCESS_SOP_DUPLICATE = 300;
-        private const string COMPONENT_NAME = "Study Process";
-
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
         private ServerRulesEngine _studyProcessedRulesEngine;
@@ -529,7 +524,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
             
                                 //Load the storage location.
-                                _storageLocationList = LoadStorageLocation(item);
+                                LoadStorageLocation(item);
 
                                 // Process the images in the list
                                 successful = ProcessUidList(item);

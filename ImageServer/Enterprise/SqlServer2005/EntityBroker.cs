@@ -396,7 +396,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <param name="criteria">The criteria for the select count</param>
         /// <param name="subWhere">If this is being used to generate the SQL for a sub-select, additional where clauses are included here for the select.  Otherwise the parameter is null.</param>
         /// <returns>The SQL string.</returns>
-        private static string GetSelectCountSql(string entityName, SqlCommand command, EntitySelectCriteria criteria,
+        private static string GetSelectCountSql(string entityName, SqlCommand command, SearchCriteria criteria,
                                                 String subWhere)
         {
             StringBuilder sb = new StringBuilder();
@@ -426,6 +426,43 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             return sb.ToString();
         }
 
+
+        /// <summary>
+        /// Proves a WHERE clause based on the supplied input criteria.
+        /// </summary>
+        /// <param name="entityName">The entity that is being deleted from.</param>
+        /// <param name="command">The SqlCommand to use.</param>
+        /// <param name="criteria">The criteria for the delete statement</param>
+        /// <param name="subWhere">If this is being used to generate the SQL for a sub-where, additional where clauses are included here for the delete.  Otherwise the parameter is null.</param>
+        /// <returns>The SQL string.</returns>
+        private static string GetDeleteWhereClause(string entityName, SqlCommand command, SearchCriteria criteria, String subWhere)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // Generate an array of the WHERE clauses to be used.
+            String[] where = GetWhereSearchCriteria(entityName, criteria, command);
+
+            // Add the where clauses on.
+            bool first = true;
+            if (subWhere != null)
+            {
+                first = false;
+                sb.AppendFormat(" {0}", subWhere);
+            }
+
+            foreach (String clause in where)
+            {
+                if (first)
+                {
+                    first = false;
+                    sb.AppendFormat(" {0}", clause);
+                }
+                else
+                    sb.AppendFormat(" AND {0}", clause);
+            }
+
+            return sb.ToString();
+        }
         /// <summary>
         /// Resolves the Database column name for a field name
         /// </summary>
@@ -1172,6 +1209,51 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     myReader.Close();
                     myReader.Dispose();
                 }
+                if (command != null)
+                    command.Dispose();
+            }
+        }
+
+        #endregion
+
+        #region IEntityBroker<TServerEntity,TSelectCriteria,TUpdateColumns> Members
+
+
+        public int Delete(TSelectCriteria criteria)
+        {
+            Platform.CheckForNullReference(criteria, "criteria");
+
+            SqlCommand command = null;
+            try
+            {
+                command = new SqlCommand();
+                command.Connection = Context.Connection;
+                command.CommandType = CommandType.Text;
+                UpdateContext update = Context as UpdateContext;
+
+                if (update != null)
+                    command.Transaction = update.Transaction;
+
+                command.CommandText = String.Format("DELETE FROM {0} WHERE {1}", _entityName, GetDeleteWhereClause(_entityName, command, criteria, null));
+
+                int rows = command.ExecuteNonQuery();
+
+                return rows;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception with delete: {0}",
+                             command != null ? command.CommandText : "");
+
+                throw new PersistenceException(
+                    String.Format("Unexpected problem with delete statment on table {0}: {1}", _entityName, e.Message),
+                    e);
+            }
+            finally
+            {
+                // Cleanup the reader/command, or else we won't be able to do anything with the
+                // connection the next time here.
+
                 if (command != null)
                     command.Dispose();
             }

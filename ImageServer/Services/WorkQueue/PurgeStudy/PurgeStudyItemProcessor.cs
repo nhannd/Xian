@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
 			//Load the storage location.
-			_storageLocationList = LoadStorageLocation(item);
+			LoadStorageLocation(item);
 
 			_partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 

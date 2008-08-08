@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
     {
         protected override void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
-            _storageLocationList = LoadStorageLocation(item);
+            LoadStorageLocation(item);
             string studyPath = StorageLocation.GetStudyPath();
 
             StudyXml studyXml = LoadStudyXml(StorageLocation);

@@ -32,11 +32,30 @@
 using System;
 using System.Web.UI;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 {
+
+    public class WorkQueueDetailsButtonEventArg:EventArgs
+    {
+        private Model.WorkQueue _item;
+
+        public WorkQueueDetailsButtonEventArg(Model.WorkQueue item)
+        {
+            _item = item;
+        }
+
+        public Model.WorkQueue WorkQueueItem
+        {
+            get { return _item; }
+            set { _item = value; }
+        }
+    }
+
     /// <summary>
     /// The <see cref="WorkQueue"/> details panel
     /// </summary>
@@ -46,6 +65,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         private Model.WorkQueue _workQueue;
         private WorkQueueDetailsViewBase _detailsView;
+
+        private EventHandler<WorkQueueDetailsButtonEventArg> _rescheduleClickHandler;
+        private EventHandler<WorkQueueDetailsButtonEventArg> _resetClickHandler;
+        private EventHandler<WorkQueueDetailsButtonEventArg> _deleteClickHandler;
+        private EventHandler<WorkQueueDetailsButtonEventArg> _reprocessClickHandler;
         #endregion Private members
 
         #region Public Properties
@@ -78,23 +102,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
 
         #region Events
 
-        public delegate void RescheduleButtonClickListener();
-        public delegate void ResetButtonClickListener();
-        public delegate void DeleteButtonClickListener();
 
         /// <summary>
         /// Fired when user clicks on the Reschedule button
         /// </summary>
-        public event RescheduleButtonClickListener RescheduleButtonClick;
+        public event EventHandler<WorkQueueDetailsButtonEventArg> RescheduleButtonClick
+        {
+            add { _rescheduleClickHandler += value; }
+            remove { _rescheduleClickHandler -= value; }
+        }
         /// <summary>
         /// Fired when user clicks on the Reset button
         /// </summary>
-        public event ResetButtonClickListener ResetButtonClick;
+        public event EventHandler<WorkQueueDetailsButtonEventArg> ResetButtonClick
+        {
+            add { _resetClickHandler += value; }
+            remove { _resetClickHandler -= value; }
+        }
 
         /// <summary>
         /// Fired when user clicks on the Delete button
         /// </summary>
-        public event DeleteButtonClickListener DeleteButtonClick;
+        public event EventHandler<WorkQueueDetailsButtonEventArg> DeleteButtonClick
+        {
+            add { _deleteClickHandler += value; }
+            remove { _deleteClickHandler -= value; }
+        }
+
+        
+        public event EventHandler<WorkQueueDetailsButtonEventArg> ReprocessButtonClick
+        {
+            add { _reprocessClickHandler += value; }
+            remove { _reprocessClickHandler -= value; }
+        }
         
 
         #endregion Events
@@ -146,24 +186,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue.Edit
             RescheduleToolbarButton.Enabled = WorkQueue != null && WorkQueueController.CanReschedule(WorkQueue);
             ResetButton.Enabled = WorkQueue != null && WorkQueueController.CanReset(WorkQueue);
             DeleteButton.Enabled = WorkQueue != null && WorkQueueController.CanDelete(WorkQueue);
+            ReprocessButton.Enabled = WorkQueue != null && WorkQueueController.CanReprocess(WorkQueue);
         }
 
         protected void Reschedule_Click(object sender, EventArgs arg)
         {
-            if (RescheduleButtonClick != null)
-                RescheduleButtonClick();
+            EventsHelper.Fire(_rescheduleClickHandler, ReprocessButton, new WorkQueueDetailsButtonEventArg(WorkQueue));
         }
 
         protected void Delete_Click(object sender, EventArgs arg)
         {
-            if (DeleteButtonClick != null)
-                DeleteButtonClick();
+            EventsHelper.Fire(_deleteClickHandler, ReprocessButton, new WorkQueueDetailsButtonEventArg(WorkQueue));
+        }
+
+        protected void Reprocess_Click(object sender, EventArgs arg)
+        {
+            EventsHelper.Fire(_reprocessClickHandler, ReprocessButton, new WorkQueueDetailsButtonEventArg(WorkQueue));
         }
 
         protected void Reset_Click(object sender, EventArgs arg)
         {
-            if (ResetButtonClick != null)
-                ResetButtonClick();
+            EventsHelper.Fire(_resetClickHandler, ReprocessButton, new WorkQueueDetailsButtonEventArg(WorkQueue));
         }
 
         protected void RefreshTimer_Tick(object sender, EventArgs arg)

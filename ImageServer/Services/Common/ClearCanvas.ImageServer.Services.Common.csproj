@@ -34,7 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Alert\AlertPlugins\AlertDBSink.cs" />
+    <Compile Include="Alert\AlertPlugins\DefaultAlertSink.cs" />
     <Compile Include="Alert\AlertService.cs" />
     <Compile Include="Alert\IAlertServiceExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

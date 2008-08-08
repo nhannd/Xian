@@ -32,7 +32,6 @@
 using System;
 using System.ServiceProcess;
 using System.Threading;
-using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.ShredHostService
 {
@@ -44,10 +43,6 @@ namespace ClearCanvas.ImageServer.ShredHostService
         /// </summary>
         static void Main(string[] args)
         {
-            ServerPlatform.Alert(AlertCategory.System, AlertLevel.Informational,
-                                 SR.AlertComponentName, AlertTypeCodes.Starting,
-                                 SR.AlertShredHostServiceStarting);
-
             if (args.Length > 0 && String.Compare(args[0], "-service", true) == 0)
             {
                 ServiceBase[] ServicesToRun;
@@ -72,9 +67,6 @@ namespace ClearCanvas.ImageServer.ShredHostService
                 ShredHostService.InternalStop();
             }
 
-            ServerPlatform.Alert(AlertCategory.System, AlertLevel.Informational,
-                                 SR.AlertComponentName, AlertTypeCodes.Stopped,
-                                 SR.AlertShredHostServiceStopped);
         }
     }
 }
