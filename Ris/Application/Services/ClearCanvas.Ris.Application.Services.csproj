@@ -103,7 +103,7 @@
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
     <Compile Include="DiagnosticServiceAssembler.cs" />
     <Compile Include="ModalityPerformedProcedureStepAssembler.cs" />
-    <Compile Include="ModalityProcedureStepAssembler.cs" />
+    <Compile Include="ProcedureStepAssembler.cs" />
     <Compile Include="MrnAssembler.cs" />
     <Compile Include="OrderAssembler.cs" />
     <Compile Include="WorkingFacilitySettings.cs" />

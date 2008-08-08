@@ -35,59 +35,51 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    [DataContract]
-    public class ModalityProcedureStepDetail : DataContractBase
-    {
-        public ModalityProcedureStepDetail(
-            EntityRef procedureStepRef,
-            string procedureStepName,
-            EnumValueInfo state,
-            DateTime? scheduledStartTime,
-            DateTime? startTime,
-            DateTime? endTime,
-            StaffSummary scheduledPerformer,
-            StaffSummary performer,
-			ModalitySummary modality
-            )
-        {
-            this.ProcedureStepRef = procedureStepRef;
-            this.ProcedureStepName = procedureStepName;
-            this.State = state;
-            this.ScheduledStartTime = scheduledStartTime;
-            this.StartTime = startTime;
-            this.EndTime = endTime;
+	[DataContract]
+	public class ProcedureStepSummary : DataContractBase
+	{
+		public ProcedureStepSummary(
+			EntityRef procedureStepRef,
+			string procedureStepName,
+			EnumValueInfo state,
+			DateTime? startTime,
+			DateTime? endTime,
+			ModalitySummary modality,
+			ProcedureSummary procedure
+			)
+		{
+			this.ProcedureStepRef = procedureStepRef;
+			this.ProcedureStepName = procedureStepName;
+			this.State = state;
+			this.StartTime = startTime;
+			this.EndTime = endTime;
 			this.Modality = modality;
-			this.ScheduledPerformer = scheduledPerformer;
-            this.Performer = performer;
-        }
+			this.Procedure = procedure;
+		}
 
+		[DataMember]
+		public EntityRef ProcedureStepRef;
 
-        [DataMember]
-        public EntityRef ProcedureStepRef;
+		[DataMember]
+		public string ProcedureStepName;
 
-        [DataMember]
-        public string ProcedureStepName;
+		[DataMember]
+		public EnumValueInfo State;
 
-        [DataMember]
-        public EnumValueInfo State;
+		[DataMember]
+		public DateTime? StartTime;
 
-        [DataMember]
-        public DateTime? ScheduledStartTime;
+		[DataMember]
+		public DateTime? EndTime;
 
-        [DataMember]
-        public DateTime? StartTime;
+		[DataMember]
+		public ProcedureSummary Procedure;
 
-        [DataMember]
-        public DateTime? EndTime;
-
-        [DataMember]
-        public StaffSummary ScheduledPerformer;
-
-        [DataMember]
-        public StaffSummary Performer;
-
+		/// <summary>
+		/// Specifies the modality of a MPS.  This field is null for other types of procedure step.
+		/// </summary>
 		[DataMember]
 		public ModalitySummary Modality;
 
-    }
+	}
 }

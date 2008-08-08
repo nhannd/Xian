@@ -46,12 +46,12 @@ namespace ClearCanvas.Ris.Application.Services
         {
             string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Name; });
 
-            ModalityProcedureStepAssembler assembler = new ModalityProcedureStepAssembler();
+            ProcedureStepAssembler assembler = new ProcedureStepAssembler();
 
             // include the details of each MPS in the mpps summary
-            List<ModalityProcedureStepSummary> mpsDetails = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepSummary>(
+            List<ProcedureStepSummary> mpsDetails = CollectionUtils.Map<ModalityProcedureStep, ProcedureStepSummary>(
                 mpps.Activities,
-                delegate(ModalityProcedureStep mps) { return assembler.CreateModalityProcedureStepSummary(mps, context); });
+                delegate(ModalityProcedureStep mps) { return assembler.CreateProcedureStepSummary(mps, context); });
 
             return new ModalityPerformedProcedureStepDetail(
                 mpps.GetRef(),

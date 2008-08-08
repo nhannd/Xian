@@ -40,9 +40,9 @@ namespace ClearCanvas.Ris.Client
     public class ProcedurePlanSummaryTableItem
     {
         private readonly ProcedureDetail _rpDetail;
-        private readonly ModalityProcedureStepDetail _mpsDetail;
+        private readonly ProcedureStepDetail _mpsDetail;
 
-        public ProcedurePlanSummaryTableItem(ProcedureDetail rpDetail, ModalityProcedureStepDetail mpsDetail)
+        public ProcedurePlanSummaryTableItem(ProcedureDetail rpDetail, ProcedureStepDetail mpsDetail)
         {
             _rpDetail = rpDetail;
             _mpsDetail = mpsDetail;
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client
             get { return _rpDetail; }
         }
 
-        public ModalityProcedureStepDetail mpsDetail
+        public ProcedureStepDetail mpsDetail
         {
             get { return _mpsDetail; }
         }

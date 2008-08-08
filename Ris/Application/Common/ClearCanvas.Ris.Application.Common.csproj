@@ -488,7 +488,7 @@
     <Compile Include="ModalityWorkflow\ListPerformedProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\ListPerformedProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\ModalityPerformedProcedureStepDetail.cs" />
-    <Compile Include="ModalityProcedureStepDetail.cs" />
+    <Compile Include="ProcedureStepDetail.cs" />
     <Compile Include="ProcedurePlanDetail.cs" />
     <Compile Include="ProcedureDetail.cs" />
     <Compile Include="ModalityWorkflow\StartModalityProcedureStepsRequest.cs" />
@@ -523,7 +523,7 @@
     <Compile Include="Admin\WorklistAdmin\WorklistAdminSummary.cs" />
     <Compile Include="DiagnosticServiceDetail.cs" />
     <Compile Include="DiagnosticServiceSummary.cs" />
-    <Compile Include="ModalityProcedureStepSummary.cs" />
+    <Compile Include="ProcedureStepSummary.cs" />
     <Compile Include="ModalityProcedureStepTypeDetail.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />

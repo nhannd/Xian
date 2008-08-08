@@ -35,37 +35,37 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-	public class ModalityProcedureStepAssembler
+	public class ProcedureStepAssembler
 	{
-		public ModalityProcedureStepSummary CreateModalityProcedureStepSummary(ModalityProcedureStep mp, IPersistenceContext context)
+		public ProcedureStepSummary CreateProcedureStepSummary(ProcedureStep ps, IPersistenceContext context)
 		{
 			ProcedureAssembler assembler = new ProcedureAssembler();
 			ModalityAssembler modalityAssembler = new ModalityAssembler();
-			return new ModalityProcedureStepSummary(
-				mp.GetRef(),
-				mp.Name,
-				EnumUtils.GetEnumValueInfo(mp.State, context),
-				mp.StartTime,
-				mp.EndTime,
-				modalityAssembler.CreateModalitySummary(mp.Modality),
-				assembler.CreateProcedureSummary(mp.Procedure, context));
+			return new ProcedureStepSummary(
+				ps.GetRef(),
+				ps.Name,
+				EnumUtils.GetEnumValueInfo(ps.State, context),
+				ps.StartTime,
+				ps.EndTime,
+				ps.Is<ModalityProcedureStep>() ? modalityAssembler.CreateModalitySummary(ps.As<ModalityProcedureStep>().Modality) : null,
+				assembler.CreateProcedureSummary(ps.Procedure, context));
 		}
 
-		public ModalityProcedureStepDetail CreateModalityProcedureStepDetail(ModalityProcedureStep mp, IPersistenceContext context)
+		public ProcedureStepDetail CreateProcedureStepDetail(ProcedureStep ps, IPersistenceContext context)
 		{
 			StaffAssembler staffAssembler = new StaffAssembler();
 			ModalityAssembler modalityAssembler = new ModalityAssembler();
 
-			return new ModalityProcedureStepDetail(
-				mp.GetRef(),
-				mp.Name,
-				EnumUtils.GetEnumValueInfo(mp.State, context),
-				mp.Scheduling == null ? null : mp.Scheduling.StartTime,
-				mp.StartTime,
-				mp.EndTime,
-				mp.AssignedStaff == null ? null : staffAssembler.CreateStaffSummary(mp.AssignedStaff, context),
-				mp.PerformingStaff == null ? null : staffAssembler.CreateStaffSummary(mp.PerformingStaff, context),
-				modalityAssembler.CreateModalitySummary(mp.Modality));
+			return new ProcedureStepDetail(
+				ps.GetRef(),
+				ps.Name,
+				EnumUtils.GetEnumValueInfo(ps.State, context),
+				ps.Scheduling == null ? null : ps.Scheduling.StartTime,
+				ps.StartTime,
+				ps.EndTime,
+				ps.AssignedStaff == null ? null : staffAssembler.CreateStaffSummary(ps.AssignedStaff, context),
+				ps.PerformingStaff == null ? null : staffAssembler.CreateStaffSummary(ps.PerformingStaff, context),
+				ps.Is<ModalityProcedureStep>() ? modalityAssembler.CreateModalitySummary(ps.As<ModalityProcedureStep>().Modality) : null);
 		}
 	}
 }

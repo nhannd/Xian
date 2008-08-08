@@ -613,7 +613,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             _procedurePlanSummaryTable.Items.Clear();
             foreach(ProcedureDetail rp in procedurePlanDetail.Procedures)
             {
-                foreach(ModalityProcedureStepDetail mps in rp.ModalityProcedureSteps)
+                foreach(ProcedureStepDetail mps in rp.ProcedureSteps)
                 {
                     _procedurePlanSummaryTable.Items.Add(
                         new Checkable<ProcedurePlanSummaryTableItem>(

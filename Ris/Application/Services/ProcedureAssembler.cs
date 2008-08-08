@@ -29,21 +29,41 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services
 {
     public class ProcedureAssembler
     {
+		/// <summary>
+		/// Creates the most verbose possible procedure detail.
+		/// </summary>
+		/// <param name="rp"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
         public ProcedureDetail CreateProcedureDetail(Procedure rp, IPersistenceContext context)
         {
-            return CreateProcedureDetail(rp, true, true, context);
+			return CreateProcedureDetail(rp, delegate { return true; }, true, context);
         }
 
-        public ProcedureDetail CreateProcedureDetail(Procedure rp, bool includeProcedureSteps, bool includeProtocol, IPersistenceContext context)
+		/// <summary>
+		/// Creates procedure detail optionally including specified data.
+		/// </summary>
+		/// <param name="rp"></param>
+		/// <param name="procedureStepFilter"></param>
+		/// <param name="includeProtocol"></param>
+		/// <param name="context"></param>
+		/// <returns></returns>
+        public ProcedureDetail CreateProcedureDetail(
+			Procedure rp,
+			Predicate<ProcedureStep> procedureStepFilter,
+			bool includeProtocol,
+			IPersistenceContext context)
         {
             ProcedureDetail detail = new ProcedureDetail();
 
@@ -59,15 +79,17 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
         	detail.Portable = rp.Portable;
 
-            if (includeProcedureSteps)
-            {
-                //TODO: what about other kinds of procedure steps ??
-                ModalityProcedureStepAssembler modalityProcedureStepAssembler = new ModalityProcedureStepAssembler();
-                detail.ModalityProcedureSteps = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
-                    rp.ModalityProcedureSteps,
-                    delegate(ModalityProcedureStep mp)
-                    { return modalityProcedureStepAssembler.CreateModalityProcedureStepDetail(mp, context); });
-            }
+        	List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.ProcedureSteps, procedureStepFilter);
+			if(includedSteps.Count > 0)
+			{
+				ProcedureStepAssembler procedureStepAssembler = new ProcedureStepAssembler();
+				detail.ProcedureSteps = CollectionUtils.Map<ProcedureStep, ProcedureStepDetail>(
+					includedSteps,
+					delegate(ProcedureStep ps)
+					{
+						return procedureStepAssembler.CreateProcedureStepDetail(ps, context);
+					});
+			}
 
             // the Protocol may be null, if this procedure has not been protocolled
             if(includeProtocol && rp.Protocol != null)

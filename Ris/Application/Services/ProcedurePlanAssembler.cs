@@ -51,7 +51,14 @@ namespace ClearCanvas.Ris.Application.Services
             detail.OrderRef = order.GetRef();
             detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(
                 order.Procedures,
-                delegate(Procedure rp) { return assembler.CreateProcedureDetail(rp, context); });
+                delegate(Procedure rp)
+                {
+                	return assembler.CreateProcedureDetail(
+                		rp,
+                		delegate(ProcedureStep ps) { return ps.Is<ModalityProcedureStep>(); }, // only MPS are relevant here
+                		false,
+                		context);
+                });
             detail.DiagnosticServiceSummary =
                 new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name, order.DiagnosticService.Deactivated);
 

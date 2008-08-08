@@ -78,7 +78,14 @@ namespace ClearCanvas.Ris.Application.Services
 
             ProcedureAssembler rpAssembler = new ProcedureAssembler();
             detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(report.Procedures,
-                delegate(Procedure p) { return rpAssembler.CreateProcedureDetail(p, context); });
+                delegate(Procedure p)
+                {
+                	return rpAssembler.CreateProcedureDetail(
+                		p,
+                		delegate(ProcedureStep ps) { return ps.Is<ReportingProcedureStep>(); },	// only Reporting steps are relevant
+                		false,	// exclude protocols
+                		context);
+                });
 
 			List<ReportPartDetail> parts = CollectionUtils.Map<ReportPart, ReportPartDetail>(report.Parts,
 				delegate(ReportPart part) { return CreateReportPartDetail(part, context); });

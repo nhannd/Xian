@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public bool Portable;
 
         [DataMember]
-        public List<ModalityProcedureStepDetail> ModalityProcedureSteps;
+        public List<ProcedureStepDetail> ProcedureSteps;
 
         [DataMember]
         public ProtocolDetail Protocol;
