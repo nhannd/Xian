@@ -6,16 +6,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	[DataContract]
 	public class ReassignProcedureStepRequest : DataContractBase
 	{
-		public ReassignProcedureStepRequest(EntityRef procedureStepRef, StaffSummary reassignedRadiologist)
+		public ReassignProcedureStepRequest(EntityRef procedureStepRef, EntityRef reassignedRadiologistRef)
 		{
 			this.ProcedureStepRef = procedureStepRef;
-			this.ReassignedRadiologist = reassignedRadiologist;
+			this.ReassignedRadiologistRef = reassignedRadiologistRef;
 		}
 
 		[DataMember]
 		public EntityRef ProcedureStepRef;
 
 		[DataMember]
-		public StaffSummary ReassignedRadiologist;
+		public EntityRef ReassignedRadiologistRef;
 	}
 }

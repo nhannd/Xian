@@ -54,5 +54,10 @@ namespace ClearCanvas.Healthcare
         {
             get { return false; }
         }
-    }
+
+		protected override ProcedureStep CreateScheduledCopy()
+		{
+			return new DocumentationProcedureStep(this.Procedure);
+		}
+	}
 }

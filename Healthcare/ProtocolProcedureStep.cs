@@ -73,6 +73,13 @@ namespace ClearCanvas.Healthcare
             }
         }
 
-        #endregion
-    }
+		protected override ProcedureStep CreateScheduledCopy()
+		{
+			ProtocolProcedureStep newStep = new ProtocolProcedureStep(_protocol);
+			this.Procedure.AddProcedureStep(newStep);
+			return newStep;
+		}
+
+		#endregion
+	}
 }

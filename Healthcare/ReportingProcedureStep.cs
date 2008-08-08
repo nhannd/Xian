@@ -66,5 +66,5 @@ namespace ClearCanvas.Healthcare
             get { return _reportPart; }
             set { _reportPart = value; }
         }
-    }
+	}
 }

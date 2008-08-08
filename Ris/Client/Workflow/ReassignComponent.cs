@@ -74,7 +74,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
-				// TODO: reassignment
+				Platform.GetService<IReportingWorkflowService>(
+					delegate(IReportingWorkflowService service)
+						{
+							service.ReassignProcedureStep(new ReassignProcedureStepRequest(_worklistItem.ProcedureStepRef, _radiologist.StaffRef));
+						});
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}

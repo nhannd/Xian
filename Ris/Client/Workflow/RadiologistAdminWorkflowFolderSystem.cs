@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -42,22 +42,39 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (items.Count == 0)
 				return null;
 
-			string procedureStepName = CollectionUtils.FirstElement(items).ProcedureStepName;
+			string stepName = CollectionUtils.FirstElement(items).ProcedureStepName;
 
-			bool hasDifferentProcedureStep = CollectionUtils.Contains(items,
-				delegate(ReportingWorklistItem item) { return !item.ProcedureStepName.Equals(procedureStepName); });
+			bool hasDifferentStepName = CollectionUtils.Contains(items,
+				delegate(ReportingWorklistItem item) { return !item.ProcedureStepName.Equals(stepName); });
 
-			if (hasDifferentProcedureStep)
+			// Don't show a preview if the items have different type of steps
+			if (hasDifferentStepName)
 				return null;
 
-				return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
-			//else
-			//    return WebResourcesSettings.Default.ReportingFolderSystemUrl;
+			return GetPreviewFromStepName(stepName);
 		}
 
         protected override SearchResultsFolder CreateSearchResultsFolder()
         {
-        	return new Folders.Reporting.ReportingSearchFolder();
+			return new Folders.RadiologistAdmin.RadiologistAdminSearchFolder();
         }
+
+		private static string GetPreviewFromStepName(string stepName)
+		{
+			//TODO: having the client specify the step name name may not be a terribly good idea
+			switch(stepName)
+			{
+				case "Interpretation":
+				case "Transcription":
+				case "Verification":
+				case "Publication":
+					return WebResourcesSettings.Default.ReportingFolderSystemUrl;
+				case "ProtocolAssignment":
+				case "ProtocolResolution":
+					return WebResourcesSettings.Default.ProtocollingFolderSystemUrl;
+				default:
+					return null;
+			}
+		}
     }
 }

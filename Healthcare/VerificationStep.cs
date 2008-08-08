@@ -72,5 +72,10 @@ namespace ClearCanvas.Healthcare {
 
             base.OnStateChanged(previousState, newState);
         }
+
+		protected override ProcedureStep CreateScheduledCopy()
+		{
+			return new VerificationStep(this);
+		}
 	}
 }

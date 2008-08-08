@@ -112,6 +112,27 @@ namespace ClearCanvas.Healthcare
             Assign(performer == null ? null : new ProcedureStepPerformer(performer));
         }
 
+		/// <summary>
+		/// Discontinue the current step, create a new step and assigns the specified staff as the scheduled performer of the new step.
+		/// </summary>
+		/// <param name="performer"></param>
+		/// <returns>A new step with the assigned performer.</returns>
+		public ProcedureStep Reassign(Staff performer)
+		{
+			this.Discontinue();
+			ProcedureStep newStep = CreateScheduledCopy();
+			newStep.Schedule(Platform.Time);
+			newStep.Assign(performer);
+
+			return newStep;
+		}
+
+		/// <summary>
+		/// Create a new step of the same type in the Scheduled state.
+		/// </summary>
+		/// <returns></returns>
+    	protected abstract ProcedureStep CreateScheduledCopy();
+
         /// <summary>
         /// Gets the staff that this step was assigned to
         /// </summary>

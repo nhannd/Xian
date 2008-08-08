@@ -125,6 +125,11 @@ namespace ClearCanvas.Healthcare {
             get { return false; }
         }
 
+		protected override ProcedureStep CreateScheduledCopy()
+		{
+			return new ModalityProcedureStep(this.Procedure, _description, _modality);
+		}
+
         /// <summary>
         /// Gets or sets the description of this step (e.g. CT Chest w/o contrast).
         /// </summary>

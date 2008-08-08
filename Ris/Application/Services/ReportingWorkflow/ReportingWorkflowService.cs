@@ -414,16 +414,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
 		[UpdateOperation]
+		[OperationEnablement("CanReassignProcedureStep")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.ProcedureStepRef, "ProcedureStepRef");
-			Platform.CheckMemberIsSet(request.ReassignedRadiologist, "ReassignedRadiologist");
+			Platform.CheckMemberIsSet(request.ReassignedRadiologistRef, "ReassignedRadiologistRef");
 
 			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
-			Staff radiologist = PersistenceContext.Load<Staff>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
+			Staff radiologist = PersistenceContext.Load<Staff>(request.ReassignedRadiologistRef, EntityLoadFlags.Proxy);
 
-			step.Assign(radiologist);
+			step.Reassign(radiologist);
 			PersistenceContext.SynchState();
 
 			return new ReassignProcedureStepResponse(step.GetRef());
@@ -524,7 +527,23 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.SaveReport(), itemKey);
         }
 
-        private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
+		public bool CanReassignProcedureStep(WorklistItemKey itemKey)
+		{
+			if(itemKey.ProcedureStepRef != null)
+			{
+				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+				if (step is ProtocolProcedureStep)
+					return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create);
+				else if (step is ReportingProcedureStep)
+					return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create);
+				else
+					return false;
+			}
+
+			return false;
+		}
+
+    	private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
         {
             // if there is no proc step ref, operation is not available
             if(itemKey.ProcedureStepRef == null)
