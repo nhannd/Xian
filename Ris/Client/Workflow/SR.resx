@@ -369,6 +369,9 @@
   <data name="MessagePrintDowntimeFormProgress" xml:space="preserve">
     <value>Printing downtime form {0} of {1}</value>
   </data>
+  <data name="MessageRadiologistAdminSearchMessage" xml:space="preserve">
+    <value>Enter search criteria (Staff Name or Staff ID)</value>
+  </data>
   <data name="MessageReplaceOrder" xml:space="preserve">
     <value>This will cancel/discontinue the current order.  Are you sure you want to continue?</value>
   </data>
@@ -524,6 +527,9 @@
   </data>
   <data name="TitleRadiologistHome" xml:space="preserve">
     <value>Radiologist Home</value>
+  </data>
+  <data name="TitleReassignItem" xml:space="preserve">
+    <value>Reassign Item</value>
   </data>
   <data name="TitleRegistrationFolderSystem" xml:space="preserve">
     <value>Registration</value>

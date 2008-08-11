@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._radiologist = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
+			this._keepReport = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// _radiologist
@@ -47,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(223, 64);
+			this._cancelButton.Location = new System.Drawing.Point(223, 57);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(142, 64);
+			this._okButton.Location = new System.Drawing.Point(142, 57);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 1;
@@ -65,17 +66,28 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
+			// _keepReport
+			// 
+			this._keepReport.AutoSize = true;
+			this._keepReport.Location = new System.Drawing.Point(12, 60);
+			this._keepReport.Name = "_keepReport";
+			this._keepReport.Size = new System.Drawing.Size(119, 17);
+			this._keepReport.TabIndex = 3;
+			this._keepReport.Text = "Keep existing report";
+			this._keepReport.UseVisualStyleBackColor = true;
+			// 
 			// ReassignComponentControl
 			// 
 			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this._cancelButton;
+			this.Controls.Add(this._keepReport);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._radiologist);
 			this.Name = "ReassignComponentControl";
-			this.Size = new System.Drawing.Size(305, 99);
+			this.Size = new System.Drawing.Size(305, 89);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -86,5 +98,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private ClearCanvas.Ris.Client.View.WinForms.LookupField _radiologist;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
+		private System.Windows.Forms.CheckBox _keepReport;
     }
 }

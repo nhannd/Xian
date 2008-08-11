@@ -21,12 +21,22 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
+			ReportingWorklistItemSearchCriteria performerCriteria = BuildCommonCriteria(wqc);
+			performerCriteria.ProcedureStep.Performer.Staff.IsNotNull();
+
+			ReportingWorklistItemSearchCriteria scheduledPerformerCriteria = BuildCommonCriteria(wqc);
+			scheduledPerformerCriteria.ProcedureStep.Scheduling.Performer.Staff.IsNotNull();
+
+			return new ReportingWorklistItemSearchCriteria[] { performerCriteria, scheduledPerformerCriteria };
+		}
+
+		private ReportingWorklistItemSearchCriteria BuildCommonCriteria(IWorklistQueryContext wqc)
+		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
 			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.SU });
-			criteria.ProcedureStep.Performer.Staff.IsNotNull();
 			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new ReportingWorklistItemSearchCriteria[] { criteria };
+			return criteria;
 		}
 	}
 
@@ -37,12 +47,22 @@ namespace ClearCanvas.Healthcare
 	{
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
+			ReportingWorklistItemSearchCriteria performerCriteria = BuildCommonCriteria(wqc);
+			performerCriteria.ProcedureStep.Performer.Staff.IsNotNull();
+
+			ReportingWorklistItemSearchCriteria scheduledPerformerCriteria = BuildCommonCriteria(wqc);
+			scheduledPerformerCriteria.ProcedureStep.Scheduling.Performer.Staff.IsNotNull();
+
+			return new ReportingWorklistItemSearchCriteria[] { performerCriteria, scheduledPerformerCriteria };
+		}
+
+		private ReportingWorklistItemSearchCriteria BuildCommonCriteria(IWorklistQueryContext wqc)
+		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP, ActivityStatus.SU });
-			criteria.ProcedureStep.Performer.Staff.IsNotNull();
 			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new WorklistItemSearchCriteria[] { criteria };
+			return criteria;
 		}
 	}
 }

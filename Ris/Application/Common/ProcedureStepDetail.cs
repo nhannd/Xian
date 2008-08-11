@@ -42,6 +42,7 @@ namespace ClearCanvas.Ris.Application.Common
             EntityRef procedureStepRef,
             string procedureStepName,
             EnumValueInfo state,
+			DateTime? creationTime,
             DateTime? scheduledStartTime,
             DateTime? startTime,
             DateTime? endTime,
@@ -53,6 +54,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.ProcedureStepRef = procedureStepRef;
             this.ProcedureStepName = procedureStepName;
             this.State = state;
+        	this.CreationTime = creationTime;
             this.ScheduledStartTime = scheduledStartTime;
             this.StartTime = startTime;
             this.EndTime = endTime;
@@ -70,6 +72,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public EnumValueInfo State;
+
+		[DataMember]
+		public DateTime? CreationTime;
 
         [DataMember]
         public DateTime? ScheduledStartTime;

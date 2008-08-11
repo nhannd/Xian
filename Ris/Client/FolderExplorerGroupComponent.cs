@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client
 
 		public string SearchMessage
 		{
-			get { return SR.MessageSearchMessage; }
+			get { return _selectedFolderExplorer == null ? null : this._selectedFolderExplorer.FolderSystem.SearchMessage; }
 		}
 
 		public void Search(SearchParams searchParams)
@@ -308,6 +308,8 @@ namespace ClearCanvas.Ris.Client
 			if (_selectedFolderExplorer != explorer)
 			{
 				_selectedFolderExplorer = explorer;
+				NotifyPropertyChanged("SearchEnabled");
+				NotifyPropertyChanged("SearhMessage");
 				EventsHelper.Fire(_selectedFolderExplorerChanged, this, EventArgs.Empty);
 
 				// refresh folders in newly selected folder explorer

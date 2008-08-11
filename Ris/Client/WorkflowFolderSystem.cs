@@ -336,6 +336,11 @@ namespace ClearCanvas.Ris.Client
             get { return true; }
         }
 
+		public virtual string SearchMessage
+		{
+			get { return SR.MessageSearchMessageDefault; }
+		}
+
         /// <summary>
         /// Performs a search, if supported.
         /// </summary>

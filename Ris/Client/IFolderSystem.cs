@@ -130,6 +130,11 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         bool SearchEnabled { get; }
 
+		/// <summary>
+		/// Get a message to describe the type of search performed.
+		/// </summary>
+		string SearchMessage { get; }
+
         /// <summary>
         /// Performs a search, if enabled.
         /// </summary>

@@ -60,6 +60,7 @@ namespace ClearCanvas.Ris.Application.Services
 				ps.GetRef(),
 				ps.Name,
 				EnumUtils.GetEnumValueInfo(ps.State, context),
+				ps.CreationTime,
 				ps.Scheduling == null ? null : ps.Scheduling.StartTime,
 				ps.StartTime,
 				ps.EndTime,

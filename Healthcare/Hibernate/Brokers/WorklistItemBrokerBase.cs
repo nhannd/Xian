@@ -484,6 +484,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </remarks>
         protected virtual void AddConditions(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool addOrderingClause)
         {
+        	bool hasOrderingClaus = false;
+
             HqlOr or = new HqlOr();
             foreach (WorklistItemSearchCriteria c in where)
             {
@@ -497,13 +499,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 if (and.Conditions.Count > 0)
                     or.Conditions.Add(and);
 
-                if(addOrderingClause)
+				if (addOrderingClause && !hasOrderingClaus)
                 {
                     foreach (KeyValuePair<string, SearchCriteria> kvp in c.SubCriteria)
                     {
                         string alias;
                         if (MapCriteriaKeyToHql(kvp.Key, out alias))
-                            query.Sorts.AddRange(HqlSort.FromSearchCriteria(alias, kvp.Value));
+                        {
+							query.Sorts.AddRange(HqlSort.FromSearchCriteria(alias, kvp.Value));
+
+							// Take the first ordering claus only
+                        	hasOrderingClaus = true;
+                        	break;
+						}
                     }
                 }
             }

@@ -433,6 +433,54 @@ function formatReportPerformer(reportPart)
 	return formattedReport;
 }
 
+function formatReportingStepStatus(step, reportPartIndex)
+{
+	var stepName = step.ProcedureStepName;
+	var addendumPrefix = reportPartIndex > 0 ? "Addendum " : "";
+	
+	var formattedStatus;
+	switch(step.State.Code)
+	{
+		case "SC": formattedStatus = "Pending " + stepName;
+			if (stepName == "Verification")
+				formattedStatus = "To Be Revised";
+				
+			break;
+		case "IP": formattedStatus = stepName + " In Progress"; 
+			if (stepName == "Verification")
+				formattedStatus = "Revising";
+
+			break;
+		case "SU": formattedStatus = stepName + " Suspended"; break;
+		case "CM": formattedStatus = stepName + " Completed";
+			// Exceptions to formatting
+			if (stepName == "Verification")
+				formattedStatus = "Verified";
+			else if (stepName == "Publication")
+				formattedStatus = "Published";
+				
+			break;
+			
+		case "DC": formattedStatus = stepName + " Cancelled"; break;
+		default: break;
+	}
+	
+	return addendumPrefix + formattedStatus;
+}
+
+function formatProtocollingStepStatus(step)
+{
+	switch(step.State.Code)
+	{
+		case "SC": return "Pending Protocol";
+		case "IP": return "Protocolling In Progress";
+		case "SU":
+		case "DC":
+		case "CM": return "Protocolling Completed";
+		default: return "";
+	}
+}
+
 /*
 // Useful test code for calculating patient age
 function testPatientAge()

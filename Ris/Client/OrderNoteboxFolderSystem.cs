@@ -92,6 +92,11 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
+		public override string SearchMessage
+		{
+			get { return SR.MessageSearchNotSupported; }
+		}
+
 		public override void Initialize()
 		{
 			base.Initialize();

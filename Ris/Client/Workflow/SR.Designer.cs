@@ -817,6 +817,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enter search criteria (Staff Name or Staff ID).
+        /// </summary>
+        internal static string MessageRadiologistAdminSearchMessage {
+            get {
+                return ResourceManager.GetString("MessageRadiologistAdminSearchMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This will cancel/discontinue the current order.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageReplaceOrder {
@@ -1281,6 +1290,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitleRadiologistHome {
             get {
                 return ResourceManager.GetString("TitleRadiologistHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reassign Item.
+        /// </summary>
+        internal static string TitleReassignItem {
+            get {
+                return ResourceManager.GetString("TitleReassignItem", resourceCulture);
             }
         }
         

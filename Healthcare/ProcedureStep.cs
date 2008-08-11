@@ -31,11 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
@@ -119,12 +118,19 @@ namespace ClearCanvas.Healthcare
 		/// <returns>A new step with the assigned performer.</returns>
 		public ProcedureStep Reassign(Staff performer)
 		{
-			this.Discontinue();
-			ProcedureStep newStep = CreateScheduledCopy();
-			newStep.Schedule(Platform.Time);
-			newStep.Assign(performer);
-
-			return newStep;
+			if (this.State == ActivityStatus.SC)
+			{
+				this.Assign(performer);
+				return this;
+			}
+			else
+			{
+				this.Discontinue();
+				ProcedureStep newStep = CreateScheduledCopy();
+				newStep.Schedule(this.Scheduling.StartTime, this.Scheduling.EndTime);
+				newStep.Assign(performer);
+				return newStep;
+			}
 		}
 
 		/// <summary>

@@ -42,20 +42,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (items.Count != 1)
 				return null;
 
-			string stepName = CollectionUtils.FirstElement(items).ProcedureStepName;
+			ReportingWorklistItem step = CollectionUtils.FirstElement(items);
 
-			return GetPreviewFromStepName(stepName);
-		}
-
-        protected override SearchResultsFolder CreateSearchResultsFolder()
-        {
-			return new Folders.RadiologistAdmin.RadiologistAdminSearchFolder();
-        }
-
-		private static string GetPreviewFromStepName(string stepName)
-		{
 			//TODO: having the client specify the step name name may not be a terribly good idea
-			switch(stepName)
+			switch (step.ProcedureStepName)
 			{
 				case "Interpretation":
 				case "Transcription":
@@ -68,5 +58,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return null;
 			}
 		}
+
+		public override string SearchMessage
+		{
+			get { return SR.MessageRadiologistAdminSearchMessage; }
+		}
+
+		protected override SearchResultsFolder CreateSearchResultsFolder()
+        {
+			return new Folders.RadiologistAdmin.RadiologistAdminSearchFolder();
+        }
     }
 }

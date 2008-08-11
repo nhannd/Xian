@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
 					new ReassignComponent(item),
-					SR.TitleEditPatient);
+					SR.TitleReassignItem);
 
 				return exitCode == ApplicationComponentExitCode.Accepted;
 			}

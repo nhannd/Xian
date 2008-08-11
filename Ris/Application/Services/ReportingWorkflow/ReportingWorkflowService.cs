@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             }
 
             Operations.StartInterpretation op = new Operations.StartInterpretation();
-            op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext), PersistenceContext);
+            op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             return new StartInterpretationResponse(interpretation.GetRef());
@@ -218,8 +218,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             SaveReportHelper(request.ReportPartExtendedProperties, verification, supervisor);
 
-            if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.ExtendedProperties[ReportPartDetail.ReportContentKey]))
-                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
+        	ValidateReportTextExists(verification);
 
             Operations.CompleteVerification op = new Operations.CompleteVerification();
             PublicationStep publication = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
@@ -426,10 +425,26 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
 			Staff radiologist = PersistenceContext.Load<Staff>(request.ReassignedRadiologistRef, EntityLoadFlags.Proxy);
 
-			step.Reassign(radiologist);
+			ProcedureStep newStep;
+
+			if (step is ReportingProcedureStep && !request.KeepReportPart)
+			{
+				ReportingProcedureStep oldReportingStep = (ReportingProcedureStep)step;
+				if (oldReportingStep.ReportPart != null)
+					oldReportingStep.ReportPart.Cancel();
+
+				newStep = step.Reassign(radiologist);
+				ReportingProcedureStep newReportingStep = (ReportingProcedureStep)newStep;
+				newReportingStep.ReportPart = null;
+			}
+			else
+			{
+				 newStep = step.Reassign(radiologist);
+			}
+
 			PersistenceContext.SynchState();
 
-			return new ReassignProcedureStepResponse(step.GetRef());
+			return new ReassignProcedureStepResponse(newStep.GetRef());
 		}
 
     	#endregion
@@ -631,7 +646,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
             }
-        }
+		}
 
         private ReportingWorklistItem GetWorklistItemSummary(ReportingProcedureStep reportingProcedureStep)
         {

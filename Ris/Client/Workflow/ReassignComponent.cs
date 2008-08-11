@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly ReportingWorklistItem _worklistItem;
 		private StaffSummary _radiologist;
 		private ILookupHandler _radiologistLookupHandler;
+		private bool _keepReport;
 
 		public ReassignComponent(ReportingWorklistItem item)
 		{
@@ -39,6 +40,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				? new string[] { }
 				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
 			_radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
+
+			_keepReport = ReassignComponentSettings.Default.KeepReport;
 
 			base.Start();
 		}
@@ -64,6 +67,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _radiologistLookupHandler; }
 		}
 
+		public bool KeepReport
+		{
+			get { return _keepReport; }
+			set { _keepReport = value; }
+		}
+
+		public bool KeepReportVisible
+		{
+			get
+			{
+				switch (_worklistItem.ProcedureStepName)
+				{
+					case "Interpretation":
+					case "Transcription":
+					case "Verification":
+					case "Publication":
+						return true;
+					case "Protocol":
+					default:
+						return false;
+				}
+			}
+		}
+
 		public void Accept()
 		{
 			try
@@ -77,8 +104,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
 						{
-							service.ReassignProcedureStep(new ReassignProcedureStepRequest(_worklistItem.ProcedureStepRef, _radiologist.StaffRef));
+							service.ReassignProcedureStep(new ReassignProcedureStepRequest(
+								_worklistItem.ProcedureStepRef, 
+								_radiologist.StaffRef,
+								_keepReport));
 						});
+				
+				if (_keepReport != ReassignComponentSettings.Default.KeepReport)
+				{
+					ReassignComponentSettings.Default.KeepReport = _keepReport;
+					ReassignComponentSettings.Default.Save();
+				}
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}

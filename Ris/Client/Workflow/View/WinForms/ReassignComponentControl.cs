@@ -20,6 +20,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_radiologist.LookupHandler = _component.RadiologistLookupHandler;
 			_radiologist.DataBindings.Add("Value", _component, "Radiologist", true, DataSourceUpdateMode.OnPropertyChanged);
+			_keepReport.DataBindings.Add("Checked", _component, "KeepReport", true, DataSourceUpdateMode.OnPropertyChanged);
+			_keepReport.DataBindings.Add("Visible", _component, "KeepReportVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+			
 		}
 
 		private void _okButton_Click(object sender, EventArgs e)

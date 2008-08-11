@@ -93,6 +93,19 @@
 					Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 					Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
 					Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
+					
+					// locate the selected step
+					var selectedProcedureStep;
+					orderDetail.Procedures.each(
+						function(rp) { rp.ProcedureSteps.each(
+							function(ps) { if(ps.ProcedureStepRef == worklistItem.ProcedureStepRef) selectedProcedureStep = ps; }); });
+
+					if (selectedProcedureStep)
+					{
+						// owner of the protocol steps is the performer, not scheduled performer
+						Field.setValue($("StepOwner"), selectedProcedureStep.Performer ? Ris.formatPersonName(selectedProcedureStep.Performer.Name) : "");
+						Field.setValue($("WorkflowStatus"), formatProtocollingStepStatus(selectedProcedureStep));
+					}
 
 					var procedures = orderDetail.Procedures;
 					var selectedProcedure = procedures.find(
@@ -100,8 +113,8 @@
 					if (selectedProcedure)
 					{
 						Field.setValue($("procedure"), selectedProcedure.Type.Name);
-						Field.setValue($("ProcedureStartTime"), "TODO");
-						Field.setValue($("ProcedureEndTime"), "TODO");
+						Field.setValue($("ProcedureStartTime"), Ris.formatDateTime(selectedProcedure.StartTime));
+						Field.setValue($("ProcedureEndTime"), Ris.formatDateTime(selectedProcedure.CheckOutTime));
 					}
 
 					if(orderDetail.Notes.length)
@@ -181,6 +194,12 @@
 						<td width="200"><div id="ProcedureStartTime"/></td>
 						<td width="120" class="propertyname">Procedure End Time</td>
 						<td width="200"><div id="ProcedureEndTime"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Owner</td>
+						<td width="200"><div id="StepOwner"/></td>
+						<td width="120"  class="propertyname">Workflow Status</td>
+						<td width="200"><div id="WorkflowStatus"/></td>
 					</tr>
 				</table>
 

@@ -87,7 +87,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class StartInterpretation : ReportingOperation
 		{
-			public void Execute(InterpretationStep step, Staff executingStaff, List<InterpretationStep> linkInterpretations, IWorkflow workflow, IPersistenceContext context)
+			public void Execute(InterpretationStep step, Staff executingStaff, List<InterpretationStep> linkInterpretations, IWorkflow workflow)
 			{
 				// if not assigned, assign
 				if (step.AssignedStaff == null)
@@ -104,7 +104,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					Report report = new Report(step.Procedure);
 					ReportPart part = report.ActivePart;
 
-					context.Lock(report, DirtyState.New);
+					workflow.CurrentContext.Lock(report, DirtyState.New);
 
 					step.ReportPart = part;
 				}
@@ -326,6 +326,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 				// put in-progress
 				step.Start(executingStaff);
+
+				// if a report has not yet been created for this step, create now
+				if (step.ReportPart == null)
+				{
+					Report report = new Report(step.Procedure);
+					ReportPart part = report.ActivePart;
+
+					workflow.CurrentContext.Lock(report, DirtyState.New);
+
+					step.ReportPart = part;
+				}
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
@@ -340,7 +351,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.AssignedStaff != null && !Equals(executingStaff, step.AssignedStaff))
 					return false;
 
-				if (step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
+				if (step.ReportPart != null && step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
 					return false;
 
 				return true;
@@ -372,7 +383,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.AssignedStaff != null && !Equals(executingStaff, step.AssignedStaff))
 					return false;
 
-				if (step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
+				if (step.ReportPart != null && step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
 					return false;
 
 				return true;

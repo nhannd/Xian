@@ -106,7 +106,7 @@
 	                    // locate the selected mps
 	                    var selectedMps;
 	                    orderDetail.Procedures.each(
-	                        function(rp) { rp.ModalityProcedureSteps.each(
+	                        function(rp) { rp.ProcedureSteps.each(
 	                            function(mps) { if(mps.ProcedureStepRef == worklistItem.ProcedureStepRef) selectedMps = mps; });
 	                        });
 	                        
@@ -119,13 +119,13 @@
 	                        Field.setValue($("StartTime"), Ris.formatDateTime(selectedMps.StartTime));
 	                        Field.setValue($("EndTime"), Ris.formatDateTime(selectedMps.EndTime));
 	                    }
-	                
+
 		                // build a list of items for the Imaging Service breakdown table
 		                var breakdownItems = [];
 		                orderDetail.Procedures.each(
 		                    function(rp)
 		                    {
-		                        rp.ModalityProcedureSteps.each(
+		                        rp.ProcedureSteps.each(
 		                            function(mps)
 		                            {
 		                                breakdownItems.add(

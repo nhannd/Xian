@@ -481,8 +481,11 @@
     <value>No results were found using the specified criteria.</value>
     <comment>{0</comment>
   </data>
-  <data name="MessageSearchMessage" xml:space="preserve">
+  <data name="MessageSearchMessageDefault" xml:space="preserve">
     <value>Enter search criteria (MRN#, Name, Healthcard ID, or A#)</value>
+  </data>
+  <data name="MessageSearchNotSupported" xml:space="preserve">
+    <value>Searching is not supported</value>
   </data>
   <data name="MessageShowAllItems" xml:space="preserve">
     <value>Showing all {0} item(s).</value>
