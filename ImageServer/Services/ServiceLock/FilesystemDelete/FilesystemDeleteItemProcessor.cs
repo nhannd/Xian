@@ -32,10 +32,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -44,60 +47,43 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
     /// <summary>
-    /// Provide a convenient means to track duration of an event 
+    /// Represents the state of a filesystem
     /// </summary>
-    class TimeTracker<T>
+    [XmlRoot("FilesystemState")]
+    public class FilesystemState
     {
-        #region Delegates
-        public delegate object ObjectKeyDelegate(T obj);
+        #region Private Members
+        private DateTime? _aboveHighWatermarkTimestamp;
+        private DateTime? _lastHighWatermarkAlertTimestamp;
         #endregion
 
-        private readonly Dictionary<object, DateTime> _lutObjectTrackingTime = new Dictionary<object, DateTime>();
-        private readonly ObjectKeyDelegate _del;
-
-        public TimeTracker(ObjectKeyDelegate del)
+        #region Public Properties
+        /// <summary>
+        /// Gets or sets the timestamp when the filesystem is above the high watermark level
+        /// </summary>
+        public DateTime? AboveHighWatermarkTimestamp
         {
-            _del = del;
-        }
-    
-        public bool IsTracking(T obj)
-        {
-            return _lutObjectTrackingTime.ContainsKey(_del(obj));
+            get { return _aboveHighWatermarkTimestamp; }
+            set { _aboveHighWatermarkTimestamp = value; }
         }
 
-        public void StartTracking(T obj)
+        /// <summary>
+        /// Gets or sets the timestamp when an alert was generated because filesystem is above the high watermark level.
+        /// </summary>
+        public DateTime? LastHighWatermarkAlertTimestamp
         {
-            _lutObjectTrackingTime.Add(_del(obj), Platform.Time);
+            get { return _lastHighWatermarkAlertTimestamp; }
+            set { _lastHighWatermarkAlertTimestamp = value; }
         }
-
-        public void ResetTracking(T obj)
-        {
-            _lutObjectTrackingTime[_del(obj)] = Platform.Time;
-        }
-
-
-        public TimeSpan GetTrackingDuration(T obj)
-        {
-            if (!IsTracking(obj))
-                return TimeSpan.Zero;
-
-            return Platform.Time - _lutObjectTrackingTime[_del(obj)];
-        }
-
-        public void StopTracking(T obj)
-        {
-            _lutObjectTrackingTime.Remove(_del(obj));
-        }
+        #endregion
     }
+
 
     /// <summary>
     /// Class for processing 'FilesystemDelete' <see cref="Model.ServiceLock"/> rows.
     /// </summary>
     public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
-        private static readonly TimeTracker<ServerFilesystemInfo> _fsTracker = new TimeTracker<ServerFilesystemInfo>(
-                    delegate(ServerFilesystemInfo fs) { return fs.Filesystem.GetKey().Key; });
-
         #region Private Members
         static private DateTime? _scheduledMigrateTime = null;
         private float _bytesToRemove;
@@ -137,6 +123,75 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 _scheduledMigrateTime = Platform.Time;
         }
 
+        /// <summary>
+        /// Updates the 'State' of the filesystem associated with the 'FilesystemDelete' <see cref="ServiceLock"/> item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="fs"></param>
+        private void UpdateState(Model.ServiceLock item, ServerFilesystemInfo fs)
+        {
+            FilesystemState state = null;
+            if (item.State != null && item.State.DocumentElement!=null)
+            {
+                //load from datatabase
+                state = XmlUtils.Deserialize<FilesystemState>(item.State.DocumentElement);
+            }
+
+            if (state == null)
+                state = new FilesystemState();
+
+            if (fs.AboveHighWatermark)
+            {
+                // we don't want to generate alert if the filesystem is offline or not accessible.
+                if (fs.Online && (fs.Readable || fs.Writeable))
+                {
+                    TimeSpan ALERT_INTERVAL = TimeSpan.FromMinutes(ServiceLockSettings.Default.HighWatermarkAlertInterval);
+
+                    if (state.AboveHighWatermarkTimestamp == null)
+                        state.AboveHighWatermarkTimestamp = Platform.Time;
+
+                    TimeSpan elapse = (state.LastHighWatermarkAlertTimestamp != null) ? Platform.Time - state.LastHighWatermarkAlertTimestamp.Value : Platform.Time - state.AboveHighWatermarkTimestamp.Value;
+
+                    if (elapse.Duration() >= ALERT_INTERVAL)
+                    {
+                        ServerPlatform.Alert(AlertCategory.System, AlertLevel.Warning, "Filesystem",
+                                             AlertTypeCodes.LowResources,
+                                             SR.AlertFilesystemAboveHW,
+                                             fs.Filesystem.Description,
+                                             TimeSpanFormatter.Format(Platform.Time - state.AboveHighWatermarkTimestamp.Value, true));
+
+
+                        state.LastHighWatermarkAlertTimestamp = Platform.Time;
+                    }
+                }
+                else
+                {
+                    state.AboveHighWatermarkTimestamp = null;
+                    state.LastHighWatermarkAlertTimestamp = null;
+                }
+            }
+            else
+            {
+                state.AboveHighWatermarkTimestamp = null;
+                state.LastHighWatermarkAlertTimestamp = null;
+            }
+
+
+            XmlDocument stateXml = new XmlDocument();
+            stateXml.AppendChild(stateXml.ImportNode(XmlUtils.Serialize(state), true));
+
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                ServiceLockUpdateColumns columns = new ServiceLockUpdateColumns();
+                columns.State = stateXml;
+
+                IServiceLockEntityBroker broker = ctx.GetBroker<IServiceLockEntityBroker>();
+                broker.Update(item.GetKey(), columns);
+                ctx.Commit();
+            }
+        }
+
 
         /// <summary>
         /// Process StudyDelete Candidates retrieved from the <see cref="Model.FilesystemQueue"/> table
@@ -163,7 +218,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
-					IInsertWorkQueueFromFilesystemQueue studyDelete = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
+					IInsertWorkQueueFromFilesystemQueue insertBroker = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
                     InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
                     insertParms.StudyStorageKey = location.GetKey();
@@ -175,7 +230,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
 
-                    WorkQueue insertItem = studyDelete.FindOne(insertParms);
+                    WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
                     {
                         Platform.Log(LogLevel.Error, "Unexpected problem inserting 'StudyDelete' record into WorkQueue for Study {0}", location.StudyInstanceUid);
@@ -217,7 +272,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				using (
 					IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
-					IInsertWorkQueueFromFilesystemQueue studyDelete = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
+                    IInsertWorkQueueFromFilesystemQueue insertBroker = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
 					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
 					insertParms.StudyStorageKey = location.GetKey();
@@ -229,7 +284,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
 
-					WorkQueue insertItem = studyDelete.FindOne(insertParms);
+                    WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
 					{
 						Platform.Log(LogLevel.Error, "Unexpected problem inserting 'PurgeStudy' record into WorkQueue for Study {0}",
@@ -503,17 +558,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 		/// <param name="item">The <see cref="ServiceLock"/> item to process.</param>
         public void Process(Model.ServiceLock item)
         {
-			ServiceLockSettings settings = ServiceLockSettings.Default;
-
+			ServiceLockSettings settings = ServiceLockSettings.Default;		    
 			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
             
             InitializeScheduleTime();
 
+            UpdateState(item, fs);
+
 			_bytesToRemove = FilesystemMonitor.Instance.CheckFilesystemBytesToRemove(item.FilesystemKey);
 
 			DateTime scheduledTime;
-
-			if (fs.AboveHighWatermark)
+		    if (fs.AboveHighWatermark)
 			{
 				int count = CheckWorkQueueCount(item);
 				if (count > 0)
@@ -540,7 +595,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
 				}
 
-                OnAboveHighWatermark(fs);
 			}
 			else
 			{
@@ -548,37 +602,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				             fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
 				scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval);
 
-			    OnBelowLowWatermark(fs);
 			}
 
 			UnlockServiceLock(item, true, scheduledTime);            
         }
-
-
-
-        private void OnAboveHighWatermark(ServerFilesystemInfo fs)
-        {
-            if (!_fsTracker.IsTracking(fs))
-            {
-                _fsTracker.StartTracking(fs);
-            }
-
-            TimeSpan duration = _fsTracker.GetTrackingDuration(fs);
-            if (duration > TimeSpan.FromMinutes(ServiceLockSettings.Default.HighWatermarkAlertInterval))
-            {
-                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Warning, SR.AlertNameFilesystemDelete, AlertTypeCodes.LowResources,
-                                            SR.AlertFilesystemAboveHW,  fs.Filesystem.Description, TimeSpanFormatter.Format(duration));
-            }
-        }
-
-        private void OnBelowLowWatermark(ServerFilesystemInfo fs)
-        {
-            if (_fsTracker.IsTracking(fs))
-            {
-                _fsTracker.StopTracking(fs);
-            }
-        }
-
+       
 
         public new void Dispose()
         {

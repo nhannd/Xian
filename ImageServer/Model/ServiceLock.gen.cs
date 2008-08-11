@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _processorId;
         private System.DateTime _scheduledTime;
         private ServiceLockTypeEnum _serviceLockTypeEnum;
+        private System.Xml.XmlDocument _state;
         #endregion
 
         #region Public Properties
@@ -91,6 +92,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _serviceLockTypeEnum; }
         set { _serviceLockTypeEnum = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
+        public System.Xml.XmlDocument State
+        {
+        get { return _state; }
+        set { _state = value; }
         }
         #endregion
 

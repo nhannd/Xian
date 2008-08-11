@@ -107,5 +107,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ServiceLockTypeEnum>)SubCriteria["ServiceLockTypeEnum"];
             } 
         }
+        public ISearchCondition<System.Xml.XmlDocument> State
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("State"))
+              {
+                 SubCriteria["State"] = new SearchCondition<System.Xml.XmlDocument>("State");
+              }
+              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["State"];
+            } 
+        }
     }
 }

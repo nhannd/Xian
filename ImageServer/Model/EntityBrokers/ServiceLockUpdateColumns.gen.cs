@@ -64,5 +64,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ServiceLockTypeEnum"] = new EntityUpdateColumn<ServiceLockTypeEnum>("ServiceLockTypeEnum", value); }
         }
+        public System.Xml.XmlDocument State
+        {
+            set { SubParameters["State"] = new EntityUpdateColumn<System.Xml.XmlDocument>("State", value); }
+        }
     }
 }

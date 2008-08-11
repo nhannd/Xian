@@ -720,6 +720,7 @@ CREATE TABLE [dbo].[ServiceLock](
 	[ScheduledTime] [datetime] NOT NULL,
 	[FilesystemGUID] [uniqueidentifier] NULL,
 	[Enabled] [bit] NOT NULL CONSTRAINT [DF_ServiceLock_Enabled]  DEFAULT ((1)),
+	[State] [xml] NULL,
  CONSTRAINT [PK_ServiceLock] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC

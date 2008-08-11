@@ -52,26 +52,58 @@ namespace ClearCanvas.Common.Statistics
         #region Public Static Methods
 
         /// <summary>
+        /// Formats a <see cref="TimeSpan"/> in appropriate units, with option to round up.
+        /// </summary>
+        /// <param name="duration">The duration to be formatted</param>
+        /// <param name="roundUp">Indicates whether the duration should be rounded up (eg, '3 sec' instead of '3.232 sec')</param>
+        /// <returns>A formatted string representation of the duration</returns>
+        public static string Format(TimeSpan duration, bool roundUp)
+        {
+            if (roundUp)
+            {
+                if (duration == TimeSpan.Zero)
+                    return "N/A";
+                else if (duration.Ticks > TICKSPERHOUR)
+                    return String.Format("{0} hr {1} min", duration.Hours, duration.Minutes);
+                if (duration.Ticks > TICKSPERMINUTE)
+                    return String.Format("{0:0} min", duration.TotalMinutes);
+                if (duration.Ticks > TICKSPERSECONDS)
+                    return String.Format("{0:0} sec", duration.TotalSeconds);
+                if (duration.Ticks > TICKSPERMILISECONDS)
+                    return String.Format("{0:0} ms", duration.TotalMilliseconds);
+                if (duration.Ticks > TICKSPERMICROECONDS)
+                    return String.Format("{0:0} µs", duration.Ticks / TICKSPERMICROECONDS);
+                else
+                    return String.Format("{0:0} ns", duration.Ticks / TICKSPERNANOSECONDS);
+            }
+            else
+            {
+                if (duration == TimeSpan.Zero)
+                    return "N/A";
+                else if (duration.Ticks > TICKSPERHOUR)
+                    return String.Format("{0} hr {1} min", duration.Hours, duration.Minutes);
+                if (duration.Ticks > TICKSPERMINUTE)
+                    return String.Format("{0:0.00} min", duration.TotalMinutes);
+                if (duration.Ticks > TICKSPERSECONDS)
+                    return String.Format("{0:0.00} sec", duration.TotalSeconds);
+                if (duration.Ticks > TICKSPERMILISECONDS)
+                    return String.Format("{0:0.00} ms", duration.TotalMilliseconds);
+                if (duration.Ticks > TICKSPERMICROECONDS)
+                    return String.Format("{0:0.00} µs", duration.Ticks / TICKSPERMICROECONDS);
+                else
+                    return String.Format("{0:0.00} ns", duration.Ticks / TICKSPERNANOSECONDS);
+                
+            }
+        }
+
+        /// <summary>
         /// Formats a <see cref="TimeSpan"/> in appropriate units.
         /// </summary>
-        /// <param name="ts"></param>
-        /// <returns></returns>
-        public static string Format(TimeSpan ts)
+        /// <param name="duration">The duration to be formatted</param>
+        /// <returns>A formatted string representation of the duration</returns>
+        public static string Format(TimeSpan duration)
         {
-            if (ts == TimeSpan.Zero)
-                return "N/A";
-            else if (ts.Ticks > TICKSPERHOUR)
-                return String.Format("{0} hr {1} min", ts.Hours, ts.Minutes);
-            if (ts.Ticks > TICKSPERMINUTE)
-                return String.Format("{0:0.00} min", ts.TotalMinutes);
-            if (ts.Ticks > TICKSPERSECONDS)
-                return String.Format("{0:0.00} sec", ts.TotalSeconds);
-            if (ts.Ticks > TICKSPERMILISECONDS)
-                return String.Format("{0:0.00} ms", ts.TotalMilliseconds);
-            if (ts.Ticks > TICKSPERMICROECONDS)
-                return String.Format("{0:0.00} µs", ts.Ticks / TICKSPERMICROECONDS);
-            else
-                return String.Format("{0:0.00} ns", ts.Ticks/TICKSPERNANOSECONDS);
+            return Format(duration, false);
         }
 
         #endregion
