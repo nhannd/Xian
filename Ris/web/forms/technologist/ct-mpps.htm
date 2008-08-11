@@ -218,7 +218,7 @@
 			var checkedItems = $("oralTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected oral contrast documentation?"))
+				if(confirm("Delete selected oral contrast documentation?"))
 				{
 					checkedItems.each(function(item) { data.oral.remove(item); });
 					$("oralCheckAllNone").checked = false;
@@ -283,7 +283,7 @@
 			var checkedItems = $("rectalTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected rectal contrast documentation?"))
+				if(confirm("Delete selected rectal contrast documentation?"))
 				{
 					checkedItems.each(function(item) { data.rectal.remove(item); });
 					$("rectalCheckAllNone").checked = false;
@@ -357,7 +357,7 @@
 			var checkedItems = $("ivAccessTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected IV access documentation?"))
+				if(confirm("Delete selected IV access documentation?"))
 				{
 					checkedItems.each(function(item) { data.ivAccess.remove(item); });
 					$("ivAccessCheckAllNone").checked = false;
@@ -451,7 +451,7 @@
 			var checkedItems = $("ivContrastTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected IV contrasts documentation?"))
+				if(confirm("Delete selected IV contrasts documentation?"))
 				{
 					checkedItems.each(function(item) { data.ivContrast.remove(item); });
 					$("ivContrastCheckAllNone").checked = false;
@@ -528,7 +528,7 @@
 			var checkedItems = $("staffTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected staff?"))
+				if(confirm("Delete selected staff?"))
 				{
 					checkedItems.each(function(item) { data.staff.remove(item); });
 					$("staffCheckAllNone").checked = false;

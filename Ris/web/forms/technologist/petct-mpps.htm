@@ -244,7 +244,7 @@
 			var checkedItems = $("oralTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-			if(confirm("Deleted selected oral contrast documentation?"))
+			if(confirm("Delete selected oral contrast documentation?"))
 			{
 					checkedItems.each(function(item) { data.oral.remove(item); });
 					$("oralCheckAllNone").checked = false;
@@ -316,7 +316,7 @@
 			var checkedItems = $("ivAccessTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-			if(confirm("Deleted selected IV access documentation?"))
+			if(confirm("Delete selected IV access documentation?"))
 			{
 					checkedItems.each(function(item) { data.ivAccess.remove(item); });
 					$("ivAccessCheckAllNone").checked = false;
@@ -416,7 +416,7 @@
 			var checkedItems = $("ivContrastTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected IV contrasts documentation?"))
+				if(confirm("Delete selected IV contrasts documentation?"))
 				{
 						checkedItems.each(function(item) { data.ivContrast.remove(item); });
 						$("ivContrastCheckAllNone").checked = false;
@@ -502,7 +502,7 @@
 
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected radiopharmaceutical documentation?"))
+				if(confirm("Delete selected radiopharmaceutical documentation?"))
 				{
 					checkedItems.each(function(item) { data.radiopharmaceutical.remove(item); });
 					$("radiopharmaceuticalCheckAllNone").checked = false;
@@ -559,7 +559,7 @@
 			var checkedItems = $("drugsTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected drugs contrast documentation?"))
+				if(confirm("Delete selected drugs contrast documentation?"))
 				{
 					checkedItems.each(function(item) { data.drugs.remove(item); });
 					$("drugsCheckAllNone").checked = false;

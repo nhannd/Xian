@@ -87,7 +87,7 @@
 			var checkedItems = $("staffTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected staff?"))
+				if(confirm("Delete selected staff?"))
 				{
 					checkedItems.each(function(item) { data.staff.remove(item); });
 					$("staffCheckAllNone").checked = false;

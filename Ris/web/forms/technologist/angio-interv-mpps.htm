@@ -205,7 +205,7 @@
 			var checkedItems = $("ivAccessTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected IV access documentation?"))
+				if(confirm("Delete selected IV access documentation?"))
 				{
 						checkedItems.each(function(item) { data.ivAccess.remove(item); });
 						$("ivAccessCheckAllNone").checked = false;
@@ -277,7 +277,7 @@
 			var checkedItems = $("ivContrastTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Deleted selected IV contrasts documentation?"))
+				if(confirm("Delete selected IV contrasts documentation?"))
 				{
 						checkedItems.each(function(item) { data.ivContrast.remove(item); });
 						$("ivContrastCheckAllNone").checked = false;
