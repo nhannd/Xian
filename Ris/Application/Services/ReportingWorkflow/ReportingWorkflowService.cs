@@ -44,6 +44,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using Iesi.Collections.Generic;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -94,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             }
 
             Operations.StartInterpretation op = new Operations.StartInterpretation();
-            op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext));
+			op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext), this.PersistenceContext);
 
             PersistenceContext.SynchState();
             return new StartInterpretationResponse(interpretation.GetRef());
@@ -447,7 +448,54 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 			return new ReassignProcedureStepResponse(newStep.GetRef());
 		}
 
-    	#endregion
+		[UpdateOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
+		public CompleteDowntimeProcedureResponse CompleteDowntimeProcedure(CompleteDowntimeProcedureRequest request)
+		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ProcedureRef, "ProcedureRef");
+
+			Procedure procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
+
+			if (request.ReportProvided)
+			{
+				Platform.CheckMemberIsSet(request.InterpreterRef, "InterpreterRef");
+
+				Staff interpreter = PersistenceContext.Load<Staff>(request.InterpreterRef);
+				Staff transcriptionist = request.TranscriptionistRef == null ? null : PersistenceContext.Load<Staff>(request.TranscriptionistRef);
+
+				// find the relevant interpretation step for this procedure
+				InterpretationStep interpStep = procedure.GetProcedureStep(delegate(ProcedureStep ps)
+					{ return ps.Is<InterpretationStep>() && ps.State == ActivityStatus.SC; }).As<InterpretationStep>();
+
+				// ideally this should not happen, but what do we do if it does?
+				if (interpStep == null)
+					throw new RequestValidationException("Report cannot be submitted for this procedure.  It may have been submitted previously.");
+
+				// start interpretation, using specified interpreter
+				Operations.StartInterpretation startOp = new Operations.StartInterpretation();
+				startOp.Execute(interpStep, interpreter, new List<InterpretationStep>(), new PersistentWorkflow(this.PersistenceContext), PersistenceContext);
+
+				// save the report data
+				SaveReportHelper(request.ReportPartExtendedProperties, interpStep, interpreter);
+
+				ValidateReportTextExists(interpStep);
+
+				// complete for verification, using specified interpreter as a supervisor, so it will go to them for review
+				Operations.CompleteInterpretationForVerification completeOp = new Operations.CompleteInterpretationForVerification();
+				ReportingProcedureStep nextStep = completeOp.Execute(interpStep, interpreter, new PersistentWorkflow(this.PersistenceContext));
+
+				// set the transcriptionist if known
+				nextStep.ReportPart.Transcriber = transcriptionist;
+			}
+
+			// flip the downtime mode switch
+			procedure.DowntimeRecoveryMode = false;
+
+			return new CompleteDowntimeProcedureResponse();
+		}
+
+		#endregion
 
         #region OperationEnablement Helpers
 

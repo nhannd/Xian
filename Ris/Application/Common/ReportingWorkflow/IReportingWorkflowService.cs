@@ -197,5 +197,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request);
+
+		/// <summary>
+		/// This is basically a hack to allow entry of downtime reports for downtime recovery.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		CompleteDowntimeProcedureResponse CompleteDowntimeProcedure(CompleteDowntimeProcedureRequest request);
 	}
 }

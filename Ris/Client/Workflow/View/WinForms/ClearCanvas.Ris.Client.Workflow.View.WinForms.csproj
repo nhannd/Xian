@@ -56,6 +56,13 @@
       <DependentUpon>DowntimePrintFormsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DowntimePrintFormsComponentView.cs" />
+    <Compile Include="DowntimeReportEntryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DowntimeReportEntryComponentControl.Designer.cs">
+      <DependentUpon>DowntimeReportEntryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DowntimeReportEntryComponentView.cs" />
     <Compile Include="Folders\FolderOptionComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -285,6 +292,10 @@
     <EmbeddedResource Include="DowntimePrintFormsComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DowntimePrintFormsComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DowntimeReportEntryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DowntimeReportEntryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LinkedInterpretationComponentControl.resx">
       <DependentUpon>LinkedInterpretationComponentControl.cs</DependentUpon>

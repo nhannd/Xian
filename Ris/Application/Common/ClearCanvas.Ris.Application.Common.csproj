@@ -135,6 +135,8 @@
     <Compile Include="Admin\WorkQueueAdmin\RemoveWorkQueueItemResponse.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemRequest.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemResponse.cs" />
+    <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureResponse.cs" />
     <Compile Include="ReportingWorkflow\FaxReportRequest.cs" />
     <Compile Include="ReportingWorkflow\FaxReportResponse.cs" />
     <Compile Include="ReportingWorkflow\ReassignProcedureStepRequest.cs" />

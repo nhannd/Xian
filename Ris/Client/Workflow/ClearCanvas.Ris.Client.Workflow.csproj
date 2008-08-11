@@ -44,6 +44,7 @@
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
+    <Compile Include="DowntimeReportEntryComponent.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
