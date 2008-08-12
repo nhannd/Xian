@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
     /// <summary>
     /// ServiceLock Configuration Web Page.
     /// </summary>
-    public partial class ServiceLockPage : BasePage
+    public partial class Default : BasePage
     {
         #region Private members
 

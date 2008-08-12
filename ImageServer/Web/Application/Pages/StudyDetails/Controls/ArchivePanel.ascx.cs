@@ -32,6 +32,7 @@
 using System;
 using System.Web.UI.WebControls;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
@@ -96,7 +97,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 Label xmlText = ArchiveStudyStorageDetailsView.FindControl("XmlText") as Label;
                 if (xmlText != null && archiveStudyStorage.ArchiveXml != null)
                 {
-                    xmlText.Text = XmlUtilities.GetXmlDocumentAsString(archiveStudyStorage.ArchiveXml, true);
+                    xmlText.Text = XmlUtils.GetXmlDocumentAsString(archiveStudyStorage.ArchiveXml, true);
                 }
             }
         }

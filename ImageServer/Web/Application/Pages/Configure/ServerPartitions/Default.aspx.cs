@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
     /// <summary>
     /// Server Partition configuration page.
     /// </summary>
-    public partial class ServerPartitionPage : BasePage
+    public partial class Default : BasePage
     {
         #region Private Members
 

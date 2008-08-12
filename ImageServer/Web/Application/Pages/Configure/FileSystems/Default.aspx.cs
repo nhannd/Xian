@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
     /// <summary>
     /// FileSystems Configuration Web Page.
     /// </summary>
-    public partial class FileSystemsPage : BasePage
+    public partial class Default : BasePage
     {
         #region Private members
 

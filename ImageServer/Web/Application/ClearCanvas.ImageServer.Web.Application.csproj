@@ -168,6 +168,34 @@
     <Compile Include="Pages\Common\MainContentSection.Master.designer.cs">
       <DependentUpon>MainContentSection.Master</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx.cs">
+      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx.designer.cs">
+      <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx.cs">
+      <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx.designer.cs">
+      <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx.cs">
+      <DependentUpon>PartitionArchiveGridPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx.designer.cs">
+      <DependentUpon>PartitionArchiveGridPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -182,12 +210,12 @@
     <Compile Include="Pages\Configure\Devices\DeviceGridView.ascx.designer.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\DevicePage.aspx.cs">
-      <DependentUpon>DevicePage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\Devices\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\DevicePage.aspx.designer.cs">
-      <DependentUpon>DevicePage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\Devices\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Configure\Devices\DevicePanel.ascx.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
@@ -210,12 +238,12 @@
     <Compile Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx.designer.cs">
       <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\FileSystemsPage.aspx.cs">
-      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\FileSystems\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\FileSystemsPage.aspx.designer.cs">
-      <DependentUpon>FileSystemsPage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\FileSystems\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
@@ -238,12 +266,12 @@
     <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPage.aspx.cs">
-      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\ServerPartitions\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPage.aspx.designer.cs">
-      <DependentUpon>ServerPartitionPage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\ServerPartitions\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
@@ -266,12 +294,12 @@
     <Compile Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx.designer.cs">
       <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRulePage.aspx.cs">
-      <DependentUpon>ServerRulePage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\ServerRules\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRulePage.aspx.designer.cs">
-      <DependentUpon>ServerRulePage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\ServerRules\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Configure\ServerRules\ServerRulePanel.ascx.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
@@ -299,12 +327,12 @@
     <Compile Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx.designer.cs">
       <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx.cs">
-      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\ServiceLocks\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx.designer.cs">
-      <DependentUpon>ServiceLockPage.aspx</DependentUpon>
+    <Compile Include="Pages\Configure\ServiceLocks\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
@@ -340,6 +368,27 @@
     </Compile>
     <Compile Include="Pages\Help\Documentation.aspx.designer.cs">
       <DependentUpon>Documentation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.cs">
+      <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.designer.cs">
+      <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Search\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -612,11 +661,7 @@
     <Compile Include="Pages\WorkQueue\WorkQueueGridView.ascx.designer.cs">
       <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\WorkQueueSettings.Designer.cs">
-      <DependentUpon>WorkQueueSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
+    <Compile Include="Pages\WorkQueue\WorkQueueSettings.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
@@ -757,9 +802,13 @@
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
+    <Content Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx" />
+    <Content Include="Pages\Configure\PartitionArchive\Default.aspx" />
+    <Content Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx" />
+    <Content Include="Pages\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx" />
     <Content Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx" />
     <Content Include="Pages\Configure\Devices\DeviceGridView.ascx" />
-    <Content Include="Pages\Configure\Devices\DevicePage.aspx" />
+    <Content Include="Pages\Configure\Devices\Default.aspx" />
     <Content Include="Pages\Configure\Devices\DevicePanel.ascx" />
     <Content Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
     <EmbeddedResource Include="App_GlobalResources\Titles.resx">
@@ -774,24 +823,29 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Configure\FileSystems\Filesystem.js" />
     <Content Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx" />
-    <Content Include="Pages\Configure\FileSystems\FileSystemsPage.aspx" />
+    <Content Include="Pages\Configure\FileSystems\Default.aspx" />
     <Content Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx" />
+    <EmbeddedResource Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.js" />
     <Content Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx" />
     <Content Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx" />
-    <Content Include="Pages\Configure\ServerPartitions\ServerPartitionPage.aspx" />
+    <Content Include="Pages\Configure\ServerPartitions\Default.aspx" />
     <Content Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx" />
     <Content Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx" />
     <Content Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx" />
-    <Content Include="Pages\Configure\ServerRules\ServerRulePage.aspx" />
+    <Content Include="Pages\Configure\ServerRules\Default.aspx" />
     <Content Include="Pages\Configure\ServerRules\ServerRulePanel.ascx" />
     <Content Include="Pages\Configure\ServerRules\ServerRuleSamples.asmx" />
     <Content Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx" />
-    <Content Include="Pages\Configure\ServiceLocks\ServiceLockPage.aspx" />
+    <Content Include="Pages\Configure\ServiceLocks\Default.aspx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
     <Content Include="Pages\Error\ErrorPage.aspx" />
     <Content Include="Pages\Help\About.aspx" />
     <Content Include="Pages\Help\Documentation.aspx" />
+    <Content Include="Pages\Queues\ArchiveQueue\Default.aspx" />
+    <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\Queues\ArchiveQueue\SearchPanel.js" />
+    <Content Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx" />
     <Content Include="Pages\Search\Default.aspx" />
     <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
     <Content Include="Pages\Search\Move\Default.aspx" />
@@ -817,6 +871,9 @@
     <Content Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx" />
     <EmbeddedResource Include="Pages\StudyDetails\Scripts\WorkQueueGridView.js" />
     <EmbeddedResource Include="Pages\StudyDetails\Scripts\FileSystemQueueGridView.js" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\SeriesGridView.js" />
+    <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
+    <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsTabs.js" />
     <Content Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
     <Content Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
     <Content Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
@@ -828,10 +885,7 @@
     <Content Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
     <Content Include="Pages\WorkQueue\SearchPage.aspx" />
     <Content Include="Pages\WorkQueue\SearchPanel.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\SeriesGridView.js" />
-    <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsTabs.js" />
-    <EmbeddedResource Include="Pages\WorkQueue\SearchPanel.js" />
+    <Content Include="Pages\WorkQueue\SearchPanel.js" />
     <Content Include="Pages\WorkQueue\WorkQueueGridView.ascx" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />
     <Content Include="Scripts\CodeMirror\css\jscolors.css" />
@@ -852,10 +906,62 @@
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
-    <None Include="Pages\WorkQueue\WorkQueueSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="Pages\WorkQueue\.svn\all-wcprops" />
+    <None Include="Pages\WorkQueue\.svn\entries" />
+    <None Include="Pages\WorkQueue\.svn\format" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPage.aspx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPage.aspx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPage.aspx.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.js.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemCollection.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSettings.Designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSettings.settings.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSummary.cs.svn-base" />
+    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSummaryAssembler.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\all-wcprops" />
+    <None Include="Pages\WorkQueue\Edit\.svn\entries" />
+    <None Include="Pages\WorkQueue\Edit\.svn\format" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetails.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\StudyDetails.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\StudyDetailsAssembler.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetails.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueDetails.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsAssembler.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsViewBase.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.svn-base" />
+    <None Include="Pages\WorkQueue\WorkQueueSettings.settings" />
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
@@ -912,6 +1018,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Pages\Queues\RestoreQueue\" />
+    <Folder Include="Pages\WorkQueue\.svn\prop-base\" />
+    <Folder Include="Pages\WorkQueue\.svn\props\" />
+    <Folder Include="Pages\WorkQueue\.svn\tmp\prop-base\" />
+    <Folder Include="Pages\WorkQueue\.svn\tmp\props\" />
+    <Folder Include="Pages\WorkQueue\.svn\tmp\text-base\" />
+    <Folder Include="Pages\WorkQueue\Edit\.svn\prop-base\" />
+    <Folder Include="Pages\WorkQueue\Edit\.svn\props\" />
+    <Folder Include="Pages\WorkQueue\Edit\.svn\tmp\prop-base\" />
+    <Folder Include="Pages\WorkQueue\Edit\.svn\tmp\props\" />
+    <Folder Include="Pages\WorkQueue\Edit\.svn\tmp\text-base\" />
     <Folder Include="plugins\" />
     <Folder Include="Scripts\.svn\prop-base\" />
     <Folder Include="Scripts\.svn\props\" />

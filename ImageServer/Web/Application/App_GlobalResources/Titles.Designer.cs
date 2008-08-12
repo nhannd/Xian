@@ -70,6 +70,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Partition Archive.
+        /// </summary>
+        internal static string AddPartitionArchiveTitle {
+            get {
+                return ResourceManager.GetString("AddPartitionArchiveTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Archive.
         /// </summary>
         internal static string Archive {
@@ -106,6 +115,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Partition Archive.
+        /// </summary>
+        internal static string EditPartitionArchiveTitle {
+            get {
+                return ResourceManager.GetString("EditPartitionArchiveTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Study Details.
         /// </summary>
         internal static string EditStudyDialog {
@@ -129,6 +147,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string FileSystems {
             get {
                 return ResourceManager.GetString("FileSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partition Archive.
+        /// </summary>
+        internal static string PartitionArchive {
+            get {
+                return ResourceManager.GetString("PartitionArchive", resourceCulture);
             }
         }
         

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
     /// <summary>
     /// Device Configuration Web Page.
     /// </summary>
-    public partial class DevicePage : BasePage
+    public partial class Default : BasePage
     {
         #region Private members
 

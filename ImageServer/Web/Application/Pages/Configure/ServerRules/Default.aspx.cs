@@ -39,7 +39,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 {
-    public partial class ServerRulePage : BasePage
+    public partial class Default : BasePage
     {
         #region Private Members
         private ServerRuleController _controller = new ServerRuleController();

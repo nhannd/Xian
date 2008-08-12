@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
         #region Private Members
         private readonly ServerRuleController _controller = new ServerRuleController();
         private ServerPartition _partition;
-        private ServerRulePage _enclosingPage;
+        private Default _enclosingPage;
 
         #endregion Private Members
 
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             set { _partition = value; }
         }
 
-        public ServerRulePage EnclosingPage
+        public Default EnclosingPage
         {
             get { return _enclosingPage; }
             set { _enclosingPage = value; }

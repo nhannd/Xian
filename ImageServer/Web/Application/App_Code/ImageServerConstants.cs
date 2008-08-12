@@ -26,6 +26,7 @@ public class ImageServerConstants
     public const string DicomDate = "yyyyMMdd";
     public const string DicomDateTime = "YYYYMMDDHHMMSS.FFFFFF";
     public const string DicomSeparator = "^";
+    public const string DefaultConfigurationXml = "<HsmArchive><RootDir>e:\\Archive</RootDir></HsmArchive>";
     
     public class DicomTags {
         public const string PatientsName = "00100010";

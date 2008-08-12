@@ -8,78 +8,60 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules {
     
     
     /// <summary>
-    /// ServerPartitionPage class.
+    /// Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ServerPartitionPage {
+    public partial class Default {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// PageContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
-        /// Panel1 control.
+        /// ServerRulePageUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::System.Web.UI.UpdatePanel ServerRulePageUpdatePanel;
         
         /// <summary>
-        /// ServerPartitionPanel control.
+        /// ServerPartitionTabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions.ServerPartitionPanel ServerPartitionPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
-        /// AddEditPartitionDialog control.
+        /// ConfirmDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitions.AddEditPartitionDialog AddEditPartitionDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ConfirmDialog;
         
         /// <summary>
-        /// deleteConfirmBox control.
+        /// AddEditServerRuleControl control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox deleteConfirmBox;
-        
-        /// <summary>
-        /// MessageBox control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
-        
-        /// <summary>
-        /// TimedDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.TimedDialog TimedDialog;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules.AddEditServerRuleDialog AddEditServerRuleControl;
     }
 }

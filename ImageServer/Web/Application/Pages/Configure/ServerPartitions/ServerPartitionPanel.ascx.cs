@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
         // used for database interaction
         private ServerPartitionConfigController _theController;
-        private ServerPartitionPage _enclosingPage;
+        private Default _enclosingPage;
 
         #endregion Private Members
 
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             set { _theController = value; }
         }
 
-        public ServerPartitionPage EnclosingPage
+        public Default EnclosingPage
         {
             get { return _enclosingPage; }
             set { _enclosingPage = value; }

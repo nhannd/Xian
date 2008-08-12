@@ -36,6 +36,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 using AjaxControlToolkit;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
@@ -108,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 Label xmlText = e.Row.FindControl("XmlText") as Label;
                 if (xmlText != null && fsq.QueueXml != null)
                 {
-                    xmlText.Text = XmlUtilities.GetXmlDocumentAsString(fsq.QueueXml, true);
+                    xmlText.Text = XmlUtils.GetXmlDocumentAsString(fsq.QueueXml, true);
                 }
             }
         }

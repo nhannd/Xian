@@ -120,6 +120,9 @@
   <data name="About" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="AddPartitionArchiveTitle" xml:space="preserve">
+    <value>Add Partition Archive</value>
+  </data>
   <data name="Archive" xml:space="preserve">
     <value>Archive</value>
   </data>
@@ -132,6 +135,9 @@
   <data name="Devices" xml:space="preserve">
     <value>Devices</value>
   </data>
+  <data name="EditPartitionArchiveTitle" xml:space="preserve">
+    <value>Edit Partition Archive</value>
+  </data>
   <data name="EditStudyDialog" xml:space="preserve">
     <value>Edit Study Details</value>
   </data>
@@ -140,6 +146,9 @@
   </data>
   <data name="FileSystems" xml:space="preserve">
     <value>File Systems</value>
+  </data>
+  <data name="PartitionArchive" xml:space="preserve">
+    <value>Partition Archive</value>
   </data>
   <data name="Queues" xml:space="preserve">
     <value>Queues</value>

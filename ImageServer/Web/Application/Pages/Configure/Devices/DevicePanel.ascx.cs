@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         private DeviceConfigurationController _theController;
         // the partition whose information will be displayed in this panel
         private ServerPartition _partition;
-        private DevicePage _enclosingPage;
+        private Default _enclosingPage;
 
         #endregion Private members
 
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             set { _partition = value; }
         }
 
-        public DevicePage EnclosingPage
+        public Default EnclosingPage
         {
             get { return _enclosingPage; }
             set { _enclosingPage = value; }

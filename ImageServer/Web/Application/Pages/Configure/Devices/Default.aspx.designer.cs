@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
     
     
     /// <summary>
-    /// DevicePage class.
+    /// Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class DevicePage {
+    public partial class Default {
         
         /// <summary>
         /// MainMenuSiteMapDataSource control.

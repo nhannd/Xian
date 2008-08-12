@@ -75,9 +75,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             set { _tiers = value; }
         }
 
-        private FileSystemsPage _enclosingPage;
+        private Default _enclosingPage;
 
-        public FileSystemsPage EnclosingPage
+        public Default EnclosingPage
         {
             get { return _enclosingPage; }
             set { _enclosingPage = value; }

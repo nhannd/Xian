@@ -5,13 +5,12 @@
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell CssClass="CSSGridViewPanelContent" VerticalAlign="top">
+        <asp:TableCell VerticalAlign="top">
         
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" OnRowDataBound="GridView1_RowDataBound" 
+            <asp:GridView ID="GridView1" runat="server" SkinID="GlobalGridView" 
+                OnRowDataBound="GridView1_RowDataBound" 
                 OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
-                EmptyDataText="" OnPageIndexChanging="GridView1_PageIndexChanging" CellPadding="0"
-                PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
+                OnPageIndexChanging="GridView1_PageIndexChanging">
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
                     <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
