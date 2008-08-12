@@ -50,6 +50,11 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 			this.AdditionalCommentsNote = additionalCommentsNote;
 		}
 
+		public RejectOrderProtocolRequest(EntityRef orderRef, EnumValueInfo rejectReason, OrderNoteDetail additionalCommentsNote)
+			: this(orderRef, null, null, rejectReason, additionalCommentsNote)
+		{
+		}
+
 		[DataMember]
 		public EnumValueInfo RejectReason;
 

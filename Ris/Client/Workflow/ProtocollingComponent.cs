@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private ReportingWorklistItem _worklistItem;
 		private EntityRef _orderRef;
+		private EntityRef _assignedStaffRef;
 		private List<OrderNoteDetail> _notes;
 
 		private readonly List<ReportingWorklistItem> _skippedItems;
@@ -390,7 +391,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IProtocollingWorkflowService service)
 					{
 						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim));
+						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim, _assignedStaffRef));
 					});
 
 				SkipCurrentItemAndBeginNextItemOrExit();
@@ -418,7 +419,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IProtocollingWorkflowService service)
 					{
 						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim));
+						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim, _assignedStaffRef));
 					});
 
 				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
@@ -563,6 +564,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 					StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef, shouldClaim, OrderNoteCategory.Protocol.Key));
 					_orderRef = response.OrderRef;
+					_assignedStaffRef = response.AssignedStaffRef;
 
 					_notes = response.ProtocolNotes;
 

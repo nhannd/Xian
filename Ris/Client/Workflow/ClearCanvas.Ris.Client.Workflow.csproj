@@ -45,10 +45,13 @@
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
     <Compile Include="DowntimeReportEntryComponent.cs" />
+    <Compile Include="EditProtocolTool.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
+    <Compile Include="ProtocolWorkflowItemTool.cs" />
+    <Compile Include="ProtocolWorkflowTools.cs" />
     <Compile Include="RadiologistAdminWorkflowFolderSystem.cs" />
     <Compile Include="RadiologistAdminWorkflowItemTools.cs" />
     <Compile Include="ReassignComponent.cs" />
@@ -94,7 +97,6 @@
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentDocument.cs" />
     <Compile Include="ProtocollingComponentMode.cs" />
-    <Compile Include="ProtocollingTool.cs" />
     <Compile Include="ProtocolReasonComponent.cs" />
     <Compile Include="ProtocolWorkflowFolderSystem.cs" />
     <Compile Include="RandomOrderTool.cs" />

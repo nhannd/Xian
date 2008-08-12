@@ -38,15 +38,19 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class StartOrderProtocolResponse : DataContractBase
 	{
-		public StartOrderProtocolResponse(EntityRef orderRef, bool protocolClaimed, List<OrderNoteDetail> protocolNotes)
+		public StartOrderProtocolResponse(EntityRef orderRef, EntityRef assignedStaffRef, bool protocolClaimed, List<OrderNoteDetail> protocolNotes)
 		{
 			this.OrderRef = orderRef;
+			this.AssignedStaffRef = assignedStaffRef;
 			this.ProtocolClaimed = protocolClaimed;
 			this.ProtocolNotes = protocolNotes;
 		}
 
 		[DataMember]
 		public EntityRef OrderRef;
+
+		[DataMember]
+		public EntityRef AssignedStaffRef;
 
 		[DataMember]
 		public bool ProtocolClaimed;

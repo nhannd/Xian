@@ -11,5 +11,10 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 			: base(orderRef, protocols, orderNotes)
 		{
 		}
+
+		public SubmitProtocolForApprovalRequest(EntityRef orderRef)
+			: this(orderRef, null, null)
+		{
+		}
 	}
 }
