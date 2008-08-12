@@ -401,7 +401,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             base.OnRowCreated(e);
 
-            // only apply changes if its DataRow
             if (e.Row.RowType == DataControlRowType.DataRow && MouseHoverRowHighlightEnabled)
             {
                 string onMouseOver = string.Format("this.style.cursor='pointer';this.originalstyle=this.style.backgroundColor;this.style.backgroundColor='{0}';", ColorTranslator.ToHtml(RowHighlightColor));

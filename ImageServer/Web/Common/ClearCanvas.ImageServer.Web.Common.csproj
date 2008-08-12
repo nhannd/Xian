@@ -52,6 +52,8 @@
     <Compile Include="Data\ArchiveQueueController.cs" />
     <Compile Include="Data\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
+    <Compile Include="Data\PartitionArchiveDataAdapter.cs" />
+    <Compile Include="Data\PartitionArchiveConfigController.cs" />
     <Compile Include="Data\FileSystemQueueController.cs" />
     <Compile Include="Data\FileSystemQueueAdapter.cs" />
     <Compile Include="Data\PartitionArchiveAdaptor.cs" />
@@ -82,7 +84,6 @@
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
     <Compile Include="Utilities\NameFormatter.cs" />
-    <Compile Include="Utilities\XmlUtilities.cs" />
     <Compile Include="WebControls\UI\PersonNameLabel.cs" />
     <Compile Include="Utilities\DateTimeFormatter.cs" />
     <Compile Include="WebControls\UI\TextBox.cs" />
@@ -97,6 +98,7 @@
     </Compile>
     <Compile Include="WebControls\Validators\BaseValidator.cs" />
     <Compile Include="WebControls\Validators\ConditionalRequiredFieldValidator.cs" />
+    <Compile Include="WebControls\Validators\PartitionArchiveValidator.cs" />
     <Compile Include="WebControls\Validators\DateValidator.cs" />
     <Compile Include="WebControls\Validators\RangeComparisonValidator.cs" />
     <Compile Include="WebControls\Validators\FilesystemPathValidator.cs" />
