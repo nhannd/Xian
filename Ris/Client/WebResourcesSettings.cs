@@ -91,6 +91,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("PatientProfileDiff.html")]
+		public string PatientReconciliationPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PatientReconciliationPageUrl"]));
+			}
+		}
+
 		#region Home Page Preview settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]

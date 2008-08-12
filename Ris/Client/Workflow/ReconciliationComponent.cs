@@ -57,24 +57,8 @@ namespace ClearCanvas.Ris.Client.Workflow
     [AssociateView(typeof(PatientReconciliationComponentViewExtensionPoint))]
     public class ReconciliationComponent : ApplicationComponent
     {
-        class DiffHost : ApplicationComponentHost
-        {
-            private ReconciliationComponent _owner;
-
-            public DiffHost(ReconciliationComponent owner, PatientProfileDiffComponent diff)
-                : base(diff)
-	        {
-                _owner = owner;
-	        }
-
-            public override DesktopWindow DesktopWindow
-            {
-                get { return _owner.Host.DesktopWindow; }
-            }
-        }
-
         private PatientProfileDiffComponent _diffComponent;
-        private ApplicationComponentHost _diffComponentHost;
+        private ChildComponentHost _diffComponentHost;
 
         private PatientProfileSummary _selectedTargetProfile;
         private PatientProfileSummary _selectedReconciliationProfile;
@@ -100,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         public override void Start()
         {
             // create the diff component
-            _diffComponentHost = new DiffHost(this, _diffComponent = new PatientProfileDiffComponent());
+			_diffComponentHost = new ChildComponentHost(this.Host, _diffComponent = new PatientProfileDiffComponent());
             _diffComponentHost.StartComponent();
 
             // add all target profiles - ensure the initially selected one is at the top of the list

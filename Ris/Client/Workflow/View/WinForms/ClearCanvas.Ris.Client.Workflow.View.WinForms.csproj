@@ -84,7 +84,6 @@
       <DependentUpon>OrderEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderEditorComponentView.cs" />
-    <Compile Include="PatientProfileDiffComponentView.cs" />
     <Compile Include="PerformedProcedureComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

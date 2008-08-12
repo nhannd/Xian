@@ -104,8 +104,8 @@ div.addDeleteButtons {
 }
 
 .discrepancy {
-	text-decoration: underline;
-	color: red;
+	background-color: #000080;
+	color: #FFFFFF;
 }
 
 tr.row0 {

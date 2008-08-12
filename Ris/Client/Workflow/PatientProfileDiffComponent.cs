@@ -39,23 +39,41 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
     /// <summary>
-    /// Extension point for views onto <see cref="PatientProfileDiffComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class PatientProfileDiffComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
     /// PatientProfileDiffComponent class
     /// </summary>
-    [AssociateView(typeof(PatientProfileDiffComponentViewExtensionPoint))]
-    public class PatientProfileDiffComponent : HtmlApplicationComponent
-    {
+    public class PatientProfileDiffComponent : DHtmlComponent
+	{
+		#region Healthcare Context
+
+		// Internal data contract used for jscript deserialization
+		[DataContract]
+		public class HealthcareContext : DataContractBase
+		{
+			private PatientProfileDiffComponent _owner;
+			public HealthcareContext(PatientProfileDiffComponent owner)
+			{
+				_owner = owner;
+			}
+
+			[DataMember]
+			public List<string> ProfileAuthorities
+			{
+				get { return _owner._profileAuthorities; }
+			}
+
+			[DataMember]
+			public List<Field> Fields
+			{
+				get { return _owner._fields; }
+			}
+		}
+
+		[DataContract]
         public class Field
         {
             private string _heading;
@@ -108,23 +126,27 @@ namespace ClearCanvas.Ris.Client.Workflow
                 return;
             }
 
+			[DataMember]
             public string Heading
             {
                 get { return _heading; }
             }
 
-            public List<Value> Values
+			[DataMember]
+			public List<Value> Values
             {
                 get { return _values; }
             }
 
-            public bool IsDiscrepancy
+			[DataMember]
+			public bool IsDiscrepancy
             {
                 get { return _isDiscrepant; }
             }
 
         }
 
+		[DataContract]
         public class Value
         {
             private List<Segment> _segments;
@@ -134,12 +156,14 @@ namespace ClearCanvas.Ris.Client.Workflow
                 _segments = segments;
             }
 
-            public List<Segment> Segments
+			[DataMember]
+			public List<Segment> Segments
             {
                 get { return _segments; }
             }
         }
 
+		[DataContract]
         public class Segment
         {
             private string _text;
@@ -151,14 +175,19 @@ namespace ClearCanvas.Ris.Client.Workflow
                 _isDiscrepant = discrepant;
             }
 
-            public string Text { get { return _text; } }
-            public bool IsDiscrepant { get { return _isDiscrepant; } }
-        }
+			[DataMember]
+			public string Text { get { return _text; } }
 
-        private List<Field> _fields;
+			[DataMember]
+			public bool IsDiscrepant { get { return _isDiscrepant; } }
+		}
+
+		#endregion
+
+		private List<Field> _fields;
         private EntityRef[] _profileRefs;
 
-        private IList<string> _profileAuthorities;
+        private List<string> _profileAuthorities;
 
         /// <summary>
         /// Constructor
@@ -195,17 +224,13 @@ namespace ClearCanvas.Ris.Client.Workflow
             base.Stop();
         }
 
+		protected override DataContractBase GetHealthcareContext()
+		{
+			return new HealthcareContext(this);
+		}
+
         #region Presentation Model
 
-        public IList<string> ProfileAuthorities
-        {
-            get { return _profileAuthorities; }
-        }
-
-        public IList<Field> Fields
-        {
-            get { return _fields; }
-        }
 
         #endregion
 
@@ -238,7 +263,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     });
 
             }
-
+			SetUrl(WebResourcesSettings.Default.PatientReconciliationPageUrl);
             NotifyAllPropertiesChanged();
         }
 
