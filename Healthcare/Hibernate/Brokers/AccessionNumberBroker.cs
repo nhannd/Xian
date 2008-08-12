@@ -82,7 +82,29 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IAccessionNumberBroker Members
 
-        public string GetNextAccessionNumber()
+    	/// <summary>
+    	/// Peeks at the next accession number in the sequence, but does not advance the sequence.
+    	/// </summary>
+    	/// <returns></returns>
+		public string PeekNextAccessionNumber()
+		{
+			// try to read the next accession number
+			try
+			{
+				IDbCommand select = this.Context.CreateSqlCommand(string.Format("SELECT * from {0}", TABLE_NAME));
+				return select.ExecuteScalar().ToString();
+			}
+			catch (Exception e)
+			{
+				throw new PersistenceException(SR.ErrorFailedReadNextSequenceNumber, e);
+			}
+		}
+
+    	/// <summary>
+    	/// Gets the next accession number in the sequence, advancing the sequence by 1.
+    	/// </summary>
+    	/// <returns></returns>
+		public string GetNextAccessionNumber()
         {
             int updatedRows = 0;
             long accNum = 0;

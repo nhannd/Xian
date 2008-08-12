@@ -146,5 +146,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
             _component.ShowVisitSummary();
         }
+
+		private void OrderEditorComponentControl_Load(object sender, EventArgs e)
+		{
+			_downtimeAccession.Mask = _component.AccessionNumberMask;
+		}
     }
 }

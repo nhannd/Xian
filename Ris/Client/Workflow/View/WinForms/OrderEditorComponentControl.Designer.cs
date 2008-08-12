@@ -591,6 +591,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "OrderEditorComponentControl";
 			this.Size = new System.Drawing.Size(1025, 767);
+			this.Load += new System.EventHandler(this.OrderEditorComponentControl_Load);
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);

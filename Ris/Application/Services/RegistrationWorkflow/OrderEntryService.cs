@@ -378,8 +378,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             DiagnosticService diagnosticService = PersistenceContext.Load<DiagnosticService>(requisition.DiagnosticService.DiagnosticServiceRef);
             OrderPriority priority = EnumUtils.GetEnumValue<OrderPriority>(requisition.Priority);
 
-        	bool isDowntimeOrder = !string.IsNullOrEmpty(requisition.DowntimeAccessionNumber);
-            
             Facility orderingFacility = PersistenceContext.Load<Facility>(requisition.OrderingFacility.FacilityRef, EntityLoadFlags.Proxy);
 
             List<ResultRecipient> resultRecipients = CollectionUtils.Map<ResultRecipientDetail, ResultRecipient>(
@@ -405,14 +403,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
 						// important to set this flag prior to creating the procedure steps, because it may affect
 						// which procedure steps are created
-                    	rp.DowntimeRecoveryMode = isDowntimeOrder;
+                    	rp.DowntimeRecoveryMode = requisition.IsDowntimeOrder;
                         return rp;
                     });
 
-            // obtain a new acc number, or use the downtime accession number if provided
-        	string accNum = isDowntimeOrder
-        	                	? requisition.DowntimeAccessionNumber
-        	                	: PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNextAccessionNumber();
+			// get appropriate A# for this order
+        	string accNum = GetAccessionNumberForOrder(requisition);
 
             // generate a new order with the default set of procedures
             Order order = Order.NewOrder(
@@ -462,6 +458,26 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return order;
         }
+
+		private string GetAccessionNumberForOrder(OrderRequisition requisition)
+		{
+			// if this is a downtime requisition, validate the downtime A#, otherwise obtain a new A#
+			IAccessionNumberBroker accessionBroker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
+			if (requisition.IsDowntimeOrder)
+			{
+				// validate that the downtime A# is less than then current sequence position
+				string currentMaxAccession = accessionBroker.PeekNextAccessionNumber();
+				if (requisition.DowntimeAccessionNumber.CompareTo(currentMaxAccession) > -1)
+					throw new RequestValidationException("Invalid downtime accession number.");
+
+				return requisition.DowntimeAccessionNumber;
+			}
+			else
+			{
+				// get new A#
+				return PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNextAccessionNumber();
+			}
+		}
 
         private void UpdateProceduresHelper(Order order, List<ProcedureRequisition> procedureReqs)
         {

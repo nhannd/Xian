@@ -135,5 +135,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 		/// </summary>
 		[DataMember]
     	public string DowntimeAccessionNumber;
+
+		/// <summary>
+		/// Gets a value indicating whether this requisition is for a downtime order.
+		/// </summary>
+    	public bool IsDowntimeOrder
+    	{
+			get { return !string.IsNullOrEmpty(DowntimeAccessionNumber); }
+    	}
     }
 }

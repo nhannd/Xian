@@ -450,6 +450,11 @@ namespace ClearCanvas.Ris.Client
 			get { return DowntimeRecovery.InDowntimeRecoveryMode && _mode == Mode.NewOrder; }
     	}
 
+    	public string AccessionNumberMask
+    	{
+			get { return TextFieldMasks.AccessionNumberMask; }
+    	}
+
     	public string DowntimeAccessionNumber
     	{
 			get { return _downtimeAccessionNumber; }

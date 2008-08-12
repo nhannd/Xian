@@ -41,6 +41,16 @@ namespace ClearCanvas.Healthcare.Brokers
     /// </summary>
     public interface IAccessionNumberBroker : IPersistenceBroker
     {
-        string GetNextAccessionNumber();
+		/// <summary>
+		/// Peeks at the next accession number in the sequence, but does not advance the sequence.
+		/// </summary>
+		/// <returns></returns>
+    	string PeekNextAccessionNumber();
+
+		/// <summary>
+		/// Gets the next accession number in the sequence, advancing the sequence by 1.
+		/// </summary>
+		/// <returns></returns>
+		string GetNextAccessionNumber();
     }
 }

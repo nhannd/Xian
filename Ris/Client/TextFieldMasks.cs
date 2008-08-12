@@ -56,5 +56,10 @@ namespace ClearCanvas.Ris.Client
         {
             get { return FormatSettings.Default.HealthcardVersionCodeMask; }
         }
+
+    	public static string AccessionNumberMask
+    	{
+			get { return FormatSettings.Default.AccessionNumberMask; }
+    	}
     }
 }
