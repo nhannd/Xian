@@ -402,6 +402,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
                         Procedure rp = new Procedure(rpt);
                         mapProcToReq.Add(rp, req);
+
+						// important to set this flag prior to creating the procedure steps, because it may affect
+						// which procedure steps are created
                     	rp.DowntimeRecoveryMode = isDowntimeOrder;
                         return rp;
                     });

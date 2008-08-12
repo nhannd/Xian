@@ -48,7 +48,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Complete Downtime Recovery...", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Complete Downtime Recovery...", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "TechnologistOpenDocumentationSmall.png", "TechnologistOpenDocumentationMedium.png", "TechnologistOpenDocumentationLarge.png")]
+	//TODO: need icon
+	//[IconSet("apply", IconScheme.Colour, "TechnologistOpenDocumentationSmall.png", "TechnologistOpenDocumentationMedium.png", "TechnologistOpenDocumentationLarge.png")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
@@ -71,6 +72,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				return this.Context.SelectedItems.Count == 1
+					// this is a blatant HACK!  we only want this tool enabled from Completed, and there is no
+					// easy way to do this (cannot use server-side enablement because operation is on the reporting workflow service)
+					 && this.Context.SelectedFolder is Folders.Technologist.CompletedTechnologistWorkflowFolder
 					   && CollectionUtils.FirstElement(this.Context.SelectedItems).ProcedureRef != null;
 			}
 		}
@@ -87,14 +91,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (item.ProcedureRef == null)
 				return;
 
-			DowntimeReportEntryComponent component = new DowntimeReportEntryComponent(item.ProcedureRef);
-
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				this.Context.DesktopWindow, component, "Complete Downtime Recovery");
-
-			if (exitCode == ApplicationComponentExitCode.Accepted)
+			try
 			{
-				DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CompletedTechnologistWorkflowFolder));
+				DowntimeReportEntryComponent component = new DowntimeReportEntryComponent(item.ProcedureRef);
+
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow, component, "Complete Downtime Recovery");
+
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CompletedTechnologistWorkflowFolder));
+				}
+
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
     }

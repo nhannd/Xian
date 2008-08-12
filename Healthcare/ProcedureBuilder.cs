@@ -226,7 +226,12 @@ namespace ClearCanvas.Healthcare
 
                 IProcedureStepBuilder builder = GetBuilderForClass(stepClass);
                 ProcedureStep step = builder.CreateInstance(stepNode, procedure);
-                procedure.AddProcedureStep(step);
+				
+				//Bug# 2505: do not create pre-steps for procedures in downtime recovery mode
+				if (procedure.DowntimeRecoveryMode && step.IsPreStep)
+					continue;
+                
+				procedure.AddProcedureStep(step);
             }
         }
 
