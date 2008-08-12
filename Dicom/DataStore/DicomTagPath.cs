@@ -244,8 +244,8 @@ namespace ClearCanvas.Dicom.DataStore
 
 				try
 				{
-					ushort groupValue = Convert.ToUInt16(group.TrimStart('('), 16);
-					ushort elementValue = Convert.ToUInt16(element.TrimEnd(')'), 16);
+					ushort groupValue = System.Convert.ToUInt16(group.TrimStart('('), 16);
+					ushort elementValue = System.Convert.ToUInt16(element.TrimEnd(')'), 16);
 
 					dicomTags.Add(NewTag(DicomTag.GetTagValue(groupValue, elementValue)));
 

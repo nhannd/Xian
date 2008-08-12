@@ -40,8 +40,10 @@ using ClearCanvas.DicomServices.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-	public class Study : PersistentDicomObject, IStudy, IEquatable<Study>
+	public class Study : IStudy, IEquatable<Study>
     {
+		private event EventHandler _changed;
+		
 		#region Private Fields
 
 		private Guid _studyOid;
@@ -75,6 +77,12 @@ namespace ClearCanvas.Dicom.DataStore
         {
 		}
 
+		internal virtual event EventHandler Changed
+		{
+			add { _changed += value; }
+			remove { _changed -= value; }
+		}
+
 		#region Public Properties
 
 		#region NHibernate Persistent Properties
@@ -85,21 +93,21 @@ namespace ClearCanvas.Dicom.DataStore
 			set { _studyOid = value; }
 		}
 
-		[QueryableProperty(DicomTags.StudyInstanceUid, ReturnAlways = true)]
+		[QueryableProperty(DicomTags.StudyInstanceUid, IsUnique = true)]
     	public virtual string StudyInstanceUid
     	{
     		get { return _studyInstanceUid; }
 			set { SetClassMember(ref _studyInstanceUid, value); }
 		}
 
-		[QueryableProperty(DicomTags.PatientId, ReturnAlways = true)]
+		[QueryableProperty(DicomTags.PatientId, IsRequired = true)]
 		public virtual string PatientId
     	{
     		get { return _patientId; }
 			set { SetClassMember(ref _patientId, value); }
     	}
 
-		[QueryableProperty(DicomTags.PatientsName, ReturnAlways = true, ReturnProperty = "PatientsNameRaw")]
+		[QueryableProperty(DicomTags.PatientsName, IsRequired = true, ReturnProperty = "PatientsNameRaw")]
 		public virtual PersonName PatientsName
     	{
     		get { return _patientsName; }
@@ -119,21 +127,21 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _patientsSex, value); }
     	}
 
-		[QueryableProperty(DicomTags.PatientsBirthDate, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.PatientsBirthDate, PostFilterOnly = true)]
 		public virtual string PatientsBirthDateRaw
     	{
     		get { return _patientsBirthDateRaw; }
 			set { SetClassMember(ref _patientsBirthDateRaw, value); }
     	}
 
-		[QueryableProperty(DicomTags.StudyId, ReturnAlways = true)]
+		[QueryableProperty(DicomTags.StudyId, IsRequired = true)]
 		public virtual string StudyId
         {
             get { return _studyId; }
 			set { SetClassMember(ref _studyId, value); }
         }
 
-		[QueryableProperty(DicomTags.AccessionNumber, ReturnAlways = true)]
+		[QueryableProperty(DicomTags.AccessionNumber, IsRequired = true)]
 		public virtual string AccessionNumber
     	{
     		get { return _accessionNumber; }
@@ -147,7 +155,7 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _studyDescription, value); }
     	}
 
-		[QueryableProperty(DicomTags.StudyDate, ReturnAlways = true, ReturnProperty = "StudyDateRaw")]
+		[QueryableProperty(DicomTags.StudyDate, IsRequired = true, ReturnProperty = "StudyDateRaw")]
 		public virtual DateTime? StudyDate
     	{
     		get { return _studyDate; }
@@ -160,28 +168,28 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _studyDateRaw, value); }
     	}
 
-		[QueryableProperty(DicomTags.StudyTime, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.StudyTime, IsRequired = true, PostFilterOnly = true)]
 		public virtual string StudyTimeRaw
         {
             get { return _studyTimeRaw; }
 			set { SetClassMember(ref _studyTimeRaw, value); }
 		}
 
-		[QueryableProperty(DicomTags.ModalitiesInStudy, IsComputed = true)]
+		[QueryableProperty(DicomTags.ModalitiesInStudy)]
 		public virtual string ModalitiesInStudy
 		{
 			get { return _modalitiesInStudy; }
 			set { SetClassMember(ref _modalitiesInStudy, value); }
 		}
 
-		[QueryableProperty(DicomTags.NumberOfStudyRelatedSeries, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.NumberOfStudyRelatedSeries)]
 		public virtual int NumberOfStudyRelatedSeries
 		{
 			get { return _numberOfStudyRelatedSeries; }
 			set { SetValueTypeMember(ref _numberOfStudyRelatedSeries, value); }
 		}
 
-		[QueryableProperty(DicomTags.NumberOfStudyRelatedInstances, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.NumberOfStudyRelatedInstances)]
 		public virtual int NumberOfStudyRelatedInstances
 		{
 			get { return _numberOfStudyRelatedInstances; }
@@ -202,7 +210,8 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
 		}
 
-		[QueryableProperty(DicomTags.SpecificCharacterSet, ReturnAlways = true)]
+		//Note: not actually a required tag, but we want it to be returned.
+		[QueryableProperty(DicomTags.SpecificCharacterSet, IsRequired = true)]
 		public virtual string SpecificCharacterSet
     	{
     		get { return _specificCharacterSet; }
@@ -222,29 +231,6 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 
 		#endregion
-
-		#region Non-Hibernate Properties
-
-		public string[] SopClassesInStudy
-		{
-			get
-			{
-				List<string> sopClasses = new List<string>();
-				foreach (Series series in Series)
-				{
-					foreach (SopInstance instance in series.GetSopInstances())
-					{
-						if (!sopClasses.Contains(instance.SopClassUid))
-							sopClasses.Add(instance.SopClassUid);
-					}
-				}
-				
-				return sopClasses.ToArray();
-			}
-		}
-
-		#endregion
-
 		#endregion
 
 		#region Private Properties
@@ -304,7 +290,7 @@ namespace ClearCanvas.Dicom.DataStore
             foreach (char character in StudyInstanceUid)
             {
                 if ('.' != character)
-                    accumulator += Convert.ToInt32(character);
+					accumulator += System.Convert.ToInt32(character);
                 else
                     accumulator -= 23;
             }
@@ -347,12 +333,14 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#endregion
 
+		#region Helper Methods
+
 		private void LoadStudyXml()
 		{
 			if (_studyXml == null)
 			{
 				if (StudyXmlUri == null)
-					throw new InvalidOperationException("The study xml location must be set.");
+					throw new DataStoreException("The study xml location must be set.");
 
 				XmlDocument doc = new XmlDocument();
 				_studyXml = new StudyXml(StudyInstanceUid);
@@ -368,32 +356,18 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 		}
 
-		#region Helper Methods
-
-		private int ComputeNumberOfSopInstances()
+		private static IEnumerable<string> ComputeModalitiesInStudy(IEnumerable<string> existingModalities, string candidate)
 		{
-			int count = 0;
-			foreach (Series series in Series)
+			foreach(string existingModality in existingModalities)
 			{
-				foreach (SopInstance sop in series.GetSopInstances())
-				{
-					++count;
-				}
+				if (existingModality == candidate)
+					candidate = null;
+
+				yield return existingModality;
 			}
 
-			return count;
-		}
-
-		private string[] ComputeModalitiesInStudy()
-		{
-			List<string> modalities = new List<string>();
-			foreach (Series series in Series)
-			{
-				if (!modalities.Contains(series.Modality))
-					modalities.Add(series.Modality);
-			}
-
-			return modalities.ToArray();
+			if (candidate != null)
+				yield return candidate;
 		}
 
 		internal void Initialize(DicomFile file)
@@ -405,7 +379,7 @@ namespace ClearCanvas.Dicom.DataStore
 			if (!String.IsNullOrEmpty(StudyInstanceUid) && StudyInstanceUid != datasetStudyUid)
 			{
 				string message = String.Format("The study uid in the data set does not match this study's uid ({0} != {1}).", 
-													datasetStudyUid, StudyInstanceUid);
+				                               datasetStudyUid, StudyInstanceUid);
 
 				throw new InvalidOperationException(message);
 			}
@@ -441,6 +415,8 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.StudyDate];
 			StudyDateRaw = attribute.ToString();
 			StudyDate = DateParser.Parse(StudyDateRaw);
+			if (!String.IsNullOrEmpty(StudyDateRaw) && StudyDate == null)
+				throw new DicomValidationException(String.Format("Invalid format for study date: {0}", StudyDateRaw));
 
 			attribute = sopInstanceDataset[DicomTags.StudyTime];
 			StudyTimeRaw = attribute.ToString();
@@ -458,6 +434,10 @@ namespace ClearCanvas.Dicom.DataStore
 
 			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
 			SpecificCharacterSet = attribute.ToString();
+
+			string[] modalitiesInStudy = DicomStringHelper.GetStringArray(ModalitiesInStudy ?? "");
+			ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(
+				ComputeModalitiesInStudy(modalitiesInStudy, sopInstanceDataset[DicomTags.Modality].GetString(0, "")));
 		}
 
 		internal void Update(DicomFile file)
@@ -465,18 +445,16 @@ namespace ClearCanvas.Dicom.DataStore
 			Initialize(file);
 			StudyXml.AddFile(file);
 
-			//NOTE: important!  These need the study xml to exist first, so they must be set here.
-			//The Initialize method is used by the validator to validate the lengths of all the column values.
-			//Currently, this will cause the ModalitiesInStudy value to be excluded from validation, but
-			//it will likely never be an issue since the column length is 256 characters.
-			ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(ComputeModalitiesInStudy());
-			NumberOfStudyRelatedInstances = ComputeNumberOfSopInstances();
-			NumberOfStudyRelatedSeries = Series.Count;
+			//these have to be here, rather than in Initialize b/c they are 
+			// computed from the series, which are parsed from the xml.
+			NumberOfStudyRelatedSeries = this.StudyXml.NumberOfStudyRelatedSeries;
+			NumberOfStudyRelatedInstances = this.StudyXml.NumberOfStudyRelatedInstances;
 		}
 
 		internal void Flush()
 		{
 			StudyXmlOutputSettings settings = new StudyXmlOutputSettings();
+			//TODO: include these?
 			settings.IncludePrivateValues = false;
 			settings.IncludeUnknownTags = false;
 			settings.IncludeSourceFileName = true;
@@ -489,6 +467,41 @@ namespace ClearCanvas.Dicom.DataStore
 				StudyXmlIo.Write(StudyXml.GetMemento(settings), stream);
 				stream.Close();
 			}
+		}
+
+		private void OnChanged()
+		{
+			EventsHelper.Fire(_changed, this, EventArgs.Empty);
+		}
+
+		private void SetValueTypeMember<T>(ref T member, T newValue)
+			where T : struct
+		{
+			if (member.Equals(newValue))
+				return;
+
+			member = newValue;
+			OnChanged();
+		}
+
+		private void SetClassMember<T>(ref T member, T newValue)
+			where T : class
+		{
+			if (Equals(member, newValue))
+				return;
+
+			member = newValue;
+			OnChanged();
+		}
+
+		private void SetNullableTypeMember<T>(ref T? member, T? newValue)
+			where T : struct
+		{
+			if (Nullable.Equals(member, newValue))
+				return;
+
+			member = newValue;
+			OnChanged();
 		}
 
 		#endregion

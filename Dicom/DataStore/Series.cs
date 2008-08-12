@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (!iterator.MoveNext())
 				{
 					string message = String.Format("There are no instances in this series ({0}).", SeriesInstanceUid);
-					throw new InvalidOperationException(message);
+					throw new DataStoreException(message);
 				}
 
 				return iterator.Current;
@@ -91,19 +91,19 @@ namespace ClearCanvas.Dicom.DataStore
 			return _parentStudy;
 		}
 
-		[QueryableProperty(DicomTags.StudyInstanceUid, IsComputed = true, ReturnAlways = true, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.StudyInstanceUid, IsHigherLevelUnique = true)]
 		public string StudyInstanceUid
 		{
 			get { return _parentStudy.StudyInstanceUid; }
 		}
 
-		[QueryableProperty(DicomTags.SeriesInstanceUid, IsComputed = true, ReturnAlways = true)]
+		[QueryableProperty(DicomTags.SeriesInstanceUid, IsUnique = true, PostFilterOnly = true)]
 		public string SeriesInstanceUid
 		{
 			get { return _seriesXml.SeriesInstanceUid; }
 		}
 
-		[QueryableProperty(DicomTags.Modality, IsComputed = true)]
+		[QueryableProperty(DicomTags.Modality, PostFilterOnly = true)]
 		public string Modality
 		{
 			get
@@ -112,7 +112,7 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 		}
 
-		[QueryableProperty(DicomTags.SeriesDescription, IsComputed = true)]
+		[QueryableProperty(DicomTags.SeriesDescription, PostFilterOnly = true)]
 		public string SeriesDescription
 		{
 			get
@@ -121,7 +121,7 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 		}
 
-		[QueryableProperty(DicomTags.SeriesNumber, IsComputed = true, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.SeriesNumber, IsRequired = true, PostFilterOnly = true)]
 		public int SeriesNumber
 		{
 			get
@@ -130,7 +130,7 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 		}
 
-		[QueryableProperty(DicomTags.NumberOfSeriesRelatedInstances, IsComputed = true, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.NumberOfSeriesRelatedInstances, PostFilterOnly = true)]
 		public int NumberOfSeriesRelatedInstances
 		{
 			get { return SopInstances.Count; }

@@ -34,14 +34,15 @@ namespace ClearCanvas.Dicom.DataStore
     public interface ISopInstance
     {
 		ISeries GetParentSeries();
+		DicomUri GetLocationUri();
 
 		string SopInstanceUid { get; }
 		string SopClassUid { get; }
+		int InstanceNumber { get; }
+
 		string TransferSyntaxUid { get; }
 
 		DicomAttribute this[DicomTag tag] { get; }
 		DicomAttribute this[uint tag] { get; }
-
-		DicomUri GetLocationUri();
     }
 }

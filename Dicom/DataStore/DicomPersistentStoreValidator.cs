@@ -60,15 +60,11 @@ namespace ClearCanvas.Dicom.DataStore
 				DicomValidator.ValidateTransferSyntaxUID(metaInfo[DicomTags.TransferSyntaxUid]);
 				
 				if (dicomFile.SopClass == null)
-					throw new DicomValidationException("The sop class must not be empty.");
+					throw new DataStoreException("The sop class must not be empty.");
 
 				DicomValidator.ValidateSopClassUid(dicomFile.SopClass.Uid);
 
 				Study study = new Study();
-				//TODO: could set the xml location here if we wanted to validate the length of 'modalities in study',
-				//which is computed from all the series; however, that would require adding a locking mechanism for
-				//the xml files (likely a named mutex), and that seems unnecessary considering how unlikely it is 
-				//for the modalities in study tag to exceed 256 characters.
 				study.Initialize(dicomFile);
 
 				_validator.ValidatePersistentObject(study);

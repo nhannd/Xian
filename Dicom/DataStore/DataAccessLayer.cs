@@ -100,20 +100,17 @@ namespace ClearCanvas.Dicom.DataStore
 			return new DataStoreWriter(SessionManager.Get());
         }
 
-		internal static IStudyStorageLocator GetStudyStorageLocator()
-		{
-			if (_studyStorageLocator == null)
-				throw new InvalidOperationException("Cannot use the persistent store without setting a valid study storage locator.");
-
-			return _studyStorageLocator;
-		}
-
 		#region Helper Methods
 
 		internal static IEnumerable<T> Cast<T>(IEnumerable original)
 		{
 			foreach (T item in original)
 				yield return item;
+		}
+
+		private static bool ContainsWildCharacters(string criteria)
+		{
+			return criteria.Contains("*") || criteria.Contains("?");
 		}
 
 		#endregion

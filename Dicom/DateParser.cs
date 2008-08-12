@@ -47,10 +47,6 @@ namespace ClearCanvas.Dicom
 	{
 		public const string DicomDateFormat = "yyyyMMdd";
 
-		// Dicom recommends we still support the old date format (#2) although it is deprecated.
-		// See PS 3.5, table 6.2-1 - 'Dicom Value Representations' under VR DA.
-		private static readonly string[] _dateFormats = { "yyyyMMdd", "yyyy.MM.dd" };
-
 		/// <summary>
 		/// Attempts to parse the date string exactly, according to accepted Dicom format(s).
 		/// Will *not* throw an exception if the format is invalid.
@@ -81,7 +77,7 @@ namespace ClearCanvas.Dicom
             if (dicomDate!=null)
                 dicomDate = dicomDate.Trim();
 
-			return DateTime.TryParseExact(dicomDate, _dateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+			return DateTime.TryParseExact(dicomDate, DicomDateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
 		}
 
 		/// <summary>

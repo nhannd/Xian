@@ -41,8 +41,8 @@ namespace ClearCanvas.Dicom.DataStore
 		private sealed class DicomPersistentStore : IDicomPersistentStore
 		{
 			private readonly Dictionary<string, Study> _existingStudyCache = new Dictionary<string, Study>();
-			private readonly Dictionary<string, Study> _studiesToUpdateInDatastore = new Dictionary<string, Study>();
 			private readonly Dictionary<string, Study> _studiesToUpdateInXml = new Dictionary<string, Study>();
+			private readonly Dictionary<string, Study> _studiesToUpdateInDatastore = new Dictionary<string, Study>();
 
 			private IDataStoreReader _dataStoreReader;
 			private IDicomPersistentStoreValidator _validator;
@@ -107,8 +107,11 @@ namespace ClearCanvas.Dicom.DataStore
 					study = new Study();
 					study.StoreTime = Platform.Time;
 
-					string fileName = String.Format("{0}\\{1}.xml",
-						_studyStorageLocator.GetStudyStoragePath(studyInstanceUid), studyInstanceUid);
+					string studyStoragePath = _studyStorageLocator.GetStudyStoragePath(studyInstanceUid);
+					if (String.IsNullOrEmpty(studyStoragePath))
+						throw new DataStoreException("The study storage path is empty.");
+
+					string fileName = String.Format("{0}\\{1}.xml", studyStoragePath, studyInstanceUid);
 
 					if (!Path.IsPathRooted(fileName))
 						fileName = Path.GetFullPath(fileName);

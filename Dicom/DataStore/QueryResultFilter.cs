@@ -5,142 +5,164 @@ using ClearCanvas.DicomServices;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-	internal class QueryResultFilter<T>
+	public partial class DataAccessLayer
 	{
-		private readonly QueryCriteria _queryCriteria;
-		private readonly IEnumerable<T> _resultCandidates;
-
-		public QueryResultFilter(QueryCriteria queryCriteria, IEnumerable<T> resultCandidates)
+		internal class QueryResultFilter<T>
 		{
-			_queryCriteria = queryCriteria;
-			_resultCandidates = resultCandidates;
-		}
+			private readonly QueryCriteria _queryCriteria;
+			private readonly IEnumerable<T> _resultCandidates;
 
-		public List<DicomAttributeCollection> GetResults()
-		{
-			List<DicomAttributeCollection> results = new List<DicomAttributeCollection>();
-			foreach (T candidate in _resultCandidates)
+			public QueryResultFilter(QueryCriteria queryCriteria, IEnumerable<T> resultCandidates)
 			{
-				DicomAttributeCollection result = GetResult(candidate);
-				if (result != null)
-					results.Add(result);
+				_queryCriteria = queryCriteria;
+				_resultCandidates = resultCandidates;
 			}
 
-			return results;
-		}
-
-		private DicomAttributeCollection GetResult(T candidate)
-		{
-			QueryablePropertyCollection<T> queryableProperties = new QueryablePropertyCollection<T>();
-			DicomAttributeCollection result = new DicomAttributeCollection();
-
-			foreach (QueryablePropertyInfo property in queryableProperties)
+			public List<DicomAttributeCollection> GetResults()
 			{
-				string criteria = _queryCriteria[property.Path];
-				if (criteria == null && !property.ReturnAlways)
-					continue;
-
-				object value = property.ReturnProperty.GetValue(candidate, null);
-				if (value == null && !property.ReturnAlways)
-					continue;
-
-				string[] values = PropertyValueToStringArray(value);
-				if (criteria != null && property.IsComputed && !property.ReturnOnly)
+				List<DicomAttributeCollection> results = new List<DicomAttributeCollection>();
+				foreach (T candidate in _resultCandidates)
 				{
-					//universal matching (empty criteria = all match)
-					if (!String.IsNullOrEmpty(criteria))
+					DicomAttributeCollection result = GetResult(candidate);
+					if (result != null)
+						results.Add(result);
+				}
+
+				return results;
+			}
+
+			private DicomAttributeCollection GetResult(T candidate)
+			{
+				DicomAttributeCollection result = new DicomAttributeCollection();
+
+				foreach (QueryablePropertyInfo property in QueryableProperties<T>.GetProperties())
+				{
+					string criteria = _queryCriteria[property.Path];
+
+					bool includeResult = criteria != null || property.IsRequired || property.IsUnique || property.IsHigherLevelUnique;
+					if (!includeResult)
+						continue;
+
+					object propertyValue = property.ReturnProperty.GetValue(candidate, null);
+					string[] testValues = new string[]{};
+					if (property.AllowListMatching)
 					{
-						string[] criteriaValues = CriteriaValueToStringArray(property, criteria);
-						if (!AnyMatch(property, values, criteriaValues))
+						testValues = Convert.ToStringArray(propertyValue, property.ReturnPropertyConverter);
+					}
+					else
+					{
+						string testValue = Convert.ToString(propertyValue, property.ReturnPropertyConverter);
+						if (testValue != null)
+							testValues = new string[] { testValue };
+					}
+
+					if (criteria == null)
+						criteria = "";
+
+					//special case, we post-filter modalities in study when it contains wildcards b/c the hql query won't 
+					//always produce exactly the right results.  This will never happen anyway.
+					bool query = !String.IsNullOrEmpty(criteria) && ((!property.IsHigherLevelUnique && property.PostFilterOnly) || 
+									(property.Path.Equals(DicomTags.ModalitiesInStudy) && ContainsWildCharacters(criteria)));
+
+					if (query)
+					{
+						string[] criteriaValues;
+						if (property.AllowListMatching)
+							criteriaValues = DicomStringHelper.GetStringArray(criteria);
+						else
+							criteriaValues = new string[] { criteria };
+
+						//When something doesn't match, the candidate is not a match, and the result is filtered out.
+						if (!AnyMatch(property, criteriaValues, testValues))
 							return null;
 					}
+
+					string resultValue = DicomStringHelper.GetDicomStringArray(testValues);
+					AddValueToResult(property.Path, resultValue, result);
 				}
 
-				string propertyValue = FormatPropertyValuesForResult(values);
-				AddValueToResult(property.Path, propertyValue, result);
+				return result;
 			}
 
-			return result;
-		}
-
-		private static bool AnyMatch(QueryablePropertyInfo property, IEnumerable<string> testValues, IEnumerable<string> criteriaValues)
-		{
-			foreach (string criteria in criteriaValues)
+			private static bool AnyMatch(QueryablePropertyInfo property, IEnumerable<string> criteriaValues, IEnumerable<string> testValues)
 			{
-				foreach (string test in testValues)
+				bool testsPerformed = false;
+
+				foreach (string criteria in criteriaValues)
 				{
-					// Note: right now, the only computed properties are of properties that undergo
-					// these types of matching.  If more are added (dates, sequence matching, for example) then code will
-					// need to be added here.
+					if (String.IsNullOrEmpty(criteria))
+						continue;
 
-					if (property.Path.ValueRepresentation == DicomVr.UIvr) //list of uid matching.
+					foreach (string test in testValues)
 					{
-						//any matching uid is considered a match.
-						if (test.Equals(criteria))
+						if (String.IsNullOrEmpty(test))
+							continue;
+
+						if (property.Path.ValueRepresentation == DicomVr.UIvr) //list of uid matching.
+						{
+							testsPerformed = true;
+							//any matching uid is considered a match.
+							if (test.Equals(criteria))
+								return true;
+						}
+						else if (property.Path.ValueRepresentation == DicomVr.DAvr)
+						{
+							//We currently don't post-filter on this VR, so it's 'optional' according to Dicom and is a match.
+
+							//The only date/time value we support querying on is Study Date, which is done in Hql.
 							return true;
-					}
-					else if (criteria.Contains("*") || criteria.Contains("?")) // wildcard matching.
-					{
-						string criteriaTest = criteria.Replace("*", "[\x21-\x7E]").Replace("?", ".");
-						//a match on any of the values is considered a match.
-						if (Regex.IsMatch(test, criteriaTest))
+						}
+						else if (property.Path.ValueRepresentation == DicomVr.TMvr)
+						{
+							//We currently don't post-filter on this VR, so it's 'optional' according to Dicom and is a match.
 							return true;
+						}
+						else if (property.Path.ValueRepresentation == DicomVr.DTvr)
+						{
+							//We currently don't post-filter on this VR, so it's 'optional' according to Dicom and is a match.
+							return true;
+						}
+						else if (ContainsWildCharacters(criteria)) // wildcard matching.
+						{
+							testsPerformed = true;
+							string criteriaTest = criteria.Replace("*", "[\x21-\x7E]").Replace("?", ".");
+							//a match on any of the values is considered a match.
+							if (Regex.IsMatch(test, criteriaTest, RegexOptions.IgnoreCase))
+								return true;
+						}
+						else
+						{
+							testsPerformed = true;
+							if (criteria.Equals(test)) //single value matching.
+								return true;
+						}
 					}
-					else if (criteria.Equals(test)) //single value matching.
-						return true;
 				}
+
+				//if no tests were performed, then it's considered a match.
+				return !testsPerformed;
 			}
 
-			return false;
-		}
-
-		private static string[] PropertyValueToStringArray(object value)
-		{
-			if (value is string)
-				return new string[] { value as string };
-			else if (value is string[])
-				return value as string[];
-			else if (value is int)
-				return new string[] { ((int)value).ToString() };
-
-			throw new InvalidOperationException("Proper conversion code must be written.");
-		}
-
-		private static string[] CriteriaValueToStringArray(QueryablePropertyInfo property, string criteria)
-		{
-			if (property.AllowListMatching)
-				return DicomStringHelper.GetStringArray(criteria);
-			else
-				return new string[] { criteria };
-		}
-
-		private static string FormatPropertyValuesForResult(string[] values)
-		{
-			if (values == null || values.Length == 0)
-				return "";
-
-			return DicomStringHelper.GetDicomStringArray(values) ?? "";
-		}
-
-		private static void AddValueToResult(DicomTagPath atrributePath, string value, DicomAttributeCollection result)
-		{
-			DicomAttribute attribute = AddAttributeToResult(atrributePath, result);
-			attribute.SetStringValue(value);
-		}
-
-		private static DicomAttribute AddAttributeToResult(DicomTagPath atrributePath, DicomAttributeCollection result)
-		{
-			int i = 0;
-			while (i < atrributePath.TagsInPath.Count - 1)
+			private static void AddValueToResult(DicomTagPath atrributePath, string value, DicomAttributeCollection result)
 			{
-				DicomAttributeSQ sequence = (DicomAttributeSQ)result[atrributePath.TagsInPath[i++]];
-				if (sequence.IsEmpty)
-					sequence.AddSequenceItem(new DicomSequenceItem());
-
-				result = ((DicomSequenceItem[])sequence.Values)[0];
+				DicomAttribute attribute = AddAttributeToResult(atrributePath, result);
+				attribute.SetStringValue(value);
 			}
 
-			return result[atrributePath.TagsInPath[i]];
+			private static DicomAttribute AddAttributeToResult(DicomTagPath atrributePath, DicomAttributeCollection result)
+			{
+				int i = 0;
+				while (i < atrributePath.TagsInPath.Count - 1)
+				{
+					DicomAttributeSQ sequence = (DicomAttributeSQ)result[atrributePath.TagsInPath[i++]];
+					if (sequence.IsEmpty)
+						sequence.AddSequenceItem(new DicomSequenceItem());
+
+					result = ((DicomSequenceItem[])sequence.Values)[0];
+				}
+
+				return result[atrributePath.TagsInPath[i]];
+			}
 		}
 	}
 }

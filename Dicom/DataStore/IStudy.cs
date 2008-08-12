@@ -38,15 +38,15 @@ namespace ClearCanvas.Dicom.DataStore
     {
 		string StudyInstanceUid { get; }
 
-		string PatientId { get; }
 		PersonName PatientsName { get; }
-
-		string StudyDescription { get; }
+		string PatientId { get; }
 		string StudyId { get; }
+
 		string StudyDate { get; }
 		string StudyTime { get; }
 
 		string AccessionNumber { get; }
+		string StudyDescription { get; }
 
 		int NumberOfStudyRelatedSeries { get; }
 		int NumberOfStudyRelatedInstances { get; }

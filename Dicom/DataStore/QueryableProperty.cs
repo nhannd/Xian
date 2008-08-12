@@ -30,40 +30,72 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Reflection;
+using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.DataStore
 {
 	internal class QueryablePropertyInfo
 	{
-		public QueryablePropertyInfo(PropertyInfo property, DicomTagPath path, 
-			bool isComputed, bool returnAlways, bool returnOnly, PropertyInfo returnProperty)
+		private readonly QueryablePropertyAttribute _attribute;
+
+		public QueryablePropertyInfo(QueryablePropertyAttribute attribute, PropertyInfo property)
 		{
+			_attribute = attribute;
 			Property = property;
+
 			ColumnName = String.Format("{0}_", property.Name);
-			Path = path;
-			IsComputed = isComputed;
-			ReturnAlways = returnAlways;
-			ReturnProperty = returnProperty;
-			ReturnOnly = returnOnly;
 
-			//minor hack to allow 'list' queries for ModalitiesInStudy.
-			AllowListMatching = path.ValueRepresentation == DicomVr.UIvr || property.Name == "ModalitiesInStudy";
+			ReturnProperty = property;
+			if (attribute.ReturnProperty != null)
+				ReturnProperty = property.DeclaringType.GetProperty(attribute.ReturnProperty) ?? Property;
+
+			Type convertType = ReturnProperty.PropertyType;
+			if (convertType.IsArray)
+				convertType = convertType.GetElementType();
+
+			ReturnPropertyConverter = TypeDescriptor.GetConverter(convertType);
+			Debug.Assert(ReturnPropertyConverter.CanConvertFrom(typeof (string)) && ReturnPropertyConverter.CanConvertTo(typeof (string)),
+				"The property type must be convertible to/from a string.");
+
+			AllowListMatching = Path.ValueRepresentation == DicomVr.UIvr || Path.Equals(DicomTags.ModalitiesInStudy);
 		}
-
-		public readonly DicomTagPath Path;
 
 		public readonly PropertyInfo Property;
 		public readonly string ColumnName;
 
+		public readonly TypeConverter ReturnPropertyConverter;
+
+		public DicomTagPath Path
+		{
+			get { return _attribute.Path; }
+		}
+
+		public bool IsHigherLevelUnique
+		{
+			get { return _attribute.IsHigherLevelUnique; }	
+		}
+
+		public bool IsUnique
+		{
+			get { return _attribute.IsUnique; }
+		}
+
+		public bool IsRequired
+		{
+			get { return _attribute.IsRequired; }
+		}
+		
+		public bool PostFilterOnly
+		{
+			get { return _attribute.PostFilterOnly; }
+		}
+
 		public readonly bool AllowListMatching;
 
-		//if ReturnOnly is true, then no querying can be performed on the property.
-		public readonly bool ReturnOnly;
-		public readonly bool IsComputed;
-		public readonly bool ReturnAlways;
 		public readonly PropertyInfo ReturnProperty;
 
 		public override string ToString()
@@ -85,73 +117,42 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 
 		public DicomTagPath Path;
-		public bool ReturnOnly = false;
-		public bool ReturnAlways = false;
-		public bool IsComputed = false;
+		public bool IsHigherLevelUnique = false;
+		public bool IsUnique = false;
+		public bool IsRequired = false;
+		public bool PostFilterOnly = false;
+
 		public string ReturnProperty = null;
 	}
 
-	internal class QueryablePropertyCollection<T> : IEnumerable<QueryablePropertyInfo>
+	internal static class QueryableProperties<T>
 	{
 		private static readonly Dictionary<DicomTagPath, QueryablePropertyInfo> _dictionary;
 
-		public QueryablePropertyCollection()
+		static QueryableProperties()
 		{
-		}
+			_dictionary = new Dictionary<DicomTagPath, QueryablePropertyInfo>();
 
-		static QueryablePropertyCollection()
-		{
-			_dictionary = CreateDictionary(typeof(T));
-		}
-
-		private static Dictionary<DicomTagPath, QueryablePropertyInfo> CreateDictionary(Type type)
-		{
-			Dictionary<DicomTagPath, QueryablePropertyInfo> dictionary = new Dictionary<DicomTagPath, QueryablePropertyInfo>();
-
-			foreach (PropertyInfo property in type.GetProperties())
+			foreach (PropertyInfo property in typeof(T).GetProperties())
 			{
 				foreach (QueryablePropertyAttribute attribute in property.GetCustomAttributes(typeof(QueryablePropertyAttribute), false))
 				{
-					PropertyInfo returnProperty = property;
-					if (attribute.ReturnProperty != null)
-						returnProperty = type.GetProperty(attribute.ReturnProperty);
-
-					dictionary[attribute.Path] = 
-						new QueryablePropertyInfo(property, attribute.Path, attribute.IsComputed, 
-													attribute.ReturnAlways, attribute.ReturnOnly, returnProperty);
+					_dictionary[attribute.Path] = new QueryablePropertyInfo(attribute, property);
 				}
 			}
-
-			return dictionary;
 		}
 
-		public QueryablePropertyInfo this[DicomTagPath path]
+		public static IEnumerable<QueryablePropertyInfo> GetProperties()
 		{
-			get
-			{
+			return _dictionary.Values;
+		}
+
+		public static QueryablePropertyInfo GetProperty(DicomTagPath path)
+		{
 				if (!_dictionary.ContainsKey(path))
 					return null;
 
 				return _dictionary[path];
-			}
 		}
-
-		#region IEnumerable<DictionaryEntry> Members
-
-		public IEnumerator<QueryablePropertyInfo> GetEnumerator()
-		{
-			return _dictionary.Values.GetEnumerator();
-		}
-
-		#endregion
-
-		#region IEnumerable Members
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return _dictionary.Values.GetEnumerator();
-		}
-
-		#endregion
 	}
 }

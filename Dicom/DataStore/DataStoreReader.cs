@@ -52,6 +52,8 @@ namespace ClearCanvas.Dicom.DataStore
 
 			public IStudy GetStudy(string studyInstanceUid)
 			{
+				Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
+
 				try
 				{
 					SessionManager.BeginReadTransaction();
@@ -121,7 +123,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("An error occurred while performing the study query.", e);
+					throw new DataStoreException("An error occurred while performing the study root query.", e);
 				}
 			}
 

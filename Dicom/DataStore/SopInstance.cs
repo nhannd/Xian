@@ -52,31 +52,31 @@ namespace ClearCanvas.Dicom.DataStore
 			return _parentSeries;
 		}
 
-		[QueryableProperty(DicomTags.StudyInstanceUid, IsComputed = true, ReturnAlways = true, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.StudyInstanceUid, IsHigherLevelUnique = true)]
 		public string StudyInstanceUid
 		{
 			get { return _parentSeries.GetParentStudy().StudyInstanceUid; }
 		}
 
-		[QueryableProperty(DicomTags.SeriesInstanceUid, IsComputed = true, ReturnAlways = true, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.SeriesInstanceUid, IsHigherLevelUnique = true)]
 		public string SeriesInstanceUid
 		{
 			get { return _parentSeries.SeriesInstanceUid; }
 		}
 
-		[QueryableProperty(DicomTags.SopInstanceUid, IsComputed = true, ReturnAlways = true)]
+		[QueryableProperty(DicomTags.SopInstanceUid, IsUnique = true, PostFilterOnly = true)]
 		public string SopInstanceUid
 		{
 			get { return _xml.SopInstanceUid; }
 		}
 
-		[QueryableProperty(DicomTags.InstanceNumber, IsComputed = true, ReturnOnly = true)]
+		[QueryableProperty(DicomTags.InstanceNumber, IsRequired = true, PostFilterOnly = true)]
 		public int InstanceNumber
 		{
 			get { return _xml[DicomTags.InstanceNumber].GetInt32(0, 0); }
 		}
 
-		[QueryableProperty(DicomTags.SopClassUid, IsComputed = true)]
+		[QueryableProperty(DicomTags.SopClassUid, PostFilterOnly = true)]
 		public string SopClassUid
 		{
 			get
@@ -109,7 +109,7 @@ namespace ClearCanvas.Dicom.DataStore
 					return null;
 
 				bool isBinary = tag.VR == DicomVr.OBvr || tag.VR == DicomVr.OWvr || tag.VR == DicomVr.OFvr;
-				//we don't store these in the xml.
+				//we don't store these in the xml, so we return null.
 				if (isBinary || tag.IsPrivate || tag.VR == DicomVr.UNvr)
 					return null;
 
