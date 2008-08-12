@@ -73,19 +73,6 @@ namespace ClearCanvas.Common.Utilities
     /// </remarks>
     public class ObjectWalker
     {
-        /// <summary>
-        /// Defines a delegate that acts as a member filter.
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        public delegate bool MemberFilterDelegate(MemberInfo property);
-
-        /// <summary>
-        /// Defines a delegate that acts as a member handler.
-        /// </summary>
-        /// <param name="context"></param>
-        public delegate void MemberHandlerDelegate(IObjectMemberContext context);
-
         #region IObjectWalkerContext implementations
 
         class PropertyContext : IObjectMemberContext
@@ -163,8 +150,7 @@ namespace ClearCanvas.Common.Utilities
         private bool _includeNonPublicProperties;
         private bool _includePublicProperties;
 
-        private MemberFilterDelegate _memberFilter;
-        private MemberHandlerDelegate _memberHandler;
+        private Predicate<MemberInfo> _memberFilter;
 
         #endregion
 
@@ -174,32 +160,20 @@ namespace ClearCanvas.Common.Utilities
         /// Constructor
         /// </summary>
         public ObjectWalker()
+			:this(null)
         {
-            // includ public fields and properties by default
-            _includePublicFields = true;
-            _includePublicProperties = true;
         }
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="memberHandler"></param>
-        public ObjectWalker(MemberHandlerDelegate memberHandler)
-            : this(memberHandler, null)
+		/// <param name="memberFilter"></param>
+        public ObjectWalker(Predicate<MemberInfo> memberFilter)
         {
-            _memberHandler = memberHandler;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="memberHandler"></param>
-        /// <param name="memberFilter"></param>
-        public ObjectWalker(MemberHandlerDelegate memberHandler, MemberFilterDelegate memberFilter)
-            : this()
-        {
-            _memberHandler = memberHandler;
-            _memberFilter = memberFilter;
+			// includ public fields and properties by default
+			_includePublicFields = true;
+			_includePublicProperties = true;
+			_memberFilter = memberFilter;
         }
 
         #endregion
@@ -242,24 +216,6 @@ namespace ClearCanvas.Common.Utilities
             set { _includePublicProperties = value; }
         }
 
-        /// <summary>
-        /// Gets or sets a delegate that filters which members will be passed to the <see cref="MemberHandler"/>.
-        /// </summary>
-        public MemberFilterDelegate MemberFilter
-        {
-            get { return _memberFilter; }
-            set { _memberFilter = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets a delegate that is invoked for each member property or field that is walked.
-        /// </summary>
-        public MemberHandlerDelegate MemberHandler
-        {
-            get { return _memberHandler; }
-            set { _memberHandler = value; }
-        }
-
         #endregion
 
         #region Public methods
@@ -268,29 +224,26 @@ namespace ClearCanvas.Common.Utilities
         /// Walks properties and/or fields of the specified object.
         /// </summary>
         /// <param name="obj"></param>
-        public void Walk(object obj)
+		public IEnumerable<IObjectMemberContext> Walk(object obj)
         {
             Platform.CheckForNullReference(obj, "obj");
 
-            WalkHelper(obj.GetType(), obj);
+            return WalkHelper(obj.GetType(), obj);
         }
 
         /// <summary>
         /// Walks properties and/or fields of the specified type.
         /// </summary>
         /// <param name="type"></param>
-        public void Walk(Type type)
+		public IEnumerable<IObjectMemberContext> Walk(Type type)
         {
-            WalkHelper(type, null);
+            return WalkHelper(type, null);
         }
 
         #endregion
 
-        private void WalkHelper(Type type, object instance)
+        private IEnumerable<IObjectMemberContext> WalkHelper(Type type, object instance)
         {
-            if (_memberHandler == null)
-                throw new InvalidOperationException("MemberHandler not set.");
-
             // walk properties
             if (_includePublicProperties || _includeNonPublicProperties)
             {
@@ -303,7 +256,7 @@ namespace ClearCanvas.Common.Utilities
                 {
                     if (_memberFilter == null || _memberFilter(property))
                     {
-                        _memberHandler(new PropertyContext(instance, property));
+                    	yield return new PropertyContext(instance, property);
                     }
                 }
             }
@@ -320,8 +273,8 @@ namespace ClearCanvas.Common.Utilities
                 {
                     if (_memberFilter == null || _memberFilter(field))
                     {
-                        _memberHandler(new FieldContext(instance, field));
-                    }
+						yield return new FieldContext(instance, field);
+					}
                 }
             }
         }

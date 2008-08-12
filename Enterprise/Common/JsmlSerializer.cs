@@ -157,14 +157,14 @@ namespace ClearCanvas.Enterprise.Common
             }
             else if (IsDataContract(dataObject.GetType()))
             {
-                List<FieldInfo> dataMemberFields = GetDataMemberFields(dataObject);
+                List<IObjectMemberContext> dataMemberFields = new List<IObjectMemberContext>(GetDataMemberFields(dataObject));
                 if (dataMemberFields.Count > 0)
                 {
                     writer.WriteStartElement(objectName);
 					writer.WriteAttributeString("hash", "true");
-					foreach (FieldInfo info in dataMemberFields)
+					foreach (IObjectMemberContext context in dataMemberFields)
                     {
-                        SerializeHelper(info.GetValue(dataObject), info.Name, writer, includeEmptyTags);
+						SerializeHelper(context.MemberValue, context.Member.Name, writer, includeEmptyTags);
                     }
                     writer.WriteEndElement();
                 }
@@ -255,14 +255,13 @@ namespace ClearCanvas.Enterprise.Common
             {
                 dataObject = Activator.CreateInstance(dataType);
 
-                List<FieldInfo> dataMemberFields = GetDataMemberFields(dataObject);
-                foreach (FieldInfo info in dataMemberFields)
+				foreach (IObjectMemberContext context in GetDataMemberFields(dataObject))
                 {
-                    XmlElement memberElement = GetFirstElementWithTagName(xmlElement, info.Name);
+					XmlElement memberElement = GetFirstElementWithTagName(xmlElement, context.Member.Name);
                     if (memberElement != null)
                     {
-                        object memberObject = DeserializeHelper(info.FieldType, memberElement);
-                        info.SetValue(dataObject, memberObject);
+                        object memberObject = DeserializeHelper(context.MemberType, memberElement);
+                        context.MemberValue = memberObject;
                     }
                 }
             }
@@ -341,17 +340,14 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// Get a list of properties and fields from a data contract object with DataMemberAttribute
         /// </summary>
-        private static List<FieldInfo> GetDataMemberFields(object dataObject)
+        private static IEnumerable<IObjectMemberContext> GetDataMemberFields(object dataObject)
         {
-            List<FieldInfo> dataMemberFields = CollectionUtils.Select<FieldInfo, List<FieldInfo>>(
-                dataObject.GetType().GetFields(),
-                delegate(FieldInfo info)
-                {
-                    object[] attribs = info.GetCustomAttributes(typeof(DataMemberAttribute), true);
-                    return attribs.Length > 0;
-                });
+			ObjectWalker walker = new ObjectWalker(
+				delegate(MemberInfo member) { return AttributeUtils.HasAttribute<DataMemberAttribute>(member, true); });
+        	walker.IncludeNonPublicFields = true;
+        	walker.IncludeNonPublicProperties = true;
 
-            return dataMemberFields;
+        	return walker.Walk(dataObject);
         }
 
         private static XmlElement GetFirstElementWithTagName(XmlElement xmlElement, string tagName)

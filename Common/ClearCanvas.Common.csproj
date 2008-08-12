@@ -259,6 +259,7 @@
     <Compile Include="Utilities\Tests\CollectionUtilsTests.cs" />
     <Compile Include="Utilities\Tests\CommandLineTests.cs" />
     <Compile Include="Utilities\Tests\DateTimeUtilsTests.cs" />
+    <Compile Include="Utilities\Tests\ObjectWalkerTests.cs" />
     <Compile Include="Utilities\Tests\StringUtilitiesTests.cs" />
     <Compile Include="Utilities\Tests\ThreadPoolTests.cs" />
     <Compile Include="Utilities\ThreadPoolBase.cs" />

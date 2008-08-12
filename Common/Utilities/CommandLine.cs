@@ -144,27 +144,22 @@ namespace ClearCanvas.Common.Utilities
             List<string> positionals = new List<string>();
             List<string> options = new List<string>();
 
-            new ObjectWalker(
-                delegate(IObjectMemberContext context)
-                {
-                    CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
-                    if (a.Position > -1)
-                    {
-                        positionals.Add(string.Format(a.Required ? "{0}" : "[{0}]", a.DisplayName));
-                    }
-                    else
-                    {
-                        string format = context.MemberType == typeof(bool) ? "/{0}[+|-]\t{1}" : "/{0}:(value)\t{1}";
-                        string s = string.Format(format, a.Key, a.Usage);
-                        if (!string.IsNullOrEmpty(a.KeyShortForm))
-                            s += string.Format(" (Short form: /{0})", a.KeyShortForm);
-                        options.Add(s);
-                    }
-                },
-                delegate(MemberInfo member)
-                {
-                    return AttributeUtils.HasAttribute<CommandLineParameterAttribute>(member);
-                }).Walk(this.GetType());
+        	foreach (IObjectMemberContext context in WalkDataMembers())
+        	{
+				CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
+				if (a.Position > -1)
+				{
+					positionals.Add(string.Format(a.Required ? "{0}" : "[{0}]", a.DisplayName));
+				}
+				else
+				{
+					string format = context.MemberType == typeof(bool) ? "/{0}[+|-]\t{1}" : "/{0}:(value)\t{1}";
+					string s = string.Format(format, a.Key, a.Usage);
+					if (!string.IsNullOrEmpty(a.KeyShortForm))
+						s += string.Format(" (Short form: /{0})", a.KeyShortForm);
+					options.Add(s);
+				}
+			}
 
             writer.Write("Usage: ");
             if (options.Count > 0)
@@ -201,44 +196,39 @@ namespace ClearCanvas.Common.Utilities
 
         private void ProcessAttributes()
         {
-            ObjectWalker walker = new ObjectWalker(
-                delegate (IObjectMemberContext context)
-                {
-                    CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
-                    if(a != null)
-                    {
-                        if(a.Position > -1)
-                        {
-                            // treat as positional
-                            ValidateMemberType(context.Member.Name, new Type[]{typeof(string)}, context.MemberType);
-                            if (_positionalArgs.Count > a.Position)
-                                context.MemberValue = _positionalArgs[a.Position];
-                            else
-                            {
-                                if(a.Required)
-                                    throw new CommandLineException(string.Format("Missing required command line argument <{0}>", a.DisplayName));
-                            }
-                        }
-                        else
-                        {
-                            // treat as named/switch
-                            if (context.MemberType == typeof(bool))
-                            {
-                                ValidateMemberType(context.Member.Name, new Type[] { typeof(bool) }, context.MemberType);
-                                SetMemberValue(a, context, _switches);
-                            }
-                            else
-                            {
-                                ValidateMemberType(context.Member.Name, new Type[] { typeof(string), typeof(int), typeof(Enum) }, context.MemberType);
-                                SetMemberValue(a, context, _namedArgs);
-                            }
-                        }
-                    }
-                });
-
-            walker.IncludeNonPublicFields = true;
-            walker.IncludeNonPublicProperties = true;
-            walker.Walk(this);
+        	foreach (IObjectMemberContext context in WalkDataMembers())
+        	{
+				CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
+				if (a != null)
+				{
+					if (a.Position > -1)
+					{
+						// treat as positional
+						ValidateMemberType(context.Member.Name, new Type[] { typeof(string) }, context.MemberType);
+						if (_positionalArgs.Count > a.Position)
+							context.MemberValue = _positionalArgs[a.Position];
+						else
+						{
+							if (a.Required)
+								throw new CommandLineException(string.Format("Missing required command line argument <{0}>", a.DisplayName));
+						}
+					}
+					else
+					{
+						// treat as named/switch
+						if (context.MemberType == typeof(bool))
+						{
+							ValidateMemberType(context.Member.Name, new Type[] { typeof(bool) }, context.MemberType);
+							SetMemberValue(a, context, _switches);
+						}
+						else
+						{
+							ValidateMemberType(context.Member.Name, new Type[] { typeof(string), typeof(int), typeof(Enum) }, context.MemberType);
+							SetMemberValue(a, context, _namedArgs);
+						}
+					}
+				}
+			}
         }
 
         /// <summary>
@@ -323,6 +313,18 @@ namespace ClearCanvas.Common.Utilities
             }
             return false;
         }
+
+		private IEnumerable<IObjectMemberContext> WalkDataMembers()
+		{
+			ObjectWalker walker = new ObjectWalker(
+				delegate(MemberInfo member)
+				{
+					return AttributeUtils.HasAttribute<CommandLineParameterAttribute>(member);
+				});
+			walker.IncludeNonPublicFields = true;
+			walker.IncludeNonPublicProperties = true;
+			return walker.Walk(this);
+		}
 
         #endregion
     }
