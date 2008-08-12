@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             }
 
             Operations.StartInterpretation op = new Operations.StartInterpretation();
-			op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext), this.PersistenceContext);
+			op.Execute(interpretation, this.CurrentUserStaff, linkedInterpretations, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
             return new StartInterpretationResponse(interpretation.GetRef());
@@ -474,7 +474,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 				// start interpretation, using specified interpreter
 				Operations.StartInterpretation startOp = new Operations.StartInterpretation();
-				startOp.Execute(interpStep, interpreter, new List<InterpretationStep>(), new PersistentWorkflow(this.PersistenceContext), PersistenceContext);
+				startOp.Execute(interpStep, interpreter, new List<InterpretationStep>(), new PersistentWorkflow(this.PersistenceContext));
 
 				// save the report data
 				SaveReportHelper(request.ReportPartExtendedProperties, interpStep, interpreter);
