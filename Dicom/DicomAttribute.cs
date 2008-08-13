@@ -644,7 +644,30 @@ namespace ClearCanvas.Dicom
             get { return _parentCollection; }
             set { _parentCollection = value; }
         }
-        #endregion
+
+    	internal bool ValidateVrLengths
+    	{
+    		get
+    		{
+				if (ParentCollection == null)
+					return DicomSettings.Default.ValidateVrLengths;
+
+    			return ParentCollection.ValidateVrLengths;
+    		}
+    	}
+
+		internal bool ValidateVrValues
+		{
+			get
+			{
+				if (ParentCollection == null)
+					return DicomSettings.Default.ValidateVrValues;
+
+				return ParentCollection.ValidateVrValues;
+			}
+		}
+		
+		#endregion
 
 
         #region Constructors

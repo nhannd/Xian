@@ -168,7 +168,7 @@ namespace ClearCanvas.Dicom
             if (value == null)
                 return;
 
-            if (DicomSettings.Default.ValidateVrLengths || DicomImplementation.UnitTest)
+            if (ValidateVrLengths || DicomImplementation.UnitTest)
             {
                 if (Tag.VR.MaximumLength != 0)
                 {
@@ -192,7 +192,7 @@ namespace ClearCanvas.Dicom
                 }
             }
 
-            if ((DicomSettings.Default.ValidateVrValues || DicomImplementation.UnitTest) && Validator != null)
+            if ((ValidateVrValues || DicomImplementation.UnitTest) && Validator != null)
             {
                 Validator.ValidateString(Tag, value);
             }

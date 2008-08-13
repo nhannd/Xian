@@ -51,21 +51,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			DeleteSopInstanceFiles(studyToRemove.GetSopInstances());
 		}
 
-		public void DeleteFilesInSeries(ISeries seriesToRemove)
-		{
-			DeleteSopInstanceFiles(seriesToRemove.GetSopInstances());
-		}
-
-		public void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
-		{
-			if (sopIntanceToDelete.GetLocationUri().IsFile == false)
-				return;
-
-			string fileName = sopIntanceToDelete.GetLocationUri().LocalDiskPath;
-			if (File.Exists(fileName))
-				File.Delete(fileName);
-		}
-
 		private void DeleteSopInstanceFiles(IEnumerable<ISopInstance> sopInstancesToDelete)
 		{
 			List<string> directoriesToDelete = new List<string>();
@@ -80,6 +65,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			// Recursively delete directories that may be empty
 			DeleteEmptyDirectories(directoriesToDelete);
+		}
+
+		private void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
+		{
+			if (sopIntanceToDelete.GetLocationUri().IsFile == false)
+				return;
+
+			string fileName = sopIntanceToDelete.GetLocationUri().LocalDiskPath;
+			if (File.Exists(fileName))
+				File.Delete(fileName);
 		}
 
 		private void DeleteEmptyDirectories(List<string> directoriesToDelete)

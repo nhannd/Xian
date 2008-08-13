@@ -311,13 +311,13 @@ Please check the service logs for more details.</value>
     <value>Cancelled.</value>
   </data>
   <data name="MessageClearingDatabase" xml:space="preserve">
-    <value>Clearing Database ...</value>
+    <value>Clearing Data Store  ...</value>
   </data>
   <data name="MessageComplete" xml:space="preserve">
     <value>Complete.</value>
   </data>
   <data name="MessageFailedToClearDatabase" xml:space="preserve">
-    <value>Failed: unable to clear database prior to reindex operation.</value>
+    <value>Failed: unable to clear data store prior to reindex operation.</value>
   </data>
   <data name="MessageFailedToProcessBadFile" xml:space="preserve">
     <value>Processing of the bad file failed.</value>

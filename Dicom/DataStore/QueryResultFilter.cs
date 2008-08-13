@@ -34,6 +34,8 @@ namespace ClearCanvas.Dicom.DataStore
 			private DicomAttributeCollection GetResult(T candidate)
 			{
 				DicomAttributeCollection result = new DicomAttributeCollection();
+				result.ValidateVrLengths = false;
+				result.ValidateVrValues = false;
 
 				foreach (QueryablePropertyInfo property in QueryableProperties<T>.GetProperties())
 				{

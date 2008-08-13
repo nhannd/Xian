@@ -638,7 +638,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clearing Database ....
+        ///   Looks up a localized string similar to Clearing Data Store  ....
         /// </summary>
         internal static string MessageClearingDatabase {
             get {
@@ -656,7 +656,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed: unable to clear database prior to reindex operation..
+        ///   Looks up a localized string similar to Failed: unable to clear data store prior to reindex operation..
         /// </summary>
         internal static string MessageFailedToClearDatabase {
             get {

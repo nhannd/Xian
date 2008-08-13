@@ -309,39 +309,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Private Methods
 
-		private static void ValidateParentStudy(ISeries series, string studyInstanceUid)
-		{
-			if (series.GetParentStudy().StudyInstanceUid != studyInstanceUid)
-			{
-				string message = String.Format("The given series exists in the database ({0}), " +
-											   "but the provided study uid differs from the one in the local database (local = {1}, provided = {2}).",
-											   series.SeriesInstanceUid, series.GetParentStudy().StudyInstanceUid, studyInstanceUid);
-
-				throw new ArgumentException(message);
-			}
-		}
-
-		private static void ValidateParentSeriesAndStudy(ISopInstance sop, string seriesInstanceUid, string studyInstanceUid)
-		{
-			if (sop.GetParentSeries().SeriesInstanceUid != seriesInstanceUid)
-			{
-				string message = String.Format("The given sop exists in the database ({0}), " +
-											   "but the provided series uid differs from the one in the local database (local = {1}, provided = {2}).",
-											   sop.SopInstanceUid, sop.GetParentSeries().SeriesInstanceUid, seriesInstanceUid);
-
-				throw new ArgumentException(message);
-			}
-
-			if (sop.GetParentSeries().GetParentStudy().StudyInstanceUid != studyInstanceUid)
-			{
-				string message = String.Format("The given sop exists in the database ({0}), " +
-											   "but the provided study uid differs from the one in the local database (local = {1}, provided = {2}).",
-											   sop.SopInstanceUid, sop.GetParentSeries().GetParentStudy().StudyInstanceUid, studyInstanceUid);
-
-				throw new ArgumentException(message);
-			}
-		}
-
 		private static IEnumerable<ISopInstance> GetStudySopInstances(IEnumerable<string> studyInstanceUids)
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
@@ -351,7 +318,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					IStudy study = reader.GetStudy(studyInstanceUid);
 					if (study == null)
 					{
-						string message = String.Format("The specified study does not exist in the database (uid = {0}).", studyInstanceUid);
+						string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
 						throw new ArgumentException(message);
 					}
 
@@ -368,13 +335,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				IStudy study = reader.GetStudy(studyInstanceUid);
 				if (study == null)
 				{
-					string message = String.Format("The specified study does not exist in the database (uid = {0}).", studyInstanceUid);
+					string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
 					throw new ArgumentException(message);
 				}
 
-				foreach (ISeries series in study.GetSeries())
+				foreach (string seriesInstanceUid in seriesInstanceUids)
 				{
-					ValidateParentStudy(series, studyInstanceUid);
+					ISeries series = CollectionUtils.SelectFirst(study.GetSeries(),
+										delegate(ISeries test) { return test.SeriesInstanceUid == seriesInstanceUid; });
+
+					if (series == null)
+					{
+						string message = String.Format("The specified series does not exist in the data store (study = {0}, series = {1}).", studyInstanceUid, seriesInstanceUid);
+						throw new ArgumentException(message);
+					}
+
 					foreach (ISopInstance sop in series.GetSopInstances())
 						yield return sop;
 				}
@@ -388,13 +363,30 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				IStudy study = reader.GetStudy(studyInstanceUid);
 				if (study == null)
 				{
-					string message = String.Format("The specified study does not exist in the database (uid = {0}).", studyInstanceUid);
+					string message = String.Format("The specified study does not exist in the data store (uid = {0}).", studyInstanceUid);
 					throw new ArgumentException(message);
 				}
 
-				foreach (ISopInstance sop in study.GetSopInstances())
+				ISeries series = CollectionUtils.SelectFirst(study.GetSeries(),
+									delegate(ISeries test) { return test.SeriesInstanceUid == seriesInstanceUid; });
+
+				if (series == null)
 				{
-					ValidateParentSeriesAndStudy(sop, seriesInstanceUid, studyInstanceUid);
+					string message = String.Format("The specified series does not exist in the data store (study = {0}, series = {1}).", studyInstanceUid, seriesInstanceUid);
+					throw new ArgumentException(message);
+				}
+					
+				foreach (string sopInstanceUid in sopInstanceUids)
+				{
+					ISopInstance sop = CollectionUtils.SelectFirst(series.GetSopInstances(),
+										delegate(ISopInstance test) { return test.SopInstanceUid == sopInstanceUid; });
+
+					if (sop == null)
+					{
+						string message = String.Format("The specified sop instance does not exist in the data store (study = {0}, series = {1}, sop = {2}).", studyInstanceUid, seriesInstanceUid, sopInstanceUid);
+						throw new ArgumentException(message);
+					}
+
 					yield return sop;
 				}
 			}

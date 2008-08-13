@@ -107,7 +107,7 @@ namespace ClearCanvas.Dicom.DataStore
 					study = new Study();
 					study.StoreTime = Platform.Time;
 
-					string studyStoragePath = _studyStorageLocator.GetStudyStoragePath(studyInstanceUid);
+					string studyStoragePath = GetFileStoreDirectory();
 					if (String.IsNullOrEmpty(studyStoragePath))
 						throw new DataStoreException("The study storage path is empty.");
 

@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.Xml;
+using System.Threading;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -239,7 +240,7 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 			get
 			{
-				LoadStudyXml();
+				LoadStudyXml(true);
 			    return _studyXml;
 			}	
 		}
@@ -335,41 +336,6 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region Helper Methods
 
-		private void LoadStudyXml()
-		{
-			if (_studyXml == null)
-			{
-				if (StudyXmlUri == null)
-					throw new DataStoreException("The study xml location must be set.");
-
-				XmlDocument doc = new XmlDocument();
-				_studyXml = new StudyXml(StudyInstanceUid);
-
-				if (File.Exists(StudyXmlUri.LocalDiskPath))
-				{
-					using (FileStream stream = new FileStream(StudyXmlUri.LocalDiskPath, FileMode.Open, FileAccess.Read))
-					{
-						StudyXmlIo.Read(doc, stream);
-						_studyXml.SetMemento(doc);
-					}
-				}
-			}
-		}
-
-		private static IEnumerable<string> ComputeModalitiesInStudy(IEnumerable<string> existingModalities, string candidate)
-		{
-			foreach(string existingModality in existingModalities)
-			{
-				if (existingModality == candidate)
-					candidate = null;
-
-				yield return existingModality;
-			}
-
-			if (candidate != null)
-				yield return candidate;
-		}
-
 		internal void Initialize(DicomFile file)
 		{
 			DicomAttributeCollection sopInstanceDataset = file.DataSet;
@@ -415,8 +381,6 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.StudyDate];
 			StudyDateRaw = attribute.ToString();
 			StudyDate = DateParser.Parse(StudyDateRaw);
-			if (!String.IsNullOrEmpty(StudyDateRaw) && StudyDate == null)
-				throw new DicomValidationException(String.Format("Invalid format for study date: {0}", StudyDateRaw));
 
 			attribute = sopInstanceDataset[DicomTags.StudyTime];
 			StudyTimeRaw = attribute.ToString();
@@ -443,30 +407,103 @@ namespace ClearCanvas.Dicom.DataStore
 		internal void Update(DicomFile file)
 		{
 			Initialize(file);
-			StudyXml.AddFile(file);
+
+			LoadStudyXml(false);
+			_studyXml.AddFile(file);
 
 			//these have to be here, rather than in Initialize b/c they are 
 			// computed from the series, which are parsed from the xml.
-			NumberOfStudyRelatedSeries = this.StudyXml.NumberOfStudyRelatedSeries;
-			NumberOfStudyRelatedInstances = this.StudyXml.NumberOfStudyRelatedInstances;
+			NumberOfStudyRelatedSeries = _studyXml.NumberOfStudyRelatedSeries;
+			NumberOfStudyRelatedInstances = _studyXml.NumberOfStudyRelatedInstances;
 		}
 
 		internal void Flush()
 		{
 			StudyXmlOutputSettings settings = new StudyXmlOutputSettings();
-			//TODO: include these?
 			settings.IncludePrivateValues = false;
 			settings.IncludeUnknownTags = false;
 			settings.IncludeSourceFileName = true;
 
 			//Ensure the existing stuff is loaded.
-			LoadStudyXml();
+			LoadStudyXml(false);
 
-			using (FileStream stream = new FileStream(StudyXmlUri.LocalDiskPath, FileMode.Create, FileAccess.Write))
+			using (FileStream stream = GetFileStream(FileMode.Create, FileAccess.Write))
 			{
-				StudyXmlIo.Write(StudyXml.GetMemento(settings), stream);
+				StudyXmlIo.Write(_studyXml.GetMemento(settings), stream);
 				stream.Close();
 			}
+		}
+
+		private void LoadStudyXml(bool throwIfNotExists)
+		{
+			if (_studyXml == null)
+			{
+				if (StudyXmlUri == null)
+					throw new DataStoreException("The study xml location must be set.");
+
+				XmlDocument doc = new XmlDocument();
+				_studyXml = new StudyXml(StudyInstanceUid);
+
+				if (File.Exists(StudyXmlUri.LocalDiskPath))
+				{
+					using (FileStream stream = GetFileStream(FileMode.Open, FileAccess.Read))
+					{
+						StudyXmlIo.Read(doc, stream);
+						_studyXml.SetMemento(doc);
+					}
+				}
+				else if (throwIfNotExists)
+				{
+					throw new FileNotFoundException("The study xml file could not be found", StudyXmlUri.LocalDiskPath);
+				}
+			}
+		}
+
+		// This is a bit hacky, but it seems silly to use a named mutex for the rare case when the service
+		// and client processes are both accessing the exact same file at the same time.
+		private FileStream GetFileStream(FileMode fileMode, FileAccess fileAccess)
+		{
+			bool alreadyLogged = false;
+			TimeSpan start = new TimeSpan(Platform.Time.Ticks);
+			
+			while(true)
+			{
+				try
+				{
+					return new FileStream(StudyXmlUri.LocalDiskPath, fileMode, fileAccess, FileShare.Delete);
+				}
+				catch(IOException) //thrown when another process has the file open.
+				{
+					if (!alreadyLogged)
+					{
+						alreadyLogged = true;
+						Platform.Log(LogLevel.Info, "Failed to open the study xml file because another process currently has it open.  Retry will continue for up to 5 seconds.");
+					}
+
+					TimeSpan diff = new TimeSpan(Platform.Time.Ticks) - start;
+					if (diff.TotalSeconds >= 5)
+					{
+						string message = String.Format("Another process has had the study xml (uid = {0}) file open for more than 5 seconds.  Aborting attempt to open file.", StudyInstanceUid);
+						throw new TimeoutException(message);
+					}
+
+					Thread.Sleep(20);
+				}
+			}
+		}
+
+		private static IEnumerable<string> ComputeModalitiesInStudy(IEnumerable<string> existingModalities, string candidate)
+		{
+			foreach(string existingModality in existingModalities)
+			{
+				if (existingModality == candidate)
+					candidate = null;
+
+				yield return existingModality;
+			}
+
+			if (candidate != null)
+				yield return candidate;
 		}
 
 		private void OnChanged()

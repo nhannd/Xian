@@ -79,7 +79,11 @@ namespace ClearCanvas.Dicom
         private String _specificCharacterSet = String.Empty;
         private readonly uint _startTag = 0x00000000;
         private readonly uint _endTag = 0xFFFFFFFF;
-        #endregion
+
+        private bool _validateVrLengths = DicomSettings.Default.ValidateVrLengths;
+		private bool _validateVrValues = DicomSettings.Default.ValidateVrValues;
+
+		#endregion
 
         #region Constructors
 
@@ -184,6 +188,19 @@ namespace ClearCanvas.Dicom
         {
             get { return Dump(String.Empty, DicomDumpOptions.None); }
         }
+
+		public bool ValidateVrLengths
+		{
+			get { return _validateVrLengths; }
+			set { _validateVrLengths = value; }
+		}
+		
+		public bool ValidateVrValues
+    	{
+			get { return _validateVrValues; }
+			set { _validateVrValues = value; }
+    	}
+
         #endregion
 
         #region Public Methods

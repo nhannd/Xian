@@ -754,7 +754,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (_stopDatabaseThread)
 							break;
 
-						//putting the wait here is important because it will update the database
+						//putting the wait here is important because it will update the data store
 						//one last time before exiting in case there was any data left to insert.
 						Monitor.Wait(_databaseThreadLock, (int)waitTimeout);
 					}

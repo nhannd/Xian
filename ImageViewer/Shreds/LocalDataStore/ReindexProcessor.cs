@@ -295,8 +295,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							if (_activeJobInformation.ProgressItem.Cancelled)
 								return;
 
-							//don't allow cancellation until after the database has been cleared, otherwise you might get
-							//some strange behaviour because the imports will be resumed while the database is being cleared.
+							//don't allow cancellation until after the data store has been cleared, otherwise you might get
+							//some strange behaviour because the imports will be resumed while the data store is being cleared.
 							_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
 						}
 					}
