@@ -199,7 +199,7 @@
     <value>A canned text category is required</value>
   </data>
   <data name="ExceptionIdenticalCannedTextExist" xml:space="preserve">
-    <value>An identical canned text already exist for {0}</value>
+    <value>An identical canned text entry already exists for {0}</value>
   </data>
   <data name="ExceptionFailedToDelete" xml:space="preserve">
     <value>Unable to delete {0}.  The most likely reason is that the item is referenced by another item in the system.</value>
