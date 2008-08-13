@@ -68,7 +68,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     /// <item>ds - DiagnosticService</item>
     /// <item>rpt - ProcedureType</item>
     /// <item>pr - Protocol</item>
-    /// </list>
+	/// <item>sst - Scheduled Performer Staff</item>
+	/// <item>pst - Performer Staff</item>
+	/// </list>
     /// Subclasses may define additional variables but must not attempt to override those defined by this class.
     /// </para>
     /// </remarks>
@@ -482,9 +484,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// Callers should typically set <paramref name="constrainPatientProfile"/> to true, unless there is a specific
         /// reason not to constrain the patient profile.
         /// </remarks>
-        protected virtual void AddConditions(HqlQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool addOrderingClause)
+        protected virtual void AddConditions(HqlProjectionQuery query, IEnumerable<WorklistItemSearchCriteria> where, bool constrainPatientProfile, bool addOrderingClause)
         {
-        	bool hasOrderingClaus = false;
+        	bool hasOrderingClause = false;
 
             HqlOr or = new HqlOr();
             foreach (WorklistItemSearchCriteria c in where)
@@ -499,7 +501,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 if (and.Conditions.Count > 0)
                     or.Conditions.Add(and);
 
-				if (addOrderingClause && !hasOrderingClaus)
+				if (addOrderingClause && !hasOrderingClause)
                 {
                     foreach (KeyValuePair<string, SearchCriteria> kvp in c.SubCriteria)
                     {
@@ -507,13 +509,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                         if (MapCriteriaKeyToHql(kvp.Key, out alias))
                         {
 							query.Sorts.AddRange(HqlSort.FromSearchCriteria(alias, kvp.Value));
-
-							// Take the first ordering claus only
-                        	hasOrderingClaus = true;
-                        	break;
 						}
                     }
-                }
+					// use the sorting information from the first WorklistItemSearchCriteria object only
+					// (the assumption is that they are all identical)
+					hasOrderingClause = true;
+				}
             }
 
             if (or.Conditions.Count > 0)
@@ -525,7 +526,59 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 query.Conditions.Add(
                     new HqlCondition("pp.Mrn.AssigningAuthority = rp.PerformingFacility.InformationAuthority"));
             }
+
+			// modify the query to workaround some NHibernate bugs
+			NHibernateBugWorkaround(query.Froms[0], query.Conditions);
         }
+
+		/// <summary>
+		/// NHibernate has a bug where criteria that de-reference properties not joined into the From clause are not
+		/// always handled properly.  For example, in order to evaluate a criteria such as "ps.Scheduling.Performer.Staff.Name like ?",
+		/// NHiberate will inject a theta-join on Staff into the SQL.  This works ok by itself.  However, when evaluating a criteria
+		/// such as "ps.Scheduling.Performer.Staff.Name.FamilyName like ? or ps.Performer.Staff.Name.FamilyName like ?", NHibernate
+		/// injects two Staff theta-joins into the SQL, which incorrectly results in a cross-join situation.
+		/// This method modifies any query that has criteria on ps.Scheduling.Performer.Staff or ps.Performer.Staff,
+		/// by adding in explicit joins to Staff for these objects, and then substituting the original conditions
+		/// with conditions based on these joins.
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="conditions"></param>
+		private void NHibernateBugWorkaround(HqlFrom from, List<HqlCondition> conditions)
+		{
+			for (int i = 0; i < conditions.Count; i++)
+			{
+				HqlCondition condition = conditions[i];
+				if (condition is HqlJunction)
+				{
+					NHibernateBugWorkaround(from, ((HqlJunction)condition).Conditions);
+				}
+				else if (condition.Hql.StartsWith("ps.Scheduling.Performer.Staff"))
+				{
+					// add join for sst (scheduled staff) if not added
+					if(!CollectionUtils.Contains(from.Joins,
+						delegate(HqlJoin j) { return j.Alias == "sst"; }))
+					{
+						from.Joins.Add(new HqlJoin("ps.Scheduling.Performer.Staff", "sst", HqlJoinMode.Left));
+					}
+					
+					// replace the condition with a new condition, using the joined Staff
+					string newHql = condition.Hql.Replace("ps.Scheduling.Performer.Staff", "sst");
+					conditions[i] = new HqlCondition(newHql, condition.Parameters);
+				}
+				else if (condition.Hql.StartsWith("ps.Performer.Staff"))
+				{
+					// add join for pst (performer staff) if not added
+					if (!CollectionUtils.Contains(from.Joins,
+						delegate(HqlJoin j) { return j.Alias == "pst"; }))
+					{
+						from.Joins.Add(new HqlJoin("ps.Performer.Staff", "pst", HqlJoinMode.Left));
+					}
+					// replace the condition with a new condition, using the joined Staff
+					string newHql = condition.Hql.Replace("ps.Performer.Staff", "pst");
+					conditions[i] = new HqlCondition(newHql, condition.Parameters);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Called by the public <see cref="GetSearchResults"/> methods to create a query for the set of active 

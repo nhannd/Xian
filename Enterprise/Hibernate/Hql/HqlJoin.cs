@@ -67,7 +67,27 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             _fetch = fetch;
         }
 
-        public override string Hql
+    	public string Alias
+    	{
+    		get { return _alias; }
+    	}
+
+    	public string Source
+    	{
+    		get { return _source; }
+    	}
+
+    	public HqlJoinMode Mode
+    	{
+    		get { return _mode; }
+    	}
+
+    	public bool Fetch
+    	{
+    		get { return _fetch; }
+    	}
+
+    	public override string Hql
         {
             get
             {
