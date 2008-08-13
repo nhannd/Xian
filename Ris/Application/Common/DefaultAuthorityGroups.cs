@@ -165,7 +165,6 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.Workflow.CannedText.Personal,
                         AuthorityTokens.Workflow.Report.Create,
                         AuthorityTokens.Workflow.Report.Verify,
-                        AuthorityTokens.Workflow.Report.Cancel,
                         AuthorityTokens.Workflow.Report.OmitSupervisor,
                         AuthorityTokens.Workflow.Protocol.Create,
                         AuthorityTokens.Workflow.Protocol.Accept,
@@ -183,7 +182,6 @@ namespace ClearCanvas.Ris.Application.Common
 						AuthorityTokens.Workflow.PatientBiography.View,
 						AuthorityTokens.Workflow.CannedText.Personal,
 						AuthorityTokens.Workflow.Report.Create,
-                        AuthorityTokens.Workflow.Report.Cancel,
 						AuthorityTokens.Workflow.Protocol.Create,
                         AuthorityTokens.Workflow.PreliminaryDiagnosis.Create,
 
