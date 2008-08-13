@@ -60,6 +60,7 @@
       <DependentUpon>ReassignComponentSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
+    <Compile Include="ReviseProtocolTool.cs" />
     <Compile Include="ViewImagesTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />
     <Compile Include="EmergencyWorkflowFolderSystem.cs" />

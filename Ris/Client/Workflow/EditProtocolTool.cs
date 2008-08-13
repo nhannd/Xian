@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -7,12 +6,10 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Protocol", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Protocol", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Open Protocol", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Open Protocol", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
-	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	public class EditProtocolTool : ProtocolWorkflowItemTool
@@ -28,42 +25,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftProtocolFolder), this);
 			this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
-		}
-
-		public string Label
-		{
-			get
-			{
-				ReportingWorklistItem item = GetSelectedItem();
-
-				if (CanCreateProtocol(item))
-					return "Assign Protocol";
-				else if (CanEditProtocol(item))
-					return "Edit Protocol";
-				else
-					return "Review Protocol";
-			}
-		}
-
-		public IconSet CurrentIconSet
-		{
-			get
-			{
-				ReportingWorklistItem item = GetSelectedItem();
-
-				if (CanCreateProtocol(item))
-					return new IconSet(IconScheme.Colour, "Icons.CreateReportSmall.png", "Icons.CreateReportMedium.png", "Icons.CreateReportMedium.png");
-				else if (CanEditProtocol(item))
-					return new IconSet(IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png");
-				else
-					return new IconSet(IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png");
-			}
-		}
-
-		public event EventHandler LabelChanged
-		{
-			add { this.Context.SelectionChanged += value; }
-			remove { this.Context.SelectionChanged -= value; }
 		}
 
 		public override bool Enabled

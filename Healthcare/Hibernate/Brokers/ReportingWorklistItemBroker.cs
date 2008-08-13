@@ -91,6 +91,30 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		}
 
 		/// <summary>
+		/// Maps the specified set of protocolling steps to a corresponding set of reporting worklist items.
+		/// </summary>
+		/// <param name="protocollingSteps"></param>
+		/// <returns></returns>
+		public IList<WorklistItem> GetWorklistItems(IEnumerable<ProtocolProcedureStep> protocollingSteps)
+		{
+			ReportingWorklistItemSearchCriteria[] worklistItemCriteria =
+				CollectionUtils.Map<ProtocolProcedureStep, ReportingWorklistItemSearchCriteria>(protocollingSteps,
+				delegate(ProtocolProcedureStep ps)
+				{
+					ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+					criteria.ProcedureStepClass = typeof(ProtocolProcedureStep);
+					criteria.ProcedureStep.EqualTo(ps);
+					criteria.TimeField = WorklistTimeField.ProcedureStartTime;
+					return criteria;
+				}).ToArray();
+
+			HqlProjectionQuery query = CreateBaseItemQuery(worklistItemCriteria);
+			AddConditions(query, worklistItemCriteria, true, true);
+
+			return DoQuery(query);
+		}
+
+		/// <summary>
 		/// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.
 		/// </summary>
 		/// <param name="step"></param>
@@ -173,7 +197,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				query.Selects.Add(SelectProcedureStepState);
 
 			HqlFrom from = query.Froms[0];
-			if (stepClass == typeof(ProtocolAssignmentStep))
+			if (stepClass == typeof(ProtocolAssignmentStep) || stepClass == typeof(ProtocolProcedureStep))
 			{
 				from.Joins.Add(JoinProtocol);
 

@@ -368,5 +368,50 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 				return true;
 			}
 		}
+
+		public class ReviseSubmittedProtocolOperation : ProtocollingOperation
+		{
+			public ProtocolAssignmentStep Execute(Order order, Staff currentUserStaff)
+			{
+				ProtocolAssignmentStep oneStep = null;
+
+				foreach (Procedure rp in order.Procedures)
+				{
+					ProtocolAssignmentStep assignmentStep = ScheduledProcedureStep<ProtocolAssignmentStep>(rp);
+
+					if (assignmentStep != null)
+					{
+						assignmentStep.Protocol.Status = ProtocolStatus.PN;
+						assignmentStep.Protocol.Supervisor = null;
+						assignmentStep.Discontinue();
+
+						// Replace with new step scheduled step
+						ProtocolAssignmentStep replacementStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
+						rp.AddProcedureStep(replacementStep);
+						replacementStep.Assign(currentUserStaff);
+						replacementStep.Start(currentUserStaff);
+
+						if (oneStep == null)
+							oneStep = replacementStep;
+					}
+				}
+
+				return oneStep;
+			}
+
+			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
+			{
+				if (step.State != ActivityStatus.SC)
+					return false;
+
+				if (step.Protocol.Status != ProtocolStatus.AA)
+					return false;
+
+				if (!Equals(step.Protocol.Author, currentUserStaff))
+					return false;
+
+				return true;
+			}
+		}
 	}
 }

@@ -40,8 +40,11 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Protocolling;
+using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
@@ -290,7 +293,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		[UpdateOperation]
 		[OperationEnablement("CanSubmitProtocolForApproval")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
 		public SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request)
 		{
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
@@ -319,6 +322,22 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			return new SubmitProtocolForApprovalResponse();
 		}
+
+		[UpdateOperation]
+		[OperationEnablement("CanReviseSubmittedProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
+		public ReviseSubmittedProtocolResponse ReviseSubmittedProtocol(ReviseSubmittedProtocolRequest request)
+		{
+			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+			ProtocollingOperations.ReviseSubmittedProtocolOperation op = new ProtocollingOperations.ReviseSubmittedProtocolOperation();
+			ProtocolAssignmentStep step = op.Execute(order, this.CurrentUserStaff);
+
+			this.PersistenceContext.SynchState();
+
+			return new ReviseSubmittedProtocolResponse(GetWorklistItemSummary(step));
+		}
+
 
 		#endregion
 
@@ -395,10 +414,18 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		public bool CanSubmitProtocolForApproval(ProtocolOperationEnablementContext enablementContext)
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForReview))
 				return false;
 
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.SubmitForApprovalOperation(), enablementContext.ProcedureStepRef);
+		}
+
+		public bool CanReviseSubmittedProtocol(ProtocolOperationEnablementContext enablementContext)
+		{
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.SubmitForReview))
+				return false;
+
+			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.ReviseSubmittedProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
 		private bool CanExecuteOperation<T>(ProtocollingOperations.ProtocollingOperation op, EntityRef procedureStepRef)
@@ -492,5 +519,15 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			
 			noteAssembler.SynchronizeOrderNotes(order, notes, this.CurrentUserStaff, this.PersistenceContext);
 		}
+
+		private ReportingWorklistItem GetWorklistItemSummary(ProtocolProcedureStep reportingProcedureStep)
+		{
+			IList<ProtocolProcedureStep> procedureSteps = new List<ProtocolProcedureStep>();
+			procedureSteps.Add(reportingProcedureStep);
+
+			IList<WorklistItem> items = this.PersistenceContext.GetBroker<IReportingWorklistItemBroker>().GetWorklistItems(procedureSteps);
+			return new ReportingWorkflowAssembler().CreateWorklistItemSummary(CollectionUtils.FirstElement(items), this.PersistenceContext);
+		}
+
 	}
 }

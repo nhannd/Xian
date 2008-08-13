@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 
 namespace ClearCanvas.Healthcare.Brokers
@@ -48,6 +45,13 @@ namespace ClearCanvas.Healthcare.Brokers
         /// <param name="reportingSteps"></param>
         /// <returns></returns>
         IList<WorklistItem> GetWorklistItems(IEnumerable<ReportingProcedureStep> reportingSteps);
+
+        /// <summary>
+        /// Maps the specified set of protocolling steps to a corresponding set of reporting worklist items.
+        /// </summary>
+        /// <param name="protocollingSteps"></param>
+        /// <returns></returns>
+        IList<WorklistItem> GetWorklistItems(IEnumerable<ProtocolProcedureStep> protocollingSteps);
 
         /// <summary>
         /// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.
