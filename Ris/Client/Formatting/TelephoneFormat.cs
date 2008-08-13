@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Formatting
                 : string.Format("+{0}", tn.CountryCode));
 
             result = result.Replace("%A", tn.AreaCode == null ? "" : tn.AreaCode);
-            result = result.Replace("%N", tn.Number == null ? "" : string.Format("{0}-{1}", tn.Number.Substring(0, 3), tn.Number.Substring(3)));
+            result = result.Replace("%N", StringMask.Apply(tn.Number, FormatSettings.Default.TelephoneNumberLocalMask) ?? "");
             result = result.Replace("%X", string.IsNullOrEmpty(tn.Extension) ? "" : string.Format("x{0}", tn.Extension));
 
             return result.Trim();
