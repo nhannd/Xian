@@ -55,6 +55,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ImageServerDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Service References\services.cs">
+      <DependentUpon>services.map</DependentUpon>
+    </Compile>
     <Compile Include="TestEditStudy.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -74,9 +77,6 @@
     </Compile>
     <Compile Include="TestHeaderStreamingForm.Designer.cs">
       <DependentUpon>TestHeaderStreamingForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\HeaderStreamingService.cs">
-      <DependentUpon>HeaderStreamingService.map</DependentUpon>
     </Compile>
     <Compile Include="Startup.cs">
       <SubType>Form</SubType>
@@ -139,10 +139,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Service References\HeaderStreamingService.map" />
     <None Include="InstallClientCert.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Service References\services.map" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>

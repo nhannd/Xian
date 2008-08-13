@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum number of simultaneous connections {0} has been reached. ServiceThrottling should be increased..
+        /// </summary>
+        internal static string AlertHeaderMaxConnectionsReached {
+            get {
+                return ResourceManager.GetString("AlertHeaderMaxConnectionsReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to start : {0}.
         /// </summary>
         internal static string AlertUnableToStart {

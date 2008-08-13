@@ -31,7 +31,7 @@
 
 using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
     internal class HeaderLoaderStatistics : StatisticsSet
     {

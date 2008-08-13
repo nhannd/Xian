@@ -40,15 +40,16 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 
-namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
     /// <summary>
     /// Loads the compressed study header stream.
     /// </summary>
     internal class HeaderLoader
     {
-        private readonly HeaderRetrievalContext _context;
+        private readonly HeaderStreamingContext _context;
         private readonly HeaderLoaderStatistics _statistics = new HeaderLoaderStatistics();
         private Stream _compressedHeaderStream = null;
         private string _partitionAE;
@@ -57,7 +58,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 
         #region Constructor
 
-        public HeaderLoader(HeaderRetrievalContext context)
+        public HeaderLoader(HeaderStreamingContext context)
         {
             _context = context;
 
@@ -175,7 +176,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
         #region Private Static Methods
         private static bool IsFileSystemReadable(ServerEntityKey fskey)
         {
-			ServerFilesystemInfo fsInfo = FilesystemMonitor.Instance.GetFilesystemInfo(fskey);
+            ServerFilesystemInfo fsInfo = FilesystemMonitor.Instance.GetFilesystemInfo(fskey);
             return fsInfo.Readable;
         }
         #endregion

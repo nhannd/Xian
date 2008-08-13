@@ -16,7 +16,7 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.DicomServices.Xml;
-using ClearCanvas.ImageServer.TestApp.HeaderStreamingService;
+using ClearCanvas.ImageServer.TestApp.services;
 
 namespace ClearCanvas.ImageServer.TestApp
 {
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             LogTextPanel.Text = "";
             StatisticsLog.Text = "";
-            HeaderRetrievalServiceClient proxy = null;
+            HeaderStreamingServiceClient proxy = null;
 
             if (Bindings.SelectedItem.ToString()==wsHttpBinding.Name)
             {
@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageServer.TestApp
                 else
                     endpoint = new EndpointAddress(uri);
 
-                proxy = new HeaderRetrievalServiceClient(wsHttpBinding, endpoint);
+                proxy = new HeaderStreamingServiceClient(wsHttpBinding, endpoint);
 
                 proxy.ClientCredentials.ClientCertificate. SetCertificate(
                     StoreLocation.LocalMachine, StoreName.My,  // this is where SetupClientCer.bat put the certificate on the machine
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageServer.TestApp
            
             try
             {
-                HeaderRetrievalParameters parms = new HeaderRetrievalParameters();
+                HeaderStreamingParameters parms = new HeaderStreamingParameters();
                 parms.StudyInstanceUID = studyInstanceUid;
                 parms.ServerAETitle = ServerAE.Text;
 

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HeaderStreaming\ConnectionMonitor.cs" />
     <Compile Include="ImageStreaming\Handlers\DicomPixelDataCache.cs" />
     <Compile Include="ImageStreaming\Handlers\IImageMimeTypeProcessor.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageStreamingContext.cs" />
@@ -50,12 +51,12 @@
     <Compile Include="ImageStreaming\Handlers\ImageMimeTypeConverterExtensionPoint.cs" />
     <Compile Include="ImageStreaming\MimeTypes\StandardMimeType.cs" />
     <Compile Include="ImageStreaming\ObjectStreamingHandlerFactory.cs" />
-    <Compile Include="HeaderRetrieval\HeaderLoader.cs" />
-    <Compile Include="HeaderRetrieval\HeaderRetrievalContext.cs" />
-    <Compile Include="HeaderRetrieval\HeaderRetrievalService.cs" />
-    <Compile Include="HeaderRetrieval\HeaderLoaderStatistics.cs" />
-    <Compile Include="HeaderRetrieval\HeaderRetrievalStatistics.cs" />
-    <Compile Include="HeaderRetrieval\Settings.Designer.cs">
+    <Compile Include="HeaderStreaming\HeaderLoader.cs" />
+    <Compile Include="HeaderStreaming\HeaderStreamingContext.cs" />
+    <Compile Include="HeaderStreaming\HeaderStreamingService.cs" />
+    <Compile Include="HeaderStreaming\HeaderLoaderStatistics.cs" />
+    <Compile Include="HeaderStreaming\HeaderStreamingStatistics.cs" />
+    <Compile Include="HeaderStreaming\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -135,7 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="HeaderRetrieval\Settings.settings">
+    <None Include="HeaderStreaming\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>

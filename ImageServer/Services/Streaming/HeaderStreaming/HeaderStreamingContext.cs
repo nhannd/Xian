@@ -1,11 +1,11 @@
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
-namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
-    internal class HeaderRetrievalContext
+    internal class HeaderStreamingContext
     {
         private string _callerAE;
-        private HeaderRetrievalParameters _parameters;
+        private HeaderStreamingParameters _parameters;
         private string _serviceInstanceID;
 
         public string ServiceInstanceID
@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
             set { _serviceInstanceID = value; }
         }
 
-        public HeaderRetrievalParameters Parameters
+        public HeaderStreamingParameters Parameters
         {
             get { return _parameters; }
             set { _parameters = value; }

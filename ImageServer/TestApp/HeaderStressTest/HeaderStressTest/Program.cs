@@ -10,6 +10,7 @@ using System.Xml;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
+using HeaderStressTest.services;
 
 namespace HeaderStressTest
 {
@@ -63,7 +64,7 @@ namespace HeaderStressTest
 
         public void Run()
         {
-            services.HeaderRetrievalServiceClient client = null;
+            HeaderStreamingServiceClient client = null;
 
             studies = null;
 
@@ -114,7 +115,7 @@ namespace HeaderStressTest
                     {
                         if (client==null)
                         {
-                            client = new services.HeaderRetrievalServiceClient();
+                            client = new HeaderStreamingServiceClient();
                             client.ClientCredentials.ClientCertificate.SetCertificate(
                                     StoreLocation.LocalMachine, StoreName.My, 
                                     X509FindType.FindBySubjectName,
@@ -127,12 +128,14 @@ namespace HeaderStressTest
                         study = studies[r.Next(studies.Count - 1)];
 
                         
-                        services.HeaderRetrievalParameters param = new services.HeaderRetrievalParameters();
+                        HeaderStreamingParameters param = new HeaderStreamingParameters();
                         param.ServerAETitle = RemoteAE;
                         param.StudyInstanceUID = study.StudyUid;
                         param.ReferenceID = Guid.NewGuid().ToString();
                         TimeSpanStatistics ts = new TimeSpanStatistics();
                         ts.Start();
+                        Console.WriteLine("************ RETRIEVING... {0} **************", LocalAE);
+                            
                         Stream input = client.GetStudyHeader(LocalAE, param);
 
                         if (input!=null)
@@ -198,7 +201,6 @@ namespace HeaderStressTest
                             client.Close();
                             client = null;
                         }
-                        
                     }
                     
                     Thread.Sleep(r.Next(Delay));

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.TestApp.HeaderStreamingService
+namespace ClearCanvas.ImageServer.TestApp.services
 {
     using System.Runtime.Serialization;
     using System;
@@ -16,14 +16,16 @@ namespace ClearCanvas.ImageServer.TestApp.HeaderStreamingService
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="HeaderRetrievalParameters", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.ImageServer.Services.Streamin" +
-        "g.HeaderRetrieval")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="HeaderStreamingParameters", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.DicomServices.ServiceModel.St" +
+        "reaming")]
     [System.SerializableAttribute()]
-    public partial class HeaderRetrievalParameters : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class HeaderStreamingParameters : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string ReferenceIDField;
         
         private string ServerAETitleField;
         
@@ -38,6 +40,19 @@ namespace ClearCanvas.ImageServer.TestApp.HeaderStreamingService
             set
             {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string ReferenceID
+        {
+            get
+            {
+                return this.ReferenceIDField;
+            }
+            set
+            {
+                this.ReferenceIDField = value;
             }
         }
         
@@ -69,49 +84,50 @@ namespace ClearCanvas.ImageServer.TestApp.HeaderStreamingService
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ClearCanvas.ImageServer.TestApp.HeaderStreamingService.IHeaderRetrievalService")]
-    public interface IHeaderRetrievalService
+    [System.ServiceModel.ServiceContractAttribute(ConfigurationName="ClearCanvas.ImageServer.TestApp.services.IHeaderStreamingService")]
+    public interface IHeaderStreamingService
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHeaderRetrievalService/GetStudyHeader", ReplyAction="http://tempuri.org/IHeaderRetrievalService/GetStudyHeaderResponse")]
-        System.IO.Stream GetStudyHeader(string callingAETitle, ClearCanvas.ImageServer.TestApp.HeaderStreamingService.HeaderRetrievalParameters parameters);
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeader", ReplyAction="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(string), Action="http://tempuri.org/IHeaderStreamingService/GetStudyHeaderStringFault", Name="string", Namespace="http://schemas.microsoft.com/2003/10/Serialization/")]
+        System.IO.Stream GetStudyHeader(string callingAETitle, ClearCanvas.ImageServer.TestApp.services.HeaderStreamingParameters parameters);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    public interface IHeaderRetrievalServiceChannel : ClearCanvas.ImageServer.TestApp.HeaderStreamingService.IHeaderRetrievalService, System.ServiceModel.IClientChannel
+    public interface IHeaderStreamingServiceChannel : ClearCanvas.ImageServer.TestApp.services.IHeaderStreamingService, System.ServiceModel.IClientChannel
     {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    public partial class HeaderRetrievalServiceClient : System.ServiceModel.ClientBase<ClearCanvas.ImageServer.TestApp.HeaderStreamingService.IHeaderRetrievalService>, ClearCanvas.ImageServer.TestApp.HeaderStreamingService.IHeaderRetrievalService
+    public partial class HeaderStreamingServiceClient : System.ServiceModel.ClientBase<ClearCanvas.ImageServer.TestApp.services.IHeaderStreamingService>, ClearCanvas.ImageServer.TestApp.services.IHeaderStreamingService
     {
         
-        public HeaderRetrievalServiceClient()
+        public HeaderStreamingServiceClient()
         {
         }
         
-        public HeaderRetrievalServiceClient(string endpointConfigurationName) : 
+        public HeaderStreamingServiceClient(string endpointConfigurationName) : 
                 base(endpointConfigurationName)
         {
         }
         
-        public HeaderRetrievalServiceClient(string endpointConfigurationName, string remoteAddress) : 
+        public HeaderStreamingServiceClient(string endpointConfigurationName, string remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress)
         {
         }
         
-        public HeaderRetrievalServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public HeaderStreamingServiceClient(string endpointConfigurationName, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(endpointConfigurationName, remoteAddress)
         {
         }
         
-        public HeaderRetrievalServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
+        public HeaderStreamingServiceClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
         }
         
-        public System.IO.Stream GetStudyHeader(string callingAETitle, ClearCanvas.ImageServer.TestApp.HeaderStreamingService.HeaderRetrievalParameters parameters)
+        public System.IO.Stream GetStudyHeader(string callingAETitle, ClearCanvas.ImageServer.TestApp.services.HeaderStreamingParameters parameters)
         {
             return base.Channel.GetStudyHeader(callingAETitle, parameters);
         }

@@ -33,7 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval;
+using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
@@ -66,25 +66,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 		{
 			Platform.Log(LogLevel.Debug, "{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-			HeaderStreamingServerSettings settings = HeaderStreamingServerSettings.Default;
-
 			try
 			{
-				if (settings.BindingType == "wshttp")
-				{
-					Platform.Log(LogLevel.Info, "Starting {0} using WS Http binding", GetDisplayName());
-					StartHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", GetDescription());
-				}
-				else if (settings.BindingType == "http")
-				{
-					Platform.Log(LogLevel.Info, "Starting {0} using basic Http binding", GetDisplayName()); 
-					StartBasicHttpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", GetDescription());
-				}
-				else
-				{
-					Platform.Log(LogLevel.Info, "Starting {0} using NET TCP binding", GetDisplayName()); 
-					StartNetTcpHost<HeaderRetrievalService, IHeaderRetrievalService>("HeaderRetrieval", GetDescription());
-				}
+				Platform.Log(LogLevel.Info, "Starting {0} using basic Http binding", GetDisplayName());
+                StartBasicHttpHost<HeaderStreamingService, IHeaderStreamingService>("HeaderStreaming", GetDescription());
 			}
 			catch (Exception e)
 			{
@@ -99,7 +84,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 		public override void Stop()
 		{
 			Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
-			StopHost("HeaderRetrieval");
+            StopHost("HeaderStreaming");
 		}
 
 		public override string GetDisplayName()

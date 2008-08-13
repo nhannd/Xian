@@ -3,14 +3,14 @@
 	<ProxyGenerationParameters
 		ServiceReferenceUri="http://localhost:50221/HeaderStreaming"
 		Name="services"
-		NotifyPropertyChange="False"
+		NotifyPropertyChange="True"
 		UseObservableCollection="False">
 	</ProxyGenerationParameters>
 	<EndPoints>
 		<EndPoint
 			Address="http://localhost:50221/HeaderStreaming/HeaderStreaming"
-			BindingConfiguration="BasicHttpBinding_IHeaderStreamingService"
-			Contract="HeaderStressTest.services.IHeaderStreamingService"
+			BindingConfiguration="WSHttpBinding_IHeaderStreamingService"
+			Contract="ClearCanvas.ImageServer.TestApp.services.IHeaderStreamingService"
 			>
 		</EndPoint>
 	</EndPoints>

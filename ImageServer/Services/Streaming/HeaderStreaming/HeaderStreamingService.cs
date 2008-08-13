@@ -33,18 +33,21 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 
-namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
-
-    [ServiceBehavior(IncludeExceptionDetailInFaults = true, InstanceContextMode=InstanceContextMode.PerCall)]
-    public class HeaderRetrievalService : IHeaderRetrievalService
+    [ServiceBehavior(IncludeExceptionDetailInFaults = true, InstanceContextMode=InstanceContextMode.PerSession)]
+    public class HeaderStreamingService : IHeaderStreamingService
     {
+        #region Private Members
         private string _callerID;
         private Guid _id = Guid.NewGuid();
+        #endregion
 
         #region Protected Properties
 
@@ -64,11 +67,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
 
         #endregion
 
-        #region IHeaderRetrievalService Members
+        #region IHeaderStreamingService Members
 
-        public Stream GetStudyHeader(string callingAETitle, HeaderRetrievalParameters parameters)
+        public Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters)
         {
-            HeaderRetrievalStatistics stats = new HeaderRetrievalStatistics();
+            ConnectionMonitor.GetMonitor(OperationContext.Current.Host).AddContext(OperationContext.Current);
+                
+            HeaderStreamingStatistics stats = new HeaderStreamingStatistics();
             stats.ProcessTime.Start();
 
             HeaderLoader loader = null;
@@ -81,9 +86,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                 Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
                 Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
 
-                Platform.Log(LogLevel.Info, "Received request Ref # {0}", parameters.ReferenceID);
+                Platform.Log(LogLevel.Debug, "Received request from {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
 
-                HeaderRetrievalContext context = new HeaderRetrievalContext();
+                HeaderStreamingContext context = new HeaderStreamingContext();
                 context.ServiceInstanceID = ID;
                 context.CallerAE = callingAETitle;
                 context.Parameters = parameters;
@@ -95,6 +100,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                 {
                     Stream stream = loader.Load();
                     Debug.Assert(stream != null);
+
+                    //Random r = new Random();
+                    //Thread.Sleep(r.Next(2000));
                     return stream;
                 }
                 else
@@ -126,6 +134,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
                     StatisticsLogger.Log(LogLevel.Info, stats);
                 }
             }
+        }
+
+        void Channel_Opened(object sender, EventArgs e)
+        {
+            Console.WriteLine("****************** CHANNEL OPENING ******************");
+        }
+
+        void Channel_Closing(object sender, EventArgs e)
+        {
+            Console.WriteLine("****************** CHANNEL CLOSEING ******************");
         }
 
         #endregion

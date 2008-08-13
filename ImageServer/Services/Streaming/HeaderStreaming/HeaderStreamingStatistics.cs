@@ -1,13 +1,13 @@
 using ClearCanvas.Common.Statistics;
 
-namespace ClearCanvas.ImageServer.Services.Streaming.HeaderRetrieval
+namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
-    internal class HeaderRetrievalStatistics : StatisticsSet
+    internal class HeaderStreamingStatistics : StatisticsSet
     {
         #region Constructors
 
-        public HeaderRetrievalStatistics()
-            : base("HeaderRetreival")
+        public HeaderStreamingStatistics()
+            : base("HeaderStreaming")
         {
             AddField(new Statistics<string>("Client"));
             AddField(new Statistics<string>("StudyInstanceUid"));
