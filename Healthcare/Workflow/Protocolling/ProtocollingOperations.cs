@@ -185,10 +185,6 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 				if (step.IsTerminated)
 					return false;
 
-				// cannot cancel a step that is assigned to someone else
-				if (step.AssignedStaff != null && !Equals(step.AssignedStaff, currentUserStaff))
-					return false;
-
 				// can only cancel scheduled approval steps
 				if (step.State == ActivityStatus.SC && step.Protocol.Status != ProtocolStatus.AA)
 					return false;

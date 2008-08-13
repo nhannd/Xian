@@ -123,7 +123,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Cancel )]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
 	public class CancelReportingStepTool : ReportingWorkflowItemTool
@@ -162,8 +161,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
-			string msg = item.IsAddendumStep ? "Discard the selected addendum?" : "Discard the selected report?";
-
+			string msg = item.IsAddendumStep ? SR.MessageConfirmDiscardSelectedAddendum : SR.MessageConfirmDiscardSelectedReport;
 
 			if (this.Context.DesktopWindow.ShowMessageBox(msg, MessageBoxActions.OkCancel)
 				== DialogBoxAction.Cancel)
@@ -173,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
-					service.CancelReportingStep(new CancelReportingStepRequest(item.ProcedureStepRef));
+					service.CancelReportingStep(new CancelReportingStepRequest(item.ProcedureStepRef, null));
 				});
 
 			// no point in invalidating "to be reported" folder because its communal

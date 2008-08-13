@@ -103,7 +103,8 @@
 					if (selectedProcedureStep)
 					{
 						// owner of the protocol steps is the performer, not scheduled performer
-						Field.setValue($("StepOwner"), selectedProcedureStep.Performer ? Ris.formatPersonName(selectedProcedureStep.Performer.Name) : "");
+						var owner = selectedProcedureStep.Performer ? selectedProcedureStep.Performer : selectedProcedureStep.ScheduledPerformer;
+						Field.setValue($("StepOwner"), owner ? Ris.formatPersonName(owner.Name) : "");
 						Field.setValue($("WorkflowStatus"), formatProtocollingStepStatus(selectedProcedureStep));
 					}
 

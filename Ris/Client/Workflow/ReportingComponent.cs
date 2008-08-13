@@ -351,6 +351,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _canCompleteInterpretationForTranscription;
 		private bool _canSaveReport;
 
+		private EntityRef _assignedStaff;
 		private ReportDetail _report;
 		private OrderDetail _orderDetail;
 		private int _activeReportPartIndex;
@@ -812,7 +813,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef));
+							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff));
 						});
 				}
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
@@ -841,7 +842,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef));
+							service.CancelReportingStep(new CancelReportingStepRequest(this.WorklistItem.ProcedureStepRef, _assignedStaff));
 						});
 				}
 
@@ -1010,7 +1011,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// start the interpretation step
 				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-				item.ProcedureStepRef = StartInterpretation(item, linkedInterpretations);
+				item.ProcedureStepRef = StartInterpretation(item, linkedInterpretations, out _assignedStaff);
 			}
 			else if (item.ProcedureStepName == StepType.Verification && item.ActivityStatus.Code == StepState.Scheduled)
 			{
@@ -1040,7 +1041,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (candidates.Count > 0)
 			{
 				LinkedInterpretationComponent component = new LinkedInterpretationComponent(candidates);
-				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
@@ -1057,7 +1058,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
-		private EntityRef StartVerification(ReportingWorklistItem item)
+		private static EntityRef StartVerification(ReportingWorklistItem item)
 		{
 			EntityRef result = null;
 			Platform.GetService<IReportingWorkflowService>(
@@ -1071,19 +1072,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-		private EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations)
+		private static EntityRef StartInterpretation(ReportingWorklistItem item, List<ReportingWorklistItem> linkedInterpretations, out EntityRef assignedStaffRef)
 		{
 			List<EntityRef> linkedInterpretationRefs = linkedInterpretations.ConvertAll<EntityRef>(
 				delegate(ReportingWorklistItem x) { return x.ProcedureStepRef; });
 
-			EntityRef result = null;
+			StartInterpretationResponse response = null;
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
 					StartInterpretationRequest request = new StartInterpretationRequest(item.ProcedureStepRef, linkedInterpretationRefs);
-					StartInterpretationResponse response = service.StartInterpretation(request);
-					result = response.InterpretationStepRef;
+					response = service.StartInterpretation(request);
 				});
+
+			EntityRef result = response.InterpretationStepRef;
+			assignedStaffRef = response.AssignedStaffRef;
 
 			return result;
 		}

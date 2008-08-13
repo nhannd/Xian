@@ -351,6 +351,12 @@
   <data name="MessageChooseRadiologist" xml:space="preserve">
     <value>You must choose a supervisor.</value>
   </data>
+  <data name="MessageConfirmDiscardSelectedAddendum" xml:space="preserve">
+    <value>Discard the selected addendum?</value>
+  </data>
+  <data name="MessageConfirmDiscardSelectedReport" xml:space="preserve">
+    <value>Discard the selected report?</value>
+  </data>
   <data name="MessageDeleteSelectedVisit" xml:space="preserve">
     <value>Are you sure you want to delete this visit?</value>
   </data>

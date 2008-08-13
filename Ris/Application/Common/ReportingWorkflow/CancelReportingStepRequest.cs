@@ -40,12 +40,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CancelReportingStepRequest : DataContractBase
     {
-        public CancelReportingStepRequest(EntityRef stepRef)
+		public CancelReportingStepRequest(EntityRef stepRef, EntityRef reassignedToStaff)
         {
             this.ReportingStepRef = stepRef;
+			this.ReassignedToStaff = reassignedToStaff;
         }
 
         [DataMember]
         public EntityRef ReportingStepRef;
+
+		[DataMember]
+		public EntityRef ReassignedToStaff;
     }
 }

@@ -213,7 +213,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CancelReportingStep : ReportingOperation
 		{
-			public List<InterpretationStep> Execute(ReportingProcedureStep step, Staff executingStaff, IWorkflow workflow)
+			public List<InterpretationStep> Execute(ReportingProcedureStep step, Staff executingStaff, Staff assignStaff, IWorkflow workflow)
 			{
 				step.Discontinue();
 
@@ -238,6 +238,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					{
 						InterpretationStep interpretation = new InterpretationStep(procedure);
 						interpretation.Schedule(Platform.Time);
+						if (assignStaff != null)
+							interpretation.Assign(assignStaff);
+
 						interpretations.Add(interpretation);
 						workflow.AddActivity(interpretation);
 					}
@@ -257,10 +260,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 				// cannot cancel a step that is already completed or cancelled
 				if (step.IsTerminated)
-					return false;
-
-				// cannot cancel a step that is assigned to someone else
-				if (step.AssignedStaff != null && !Equals(step.AssignedStaff, executingStaff))
 					return false;
 
 				return true;
@@ -326,17 +325,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 				// put in-progress
 				step.Start(executingStaff);
-
-				// if a report has not yet been created for this step, create now
-				if (step.ReportPart == null)
-				{
-					Report report = new Report(step.Procedure);
-					ReportPart part = report.ActivePart;
-
-					workflow.CurrentContext.Lock(report, DirtyState.New);
-
-					step.ReportPart = part;
-				}
 			}
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
@@ -351,7 +339,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.AssignedStaff != null && !Equals(executingStaff, step.AssignedStaff))
 					return false;
 
-				if (step.ReportPart != null && step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
+				if (step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
 					return false;
 
 				return true;
@@ -383,7 +371,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.AssignedStaff != null && !Equals(executingStaff, step.AssignedStaff))
 					return false;
 
-				if (step.ReportPart != null && step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
+				if (step.ReportPart.Supervisor != null && !Equals(executingStaff, step.ReportPart.Supervisor))
 					return false;
 
 				return true;

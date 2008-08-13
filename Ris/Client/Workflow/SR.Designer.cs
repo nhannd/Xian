@@ -763,6 +763,24 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Discard the selected addendum?.
+        /// </summary>
+        internal static string MessageConfirmDiscardSelectedAddendum {
+            get {
+                return ResourceManager.GetString("MessageConfirmDiscardSelectedAddendum", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Discard the selected report?.
+        /// </summary>
+        internal static string MessageConfirmDiscardSelectedReport {
+            get {
+                return ResourceManager.GetString("MessageConfirmDiscardSelectedReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this visit?.
         /// </summary>
         internal static string MessageDeleteSelectedVisit {

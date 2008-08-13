@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Healthcare
 {
-    public class ProtocolProcedureStep : ProcedureStep
+    public abstract class ProtocolProcedureStep : ProcedureStep
     {
         private Protocol _protocol;
 
@@ -72,13 +72,6 @@ namespace ClearCanvas.Healthcare
                 return true;
             }
         }
-
-		protected override ProcedureStep CreateScheduledCopy()
-		{
-			ProtocolProcedureStep newStep = new ProtocolProcedureStep(_protocol);
-			this.Procedure.AddProcedureStep(newStep);
-			return newStep;
-		}
 
 		#endregion
 	}

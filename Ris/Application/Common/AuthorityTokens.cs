@@ -164,14 +164,14 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow radiology reports to be submitted for review.")]
 				public const string SubmitForReview = "Workflow/Report/Submit for Review";
 
-				[AuthorityToken(Description = "Allow radiology reports to be cancelled and returned to the communal worklist.")]
-				public const string Cancel = "Workflow/Report/Cancel";
-
 				[AuthorityToken(Description = "Allow reporting without specifying a supervisor")]
 				public const string OmitSupervisor = "Workflow/Report/Omit Supervisor";
 
 				[AuthorityToken(Description = "Allow reassigning of a report to another radiologist.")]
 				public const string Reassign = "Workflow/Report/Reassign";
+
+				[AuthorityToken(Description = "Allow cancelling of a report that is assigned to other radiologists.")]
+				public const string Cancel = "Workflow/Report/Cancel";
 			}
 
 			public static class Protocol
@@ -193,6 +193,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow reassigning of a protocol to another radiologist.")]
 				public const string Reassign = "Workflow/Protocol/Reassign";
+
+				[AuthorityToken(Description = "Allow cancelling of a protocol that is assigned to other radiologists.")]
+				public const string Cancel = "Workflow/Protocol/Cancel";
 			}
 
 			public static class Patient

@@ -391,7 +391,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IProtocollingWorkflowService service)
 					{
 						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim, _assignedStaffRef));
+						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _worklistItem.ProcedureStepRef, _notes, shouldUnclaim, _assignedStaffRef));
 					});
 
 				SkipCurrentItemAndBeginNextItemOrExit();
@@ -419,7 +419,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IProtocollingWorkflowService service)
 					{
 						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _notes, shouldUnclaim, _assignedStaffRef));
+						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _worklistItem.ProcedureStepRef, _notes, shouldUnclaim, _assignedStaffRef));
 					});
 
 				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been

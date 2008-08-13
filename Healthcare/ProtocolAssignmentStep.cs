@@ -109,5 +109,12 @@ namespace ClearCanvas.Healthcare {
         {
             return this.State == ActivityStatus.IP && this.PerformingStaff == staff;
         }
-    }
+
+		protected override ProcedureStep CreateScheduledCopy()
+		{
+			ProtocolAssignmentStep newStep = new ProtocolAssignmentStep(this.Protocol);
+			this.Procedure.AddProcedureStep(newStep);
+			return newStep;
+		}
+	}
 }

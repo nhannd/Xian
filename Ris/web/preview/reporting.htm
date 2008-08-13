@@ -117,7 +117,8 @@
 
 				if (selectedProcedureStep)
 				{
-					Field.setValue($("StepOwner"), selectedProcedureStep.ScheduledPerformer ? Ris.formatPersonName(selectedProcedureStep.ScheduledPerformer.Name) : "");
+					var owner = selectedProcedureStep.Performer ? selectedProcedureStep.Performer : selectedProcedureStep.ScheduledPerformer;
+					Field.setValue($("StepOwner"), owner ? Ris.formatPersonName(owner.Name) : "");
 					Field.setValue($("WorkflowStatus"), formatReportingStepStatus(selectedProcedureStep, worklistItem.ReportPartIndex));
 				}
 				

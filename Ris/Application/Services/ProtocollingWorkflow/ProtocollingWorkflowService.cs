@@ -196,6 +196,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
 		{
+			// demand authority token if trying to cancel a protocol that is perfomed by someone else
+			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProtocolStepRef, EntityLoadFlags.CheckVersion);
+			if (step.AssignedStaff != null && !Equals(step.PerformingStaff, this.CurrentUserStaff))
+			{
+				PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
+				permission.Demand();
+			}
+
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 			Staff staff = request.ReassignToStaff == null ? null : this.PersistenceContext.Load<Staff>(request.ReassignToStaff);
 
@@ -327,6 +335,18 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
 				return false;
+
+			// if there is no proc step ref, operation is not available
+			if (enablementContext.ProcedureStepRef == null)
+				return false;
+
+			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(enablementContext.ProcedureStepRef);
+
+			// cannot cancel a protocol that is performed by someone else without the authority token
+			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Cancel) &&
+				(step.PerformingStaff != null && !Equals(step.PerformingStaff, this.CurrentUserStaff)))
+				return false;
+
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.DiscardProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 

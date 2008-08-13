@@ -38,17 +38,21 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class DiscardOrderProtocolRequest : UpdateOrderProtocolRequest
 	{
-		public DiscardOrderProtocolRequest(EntityRef orderRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
+		public DiscardOrderProtocolRequest(EntityRef orderRef, EntityRef protocolStepRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
 			: base(orderRef, null, orderNotes)
 		{
+			this.ProtocolStepRef = protocolStepRef;
 			this.ShouldUnclaim = shouldUnclaim;
 			this.ReassignToStaff = reassignToStaff;
 		}
 
-		public DiscardOrderProtocolRequest(EntityRef orderRef)
-			: this(orderRef, null, true, null)
+		public DiscardOrderProtocolRequest(EntityRef orderRef, EntityRef protocolStepRef)
+			: this(orderRef, protocolStepRef, null, true, null)
 		{
 		}
+
+		[DataMember]
+		public EntityRef ProtocolStepRef;
 
 		[DataMember]
 		public bool ShouldUnclaim;
