@@ -38,6 +38,7 @@
   <folder-system id="ClearCanvas.Ris.Client.Workflow.ProtocolWorkflowFolderSystem">
     <folder id="ToBeProtocolledFolder" />
     <folder id="ToBeReviewedProtocolFolder" />
+    <folder id="AssignedToBeProtocolFolder" />
     <folder id="AssignedForReviewProtocolFolder" />
     <folder id="DraftProtocolFolder" />
     <folder id="AwaitingApprovalProtocolFolder" />
@@ -61,5 +62,10 @@
     <folder id="PersonalInboxFolder" />
     <folder id="GroupInboxFolder" />
     <folder id="SentItemsFolder" />
+  </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Workflow.RadiologistAdminWorkflowFolderSystem">
+    <folder id="ReportingAdminAssignedFolder" />
+    <folder id="ProtocollingAdminAssignedFolder" />
+    <folder id="RadiologistAdminSearchFolder" />
   </folder-system>
 </folder-systems>
