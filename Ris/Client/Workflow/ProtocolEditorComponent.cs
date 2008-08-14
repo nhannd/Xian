@@ -71,19 +71,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				get
 				{
-					return ProtocolGroupSettings.Default.GetDefaultProtocolGroup(procedureName);
+					return ProtocollingSettings.Default.GetDefaultProtocolGroup(procedureName);
 				}
 				set
 				{
 					if (String.IsNullOrEmpty(value)) return;
 
-					ProtocolGroupSettings.Default.SetDefaultProtocolGroup(value, procedureName);
+					ProtocollingSettings.Default.SetDefaultProtocolGroup(value, procedureName);
 				}
 			}
 
 			public string GetSuggestedDefault()
 			{
-				return ProtocolGroupSettings.Default.LastDefaultProtocolGroup;
+				return ProtocollingSettings.Default.LastDefaultProtocolGroup;
 			}
 
 			#endregion
@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
+			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
 			string[] staffTypes = string.IsNullOrEmpty(filters)
 				? new string[] { }
 				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
@@ -226,8 +226,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (_selectedProcodurePlanSummaryTableItem != null)
 			{
 				_selectedProcodurePlanSummaryTableItem.ProtocolDetail.Supervisor = supervisor;
-				SupervisorSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
-				SupervisorSettings.Default.Save();
+				ProtocollingSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
+				ProtocollingSettings.Default.Save();
 			}
 		}
 
@@ -434,10 +434,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 						&& item.ProtocolDetail.Supervisor == null)
 					{
 						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-						if (!String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID))
+						if (!String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
 						{
 							object supervisor;
-							if (_supervisorLookupHandler.Resolve(SupervisorSettings.Default.SupervisorID, false, out supervisor))
+							if (_supervisorLookupHandler.Resolve(ProtocollingSettings.Default.SupervisorID, false, out supervisor))
 							{
 								item.ProtocolDetail.Supervisor = (StaffSummary)supervisor;
 							}

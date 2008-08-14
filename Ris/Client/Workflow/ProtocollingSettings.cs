@@ -9,13 +9,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	[SettingsGroupDescription("")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class ProtocolGroupSettings
+	internal sealed partial class ProtocollingSettings
 	{
 		private XmlDocument _xmlDoc;
 		private XmlNode _root;
 		private readonly string _lastDefault = "__LastDefault";
 
-		public ProtocolGroupSettings()
+		public ProtocollingSettings()
 		{
 			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}

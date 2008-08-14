@@ -60,7 +60,6 @@
       <DependentUpon>ReassignComponentSettings.cs</DependentUpon>
     </Compile>
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
-    <Compile Include="ReviseProtocolTool.cs" />
     <Compile Include="ViewImagesTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />
     <Compile Include="EmergencyWorkflowFolderSystem.cs" />
@@ -89,9 +88,9 @@
     <Compile Include="ProtocolEditorComponent.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTable.cs" />
     <Compile Include="ProtocolEditorProcedurePlanSummaryTableItem.cs" />
-    <Compile Include="ProtocolGroupSettings.cs" />
-    <Compile Include="ProtocolGroupSettings.Designer.cs">
-      <DependentUpon>ProtocolGroupSettings.settings</DependentUpon>
+    <Compile Include="ProtocollingSettings.cs" />
+    <Compile Include="ProtocollingSettings.Designer.cs">
+      <DependentUpon>ProtocollingSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
@@ -134,12 +133,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
-    <Compile Include="SupervisorSettings.cs" />
-    <Compile Include="SupervisorSettings.Designer.cs">
-      <DependentUpon>SupervisorSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="TechnologistDocumentationComponent.cs" />
     <Compile Include="TechnologistDocumentationComponentSettings.cs" />
@@ -189,18 +182,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ProtocolGroupSettings.settings">
+    <None Include="ProtocollingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ProtocolGroupSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>ProtocollingSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ReassignComponentSettings.settings" />
     <None Include="ReportingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="SupervisorSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>SupervisorSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="TechnologistDocumentationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

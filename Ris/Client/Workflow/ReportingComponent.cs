@@ -379,7 +379,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// create supervisor lookup handler, using filters supplied in application settings
-			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
+			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
 			string[] staffTypes = string.IsNullOrEmpty(filters)
 				? new string[] { }
 				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
@@ -895,8 +895,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void SetSupervisor(StaffSummary supervisor)
 		{
 			_supervisor = supervisor;
-			SupervisorSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
-			SupervisorSettings.Default.Save();
+			ReportingSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
+			ReportingSettings.Default.Save();
 		}
 
 		private void RequestClose(ReportEditorCloseReason reason)
@@ -965,10 +965,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						// active part does not have a supervisor assigned
 						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-						if (!String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID))
+						if (!String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
 						{
 							object supervisor;
-							if(_supervisorLookupHandler.Resolve(SupervisorSettings.Default.SupervisorID, false, out supervisor))
+							if (_supervisorLookupHandler.Resolve(ReportingSettings.Default.SupervisorID, false, out supervisor))
 							{
 								_supervisor = (StaffSummary) supervisor;
 							}
