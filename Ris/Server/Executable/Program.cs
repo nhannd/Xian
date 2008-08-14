@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Server.Executable
             }
             else
             {
-                Platform.StartApp();
+				Console.WriteLine("ERROR: Application Root must be specified.");
             }
         }
     }
