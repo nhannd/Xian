@@ -2630,7 +2630,7 @@ END
 END
 GO
 
-/****** Object:  StoredProcedure [dbo].[WebQueryArchiveQueue]    Script Date: 08/05/2008 17:35:56 ******/
+/****** Object:  StoredProcedure [dbo].[WebQueryArchiveQueue]    Script Date: 08/14/2008 15:21:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -2664,6 +2664,7 @@ BEGIN
 	SET @stmt =			''SELECT ArchiveQueue.*, ROW_NUMBER() OVER(ORDER BY ScheduledTime ASC) as RowNum FROM ArchiveQueue ''
 	SET @stmt = @stmt + ''LEFT JOIN StudyStorage on StudyStorage.GUID = ArchiveQueue.StudyStorageGUID ''
 	SET @stmt = @stmt + ''LEFT JOIN Study on Study.ServerPartitionGUID = StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid = StudyStorage.StudyInstanceUid ''
+	SET @stmt = @stmt + ''JOIN PartitionArchive on PartitionArchive.GUID = ArchiveQueue.PartitionArchiveGUID ''
 	
 	SET @where = ''''
 
@@ -2672,7 +2673,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''ArchiveQueue.ServerPartitionGUID = '''''' +  CONVERT(varchar(250),@ServerPartitionGUID) +''''''''
+		SET @where = @where + ''PartitionArchive.ServerPartitionGUID = '''''' +  CONVERT(varchar(250),@ServerPartitionGUID) +''''''''
 	END
 	
 	IF (@ArchiveQueueStatusEnum IS NOT NULL)
@@ -2719,21 +2720,21 @@ BEGIN
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where
 
-	--PRINT @stmt
+	PRINT @stmt
 	SET @stmt = ''SELECT A.GUID, A.PartitionArchiveGUID, A.ScheduledTime, A.StudyStorageGUID, A.ArchiveQueueStatusEnum, A.ProcessorId FROM ('' + @stmt
 	SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
 
 	if (@where<>'''')
-		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue WHERE '' + @where
+		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue JOIN PartitionArchive on PartitionArchive.GUID = ArchiveQueue.PartitionArchiveGUID WHERE '' + @where
 	else
-		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue''
+		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue JOIN PartitionArchive on PartitionArchive.GUID = ArchiveQueue.PartitionArchiveGUID ''
 
 	DECLARE @recCount int
 	
 	EXEC sp_executesql  @count, N''@recordCount int OUT'', @recCount OUT
-	--print @count
+	print @count
 	set @ResultCount = @recCount
 
 END
