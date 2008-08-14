@@ -399,6 +399,7 @@ namespace ClearCanvas.Ris.Client
 
 			_recipients.Add(_selectedStaff, true);
 			NotifyPropertyChanged("Recipients");
+			NotifyPropertyChanged("CompleteEnabled");
 		}
 
 		#endregion
@@ -427,6 +428,7 @@ namespace ClearCanvas.Ris.Client
 
 			_recipients.Add(_selectedStaffGroup, true);
 			NotifyPropertyChanged("Recipients");
+			NotifyPropertyChanged("CompleteEnabled");
 		}
 
 		#endregion
@@ -452,14 +454,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				if (_notes.Items.Count == 0)
-				{
+				if (_notes.Items.Count == 0 && _recipients.Items.Count != 0)
 					return !string.IsNullOrEmpty(_body);
-				}
-				else
-				{
+				else if (_notes.Items.Count > 0 && _recipients.Items.Count != 0)
 					return !_notes.HasUncheckedUnacknowledgedNotes();
-				}
+				else
+					return false;
 			}
 		}
 
