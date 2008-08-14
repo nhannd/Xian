@@ -197,10 +197,6 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 					&& step.AssignedStaff == null)
 					return false;
 
-				// can
-				if (step.State == ActivityStatus.IP && step.Protocol.Status != ProtocolStatus.PN)
-					return false;
-
 				return true;
 			}
 		}
@@ -227,6 +223,9 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
 			{
+				if (step.PerformingStaff != null && !Equals(step.PerformingStaff, currentUserStaff))
+					return false;
+
 				if (step.Protocol.Status == ProtocolStatus.PR || step.Protocol.Status == ProtocolStatus.RJ)
 					return false;
 
@@ -274,6 +273,9 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
 			{
+				if (step.PerformingStaff != null && !Equals(step.PerformingStaff, currentUserStaff))
+					return false;
+
 				if (step.Protocol.Status == ProtocolStatus.PR || step.Protocol.Status == ProtocolStatus.RJ)
 					return false;
 
@@ -363,6 +365,9 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
 			{
+				if (step.PerformingStaff != null && !Equals(step.PerformingStaff, currentUserStaff))
+					return false;
+
 				if (step.State != ActivityStatus.IP)
 					return false;
 

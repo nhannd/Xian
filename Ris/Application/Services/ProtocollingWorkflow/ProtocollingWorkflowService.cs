@@ -45,6 +45,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
+using ClearCanvas.Workflow;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
@@ -198,11 +199,12 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
 		{
-			if (request.ProtocolStepRef != null)
+			if (request.ProtocolStepRef != null && request.ShouldUnclaim)
 			{
 				// demand authority token if trying to cancel a protocol that is perfomed by someone else
-				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProtocolStepRef, EntityLoadFlags.CheckVersion);
-				if (step.AssignedStaff != null && !Equals(step.PerformingStaff, this.CurrentUserStaff))
+				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProtocolStepRef, EntityLoadFlags.None);
+				if ((step.State == ActivityStatus.SC && !Equals(step.AssignedStaff, this.CurrentUserStaff)) ||
+					(step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, this.CurrentUserStaff)))
 				{
 					PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
 					permission.Demand();
@@ -369,7 +371,8 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			// cannot cancel a protocol that is performed by someone else without the authority token
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Cancel) &&
-				(step.PerformingStaff != null && !Equals(step.PerformingStaff, this.CurrentUserStaff)))
+				((step.State == ActivityStatus.SC && !Equals(step.AssignedStaff, this.CurrentUserStaff)) ||
+				(step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, this.CurrentUserStaff))))
 				return false;
 
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.DiscardProtocolOperation(), enablementContext.ProcedureStepRef);
@@ -404,6 +407,17 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			if (step.AssignedStaff != null && !Equals(step.AssignedStaff, this.CurrentUserStaff))
 				return false;
+
+			if (step.PerformingStaff != null && !Equals(step.PerformingStaff, CurrentUserStaff))
+				return false;
+
+			// items submitted for review should not be editable.
+			ProtocolAssignmentStep assignmentStep = step.As<ProtocolAssignmentStep>();
+			if (assignmentStep.Protocol.Status == ProtocolStatus.AA)
+			{
+				if (Equals(assignmentStep.Protocol.Author, this.CurrentUserStaff))
+					return false;
+			}
 
 			if (step.IsTerminated)
 				return false;
