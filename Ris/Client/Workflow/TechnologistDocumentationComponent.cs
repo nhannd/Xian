@@ -202,7 +202,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             InitializeDocumentationTabPages();
 
             // create staff lookup handler, using filters provided by application configuration
-        	string filters = TechnologistDocumentationComponentSettings.Default.RadiologistLookupStaffTypeFilters;
+        	string filters = TechnologistDocumentationComponentSettings.Default.RadiologistStaffTypeFilters;
 			string[] staffTypes = string.IsNullOrEmpty(filters) ? new string[] { } :
 				CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
  
@@ -580,7 +580,6 @@ namespace ClearCanvas.Ris.Client.Workflow
             }
             else
             {
-                // TODO: defer enablement to server
                 _startAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
                     delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.State.Code == "SC"; });
 

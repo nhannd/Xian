@@ -75,19 +75,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			this.Context.RegisterDropHandler(typeof(Folders.Registration.CheckedInFolder), this);
 		}
-/* TODO: is this needed?
-		public override bool Enabled
-		{
-			get
-			{
-				if (this.Context.Selection.Items.Length != 1)
-					return false;
-				RegistrationWorklistItem item =
-					(RegistrationWorklistItem)CollectionUtils.FirstElement(this.Context.Selection.Items);
-				return item.OrderRef != null && base.Enabled;
-			}
-		}
-*/
+
 		protected override bool Execute(RegistrationWorklistItem item)
 		{
 			CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);

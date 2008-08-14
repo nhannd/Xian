@@ -144,7 +144,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <summary>
         /// This provide a mean to complete a publication step.  It is meant for testing only. 
         /// </summary>
-        /// TODO: to be removed
         [OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]

@@ -901,7 +901,6 @@ namespace ClearCanvas.Ris.Client
             _selectedDiagnosticService = summary;
 
             // update the table of procedures
-            //TODO: should warn user if there are already procedures in this table???
             _proceduresTable.Items.Clear();
             if (_selectedDiagnosticService != null)
             {

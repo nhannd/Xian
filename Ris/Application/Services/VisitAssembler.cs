@@ -116,8 +116,6 @@ namespace ClearCanvas.Ris.Application.Services
 
         public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
         {
-            // TODO: add validation and throw RequestValidationException as necessary
-
             visit.Patient = context.Load<Patient>(detail.PatientRef, EntityLoadFlags.Proxy);
             visit.VisitNumber.Id = detail.VisitNumber.Id;
             visit.VisitNumber.AssigningAuthority = EnumUtils.GetEnumValue<InformationAuthorityEnum>(detail.VisitNumber.AssigningAuthority, context);

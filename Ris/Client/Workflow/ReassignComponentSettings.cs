@@ -4,9 +4,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Stores settings related to the Reassign component.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class ReassignComponentSettings
 	{

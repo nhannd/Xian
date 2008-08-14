@@ -181,7 +181,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
                 delegate(EntityRef mpsRef) { return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef); });
 
-            // TODO determine procedureAborted logic
             foreach (ModalityProcedureStep step in modalitySteps)
             {
                 DiscontinueModalityProcedureStepOperation op = new DiscontinueModalityProcedureStepOperation();
@@ -247,7 +246,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 				mpps.ExtendedProperties[pair.Key] = pair.Value;
 			}
 
-            // TODO determine procedureAborted logic
             DiscontinueModalityPerformedProcedureStepOperation op = new DiscontinueModalityPerformedProcedureStepOperation();
             op.Execute(mpps, request.DiscontinuedTime, new PersistentWorkflow(PersistenceContext));
 

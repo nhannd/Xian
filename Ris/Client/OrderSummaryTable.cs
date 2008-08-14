@@ -51,7 +51,6 @@ namespace ClearCanvas.Ris.Client
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnStatus,
                 delegate(OrderSummary order) { return order.OrderStatus.Value; }));
 
-            //TODO PatientNameDetail formatting
             this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered by",
                 delegate(OrderSummary order) { return PersonNameFormat.Format(order.OrderingPractitioner.Name); }));
 

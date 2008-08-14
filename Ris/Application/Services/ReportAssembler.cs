@@ -39,7 +39,6 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class ReportAssembler
     {
-        // TODO: in order for this to be efficent, the Procedures collection should have been obtained in a join fetch
         public ReportSummary CreateReportSummary(Procedure rp, Report report, IPersistenceContext context)
         {
             ReportSummary summary = new ReportSummary();

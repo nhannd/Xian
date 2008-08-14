@@ -56,7 +56,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
             _component = component;
 
-            // TODO add .NET databindings to _component
             _sourceTable.Table = _component.SourcePatientData;
             _targetTable.Table = _component.TargetPatientData;
         }

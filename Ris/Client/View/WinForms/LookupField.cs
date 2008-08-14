@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             }
             catch (Exception ex)
             {
-                // TODO: not much we can do here if Resolve throws an exception
+                // not much we can do here if Resolve throws an exception
                 Platform.Log(LogLevel.Error, ex);
             }
         }
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             }
             catch (Exception ex)
             {
-                // TODO: not much we can do here if FormatItem throws an exception
+                // not much we can do here if FormatItem throws an exception
                 Platform.Log(LogLevel.Error, ex);
             }
         }

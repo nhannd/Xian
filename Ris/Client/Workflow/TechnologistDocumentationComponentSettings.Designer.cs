@@ -45,9 +45,9 @@ namespace ClearCanvas.Ris.Client.Workflow {
             "st lookup field")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PRAD, PRAR")]
-        public string RadiologistLookupStaffTypeFilters {
+        public string RadiologistStaffTypeFilters {
             get {
-                return ((string)(this["RadiologistLookupStaffTypeFilters"]));
+                return ((string)(this["RadiologistStaffTypeFilters"]));
             }
         }
     }

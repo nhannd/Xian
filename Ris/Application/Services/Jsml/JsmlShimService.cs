@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.Jsml
             MethodInfo operation = contract.GetMethod(request.OperationName);
             ParameterInfo[] parameters = operation.GetParameters();
             if (parameters.Length != 1)
-                throw new Exception();  // todo fix this
+                throw new InvalidOperationException("Can only invoke methods with exactly one input parameter.");
 
             object service = null;
             try

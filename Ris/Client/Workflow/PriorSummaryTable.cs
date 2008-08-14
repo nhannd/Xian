@@ -50,10 +50,6 @@ namespace ClearCanvas.Ris.Client.Workflow
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Procedure",
                 delegate(PriorProcedureSummary item) { return item.ProcedureType.Name; }));
 
-            //TODO: fill out Performed Location for Prior Summary Table
-            //this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Location",
-            //    delegate(PriorProcedureSummary item) { return "WHAT?"; }));
-
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Date",
                 delegate(PriorProcedureSummary item) { return item.PerformedDate == null ? null : Format.Date(item.PerformedDate.Value); }));
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Report Status",

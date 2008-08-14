@@ -69,7 +69,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 					_availableReasons = response.SuspendRejectReasonChoices;
 				});
 
-			// TODO prepare the component for its live phase
 			base.Start();
 		}
 

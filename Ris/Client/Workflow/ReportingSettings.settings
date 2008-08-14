@@ -8,11 +8,14 @@
     <Setting Name="EnableTranscriptionWorkflow" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SupervisorStaffTypeFilters" Description="A comma separated list of staff type codes, used to filter the Supervisor lookup field" Type="System.String" Scope="Application">
+    <Setting Name="SupervisorStaffTypeFilters" Description="A comma separated list of staff type codes used to determine which staff can be used as a Supervisor" Type="System.String" Scope="Application">
       <Value Profile="(Default)">PRAD</Value>
     </Setting>
     <Setting Name="SupervisorID" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="TranscriptionistStaffTypeFilters" Description="A comma separated list of staff type codes used to determine which staff can be used as a Transcriptionist" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">STRA</Value>
     </Setting>
   </Settings>
 </SettingsFile>

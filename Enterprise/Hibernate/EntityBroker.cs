@@ -174,8 +174,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public void Delete(TEntity entity)
         {
-            if(this.Context.ReadOnly)
-                 throw new Exception();  //TODO elaborate
+			if (this.Context.ReadOnly)
+				throw new InvalidOperationException("Cannot delete entity via read-only persistence context.");
 
             this.Context.Session.Delete(entity);
         }

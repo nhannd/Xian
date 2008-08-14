@@ -18,7 +18,6 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
-		//TODO: consider using staff admin service rather than defining method on this service
 		ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request);
 
 		/// <summary>
@@ -27,7 +26,6 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
-		//TODO: consider using staff admin service rather than defining method on this service
 		AddStaffGroupsResponse AddStaffGroups(AddStaffGroupsRequest request);
 
         /// <summary>

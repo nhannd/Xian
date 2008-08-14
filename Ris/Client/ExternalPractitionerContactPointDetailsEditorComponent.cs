@@ -67,19 +67,6 @@ namespace ClearCanvas.Ris.Client
             _resultCommunicationModeChoices = resultCommunicationModeChoices;
         }
 
-        public override void Start()
-        {
-            // TODO prepare the component for its live phase
-            base.Start();
-        }
-
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
-
         #region Presentation Model
 
         [ValidateNotNull]

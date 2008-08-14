@@ -87,13 +87,6 @@ namespace ClearCanvas.Ris.Client
             base.Start();
         }
 
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
-
         #region Presentation Model
 
         public ITree DiagnosticServiceTree

@@ -44,9 +44,6 @@ namespace ClearCanvas.Enterprise.Core
 
         public DateTime GetTime()
         {
-            // TODO: obtain the time from some central source.  Sql server may be used for this purpose, however:
-            // do not use NHibernate to communicate with Sql server to obtain the time!!!
-            // this is because initializing NHibernate may itself cause this method to be invoked -> infinite recursion
             return DateTime.Now;
         }
 

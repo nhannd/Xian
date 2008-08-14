@@ -96,7 +96,6 @@ namespace ClearCanvas.Ris.Client.Admin
 			base.InitializeActionModel(model);
 
 			// add a "duplicate worklist" action 
-			//TODO: change the icon
 			this.ActionModel.AddAction(_duplicateWorklistActionKey, SR.TitleDuplicate, "Icons.DuplicateSmall.png", DuplicateWorklist);
 
 			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist);

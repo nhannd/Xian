@@ -553,7 +553,6 @@
     <Compile Include="ModalityWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="ModalityWorkflow\IModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
-    <Compile Include="ModalityWorkflow\ModalityWorklistSearchData.cs" />
     <Compile Include="ModalityWorkflow\StartProcedureRequest.cs" />
     <Compile Include="PatientNoteDetail.cs" />
     <Compile Include="OrderDetail.cs" />
@@ -644,7 +643,6 @@
     <Compile Include="ReportingWorkflow\StartInterpretationResponse.cs" />
     <Compile Include="ReportingWorkflow\IReportingWorkflowService.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistItem.cs" />
-    <Compile Include="ReportingWorkflow\ReportingWorklistSearchCriteria.cs" />
     <Compile Include="ReportingWorkflow\StartInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\StartVerificationRequest.cs" />
     <Compile Include="ProcedureSummary.cs" />
