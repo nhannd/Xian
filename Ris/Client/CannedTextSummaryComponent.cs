@@ -137,6 +137,11 @@ namespace ClearCanvas.Ris.Client
 
 		#region Overrides
 
+		protected override bool SupportsEdit
+		{
+			get { return true; }
+		}
+
 		/// <summary>
 		/// Gets a value indicating whether this component supports deletion.  The default is false.
 		/// Override this method to support deletion.
@@ -189,7 +194,6 @@ namespace ClearCanvas.Ris.Client
 				{
 					listResponse = service.ListCannedText(request);
 				});
-
 			return listResponse.CannedTexts;
 		}
 
@@ -292,17 +296,22 @@ namespace ClearCanvas.Ris.Client
 				_duplicateCannedTextAction.Enabled = true;
 				_copyCannedTextToClipboardAction.Enabled = true;
 
+				this.ActionModel.Add.Enabled = HasPersonalAdminAuthority || HasGroupAdminAuthority;
+
 				if (selectedItem.IsPersonal)
 				{
-					this.ActionModel.Add.Enabled = 
-						this.ActionModel.Edit.Enabled = 
-						this.ActionModel.Delete.Enabled = HasPersonalAdminAuthority;
+					this.ActionModel.Edit.Enabled = HasPersonalAdminAuthority;
+					this.ActionModel.Delete.Enabled = HasPersonalAdminAuthority;
+				}
+				else if (selectedItem.IsGroup)
+				{
+					this.ActionModel.Edit.Enabled = HasGroupAdminAuthority;
+					this.ActionModel.Delete.Enabled = HasGroupAdminAuthority;
 				}
 				else
 				{
-					this.ActionModel.Add.Enabled =
-						this.ActionModel.Edit.Enabled =
-						this.ActionModel.Delete.Enabled = HasGroupAdminAuthority;
+					this.ActionModel.Edit.Enabled = false;
+					this.ActionModel.Delete.Enabled = false;
 				}
 			}
 			else

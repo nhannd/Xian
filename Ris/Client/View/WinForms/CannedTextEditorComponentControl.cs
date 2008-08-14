@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component = component;
 
 			_typeGroupBox.Visible = _component.CanChangeType;
-			if (_component.CanChangeType == false && _component.IsEditingPersonal)
+			if (_component.CanChangeType == false && (_component.HasGroupAdminAuthority == false || _component.HasPersonalAdminAuthority == false))
 				_groups.Visible = false;
 			else
 				_radioGroup.Checked = _component.IsEditingGroup;

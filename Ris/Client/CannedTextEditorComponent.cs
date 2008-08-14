@@ -166,8 +166,8 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsEditingPersonal
 		{
-			get { return _isEditingPersonal; }
-			set { _isEditingPersonal = value; }
+			get{ return _isEditingPersonal; }
+			set{ _isEditingPersonal = value; }
 		}
 
 		public bool IsEditingGroup
@@ -212,6 +212,16 @@ namespace ClearCanvas.Ris.Client
 				_cannedTextDetail.Category = value;
 				this.Modified = true;
 			}
+		}
+
+		public bool HasGroupAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
+		}
+
+		public bool HasPersonalAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Personal); }
 		}
 
 		[ValidateNotNull]
@@ -306,11 +316,6 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 				return item.ToString(); // place-holder items
-		}
-
-		private static bool HasGroupAdminAuthority
-		{
-			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.CannedText.Group); }
 		}
 	}
 }
