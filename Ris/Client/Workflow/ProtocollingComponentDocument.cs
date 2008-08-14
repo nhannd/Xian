@@ -59,8 +59,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_item = item;
 			_mode = mode;
 			_folderName = context.SelectedFolder.Name;
-			_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
-			_worklistClassName = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistClassName;
+
+			if (context.SelectedFolder is ReportingWorkflowFolder)
+			{
+				_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
+				_worklistClassName = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistClassName;
+			}
+			else
+			{
+				_worklistRef = null;
+				_worklistClassName = null;
+			}
 		}
 
 		#endregion

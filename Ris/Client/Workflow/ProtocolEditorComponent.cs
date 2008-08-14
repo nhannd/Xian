@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return;
 
 			GetProcedurePlanForProtocollingWorklistItemRequest procedurePlanRequest = 
-				new GetProcedurePlanForProtocollingWorklistItemRequest(_worklistItem.ProcedureStepRef);
+				new GetProcedurePlanForProtocollingWorklistItemRequest(_worklistItem.OrderRef);
 
 			GetProcedurePlanForProtocollingWorklistItemResponse procedurePlanResponse = 
 				service.GetProcedurePlanForProtocollingWorklistItem(procedurePlanRequest);
@@ -260,8 +260,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ShowAuthor
 		{
-			// TODO: do not show name if it's the current user
-			get { return true; }
+			get
+			{
+				if(_selectedProcodurePlanSummaryTableItem != null)
+				{
+					return !String.Equals(LoginSession.Current.Staff.StaffId, _selectedProcodurePlanSummaryTableItem.ProtocolDetail.Author.StaffId);
+				}
+				else
+				{
+					return false;
+				}
+			}
 		}
 
 		public string Urgency

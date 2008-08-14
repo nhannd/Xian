@@ -142,8 +142,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[ReadOperation]
 		public GetProcedurePlanForProtocollingWorklistItemResponse GetProcedurePlanForProtocollingWorklistItem(GetProcedurePlanForProtocollingWorklistItemRequest request)
 		{
-			ProcedureStep mps = this.PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
-			Order order = mps.Procedure.Order;
+			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
 			ProcedurePlanAssembler assembler = new ProcedurePlanAssembler();
 			ProcedurePlanDetail procedurePlanSummary =
@@ -199,12 +198,19 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
 		{
-			// demand authority token if trying to cancel a protocol that is perfomed by someone else
-			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProtocolStepRef, EntityLoadFlags.CheckVersion);
-			if (step.AssignedStaff != null && !Equals(step.PerformingStaff, this.CurrentUserStaff))
+			if (request.ProtocolStepRef != null)
 			{
-				PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
-				permission.Demand();
+				// demand authority token if trying to cancel a protocol that is perfomed by someone else
+				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProtocolStepRef, EntityLoadFlags.CheckVersion);
+				if (step.AssignedStaff != null && !Equals(step.PerformingStaff, this.CurrentUserStaff))
+				{
+					PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
+					permission.Demand();
+				}
+			}
+			else
+			{
+				// don't care, since the operation won't be enabled.
 			}
 
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);

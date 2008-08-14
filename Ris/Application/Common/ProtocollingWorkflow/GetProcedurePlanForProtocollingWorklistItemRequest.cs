@@ -37,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     [DataContract]
     public class GetProcedurePlanForProtocollingWorklistItemRequest : DataContractBase
     {
-        public GetProcedurePlanForProtocollingWorklistItemRequest(EntityRef procedureStepRef)
+        public GetProcedurePlanForProtocollingWorklistItemRequest(EntityRef orderRef)
         {
-            ProcedureStepRef = procedureStepRef;
+            this.OrderRef = orderRef;
         }
 
         [DataMember]
-        public EntityRef ProcedureStepRef;
+        public EntityRef OrderRef;
     }
 }
