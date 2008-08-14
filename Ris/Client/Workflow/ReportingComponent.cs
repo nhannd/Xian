@@ -543,7 +543,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				if (!Equals(value, _supervisor))
 				{
-					_supervisor = value;
+					SetSupervisor(value);
 					NotifyPropertyChanged("Supervisor");
 				}
 			}
