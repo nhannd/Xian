@@ -266,6 +266,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 			CollectionUtils.ForEach(duplicate.TelephoneNumbers,
 				delegate(TelephoneNumber p) { original.TelephoneNumbers.Add((TelephoneNumber)p.Clone()); });
 
+			if (duplicate.IsDefaultContactPoint)
+				original.IsDefaultContactPoint = true;
+
 			PersistenceContext.SynchState();
 
 			// remove the duplicate contact point

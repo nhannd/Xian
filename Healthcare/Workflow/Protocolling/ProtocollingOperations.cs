@@ -185,12 +185,16 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 				if (step.IsTerminated)
 					return false;
 
-				// can only cancel scheduled approval steps
-				if (step.State == ActivityStatus.SC && step.Protocol.Status != ProtocolStatus.AA)
+				// can only cancel scheduled pending and approval steps
+				if (step.State == ActivityStatus.SC && 
+					step.Protocol.Status != ProtocolStatus.AA &&
+					step.Protocol.Status != ProtocolStatus.PN)
 					return false;
 
-				// no need to cancel unassigned approval steps
-				if (step.State == ActivityStatus.SC && step.Protocol.Status == ProtocolStatus.AA && step.AssignedStaff == null)
+				// no need to cancel unassigned pending or approval steps
+				if (step.State == ActivityStatus.SC 
+					&& (step.Protocol.Status == ProtocolStatus.PN || step.Protocol.Status == ProtocolStatus.AA)
+					&& step.AssignedStaff == null)
 					return false;
 
 				// can
