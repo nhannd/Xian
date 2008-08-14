@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected static bool CurrentStaffCanSupervise()
 		{
-			string filters = ReportingSettings.Default.SupervisorLookupStaffTypeFilters;
+			string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
 			List<string> staffTypes = string.IsNullOrEmpty(filters)
 										? new List<string>()
 										: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); });

@@ -49,9 +49,9 @@ namespace ClearCanvas.Ris.Client.Workflow {
             "field")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PRAD")]
-        public string SupervisorLookupStaffTypeFilters {
+        public string SupervisorStaffTypeFilters {
             get {
-                return ((string)(this["SupervisorLookupStaffTypeFilters"]));
+                return ((string)(this["SupervisorStaffTypeFilters"]));
             }
         }
         
