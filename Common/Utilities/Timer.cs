@@ -164,7 +164,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Implementation of the <see cref="IDisposable"/> pattern.
 		/// </summary>
-		public void  Dispose()
+		public void Dispose()
 		{
 			try
 			{
@@ -178,6 +178,14 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		#endregion
+
+		private void OnElapsed(object nothing)
+		{
+			if (!Enabled)
+				return;
+
+			_elapsedDelegate(_stateObject);
+		}
 
 		private void RunThread(object nothing)
 		{
@@ -193,7 +201,7 @@ namespace ClearCanvas.Common.Utilities
 					if (_state == State.Stopping)
 						break;
 
-					_synchronizationContext.Post(delegate{ _elapsedDelegate(_stateObject); }, null);
+					_synchronizationContext.Post(OnElapsed, null);
 				}
 
 				_state = State.Stopped;

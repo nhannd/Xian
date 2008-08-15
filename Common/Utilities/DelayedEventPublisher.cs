@@ -82,7 +82,7 @@ namespace ClearCanvas.Common.Utilities
 
 		private void OnTimer(object nothing)
 		{
-			if (!_timer.Enabled)
+			if (_timer == null || !_timer.Enabled)
 				return;
 
 			if (Platform.Time.Subtract(_lastPublishTime).TotalMilliseconds >= _timeoutMilliseconds)
