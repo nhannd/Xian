@@ -169,22 +169,4 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return true;
 		}
 	}
-
-	//[MenuAction("apply", "folderexplorer-items-contextmenu/XXXXX", "Apply")]
-	//[ButtonAction("apply", "folderexplorer-items-toolbar/XXXXX", "Apply")]
-	//[IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
-	//[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	//[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
-	//public class ReviseProtocolTool : ProtocolWorkflowItemTool
-	//{
-	//    public ReviseProtocolTool()
-	//        : base("ReviseOrderProtocol")
-	//    {
-	//    }
-
-	//    protected override bool Execute(ReportingWorklistItem item)
-	//    {
-	//        return true;
-	//    }
-	//}
 }

@@ -35,10 +35,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -46,11 +45,11 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order", "NewOrder")]
     [ButtonAction("neworder", "patientsearch-items-toolbar/New Order", "NewOrder")]
     [MenuAction("neworder", "patientsearch-items-contextmenu/New Order", "NewOrder")]
-	[IconSet("neworder", IconScheme.Colour, "NewOrderSmall.png", "NewOrderMedium.png", "NewOrderLarge.png")]
+    [IconSet("neworder", IconScheme.Colour, "NewOrderSmall.png", "NewOrderMedium.png", "NewOrderLarge.png")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
-	[ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
+    [ActionPermission("neworder", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Create)]
 
-	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class NewOrderTool : Tool<IToolContext>
@@ -131,24 +130,20 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-            	OrderEditorComponent component = new OrderEditorComponent(patientRef, profileRef);
+                OrderEditorComponent component = new OrderEditorComponent(patientRef, profileRef);
                 IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                     desktopWindow,
                     component,
                     title);
 
-				workspace.Closed += delegate
-					{
-						if (component.ExitCode == ApplicationComponentExitCode.Accepted)
-						{
-							if (this.Context is IRegistrationWorkflowItemToolContext)
-							{
-								IRegistrationWorkflowItemToolContext context = ((IRegistrationWorkflowItemToolContext)this.ContextBase);
-								context.InvalidateFolders((typeof(Folders.Registration.ScheduledFolder)));
-							}
-						}
-					};
-			}
+                workspace.Closed += delegate
+                    {
+                        if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+                        {
+                            DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
+                        }
+                    };
+            }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, desktopWindow);

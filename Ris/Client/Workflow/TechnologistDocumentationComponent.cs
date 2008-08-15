@@ -31,20 +31,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
-using System.Security.Permissions;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System.Threading;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -184,9 +182,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         private bool _completeEnabled;
 
-        private event EventHandler _documentCompleted;
-        private event EventHandler _documentSaved;
-
         #endregion
 
         public TechnologistDocumentationComponent(ModalityWorklistItem item)
@@ -203,8 +198,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
             // create staff lookup handler, using filters provided by application configuration
         	string filters = TechnologistDocumentationComponentSettings.Default.RadiologistStaffTypeFilters;
-			string[] staffTypes = string.IsNullOrEmpty(filters) ? new string[] { } :
-				CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+            string[] staffTypes = string.IsNullOrEmpty(filters) ? new string[] { } :
+                CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
  
             _radiologistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
@@ -273,13 +268,18 @@ namespace ClearCanvas.Ris.Client.Workflow
             }
         }
 
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
         public void SaveDocumentation()
         {
             try
             {
                 if (Save(false))
-                    EventsHelper.Fire(_documentSaved, this, EventArgs.Empty);
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.Technologist.InProgressTechnologistWorkflowFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Technologist.UndocumentedTechnologistWorkflowFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CancelledTechnologistWorkflowFolder));
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
             }
             catch (Exception e)
             {
@@ -289,23 +289,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public bool SaveEnabled
         {
-			get { return true; }
+            get { return true; }
         }
 
-        public event EventHandler DocumentSaved
-        {
-            add { _documentSaved += value; }
-            remove { _documentSaved -= value; }
-        }
-
-		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept)]
-		public void CompleteDocumentation()
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept)]
+        public void CompleteDocumentation()
         {
             try
             {
                 // validate first
                 if (Save(true))
-                    EventsHelper.Fire(_documentCompleted, this, EventArgs.Empty);
+                {
+                    DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CancelledTechnologistWorkflowFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CompletedTechnologistWorkflowFolder));
+                    this.Exit(ApplicationComponentExitCode.Accepted);
+                }
             }
             catch (Exception e)
             {
@@ -318,18 +316,12 @@ namespace ClearCanvas.Ris.Client.Workflow
             get { return _completeEnabled; }
         }
 
-    	public bool CompleteVisible
-    	{
-    		get
-    		{
-				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept);
-    		}
-    	}
-
-        public event EventHandler DocumentCompleted
+        public bool CompleteVisible
         {
-            add { _documentCompleted += value; }
-            remove { _documentCompleted -= value; }
+            get
+            {
+                return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept);
+            }
         }
 
         #endregion
@@ -346,18 +338,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (checkedMpsRefs.Count > 0)
                 {
-					DateTime? startTime = Platform.Time;
-					if (DowntimeRecovery.InDowntimeRecoveryMode)
-					{
-						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
-							return;
-					}
+                    DateTime? startTime = Platform.Time;
+                    if (DowntimeRecovery.InDowntimeRecoveryMode)
+                    {
+                        if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Start Time", false, ref startTime))
+                            return;
+                    }
 
                     Platform.GetService<IModalityWorkflowService>(
                         delegate(IModalityWorkflowService service)
                         {
                             StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
-                        	request.StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null;
+                            request.StartTime = DowntimeRecovery.InDowntimeRecoveryMode ? startTime : null;
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
                             RefreshProcedurePlanSummary(response.ProcedurePlan);
@@ -383,19 +375,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 if (checkedMpsRefs.Count > 0)
                 {
-                	DateTime? discontinueTime = Platform.Time;
-					if (DowntimeRecovery.InDowntimeRecoveryMode)
-					{
-						if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
-							return;
-					}
+                    DateTime? discontinueTime = Platform.Time;
+                    if (DowntimeRecovery.InDowntimeRecoveryMode)
+                    {
+                        if (!DateTimeEntryComponent.PromptForTime(this.Host.DesktopWindow, "Cancel Time", false, ref discontinueTime))
+                            return;
+                    }
 
-					Platform.GetService<IModalityWorkflowService>(
+                    Platform.GetService<IModalityWorkflowService>(
                         delegate(IModalityWorkflowService service)
                         {
                             DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
-							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
-							DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
+                            request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? discontinueTime : null;
+                            DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
                             RefreshProcedurePlanSummary(response.ProcedurePlan);
                             UpdateActionEnablement();

@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				});
 
 			this.Context.InvalidateFolders(typeof(Folders.Registration.RejectedProtocolFolder));
+			this.Context.InvalidateFolders(typeof(Folders.Registration.PendingProtocolFolder));
 
 			return true;
 		}

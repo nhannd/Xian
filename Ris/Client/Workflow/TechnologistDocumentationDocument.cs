@@ -30,10 +30,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -59,22 +58,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public override IApplicationComponent GetComponent()
         {
-            TechnologistDocumentationComponent component = new TechnologistDocumentationComponent(_item);
-
-            component.DocumentSaved += DocumentSaved;
-            component.DocumentCompleted += DocumentCompleted;
-
-            return component;
-        }
-
-        private void DocumentSaved(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void DocumentCompleted(object sender, EventArgs e)
-        {
-            this.Close();
+        	return new TechnologistDocumentationComponent(_item);
         }
     }
 }

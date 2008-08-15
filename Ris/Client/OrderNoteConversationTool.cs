@@ -151,6 +151,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			// invalidate the sent items folder in case any notes were posted
 			this.Context.InvalidateFolders(typeof(SentItemsFolder));
+			this.Context.InvalidateFolders(typeof(PersonalInboxFolder));
+			this.Context.InvalidateFolders(typeof(GroupInboxFolder));
 
 			base.OnDialogClosed(exitCode);
 		}

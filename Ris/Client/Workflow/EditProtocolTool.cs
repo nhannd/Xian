@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -54,6 +55,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// open the report editor
 			ProtocollingComponentDocument protocollingComponentDocument = new ProtocollingComponentDocument(item, GetMode(item), this.Context);
 			protocollingComponentDocument.Open();
+
+			Type selectedFolderType = this.Context.SelectedFolder.GetType();
+			protocollingComponentDocument.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 
 			return true;
 		}

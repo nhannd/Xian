@@ -35,7 +35,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -43,9 +42,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Modify Order", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Modify Order", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "ModifyOrderSmall.png", "ModifyOrderMedium.png", "ModifyOrderLarge.png")]
+    [IconSet("apply", IconScheme.Colour, "ModifyOrderSmall.png", "ModifyOrderMedium.png", "ModifyOrderLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Modify)]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Modify)]
 
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
@@ -95,23 +94,23 @@ namespace ClearCanvas.Ris.Client.Workflow
             string title = string.Format("Modify Order - {0} {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
             try
             {
-				OrderEditorComponent component = new OrderEditorComponent(
-					item.PatientRef, 
-					item.PatientProfileRef, 
-					item.OrderRef, 
-					OrderEditorComponent.Mode.ModifyOrder);
+                OrderEditorComponent component = new OrderEditorComponent(
+                    item.PatientRef, 
+                    item.PatientProfileRef, 
+                    item.OrderRef, 
+                    OrderEditorComponent.Mode.ModifyOrder);
 
-				IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
-					this.Context.DesktopWindow,
-					component,
-					title);
+                IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
+                    this.Context.DesktopWindow,
+                    component,
+                    title);
 
-				workspace.Closed += delegate
-					{
-						if (component.ExitCode == ApplicationComponentExitCode.Accepted)
-							this.Context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
-					};
-			}
+                workspace.Closed += delegate
+                    {
+                        if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+                            DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
+                    };
+            }
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Context.DesktopWindow);

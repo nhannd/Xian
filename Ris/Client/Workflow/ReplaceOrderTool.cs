@@ -30,25 +30,23 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "ReplaceOrderSmall.png", "ReplaceOrderMedium.png", "ReplaceOrderLarge.png")]
+    [IconSet("apply", IconScheme.Colour, "ReplaceOrderSmall.png", "ReplaceOrderMedium.png", "ReplaceOrderLarge.png")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
 
-	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class ReplaceOrderTool : Tool<IWorkflowItemToolContext>
@@ -76,25 +74,25 @@ namespace ClearCanvas.Ris.Client.Workflow
             try
             {
                 WorklistItemSummaryBase item = (WorklistItemSummaryBase)this.Context.Selection.Item;
-            	OrderEditorComponent component = new OrderEditorComponent(
-					item.PatientRef, 
-					item.PatientProfileRef, 
-					item.OrderRef,
-					OrderEditorComponent.Mode.ReplaceOrder);
+                OrderEditorComponent component = new OrderEditorComponent(
+                    item.PatientRef, 
+                    item.PatientProfileRef, 
+                    item.OrderRef,
+                    OrderEditorComponent.Mode.ReplaceOrder);
 
-				IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
+                IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
                     this.Context.DesktopWindow,
                     component,
                     string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
 
-				workspace.Closed += delegate
-					{
-						if (component.ExitCode == ApplicationComponentExitCode.Accepted)
-						{
-							this.Context.InvalidateFolders(typeof(Folders.Registration.ScheduledFolder));
-							this.Context.InvalidateFolders(typeof(Folders.Registration.CancelledFolder));
-						}
-					};
+                workspace.Closed += delegate
+                    {
+                        if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+                        {
+                            DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
+                            DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
+                        }
+                    };
             }
             catch (Exception e)
             {

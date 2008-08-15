@@ -118,6 +118,10 @@ namespace ClearCanvas.Ris.Client
 				bool success = Execute(item);
 				if (success)
 				{
+					// This invalidates the selected folder so that any updates effected by the tools Execute method are reflected.
+					// Additionally, if the Execute method opens an ApplicationComponent, updates effected by the component's Start method
+					// are reflected.  Changes effected by an ApplicationComponent after the Start method are not reflected in the invalidated
+					// folder.  In this case, the selected folder should be invalidated again when the component closes.
 					this.Context.InvalidateSelectedFolder();
 					return true;
 				}

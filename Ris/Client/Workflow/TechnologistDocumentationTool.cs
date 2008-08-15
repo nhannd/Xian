@@ -35,15 +35,14 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Open Documentation", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Open Documentation", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "TechnologistOpenDocumentationSmall.png", "TechnologistOpenDocumentationMedium.png", "TechnologistOpenDocumentationLarge.png")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
+    [IconSet("apply", IconScheme.Colour, "TechnologistOpenDocumentationSmall.png", "TechnologistOpenDocumentationMedium.png", "TechnologistOpenDocumentationLarge.png")]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Create)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class TechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
@@ -52,15 +51,15 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-			this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
+            this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
         }
 
         public bool Enabled
         {
             get
             {
-            	return this.Context.SelectedItems.Count == 1
-            	       && CollectionUtils.FirstElement(this.Context.SelectedItems).OrderRef != null;
+                return this.Context.SelectedItems.Count == 1
+                       && CollectionUtils.FirstElement(this.Context.SelectedItems).OrderRef != null;
             }
         }
 
@@ -83,6 +82,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                     {
                         Document doc = new TechnologistDocumentationDocument(item, this.Context.DesktopWindow);
                         doc.Open();
+
+                        Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
+                        doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
                     }
                     else
                     {

@@ -111,6 +111,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				ReportDocument doc = new ReportDocument(item, this.Context);
 				doc.Open();
 
+				// Need to re-invalidate folders that open a report document, since cancelling the report
+				// can re-insert items into the same folder.
+				Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
+				doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
+
 				// open the images
 				if (ViewImagesHelper.IsSupported)
 					ViewImagesHelper.OpenStudy(item.AccessionNumber);
