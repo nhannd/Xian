@@ -87,6 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Send for Review", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[IconSet("apply", IconScheme.Colour, "Icons.SubmitForReviewSmall.png", "Icons.SubmitForReviewMedium.png", "Icons.SubmitForReviewLarge.png")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	public class CompleteInterpretationForVerificationTool : ReportingWorkflowItemTool

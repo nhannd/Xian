@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Reject Protocol", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Reject Protocol", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.CancelReportSmall.png", "Icons.CancelReportMedium.png", "Icons.CancelReportLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.RejectProtocolSmall.png", "Icons.RejectProtocolMedium.png", "Icons.RejectProtocolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	public class RejectProtocolTool : ProtocolWorkflowItemTool
@@ -91,6 +91,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Submit for Review", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Submit for Review", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.SubmitForReviewSmall.png", "Icons.SubmitForReviewMedium.png", "Icons.SubmitForReviewLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
