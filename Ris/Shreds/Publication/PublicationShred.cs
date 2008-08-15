@@ -51,8 +51,8 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 			try
 			{
-				_publisher.Start();
 				_isStarted = true;
+				_publisher.Start();
 
 				Platform.Log(LogLevel.Info, SR.ServiceStartedSuccessfully);
 			}
