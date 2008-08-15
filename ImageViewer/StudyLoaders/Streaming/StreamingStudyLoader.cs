@@ -5,10 +5,10 @@ using System.IO.Compression;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
-using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
 		{
-			HeaderRetrievalParameters headerParams = new HeaderRetrievalParameters();
+			HeaderStreamingParameters headerParams = new HeaderStreamingParameters();
 			headerParams.StudyInstanceUID = studyLoaderArgs.StudyInstanceUid;
 			headerParams.ServerAETitle = _ae.AETitle;
 			headerParams.ReferenceID = Guid.NewGuid().ToString();
@@ -78,9 +78,18 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				"BasicHttpBinding_IHeaderRetrievalService",
 				endpoint);
 
-			Stream stream = client.GetStudyHeader(DicomServerConfigurationHelper.AETitle, headerParams);
-
-			return DecompressHeaderStreamToXml(stream);
+			try
+			{
+				client.Open();
+				Stream stream = client.GetStudyHeader(DicomServerConfigurationHelper.AETitle, headerParams);
+				client.Close();
+				return DecompressHeaderStreamToXml(stream);
+			}
+			catch(Exception)
+			{
+				client.Abort();
+				throw;
+			}
 		}
 
 		private static XmlDocument DecompressHeaderStreamToXml(Stream stream)

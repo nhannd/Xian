@@ -1,10 +1,10 @@
 using System.IO;
 using System.ServiceModel;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	class HeaderStreamingServiceClient : ClientBase<IHeaderRetrievalService>, IHeaderRetrievalService
+	class HeaderStreamingServiceClient : ClientBase<IHeaderStreamingService>, IHeaderStreamingService
 	{
 		public HeaderStreamingServiceClient()
 		{
@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			
 		}
 
-		public Stream GetStudyHeader(string callingAETitle, HeaderRetrievalParameters parameters)
+		public Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters)
 		{
 			return base.Channel.GetStudyHeader(callingAETitle, parameters);
 		}
