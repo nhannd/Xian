@@ -1,71 +1,82 @@
 using System;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {
-    [ExtensionOf(typeof(ShredExtensionPoint))]
-    public class PublicationShred : Shred
-    {
-        private readonly IPublisher _publisher;
+	[ExtensionOf(typeof(ShredExtensionPoint))]
+	public class PublicationShred : Shred
+	{
+		private readonly IPublisher _publisher;
+		private bool _isStarted;
 
-        private readonly EventWaitHandle _stopSignal;
+		public PublicationShred()
+		{
+			_publisher = new Publisher();
+		}
 
-        public PublicationShred()
-        {
-            _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
+		#region Shred overrides
 
-            _publisher = new Publisher();
-        }
+		public override void Start()
+		{
+			if (!_isStarted)
+			{
+				StartUp();
+			}
+		}
 
-        public override void Start()
-        {
-            _stopSignal.Reset();
+		public override void Stop()
+		{
+			if (_isStarted)
+			{
+				ShutDown();
+			}
+		}
 
-            Thread publisherThread = new Thread(_publisher.Start);
-            try
-            {
-                publisherThread.Start();
-                
-                Platform.Log(LogLevel.Info, SR.ServiceStartedSuccessfully);
-                Console.WriteLine(SR.ServiceStartedSuccessfully);
-            }
-            catch(Exception e)
-            {
-                Platform.Log(LogLevel.Fatal, e);
-                Platform.Log(LogLevel.Info, SR.ServiceFailedToStart);
-            }
-            _stopSignal.WaitOne();
-            publisherThread.Join();
-        }
+		public override string GetDisplayName()
+		{
+			return SR.Publication;
+		}
 
-        public override void Stop()
-        {
-            try
-            {
-                _publisher.RequestStop();
-                _stopSignal.Set();
+		public override string GetDescription()
+		{
+			return SR.PublicationDescription;
+		}
 
-                Platform.Log(LogLevel.Info, SR.ServiceStoppedSuccessfully);
-                Console.WriteLine(SR.ServiceStoppedSuccessfully);
-            }
-            catch(Exception e)
-            {
-                Platform.Log(LogLevel.Fatal, e);
-                Platform.Log(LogLevel.Info, SR.ServiceFailedToStop);
-            }
-        }
+		#endregion
 
-        public override string GetDisplayName()
-        {
-            return SR.Publication;
-        }
+		private void StartUp()
+		{
+			Platform.Log(LogLevel.Info, SR.ServiceStarting);
 
-        public override string GetDescription()
-        {
-            return SR.PublicationDescription;
-        }
+			try
+			{
+				_publisher.Start();
+				_isStarted = true;
 
-    }
+				Platform.Log(LogLevel.Info, SR.ServiceStartedSuccessfully);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, SR.ServiceFailedToStart);
+			}
+		}
+
+		private void ShutDown()
+		{
+			Platform.Log(LogLevel.Info, SR.ServiceStopping);
+
+			try
+			{
+				_publisher.RequestStop();
+				_isStarted = false;
+
+				Platform.Log(LogLevel.Info, SR.ServiceStoppedSuccessfully);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, SR.ServiceFailedToStop);
+			}
+		}
+	}
 }

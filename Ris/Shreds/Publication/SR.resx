@@ -132,7 +132,13 @@
   <data name="ServiceStartedSuccessfully" xml:space="preserve">
     <value>The Publication Processor service has started successfully.</value>
   </data>
+  <data name="ServiceStarting" xml:space="preserve">
+    <value>Starting Publication Shred</value>
+  </data>
   <data name="ServiceStoppedSuccessfully" xml:space="preserve">
     <value>The Publication Processor service has stopped successfully.</value>
+  </data>
+  <data name="ServiceStopping" xml:space="preserve">
+    <value>Stopping Publication Shred</value>
   </data>
 </root>
