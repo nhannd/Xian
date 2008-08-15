@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._type.Margin = new System.Windows.Forms.Padding(2);
 			this._type.Name = "_type";
 			this._type.Size = new System.Drawing.Size(150, 41);
-			this._type.TabIndex = 10;
+			this._type.TabIndex = 0;
 			this._type.Value = null;
 			// 
 			// _acceptButton
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(401, 229);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 12;
+			this._cancelButton.TabIndex = 10;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._country.Margin = new System.Windows.Forms.Padding(2);
 			this._country.Name = "_country";
 			this._country.Size = new System.Drawing.Size(151, 41);
-			this._country.TabIndex = 19;
+			this._country.TabIndex = 6;
 			this._country.Value = null;
 			// 
 			// _street
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._street.Name = "_street";
 			this._street.PasswordChar = '\0';
 			this._street.Size = new System.Drawing.Size(364, 41);
-			this._street.TabIndex = 14;
+			this._street.TabIndex = 1;
 			this._street.ToolTip = null;
 			this._street.Value = null;
 			// 
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._validUntil.Name = "_validUntil";
 			this._validUntil.Nullable = true;
 			this._validUntil.Size = new System.Drawing.Size(151, 41);
-			this._validUntil.TabIndex = 13;
+			this._validUntil.TabIndex = 8;
 			this._validUntil.Value = new System.DateTime(2006, 7, 26, 16, 37, 6, 765);
 			// 
 			// _city
@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._city.Name = "_city";
 			this._city.PasswordChar = '\0';
 			this._city.Size = new System.Drawing.Size(150, 41);
-			this._city.TabIndex = 16;
+			this._city.TabIndex = 3;
 			this._city.ToolTip = null;
 			this._city.Value = null;
 			// 
@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._validFrom.Name = "_validFrom";
 			this._validFrom.Nullable = true;
 			this._validFrom.Size = new System.Drawing.Size(150, 41);
-			this._validFrom.TabIndex = 11;
+			this._validFrom.TabIndex = 7;
 			this._validFrom.Value = new System.DateTime(2006, 7, 26, 16, 37, 8, 953);
 			// 
 			// _postalCode
@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._postalCode.Name = "_postalCode";
 			this._postalCode.PasswordChar = '\0';
 			this._postalCode.Size = new System.Drawing.Size(150, 41);
-			this._postalCode.TabIndex = 18;
+			this._postalCode.TabIndex = 5;
 			this._postalCode.ToolTip = null;
 			this._postalCode.Value = null;
 			// 
@@ -193,7 +193,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._province.Margin = new System.Windows.Forms.Padding(2);
 			this._province.Name = "_province";
 			this._province.Size = new System.Drawing.Size(150, 41);
-			this._province.TabIndex = 17;
+			this._province.TabIndex = 4;
 			this._province.Value = null;
 			// 
 			// _unit
@@ -205,7 +205,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._unit.Name = "_unit";
 			this._unit.PasswordChar = '\0';
 			this._unit.Size = new System.Drawing.Size(89, 41);
-			this._unit.TabIndex = 15;
+			this._unit.TabIndex = 2;
 			this._unit.ToolTip = null;
 			this._unit.Value = null;
 			// 

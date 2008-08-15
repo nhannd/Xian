@@ -230,7 +230,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderingPractitionerContactPoint.Margin = new System.Windows.Forms.Padding(2);
 			this._orderingPractitionerContactPoint.Name = "_orderingPractitionerContactPoint";
 			this._orderingPractitionerContactPoint.Size = new System.Drawing.Size(491, 46);
-			this._orderingPractitionerContactPoint.TabIndex = 5;
+			this._orderingPractitionerContactPoint.TabIndex = 4;
 			this._orderingPractitionerContactPoint.Value = null;
 			// 
 			// tableLayoutPanel4
@@ -250,7 +250,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel4.RowCount = 1;
 			this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel4.Size = new System.Drawing.Size(495, 45);
-			this.tableLayoutPanel4.TabIndex = 7;
+			this.tableLayoutPanel4.TabIndex = 6;
 			// 
 			// _visit
 			// 
@@ -289,7 +289,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(489, 325);
-			this.tabControl1.TabIndex = 10;
+			this.tabControl1.TabIndex = 9;
 			// 
 			// tabPage1
 			// 
@@ -433,7 +433,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._schedulingRequestTime.ShowDate = false;
 			this._schedulingRequestTime.ShowTime = true;
 			this._schedulingRequestTime.Size = new System.Drawing.Size(244, 40);
-			this._schedulingRequestTime.TabIndex = 9;
+			this._schedulingRequestTime.TabIndex = 8;
 			this._schedulingRequestTime.Value = null;
 			// 
 			// _diagnosticService
@@ -447,7 +447,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
 			this._diagnosticService.Name = "_diagnosticService";
 			this._diagnosticService.Size = new System.Drawing.Size(491, 41);
-			this._diagnosticService.TabIndex = 2;
+			this._diagnosticService.TabIndex = 1;
 			this._diagnosticService.Value = null;
 			// 
 			// _schedulingRequestDate
@@ -463,7 +463,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._schedulingRequestDate.Name = "_schedulingRequestDate";
 			this._schedulingRequestDate.Nullable = true;
 			this._schedulingRequestDate.Size = new System.Drawing.Size(243, 40);
-			this._schedulingRequestDate.TabIndex = 8;
+			this._schedulingRequestDate.TabIndex = 7;
 			this._schedulingRequestDate.Value = null;
 			// 
 			// _priority
@@ -479,7 +479,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._priority.Margin = new System.Windows.Forms.Padding(2);
 			this._priority.Name = "_priority";
 			this._priority.Size = new System.Drawing.Size(243, 41);
-			this._priority.TabIndex = 3;
+			this._priority.TabIndex = 2;
 			this._priority.Value = null;
 			// 
 			// _orderingPractitioner
@@ -492,7 +492,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
 			this._orderingPractitioner.Name = "_orderingPractitioner";
 			this._orderingPractitioner.Size = new System.Drawing.Size(244, 41);
-			this._orderingPractitioner.TabIndex = 4;
+			this._orderingPractitioner.TabIndex = 3;
 			this._orderingPractitioner.Value = null;
 			// 
 			// _indication
@@ -508,7 +508,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._indication.Name = "_indication";
 			this._indication.PasswordChar = '\0';
 			this._indication.Size = new System.Drawing.Size(491, 40);
-			this._indication.TabIndex = 6;
+			this._indication.TabIndex = 5;
 			this._indication.ToolTip = null;
 			this._indication.Value = null;
 			// 
@@ -549,7 +549,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._downtimeAccession.Name = "_downtimeAccession";
 			this._downtimeAccession.PasswordChar = '\0';
 			this._downtimeAccession.Size = new System.Drawing.Size(242, 39);
-			this._downtimeAccession.TabIndex = 1;
+			this._downtimeAccession.TabIndex = 0;
 			this._downtimeAccession.ToolTip = null;
 			this._downtimeAccession.Value = null;
 			// 

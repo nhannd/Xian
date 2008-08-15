@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._phoneType.Margin = new System.Windows.Forms.Padding(2);
 			this._phoneType.Name = "_phoneType";
 			this._phoneType.Size = new System.Drawing.Size(95, 41);
-			this._phoneType.TabIndex = 10;
+			this._phoneType.TabIndex = 0;
 			this._phoneType.Value = null;
 			// 
 			// _cancelButton
@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(219, 234);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 17;
+			this._cancelButton.TabIndex = 8;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._acceptButton.Location = new System.Drawing.Point(140, 234);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 16;
+			this._acceptButton.TabIndex = 7;
 			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._countryCode.Name = "_countryCode";
 			this._countryCode.PasswordChar = '\0';
 			this._countryCode.Size = new System.Drawing.Size(75, 43);
-			this._countryCode.TabIndex = 12;
+			this._countryCode.TabIndex = 1;
 			this._countryCode.ToolTip = null;
 			this._countryCode.Value = null;
 			// 
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._validFrom.Name = "_validFrom";
 			this._validFrom.Nullable = true;
 			this._validFrom.Size = new System.Drawing.Size(152, 41);
-			this._validFrom.TabIndex = 9;
+			this._validFrom.TabIndex = 5;
 			this._validFrom.Value = null;
 			// 
 			// _number
@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._number.Name = "_number";
 			this._number.PasswordChar = '\0';
 			this._number.Size = new System.Drawing.Size(95, 41);
-			this._number.TabIndex = 14;
+			this._number.TabIndex = 3;
 			this._number.ToolTip = null;
 			this._number.Value = null;
 			// 
@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._extension.Name = "_extension";
 			this._extension.PasswordChar = '\0';
 			this._extension.Size = new System.Drawing.Size(77, 43);
-			this._extension.TabIndex = 15;
+			this._extension.TabIndex = 4;
 			this._extension.ToolTip = null;
 			this._extension.Value = null;
 			// 
@@ -166,7 +166,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._areaCode.Name = "_areaCode";
 			this._areaCode.PasswordChar = '\0';
 			this._areaCode.Size = new System.Drawing.Size(56, 43);
-			this._areaCode.TabIndex = 13;
+			this._areaCode.TabIndex = 2;
 			this._areaCode.ToolTip = null;
 			this._areaCode.Value = null;
 			// 
@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._validUntil.Name = "_validUntil";
 			this._validUntil.Nullable = true;
 			this._validUntil.Size = new System.Drawing.Size(145, 41);
-			this._validUntil.TabIndex = 11;
+			this._validUntil.TabIndex = 6;
 			this._validUntil.Value = null;
 			// 
 			// PhoneNumberEditorControl

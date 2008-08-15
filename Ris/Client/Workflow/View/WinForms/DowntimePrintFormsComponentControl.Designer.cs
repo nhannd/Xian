@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._printButton.Location = new System.Drawing.Point(183, 20);
 			this._printButton.Name = "_printButton";
 			this._printButton.Size = new System.Drawing.Size(75, 23);
-			this._printButton.TabIndex = 3;
+			this._printButton.TabIndex = 2;
 			this._printButton.Text = "Print";
 			this._printButton.UseVisualStyleBackColor = true;
 			this._printButton.Click += new System.EventHandler(this._printButton_Click);
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             0});
 			this._numberOfForms.Name = "_numberOfForms";
 			this._numberOfForms.Size = new System.Drawing.Size(67, 20);
-			this._numberOfForms.TabIndex = 5;
+			this._numberOfForms.TabIndex = 1;
 			this._numberOfForms.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			this._numberOfForms.Value = new decimal(new int[] {
             1,
@@ -78,14 +78,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._formPreviewPanel.Location = new System.Drawing.Point(3, 65);
 			this._formPreviewPanel.Name = "_formPreviewPanel";
 			this._formPreviewPanel.Size = new System.Drawing.Size(774, 663);
-			this._formPreviewPanel.TabIndex = 7;
+			this._formPreviewPanel.TabIndex = 1;
 			// 
 			// _cancelPrintingButton
 			// 
 			this._cancelPrintingButton.Location = new System.Drawing.Point(264, 20);
 			this._cancelPrintingButton.Name = "_cancelPrintingButton";
 			this._cancelPrintingButton.Size = new System.Drawing.Size(97, 23);
-			this._cancelPrintingButton.TabIndex = 4;
+			this._cancelPrintingButton.TabIndex = 3;
 			this._cancelPrintingButton.Text = "Cancel Printing";
 			this._cancelPrintingButton.UseVisualStyleBackColor = true;
 			this._cancelPrintingButton.Click += new System.EventHandler(this._cancelPrintingButton_Click);
@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.groupBox1.Location = new System.Drawing.Point(0, 4);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(777, 55);
-			this.groupBox1.TabIndex = 8;
+			this.groupBox1.TabIndex = 0;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Print downtime forms";
 			// 
@@ -122,13 +122,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusStrip.Location = new System.Drawing.Point(0, 731);
 			this._statusStrip.Name = "_statusStrip";
 			this._statusStrip.Size = new System.Drawing.Size(780, 22);
-			this._statusStrip.TabIndex = 9;
+			this._statusStrip.TabIndex = 2;
 			this._statusStrip.Text = "statusStrip1";
 			// 
 			// _statusText
 			// 
 			this._statusText.Name = "_statusText";
-			this._statusText.Size = new System.Drawing.Size(482, 17);
+			this._statusText.Size = new System.Drawing.Size(513, 17);
 			this._statusText.Spring = true;
 			this._statusText.Text = "Select number of forms to print";
 			this._statusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
