@@ -58,9 +58,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _direction.DataBindings.Add("Value", _component, "Direction", true, DataSourceUpdateMode.OnPropertyChanged);
             _directionChkBox.DataBindings.Add("Checked", _component, "DirectionChecked", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _peer.DataSource = _component.PeerChoices;
-            _peer.DataBindings.Add("Value", _component, "Peer", true, DataSourceUpdateMode.OnPropertyChanged);
-            _peerChkBox.DataBindings.Add("Checked", _component, "PeerChecked", true, DataSourceUpdateMode.OnPropertyChanged);
+			// Peer filter disabled permanently until proven usable again
+			//_peer.DataSource = _component.PeerChoices;
+			//_peer.DataBindings.Add("Value", _component, "Peer", true, DataSourceUpdateMode.OnPropertyChanged);
+			//_peerChkBox.DataBindings.Add("Checked", _component, "PeerChecked", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _type.DataSource = _component.TypeChoices;
             _type.DataBindings.Add("Value", _component, "Type", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -107,10 +108,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _direction.Enabled = _directionChkBox.Checked;
         }
 
-        private void _peerChkBox_CheckedChanged(object sender, EventArgs e)
-        {
-            _peer.Enabled = _peerChkBox.Checked;
-        }
+		// Peer filter disabled permanently until proven usable again
+		//private void _peerChkBox_CheckedChanged(object sender, EventArgs e)
+		//{
+		//    _peer.Enabled = _peerChkBox.Checked;
+		//}
 
         private void _typeChkBox_CheckedChanged(object sender, EventArgs e)
         {
