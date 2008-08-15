@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         GetPriorsResponse GetPriors(GetPriorsRequest request);
 
 		[OperationContract]
-    	FaxReportResponse FaxReport(FaxReportRequest request);
+    	MailFaxReportResponse MailFaxReport(MailFaxReportRequest request);
 
 		/// <summary>
 		/// Reassigning a step to another radiologist.

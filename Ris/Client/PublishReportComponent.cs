@@ -449,9 +449,9 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
-	public class FaxReportComponent : PublishReportComponent
+	public class MailFaxReportComponent : PublishReportComponent
 	{
-		public FaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
+		public MailFaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
 			: base(patientProfileRef, orderRef, procedureRef, reportRef)
 		{
 		}
@@ -461,19 +461,19 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
-					FaxReportRequest request = new FaxReportRequest(this.ReportRef);
+					MailFaxReportRequest request = new MailFaxReportRequest(this.ReportRef);
 					foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
 					{
 						if (checkable.IsChecked)
 						{
 							ResultRecipientDetail detail = checkable.Item;
-							request.Recipients.Add(new FaxRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
+							request.Recipients.Add(new MailFaxRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
 						}
 					}
 
 					if (request.Recipients.Count > 0)
 					{
-						service.FaxReport(request);
+						service.MailFaxReport(request);
 					}
 				});
 

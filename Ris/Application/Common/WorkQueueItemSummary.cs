@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public string User;
 
 		[DataMember]
-		public EnumValueInfo Type;
+		public string Type;
 
 		[DataMember]
 		public EnumValueInfo Status;

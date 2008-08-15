@@ -74,6 +74,7 @@
     <Compile Include="Alerts\LanguageAlert.cs" />
     <Compile Include="Alerts\NoteAlert.cs" />
     <Compile Include="Brokers\IWorklistItemBroker.cs" />
+    <Compile Include="Brokers\IWorkQueueItemBroker.cs" />
     <Compile Include="CannedText.cs" />
     <Compile Include="EmergencyWorklists.cs" />
     <Compile Include="GroupNotePosting.cs" />
@@ -273,9 +274,8 @@
     <Compile Include="WorklistTimeField.cs" />
     <Compile Include="WorklistTimePoint.cs" />
     <Compile Include="WorklistTimeRange.cs" />
-    <Compile Include="WorkQueue.cs" />
+    <Compile Include="WorkQueueItem.cs" />
     <Compile Include="WorkQueueStatus.cs" />
-    <Compile Include="WorkQueueType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

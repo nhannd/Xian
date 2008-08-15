@@ -44,40 +44,31 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		public WorkQueueSummaryTable()
 		{
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Creation Time",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnCreationTime,
 				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.CreationTime); }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Scheduled Time",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnScheduledTime,
 				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.ScheduledTime); }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Expiration Time",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnExpirationTime,
 				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.ExpirationTime); }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"User",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnUser,
 				delegate(WorkQueueItemSummary item) { return item.User; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Type",
-				delegate(WorkQueueItemSummary item) { return item.Type.Value; }));
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnType,
+				delegate(WorkQueueItemSummary item) { return item.Type; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Status",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnStatus,
 				delegate(WorkQueueItemSummary item) { return item.Status.Value; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Processed Time",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnProcessedTime,
 				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.ProcessedTime); }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, int>(
-				"Failure Count",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, int>(SR.ColumnFailureCount,
 				delegate(WorkQueueItemSummary item) { return item.FailureCount; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(
-				"Failure Description",
+			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnFailureDescription,
 				delegate(WorkQueueItemSummary item) { return item.FailureDescription; }));
 
 		}
@@ -103,8 +94,8 @@ namespace ClearCanvas.Ris.Client.Admin
 		private DateTime? _endTime;
 		private string _user;
 
-		private EnumValueInfo _type;
-		private readonly List<EnumValueInfo> _typeChoices = new List<EnumValueInfo>();
+		private string _type;
+		private readonly List<string> _typeChoices = new List<string>();
 
 		private EnumValueInfo _status;
 		private readonly List<EnumValueInfo> _statusChoices = new List<EnumValueInfo>();
@@ -119,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					{
 						GetWorkQueueFormDataResponse response = service.GetWorkQueueFormData(new GetWorkQueueFormDataRequest());
 						_typeChoices.AddRange(response.Types);
-						_typeChoices.Insert(0, _any);
+						_typeChoices.Insert(0, _any.Value);
 						_type = CollectionUtils.FirstElement(_typeChoices);
 						_statusChoices.AddRange(response.Statuses);
 						_statusChoices.Insert(0, _any);
@@ -151,13 +142,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
 		public string Type
 		{
-			get { return _type.Value; }
-			set { _type = EnumValueUtils.MapDisplayValue(_typeChoices, value); }
+			get { return _type; }
+			set { _type = value; }
 		}
 
 		public List<string> TypeChoices
 		{
-			get { return EnumValueUtils.GetDisplayValues(_typeChoices); }
+			get { return _typeChoices; }
 		}
 
 		public string Status
@@ -197,7 +188,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					request.StartTime = _startTime;
 					request.EndTime = _endTime;
 					request.User = _user;
-					request.Type = _type.Code == _any.Code ? null : _type;
+					request.Type = Equals(_type, _any.Value) ? null : _type;
 					request.Status = _status.Code == _any.Code ? null : _status;
 					listResponse = service.ListWorkQueueItems(request);
 				});

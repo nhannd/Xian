@@ -7,7 +7,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 	[DataContract]
 	public class GetWorkQueueFormDataResponse : DataContractBase
 	{
-		public GetWorkQueueFormDataResponse(List<EnumValueInfo> statuses, List<EnumValueInfo> types)
+		public GetWorkQueueFormDataResponse(List<EnumValueInfo> statuses, List<string> types)
 		{
 			this.Statuses = statuses;
 			this.Types = types;
@@ -17,6 +17,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		public List<EnumValueInfo> Statuses;
 
 		[DataMember]
-		public List<EnumValueInfo> Types;
+		public List<string> Types;
 	}
 }

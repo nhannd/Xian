@@ -80,8 +80,9 @@
     <RisFiles Include="$(FaxApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Services.dll" />
     <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
     <RisFiles Include="$(PublicationShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.dll" />
-    
-  </ItemGroup>
+    <RisFiles Include="$(PublicationShredDirectory)\MailFaxProcessor\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor.dll" />
+
+	</ItemGroup>
 
   <ItemGroup>
 	<ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />

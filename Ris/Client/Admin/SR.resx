@@ -147,6 +147,9 @@
   <data name="ColumnCreatedOn" xml:space="preserve">
     <value>Created On</value>
   </data>
+  <data name="ColumnCreationTime" xml:space="preserve">
+    <value>Creation Time</value>
+  </data>
   <data name="ColumnDegree" xml:space="preserve">
     <value>Degree</value>
   </data>
@@ -156,8 +159,17 @@
   <data name="ColumnDirection" xml:space="preserve">
     <value>Direction</value>
   </data>
+  <data name="ColumnExpirationTime" xml:space="preserve">
+    <value>Expiration Time</value>
+  </data>
   <data name="ColumnFacility" xml:space="preserve">
     <value>Facility</value>
+  </data>
+  <data name="ColumnFailureCount" xml:space="preserve">
+    <value>Failure Count</value>
+  </data>
+  <data name="ColumnFailureDescription" xml:space="preserve">
+    <value>Failure Description</value>
   </data>
   <data name="ColumnFamilyName" xml:space="preserve">
     <value>Family Name</value>
@@ -195,8 +207,14 @@
   <data name="ColumnPrefix" xml:space="preserve">
     <value>Prefix</value>
   </data>
+  <data name="ColumnProcessedTime" xml:space="preserve">
+    <value>Processed Time</value>
+  </data>
   <data name="ColumnRoom" xml:space="preserve">
     <value>Room</value>
+  </data>
+  <data name="ColumnScheduledTime" xml:space="preserve">
+    <value>Scheduled Time</value>
   </data>
   <data name="ColumnSeverity" xml:space="preserve">
     <value>Severity</value>
@@ -215,6 +233,9 @@
   </data>
   <data name="ColumnUpdatedOn" xml:space="preserve">
     <value>Updated On</value>
+  </data>
+  <data name="ColumnUser" xml:space="preserve">
+    <value>User</value>
   </data>
   <data name="ColumnUserId" xml:space="preserve">
     <value>User ID</value>

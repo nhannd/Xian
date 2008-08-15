@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		public string User;
 
 		[DataMember]
-		public EnumValueInfo Type;
+		public string Type;
 
 		[DataMember]
 		public EnumValueInfo Status;

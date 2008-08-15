@@ -411,17 +411,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        public FaxReportResponse FaxReport(FaxReportRequest request)
+		public MailFaxReportResponse MailFaxReport(MailFaxReportRequest request)
         {
-            foreach (FaxRecipientDetail detail in request.Recipients)
+            foreach (MailFaxRecipientDetail detail in request.Recipients)
             {
-                WorkQueue workQueue = new WorkQueue(WorkQueueType.FXR);
-                workQueue.ExtendedProperties.Add("ReportOID", request.ReportRef.ToString(false, false));
-                workQueue.ExtendedProperties.Add("ExternalPractitionerOID", detail.PractitionerRef.ToString(false, false));
-                workQueue.ExtendedProperties.Add("ExternalPractitionerContactPointOID", detail.ContactPointRef.ToString(false, false));
-                this.PersistenceContext.Lock(workQueue, DirtyState.New);
+				MailFaxWorkQueueItem.Schedule(
+					request.ReportRef,
+					detail.PractitionerRef,
+					detail.ContactPointRef,
+					this.PersistenceContext);
             }
-            return new FaxReportResponse();
+			return new MailFaxReportResponse();
         }
 
 		[UpdateOperation]

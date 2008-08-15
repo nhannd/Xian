@@ -6,7 +6,7 @@ namespace ClearCanvas.Ris.Application.Services
 {
 	public class WorkQueueAssembler
 	{
-		public WorkQueueItemSummary CreateWorkQueueItemSummary(WorkQueue workQueueItem, IPersistenceContext context)
+		public WorkQueueItemSummary CreateWorkQueueItemSummary(WorkQueueItem workQueueItem, IPersistenceContext context)
 		{
 			WorkQueueItemSummary summary = new WorkQueueItemSummary();
 
@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Services
 			summary.ScheduledTime = workQueueItem.ScheduledTime;
 			summary.ExpirationTime = workQueueItem.ExpirationTime;
 			summary.User = workQueueItem.User;
-			summary.Type = EnumUtils.GetEnumValueInfo(workQueueItem.Type, context);
+			summary.Type = workQueueItem.Type;
 			summary.Status = EnumUtils.GetEnumValueInfo(workQueueItem.Status, context);
 			summary.ProcessedTime = workQueueItem.ProcessedTime;
 			summary.FailureCount = workQueueItem.FailureCount;

@@ -22,7 +22,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		public GetWorkQueueFormDataResponse GetWorkQueueFormData(GetWorkQueueFormDataRequest request)
 		{
 			List<EnumValueInfo> statuses = EnumUtils.GetEnumValueList<WorkQueueStatusEnum>(this.PersistenceContext);
-			List<EnumValueInfo> types = EnumUtils.GetEnumValueList<WorkQueueTypeEnum>(this.PersistenceContext);
+
+			List<string> types = new List<string>(PersistenceContext.GetBroker<IWorkQueueItemBroker>().GetTypes());
 			return new GetWorkQueueFormDataResponse(statuses, types);
 		}
 
@@ -30,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.System.WorkQueue)]
 		public ListWorkQueueItemsResponse ListWorkQueueItems(ListWorkQueueItemsRequest request)
 		{
-			WorkQueueSearchCriteria criteria = new WorkQueueSearchCriteria();
+			WorkQueueItemSearchCriteria criteria = new WorkQueueItemSearchCriteria();
 			criteria.CreationTime.SortAsc(0);
 
 			if (request.Status != null)
@@ -40,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 
 			if (request.Type != null)
 			{
-				criteria.Type.EqualTo(EnumUtils.GetEnumValue<WorkQueueType>(request.Type));
+				criteria.Type.EqualTo(request.Type);
 			}
 
 			if (!string.IsNullOrEmpty(request.User))
@@ -63,9 +64,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 
 			WorkQueueAssembler assembler = new WorkQueueAssembler();
 			return new ListWorkQueueItemsResponse(
-				CollectionUtils.Map<WorkQueue, WorkQueueItemSummary>(
-					this.PersistenceContext.GetBroker<IWorkQueueBroker>().Find(criteria, request.Page),
-					delegate(WorkQueue item) { return assembler.CreateWorkQueueItemSummary(item, this.PersistenceContext); }));
+				CollectionUtils.Map<WorkQueueItem, WorkQueueItemSummary>(
+					this.PersistenceContext.GetBroker<IWorkQueueItemBroker>().Find(criteria, request.Page),
+					delegate(WorkQueueItem item) { return assembler.CreateWorkQueueItemSummary(item, this.PersistenceContext); }));
 		}
 
 		[UpdateOperation]
@@ -79,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.System.WorkQueue)]
 		public ResubmitWorkQueueItemResponse ResubmitWorkQueueItem(ResubmitWorkQueueItemRequest request)
 		{
-			WorkQueue item = this.PersistenceContext.Load<WorkQueue>(request.WorkQueueItemRef);
+			WorkQueueItem item = this.PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
 			item.Resubmit();
 			this.PersistenceContext.SynchState();
 			return new ResubmitWorkQueueItemResponse(new WorkQueueAssembler().CreateWorkQueueItemSummary(item, this.PersistenceContext));

@@ -91,14 +91,14 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
-	[ButtonAction("apply", "biography-reports-toolbar/Fax Report", "Apply")]
+	[ButtonAction("apply", "biography-reports-toolbar/Mail//Fax Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
-	public class BiographyFaxReportTool : BiographyPublishReportTool<FaxReportComponent>
+	public class BiographyMailFaxReportTool : BiographyPublishReportTool<MailFaxReportComponent>
 	{
-		public override FaxReportComponent GetComponent()
+		public override MailFaxReportComponent GetComponent()
 		{
-			return new FaxReportComponent(
+			return new MailFaxReportComponent(
 					this.Context.PatientProfileRef,
 					this.Context.OrderRef,
 					null,
