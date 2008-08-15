@@ -20,12 +20,17 @@
 		{
 
 			try
-         {
+			{
 				scaleWidth();
 
 				if(Ris)
 				{
 					data = JSML.parse(Ris.getTag("PostExamDetails")) || {};
+					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
+					if(readOnly)
+					{
+						Field.show($("readOnlyHeader"), readOnly);
+					}
 				}
 
 				// redirect if this data was captured by a page other than this page
@@ -302,6 +307,7 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
+	<div id="readOnlyHeader">Changes to this form will not be saved.</div>
 	<p class="sectionheading">Staff</p>
 	<div class="addDeleteButtons">
 		 <input type="button" value="Add" onclick="javascript: onAddStaff()" />

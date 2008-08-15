@@ -71,7 +71,13 @@
 					startTime = mpps.StartTime;
 					stopTime = mpps.EndTime;
 					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
-				}
+									
+					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
+					if(readOnly)
+					{
+						Field.show($("readOnlyHeader"), readOnly);
+					}
+}
 
 				// redirect if this data was captured by a page other than this page
 				// (data should be presented by the same version of the page that captured it)
@@ -143,6 +149,7 @@
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
+		<div id="readOnlyHeader">Changes to this form will not be saved.</div>
 		<p class="sectionheading">Exam Acquisition/Mpps</p>
 		<table id="acquisitionTable" width="100%">
 			<tr><td class="tableheading"></td></tr>

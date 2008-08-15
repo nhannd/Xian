@@ -6,6 +6,14 @@ body {
 	font-family: Arial;
 }
 
+div#readOnlyHeader {
+	border: thin solid red;
+	color: red;
+	font-size: 1.5em;
+	text-align: center;
+	width: 100%;
+}
+
 pre {
 	font-family: Arial;
 }
