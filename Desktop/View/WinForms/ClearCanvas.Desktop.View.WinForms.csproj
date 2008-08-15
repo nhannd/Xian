@@ -102,6 +102,7 @@
     <Compile Include="RichTextField.Designer.cs">
       <DependentUpon>RichTextField.cs</DependentUpon>
     </Compile>
+    <Compile Include="ScreenInfoProvider.cs" />
     <Compile Include="SuggestComboField.cs">
       <SubType>UserControl</SubType>
     </Compile>

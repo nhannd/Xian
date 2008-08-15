@@ -31,50 +31,33 @@
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class SimpleImageLayoutManager : ILayoutManager
+	internal class SimpleImageLayoutManager : LayoutManager
 	{
-		private IImageViewer _imageViewer;
-
 		public SimpleImageLayoutManager()
 		{
 
 		}
 
-		#region ILayoutManager Members
-
-		public void SetImageViewer(IImageViewer imageViewer)
+		protected override void LayoutPhysicalWorkspace()
 		{
-			_imageViewer = imageViewer;
-		}
-
-		public void Layout()
-		{
-			SimpleLogicalWorkspaceBuilder.Build(_imageViewer);
-
-			int numDisplaySets = GetNumDisplaySets(_imageViewer);
+			int numDisplaySets = GetNumDisplaySets(ImageViewer);
 
 			if (numDisplaySets == 1)
-				_imageViewer.PhysicalWorkspace.SetImageBoxGrid(1, 1);
+				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(1, 1);
 			else if (numDisplaySets == 2)
-				_imageViewer.PhysicalWorkspace.SetImageBoxGrid(1, 2);
+				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(1, 2);
 			else if (numDisplaySets <= 4)
-				_imageViewer.PhysicalWorkspace.SetImageBoxGrid(2, 2);
+				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(2, 2);
 			else if (numDisplaySets <= 8)
-				_imageViewer.PhysicalWorkspace.SetImageBoxGrid(2, 4);
+				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(2, 4);
 			else if (numDisplaySets <= 12)
-				_imageViewer.PhysicalWorkspace.SetImageBoxGrid(3, 4);
+				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(3, 4);
 			else
-				_imageViewer.PhysicalWorkspace.SetImageBoxGrid(4, 4);
+				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(4, 4);
 
-			foreach (IImageBox imageBox in _imageViewer.PhysicalWorkspace.ImageBoxes)
+			foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 				imageBox.SetTileGrid(1,1);
-
-			SimplePhysicalWorkspaceFiller.Fill(_imageViewer);
-			_imageViewer.PhysicalWorkspace.Draw();
 		}
-
-		#endregion
-
 
 		private int GetNumDisplaySets(IImageViewer imageViewer)
 		{
@@ -85,14 +68,5 @@ namespace ClearCanvas.ImageViewer
 
 			return count;
 		}
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-		}
-
-		#endregion
-
 	}
 }

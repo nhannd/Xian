@@ -36,68 +36,15 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
     [ExtensionOf(typeof(LayoutManagerExtensionPoint))]
-	public class LayoutManager : ILayoutManager
+	public class LayoutManager : ClearCanvas.ImageViewer.LayoutManager
 	{
 		private bool _physicalWorkspaceLayoutSet = false;
-    	private IImageViewer _imageViewer;
 
-		// Constructor
 		public LayoutManager()
 		{	
 		}
 
-		#region ILayoutManager Members
-
-		public void SetImageViewer(IImageViewer imageViewer)
-		{
-			_imageViewer = imageViewer;
-		}
-
-		public void Layout()
-		{
-			SimpleLogicalWorkspaceBuilder.Build(_imageViewer);
-			LayoutPhysicalWorkspace(_imageViewer.PhysicalWorkspace);
-			SimplePhysicalWorkspaceFiller.Fill(_imageViewer);
-			_imageViewer.PhysicalWorkspace.Draw();
-		}
-
-		#endregion
-
-
-		#region Disposal
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			try
-			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-			catch (Exception e)
-			{
-				// shouldn't throw anything from inside Dispose()
-				Platform.Log(LogLevel.Error, e);
-			}
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Implementation of the <see cref="IDisposable"/> pattern
-		/// </summary>
-		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-			}
-		}
-
-		#endregion
-
-		private void LayoutPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace)
+		protected override void LayoutPhysicalWorkspace()
 		{
 			if (_physicalWorkspaceLayoutSet)
 				return;
@@ -107,9 +54,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			StoredLayoutConfiguration configuration = null;
 
 			//take the first opened study, enumerate the modalities and compute the union of the layout configuration (in case there are multiple modalities in the study).
-			if (physicalWorkspace.LogicalWorkspace.ImageSets.Count > 0)
+			if (LogicalWorkspace.ImageSets.Count > 0)
 			{
-				IImageSet firstImageSet = physicalWorkspace.LogicalWorkspace.ImageSets[0];
+				IImageSet firstImageSet = LogicalWorkspace.ImageSets[0];
 				foreach(IDisplaySet displaySet in firstImageSet.DisplaySets)
 				{
 					if (displaySet.PresentationImages.Count <= 0)
@@ -129,10 +76,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (configuration == null)
 				configuration = LayoutConfigurationSettings.Default.DefaultConfiguration;
 
-			physicalWorkspace.SetImageBoxGrid(configuration.ImageBoxRows, configuration.ImageBoxColumns);
-			for (int i = 0; i < physicalWorkspace.ImageBoxes.Count; ++i)
-				physicalWorkspace.ImageBoxes[i].SetTileGrid(configuration.TileRows, configuration.TileColumns);
+			PhysicalWorkspace.SetImageBoxGrid(configuration.ImageBoxRows, configuration.ImageBoxColumns);
+			for (int i = 0; i < PhysicalWorkspace.ImageBoxes.Count; ++i)
+				PhysicalWorkspace.ImageBoxes[i].SetTileGrid(configuration.TileRows, configuration.TileColumns);
 		}
-
 	}
 }

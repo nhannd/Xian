@@ -34,19 +34,21 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	public partial class ImageViewerControl : UserControl
 	{
+		private Form _parentForm;
 		private PhysicalWorkspace _physicalWorkspace;
 		private ImageViewerComponent _component;
+		private DelayedEventPublisher _delayedEventPublisher;
 
 		internal ImageViewerControl(ImageViewerComponent component)
 		{
 			_component = component;
 			_physicalWorkspace = _component.PhysicalWorkspace as PhysicalWorkspace;
-
 			InitializeComponent();
 
 			this.SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -56,6 +58,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_component.Closing += new EventHandler(OnComponentClosing);
 			_physicalWorkspace.Drawing += new EventHandler(OnPhysicalWorkspaceDrawing);
 			_physicalWorkspace.LayoutCompleted += new EventHandler(OnLayoutCompleted);
+			_physicalWorkspace.ScreenRectangleChanged += new EventHandler(OnScreenRectangleChanged);
+
+			_delayedEventPublisher = new DelayedEventPublisher(OnRecalculateImageBoxes, 50);
 		}
 
 		internal void Draw()
@@ -70,12 +75,37 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		protected override void OnLoad(EventArgs e)
 		{
+			if (_parentForm == null)
+			{
+				_parentForm = this.ParentForm;
+				_parentForm.Move += new EventHandler(OnParentMoved);
+			}
+
 			AddImageBoxControls(_physicalWorkspace);
 
 			base.OnLoad(e);
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
+		{
+			UpdateScreenRectangle();
+		}
+
+		#endregion
+
+		#region Private members
+
+		private void OnParentMoved(object sender, EventArgs e)
+		{
+			UpdateScreenRectangle();
+		}
+
+		private void OnScreenRectangleChanged(object sender, EventArgs e)
+		{
+			_delayedEventPublisher.Publish(this, EventArgs.Empty);
+		}
+
+		private void OnRecalculateImageBoxes(object sender, EventArgs e)
 		{
 			this.SuspendLayout();
 
@@ -86,10 +116,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			Invalidate();
 		}
-
-		#endregion
-
-		#region Private members
 
 		private void OnPhysicalWorkspaceDrawing(object sender, EventArgs e)
 		{
@@ -119,6 +145,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Controls.Remove(control);
 				control.Dispose();
 			}
+		}
+
+		private void UpdateScreenRectangle()
+		{
+			_physicalWorkspace.ScreenRectangle = this.RectangleToScreen(this.ClientRectangle);
 		}
 
 		private void AddImageBoxControls(PhysicalWorkspace physicalWorkspace)

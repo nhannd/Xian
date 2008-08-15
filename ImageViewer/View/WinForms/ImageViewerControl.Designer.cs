@@ -48,6 +48,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			if (disposing)
 			{
+				if (_parentForm != null)
+				{
+					_parentForm.Move -= new EventHandler(OnParentMoved);
+					_parentForm = null;
+				}
+				
 				if (components != null)
 					components.Dispose();
 
@@ -55,12 +61,20 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				{
 					_component.Closing -= new EventHandler(OnComponentClosing);
 					_component = null;
-				} 
-				
+				}
+
+				if (_delayedEventPublisher != null)
+				{
+					_delayedEventPublisher.Dispose();
+					_delayedEventPublisher = null;
+				}
+
 				if (_physicalWorkspace != null)
 				{
 					_physicalWorkspace.Drawing -= new EventHandler(OnPhysicalWorkspaceDrawing);
 					_physicalWorkspace.LayoutCompleted -= new EventHandler(OnLayoutCompleted);
+					_physicalWorkspace.ScreenRectangleChanged -= new EventHandler(OnScreenRectangleChanged);
+
 					_physicalWorkspace = null;
 				}
 			}

@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Desktop;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -96,6 +97,17 @@ namespace ClearCanvas.ImageViewer
 		/// Gets or sets whether the workspace is currently enabled.
 		/// </summary>
 		bool Enabled { get; set; }
+
+		/// <summary>
+		/// Gets the rectangle that the <see cref="IPhysicalWorkspace"/> occupies
+		/// in virtual screen coordinates.
+		/// </summary>
+		Rectangle ScreenRectangle { get; }
+
+		/// <summary>
+		/// Occurs when <see cref="ScreenRectangle"/> changes.
+		/// </summary>
+		event EventHandler ScreenRectangleChanged;
 
 		/// <summary>
 		/// Occurs when all changes to image box collection are complete.

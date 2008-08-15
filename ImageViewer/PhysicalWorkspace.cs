@@ -34,6 +34,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Mathematics;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -69,6 +72,10 @@ namespace ClearCanvas.ImageViewer
 		private bool _enabled = true;
 		private event EventHandler _drawingEvent;
 		private event EventHandler _layoutCompletedEvent;
+
+
+		private Rectangle _screenRectangle;
+		private event EventHandler _screenRectangleChanged;
 
 		#endregion
 
@@ -192,6 +199,23 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
+		/// <summary>
+		/// Gets the rectangle that the <see cref="IPhysicalWorkspace"/> occupies
+		/// in virtual screen coordinates.
+		/// </summary>
+		public Rectangle ScreenRectangle
+		{
+			get { return _screenRectangle; }
+			set 
+			{
+				if (_screenRectangle.Equals(value))
+					return;
+
+				_screenRectangle = value;
+				OnScreenRectangleChanged();
+			}
+		}
+
 		#endregion
 
 		#region Public events
@@ -221,6 +245,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _layoutCompletedEvent += value; }
 			remove { _layoutCompletedEvent -= value; }
+		}
+
+		/// <summary>
+		/// Occurs when <see cref="IPhysicalWorkspace.ScreenRectangle"/> changes.
+		/// </summary>
+		public event EventHandler ScreenRectangleChanged
+		{
+			add { _screenRectangleChanged += value; }
+			remove { _screenRectangleChanged -= value; }
 		}
 
 		#endregion
@@ -295,28 +328,14 @@ namespace ClearCanvas.ImageViewer
 			if (_rows == rows && _columns == columns)
 				return;
 
+			this.ImageBoxes.Clear();
+			for (int i = 0; i < rows * columns; ++i)
+				this.ImageBoxes.Add(new ImageBox());
+
 			_rows = rows;
 			_columns = columns;
 
-			this.ImageBoxes.Clear();
-
-			double imageBoxWidth = (1.0d / columns);
-			double imageBoxHeight = (1.0d / rows);
-
-			for (int row = 0; row < rows; row++)
-			{
-				for (int column = 0; column < columns; column++)
-				{
-					double x = column * imageBoxWidth;
-					double y = row * imageBoxHeight;
-					RectangleF rect = new RectangleF((float)x, (float)y, (float)imageBoxWidth, (float)imageBoxHeight);
-
-					ImageBox imageBox = new ImageBox();
-					imageBox.NormalizedRectangle = rect;
-					this.ImageBoxes.Add(imageBox);
-				}
-			}
-
+			SetNormalizedRectangles();
 			OnLayoutCompleted();
 		}
 
@@ -434,6 +453,8 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnImageBoxAdded(object sender, ListEventArgs<IImageBox> e)
 		{
+			_rows = _columns = -1;
+
 			ImageBox imageBox = (ImageBox)e.Item;
 			imageBox.ImageViewer = this.ImageViewer;
 			imageBox.ParentPhysicalWorkspace = this;
@@ -441,10 +462,163 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnImageBoxRemoved(object sender, ListEventArgs<IImageBox> e)
 		{
+			_rows = _columns = -1;
+
 			if (e.Item.Selected)
 				this.SelectedImageBox = null;
 
 			e.Item.DisplaySet = null;
+		}
+
+		private void OnScreenRectangleChanged()
+		{
+			SetNormalizedRectangles();
+			EventsHelper.Fire(_screenRectangleChanged, this, EventArgs.Empty);
+		}
+
+		private void SetNormalizedRectangles()
+		{
+			if (_rows < 0 || _columns < 0)
+				return;
+
+			bool succeeded = false;
+
+			try
+			{
+				succeeded = SetOptimalNormalizedRectangles();
+				if (!succeeded)
+					Platform.Log(LogLevel.Warn, "Failed to optimize image box rectangles; defaulting to simple method.");
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, "Failed to optimize image box rectangles; defaulting to simple method.");
+			}
+
+			if (!succeeded)
+				SetSimpleNormalizedRectangles();
+		}
+
+		private void SetSimpleNormalizedRectangles()
+		{
+			double imageBoxWidth = (1.0d / _columns);
+			double imageBoxHeight = (1.0d / _rows);
+
+			for (int row = 0; row < _rows; row++)
+			{
+				for (int column = 0; column < _columns; column++)
+				{
+					double x = column * imageBoxWidth;
+					double y = row * imageBoxHeight;
+					this[row, column].NormalizedRectangle = new RectangleF((float)x, (float)y, (float)imageBoxWidth, (float)imageBoxHeight);
+				}
+			}
+		}
+
+		// Note: this algorithm is not bulletproof, but will always work when the workspace is completely visible
+		// on any combination of monitors.  More specifically, where it starts to fail is when the center of the (default positioned)
+		// image box falls off of all of the screens.  In those rare/extreme cases, we don't try to do any optimization
+		// and use the simple rectangle calculation.
+		private bool SetOptimalNormalizedRectangles()
+		{
+			Rectangle usableWorkspaceArea = GetUsableArea();
+
+			if (usableWorkspaceArea.IsEmpty || usableWorkspaceArea.Width < 20 || usableWorkspaceArea.Height < 20)
+				return false;
+
+			float rectangleWidth = usableWorkspaceArea.Width / (float)_columns;
+			float rectangleHeight = usableWorkspaceArea.Height / (float)_rows;
+
+			List<IImageBox> imageBoxesSet = new List<IImageBox>();
+
+			foreach (Screen screen in Screen.AllScreens)
+			{
+				int firstRow = -1;
+				int lastRow = -1;
+				int firstColumn = -1;
+				int lastColumn = -1;
+
+				//Find the first and last row/column defining a sub-grid that will be kept on this screen.
+				//We use the center of each image box in the non-optimized case to determine what screen
+				//a particular image box should be on.
+				for (int row = 0; row < _rows; ++row)
+				{
+					for (int column = 0; column < _columns; ++column)
+					{
+						int rectangleCentreX = usableWorkspaceArea.Left + (int)(rectangleWidth * (column + 0.5F));
+						int rectangleCentreY = usableWorkspaceArea.Top + (int)(rectangleHeight * (row + 0.5F));
+
+						if (screen.Bounds.Contains(rectangleCentreX, rectangleCentreY))
+						{
+							if (firstRow < 0)
+								firstRow = row;
+
+							lastRow = row;
+
+							if (firstColumn < 0)
+								firstColumn = column;
+
+							lastColumn = column;
+						}
+					}
+				}
+
+				Rectangle workspaceArea = ScreenRectangle;
+				Rectangle screenUsableArea = Rectangle.Intersect(workspaceArea, screen.WorkingArea);
+
+				//Subdivide the occupied screen area into a grid based on the start/end row/column determined above.
+				if (!screenUsableArea.IsEmpty && firstRow >= 0 && firstColumn >= 0)
+				{
+					RectangleF normalizedScreenUsableArea = RectangleUtilities.CalculateNormalizedSubRectangle(workspaceArea, screenUsableArea);
+
+					int screenRows = lastRow - firstRow + 1;
+					int screenColumns = lastColumn - firstColumn + 1;
+
+					float adjustedWidth = normalizedScreenUsableArea.Width / screenColumns;
+					float adjustedHeight = normalizedScreenUsableArea.Height / screenRows;
+
+					for (int screenRow = 0; screenRow < screenRows; ++screenRow)
+					{
+						for (int screenColumn = 0; screenColumn < screenColumns; ++screenColumn)
+						{
+							IImageBox imageBox = this[firstRow + screenRow, firstColumn + screenColumn];
+
+							//same one was already set; fail.
+							if (imageBoxesSet.Contains(imageBox))
+								return false;
+
+							imageBoxesSet.Add(imageBox);
+
+							float x = normalizedScreenUsableArea.Left + screenColumn * adjustedWidth;
+							float y = normalizedScreenUsableArea.Top + screenRow * adjustedHeight;
+
+							imageBox.NormalizedRectangle = new RectangleF(x, y, adjustedWidth, adjustedHeight);
+						}
+					}
+				}
+			}
+
+			//Success only if every image box's rectangle was set exactly once.
+			return imageBoxesSet.Count == ImageBoxes.Count;
+		}
+
+		private Rectangle GetUsableArea()
+		{
+			List<Rectangle> intersections = new List<Rectangle>();
+			foreach (Screen screen in Screen.AllScreens)
+			{
+				Rectangle intersection = Rectangle.Intersect(screen.WorkingArea, ScreenRectangle);
+				if (!intersection.IsEmpty)
+					intersections.Add(intersection);
+			}
+
+			if (intersections.Count == 0)
+				return Rectangle.Empty;
+
+			Rectangle union = intersections[0];
+			for(int i = 1; i < intersections.Count; ++i)
+				union = Rectangle.Union(union, intersections[i]);
+
+			return union;
 		}
 
 		#endregion

@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			DrawArgs args = new DrawArgs(
 				this.Surface, 
-				new ScreenInfo(Screen.FromControl(this)),
+				new WinformsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
 				ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
 
 			try
@@ -221,7 +221,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 				DrawArgs args = new DrawArgs(
 					this.Surface,
-					new ScreenInfo(Screen.FromControl(this)),
+					new WinformsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
 
 				try

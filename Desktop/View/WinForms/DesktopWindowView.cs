@@ -33,14 +33,14 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common.Utilities;
+
+using WinFormsScreen = System.Windows.Forms.Screen;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -778,7 +778,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			FormWindowState windowState;
 			if (!DesktopViewSettings.Default.GetDesktopWindowState(_desktopWindow.Name, out screenRectangle, out windowState))
 			{
-				screenRectangle = Screen.PrimaryScreen.Bounds;
+				screenRectangle = WinFormsScreen.PrimaryScreen.Bounds;
 
 				// Make the window size 75% of the primary screen
 				float scale = 0.75f;

@@ -142,6 +142,7 @@
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
+    <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
     <Compile Include="Mathematics\Tests\MatrixTests.cs" />
     <Compile Include="Mathematics\Tests\Vector3DTests.cs" />
@@ -237,10 +238,8 @@
     <Compile Include="Rendering\RendererBase.cs" />
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
-    <Compile Include="Rendering\IScreenInfo.cs" />
     <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
     <Compile Include="SimpleImageLayoutManager.cs" />
-    <Compile Include="SimplePhysicalWorkspaceFiller.cs" />
     <Compile Include="StudyManagement\Frame.cs" />
     <Compile Include="StudyManagement\FrameCollection.cs" />
     <Compile Include="StudyManagement\IPrefetchingStrategy.cs" />

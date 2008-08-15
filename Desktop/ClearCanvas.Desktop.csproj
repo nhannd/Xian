@@ -110,6 +110,7 @@
     <Compile Include="ISuggestionProvider.cs" />
     <Compile Include="IWorkspaceHost.cs" />
     <Compile Include="FileDialogResult.cs" />
+    <Compile Include="Screen.cs" />
     <Compile Include="StackTabPage.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="SuggestionProviderBase.cs" />

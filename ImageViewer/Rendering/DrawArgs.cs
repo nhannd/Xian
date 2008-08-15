@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private readonly DrawMode _drawMode;
 		private readonly IRenderingSurface _renderingSurface;
 		private CompositeGraphic _sceneGraph;
-		private IScreenInfo _screenInfo;
+		private readonly Screen _screen;
 		private object _tag;
 
 		#endregion
@@ -69,11 +70,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		public DrawArgs(
 			IRenderingSurface surface, 
-			IScreenInfo screenInfo,
+			Screen screen,
 			DrawMode drawMode)
 		{
 			_renderingSurface = surface;
-			_screenInfo = screenInfo;
+			_screen = screen;
 			_drawMode = drawMode;
 		}
 
@@ -111,9 +112,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// will be that of the screen on which the larger portion of the <see cref="Tile"/>
 		/// resides.
 		/// </remarks>
-		public IScreenInfo ScreenInfo
+		public Screen Screen
 		{
-			get { return _screenInfo; }
+			get { return _screen; }
 		}
 
 		/// <summary>

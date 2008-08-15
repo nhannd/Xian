@@ -362,6 +362,21 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
+		/// Calculates the normalized rectangle of <paramref name="subRectangle"/> within <paramref name="parentRectangle"/>.
+		/// </summary>
+		public static RectangleF CalculateNormalizedSubRectangle(Rectangle parentRectangle, Rectangle subRectangle)
+		{
+			float left = (subRectangle.Left - parentRectangle.Left) / (float)parentRectangle.Width;
+			float right = (subRectangle.Right - parentRectangle.Left) / (float)parentRectangle.Width;
+			float top = (subRectangle.Top - parentRectangle.Top) / (float)parentRectangle.Height;
+			float bottom = (subRectangle.Bottom - parentRectangle.Top) / (float)parentRectangle.Height;
+
+			RectangleF normalizedRectangle = new RectangleF(left, top, right - left, bottom - top);
+			VerifyNormalizedRectangle(normalizedRectangle);
+			return normalizedRectangle;
+		}
+
+		/// <summary>
 		/// Converts a rectangle whose width and/or heigh and converts it to
 		/// an equivalent rectangle whose width and height are guaranteed to be positive
 		/// </summary>
