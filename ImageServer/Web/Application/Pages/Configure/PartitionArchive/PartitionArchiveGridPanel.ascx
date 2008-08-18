@@ -36,11 +36,9 @@
                         <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                     <asp:TemplateField HeaderText="Configuration XML">
-                        <ItemTemplate>
+                         <ItemTemplate>
                              <asp:Label ID="ConfigurationXML" runat="server" />
                         </ItemTemplate>
-                        <ItemStyle HorizontalAlign="Center" />
-                        <HeaderStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
@@ -50,10 +48,19 @@
                             Description
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">
+                            Type
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
+                            Archive Delay Hours
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell HorizontalAlign="Center">
                             Enabled
                             </asp:TableHeaderCell>
                             <asp:TableHeaderCell HorizontalAlign="Center">
                             Read Only
+                            </asp:TableHeaderCell>
+                            <asp:TableHeaderCell>
+                            Configuration XML
                             </asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
@@ -61,6 +68,7 @@
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
             </ccUI:GridView>
         </asp:TableCell>
     </asp:TableRow>

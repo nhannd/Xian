@@ -37,23 +37,24 @@ using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
-//[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.js", "application/x-javascript")]
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive
 {
     /// <summary>
     /// Server parition panel  used in <seealso cref="Default"/> web page.
     /// </summary>
-    //[ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.js")]
-    public partial class PartitionArchivePanel : UserControl
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.js")]
+    public partial class PartitionArchivePanel : AJAXScriptControl
     {
         #region Private Members
 
         // list of partitions displayed in the list
         private IList<Model.PartitionArchive> _partitionArchives = new List<Model.PartitionArchive>();
         // used for database interaction
-        private PartitionArchiveConfigController _theController; 
+        private PartitionArchiveConfigController _theController;
 
         #endregion Private Members
 
@@ -213,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-
+            DataBind();
         }
 
         protected void AddPartitionButton_Click(object sender, ImageClickEventArgs e)
@@ -260,9 +261,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             LoadData();
             PartitionArchiveGridPanel.UpdateUI();
 
-            //ServerPartition partition = ((Default)Page).ServerPartition;
-            //EditPartitionButton.Enabled = partition != null;
-            //DeletePartitionButton.Enabled = (partition != null);
+            Model.PartitionArchive pa = PartitionArchiveGridPanel.SelectedPartition;
+            if (pa == null)
+            {
+                EditPartitionButton.Enabled = false;
+                DeletePartitionButton.Enabled = false;
+            }
+            else
+            {
+                EditPartitionButton.Enabled = true;
+                DeletePartitionButton.Enabled = true;
+            }
 
             UpdatePanel1.Update();
         }
