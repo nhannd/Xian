@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
@@ -49,6 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         #region Constants
         private const string TIME_FORMAT = "hh:mm tt";
         private const int DEFAULT_TIME_GAP_MINS = 15; // minutes
+        private ServiceLock _serviceLock;
 
         #endregion Constants
 
@@ -100,25 +102,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         {
             set
             {
+                _serviceLock = value;
                 // put into viewstate to retrieve later
-                ViewState[ClientID + "_ServiceLock"] = value;
+                if(_serviceLock != null)
+                    ViewState[ClientID + "_ServiceLock"] = _serviceLock.GetKey();
             }
             get
             {
-                return ViewState[ClientID + "_ServiceLock"] as ServiceLock;
+                return _serviceLock;
             }
         }
 
         #endregion // public members
-
-        #region Events
-
-
-        #endregion Events
-
-        #region Public delegates
-
-        #endregion // public delegates
 
         #region Protected methods
 
@@ -131,6 +126,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            if (ViewState[ClientID + "_ServiceLock"] != null)
+            {
+                ServerEntityKey serviceLockKey = ViewState[ClientID + "_ServiceLock"] as ServerEntityKey;
+                _serviceLock = ServiceLock.Load(serviceLockKey);
+            }
 
             ScheduleDate.Text = Request[ScheduleDate.UniqueID] ;
         }
