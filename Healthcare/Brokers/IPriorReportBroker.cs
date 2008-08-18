@@ -38,17 +38,23 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IPriorReportBroker : IPersistenceBroker
     {
+		/// <summary>
+		/// Obtains the set of procedure types that are relevant to the specified procedure type.
+		/// </summary>
+		/// <param name="procType"></param>
+		/// <returns></returns>
+    	IList<ProcedureType> GetRelevantProcedureTypes(ProcedureType procType);
+
         /// <summary>
-        /// Obtains a list of prior procedures relevant to the specified report.
+        /// Obtains the set of prior procedures relevant to the specified report.
         /// </summary>
         /// <param name="report"></param>
         /// <returns></returns>
         IList<Report> GetPriors(Report report);
 
         /// <summary>
-        /// Obtains a list of prior procedures relevant to the specified order.
+        /// Obtains the set of prior procedures relevant to the specified order.
         /// </summary>
-        /// <param name="patient"></param>
         /// <returns></returns>
         IList<Report> GetPriors(Order order);
 

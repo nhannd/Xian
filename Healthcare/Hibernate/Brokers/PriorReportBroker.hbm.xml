@@ -1,101 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <!-- 
-    Obtains a list of prior reports that are relevant to a given report.
-    Parameters: 1. the reference Report
-    
-    Note: this query had to be written entirely using theta joins because SQL-server does not allow
-    mixing ANSI joins and theta joins
-  -->
-  <query name="relevantPriorsByReport">
-    select priorReport
-    from
-    Report priorReport, Report refReport,
-    Procedure priorProcedure, Procedure refProcedure,
-    ProcedureType priorProcedureType, ProcedureType refProcedureType
-    where priorProcedureType = priorProcedure.Type
-    and priorProcedure in elements(priorReport.Procedures)
-    and refProcedureType = refProcedure.Type
-    and refProcedure in elements(refReport.Procedures)
-    and priorProcedureType in (
-      select elements(relevanceGroup.ProcedureTypes)
-      from RelevanceGroup relevanceGroup
-      where refProcedureType in elements(relevanceGroup.ProcedureTypes)
-    )
-    and priorProcedure.Order.Patient = refProcedure.Order.Patient
-    and priorReport.Status in ('P', 'F', 'C')
-    and refReport = ?
-  </query>
 
   <!-- 
-    Obtains a list of prior reports that are relevant to the procedures in a given order.
-    Parameters: 1. the reference Order
-    
-    Note: this query had to be written entirely using theta joins because SQL-server does not allow
-    mixing ANSI joins and theta joins
+    Obtains the set of procedure types relevant to a given procedure type.
+    Parameters: 1. the reference procedure type.
+    Note: it may seem that the outer select is not necessary given that the inner select returns exactly what we want.
+    However, removing the outer select causes NHibernate to issues 1+N selects in order to obtain the full ProcedureType
+    entity for each result.  The addition of the outer select allows the entire query to execute as a single SQL statement.
   -->
-  <query name="relevantPriorsByOrder">
-    select priorReport
-    from
-    Report priorReport, Order refOrder,
-    Procedure priorProcedure, Procedure refProcedure,
-    ProcedureType priorProcedureType, ProcedureType refProcedureType
-    where priorProcedureType = priorProcedure.Type
-    and priorProcedure in elements(priorReport.Procedures)
-    and refProcedureType = refProcedure.Type
-    and refProcedure in elements(refOrder.Procedures)
-    and priorProcedureType in (
+  <query name="relevantProcedureTypes">
+    select pt
+    from ProcedureType pt
+    where pt in
+    (
       select elements(relevanceGroup.ProcedureTypes)
       from RelevanceGroup relevanceGroup
-      where refProcedureType in elements(relevanceGroup.ProcedureTypes)
+      where ? in elements(relevanceGroup.ProcedureTypes)
     )
-    and priorProcedure.Order.Patient = refOrder.Patient
-    and priorReport.Status in ('P', 'F', 'C')
-    and refOrder = ?
   </query>
 
-
-
-  <!-- 
-    Obtains a list of prior reports that are relevant to a given procedure.
-    Parameters: 1. the reference Procedure
-    
-    Note: this query had to be written entirely using theta joins because SQL-server does not allow
-    mixing ANSI joins and theta joins
-  -->
-  <query name="relevantPriorsByProcedure">
-    select priorReport
-    from Report priorReport,
-    Procedure priorProcedure, Procedure refProcedure,
-    ProcedureType priorProcedureType, ProcedureType refProcedureType
-    where priorProcedureType = priorProcedure.Type
-    and priorProcedure in elements(priorReport.Procedures)
-    and refProcedureType = refProcedure.Type
-    and refProcedure = ?
-    and priorProcedureType in (
-      select elements(relevanceGroup.ProcedureTypes)
-      from RelevanceGroup relevanceGroup
-      where refProcedureType in elements(relevanceGroup.ProcedureTypes)
-    )
-    and priorProcedure.Order.Patient = refProcedure.Order.Patient
-    and priorReport.Status in ('P', 'F', 'C')
-  </query>
 
   <!-- 
     Obtains all prior reports for a given patient.
     Parameters: 1. the reference Patient
-    
-    Note: this query had to be written entirely using theta joins because SQL-server does not allow
-    mixing ANSI joins and theta joins
   -->
   <query name="allPriorsByPatient">
     select priorReport
-    from Report priorReport,
-    Procedure priorProcedure,
-    ProcedureType priorProcedureType,
-    where priorProcedureType = priorProcedure.Type
-    and priorProcedure in elements(priorReport.Procedures)
+    from
+    Report priorReport
+    join priorReport.Procedures priorProcedure
+    where
+    priorReport.Status in ('P', 'F', 'C')
     and priorProcedure.Order.Patient = ?
-    and priorReport.Status in ('P', 'F', 'C')
   </query>
 </hibernate-mapping>

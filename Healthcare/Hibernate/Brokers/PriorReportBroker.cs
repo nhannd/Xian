@@ -36,6 +36,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using Iesi.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Hibernate.Hql;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -47,53 +49,57 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     {
         #region IPriorReportBroker Members
 
-        /// <summary>
-        /// Obtains a list of prior reports for the specified report, optionally constrained by Relevance grouping.
-        /// </summary>
-        /// <param name="report"></param>
-        /// <returns></returns>
-        public IList<Report> GetPriors(Report report)
+    	/// <summary>
+    	/// Obtains the set of procedure types that are relevant to the specified procedure type.
+    	/// </summary>
+    	/// <param name="procType"></param>
+    	/// <returns></returns>
+    	public IList<ProcedureType> GetRelevantProcedureTypes(ProcedureType procType)
+		{
+			// by caching this query, we effectively build up a kind of in-memory index
+			// of relevant procedure types
+			// TODO: we could even set up a different cache-region with a much longer expiry time (eg hours) if we need to make this fast!!!
+			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantProcedureTypes");
+			q.SetCacheable(true);
+			q.SetParameter(0, procType);
+			return q.List<ProcedureType>();
+		}
+
+    	/// <summary>
+    	/// Obtains the set of prior procedures relevant to the specified report.
+    	/// </summary>
+    	/// <param name="report"></param>
+    	/// <returns></returns>
+    	public IList<Report> GetPriors(Report report)
         {
-            NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByReport");
-            q.SetParameter(0, report);
-            return q.List<Report>();
+        	return GetPriorsHelper(report.Procedures);
         }
 
-        public IList<Report> GetPriors(Order order)
+    	/// <summary>
+    	/// Obtains the set of prior procedures relevant to the specified order.
+    	/// </summary>
+    	/// <returns></returns>
+    	public IList<Report> GetPriors(Order order)
         {
-            NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByOrder");
-            q.SetParameter(0, order);
-            return q.List<Report>();
+        	return GetPriorsHelper(order.Procedures);
         }
 
-        /// <summary>
-        /// Obtains a list of prior reports relevant to the specified procedures.
-        /// </summary>
-        /// <param name="procedures"></param>
-        /// <returns></returns>
-        public IList<Report> GetPriors(IEnumerable<Procedure> procedures)
+    	/// <summary>
+    	/// Obtains a list of prior procedures relevant to the specified procedures.
+    	/// </summary>
+    	/// <param name="procedures"></param>
+    	/// <returns></returns>
+    	public IList<Report> GetPriors(IEnumerable<Procedure> procedures)
         {
-            // because we are using a fixed-form query defined in an external file, 
-            // there is no way to query based on all procedures at once, therefore we need one query per procedure
-            // this is unfortunate, but hopefully not a major concern in the scheme of things
-            // (if so, this method could always be refactored such that the HQL is created dynamically
-            // based on the number of procedures)
-            HashedSet<Report> reports = new HashedSet<Report>();
-            foreach (Procedure procedure in procedures)
-            {
-                NHibernate.IQuery q = this.Context.GetNamedHqlQuery("relevantPriorsByProcedure");
-                q.SetParameter(0, procedure);
-                reports.AddAll(q.List<Report>());
-            }
-            return new List<Report>(reports);
+        	return GetPriorsHelper(procedures);
         }
 
-        /// <summary>
-        /// Obtains a list of all prior reports for the specified patient.
-        /// </summary>
-        /// <param name="patient"></param>
-        /// <returns></returns>
-        public IList<Report> GetPriors(Patient patient)
+    	/// <summary>
+    	/// Obtains a list of all prior procedures for the specified patient.
+    	/// </summary>
+    	/// <param name="patient"></param>
+    	/// <returns></returns>
+    	public IList<Report> GetPriors(Patient patient)
         {
             NHibernate.IQuery q = this.Context.GetNamedHqlQuery("allPriorsByPatient");
             q.SetParameter(0, patient);
@@ -101,5 +107,73 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         }
 
         #endregion
-    }
+
+		/// <summary>
+		/// Obtains the set of prior reports relevant to the specified set of procedures, which must all be for the same patient.
+		/// </summary>
+		/// <remarks>
+		/// Excludes draft and deleted reports, as well as any report that is directly associated with the input procedures.
+		/// </remarks>
+		/// <param name="inputProcedures"></param>
+		/// <returns></returns>
+		private IList<Report> GetPriorsHelper(IEnumerable<Procedure> inputProcedures)
+		{
+			// Notes on strategy:
+			// The algorithm is split into two parts.
+			
+			// 1) Obtain the set of relevant procedure types, based on the set of input procedures.
+			// This query is for practical purposes a constant function, because the relevance groups
+			// rarely change.  Therefore, the query can be cached, which should improve performance
+			// (even though the raw performance seems quite reasonable to begin with).
+			List<ProcedureType> inputTypes = CollectionUtils.Map<Procedure, ProcedureType>(inputProcedures,
+				delegate(Procedure p) { return p.Type; });
+
+			List<ProcedureType> relevantTypes = new List<ProcedureType>();
+			foreach (ProcedureType type in inputTypes)
+			{
+				// get relevant types for each input procedure
+				// typically there should be 1 to 3 elements in this collection, with 1 being the most common scenario
+				// therefore, don't worry about having to do a separate query for each
+				// (we could try to write a query that would accept all inputs at once, but this would defeat the value of
+				// caching the query)
+				relevantTypes.AddRange(GetRelevantProcedureTypes(type));
+			}
+
+			// 2) Obtain the set of prior reports for this patient, where the report is associated
+			// with procedure types as determined above
+
+			// obtain patient from any of the input procedures (since all must be for same patient)
+			Patient patient = CollectionUtils.FirstElement(inputProcedures).Order.Patient;
+
+
+			// build query for prior reports
+			HqlProjectionQuery reportsQuery = new HqlProjectionQuery(
+				new HqlFrom("Report", "priorReport", new HqlJoin[]
+        		                                     	{
+        		                                     		new HqlJoin("priorReport.Procedures", "priorProcedure"),
+        		                                     		new HqlJoin("priorProcedure.Type", "priorProcedureType"),
+
+															// add fetch join for procedures, to save one query
+															new HqlJoin("priorReport.Procedures", null, HqlJoinMode.Inner, true)
+        		                                     	}),
+				new HqlSelect[] { new HqlSelect("priorReport") });
+
+			// must be for same patient
+			reportsQuery.Conditions.Add(HqlCondition.EqualTo("priorProcedure.Order.Patient", patient));
+
+			// exclude the input procedures
+			reportsQuery.Conditions.Add(HqlCondition.NotIn("priorProcedure", inputProcedures));
+
+			// not a draft or deleted report
+			reportsQuery.Conditions.Add(HqlCondition.In("priorReport.Status", ReportStatus.P, ReportStatus.F, ReportStatus.C));
+
+			// consider only reports with relevant procedure types
+			reportsQuery.Conditions.Add(HqlCondition.In("priorProcedureType", relevantTypes));
+
+			IList<Report> reports = ExecuteHql<Report>(reportsQuery);
+
+			// ensure unique results are returned (because fetch joins may have introduced duplicates into result set)
+			return CollectionUtils.Unique(reports);
+		}
+	}
 }

@@ -83,8 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly PriorSummaryTable _reportList;
 		private PriorProcedureSummary _selectedPrior;
 
-		//TODO: JR temporarily changed this to default false until bug #xxx can be fixed
-		private bool _relevantPriorsOnly = false;
+		private bool _relevantPriorsOnly = true;
 
 		private List<PriorProcedureSummary> _relevantPriors;
 		private List<PriorProcedureSummary> _allPriors;
