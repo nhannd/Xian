@@ -1,6 +1,6 @@
 using System.IO;
 using System.ServiceModel;
-using ClearCanvas.Dicom.ServiceModel.Streaming;
+using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
