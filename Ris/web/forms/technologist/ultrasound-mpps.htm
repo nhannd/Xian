@@ -115,10 +115,7 @@
 					modality = mpps.ModalityProcedureSteps[0].ModalityName;
 					
 					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
-					if(readOnly)
-					{
-						Field.show($("readOnlyHeader"), readOnly);
-					}
+					Field.show($("readOnlyHeader"), readOnly);
 				}
 
 				data.acquisition = data.acquisition || {};

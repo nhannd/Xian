@@ -27,10 +27,7 @@
 				{
 					data = JSML.parse(Ris.getTag("PostExamDetails")) || {};
 					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
-					if(readOnly)
-					{
-						Field.show($("readOnlyHeader"), readOnly);
-					}
+					Field.show($("readOnlyHeader"), readOnly);
 				}
 
 				// redirect if this data was captured by a page other than this page

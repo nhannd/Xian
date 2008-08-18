@@ -73,11 +73,8 @@
 					facility = mpps.ModalityProcedureSteps[0].Procedure.PerformingFacility.Code;
 									
 					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
-					if(readOnly)
-					{
-						Field.show($("readOnlyHeader"), readOnly);
-					}
-}
+					Field.show($("readOnlyHeader"), readOnly);
+				}
 
 				// redirect if this data was captured by a page other than this page
 				// (data should be presented by the same version of the page that captured it)
