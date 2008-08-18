@@ -120,4 +120,10 @@
   <data name="EditStudyDialog" xml:space="preserve">
     <value>Edit Study</value>
   </data>
+  <data name="GridPagerArchiveQueueMultipleItems" xml:space="preserve">
+    <value>Items Found</value>
+  </data>
+  <data name="GridPagerArchiveQueueSingleItem" xml:space="preserve">
+    <value>Item Found</value>
+  </data>
 </root>

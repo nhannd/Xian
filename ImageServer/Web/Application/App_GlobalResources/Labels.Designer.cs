@@ -68,5 +68,23 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
                 return ResourceManager.GetString("EditStudyDialog", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Items Found.
+        /// </summary>
+        internal static string GridPagerArchiveQueueMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerArchiveQueueMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Item Found.
+        /// </summary>
+        internal static string GridPagerArchiveQueueSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerArchiveQueueSingleItem", resourceCulture);
+            }
+        }
     }
 }

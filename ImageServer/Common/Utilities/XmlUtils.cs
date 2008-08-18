@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Security;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
@@ -19,8 +20,20 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         public static string GetXmlDocumentAsString(XmlDocument doc, bool escapeChars)
         {
             StringWriter sw = new StringWriter();
-            XmlTextWriter xw = new XmlTextWriter(sw);
+            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+
+            xmlSettings.Encoding = Encoding.UTF8;
+            xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+            xmlSettings.Indent = true;
+            xmlSettings.NewLineOnAttributes = false;
+            xmlSettings.CheckCharacters = true;
+            xmlSettings.IndentChars = "  ";
+
+            XmlWriter xw = XmlWriter.Create(sw, xmlSettings);
+
             doc.WriteTo(xw);
+
+            xw.Close();
 
             return escapeChars ? SecurityElement.Escape(sw.ToString()) : sw.ToString();
         }

@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             DataBind();
         }
 
-		protected void DisposeStudyDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
+		protected void DisposeArchiveQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
 		{
 			e.Cancel = true;
 		}

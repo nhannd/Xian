@@ -1,6 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.Default"
-    Title="Search" %>
+    Title="ClearCanvas ImageServer : Archive Queue" %>
 
 <asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder">Archive Queue</asp:Content>
     

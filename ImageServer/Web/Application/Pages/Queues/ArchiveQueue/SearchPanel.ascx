@@ -29,20 +29,15 @@
                                                 <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Accession #" CssClass="SearchTextBoxLabel"
-                                                    EnableViewState="False" /><br />
-                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Accession Number" />
-                                            </td>
-                                            <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" EnableViewState="false"/>
                                                 <asp:LinkButton ID="ClearScheduleDateButton" runat="server" Text="X" CssClass="SmallLink"/><br />
                                                 <ccUI:TextBox ID="ScheduleDate" runat="server" CssClass="SearchTextBox" ReadOnly="true" ToolTip="Search the list by Schedule Date [dd/mm/yyyy]" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label4" runat="server" Text="Status" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server"  CssClass="SearchTextBox" ToolTip="Search the list by Study Description" />
-                                            </td>                                            
+                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList" ToolTip="Search the list by Status" />
+                                            </td>                
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
@@ -65,10 +60,7 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="ViewItemDetailsButton" runat="server" SkinID="ViewDetailsButton" />
-                                        <ccUI:ToolbarButton ID="MoveItemButton" runat="server" SkinID="MoveButton" />
-                                        <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="DeleteButton" OnClick="DeleteStudyButton_Click" />
-                                        <ccUI:ToolbarButton ID="RestoreItemButton" runat="server" SkinID="RestoreButton" OnClick="RestoreStudyButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="DeleteButton" OnClick="DeleteItemButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
@@ -77,7 +69,7 @@
 
                          <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
                             <table width="100%" cellpadding="0" cellspacing="0">
-                                 <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
+                                <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
                                 <tr><td style="background-color: white;"><localAsp:ArchiveQueueItemList id="ArchiveQueueItemList" runat="server" Height="500px"></localAsp:ArchiveQueueItemList></td></tr>
                                 <tr><td style="border-top: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>                    
                             </table>                        

@@ -32,22 +32,22 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
     [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel.js")]
-    public partial class SearchPanel : ScriptUserControl
+    public partial class SearchPanel : AJAXScriptControl
     {
         #region Private members
-        private ServerPartition _serverPartition;
-        private ArchiveQueueController _controller = new ArchiveQueueController();
 
     	#endregion Private members
 
@@ -61,37 +61,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         }
 
         [ExtenderControlProperty]
-        [ClientPropertyName("OpenButtonClientID")]
-        public string OpenButtonClientID
-        {
-            get { return ViewItemDetailsButton.ClientID; }
-        }
-
-		[ExtenderControlProperty]
-		[ClientPropertyName("RestoreButtonClientID")]
-		public string RestoreButtonClientID
-		{
-			get { return RestoreItemButton.ClientID; }
-		}
-
-        [ExtenderControlProperty]
-        [ClientPropertyName("SendButtonClientID")]
-        public string SendButtonClientID
-        {
-            get { return MoveItemButton.ClientID; }
-        }
-
-        [ExtenderControlProperty]
-        [ClientPropertyName("ArchiveQueueListClientID")]
-        public string ArchiveQueueListClientID
+        [ClientPropertyName("ItemListClientID")]
+        public string ItemListClientID
         {
             get { return ArchiveQueueItemList.ArchiveQueueGrid.ClientID; }
-        }
-
- public ServerPartition ServerPartition
-        {
-            get { return _serverPartition; }
-            set { _serverPartition = value; }
         }
 
         #endregion Public Properties  
@@ -105,27 +78,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         {
             PatientId.Text = string.Empty;
             PatientName.Text = string.Empty;
-            AccessionNumber.Text = string.Empty;
-            //ItemDescription.Text = string.Empty;
             ScheduleDate.Text = string.Empty;
+            StatusFilter.SelectedIndex = 0;
         }
 
         public override void DataBind()
         {
-            ArchiveQueueItemList.Partition = ServerPartition;
+            ArchiveQueueItemList.Partition = ((Default)Page).ServerPartition;
             base.DataBind();
             ArchiveQueueItemList.DataBind();
         }
 
         #endregion Public Methods
-
-        #region Constructors
-        public SearchPanel()
-            : base(false, HtmlTextWriterTag.Div)
-        {
-        }
-
-        #endregion Constructors
 
         #region Protected Methods
 
@@ -144,8 +108,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             GridPagerTop.ItemCountVisible = true;
             GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerStudySingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerStudyMultipleItems;
+            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerArchiveQueueSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerArchiveQueueMultipleItems;
             GridPagerTop.Target = ArchiveQueueItemList.ArchiveQueueGrid;
             GridPagerTop.GetRecordCountMethod = delegate
                               {
@@ -173,36 +137,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                                 UpdatePanel.Update(); // force refresh
                             };
 
-			RestoreMessageBox.Confirmed += delegate(object data)
-							{
-                                if (data is IList<Model.ArchiveQueue>)
-								{
-									IList<Model.ArchiveQueue> items = data as IList<Model.ArchiveQueue>;
-									foreach (Model.ArchiveQueue item in items)
-									{
-										//_controller.RestoreItem(item);
-									}
-								}
-								else if (data is Model.ArchiveQueue)
-								{
-									Model.ArchiveQueue item = data as Model.ArchiveQueue;
-									//_controller.RestoreItem(item);
-								}
-
-								DataBind();
-								UpdatePanel.Update(); // force refresh
-							};
-
 			ArchiveQueueItemList.DataSourceCreated += delegate(ArchiveQueueDataSource source)
 										{
-											source.Partition = ServerPartition;
+											source.Partition = ((Default)Page).ServerPartition;
+                                            source.DateFormats = ScheduleDateCalendarExtender.Format;
 
 											if (!String.IsNullOrEmpty(PatientId.Text))
 												source.PatientId = PatientId.Text;
 											if (!String.IsNullOrEmpty(PatientName.Text))
 												source.PatientName = PatientName.Text;
-											if (!String.IsNullOrEmpty(AccessionNumber.Text))
-												source.AccessionNumber = AccessionNumber.Text;
 											if (!String.IsNullOrEmpty(ScheduleDate.Text))
 												source.ScheduledDate = ScheduleDate.Text;
 										};
@@ -215,6 +158,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                 ScheduleDateCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleDateCalendarExtender.Format, null);
             else
                 ScheduleDateCalendarExtender.SelectedDate = null;
+
+            IList<ArchiveQueueStatusEnum> statusItems = ArchiveQueueStatusEnum.GetAll();
+
+            int prevSelectedIndex = StatusFilter.SelectedIndex;
+            StatusFilter.Items.Clear();
+            StatusFilter.Items.Add(new ListItem("All", "All"));
+            foreach (ArchiveQueueStatusEnum s in statusItems)
+                StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
+            StatusFilter.SelectedIndex = prevSelectedIndex;
 
 			if (ArchiveQueueItemList.IsPostBack)
 			{
@@ -232,7 +184,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         protected void UpdateUI()
         {
             UpdateToolbarButtonState();
-            
         }
         
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -242,7 +193,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 			DataBind();
         }
 
-        protected void DeleteStudyButton_Click(object sender, EventArgs e)
+        protected void DeleteItemButton_Click(object sender, EventArgs e)
         {
             IList<Model.ArchiveQueue> items = ArchiveQueueItemList.SelectedItems;
 
@@ -267,54 +218,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             }
         }
 
-		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
-		{
-			IList<Model.ArchiveQueue> items = ArchiveQueueItemList.SelectedItems;
-
-			if (items != null && items.Count > 0)
-			{
-				if (items.Count > 1) RestoreMessageBox.Message = string.Format(App_GlobalResources.SR.MultipleStudyRestore);
-				else RestoreMessageBox.Message = string.Format(App_GlobalResources.SR.SingleStudyRestore);
-
-				RestoreMessageBox.Message += "<table>";
-				foreach (Model.ArchiveQueue item in items)
-				{
-				    String text = "";
-                    //String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>",
-					//				item.PatientsName, item.AccessionNumber, item.StudyDescription);
-					RestoreMessageBox.Message += text;
-				}
-				RestoreMessageBox.Message += "</table>";
-
-				RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-				RestoreMessageBox.Data = items;
-				RestoreMessageBox.Show();
-			}
-		}
-
         protected void UpdateToolbarButtonState()
         {
             IList<Model.ArchiveQueue> items = ArchiveQueueItemList.SelectedItems;
             if (items != null)
             {
-            	ViewItemDetailsButton.Enabled = true;
 				DeleteItemButton.Enabled = true;
-                MoveItemButton.Enabled = true;
-                foreach (Model.ArchiveQueue item in items)
-                {
-//                    if (_controller.IsScheduledForDelete(item))
-//                    {
-//                        DeleteItemButton.Enabled = false;
-//                        break;
-//                    }
-                }
             }
             else
             {
-                ViewItemDetailsButton.Enabled = false;
-                MoveItemButton.Enabled = false;
                 DeleteItemButton.Enabled = false;
-            	RestoreItemButton.Enabled = false;
             }
         }
 

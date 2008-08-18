@@ -74,24 +74,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue {
         protected global::System.Web.UI.WebControls.TextBox PatientId;
         
         /// <summary>
-        /// Label3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label3;
-        
-        /// <summary>
-        /// AccessionNumber control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox AccessionNumber;
-        
-        /// <summary>
         /// Label5 control.
         /// </summary>
         /// <remarks>
@@ -128,13 +110,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue {
         protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// StudyDescription control.
+        /// StatusFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox StudyDescription;
+        protected global::System.Web.UI.WebControls.DropDownList StatusFilter;
         
         /// <summary>
         /// Panel1 control.
@@ -182,24 +164,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue {
         protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
         
         /// <summary>
-        /// ViewItemDetailsButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewItemDetailsButton;
-        
-        /// <summary>
-        /// MoveItemButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton MoveItemButton;
-        
-        /// <summary>
         /// DeleteItemButton control.
         /// </summary>
         /// <remarks>
@@ -207,15 +171,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteItemButton;
-        
-        /// <summary>
-        /// RestoreItemButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton RestoreItemButton;
         
         /// <summary>
         /// Panel2 control.

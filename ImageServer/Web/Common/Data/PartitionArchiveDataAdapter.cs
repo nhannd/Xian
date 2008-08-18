@@ -89,7 +89,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             PartitionArchiveUpdateColumns parms = new PartitionArchiveUpdateColumns();
             parms.Description = partition.Description;
-
+            parms.ServerPartitionKey = partition.ServerPartitionKey;
+            parms.ArchiveTypeEnum = partition.ArchiveTypeEnum;
+            parms.ConfigurationXml = partition.ConfigurationXml;
+            parms.Enabled = partition.Enabled;
+            parms.ReadOnly = partition.ReadOnly;
+            parms.ArchiveDelayHours = partition.ArchiveDelayHours;
+            
+            
             return Update(partition.Key, parms);
         }
 
