@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._btnAccept.Name = "_btnAccept";
 			this._btnAccept.Size = new System.Drawing.Size(75, 23);
 			this._btnAccept.TabIndex = 0;
-			this._btnAccept.Text = "Accept";
+			this._btnAccept.Text = "Verify";
 			this._btnAccept.UseVisualStyleBackColor = true;
 			this._btnAccept.Click += new System.EventHandler(this._btnAccept_Click);
 			// 
