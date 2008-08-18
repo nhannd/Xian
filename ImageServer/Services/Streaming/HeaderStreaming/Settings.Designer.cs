@@ -31,14 +31,5 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming {
                 return ((bool)(this["LogStatistics"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("65536")]
-        public uint ReadBufferSize {
-            get {
-                return ((uint)(this["ReadBufferSize"]));
-            }
-        }
     }
 }

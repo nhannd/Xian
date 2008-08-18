@@ -31,14 +31,5 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
                 return ((string)(this["Address"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("65536")]
-        public int StreamBufferSize {
-            get {
-                return ((int)(this["StreamBufferSize"]));
-            }
-        }
     }
 }
