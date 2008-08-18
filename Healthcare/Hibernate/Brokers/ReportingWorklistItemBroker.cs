@@ -59,7 +59,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			"((pr.Status not in (?)) or (ps.EndTime = (select max(ps2.EndTime) from ProcedureStep ps2 where ps.Protocol = ps2.Protocol)))", ProtocolStatus.RJ);
 
 		private static readonly HqlCondition ConditionMostRecentPublicationStep = new HqlCondition(
-			"(ps.Scheduling.StartTime = (select max(ps2.Scheduling.StartTime) from ProcedureStep ps2 where ps.ReportPart.Report = ps2.ReportPart.Report))");
+			"(ps.Scheduling.StartTime = (select max(ps2.Scheduling.StartTime) from ProcedureStep ps2 where ps.ReportPart.Report = ps2.ReportPart.Report and ps2.State not in (?)))", ActivityStatus.DC);
 
 		#endregion
 
