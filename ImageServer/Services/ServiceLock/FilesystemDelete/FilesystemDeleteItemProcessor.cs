@@ -315,7 +315,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         	{
         		if (_bytesToRemove < 0)
         		{
-        			break;
+                    Platform.Log(LogLevel.Debug, "Estimated disk space has been reached.");
+                    break;
         		}
 
         		// First, get the StudyStorage locations for the study, and calculate the disk usage.
@@ -573,6 +574,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				int count = CheckWorkQueueCount(item);
 				if (count > 0)
 				{
+                    // delay to avoid overshoot
+
 					Platform.Log(LogLevel.Info,
 								 "Delaying Filesystem ServiceLock check, {0} StudyDelete, StudyPurge or MigrateStudy items still in the WorkQueue for Filesystem: {1} (Current: {2}, High Watermark: {3})",
 								 count, fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
@@ -591,6 +594,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 					if (_bytesToRemove > 0)
 						PurgeStudies(item, fs);
+
+
+                    if (_studiesDeleted + _studiesMigrated + _studiesPurged ==0)
+                    {
+                        Platform.Log(LogLevel.Warn, "Fileystem '{0}' is above high watermark but no studies can be deleted, migrated or purged at this point", fs.Filesystem.Description);
+                    }
 
 					scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
 				}

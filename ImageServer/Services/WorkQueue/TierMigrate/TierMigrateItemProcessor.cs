@@ -39,6 +39,7 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
@@ -102,20 +103,49 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         }
 
+        
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
+
+            //Load the storage location.
+            LoadStorageLocation(item);
+                
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
+            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending});
+
+            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
+            if (relatedItems != null && relatedItems.Count > 0)
+            {
+                // can't do it now. Reschedule it for future
+                relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
+                                      {
+                                          return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
+                                      });
+
+                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
+                if (newScheduledTime < Platform.Time.AddMinutes(1))
+                    newScheduledTime = Platform.Time.AddMinutes(1);
+
+                PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
+                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
+            }
+            else
+            {
+                try
+                {
+                    DoMigrateStudies(StorageLocationList);
+                    PostProcessing(item, false, true);
+                }
+                catch (Exception e)
+                {
+                    FailQueueItem(item, e.Message);
+                }
+            }
             
-            try
-            {
-                LoadStorageLocation(item);
-                DoMigrateStudies(StorageLocationList);
-                PostProcessing(item, false, true);
-            }
-            catch(Exception e)
-            {
-                FailQueueItem(item, e.Message);
-            }
+            
         }
 
         private void DoMigrateStudies(IList<StudyStorageLocation> storages)

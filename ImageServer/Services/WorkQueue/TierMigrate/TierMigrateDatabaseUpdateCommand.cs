@@ -43,15 +43,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 searchCriteria.StudyStorageKey.EqualTo(Context.OriginalStudyLocation.GetKey());
                 searchCriteria.FilesystemKey.EqualTo(Context.OriginalStudyLocation.FilesystemKey);
                 IList<FilesystemStudyStorage> storageFilesystems = broker.Find(searchCriteria);
-
                 Debug.Assert(storageFilesystems.Count == 1);
-
                 FilesystemStudyStorage filesystemStudyStorage = storageFilesystems[0];
-                filesystemStudyStorage.FilesystemKey = Context.Destination.Filesystem.GetKey();
 
+                // Update Filesystem for the StudyStorage entry
+                filesystemStudyStorage.FilesystemKey = Context.Destination.Filesystem.GetKey();
                 broker.Update(filesystemStudyStorage);
 
 
+                // Update Filesystem for the remaining FilesystemQueue entries
                 IFilesystemQueueEntityBroker fsQueueBroker = updateContext.GetBroker<IFilesystemQueueEntityBroker>();                
                 FilesystemQueueSelectCriteria fsQueueSearchCriteria = new FilesystemQueueSelectCriteria();
                 fsQueueSearchCriteria.StudyStorageKey.EqualTo(Context.OriginalStudyLocation.GetKey());
@@ -59,10 +59,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
                 FilesystemQueueUpdateColumns fsQueueUpdateColumns = new FilesystemQueueUpdateColumns();
                 fsQueueUpdateColumns.FilesystemKey = Context.Destination.Filesystem.GetKey();
-
                 fsQueueBroker.Update(fsQueueSearchCriteria, fsQueueUpdateColumns);
                 
-                // insert new migration scheduling entry for the new filesystem
+                // insert new tier-migration eligiblility entry for the new filesystem
                 FilesystemQueueUpdateColumns columns = new FilesystemQueueUpdateColumns();
                 columns.FilesystemKey = Context.Destination.Filesystem.GetKey();
                 columns.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;

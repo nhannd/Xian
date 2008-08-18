@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -40,6 +41,7 @@ using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
@@ -190,52 +192,78 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		}
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
+            
+            // don't compress until the study has been completely processed.
+            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed});
+            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
+            if (relatedItems != null && relatedItems.Count > 0)
+            {
+                // can't do it now. Reschedule it for future
+                relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
+                                      {
+                                          return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
+                                      });
 
-			LoadUids(item);
-            LoadStorageLocation(item);
+                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
+                if (newScheduledTime < Platform.Time.AddMinutes(1))
+                    newScheduledTime = Platform.Time.AddMinutes(1);
 
-			if (WorkQueueUidList.Count == 0)
-			{
-				// No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, false, false);
-				return;
-			}
-			XmlElement element = item.Data.DocumentElement;
+                PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
+                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
+            }
+            else
+            {
+                LoadUids(item);
+                LoadStorageLocation(item);
 
-			string syntax = element.Attributes["syntax"].Value;
+                if (WorkQueueUidList.Count == 0)
+                {
+                    // No UIDs associated with the WorkQueue item.  Set the status back to idle
+                    PostProcessing(item, false, false);
+                    return;
+                }
+                XmlElement element = item.Data.DocumentElement;
 
-			TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+                string syntax = element.Attributes["syntax"].Value;
 
-			Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
+                TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
 
-			IDicomCodecFactory[] codecs = DicomCodecHelper.GetCodecs();
-			IDicomCodecFactory theCodecFactory = null;
-			foreach (IDicomCodecFactory codec in codecs)
-				if (codec.CodecTransferSyntax.Equals(compressSyntax))
-				{
-					theCodecFactory = codec;
-					break;
-				}
+                Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
 
-			if (theCodecFactory == null)
-			{
-				item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
-				Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
-				base.PostProcessingFailure(item, true);
-				return;
-			}
+                IDicomCodecFactory[] codecs = DicomCodecHelper.GetCodecs();
+                IDicomCodecFactory theCodecFactory = null;
+                foreach (IDicomCodecFactory codec in codecs)
+                    if (codec.CodecTransferSyntax.Equals(compressSyntax))
+                    {
+                        theCodecFactory = codec;
+                        break;
+                    }
 
-			if (!ProcessUidList(item, theCodecFactory))
-				PostProcessingFailure(item, false);
-			else
-			{
-				if (compressSyntax.LossyCompressed)
-					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
-				else
-					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
+                if (theCodecFactory == null)
+                {
+                    item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
+                    Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+                    base.PostProcessingFailure(item, true);
+                    return;
+                }
 
-				PostProcessing(item, true, false);  // batch processed, not complete
-			}
+                if (!ProcessUidList(item, theCodecFactory))
+                    PostProcessingFailure(item, false);
+                else
+                {
+                    if (compressSyntax.LossyCompressed)
+                        UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
+                    else
+                        UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
+
+                    PostProcessing(item, true, false);  // batch processed, not complete
+                }
+            }
+
+		    
 		}
 	}
 }

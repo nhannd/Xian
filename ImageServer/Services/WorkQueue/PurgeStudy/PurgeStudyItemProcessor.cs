@@ -30,11 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
@@ -102,17 +104,41 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
-			//Load the storage location.
-			LoadStorageLocation(item);
+            //Load the storage location.
+            LoadStorageLocation(item);
 
-			_partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
+            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending});
 
-			Platform.Log(LogLevel.Info, "Purging study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
-						 _partition.Description);
+            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item , workQueueCriteria);
+            if (relatedItems != null && relatedItems.Count > 0)
+            {
+                // can't do it now. Reschedule it for future
+                relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
+                                      {
+                                          return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
+                                      });
 
-			RemoveFilesystem();
+                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
+                if (newScheduledTime < Platform.Time.AddMinutes(1))
+                    newScheduledTime = Platform.Time.AddMinutes(1);
 
-			RemoveDatabase(item);
+                PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
+                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
+            }
+            else
+            {
+                _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
+
+                Platform.Log(LogLevel.Info, "Purging study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
+                             _partition.Description);
+
+                RemoveFilesystem();
+            }
+
+		    RemoveDatabase(item);
 
 			// No need to remove / update the Queue entry, it was deleted as part of the delete process.
 		}

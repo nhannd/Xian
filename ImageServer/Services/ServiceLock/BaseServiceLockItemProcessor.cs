@@ -68,15 +68,19 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #region Protected Methods
         protected IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type)
         {
-            IQueryFilesystemQueue query = ReadContext.GetBroker<IQueryFilesystemQueue>();
+            IFilesystemQueueEntityBroker broker = ReadContext.GetBroker<IFilesystemQueueEntityBroker>();
+            FilesystemQueueSelectCriteria fsQueueCriteria = new FilesystemQueueSelectCriteria();
 
-            FilesystemQueueQueryParameters parms = new FilesystemQueueQueryParameters();
-            parms.FilesystemKey = item.FilesystemKey;
-            parms.ScheduledTime = scheduledTime;
-            parms.FilesystemQueueTypeEnum = type;
-            parms.Results = ServiceLockSettings.Default.FilesystemQueueResultCount;
+            fsQueueCriteria.FilesystemKey.EqualTo(item.FilesystemKey);
+            fsQueueCriteria.ScheduledTime.LessThanOrEqualTo(scheduledTime);
+            fsQueueCriteria.FilesystemQueueTypeEnum.EqualTo(type);
 
-            IList<FilesystemQueue> list = query.Find(parms);
+            WorkQueueSelectCriteria workQueueSearchCriteria = new WorkQueueSelectCriteria();
+            workQueueSearchCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
+            fsQueueCriteria.WorkQueue.NotExists(workQueueSearchCriteria); // no work queue item exists for the same studies
+            fsQueueCriteria.ScheduledTime.SortAsc(0);
+
+            IList<FilesystemQueue> list = broker.Find(fsQueueCriteria, 0, ServiceLockSettings.Default.FilesystemQueueResultCount);
 
             return list;
         }
@@ -96,8 +100,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
             if (storageLocation == null)
             {
-                string error = String.Format("Unable to find storage location for study {0} on partition {1}",
-                                             studyInstanceUid, serverPartitionKey);
+                string error = String.Format("Unable to find storage location for study {0} on partition {1}",studyInstanceUid, serverPartitionKey);
                 Platform.Log(LogLevel.Error, error);
                 throw new ApplicationException(error);
             }

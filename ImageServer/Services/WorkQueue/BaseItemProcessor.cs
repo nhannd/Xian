@@ -40,6 +40,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -671,6 +672,46 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
            return theXml;
         }
+
+        protected void PostponeItem(Model.WorkQueue item, DateTime when, DateTime expire)
+        {
+            DBUpdateTime.Add(
+               delegate
+               {
+                   using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+                   {
+                       IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+                       WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                       parms.WorkQueueKey = item.GetKey();
+                       parms.StudyStorageKey = item.StudyStorageKey;
+                       parms.ProcessorID = ServiceTools.ProcessorId;
+                       parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                       parms.ScheduledTime = when;
+                       parms.ExpirationTime = expire;
+                       parms.FailureCount = item.FailureCount;
+                       
+                       if (false == update.Execute(parms))
+                       {
+                           Platform.Log(LogLevel.Error, "Unable to reschedule {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
+                       }
+                       else
+                           updateContext.Commit();
+                   }
+               }
+               );
+        }
+
+
+        protected List<Model.WorkQueue> FindRelatedWorkQueueItems(Model.WorkQueue item, WorkQueueSelectCriteria criteria)
+        {
+            IWorkQueueEntityBroker broker = ReadContext.GetBroker<IWorkQueueEntityBroker>();
+            List<Model.WorkQueue> list = ListUtils.Convert(broker.Find(criteria));
+            return list.FindAll(delegate(Model.WorkQueue testItem)
+                                    {
+                                        return !testItem.GetKey().Equals(item.GetKey());
+                                    });
+        }
+
 
         /// <summary>
         /// Called before the <see cref="WorkQueue"/> item is processed

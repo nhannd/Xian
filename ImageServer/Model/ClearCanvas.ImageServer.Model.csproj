@@ -81,6 +81,7 @@
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DeviceSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DeviceUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\FilesystemQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\FilesystemQueueSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemSelectCriteria.gen.cs" />

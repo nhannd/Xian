@@ -232,33 +232,48 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
                     break;
                 case SearchConditionTest.NotExists:
-                    EntitySelectCriteria notExistsSubCriteria = (EntitySelectCriteria) values[0];
+                    {
+                        RelatedEntityCondition<EntitySelectCriteria> rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
+                        if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition", null);
+                        EntitySelectCriteria notExistsSubCriteria = (EntitySelectCriteria)values[0];
 
-                    string sql;
-                    sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria, null, null,
-                                       String.Format("{0}.GUID = {1}.{0}GUID", variable, notExistsSubCriteria.GetKey()));
-                    sb.AppendFormat("NOT EXISTS ({0})", sql);
-                    break;
+                        string baseTableColumn = rec.BaseTableColumn;
+                        if (baseTableColumn.EndsWith("Key"))
+                            baseTableColumn = baseTableColumn.Replace("Key", "GUID");
+                        string relatedTableColumn = rec.RelatedTableColumn;
+                        if (relatedTableColumn.EndsWith("Key"))
+                            relatedTableColumn = relatedTableColumn.Replace("Key", "GUID");
+
+                        string sql;
+                        sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria, null, null,
+                                           String.Format("{0}.{2} = {1}.{3}", variable, notExistsSubCriteria.GetKey(), baseTableColumn, relatedTableColumn));
+
+                        sb.AppendFormat("NOT EXISTS ({0})", sql);
+                        break;
+                    }
+                    
                 case SearchConditionTest.Exists:
-                    RelatedEntityCondition<EntitySelectCriteria> rec =
-                        sc as RelatedEntityCondition<EntitySelectCriteria>;
-                    if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition", null);
-                    EntitySelectCriteria existsSubCriteria = (EntitySelectCriteria) values[0];
+                    {
+                        RelatedEntityCondition<EntitySelectCriteria> rec = sc as RelatedEntityCondition<EntitySelectCriteria>;
+                        if (rec == null) throw new PersistenceException("Casting error with RelatedEntityCondition", null);
+                        EntitySelectCriteria existsSubCriteria = (EntitySelectCriteria)values[0];
 
-                    string baseTableColumn = rec.BaseTableColumn;
-                    if (baseTableColumn.EndsWith("Key"))
-                        baseTableColumn = baseTableColumn.Replace("Key", "GUID");
-                    string relatedTableColumn = rec.RelatedTableColumn;
-                    if (relatedTableColumn.EndsWith("Key"))
-                        relatedTableColumn = relatedTableColumn.Replace("Key", "GUID");
+                        string baseTableColumn = rec.BaseTableColumn;
+                        if (baseTableColumn.EndsWith("Key"))
+                            baseTableColumn = baseTableColumn.Replace("Key", "GUID");
+                        string relatedTableColumn = rec.RelatedTableColumn;
+                        if (relatedTableColumn.EndsWith("Key"))
+                            relatedTableColumn = relatedTableColumn.Replace("Key", "GUID");
 
-                    string existsSql;
+                        string existsSql;
 
-                    existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null, null,
-                                             String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
-                                                           baseTableColumn, relatedTableColumn));
-                    sb.AppendFormat("EXISTS ({0})", existsSql);
-                    break;
+                        existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null, null,
+                                                 String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
+                                                               baseTableColumn, relatedTableColumn));
+                        sb.AppendFormat("EXISTS ({0})", existsSql);
+                        break;
+                    }
+                    
                 case SearchConditionTest.None:
 
                 default:
@@ -300,9 +315,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     // this way instead.
                     string subQualifier;
                     if (subCriteria is RelatedEntityCondition<EntitySelectCriteria>)
-                        subQualifier = qualifier;
+                    {
+                        subQualifier = qualifier;   
+                    }
                     else
                         subQualifier = string.Format("{0}.{1}", qualifier, subCriteria.GetKey());
+
                     list.AddRange(GetWhereSearchCriteria(subQualifier, subCriteria, command));
                 }
             }
