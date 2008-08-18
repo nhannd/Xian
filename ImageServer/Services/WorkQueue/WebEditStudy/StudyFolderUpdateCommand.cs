@@ -158,13 +158,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 string newStudyXmlPath = Path.Combine(tempStudyFolder, Context.Study.StudyInstanceUid + ".xml");
                 using (FileStream stream = new FileStream(newStudyXmlPath, FileMode.CreateNew))
                 {
-                    XmlDocument studyXml = Context.NewStudyXml.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings);
-                    StudyXmlIo.Write(studyXml, stream);
 
                     string newGzipStudyXmlPath = Path.Combine(tempStudyFolder, Context.Study.StudyInstanceUid + ".xml.gz");
                     using (FileStream gzStream = new FileStream(newGzipStudyXmlPath, FileMode.CreateNew))
                     {
-                        StudyXmlIo.WriteGzip(studyXml, gzStream);
+						XmlDocument studyXml = Context.NewStudyXml.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings);
+                    	StudyXmlIo.WriteXmlAndGzip(studyXml, stream, gzStream);
                     }
                 }
             }

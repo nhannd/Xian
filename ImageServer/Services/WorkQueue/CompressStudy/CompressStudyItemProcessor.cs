@@ -173,6 +173,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				if (!processor.Execute())
 				{
 					Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+					Platform.Log(LogLevel.Error,"Compression file that failed: {0}",file.Filename);
 					throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
 				}
 				else

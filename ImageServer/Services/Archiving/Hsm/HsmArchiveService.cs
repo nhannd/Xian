@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// </summary>
 		protected override void Stop()
 		{
-			// NO-OP
+			_threadPool.Stop(true);
 		}
 	}
 }

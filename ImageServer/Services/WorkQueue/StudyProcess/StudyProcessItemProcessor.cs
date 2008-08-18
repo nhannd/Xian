@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (!processor.Execute())
                 {
                     Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-
+					Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
                     throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
                 }
                 else

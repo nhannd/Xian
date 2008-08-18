@@ -45,8 +45,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly TransferSyntax _syntax;
 		private bool _lossy;
 
-		public DicomCompressCommand(DicomMessageBase file, TransferSyntax syntax, IDicomCodec codec, DicomCodecParameters parms, bool lossy) 
-			: base("DICOM Compress Command",false)
+		public DicomCompressCommand(DicomMessageBase file, TransferSyntax syntax, IDicomCodec codec, DicomCodecParameters parms, bool lossy)
+			: base("DICOM Compress Command", true)
 		{
 			_file = file;
 			_syntax = syntax;

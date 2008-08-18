@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
@@ -107,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// </summary>
 		protected override void Stop()
 		{
-			// NO-OP
+			_threadPool.Stop(true);
 		}
 	}
 }
