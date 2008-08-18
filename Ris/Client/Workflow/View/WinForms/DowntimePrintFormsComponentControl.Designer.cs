@@ -122,13 +122,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusStrip.Location = new System.Drawing.Point(0, 731);
 			this._statusStrip.Name = "_statusStrip";
 			this._statusStrip.Size = new System.Drawing.Size(780, 22);
+			this._statusStrip.SizingGrip = false;
 			this._statusStrip.TabIndex = 2;
 			this._statusStrip.Text = "statusStrip1";
 			// 
 			// _statusText
 			// 
 			this._statusText.Name = "_statusText";
-			this._statusText.Size = new System.Drawing.Size(513, 17);
+			this._statusText.Size = new System.Drawing.Size(482, 17);
 			this._statusText.Spring = true;
 			this._statusText.Text = "Select number of forms to print";
 			this._statusText.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
