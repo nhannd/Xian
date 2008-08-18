@@ -206,8 +206,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.Context.GetOperationEnablement("CompleteInterpretationAndVerify") ||
-					this.Context.GetOperationEnablement("CompleteVerification");
+				return this.Context.SelectedItems.Count == 1 && 
+					(this.Context.GetOperationEnablement("CompleteInterpretationAndVerify") ||
+					this.Context.GetOperationEnablement("CompleteVerification"));
 			}
 		}
 

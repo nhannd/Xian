@@ -7,9 +7,11 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
+	[ButtonAction("apply", "biography-reports-toolbar/Print//Fax Report", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	public abstract class BiographyPublishReportTool<TPublishReportComponent> : Tool<IBiographyOrderReportsToolContext>
-		where TPublishReportComponent : PublishReportComponent
+	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
+	public class BiographyPublishReportTool : Tool<IBiographyOrderReportsToolContext>
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
@@ -18,19 +20,18 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.Initialize();
 
-			((IBiographyOrderReportsToolContext)this.ContextBase).ContextChanged += delegate
-			{
-				this.Enabled = DetermineEnablement();
-			};
+			this.Context.ContextChanged += delegate { this.Enabled = DetermineEnablement(); };
 		}
-
-		public abstract TPublishReportComponent GetComponent();
 
 		public void Apply()
 		{
 			try
 			{
-				TPublishReportComponent component = GetComponent();
+				PublishReportComponent component = new PublishReportComponent(
+						this.Context.PatientProfileRef,
+						this.Context.OrderRef,
+						null,
+						this.Context.ReportRef);
 
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
@@ -48,7 +49,7 @@ namespace ClearCanvas.Ris.Client
 			if (this.Context.PatientProfileRef == null) return false;
 			if (this.Context.OrderRef == null) return false;
 			if (this.Context.ReportRef == null) return false;
-
+			if (this.Context.ReportStatus.Code != "F" && this.Context.ReportStatus.Code != "C") return false;
 			return true;
 		}
 
@@ -73,21 +74,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _enabledChanged += value; }
 			remove { _enabledChanged -= value; }
-		}
-	}
-
-	[ButtonAction("apply", "biography-reports-toolbar/Print//Fax Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
-	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
-	public class BiographyPrintReportTool : BiographyPublishReportTool<PublishReportComponent>
-	{
-		public override PublishReportComponent GetComponent()
-		{
-			return new PublishReportComponent(
-					this.Context.PatientProfileRef,
-					this.Context.OrderRef,
-					null,
-					this.Context.ReportRef);
 		}
 	}
 }

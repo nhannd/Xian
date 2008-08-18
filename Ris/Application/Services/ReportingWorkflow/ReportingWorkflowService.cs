@@ -411,6 +411,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
+		[OperationEnablement("CanSendReportToQueue")]
 		public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
         {
 			foreach (PublishRecipientDetail detail in request.Recipients)
@@ -630,6 +631,27 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 						&& !(step is PublicationStep);
 				else
 					return false;
+			}
+
+			return false;
+		}
+
+		public bool CanSendReportToQueue(WorklistItemKey itemKey)
+		{
+			if (itemKey.ProcedureStepRef != null)
+			{
+				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+
+				if (step is ReportingProcedureStep == false)
+					return false;
+
+				ReportPart part = ((ReportingProcedureStep)step).ReportPart;
+				if (part == null)
+					return false;
+
+				// Only return true for completed or corrected report
+				if (part.Report.Status == ReportStatus.F || part.Report.Status == ReportStatus.C)
+					return true;
 			}
 
 			return false;

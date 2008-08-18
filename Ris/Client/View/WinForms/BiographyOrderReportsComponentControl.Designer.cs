@@ -66,10 +66,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _reportPreviewPanel
 			// 
-			this._reportPreviewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reportPreviewPanel.Location = new System.Drawing.Point(0, 0);
+			this._reportPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._reportPreviewPanel.Location = new System.Drawing.Point(0, 84);
 			this._reportPreviewPanel.Name = "_reportPreviewPanel";
-			this._reportPreviewPanel.Size = new System.Drawing.Size(343, 498);
+			this._reportPreviewPanel.Size = new System.Drawing.Size(343, 414);
 			this._reportPreviewPanel.TabIndex = 1;
 			// 
 			// _reports
@@ -83,7 +85,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._reports.Location = new System.Drawing.Point(3, 2);
 			this._reports.Margin = new System.Windows.Forms.Padding(2);
 			this._reports.Name = "_reports";
-			this._reports.Size = new System.Drawing.Size(337, 41);
+			this._reports.Size = new System.Drawing.Size(340, 41);
 			this._reports.TabIndex = 2;
 			this._reports.Value = null;
 			// 
@@ -99,7 +101,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._toolstrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._toolstrip.Location = new System.Drawing.Point(3, 49);
 			this._toolstrip.Name = "_toolstrip";
-			this._toolstrip.Size = new System.Drawing.Size(337, 32);
+			this._toolstrip.Size = new System.Drawing.Size(340, 32);
 			this._toolstrip.TabIndex = 3;
 			this._toolstrip.Text = "toolStrip1";
 			// 
@@ -112,7 +114,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.Controls.Add(this._reports);
 			this.Controls.Add(this._reportPreviewPanel);
 			this.Name = "BiographyOrderReportsComponentControl";
-			this.Size = new System.Drawing.Size(343, 498);
+			this.Size = new System.Drawing.Size(346, 501);
 			this.ResumeLayout(false);
 
         }
