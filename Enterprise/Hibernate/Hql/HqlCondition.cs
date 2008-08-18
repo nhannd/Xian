@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using ClearCanvas.Enterprise.Core;
+using System.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate.Hql
 {
@@ -57,7 +58,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 SearchConditionBase sc = (SearchConditionBase)criteria;
                 if (sc.Test != SearchConditionTest.None)
                 {
-                    hqlConditions.Add(new HqlCondition(GetHqlText(qualifier, sc), sc.Values));
+                    hqlConditions.Add(GetCondition(qualifier, sc.Test, sc.Values));
                 }
             }
             else
@@ -72,6 +73,103 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
 
             return hqlConditions.ToArray();
         }
+
+		public static HqlCondition EqualTo(string variable, object value)
+		{
+			return MakeCondition(variable, "= ?", value);
+		}
+
+		public static HqlCondition NotEqualTo(string variable, object value)
+		{
+			return MakeCondition(variable, "<> ?", value);
+		}
+
+		public static HqlCondition Like(string variable, string value)
+		{
+			return MakeCondition(variable, "like ?", value);
+		}
+
+		public static HqlCondition NotLike(string variable, string value)
+		{
+			return MakeCondition(variable, "not like ?", value);
+		}
+
+		public static HqlCondition Between(string variable, object lower, object upper)
+		{
+			return MakeCondition(variable, "between ? and ?", lower, upper);
+		}
+
+		public static HqlCondition In(string variable, params object[] values)
+		{
+			return InHelper(variable, values, false);
+		}
+
+		public static HqlCondition In(string variable, IEnumerable values)
+		{
+			return InHelper(variable, values, false);
+		}
+
+		public static HqlCondition NotIn(string variable, params object[] values)
+		{
+			return InHelper(variable, values, true);
+		}
+
+		public static HqlCondition NotIn(string variable, IEnumerable values)
+		{
+			return InHelper(variable, values, true);
+		}
+
+		private static HqlCondition InHelper(string variable, IEnumerable values, bool invert)
+		{
+			List<object> valueList = new List<object>();
+			List<string> placeHolderList = new List<string>();
+			foreach (object o in values)
+			{
+				valueList.Add(o);
+				placeHolderList.Add("?");
+			}
+
+			StringBuilder sb = invert ? new StringBuilder("not in (") : new StringBuilder("in (");
+			sb.Append(string.Join(",", placeHolderList.ToArray()));
+			sb.Append(")");
+			return MakeCondition(variable, sb.ToString(), valueList.ToArray());
+		}
+
+
+		public static HqlCondition LessThan(string variable, object value)
+		{
+			return MakeCondition(variable, "< ?", value);
+		}
+
+		public static HqlCondition LessThanOrEqual(string variable, object value)
+		{
+			return MakeCondition(variable, "<= ?", value);
+		}
+
+		public static HqlCondition MoreThan(string variable, object value)
+		{
+			return MakeCondition(variable, "> ?", value);
+		}
+
+		public static HqlCondition MoreThanOrEqual(string variable, object value)
+		{
+			return MakeCondition(variable, ">= ?", value);
+		}
+
+		public static HqlCondition IsNull(string variable)
+		{
+			return MakeCondition(variable, "is null");
+		}
+
+		public static HqlCondition IsNotNull(string variable)
+		{
+			return MakeCondition(variable, "is not null");
+		}
+
+		private static HqlCondition MakeCondition(string variable, string hql, params object[] values)
+		{
+			return new HqlCondition(string.Format("{0} {1}", variable, hql), values);
+		}
 
         private string _hql;
         private object[] _parameters;
@@ -103,56 +201,38 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             get { return _parameters; }
         }
 
-        private static string GetHqlText(string variable, SearchConditionBase sc)
+		internal static HqlCondition GetCondition(string variable, SearchConditionTest test, object[] values)
         {
-            string a;
-            switch (sc.Test)
+			switch (test)
             {
                 case SearchConditionTest.Equal:
-                    a = "= ?";
-                    break;
+            		return EqualTo(variable, values[0]);
                 case SearchConditionTest.NotEqual:
-                    a = "<> ?";
-                    break;
+            		return NotEqualTo(variable, values[0]);
                 case SearchConditionTest.Like:
-                    a = "like ?";
-                    break;
+            		return Like(variable, (string)values[0]);
                 case SearchConditionTest.NotLike:
-                    a = "not like ?";
-                    break;
+            		return NotLike(variable, (string) values[0]);
                 case SearchConditionTest.Between:
-                    a = "between ? and ?";
-                    break;
+            		return Between(variable, values[0], values[1]);
                 case SearchConditionTest.In:
-                    StringBuilder sb = new StringBuilder("in (?");  // assume at least one param
-                    for (int i = 1; i < sc.Values.Length; i++) { sb.Append(", ?"); }
-                    sb.Append(")");
-                    a = sb.ToString();
-                    break;
+            		return In(variable, values);
                 case SearchConditionTest.LessThan:
-                    a = "< ?";
-                    break;
+            		return LessThan(variable, values[0]);
                 case SearchConditionTest.LessThanOrEqual:
-                    a = "<= ?";
-                    break;
+            		return LessThanOrEqual(variable, values[0]);
                 case SearchConditionTest.MoreThan:
-                    a = "> ?";
-                    break;
+            		return MoreThan(variable, values[0]);
                 case SearchConditionTest.MoreThanOrEqual:
-                    a = ">= ?";
-                    break;
+            		return MoreThanOrEqual(variable, values[0]);
                 case SearchConditionTest.NotNull:
-                    a = "is not null";
-                    break;
+            		return IsNotNull(variable);
                 case SearchConditionTest.Null:
-                    a = "is null";
-                    break;
+            		return IsNull(variable);
                 case SearchConditionTest.None:
                 default:
                     throw new Exception();  // invalid
             }
-
-            return string.Format("{0} {1}", variable, a);
         }
 
     }
