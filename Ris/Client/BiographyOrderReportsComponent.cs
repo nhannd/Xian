@@ -63,6 +63,7 @@ namespace ClearCanvas.Ris.Client
 		EntityRef PatientProfileRef { get; }
 		EntityRef OrderRef { get; }
 		EntityRef ReportRef { get; }
+		EnumValueInfo ReportStatus { get; }
 		IDesktopWindow DesktopWindow { get; }
 		event EventHandler ContextChanged;
 	}
@@ -102,6 +103,11 @@ namespace ClearCanvas.Ris.Client
 			public EntityRef ReportRef
 			{
 				get { return _component.ReportRef; }
+			}
+
+			public EnumValueInfo ReportStatus
+			{
+				get { return _component.ReportStatus; }
 			}
 
 			public IDesktopWindow DesktopWindow
@@ -198,6 +204,11 @@ namespace ClearCanvas.Ris.Client
 			public EntityRef ReportRef
 			{
 				get { return _reportRef; }
+			}
+
+			public EnumValueInfo ReportStatus
+			{
+				get { return CollectionUtils.FirstElement(_reportListItems).ReportStatus; }
 			}
 
 			public void AddReportListItem(ReportListItem item)
@@ -346,6 +357,11 @@ namespace ClearCanvas.Ris.Client
 		public EntityRef ReportRef
 		{
 			get { return this._selectedReport != null ? this._selectedReport.ReportRef : null; }
+		}
+
+		public EnumValueInfo ReportStatus
+		{
+			get { return this._selectedReport != null ? this._selectedReport.ReportStatus : null; }
 		}
 
 		private void RefreshComponent()
