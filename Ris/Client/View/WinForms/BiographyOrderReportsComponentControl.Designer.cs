@@ -66,12 +66,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _reportPreviewPanel
 			// 
-			this._reportPreviewPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._reportPreviewPanel.Location = new System.Drawing.Point(3, 84);
+			this._reportPreviewPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._reportPreviewPanel.Location = new System.Drawing.Point(0, 0);
 			this._reportPreviewPanel.Name = "_reportPreviewPanel";
-			this._reportPreviewPanel.Size = new System.Drawing.Size(337, 347);
+			this._reportPreviewPanel.Size = new System.Drawing.Size(343, 498);
 			this._reportPreviewPanel.TabIndex = 1;
 			// 
 			// _reports
