@@ -14,7 +14,6 @@
 
 if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel']==null)
 {
-
     Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive');
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +24,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Conf
 
     ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel = function(element) { 
         ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.initializeBase(this, [element]);
-       
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,8 +43,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Conf
             this._OnPartitionArchiveListRowClickedHandler = Function.createDelegate(this,this._OnPartitionArchiveListRowClicked);
             this._OnPartitionArchiveListRowDblClickedHandler = Function.createDelegate(this,this._OnPartitionArchiveListRowDblClicked);
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);
-            Sys.Application.add_load(this._OnLoadHandler);
-                 
+            Sys.Application.add_load(this._OnLoadHandler);                             
         },
         
         dispose : function() {
@@ -145,7 +142,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Conf
             addButton.set_enable(en);
         },
         
-        _enableEditButtonButton : function(en)
+        _enableEditButton : function(en)
         {
             var editButton = $find(this._EditButtonClientID);
             editButton.set_enable(en);
@@ -206,13 +203,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Conf
         set_PartitionArchiveListClientID : function(value) {
             this._PartitionArchiveListClientID = value;
             this.raisePropertyChanged('PartitionArchiveListClientID');
-        },
+        }
     }
 
     // Register the class as a type that inherits from Sys.UI.Control.
 
-        ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel', Sys.UI.Control);
-     
+    ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel', Sys.UI.Control);
 
     if (typeof(Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
 

@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-			DataBind();
+			ArchiveQueueGridView.DataBind();
         }
         
         protected override void OnInit(EventArgs e)

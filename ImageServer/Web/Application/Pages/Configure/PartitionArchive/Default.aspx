@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
+<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" ValidateRequest="false"
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.Default"
     Title="Configure Partition Archive" %>
 
@@ -12,7 +12,7 @@
         <ContentTemplate>
             <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
             <localAsp:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
-            <ccAsp:MessageBox ID="deleteConfirmBox" runat="server" />       
+            <ccAsp:MessageBox ID="DeleteConfirmDialog" runat="server" />       
             <ccAsp:MessageBox ID="MessageBox" runat="server" />     
             <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />        
         </ContentTemplate>

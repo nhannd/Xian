@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
     {
         #region Private members
 
+        private ArchiveQueueController _controller = new ArchiveQueueController();
+
     	#endregion Private members
 
         #region Public Properties
@@ -124,17 +126,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                                     IList<Model.ArchiveQueue> items = data as IList<Model.ArchiveQueue>;
                                     foreach (Model.ArchiveQueue item in items)
                                     {
-                                        //_controller.DeleteItem(item);
+                                        _controller.DeleteArchiveQueueItem(item);
                                     }
                                 }
                                 else if (data is Model.ArchiveQueue)
                                 {
                                     Model.ArchiveQueue item = data as Model.ArchiveQueue;
-                                    //_controller.DeleteItem(item);
+                                    _controller.DeleteArchiveQueueItem(item);
                                 }
 
                                 DataBind();
                                 UpdatePanel.Update(); // force refresh
+
                             };
 
 			ArchiveQueueItemList.DataSourceCreated += delegate(ArchiveQueueDataSource source)
@@ -199,8 +202,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             if (items != null && items.Count>0)
             {
-                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleStudyDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleStudyDelete);
+                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleArchiveQueueDelete);
+                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleArchiveQueueDelete);
 
                 MessageBox.Message += "<table>";
                 foreach (Model.ArchiveQueue item in items)

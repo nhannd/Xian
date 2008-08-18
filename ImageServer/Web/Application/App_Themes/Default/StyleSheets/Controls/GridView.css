@@ -11,41 +11,53 @@
     background: #ffffff url(../../images/Controls/GridView/GridViewHeaderBackground.png) repeat-x;
     height: 23px;
 	text-align: left;
-	padding-bottom: 2px;
-	padding-left: 3px;
+	padding-left: 8px;
 	color: #205F87;
 }
 
 .GlobalGridViewRow
 {
+    border-bottom: solid 2px #eeeeee;
+    padding: 0px 0px 0px 8px;
+    height: 20px;
 }
 
 .GlobalGridViewRow td
 {
     border-bottom: solid 2px #eeeeee;
-    padding-left: 3px;
-    height: 18px;
+    padding: 0px 0px 0px 8px;
+    height: 20px;
+}
+
+.GlobalGridViewAlternatingRow
+{
+    padding: 0px 0px 0px 8px;
+    border-bottom: solid 2px #eeeeee;
+    height: 20px;
 }
 
 .GlobalGridViewAlternatingRow td
 {
-    padding-left: 3px;
+    padding: 0px 0px 0px 8px;
     border-bottom: solid 2px #eeeeee;
-    height: 18px;
+    height: 20px;
 }
 
 .GlobalGridViewSelectedRow
 {
-    
+    background-color: #dddddd;
+    border-bottom: solid 2px #eeeeee;
+    padding: 0px 0px 0px 8px;
+    height: 20px;    
 }
 
 .GlobalGridViewSelectedRow td
 {
-    Height: 18px;
-    background: #eeeeee url(../../images/Controls/GridView/GridViewSelectedBackground.png) repeat-x;
+    background-color: #dddddd;
     border-bottom: solid 2px #eeeeee;
     color: Black;
-    padding-left: 3px;
+    height: 20px;
+    padding: 0px 0px 0px 8px;
 }
 
 .GlobalGridViewEmptyText

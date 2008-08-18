@@ -47,7 +47,7 @@
                                 <td valign="top"><asp:Label ID="Label3" runat="server" Text="Configuration XML" CssClass="DialogTextBoxLabel" /></td>
                                 <td><asp:TextBox ID="ConfigurationXML" TextMode="MultiLine" runat="server" ValidationGroup="vg1" MaxLength="4" Width="300" CssClass="DialogTextBox" Rows="5"></asp:TextBox></td>
                                 <td>                                   
-
+                                    
                                  </td>
                             </tr>
                             <tr>

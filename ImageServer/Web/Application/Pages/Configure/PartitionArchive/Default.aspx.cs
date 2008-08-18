@@ -46,9 +46,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
     {
         #region Private Members
 
-        private IDictionary<ServerEntityKey, PartitionArchivePanel> _mapDevicePanel =
-            new Dictionary<ServerEntityKey, PartitionArchivePanel>();
-
         private ServerPartition _serverPartition;
 
         // used for database interaction
@@ -71,7 +68,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         protected void SetupEventHandlers()
         {
             AddEditPartitionDialog.OKClicked += AddEditPartitionDialog_OKClicked;
-            deleteConfirmBox.Confirmed += DeleteConfirmDialog_Confirmed;
+            DeleteConfirmDialog.Confirmed += DeleteConfirmDialog_Confirmed;
         }
 
 
@@ -93,9 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
                                                                
                                                                PartitionArchivePanel panel =
                                                                    LoadControl("PartitionArchivePanel.ascx") as PartitionArchivePanel;
-                                                               
                                                                panel.ID = "PartitionArchivePanel_" + partition.AeTitle;
-                                                               _mapDevicePanel[partition.GetKey()] = panel; // this map is used to reload the list when the devices are updated.
                                                                return panel;
                                                            });
 
@@ -132,23 +127,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
         private void DeleteConfirmDialog_Confirmed(object data)
         {
-            Model.PartitionArchive partition = data as Model.PartitionArchive;
-            if (partition != null)
-            {
-                if (!_controller.Delete(partition))
-                {
-                    UpdateUI();
+            ServerEntityKey key = data as ServerEntityKey;
 
-                    MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                    MessageBox.Message =
-                        "Unable to delete this partition archive. This could mean there are studies on this partition.<BR>Please check the log file or contact the server administrator";
-                    MessageBox.Show();
-                }
-                else
-                {
-                    UpdateUI();
-                }
-            }
+            Model.PartitionArchive pa = Model.PartitionArchive.Load(key);
+
+            _controller.Delete(pa);
+
+            ServerPartitionTabs.Update(pa.ServerPartitionKey);
         }
 
         #endregion
@@ -170,14 +155,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             AddEditPartitionDialog.Show(true);
         }
 
-        public void DeletePartition(Model.PartitionArchive selectedPartition)
+        public void DeletePartition(Model.PartitionArchive partitionArchive)
         {
-            deleteConfirmBox.Data = selectedPartition;
-            deleteConfirmBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-            deleteConfirmBox.Message =
-                String.Format(
-                    "Are you sure you want to delete this partition archive and all related settings permanently?");
-            deleteConfirmBox.Show();
+            DeleteConfirmDialog.Message = String.Format(
+                    "Are you sure you want to delete partition archive \"{0}\" and all related settings permanently?", partitionArchive.Description);
+            DeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
+            DeleteConfirmDialog.Data = partitionArchive.GetKey();
+            DeleteConfirmDialog.Show();
         }
 
         #endregion

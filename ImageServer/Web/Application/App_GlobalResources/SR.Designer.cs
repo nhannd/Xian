@@ -358,6 +358,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete these Archive Queue items?.
+        /// </summary>
+        internal static string MultipleArchiveQueueDelete {
+            get {
+                return ResourceManager.GetString("MultipleArchiveQueueDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
         /// </summary>
         internal static string MultipleStudyDelete {
@@ -435,6 +444,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string ServiceLockUpdateFailed_ContactAdmin {
             get {
                 return ResourceManager.GetString("ServiceLockUpdateFailed_ContactAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this Archive Queue item?.
+        /// </summary>
+        internal static string SingleArchiveQueueDelete {
+            get {
+                return ResourceManager.GetString("SingleArchiveQueueDelete", resourceCulture);
             }
         }
         

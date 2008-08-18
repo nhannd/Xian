@@ -41,6 +41,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 {
 	public class ArchiveQueueController
 	{
+        private readonly ArchiveQueueAdaptor _adaptor = new ArchiveQueueAdaptor();
+
 
 		/// <summary>
 		/// Gets a list of <see cref="ArchiveQueue"/> items with specified criteria
@@ -69,5 +71,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				return new List<ArchiveQueue>();
 			}
 		}
+
+        public bool DeleteArchiveQueueItem(ArchiveQueue item)
+        {
+            return _adaptor.Delete(item.Key);
+        }
+
+        
 	}
 }

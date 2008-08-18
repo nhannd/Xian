@@ -29,22 +29,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
-        /// Panel1 control.
+        /// ServerPartitionTabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
-        
-        /// <summary>
-        /// PartitionArchivePanel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.PartitionArchivePanel PartitionArchivePanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs ServerPartitionTabs;
         
         /// <summary>
         /// AddEditPartitionDialog control.
@@ -56,13 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive.AddEditPartitionDialog AddEditPartitionDialog;
         
         /// <summary>
-        /// deleteConfirmBox control.
+        /// DeleteConfirmDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox deleteConfirmBox;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteConfirmDialog;
         
         /// <summary>
         /// MessageBox control.
@@ -81,14 +72,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.TimedDialog TimedDialog;
-
-        /// <summary>
-        /// ServerPartitionTabs control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs ServerPartitionTabs;
     }
 }

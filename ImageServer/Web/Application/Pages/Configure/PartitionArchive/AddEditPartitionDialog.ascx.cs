@@ -31,9 +31,12 @@
 
 using System;
 using System.IO;
+using System.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
@@ -72,8 +75,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             set
             {
                 _partitionArchive = value;
-                // put into viewstate to retrieve later
-                ViewState[ClientID + "_EdittedPartitionArchive"] = _partitionArchive;
+                if (_partitionArchive != null && _partitionArchive.Key != null)
+                    ViewState[ClientID + "_EdittedPartitionArchive"] = _partitionArchive.GetKey();
             }
             get { return _partitionArchive; }
         }
@@ -103,10 +106,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             {
                 if (ViewState[ClientID + "_EditMode"] != null)
                     _editMode = (bool) ViewState[ClientID + "_EditMode"];
+
+                if (ViewState[ClientID + "_EdittedPartitionArchive"] != null)
+                {
+                    ServerEntityKey partitionKey = ViewState[ClientID + "_EdittedPartitionArchive"] as ServerEntityKey;
+                    _partitionArchive = Model.PartitionArchive.Load(partitionKey);
+                }
             }
 
             ArchiveTypeDropDownList.Items.Clear();
-            ArchiveTypeDropDownList.Items.Add(new ListItem("HSM Archive", "HSMArchive"));
+            ArchiveTypeDropDownList.Items.Add(new ListItem("HSM Archive", "HsmArchive"));
 
         }
 
@@ -161,21 +170,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
             if (PartitionArchive == null)
             {
-                //Description.Text = "Partition Archive Name";
-                //ArchiveDelay.Text = "10";
-                //EnabledCheckBox.Checked = true;
-                //ReadOnlyCheckBox.Checked = true;
-                //ConfigurationXML.Text = "<HsmArchive>\n\t<RootDir>C:\\ImageServer\\Archive</RootDir>\n</HsmArchive>";
-                //ArchiveTypeDropDownList.SelectedIndex = 0;
+                Description.Text = "Partition Archive Name";
+                ArchiveDelay.Text = "12";
+                EnabledCheckBox.Checked = true;
+                ReadOnlyCheckBox.Checked = true;
+                ArchiveTypeDropDownList.SelectedIndex = 0;
+                ConfigurationXML.Text = "<HsmArchive>\n\t<RootDir>C:\\ImageServer\\Archive</RootDir>\n</HsmArchive>";
             }
             else if (Page.IsValid)
             {
-                //Description.Text = PartitionArchive.Description;
-                //ArchiveDelay.Text = PartitionArchive.ArchiveDelayHours.ToString();
-                //EnabledCheckBox.Checked = PartitionArchive.Enabled;
-                //ReadOnlyCheckBox.Checked = PartitionArchive.ReadOnly;
-                //ConfigurationXML.Text = XmlUtilities.GetXmlDocumentAsString(PartitionArchive.ConfigurationXml, false);
-                //ArchiveTypeDropDownList.SelectedValue = PartitionArchive.ArchiveTypeEnum.Lookup;
+                Description.Text = PartitionArchive.Description;
+                ArchiveDelay.Text = PartitionArchive.ArchiveDelayHours.ToString();
+                EnabledCheckBox.Checked = PartitionArchive.Enabled;
+                ReadOnlyCheckBox.Checked = PartitionArchive.ReadOnly;
+                ArchiveTypeDropDownList.SelectedValue = PartitionArchive.ArchiveTypeEnum.Lookup;
+                ConfigurationXML.Text = XmlUtils.GetXmlDocumentAsString(PartitionArchive.ConfigurationXml, false);
             }
         }
 
