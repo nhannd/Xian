@@ -91,31 +91,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Print Report", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Print Report", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Print//Fax Report", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Print//Fax Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class PrintReportTool : PublishReportTool<PrintReportComponent>
+	public class PrintReportTool : PublishReportTool<PublishReportComponent>
 	{
-		public override PrintReportComponent GetComponent(ReportingWorklistItem item)
+		public override PublishReportComponent GetComponent(ReportingWorklistItem item)
 		{
-			return new PrintReportComponent(
-					item.PatientProfileRef,
-					item.OrderRef,
-					item.ProcedureRef,
-					item.ReportRef);
-		}
-	}
-
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Mail//Fax Report", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Mail//Fax Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
-	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class FaxReportTool : PublishReportTool<MailFaxReportComponent>
-	{
-		public override MailFaxReportComponent GetComponent(ReportingWorklistItem item)
-		{
-			return new MailFaxReportComponent(
+			return new PublishReportComponent(
 					item.PatientProfileRef,
 					item.OrderRef,
 					item.ProcedureRef,

@@ -69,7 +69,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
 			_consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 
-			_btnOk.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_printButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_publishButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_component.PropertyChanged += _component_propertyChanged;
 		}
@@ -78,20 +79,28 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			if (e.PropertyName == "AcknowledgeEnabled")
 			{
-				_btnOk.Enabled = _component.AcceptEnabled;
+				_printButton.Enabled = _component.AcceptEnabled;
+				_publishButton.Enabled = _component.AcceptEnabled;
 			}
 		}
 
+		private void _publishButton_Click(object sender, EventArgs e)
+		{
+			using (new CursorManager(Cursors.WaitCursor))
+			{
+				_component.SendReportToQueue();
+			}
+		}
 
-		private void _btnOk_Click(object sender, EventArgs e)
+		private void _printButton_Click(object sender, EventArgs e)
 		{
 			using(new CursorManager(Cursors.WaitCursor))
 			{
-				_component.Accept();
+				_component.PrintDocument();
 			}
 		}
 
-		private void _btnCancel_Click(object sender, EventArgs e)
+		private void _cancelButton_Click(object sender, EventArgs e)
 		{
 			_component.Cancel();
 		}

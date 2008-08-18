@@ -5,25 +5,25 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
 	[DataContract]
-	public class MailFaxReportRequest : DataContractBase
+	public class SendReportToQueueRequest : DataContractBase
 	{
-		public MailFaxReportRequest(EntityRef reportRef)
+		public SendReportToQueueRequest(EntityRef reportRef)
 		{
 			this.ReportRef = reportRef;
-			this.Recipients = new List<MailFaxRecipientDetail>();
+			this.Recipients = new List<PublishRecipientDetail>();
 		}
 
 		[DataMember]
 		public EntityRef ReportRef;
 
 		[DataMember]
-		public List<MailFaxRecipientDetail> Recipients;
+		public List<PublishRecipientDetail> Recipients;
 	}
 
 	[DataContract]
-	public class MailFaxRecipientDetail : DataContractBase
+	public class PublishRecipientDetail : DataContractBase
 	{
-		public MailFaxRecipientDetail(EntityRef practitionerRef, EntityRef contactPointRef)
+		public PublishRecipientDetail(EntityRef practitionerRef, EntityRef contactPointRef)
 		{
 			this.PractitionerRef = practitionerRef;
 			this.ContactPointRef = contactPointRef;

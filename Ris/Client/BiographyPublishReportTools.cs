@@ -76,29 +76,14 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
-	[ButtonAction("apply", "biography-reports-toolbar/Print Report", "Apply")]
+	[ButtonAction("apply", "biography-reports-toolbar/Print//Fax Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
 	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
-	public class BiographyPrintReportTool : BiographyPublishReportTool<PrintReportComponent>
+	public class BiographyPrintReportTool : BiographyPublishReportTool<PublishReportComponent>
 	{
-		public override PrintReportComponent GetComponent()
+		public override PublishReportComponent GetComponent()
 		{
-			return new PrintReportComponent(
-					this.Context.PatientProfileRef,
-					this.Context.OrderRef,
-					null,
-					this.Context.ReportRef);
-		}
-	}
-
-	[ButtonAction("apply", "biography-reports-toolbar/Mail//Fax Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.PrintSmall.png", "Icons.PrintMedium.png", "Icons.PrintLarge.png")]
-	[ExtensionOf(typeof(BiographyOrderReportsToolExtensionPoint))]
-	public class BiographyMailFaxReportTool : BiographyPublishReportTool<MailFaxReportComponent>
-	{
-		public override MailFaxReportComponent GetComponent()
-		{
-			return new MailFaxReportComponent(
+			return new PublishReportComponent(
 					this.Context.PatientProfileRef,
 					this.Context.OrderRef,
 					null,

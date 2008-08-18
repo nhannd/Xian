@@ -411,9 +411,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-		public MailFaxReportResponse MailFaxReport(MailFaxReportRequest request)
+		public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
         {
-            foreach (MailFaxRecipientDetail detail in request.Recipients)
+			foreach (PublishRecipientDetail detail in request.Recipients)
             {
 				MailFaxWorkQueueItem.Schedule(
 					request.ReportRef,
@@ -421,7 +421,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 					detail.ContactPointRef,
 					this.PersistenceContext);
             }
-			return new MailFaxReportResponse();
+			return new SendReportToQueueResponse();
         }
 
 		[UpdateOperation]

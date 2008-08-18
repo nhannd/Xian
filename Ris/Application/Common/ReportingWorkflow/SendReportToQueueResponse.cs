@@ -4,7 +4,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
 	[DataContract]
-	public class MailFaxReportResponse : DataContractBase
+	public class SendReportToQueueResponse : DataContractBase
 	{
 	}
 }

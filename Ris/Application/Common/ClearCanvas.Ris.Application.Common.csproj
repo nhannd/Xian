@@ -139,8 +139,8 @@
     <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteDowntimeProcedureResponse.cs" />
-    <Compile Include="ReportingWorkflow\MailFaxReportRequest.cs" />
-    <Compile Include="ReportingWorkflow\MailFaxReportResponse.cs" />
+    <Compile Include="ReportingWorkflow\SendReportToQueueRequest.cs" />
+    <Compile Include="ReportingWorkflow\SendReportToQueueResponse.cs" />
     <Compile Include="ReportingWorkflow\ReassignProcedureStepRequest.cs" />
     <Compile Include="ReportingWorkflow\ReassignProcedureStepResponse.cs" />
     <Compile Include="WorklistItemTextQueryOptions.cs" />

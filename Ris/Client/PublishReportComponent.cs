@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client
 	/// PublishReportComponent class.
 	/// </summary>
 	[AssociateView(typeof(ReportPublishComponentViewExtensionPoint))]
-	public abstract class PublishReportComponent : ApplicationComponent
+	public class PublishReportComponent : ApplicationComponent
 	{
 		public class PublishReportPreviewComponent : DHtmlComponent
 		{
@@ -251,7 +251,6 @@ namespace ClearCanvas.Ris.Client
 			get { return _publishReportPreviewComponent; }
 		}
 
-
 		#region Presentation model
 
 		public ApplicationComponentHost PublishReportPreviewComponentHost
@@ -285,7 +284,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _recipientToAdd; }
 			set
 			{
-				if (!object.Equals(value, _recipientToAdd))
+				if (!Equals(value, _recipientToAdd))
 				{
 					_recipientToAdd = value;
 					NotifyPropertyChanged("RecipientToAdd");
@@ -323,7 +322,7 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedRecipient); }
 			set
 			{
-				if (!object.Equals(value, _selectedRecipient))
+				if (!Equals(value, _selectedRecipient))
 				{
 					_selectedRecipient = (Checkable<ResultRecipientDetail>)value.Item;
 					UpdatePreview();
@@ -344,9 +343,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-
-		public abstract void Accept();
-
 		public bool AcceptEnabled
 		{
 			get
@@ -360,6 +356,76 @@ namespace ClearCanvas.Ris.Client
 		public void Cancel()
 		{
 			this.Exit(ApplicationComponentExitCode.None);
+		}
+
+		public void SendReportToQueue()
+		{
+			try
+			{
+				Platform.GetService<IReportingWorkflowService>(
+					delegate(IReportingWorkflowService service)
+					{
+						SendReportToQueueRequest request = new SendReportToQueueRequest(this.ReportRef);
+						foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+						{
+							if (checkable.IsChecked)
+							{
+								ResultRecipientDetail detail = checkable.Item;
+								request.Recipients.Add(new PublishRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
+							}
+						}
+
+						if (request.Recipients.Count > 0)
+						{
+							service.SendReportToQueue(request);
+						}
+					});
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				this.Exit(ApplicationComponentExitCode.Error);
+			}
+		}
+
+		public void PrintDocument()
+		{
+			try
+			{
+				using (new HeaderFooterSettings())
+				{
+					foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+					{
+						if (checkable.IsChecked)
+						{
+							ResultRecipientDetail detail = checkable.Item;
+
+							PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
+							ChildComponentHost host = new ChildComponentHost(this.Host, component);
+							host.StartComponent();
+							object view = host.ComponentView.GuiElement;
+
+							component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
+								this.PatientProfileRef,
+								this.OrderRef,
+								this.ProcedureRef,
+								this.ReportRef,
+								detail);
+
+							component.ScriptCompleted += OnPrintDocument;
+						}
+					}
+				}
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+				this.Exit(ApplicationComponentExitCode.Error);
+			}
 		}
 
 		#endregion
@@ -402,82 +468,12 @@ namespace ClearCanvas.Ris.Client
 			return choices;
 		}
 
-		#endregion
-	}
-
-	public class PrintReportComponent : PublishReportComponent
-	{
-		public PrintReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
-			: base(patientProfileRef, orderRef, procedureRef, reportRef)
-		{
-		}
-
-		public override void Accept()
-		{
-			using (new HeaderFooterSettings())
-			{
-				foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-				{
-					if (checkable.IsChecked)
-					{
-						ResultRecipientDetail detail = checkable.Item;
-
-						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
-						ChildComponentHost host = new ChildComponentHost(this.Host, component);
-						host.StartComponent();
-						object view = host.ComponentView.GuiElement;
-
-						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
-							this.PatientProfileRef,
-							this.OrderRef,
-							this.ProcedureRef,
-							this.ReportRef,
-							detail);
-
-						component.ScriptCompleted += PrintDocument;
-					}
-				}
-			}
-
-			this.Exit(ApplicationComponentExitCode.Accepted);
-		}
-
-		private void PrintDocument(object sender, EventArgs e)
+		private static void OnPrintDocument(object sender, EventArgs e)
 		{
 			PublishReportPreviewComponent component = (PublishReportPreviewComponent)sender;
 			component.PrintDocument();
 		}
-	}
 
-	public class MailFaxReportComponent : PublishReportComponent
-	{
-		public MailFaxReportComponent(EntityRef patientProfileRef, EntityRef orderRef, EntityRef procedureRef, EntityRef reportRef)
-			: base(patientProfileRef, orderRef, procedureRef, reportRef)
-		{
-		}
-
-		public override void Accept()
-		{
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					MailFaxReportRequest request = new MailFaxReportRequest(this.ReportRef);
-					foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-					{
-						if (checkable.IsChecked)
-						{
-							ResultRecipientDetail detail = checkable.Item;
-							request.Recipients.Add(new MailFaxRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
-						}
-					}
-
-					if (request.Recipients.Count > 0)
-					{
-						service.MailFaxReport(request);
-					}
-				});
-
-			this.Exit(ApplicationComponentExitCode.Accepted);
-		}
+		#endregion
 	}
 }
