@@ -37,9 +37,34 @@ using ClearCanvas.Healthcare.Workflow.Reporting;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
-    public interface IPreviewBroker : IPersistenceBroker
+    public interface IPatientHistoryBroker : IPersistenceBroker
     {
-        IList<Order> QueryOrderData(Patient patient);
-        IList<Procedure> QueryProcedureData(Patient patient);
+		/// <summary>
+		/// Obtains the set of all orders for the specified patient.
+		/// </summary>
+		/// <param name="patient"></param>
+		/// <returns></returns>
+        IList<Order> GetOrderHistory(Patient patient);
+
+		/// <summary>
+		/// Obtains the set of all procedures for the specified patient.
+		/// </summary>
+		/// <param name="patient"></param>
+		/// <returns></returns>
+        IList<Procedure> GetProcedureHistory(Patient patient);
+
+		/// <summary>
+		/// Obtains the set of all reports for the specified patient.
+		/// </summary>
+		/// <param name="patient"></param>
+		/// <returns></returns>
+		IList<Report> GetReportHistory(Patient patient);
+
+    	/// <summary>
+    	/// Obtains the set of all reports for the specified order.
+    	/// </summary>
+    	/// <param name="order"></param>
+    	/// <returns></returns>
+    	IList<Report> GetReportsForOrder(Order order);
     }
 }

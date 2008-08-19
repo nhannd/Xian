@@ -165,7 +165,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 			{
 				return new ListOrdersResponse(
 					CollectionUtils.Map<Order, OrderListItem>(
-						PersistenceContext.GetBroker<IPreviewBroker>().QueryOrderData(patient),
+						PersistenceContext.GetBroker<IPatientHistoryBroker>().GetOrderHistory(patient),
 						delegate(Order order)
 						{
 							return assembler.CreateOrderListItem(order, this.PersistenceContext);
@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 			{
 				return new ListOrdersResponse(
 					CollectionUtils.Map<Procedure, OrderListItem>(
-						PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient),
+						PersistenceContext.GetBroker<IPatientHistoryBroker>().GetProcedureHistory(patient),
 						delegate(Procedure rp)
 						{
 							return assembler.CreateOrderListItem(rp, this.PersistenceContext);
@@ -218,31 +218,29 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
 
 		private ListReportsResponse ListReports(ListReportsRequest request)
 		{
-			// TODO: this implementation is inefficient - need custom broker methods to do this efficiently
-
-			IEnumerable<Procedure> procedures = new List<Procedure>();
+			IList<Report> reports = new List<Report>();
 			if (request.OrderRef != null)
 			{
 				// list only reports for this order
 				Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.Proxy);
-				procedures = order.Procedures;
+				reports = PersistenceContext.GetBroker<IPatientHistoryBroker>().GetReportsForOrder(order);
 			}
 			else if (request.PatientRef != null)
 			{
 				Patient patient = PersistenceContext.Load<Patient>(request.PatientRef, EntityLoadFlags.Proxy);
-				procedures = PersistenceContext.GetBroker<IPreviewBroker>().QueryProcedureData(patient);
+				reports = PersistenceContext.GetBroker<IPatientHistoryBroker>().GetReportHistory(patient);
 			}
 
 			BrowsePatientDataAssembler assembler = new BrowsePatientDataAssembler();
 			List<ReportListItem> reportListItems = new List<ReportListItem>();
 
-			CollectionUtils.ForEach(procedures,
-				delegate(Procedure rp)
+			foreach (Report report in reports)
+			{
+				foreach (Procedure procedure in report.Procedures)
 				{
-					ReportListItem reportListItem = assembler.CreateReportListItem(rp, request.IncludeCancelledReports, this.PersistenceContext);
-					if (reportListItem != null)
-						reportListItems.Add(reportListItem);
-				});
+					reportListItems.Add(assembler.CreateReportListItem(report, procedure, this.PersistenceContext));
+				}
+			}
 
 			return new ListReportsResponse(reportListItems);
 		}

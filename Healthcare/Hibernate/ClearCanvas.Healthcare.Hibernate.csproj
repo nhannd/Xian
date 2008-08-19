@@ -49,7 +49,7 @@
     <Compile Include="Brokers\OrderNoteboxItemBroker.cs" />
     <Compile Include="Brokers\ProcedureTypeGroupBroker.cs" />
     <Compile Include="Brokers\MimeDocumentDataBroker.cs" />
-    <Compile Include="Brokers\PreviewBroker.cs" />
+    <Compile Include="Brokers\PatientHistoryBroker.cs" />
     <Compile Include="Brokers\PriorReportBroker.cs" />
     <Compile Include="Brokers\ProtocolGroupBroker.cs" />
     <Compile Include="Brokers\RegistrationWorklistItemBroker.cs" />
@@ -234,6 +234,7 @@
     <EmbeddedResource Include="Mappings\ProtocolUrgencyEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientNote.hbm.xml" />
     <EmbeddedResource Include="Mappings\RadiologistAdminWorklists.hbm.xml" />
+    <EmbeddedResource Include="Brokers\PatientHistoryBroker.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueItem.hbm.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />

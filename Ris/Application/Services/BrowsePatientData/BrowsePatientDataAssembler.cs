@@ -60,21 +60,13 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             return data;
         }
 
-		public ReportListItem CreateReportListItem(Procedure rp, bool includeCancelledReports, IPersistenceContext context)
+		public ReportListItem CreateReportListItem(Report report, Procedure rp, IPersistenceContext context)
 		{
-			// a given procedure should only ever have 1 non-X report
-			Report report = includeCancelledReports ? CollectionUtils.FirstElement(rp.Reports) :
-				CollectionUtils.SelectFirst(rp.Reports, delegate(Report r) { return r.Status != ReportStatus.X; });
-
-			if (report == null)
-				return null;
-
 			ReportListItem data = new ReportListItem();
 
 			UpdateListItem(data, rp.Order, context);
 			UpdateListItem(data, rp.Order.Visit, context);
 			UpdateListItem(data, rp, context);
-
 			UpdateListItem(data, report, context);
 
 			return data;
