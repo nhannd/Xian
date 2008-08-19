@@ -5,14 +5,32 @@ using System.Text;
 
 namespace ClearCanvas.Common.Utilities
 {
+	/// <summary>
+	/// Memory and storage size units
+	/// </summary>
 	public enum SizeUnits
 	{
+		/// <summary>
+		/// Bytes
+		/// </summary>
 		Bytes,
+		/// <summary>
+		/// Kilobytes
+		/// </summary>
 		Kilobytes,
+		/// <summary>
+		/// Megabytes
+		/// </summary>
 		Megabytes,
+		/// <summary>
+		/// Gigabytes
+		/// </summary>
 		Gigabytes
 	}
 
+	/// <summary>
+	/// Provides convenience methods for querying system resources.
+	/// </summary>
 	public static class SystemResources
 	{
 		private static volatile PerformanceCounter _memoryPerformanceCounter;
@@ -35,6 +53,11 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
+		/// <summary>
+		/// Gets the available physical memory.
+		/// </summary>
+		/// <param name="units"></param>
+		/// <returns></returns>
 		public static long GetAvailableMemory(SizeUnits units)
 		{
 			long availableBytes = Convert.ToInt64(MemoryPerformanceCounter.NextValue());
