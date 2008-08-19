@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         {
 			this.components = new System.ComponentModel.Container();
 			this._searchButton = new System.Windows.Forms.Button();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+			this._buttonsLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._startTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._clearButton = new System.Windows.Forms.Button();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this.flowLayoutPanel1.SuspendLayout();
+			this._buttonsLayoutPanel.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.SuspendLayout();
@@ -95,18 +95,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._searchButton.UseVisualStyleBackColor = false;
 			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
 			// 
-			// flowLayoutPanel1
+			// _buttonsLayoutPanel
 			// 
-			this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+			this._buttonsLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
-			this.flowLayoutPanel1.Controls.Add(this._okButton);
-			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 610);
-			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(614, 30);
-			this.flowLayoutPanel1.TabIndex = 2;
+			this._buttonsLayoutPanel.Controls.Add(this._cancelButton);
+			this._buttonsLayoutPanel.Controls.Add(this._okButton);
+			this._buttonsLayoutPanel.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+			this._buttonsLayoutPanel.Location = new System.Drawing.Point(2, 610);
+			this._buttonsLayoutPanel.Margin = new System.Windows.Forms.Padding(2);
+			this._buttonsLayoutPanel.Name = "_buttonsLayoutPanel";
+			this._buttonsLayoutPanel.Size = new System.Drawing.Size(614, 30);
+			this._buttonsLayoutPanel.TabIndex = 2;
 			// 
 			// _cancelButton
 			// 
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.Controls.Add(this._diagnosticServiceTableView, 0, 1);
 			this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
+			this.tableLayoutPanel1.Controls.Add(this._buttonsLayoutPanel, 0, 2);
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
@@ -262,7 +262,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "WorkQueueSummaryComponentControl";
 			this.Size = new System.Drawing.Size(618, 642);
-			this.flowLayoutPanel1.ResumeLayout(false);
+			this._buttonsLayoutPanel.ResumeLayout(false);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -273,7 +273,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 		private System.Windows.Forms.Button _searchButton;
 		private System.Windows.Forms.ToolTip toolTip1;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+		private System.Windows.Forms.FlowLayoutPanel _buttonsLayoutPanel;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;

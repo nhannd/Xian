@@ -104,6 +104,7 @@
     <Compile Include="WorklistAdminSummaryTable.cs" />
     <Compile Include="WorklistSummaryTool.cs" />
     <Compile Include="WorklistTimeWindowEditorComponent.cs" />
+    <Compile Include="WorkQueuePreviewComponent.cs" />
     <Compile Include="WorkQueueSummaryComponent.cs" />
     <Compile Include="WorkQueueSummaryTool.cs" />
   </ItemGroup>

@@ -162,6 +162,16 @@ namespace ClearCanvas.Ris.Client.Admin
 			get { return EnumValueUtils.GetDisplayValues(_statusChoices); }
 		}
 
+		public void Clear()
+		{
+			this.StartTime = null;
+			this.EndTime = null;
+			this.User = null;
+			this.Type = _any.Value;
+			this.Status = _any.Value;
+			NotifyPropertyChanged("Status");
+		}
+
 		#endregion
 
 		/// <summary>

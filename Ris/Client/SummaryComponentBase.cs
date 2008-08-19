@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client
 		private bool _setModifiedOnListChange;
 
     	private readonly bool _showActiveColumn;
-
+		private event EventHandler _summarySelectionChanged;
 
 		public SummaryComponentBase()
 			: this(false)
@@ -268,9 +268,16 @@ namespace ClearCanvas.Ris.Client
                     _selectedItems = new TypeSafeListWrapper<TSummary>(value.Items);
                     OnSelectedItemsChanged();
                     NotifyPropertyChanged("SummarySelection");
+					EventsHelper.Fire(_summarySelectionChanged, this, EventArgs.Empty);
                 }
             }
         }
+
+		public event EventHandler SummarySelectionChanged
+		{
+			add { _summarySelectionChanged += value; }
+			remove { _summarySelectionChanged -= value; }
+		}
 
 		public override void Search()
 		{

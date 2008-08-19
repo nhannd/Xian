@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Core;
@@ -20,6 +21,7 @@ namespace ClearCanvas.Ris.Application.Services
 			summary.ProcessedTime = workQueueItem.ProcessedTime;
 			summary.FailureCount = workQueueItem.FailureCount;
 			summary.FailureDescription = workQueueItem.FailureDescription;
+			summary.ExtendedProperties = new Dictionary<string, string>(workQueueItem.ExtendedProperties);
 
 			return summary;
 		}

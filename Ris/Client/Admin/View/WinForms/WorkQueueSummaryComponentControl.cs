@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 	/// </summary>
 	public partial class WorkQueueSummaryComponentControl : ApplicationComponentUserControl
 	{
-		private WorkQueueSummaryComponent _component;
+		private readonly WorkQueueSummaryComponent _component;
 
 		/// <summary>
 		/// Constructor.
@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			_okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
 			_cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
+			_buttonsLayoutPanel.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 		}
 
 		private void _searchButton_Click(object sender, EventArgs e)
@@ -90,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
 		private void _clearButton_Click(object sender, EventArgs e)
 		{
-			_component.Search();
+			_component.Clear();
 		}
 	}
 }
