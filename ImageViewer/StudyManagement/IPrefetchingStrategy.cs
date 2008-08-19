@@ -4,15 +4,18 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	/// <summary>
+	/// Defines a pixel data prefetching strategy.
+	/// </summary>
 	public interface IPrefetchingStrategy
 	{
 		/// <summary>
-		/// The friendly name of the prefetching strategy.
+		/// Gets the friendly name of the prefetching strategy.
 		/// </summary>
 		string Name { get; }
 
 		/// <summary>
-		/// A friendly description of the prefetching strategy
+		/// Gets the friendly description of the prefetching strategy
 		/// </summary>
 		string Description { get; }
 

@@ -569,6 +569,9 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			VerifyLoad(numberOfImages, failedImages);
+
+			if (studyLoader.PrefetchingStrategy != null)
+				studyLoader.PrefetchingStrategy.Start(this);
 		}
 
 		/// <summary>
@@ -671,8 +674,6 @@ namespace ClearCanvas.ImageViewer
 
 		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow)
 		{
-			imageViewer.StartPrefetching();
-
 			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
 				desktopWindow,
 				imageViewer,
@@ -767,15 +768,6 @@ namespace ClearCanvas.ImageViewer
 			ex.TotalImages = totalImages;
 			ex.FailedImages = failedImages;
 			throw ex;
-		}
-
-		private void StartPrefetching()
-		{
-			foreach (IStudyLoader loader in _studyLoaders)
-			{
-				if (loader.PrefetchingStrategy != null)
-					loader.PrefetchingStrategy.Start(this);
-			}
 		}
 
 		private void StopPrefetching()

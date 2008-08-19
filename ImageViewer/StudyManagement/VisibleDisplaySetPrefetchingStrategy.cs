@@ -1,34 +1,51 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Text;
 using System.Threading;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-
+	/// <summary>
+	/// A prefetching strategy triggered when a display set is made visible.
+	/// </summary>
 	public class VisibleDisplaySetPrefetchingStrategy : IPrefetchingStrategy
 	{
 		private IImageViewer _imageViewer;
 		private bool _stopped = false;
-		private int _threadCount = 0;
+		private SimpleBlockingThreadPool _threadPool;
 
+		/// <summary>
+		/// Gets the friendly name of the prefetching strategy.
+		/// </summary>
 		public string Name
 		{
 			get { return SR.PrefetchingStrategyNameVisibleDisplaySet; }
 		}
 
+		/// <summary>
+		/// Gets the friendly description of the prefetching strategy
+		/// </summary>
 		public string Description
 		{
 			get { return SR.PrefetchingStrategyDescriptionVisibleDisplaySet; }
 		}
 
+		/// <summary>
+		/// Starts prefetching pixel data in the background.
+		/// </summary>
+		/// <param name="imageViewer"></param>
+		/// <remarks>
+		/// Use <paramref name="imageViewer"/> to determine how prefetching is done.
+		/// </remarks>
 		public void Start(IImageViewer imageViewer)
 		{
+			if (_threadPool == null)
+			{
+				const int numberOfThreads = 10;
+				_threadPool = new SimpleBlockingThreadPool(numberOfThreads);
+			}
+
+			_threadPool.Start();
+
 			if (_imageViewer == null)
 			{
 				_imageViewer = imageViewer;
@@ -36,37 +53,48 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Stops prefetching of pixel data in the background.
+		/// </summary>
+		/// <remarks>
+		/// Implementers should ensure that all background threads have terminated
+		/// before this method returns.
+		/// </remarks>
 		public void Stop()
 		{
 			_stopped = true;
 
-			// Wait until all threads are done
-			while (_threadCount > 0)
-				Thread.Sleep(5);
+			if (_threadPool != null)
+			{
+				// Wait until all threads are done
+				while (_threadPool.ActiveCount > 0)
+					Thread.Sleep(5);
 
-			_imageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+				_imageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+				_threadPool.Stop();
+			}
 		}
 
 		private void OnDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
 		{
 			if (e.NewDisplaySet != null)
 			{
-				Interlocked.Increment(ref _threadCount);
-
-				// Should this use our thread pool instead?
-				ThreadPool.QueueUserWorkItem(PrefetchPixelData, e.NewDisplaySet);
+				_threadPool.Enqueue(delegate()
+				                    	{
+				                    		PrefetchPixelData(e.NewDisplaySet);
+				                    	});
 			}
 		}
 
-		private void PrefetchPixelData(object obj)
+		private void PrefetchPixelData(IDisplaySet displaySet)
 		{
-			IDisplaySet displaySet = obj as IDisplaySet;
-
 			foreach (IPresentationImage image in displaySet.PresentationImages)
 			{
-				if (_stopped)
+				// Quit when we've received a signal to stop, or when the available
+				// memory has dropped below a certain threshold
+				if (_stopped || 
+					SystemResources.GetAvailableMemory(SizeUnits.Megabytes) < 100)
 				{
-					Interlocked.Decrement(ref _threadCount);
 					return;
 				}
 
@@ -94,8 +122,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				//    }
 				//}
 			}
-
-			Interlocked.Decrement(ref _threadCount);
 		}
 	}
 }

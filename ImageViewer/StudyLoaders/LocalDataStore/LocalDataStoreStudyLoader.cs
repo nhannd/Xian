@@ -62,10 +62,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
     	{
 			get
 			{
-				if (_prefetchingStrategy == null)
-					_prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy();
+				//if (_prefetchingStrategy == null)
+				//    _prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy();
 
-				return _prefetchingStrategy;
+				//return _prefetchingStrategy;
+
+				return null;
 			}
 		}
 
