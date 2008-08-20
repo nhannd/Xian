@@ -4,7 +4,7 @@
 		<siteMapNode url="~/Pages/Search/Default.aspx" title="$Resources: Titles, Search"  />
 
     <siteMapNode url="" title="$Resources: Titles, Queues">
-      <siteMapNode url="~/Pages/WorkQueue/SearchPage.aspx" title="$Resources: Titles, WorkQueue"  />
+      <siteMapNode url="~/Pages/Queues/WorkQueue/Default.aspx" title="$Resources: Titles, WorkQueue"  />
       <siteMapNode url="~/Pages/Queues/ArchiveQueue/Default.aspx" title="$Resources: Titles, ArchiveQueue"  />
       <siteMapNode url="~/Pages/Queues/RestoreQueue/Default.aspx" title="$Resources: Titles, RestoreQueue"  />
     </siteMapNode>
