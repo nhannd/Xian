@@ -32,7 +32,25 @@
 	width:100px;
 }
 
-#letterheadLogo.uhn {
+#letterheadLogo.tgh{
+	background-image:url(../images/uhnlogo.png);
+	height:75px;
+	width:63px;
+}
+
+#letterheadLogo.twh{
+	background-image:url(../images/uhnlogo.png);
+	height:75px;
+	width:63px;
+}
+
+#letterheadLogo.pmh{
+	background-image:url(../images/uhnlogo.png);
+	height:75px;
+	width:63px;
+}
+
+#letterheadLogo.uhn{
 	background-image:url(../images/uhnlogo.png);
 	height:75px;
 	width:63px;
