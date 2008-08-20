@@ -30,12 +30,9 @@
 #endregion
 
 using System;
-using System.Drawing;
-using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -45,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "imageviewer-contextmenu/MenuZoom", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuZoom", "Select", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarZoom", "Select", Flags = ClickActionFlags.CheckAction)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarZoom", "Select", "ZoomDropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardZoom/Activate", "Select", KeyStroke = XKeys.Z)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
@@ -81,6 +78,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
+		public ActionModelNode ZoomDropDownMenuModel
+		{
+			get
+			{
+				SimpleActionModel actionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+
+				actionModel.AddAction("fit", SR.LabelZoomFit, null, SR.LabelZoomFit, delegate { SetScale(0); });
+				AddFixedZoomAction(actionModel, 1);
+				AddFixedZoomAction(actionModel, 2);
+				AddFixedZoomAction(actionModel, 4);
+				AddFixedZoomAction(actionModel, 8);
+
+				return actionModel;
+			}	
+		}
+
+		private void AddFixedZoomAction(SimpleActionModel actionModel, int scale)
+		{
+			int zoom = scale*100;
+			string label = String.Format(SR.FormatLabelZoomFixed, zoom);
+			actionModel.AddAction("fixedzoom" + zoom, label, null, label, delegate { SetScale(scale); });
+		}
+
 		private void CaptureBeginState()
 		{
 			if (!_operation.AppliesTo(this.SelectedPresentationImage))
@@ -113,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			CaptureBeginState();
 
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			IncrementZoom(increment);
+			IncrementScale(increment);
 
 			CaptureEndState();
 		}
@@ -123,12 +143,39 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			CaptureBeginState();
 
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			IncrementZoom(increment);
+			IncrementScale(increment);
 
 			CaptureEndState();
 		}
 
-		private void IncrementZoom(float scaleIncrement)
+		private void SetScale(float scale)
+		{
+			if (this.SelectedPresentationImage == null)
+				return;
+
+			CaptureBeginState();
+
+			if (!_operation.AppliesTo(this.SelectedPresentationImage))
+				return;
+
+			IImageSpatialTransform transform = (IImageSpatialTransform)this.SelectedSpatialTransformProvider.SpatialTransform;
+			if (scale <= 0)
+			{
+				transform.ScaleToFit = true;
+				transform.Scale = 1.0F;
+			}
+			else
+			{
+				transform.ScaleToFit = false;
+				transform.Scale = scale;
+			}
+
+			CaptureEndState();
+
+			this.SelectedSpatialTransformProvider.Draw();
+		}
+		
+		private void IncrementScale(float scaleIncrement)
 		{
 			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
@@ -179,7 +226,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Track(mouseInformation);
 
-			IncrementZoom((float)base.DeltaY * 0.025F);
+			IncrementScale((float)base.DeltaY * 0.025F);
 
 			return true;
 		}
@@ -211,13 +258,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		protected override void WheelBack()
 		{
 			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			IncrementZoom(increment);
+			IncrementScale(increment);
 		}
 
 		protected override void WheelForward()
 		{
 			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
-			IncrementZoom(increment);
+			IncrementScale(increment);
 		}
 
 		public void Apply(IPresentationImage image)
