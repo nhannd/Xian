@@ -177,6 +177,12 @@
   <data name="GridPagerDeviceSingleItem" xml:space="preserve">
     <value>Device Found</value>
   </data>
+  <data name="GridPagerFileSystemMultipleItems" xml:space="preserve">
+    <value>File Systems found</value>
+  </data>
+  <data name="GridPagerFileSystemSingleItem" xml:space="preserve">
+    <value>File System found</value>
+  </data>
   <data name="GridPagerLineSpacer" xml:space="preserve">
     <value> | </value>
   </data>

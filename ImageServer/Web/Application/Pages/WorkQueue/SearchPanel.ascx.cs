@@ -88,18 +88,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.WorkQueue
             ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
 
             // setup child controls
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
+
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerWorkQueueSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerWorkQueueMultipleItems;
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerWorkQueueSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerWorkQueueMultipleItems;
             GridPagerTop.Target = workQueueItemListPanel.WorkQueueItemListControl;
             GridPagerTop.GetRecordCountMethod = delegate
                                                   {
 													  return workQueueItemListPanel.ResultCount;
                                                   };
+            GridPagerBottom.GetRecordCountMethod = delegate
+                                      {
+                                          return workQueueItemListPanel.ResultCount;
+                                      };
 
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
             GridPagerBottom.Target = workQueueItemListPanel.WorkQueueItemListControl;
 
         	workQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)

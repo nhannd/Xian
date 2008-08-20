@@ -93,6 +93,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
         protected void SetUpEventHandlers()
         {
             GridPagerTop.GetRecordCountMethod = delegate { return FileSystemsGridView1.FileSystems.Count; };
+            GridPagerBottom.GetRecordCountMethod = delegate { return FileSystemsGridView1.FileSystems.Count; };
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -108,16 +109,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             // initialize the controller
             _theController = new FileSystemsConfigurationController();
 
-
             // setup child controls
-            GridPagerTop.ItemName = "FileSystem";
-            GridPagerTop.PuralItemName = "FileSystems";
+            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerFileSystemSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerFileSystemMultipleItems;
             GridPagerTop.Target = FileSystemsGridView1.TheGrid;
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
 
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerFileSystemSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerFileSystemMultipleItems;
             GridPagerBottom.Target = FileSystemsGridView1.TheGrid;
 
             Tiers = _theController.GetFileSystemTiers();

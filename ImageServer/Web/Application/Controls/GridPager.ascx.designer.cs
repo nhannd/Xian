@@ -8,8 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Controls
-{
+namespace ClearCanvas.ImageServer.Web.Application.Controls {
+    
+    
     /// <summary>
     /// GridPager class.
     /// </summary>
@@ -28,15 +29,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         protected global::System.Web.UI.WebControls.Label ItemCountLabel;
         
         /// <summary>
-        /// PageCountLabel control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label PageCountLabel;
-        
-        /// <summary>
         /// PrevPageButton control.
         /// </summary>
         /// <remarks>
@@ -46,13 +38,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         protected global::System.Web.UI.WebControls.LinkButton PrevPageButton;
         
         /// <summary>
-        /// LineSpacerLabel control.
+        /// Label2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LineSpacerLabel;
+        protected global::System.Web.UI.WebControls.Label Label2;
+        
+        /// <summary>
+        /// PageCountLabel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label PageCountLabel;
+        
+        /// <summary>
+        /// Label1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
         /// NextPageButton control.

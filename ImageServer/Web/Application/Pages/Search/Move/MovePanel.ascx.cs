@@ -60,12 +60,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
             GridPagerTop.Target = DeviceGridPanel.TheGrid;
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
 
             GridPagerBottom.Target = DeviceGridPanel.TheGrid;
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
 
             GridPagerTop.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
 

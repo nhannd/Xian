@@ -81,6 +81,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         protected void SetUpEventHandlers()
         {
             GridPagerTop.GetRecordCountMethod = delegate { return DeviceGridViewControl1.Devices.Count; };
+            GridPagerBottom.GetRecordCountMethod = delegate { return DeviceGridViewControl1.Devices.Count; };
         }
 
         protected void Clear()
@@ -100,17 +101,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
 
 
             // setup child controls
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
             GridPagerTop.Target = DeviceGridViewControl1.TheGrid;
 
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
-            GridPagerBottom.Target = DeviceGridViewControl1.TheGrid;
-
-            
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
+            GridPagerBottom.Target = DeviceGridViewControl1.TheGrid;           
 
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));

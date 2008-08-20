@@ -150,13 +150,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerServerRulesSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerServerRulesMultipleItems;
             GridPagerTop.Target = ServerRuleGridViewControl.TheGrid;
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
 
             GridPagerTop.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; };
+            GridPagerBottom.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules == null ? 0 : ServerRuleGridViewControl.ServerRules.Count; };
 
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerServerRulesSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerServerRulesMultipleItems;
             GridPagerBottom.Target = ServerRuleGridViewControl.TheGrid;
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;

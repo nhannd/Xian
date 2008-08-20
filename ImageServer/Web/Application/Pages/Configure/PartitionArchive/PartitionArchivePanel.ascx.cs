@@ -143,11 +143,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             GridPagerTop.Target = PartitionArchiveGridPanel.TheGrid;
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
 
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.Target = PartitionArchiveGridPanel.TheGrid;
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
+
             GridPagerBottom.Target = PartitionArchiveGridPanel.TheGrid;
 
             int prevSelectIndex = ArchiveTypeFilter.SelectedIndex;
@@ -173,6 +173,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         protected void SetupEventHandlers()
         {
             GridPagerTop.GetRecordCountMethod = delegate { return PartitionArchives.Count; };
+            GridPagerBottom.GetRecordCountMethod = delegate { return PartitionArchives.Count; };
         }
 
         public override void DataBind()

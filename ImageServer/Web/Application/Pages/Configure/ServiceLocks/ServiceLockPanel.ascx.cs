@@ -81,14 +81,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerServiceSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerServiceMultipleItems;
             GridPagerTop.Target = ServiceLockGridViewControl.TheGrid;
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
-
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
+            
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerServiceSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerServiceMultipleItems;
             GridPagerBottom.Target = ServiceLockGridViewControl.TheGrid;
-
-
+            
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
@@ -100,6 +97,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                                                                ServiceLockGridViewControl.ServiceLocks != null
                                                                    ? ServiceLockGridViewControl.ServiceLocks.Count
                                                                    : 0; };
+            GridPagerBottom.GetRecordCountMethod = delegate
+            {
+                return
+                    ServiceLockGridViewControl.ServiceLocks != null
+                        ? ServiceLockGridViewControl.ServiceLocks.Count
+                        : 0;
+            };
         }
 
         

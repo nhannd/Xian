@@ -152,20 +152,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
             
             // setup child controls
-            GridPagerBottom.ItemCountVisible = false;
-            GridPagerBottom.PageCountVisible = true;
             GridPagerBottom.Target = StudyListGridView.StudyListGrid;
 
-            GridPagerTop.ItemCountVisible = true;
-            GridPagerTop.PageCountVisible = false;
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerStudySingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerStudyMultipleItems;
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerStudySingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerStudyMultipleItems;
             GridPagerTop.Target = StudyListGridView.StudyListGrid;
+            GridPagerBottom.Target = StudyListGridView.StudyListGrid;
             GridPagerTop.GetRecordCountMethod = delegate
                               {
 								  return StudyListGridView.ResultCount;
                               };
-
+            GridPagerBottom.GetRecordCountMethod = delegate
+                                          {
+                                              return StudyListGridView.ResultCount;
+                                          };
 
             MessageBox.Confirmed += delegate(object data)
                             {

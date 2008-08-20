@@ -241,6 +241,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File Systems found.
+        /// </summary>
+        internal static string GridPagerFileSystemMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerFileSystemMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File System found.
+        /// </summary>
+        internal static string GridPagerFileSystemSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerFileSystemSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to  | .
         /// </summary>
         internal static string GridPagerLineSpacer {

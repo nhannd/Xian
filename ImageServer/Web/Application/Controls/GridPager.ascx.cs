@@ -45,30 +45,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         private GridView _target;
         private string _itemName;
         private string _puralItemName;
-        private bool _pageCountVisible;
-        private bool _itemCountVisible;
 
         #endregion Private Members
 
         #region Public Properties
-
-        /// <summary>
-        /// Sets/Gets whether or not the page count label is visible
-        /// </summary>
-        public bool PageCountVisible
-        {
-            get { return _pageCountVisible; }
-            set { _pageCountVisible = value; }
-        }
-
-        /// <summary>
-        /// Sets/Gets the item count label is visible
-        /// </summary>
-        public bool ItemCountVisible
-        {
-            get { return _itemCountVisible; }
-            set { _itemCountVisible = value; }
-        }
 
         /// <summary>
         /// Sets/Gets the grid associated with this control
@@ -173,9 +153,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 PageCountLabel.Text =
                     string.Format("Page {0} of {1}", _target.PageIndex + 1, _target.PageCount == 0 ? 1 : _target.PageCount);
 
-                PageCountLabel.Visible = _pageCountVisible;
-                ItemCountLabel.Visible = _itemCountVisible;
-
                 if (_target.PageIndex > 0)
                 {
                     PrevPageButton.Enabled = true;
@@ -201,14 +178,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
                 NextPageButton.Text = App_GlobalResources.SR.GridPagerNext;
                 PrevPageButton.Text = App_GlobalResources.SR.GridPagerPrevious;
-                if (PrevPageButton.Enabled || NextPageButton.Enabled)
-                {
-                    LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
-                }
-                else
-                {
-                    LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
-                }
+                //if (PrevPageButton.Enabled || NextPageButton.Enabled)
+                //{
+                    //LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
+                //}
+                //else
+                //{
+                    //LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
+                //}
             }
         }
 

@@ -113,11 +113,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             GridPagerTop.Target = ServerPartitionGridPanel.TheGrid;
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
             GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
-            GridPagerTop.PageCountVisible = false;
-            GridPagerTop.ItemCountVisible = true;
-
-            GridPagerBottom.PageCountVisible = true;
-            GridPagerBottom.ItemCountVisible = false;
+            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
             GridPagerBottom.Target = ServerPartitionGridPanel.TheGrid;
 
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
@@ -130,6 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         protected void SetupEventHandlers()
         {
             GridPagerTop.GetRecordCountMethod = delegate { return Partitions.Count; };
+            GridPagerBottom.GetRecordCountMethod = delegate { return Partitions.Count; };
         }
 
         public override void DataBind()
