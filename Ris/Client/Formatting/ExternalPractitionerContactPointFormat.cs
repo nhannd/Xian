@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Formatting
             result = result.Replace("%D", StringUtilities.EmptyIfNull(cp.Description));
             result = result.Replace("%A", cp.CurrentAddress == null ? "" : AddressFormat.Format(cp.CurrentAddress));
             result = result.Replace("%F", cp.CurrentFaxNumber == null ? "" : TelephoneFormat.Format(cp.CurrentFaxNumber));
-            result = result.Replace("%T", cp.CurrentFaxNumber == null ? "" : TelephoneFormat.Format(cp.CurrentPhoneNumber));
+            result = result.Replace("%T", cp.CurrentPhoneNumber == null ? "" : TelephoneFormat.Format(cp.CurrentPhoneNumber));
 
             return result.Trim();
         }
