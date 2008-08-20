@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                 delegate(ModalityWorklistItem item) { return Format.Time(item.Time); }, 0.5f);
             scheduledForColumn.Visible = false;
 			scheduledForColumn.Comparison = delegate(ModalityWorklistItem item1, ModalityWorklistItem item2)
-				{ return CompareNullableDateTime(item1.Time, item2.Time); };
+				{ return Nullable.Compare(item1.Time, item2.Time); };
 
             // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
@@ -197,17 +197,5 @@ namespace ClearCanvas.Ris.Client.Workflow
                     return null;
             }
         }
-
-		private static int CompareNullableDateTime(DateTime? time1, DateTime? time2)
-		{
-			if (time1 == null && time2 == null)
-				return 0;
-			else if (time1 == null)
-				return -1;
-			else if (time2 == null)
-				return 1;
-			else
-				return DateTime.Compare(time1.Value, time2.Value);
-		}
 	}
 }
