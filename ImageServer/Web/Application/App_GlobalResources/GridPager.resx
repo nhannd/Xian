@@ -117,19 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="EditStudyDialog" xml:space="preserve">
-    <value>Edit Study</value>
-  </data>
-  <data name="GridPagerArchiveQueueMultipleItems" xml:space="preserve">
-    <value>Items Found</value>
-  </data>
-  <data name="GridPagerArchiveQueueSingleItem" xml:space="preserve">
-    <value>Item Found</value>
-  </data>
-  <data name="GridPagerRestoreQueueMultipleItems" xml:space="preserve">
-    <value>Items Found</value>
-  </data>
-  <data name="GridPagerRestoreQueueSingleItem" xml:space="preserve">
-    <value>Item Found</value>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
   </data>
 </root>

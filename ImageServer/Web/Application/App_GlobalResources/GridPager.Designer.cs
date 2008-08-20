@@ -22,14 +22,14 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "2.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Labels {
+    internal class GridPager {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Labels() {
+        internal GridPager() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Web.Application.App_GlobalResources.Labels", typeof(Labels).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageServer.Web.Application.App_GlobalResources.GridPager", typeof(GridPager).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,47 +61,11 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit Study.
+        ///   Looks up a localized string similar to Test.
         /// </summary>
-        internal static string EditStudyDialog {
+        internal static string Test {
             get {
-                return ResourceManager.GetString("EditStudyDialog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Items Found.
-        /// </summary>
-        internal static string GridPagerArchiveQueueMultipleItems {
-            get {
-                return ResourceManager.GetString("GridPagerArchiveQueueMultipleItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item Found.
-        /// </summary>
-        internal static string GridPagerArchiveQueueSingleItem {
-            get {
-                return ResourceManager.GetString("GridPagerArchiveQueueSingleItem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Items Found.
-        /// </summary>
-        internal static string GridPagerRestoreQueueMultipleItems {
-            get {
-                return ResourceManager.GetString("GridPagerRestoreQueueMultipleItems", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Item Found.
-        /// </summary>
-        internal static string GridPagerRestoreQueueSingleItem {
-            get {
-                return ResourceManager.GetString("GridPagerRestoreQueueSingleItem", resourceCulture);
+                return ResourceManager.GetString("Test", resourceCulture);
             }
         }
     }

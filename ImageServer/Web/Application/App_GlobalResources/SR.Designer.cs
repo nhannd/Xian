@@ -385,6 +385,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete these Restore Queue Items?.
+        /// </summary>
+        internal static string MultipleRestoreQueueDelete {
+            get {
+                return ResourceManager.GetString("MultipleRestoreQueueDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
         /// </summary>
         internal static string MultipleStudyDelete {
@@ -471,6 +480,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string SingleArchiveQueueDelete {
             get {
                 return ResourceManager.GetString("SingleArchiveQueueDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this Restore Queue Item?.
+        /// </summary>
+        internal static string SingleRestoreQueueDelete {
+            get {
+                return ResourceManager.GetString("SingleRestoreQueueDelete", resourceCulture);
             }
         }
         

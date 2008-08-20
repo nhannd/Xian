@@ -64,6 +64,11 @@
     </Compile>
     <Compile Include="App_Code\KeyedCollectionBase.cs" />
     <Compile Include="App_Code\EntityCollection.cs" />
+    <Compile Include="App_GlobalResources\GridPager.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GridPager.resx</DependentUpon>
+    </Compile>
     <Compile Include="App_GlobalResources\Labels.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -390,6 +395,27 @@
     <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.designer.cs">
       <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx.cs">
+      <DependentUpon>RestoreQueueItemList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx.designer.cs">
+      <DependentUpon>RestoreQueueItemList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\RestoreQueue\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\RestoreQueue\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Search\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -567,101 +593,105 @@
     <Compile Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
-    <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.cs">
       <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.designer.cs">
       <DependentUpon>AutoRouteWorkQueueDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.cs">
       <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.designer.cs">
       <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
       <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
       <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\ResetWorkQueueDialog.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx.cs">
       <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\ResetWorkQueueDialog.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx.designer.cs">
       <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.cs">
       <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx.designer.cs">
       <DependentUpon>ScheduleWorkQueueDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\StudyDetails.cs" />
-    <Compile Include="Pages\WorkQueue\Edit\StudyDetailsAssembler.cs" />
-    <Compile Include="Pages\WorkQueue\Edit\ViewEdit.aspx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\StudyDetails.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\Edit\StudyDetailsAssembler.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ViewEdit.aspx.cs">
       <DependentUpon>ViewEdit.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\ViewEdit.aspx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\ViewEdit.aspx.designer.cs">
       <DependentUpon>ViewEdit.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetails.cs" />
-    <Compile Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetails.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.cs">
       <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs">
       <DependentUpon>WebMoveStudyWorkQueueDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueDetails.cs" />
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueDetailsAssembler.cs" />
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueDetailsViewBase.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueDetails.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueDetailsAssembler.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueDetailsViewBase.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx.designer.cs">
       <DependentUpon>WorkQueueItemDetailsPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueSettingsPanel.ascx.cs">
       <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueSettingsPanel.ascx.designer.cs">
       <DependentUpon>WorkQueueSettingsPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\SearchPage.aspx.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
+    <Compile Include="Pages\Queues\WorkQueue\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\SearchPage.aspx.designer.cs">
-      <DependentUpon>SearchPage.aspx</DependentUpon>
+    <Compile Include="Pages\Queues\WorkQueue\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\SearchPanel.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\SearchPanel.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\WorkQueueItemCollection.cs" />
-    <Compile Include="Pages\WorkQueue\WorkQueueGridView.ascx.cs">
+    <Compile Include="Pages\Queues\WorkQueue\WorkQueueItemCollection.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx.cs">
       <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\WorkQueue\WorkQueueGridView.ascx.designer.cs">
+    <Compile Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx.designer.cs">
       <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\WorkQueue\WorkQueueSettings.Designer.cs" />
+    <Compile Include="Pages\Queues\WorkQueue\WorkQueueSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorkQueueSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
@@ -811,6 +841,11 @@
     <Content Include="Pages\Configure\Devices\Default.aspx" />
     <Content Include="Pages\Configure\Devices\DevicePanel.ascx" />
     <Content Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
+    <EmbeddedResource Include="App_GlobalResources\GridPager.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>GridPager.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="App_GlobalResources\Titles.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -846,6 +881,10 @@
     <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Queues\ArchiveQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx" />
+    <Content Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx" />
+    <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
+    <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />
+    <Content Include="Pages\Queues\RestoreQueue\SearchPanel.ascx" />
     <Content Include="Pages\Search\Default.aspx" />
     <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
     <Content Include="Pages\Search\Move\Default.aspx" />
@@ -874,19 +913,19 @@
     <EmbeddedResource Include="Pages\StudyDetails\Scripts\SeriesGridView.js" />
     <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
     <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsTabs.js" />
-    <Content Include="Pages\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\ViewEdit.aspx" />
-    <Content Include="Pages\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
-    <Content Include="Pages\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
-    <Content Include="Pages\WorkQueue\SearchPage.aspx" />
-    <Content Include="Pages\WorkQueue\SearchPanel.ascx" />
-    <Content Include="Pages\WorkQueue\SearchPanel.js" />
-    <Content Include="Pages\WorkQueue\WorkQueueGridView.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\ViewEdit.aspx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Default.aspx" />
+    <Content Include="Pages\Queues\WorkQueue\SearchPanel.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\SearchPanel.js" />
+    <Content Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />
     <Content Include="Scripts\CodeMirror\css\jscolors.css" />
     <Content Include="Scripts\CodeMirror\css\xmlcolors.css" />
@@ -906,62 +945,65 @@
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
-    <None Include="Pages\WorkQueue\.svn\all-wcprops" />
-    <None Include="Pages\WorkQueue\.svn\entries" />
-    <None Include="Pages\WorkQueue\.svn\format" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPage.aspx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPage.aspx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPage.aspx.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\SearchPanel.js.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemCollection.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSettings.Designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSettings.settings.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSummary.cs.svn-base" />
-    <None Include="Pages\WorkQueue\.svn\text-base\WorkQueueSummaryAssembler.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\all-wcprops" />
-    <None Include="Pages\WorkQueue\Edit\.svn\entries" />
-    <None Include="Pages\WorkQueue\Edit\.svn\format" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetails.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\StudyDetails.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\StudyDetailsAssembler.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetails.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueDetails.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsAssembler.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsViewBase.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.svn-base" />
-    <None Include="Pages\WorkQueue\WorkQueueSettings.settings" />
+    <None Include="Pages\Queues\WorkQueue\.svn\all-wcprops" />
+    <None Include="Pages\Queues\WorkQueue\.svn\entries" />
+    <None Include="Pages\Queues\WorkQueue\.svn\format" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPage.aspx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPage.aspx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPage.aspx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.js.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemCollection.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSettings.Designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSettings.settings.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSummary.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSummaryAssembler.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\all-wcprops" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\entries" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\format" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetails.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\StudyDetails.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\StudyDetailsAssembler.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetails.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueDetails.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsAssembler.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsViewBase.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.designer.cs.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.svn-base" />
+    <None Include="Pages\Queues\WorkQueue\WorkQueueSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
@@ -1018,17 +1060,16 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\Queues\RestoreQueue\" />
-    <Folder Include="Pages\WorkQueue\.svn\prop-base\" />
-    <Folder Include="Pages\WorkQueue\.svn\props\" />
-    <Folder Include="Pages\WorkQueue\.svn\tmp\prop-base\" />
-    <Folder Include="Pages\WorkQueue\.svn\tmp\props\" />
-    <Folder Include="Pages\WorkQueue\.svn\tmp\text-base\" />
-    <Folder Include="Pages\WorkQueue\Edit\.svn\prop-base\" />
-    <Folder Include="Pages\WorkQueue\Edit\.svn\props\" />
-    <Folder Include="Pages\WorkQueue\Edit\.svn\tmp\prop-base\" />
-    <Folder Include="Pages\WorkQueue\Edit\.svn\tmp\props\" />
-    <Folder Include="Pages\WorkQueue\Edit\.svn\tmp\text-base\" />
+    <Folder Include="Pages\Queues\WorkQueue\.svn\prop-base\" />
+    <Folder Include="Pages\Queues\WorkQueue\.svn\props\" />
+    <Folder Include="Pages\Queues\WorkQueue\.svn\tmp\prop-base\" />
+    <Folder Include="Pages\Queues\WorkQueue\.svn\tmp\props\" />
+    <Folder Include="Pages\Queues\WorkQueue\.svn\tmp\text-base\" />
+    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\prop-base\" />
+    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\props\" />
+    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\prop-base\" />
+    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\props\" />
+    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\text-base\" />
     <Folder Include="plugins\" />
     <Folder Include="Scripts\.svn\prop-base\" />
     <Folder Include="Scripts\.svn\props\" />
