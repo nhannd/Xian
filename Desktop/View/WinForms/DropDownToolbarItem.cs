@@ -73,12 +73,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			this.ShowDropDownArrow = true;
 
-			// Build the dropdown menu
-			ToolStripDropDownMenu dropDownMenu = new ToolStripDropDownMenu();
-			ToolStripBuilder.BuildMenu(dropDownMenu.Items, _action.DropDownMenuModel.ChildNodes);
-			this.DropDown = dropDownMenu;
+			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 		}
 
+		private void OnDropDownOpening(object sender, EventArgs e)
+		{
+			this.DropDownItems.Clear();
+
+			ActionModelNode model = (_action).DropDownMenuModel;
+			if (model != null)
+				ToolStripBuilder.BuildMenu(this.DropDownItems, model.ChildNodes);
+		}
+		
 		private void OnActionEnabledChanged(object sender, EventArgs e)
 		{
 			UpdateEnablement();

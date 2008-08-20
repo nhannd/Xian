@@ -177,13 +177,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.IconSetChanged += _actionIconSetChangedHandler;
 			_action.CheckedChanged += _actionCheckedChangedHandler;
 
-			ActionModelNode model = dropAction.DropDownMenuModel;
-			if (model != null)
-			{
-				ToolStripDropDownMenu dropDownMenu = new ToolStripDropDownMenu();
-				ToolStripBuilder.BuildMenu(dropDownMenu.Items, model.ChildNodes);
-				this.DropDown = dropDownMenu;
-			}
+			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 
 			this.Text = _action.Label;
 			this.Enabled = _action.Enabled;
@@ -199,6 +193,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				_action.Click();
 			};
+		}
+
+		private void OnDropDownOpening(object sender, EventArgs e)
+		{
+			this.DropDownItems.Clear();
+			
+			ActionModelNode model = ((IDropDownAction)_action).DropDownMenuModel;
+			if (model != null)
+				ToolStripBuilder.BuildMenu(this.DropDownItems, model.ChildNodes);
 		}
 
 		protected override void OnParentChanged(ToolStrip oldParent, ToolStrip newParent)

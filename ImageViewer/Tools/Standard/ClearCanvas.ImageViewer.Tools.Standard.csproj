@@ -145,7 +145,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PresetVoiLutSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="PresetVoiLutTool.cs" />
+    <Compile Include="WindowLevelToolPresets.cs" />
     <Compile Include="MemoryUsageTool.cs" />
     <Compile Include="ColorMapTool.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutConfigurationComponent.cs" />
