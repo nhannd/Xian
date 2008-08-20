@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomValidationException))]
+		[ExpectedException(typeof(DicomDataException))]
 		public void BitsStoredInvalid()
 		{
 			int bitsStored = 0;

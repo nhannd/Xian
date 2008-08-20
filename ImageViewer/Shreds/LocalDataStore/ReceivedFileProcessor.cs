@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 

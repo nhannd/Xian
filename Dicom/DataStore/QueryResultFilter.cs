@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {

@@ -31,7 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 using ClearCanvas.Server.ShredHost;

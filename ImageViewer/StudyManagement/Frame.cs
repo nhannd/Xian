@@ -33,7 +33,9 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.Dicom.Validation;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
 
@@ -108,8 +110,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// A <see cref="PatientOrientation"/> is returned even when no data is available; 
 		/// it will simply have values of "" for its 
-		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Row"/> and 
-		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Column"/> properties.
+		/// <see cref="Dicom.Iod.PatientOrientation.Row"/> and 
+		/// <see cref="Dicom.Iod.PatientOrientation.Column"/> properties.
 		/// </remarks>
 		public virtual PatientOrientation PatientOrientation
 		{

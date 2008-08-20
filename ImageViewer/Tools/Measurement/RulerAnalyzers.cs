@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement

@@ -56,6 +56,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Dicom.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Codec.Rle
 {
@@ -461,7 +462,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
                         int c = 257 - n;
                         if (i >= end)
                         {
-                            DicomLogger.LogError("RLE Segement unexpectedly wrong.");
+                            Platform.Log(LogLevel.Error, "RLE Segement unexpectedly wrong.");
                             return;
                         }
                         byte b = rleData[i++];
@@ -469,7 +470,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
                         {
                             if (pos >= buffer.Length)
                             {
-                                DicomLogger.LogError("RLE segment unexpectedly too long.  Ignoring data.");
+								Platform.Log(LogLevel.Error, "RLE segment unexpectedly too long.  Ignoring data.");
                                 return;
                             }
                             buffer[pos++] = b;
@@ -486,7 +487,7 @@ namespace ClearCanvas.Dicom.Codec.Rle
                         }
                         if (i > rleData.Length || pos + c > buffer.Length)
                         {
-                            DicomLogger.LogError("Invalid formatted RLE data.  RLE segment unexpectedly too long.");
+							Platform.Log(LogLevel.Error, "Invalid formatted RLE data.  RLE segment unexpectedly too long.");
                             return;
                         }
 

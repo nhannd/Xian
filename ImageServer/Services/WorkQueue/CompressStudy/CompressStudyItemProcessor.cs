@@ -36,8 +36,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.DicomServices.Codec;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
@@ -234,7 +233,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
                 Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
 
-                IDicomCodecFactory[] codecs = DicomCodecHelper.GetCodecs();
+                IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
                 IDicomCodecFactory theCodecFactory = null;
                 foreach (IDicomCodecFactory codec in codecs)
                     if (codec.CodecTransferSyntax.Equals(compressSyntax))

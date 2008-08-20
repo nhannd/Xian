@@ -38,6 +38,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;

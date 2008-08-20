@@ -86,10 +86,6 @@
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\DicomServices\ClearCanvas.DicomServices.csproj">
-      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
-      <Name>ClearCanvas.DicomServices</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

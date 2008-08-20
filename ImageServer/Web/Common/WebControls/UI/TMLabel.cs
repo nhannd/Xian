@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Web.UI;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI

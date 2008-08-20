@@ -29,7 +29,7 @@
 
 #endregion
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 

@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.DataStore
 {

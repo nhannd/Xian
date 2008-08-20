@@ -32,7 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Validation;
 

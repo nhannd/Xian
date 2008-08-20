@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Network.Scp;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {

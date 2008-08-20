@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices;
-using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.Dicom.Network.Scp;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -64,22 +63,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			_context = new DicomServerContext(this);
 			_scp = new DicomScp<IDicomServerContext>(_context, AssociationVerifier.VerifyAssociation);
-		}
-
-		static DicomServer()
-		{
-			try
-			{
-				DicomCodecHelper.RegisterCodecExtensions();
-			}
-			catch (NotSupportedException e)
-			{
-				Platform.Log(LogLevel.Info, e);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-			}
 		}
 
 		#region Public Properties

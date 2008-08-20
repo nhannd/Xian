@@ -58,6 +58,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -296,7 +297,7 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (Exception x) 
             {
-                DicomLogger.LogErrorException(x, "Unexpected exception when calling IDicomServerHandler.OnNetworkError");
+				Platform.Log(LogLevel.Error, x, "Unexpected exception when calling IDicomServerHandler.OnNetworkError");
             }
 
             _closedOnError = true;
@@ -312,7 +313,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (!_appList.ContainsKey(association.CalledAE))
             {
-                DicomLogger.LogError("Rejecting association from {0}: Invalid Called AE Title ({1}).", association.CallingAE, association.CalledAE);
+				Platform.Log(LogLevel.Error, "Rejecting association from {0}: Invalid Called AE Title ({1}).", association.CallingAE, association.CalledAE);
                 SendAssociateReject(DicomRejectResult.Permanent, DicomRejectSource.ServiceProviderACSE, DicomRejectReason.CalledAENotRecognized);
                 return;
             }
@@ -336,7 +337,7 @@ namespace ClearCanvas.Dicom.Network
             bool anyValidContexts = NegotiateAssociation(association, info.Parameters);
             if (!anyValidContexts)
             {
-                DicomLogger.LogError("Rejecting association from {0}: No valid presentation contexts.",association.CallingAE);
+				Platform.Log(LogLevel.Error, "Rejecting association from {0}: No valid presentation contexts.", association.CallingAE);
                 SendAssociateReject(DicomRejectResult.Permanent, DicomRejectSource.ServiceProviderACSE, DicomRejectReason.NoReasonGiven);
                 return;
             }

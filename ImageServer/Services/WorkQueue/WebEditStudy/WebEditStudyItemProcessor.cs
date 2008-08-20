@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                             ctx.Partition = Partition;
                             ctx.StorageLocation = StorageLocation;
                             ctx.OriginalStorageLocation = LoadStorageLocation(item)[0];// copy
-                            ctx.NewStudyXml = new DicomServices.Xml.StudyXml();
+							ctx.NewStudyXml = new ClearCanvas.Dicom.Utilities.Xml.StudyXml();
 
                             // output folder = temp\ImageServer\EditStudy\.....
                             string outFolder = GetTempPath();

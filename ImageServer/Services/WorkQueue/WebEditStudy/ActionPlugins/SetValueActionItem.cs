@@ -40,6 +40,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.ActionPlugins
 {

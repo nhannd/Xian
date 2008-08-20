@@ -31,7 +31,7 @@
 
 using System;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections;

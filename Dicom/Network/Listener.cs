@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -74,12 +75,12 @@ namespace ClearCanvas.Dicom.Network
 
                 if (theListener._applications.ContainsKey(parameters.CalledAE))
                 {
-                    DicomLogger.LogError("Already listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+					Platform.Log(LogLevel.Error, "Already listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
                     return false;
                 }
 
                 theListener._applications.Add(parameters.CalledAE,info);
-                DicomLogger.LogInfo("Starting to listen with AE {0} on existing port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                Platform.Log(LogLevel.Info, "Starting to listen with AE {0} on existing port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
             else
             {
@@ -88,7 +89,7 @@ namespace ClearCanvas.Dicom.Network
                 _listeners[parameters.LocalEndPoint] = theListener;
                 theListener.StartThread();
 
-                DicomLogger.LogInfo("Starting to listen with AE {0} on port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                Platform.Log(LogLevel.Info, "Starting to listen with AE {0} on port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
 
             return true;
@@ -113,17 +114,17 @@ namespace ClearCanvas.Dicom.Network
                         theListener.StopThread();
                         theListener.Dispose();
                     }
-                    DicomLogger.LogInfo("Stopping listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                    Platform.Log(LogLevel.Info, "Stopping listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
                 }
                 else
                 {
-                    DicomLogger.LogError("Unable to stop listening on AE {0}, assembly was not listening with this AE.", parameters.CalledAE);
+					Platform.Log(LogLevel.Error, "Unable to stop listening on AE {0}, assembly was not listening with this AE.", parameters.CalledAE);
                     return false;
                 }
             }
             else
             {
-                DicomLogger.LogError("Unable to stop listening, assembly was not listening on end point {0}.", parameters.LocalEndPoint.ToString());
+				Platform.Log(LogLevel.Error, "Unable to stop listening, assembly was not listening on end point {0}.", parameters.LocalEndPoint.ToString());
                 return false;
             }
 
@@ -171,8 +172,8 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (SocketException e)
             {
-                DicomLogger.LogErrorException(e,"Unexpected exception when starting TCP listener");
-                DicomLogger.LogError("Shutting down listener on {0}", _ipEndPoint.ToString());
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when starting TCP listener");
+				Platform.Log(LogLevel.Error, "Shutting down listener on {0}", _ipEndPoint.ToString());
                 return;
             }
 
@@ -194,7 +195,7 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (SocketException e)
             {
-                DicomLogger.LogErrorException(e, "Unexpected exception when stoppinging TCP listener on {0}",_ipEndPoint,ToString());
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when stoppinging TCP listener on {0}", _ipEndPoint, ToString());
             }
         }
 

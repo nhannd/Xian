@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.DataStore;
 

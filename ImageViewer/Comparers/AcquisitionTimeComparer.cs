@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -31,7 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers

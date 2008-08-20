@@ -30,14 +30,17 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Globalization;
 using System.Collections;
+using System.Globalization;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Validation
 {
-    public abstract class StringValueValidator
+	// TODO: all of the ValidateString methods below appear to be inherently thread safe because they use only 
+	// the arguments passed in and the classes have no members other than the mutex.  They can just be static helpers.
+	// Or, if thread safety really is an issue, there could be a ThreadStatic instance member declared rather than using mutexes and maps.
+
+	public abstract class StringValueValidator
     {
     
         /// <summary>

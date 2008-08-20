@@ -87,7 +87,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7} = {86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}
 		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB} = {8517089B-809E-4A62-9AB2-CFF8C72E1AEB}
 		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
-		{734E6EA2-DC6B-4387-B671-EED0A603D73E} = {734E6EA2-DC6B-4387-B671-EED0A603D73E}
 		{19134434-DCC7-4B42-83ED-7B7F9D3A7C08} = {19134434-DCC7-4B42-83ED-7B7F9D3A7C08}
 		{0D64751F-987E-415E-8CE7-069EA2763EC0} = {0D64751F-987E-415E-8CE7-069EA2763EC0}
 	EndProjectSection
@@ -354,12 +353,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Thu
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices", "..\DicomServices\ClearCanvas.DicomServices.csproj", "{734E6EA2-DC6B-4387-B671-EED0A603D73E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Codec.Jpeg", "Codec\Jpeg\ClearCanvas.ImageViewer.Codec.Jpeg.csproj", "{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -562,10 +555,6 @@ Global
 		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44755126-5B83-43D1-AC83-621F5FCFBA67}.Release|Any CPU.Build.0 = Release|Any CPU
-		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Validation;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Graphics

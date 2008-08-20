@@ -37,15 +37,13 @@ using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Codec.Rle.Tests
 {
+	//TODO: this test won't work anymore because the codec registry uses extensions.
     [TestFixture]
     public class CodecTest : AbstractTest
     {
         [Test]
         public void RleTest()
         {
-            DicomCodecRegistry.RegisterCodec(TransferSyntax.RleLossless,
-                                             new DicomRleCodecFactory());
-
             DicomFile file = new DicomFile("RleCodecTest.dcm");
 
             SetupMR(file.DataSet);

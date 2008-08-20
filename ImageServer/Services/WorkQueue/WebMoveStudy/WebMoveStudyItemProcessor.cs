@@ -32,7 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.Dicom;

@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;

@@ -36,7 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices.Anonymization;
+using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;

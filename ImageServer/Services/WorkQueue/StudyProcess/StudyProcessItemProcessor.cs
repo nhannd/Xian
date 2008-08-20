@@ -35,7 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;

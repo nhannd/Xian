@@ -33,10 +33,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.ServiceModel;
-using System.Threading;
+
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming

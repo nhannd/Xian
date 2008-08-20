@@ -1,7 +1,8 @@
 using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming

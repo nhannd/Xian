@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
 {

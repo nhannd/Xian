@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;

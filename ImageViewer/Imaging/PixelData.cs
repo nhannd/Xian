@@ -31,7 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

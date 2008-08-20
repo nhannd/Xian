@@ -35,9 +35,9 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.DicomServices;
-using ClearCanvas.DicomServices.Scu;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -48,7 +48,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
     ///<summary>
-    /// Plugin for handling DICOM Retrieve Requests implementing the <see cref="IDicomScp{DicomScpParameters}"/> interface.
+    /// Plugin for handling DICOM Retrieve Requests implementing the <see cref="IDicomScp{TContext}"/> interface.
     ///</summary>
     [ExtensionOf(typeof(DicomScpExtensionPoint<DicomScpContext>))]
     public class MoveScpExtension : BaseScp, IDicomScp<DicomScpContext>

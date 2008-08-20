@@ -2,14 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
-using System.Threading;
 using System.Web;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices.Codec;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 
 namespace WADOClient
 {
@@ -46,8 +42,6 @@ namespace WADOClient
 
         static void Main(string[] args)
         {
-            DicomCodecHelper.RegisterCodecExtensions();
-
             CommandLine cmdline = new CommandLine(args);
             IDictionary<string, string> parameters = cmdline.Named;
 

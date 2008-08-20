@@ -57,6 +57,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
@@ -716,7 +717,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception e)
             {
-                DicomLogger.LogErrorException(e,"Error in default value type! - {0}", vtype.ToString());
+                Platform.Log(LogLevel.Error, e, "Error in default value type! - {0}", vtype.ToString());
                 return null;
             }
         }
@@ -899,7 +900,7 @@ namespace ClearCanvas.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e,"Unable to bind field");
+                        Platform.Log(LogLevel.Error, e,"Unable to bind field");
                     }
                 }
             }
@@ -927,7 +928,7 @@ namespace ClearCanvas.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e,"Unable to bind field");
+                        Platform.Log(LogLevel.Error, e,"Unable to bind field");
                     }
                 }
             }

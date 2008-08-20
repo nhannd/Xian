@@ -55,6 +55,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Network
@@ -517,7 +518,7 @@ namespace ClearCanvas.Dicom.Network
                                 }
                                 else
                                 {
-                                    DicomLogger.LogError("Unhandled user item: 0x{0:x2} ({1} + 4 bytes)", ut, ul);
+                                    Platform.Log(LogLevel.Error, "Unhandled user item: 0x{0:x2} ({1} + 4 bytes)", ut, ul);
                                     raw.SkipBytes("Unhandled User Item", ul);
                                 }
                             }

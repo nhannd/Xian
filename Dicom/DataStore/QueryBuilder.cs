@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {

@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageServer.TestApp
             {
                 if (attrib.Tag.IsPrivate && attrib.Tag.VR.Equals(DicomVr.SQvr))
                 {
-                    DicomLogger.LogInfo("Found file with private SQ: {0}", filename);
+                    Platform.Log(LogLevel.Info, "Found file with private SQ: {0}", filename);
                     return;
                 }
                 else if (attrib.Tag.VR.Equals(DicomVr.SQvr) && !attrib.IsNull)
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
             FileInfo[] files = dir.GetFiles();
 
-            DicomLogger.LogInfo("Scanning directory: {0}", dir.FullName);
+            Platform.Log(LogLevel.Info, "Scanning directory: {0}", dir.FullName);
 
             foreach (FileInfo file in files)
             {

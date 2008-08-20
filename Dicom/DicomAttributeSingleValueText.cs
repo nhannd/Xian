@@ -53,7 +53,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom

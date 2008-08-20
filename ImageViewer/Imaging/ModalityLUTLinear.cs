@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

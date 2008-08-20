@@ -32,7 +32,8 @@
 #if UNIT_TESTS
 
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests

@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.WorkQueue;
@@ -78,9 +77,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		#region Protected Methods
 		protected override void Initialize()
 		{
-			//Load Codecs
-			DicomCodecHelper.RegisterCodecExtensions();
-
 			if (_theProcessor == null)
 			{
 				// Force a read context to be opened.  When developing the retry mechanism 

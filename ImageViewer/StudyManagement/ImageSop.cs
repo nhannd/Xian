@@ -32,8 +32,8 @@
 using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -44,22 +44,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		private readonly object _syncLock = new object();
 		private volatile FrameCollection _frames;
-
-		static ImageSop()
-		{
-			try
-			{
-				DicomCodecHelper.RegisterCodecExtensions();
-			}
-			catch(NotSupportedException e)
-			{
-				Platform.Log(LogLevel.Info, e);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-			}
-		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageSop"/>.
@@ -110,8 +94,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// A <see cref="PatientOrientation"/> is returned even when no data is available; 
 		/// it will simply have values of "" for its 
-		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Row"/> and 
-		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Column"/> properties.
+		/// <see cref="Dicom.Iod.PatientOrientation.Row"/> and 
+		/// <see cref="Dicom.Iod.PatientOrientation.Column"/> properties.
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use equivalent property on Frame class instead.")]
 		public virtual PatientOrientation PatientOrientation

@@ -54,7 +54,9 @@
 
 namespace ClearCanvas.Dicom.Codec
 {
-    /// <summary>
+	//TODO: empty class - just return an object?
+
+	/// <summary>
     /// Abstract base class for parameters to codecs.
     /// </summary>
     public abstract class DicomCodecParameters

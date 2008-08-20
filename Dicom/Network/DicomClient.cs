@@ -59,6 +59,7 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -182,8 +183,8 @@ namespace ClearCanvas.Dicom.Network
                         }
                         catch (Exception e)
                         {
-                            DicomLogger.LogErrorException(e,
-                                                          "Unable to connection to remote host, attempting other addresses: {0}",
+							Platform.Log(LogLevel.Error, e,
+                                                          "Unable to connect to remote host, attempting other addresses: {0}",
                                                           dnsAddr.ToString());
                         }
                     }
@@ -199,7 +200,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                         catch (Exception e)
                         {
-                            DicomLogger.LogErrorException(e,
+							Platform.Log(LogLevel.Error, e,
                                                           "Unable to connection to remote host, attempting other addresses: {0}",
                                                           dnsAddr.ToString());
                         }
@@ -207,7 +208,7 @@ namespace ClearCanvas.Dicom.Network
                 }
                 String message = String.Format("Unable to connect to: {0}:{1}, no valid addresses to connect to",_assoc.RemoteHostname,_assoc.RemotePort);
 
-                DicomLogger.LogError(message);
+				Platform.Log(LogLevel.Error, message);
                 throw new DicomException(message);
             }
         }
@@ -331,7 +332,7 @@ namespace ClearCanvas.Dicom.Network
 
         private void OnClientConnected()
         {
-            DicomLogger.LogInfo("{0} SCU -> Network Connected: {2} {1}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString(), _assoc.CalledAE);
+            Platform.Log(LogLevel.Info, "{0} SCU -> Network Connected: {2} {1}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString(), _assoc.CalledAE);
 
             SendAssociateRequest(_assoc);
         }
@@ -382,9 +383,9 @@ namespace ClearCanvas.Dicom.Network
             {
                 _handler.OnNetworkError(this, _assoc as ClientAssociationParameters, e);
             }
-            catch (Exception x) 
+            catch (Exception ex) 
             {
-                DicomLogger.LogErrorException(x, "Unexpected exception when calling IDicomClientHandler.OnNetworkError");
+				Platform.Log(LogLevel.Error, ex, "Unexpected exception when calling IDicomClientHandler.OnNetworkError");
             }
 
 			_closedOnError = true;

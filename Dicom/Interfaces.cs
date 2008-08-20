@@ -29,13 +29,11 @@
 
 #endregion
 
+using System;
+
 namespace ClearCanvas.Dicom
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
-    /// <summary>
+	/// <summary>
     /// Specifies an interface that allows an object to have
     /// DICOM properties set to specific values. An example where
     /// this interface may be used is in the loading of DICOM image

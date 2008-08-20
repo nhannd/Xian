@@ -35,9 +35,10 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.DicomServices;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using System.Threading;
+using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
 {

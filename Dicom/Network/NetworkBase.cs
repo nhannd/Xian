@@ -58,6 +58,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
 
@@ -256,7 +257,7 @@ namespace ClearCanvas.Dicom.Network
 
         protected virtual void OnUserException(Exception e, String description)
         {
-            DicomLogger.LogErrorException(e, "Unexpected User exception, description: " + description);
+            Platform.Log(LogLevel.Error, e, "Unexpected User exception, description: " + description);
             switch (_state)
             {
                 case DicomAssociationState.Sta2_TransportConnectionOpen:
@@ -272,7 +273,7 @@ namespace ClearCanvas.Dicom.Network
                     OnNetworkError(e, true);
                     break;
                 case DicomAssociationState.Sta6_AssociationEstablished:
-                    DicomLogger.LogError("Aborting association from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
+                    Platform.Log(LogLevel.Error, "Aborting association from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
                     SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
                     OnNetworkError(e, false);
                     break;
@@ -648,7 +649,7 @@ namespace ClearCanvas.Dicom.Network
             }
             else
             {
-                DicomLogger.LogError("Unexpected state for association abort, closing connection from {0} to {1}",
+                Platform.Log(LogLevel.Error, "Unexpected state for association abort, closing connection from {0} to {1}",
                                      _assoc.CallingAE, _assoc.CalledAE);
 
 				OnNetworkError(null, true);
@@ -666,7 +667,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (_state != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
             {
-                DicomLogger.LogError("Error attempting to send association accept at invalid time in association.");
+                Platform.Log(LogLevel.Error, "Error attempting to send association accept at invalid time in association.");
                 SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
                 throw new NetworkException(
                     "Attempting to send association accept at invalid time in association, aborting");
@@ -692,7 +693,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (_state != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
             {
-                DicomLogger.LogError("Error attempting to send associaiton reject at invalid time in association.");
+                Platform.Log(LogLevel.Error, "Error attempting to send association reject at invalid time in association.");
                 SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
                 throw new NetworkException(
                     "Attempting to send association reject at invalid time in association, aborting");
@@ -714,7 +715,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (_state != DicomAssociationState.Sta6_AssociationEstablished)
             {
-                DicomLogger.LogError("Unexpected attempt to send Release Request when in invalid state.");
+                Platform.Log(LogLevel.Error, "Unexpected attempt to send Release Request when in invalid state.");
                 return;
             }
 
@@ -754,7 +755,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="messageID">The messageID to use.</param>
         public void SendCEchoRequest(byte presentationID, ushort messageID)
         {
-            DicomLogger.LogInfo("Sending C Echo request, pres ID: {0}, messageID = {1}", presentationID, messageID);
+            Platform.Log(LogLevel.Info, "Sending C Echo request, pres ID: {0}, messageID = {1}", presentationID, messageID);
             DicomMessage msg = new DicomMessage();
             msg.MessageId = messageID;
             msg.CommandField = DicomCommandField.CEchoRequest;
@@ -1071,7 +1072,7 @@ namespace ClearCanvas.Dicom.Network
                         if (!success)
                         {
                             // Start the Abort process, not much else we can do
-                            DicomLogger.LogError(
+                            Platform.Log(LogLevel.Error,
                                 "Unexpected error processing PDU.  Aborting Association from {0} to {1}",
                                 _assoc.CallingAE, _assoc.CalledAE);
                             SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.InvalidPDUParameter);
@@ -1090,7 +1091,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                         else if (_state == DicomAssociationState.Sta2_TransportConnectionOpen)
                         {
-                            DicomLogger.LogError(
+                            Platform.Log(LogLevel.Error,
                                 "ARTIM timeout when waiting for AAssociate Request PDU, closing connection.");
                             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 							OnNetworkError(null, true);
@@ -1100,7 +1101,7 @@ namespace ClearCanvas.Dicom.Network
                         }
 						else if (_state == DicomAssociationState.Sta5_AwaitingAAssociationACOrReject)
 						{
-							DicomLogger.LogError(
+							Platform.Log(LogLevel.Error,
 								"ARTIM timeout when waiting for AAssociate AC or RJ PDU, closing connection.");
 							_state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
 							OnNetworkError(null, true);
@@ -1110,7 +1111,7 @@ namespace ClearCanvas.Dicom.Network
 						}
                         else if (_state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
                         {
-                            DicomLogger.LogError(
+							Platform.Log(LogLevel.Error,
                                 "Timeout when waiting for transport connection to close from {0} to {1}.  Dropping Connection.",
                                 _assoc.CallingAE, _assoc.CalledAE);
 							OnNetworkError(null, true);
@@ -1174,7 +1175,7 @@ namespace ClearCanvas.Dicom.Network
                             if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose &&
                                 _state != DicomAssociationState.Sta6_AssociationEstablished)
                             {
-                                DicomLogger.LogError("Association incorrectly not accepted or rejected, aborting.");
+								Platform.Log(LogLevel.Error, "Association incorrectly not accepted or rejected, aborting.");
                                 return false;
                             }
 
@@ -1255,7 +1256,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                     case 0xFF:
                         {
-                            DicomLogger.LogError("Unexpected PDU type: 0xFF.  Potential parsing error.");
+							Platform.Log(LogLevel.Error, "Unexpected PDU type: 0xFF.  Potential parsing error.");
                             return false;
                         }
                     default:
@@ -1273,7 +1274,7 @@ namespace ClearCanvas.Dicom.Network
                                             Environment.CurrentDirectory, DateTime.Now.Ticks);
                 Directory.CreateDirectory(Environment.CurrentDirectory + @"\Errors");
                 raw.Save(file);
-                DicomLogger.LogErrorException(e,"Unexpected exception when processing PDU.");
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when processing PDU.");
                 return false;
             }
         }
@@ -1310,7 +1311,7 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.CommandReader.Read(null, DicomReadOptions.UseDictionaryForExplicitUN);
                         if (stat == DicomReadStatus.UnknownError)
                         {
-                            DicomLogger.LogError("Unexpected parsing error when reading command group elements.");
+							Platform.Log(LogLevel.Error, "Unexpected parsing error when reading command group elements.");
                             return false;
                         }
                         bytes += pdv.Value.Length;
@@ -1322,7 +1323,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             if (stat == DicomReadStatus.NeedMoreData)
                             {
-                                DicomLogger.LogError(
+								Platform.Log(LogLevel.Error,
                                     "Unexpected end of StreamReader.  More data needed after reading last PDV fraagment.");
                                 return false;
                             }
@@ -1344,7 +1345,7 @@ namespace ClearCanvas.Dicom.Network
                                 OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset);
                                 bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
                                 if (!ret)
-                                    DicomLogger.LogError("Error with OnReceiveDimse");
+									Platform.Log(LogLevel.Error, "Error with OnReceiveDimse");
 
                                 //_assoc.TotalBytesRead += (UInt64)total;
 
@@ -1376,7 +1377,7 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.DatasetReader.Read(null, DicomReadOptions.UseDictionaryForExplicitUN);
                         if (stat == DicomReadStatus.UnknownError)
                         {
-                            DicomLogger.LogError("Unexpected parsing error when reading DataSet.");
+							Platform.Log(LogLevel.Error, "Unexpected parsing error when reading DataSet.");
                             return false;
                         }
 
@@ -1389,7 +1390,7 @@ namespace ClearCanvas.Dicom.Network
                         {
                             if (stat == DicomReadStatus.NeedMoreData)
                             {
-                                DicomLogger.LogError(
+								Platform.Log(LogLevel.Error,
                                     "Unexpected end of StreamReader.  More data needed after reading last PDV fraagment.");
                                 return false;
                             }
@@ -1403,7 +1404,7 @@ namespace ClearCanvas.Dicom.Network
                             OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset);
                             bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
                             if (!ret)
-                                DicomLogger.LogError("Error with OnReceiveDimse");
+								Platform.Log(LogLevel.Error, "Error with OnReceiveDimse");
 
                             _dimse = null;
                             return ret;
@@ -1426,7 +1427,7 @@ namespace ClearCanvas.Dicom.Network
             catch (Exception e)
             {
                 //do something here!
-                DicomLogger.LogErrorException(e, "Unexpected exception processing P-DATA PDU");
+				Platform.Log(LogLevel.Error, e, "Unexpected exception processing P-DATA PDU");
                 return false;
             }
         }

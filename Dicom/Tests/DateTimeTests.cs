@@ -32,10 +32,9 @@
 #if UNIT_TESTS
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.Globalization;
+using ClearCanvas.Dicom.Utilities;
+using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Tests
 {

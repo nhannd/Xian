@@ -53,10 +53,10 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using ClearCanvas.Dicom.IO;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.Dicom

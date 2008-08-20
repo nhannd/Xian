@@ -32,7 +32,8 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;

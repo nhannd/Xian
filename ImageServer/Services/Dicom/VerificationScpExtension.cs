@@ -33,7 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Dicom

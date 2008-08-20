@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.DicomServices.Scu;
+using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;

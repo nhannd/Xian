@@ -35,8 +35,8 @@ using System.Threading;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.DicomServices.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 

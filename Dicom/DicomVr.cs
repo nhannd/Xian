@@ -31,8 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom

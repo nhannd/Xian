@@ -32,7 +32,6 @@
 #if UNIT_TESTS
 
 using System;
-using System.Diagnostics;
 using NUnit.Framework;
 
 namespace ClearCanvas.Dicom.Tests

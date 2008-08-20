@@ -31,7 +31,7 @@
 
 using System;
 using System.Drawing;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;

@@ -31,7 +31,6 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices.Codec;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -251,9 +250,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Shreds
 		#region Protected Methods
 		protected override void Initialize()
 		{
-			//Load Codecs
-			DicomCodecHelper.RegisterCodecExtensions();
-
 			_archiveServiceList.Clear();
 
 

@@ -29,6 +29,8 @@
 
 #endregion
 
+using ClearCanvas.Dicom.Validation;
+
 namespace ClearCanvas.Dicom.DataStore
 {
 	public sealed partial class DataAccessLayer

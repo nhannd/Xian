@@ -58,10 +58,5 @@ namespace ClearCanvas.Dicom.Codec.Rle
         {
             return new DicomRleCodec();
         }
-
-        public static void Register()
-        {
-            DicomCodecRegistry.RegisterCodec(TransferSyntax.RleLossless, new DicomRleCodecFactory());
-        }
     }
 }

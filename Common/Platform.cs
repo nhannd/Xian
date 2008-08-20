@@ -35,6 +35,7 @@ using ClearCanvas.Common.Auditing;
 using log4net;
 using ClearCanvas.Common.Utilities;
 using System.Collections.Generic;
+using System.IO;
 
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
@@ -271,8 +272,16 @@ namespace ClearCanvas.Common
                 {
                     lock (_syncRoot)
                     {
-                        if (_pluginsDirectory == null)
-                            _pluginsDirectory = string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _pluginSubFolder);
+						if (_pluginsDirectory == null)
+						{
+							string pluginsDirectory =
+								string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _pluginSubFolder);
+
+							if (Directory.Exists(pluginsDirectory))
+								_pluginsDirectory = pluginsDirectory;
+							else
+							    _pluginsDirectory = InstallDirectory;
+						}
                     }
                 }
 
@@ -294,9 +303,14 @@ namespace ClearCanvas.Common
                 {
                     lock (_syncRoot)
                     {
-                        if (_commonDirectory == null)
-                            _commonDirectory = string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _commonSubFolder);
-                    }
+						string commonDirectory =
+							string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _commonSubFolder);
+
+						if (Directory.Exists(commonDirectory))
+							_commonDirectory = commonDirectory;
+						else
+						    _commonDirectory = InstallDirectory;
+					}
                 }
 
                 return _commonDirectory;

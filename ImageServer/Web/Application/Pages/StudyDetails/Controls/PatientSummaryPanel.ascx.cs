@@ -33,6 +33,7 @@
 using System;
 using System.Web.UI;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Code;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls

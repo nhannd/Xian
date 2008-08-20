@@ -16,7 +16,7 @@ namespace HeaderStressTest.services
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="HeaderStreamingParameters", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.DicomServices.ServiceModel.St" +
+    [System.Runtime.Serialization.DataContractAttribute(Name="HeaderStreamingParameters", Namespace="http://schemas.datacontract.org/2004/07/ClearCanvas.Dicom.ServiceModel.St" +
         "reaming")]
     [System.SerializableAttribute()]
     public partial class HeaderStreamingParameters : object, System.Runtime.Serialization.IExtensibleDataObject

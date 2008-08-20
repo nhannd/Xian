@@ -5,8 +5,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.DicomServices;
-using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			IDicomCodecFactory[] codecs = DicomCodecHelper.GetCodecs();
+			TransferSyntax[] codecSyntaxes = DicomCodecRegistry.GetCodecTransferSyntaxes();
 
 			foreach (SopClass sopClass in GetSupportedSopClasses())
 			{
@@ -97,12 +97,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
 
 				//TODO: should we maybe order them according to preference?
-				foreach (IDicomCodecFactory codec in codecs)
+				foreach (TransferSyntax syntax in codecSyntaxes)
 				{
-					if (codec.CodecTransferSyntax.UidString != TransferSyntax.ExplicitVrLittleEndian.UidString
-						&& codec.CodecTransferSyntax.UidString != TransferSyntax.ImplicitVrLittleEndian.UidString)
+					if (syntax.UidString != TransferSyntax.ExplicitVrLittleEndian.UidString
+						&& syntax.UidString != TransferSyntax.ImplicitVrLittleEndian.UidString)
 					{
-						sop.SyntaxList.Add(codec.CodecTransferSyntax);
+						sop.SyntaxList.Add(syntax);
 					}
 				}
 

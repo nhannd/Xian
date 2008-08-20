@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.DicomServices.Anonymization;
+using ClearCanvas.Dicom.Utilities.Anonymization;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {

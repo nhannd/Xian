@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {

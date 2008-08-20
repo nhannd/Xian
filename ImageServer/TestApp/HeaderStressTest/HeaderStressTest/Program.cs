@@ -9,7 +9,7 @@ using System.Threading;
 using System.Xml;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using HeaderStressTest.services;
 
 namespace HeaderStressTest

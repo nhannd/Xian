@@ -15,7 +15,7 @@ using System.Xml;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.TestApp.services;
 
 namespace ClearCanvas.ImageServer.TestApp

@@ -31,7 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.Dicom.DataStore
 {

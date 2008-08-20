@@ -32,9 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
+	//TODO: Move to Utilities?  Should it just be DicomDirectory with both add/remove functionality (and both Load/Save methods).
+
     /// <summary>
     /// This class writes a Dicom Directory file.  
     /// </summary>
@@ -111,7 +114,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception ex)
             {
-                DicomLogger.LogErrorException(ex, "Exception initializing DicomDirectory");
+				Platform.Log(LogLevel.Error, ex, "Exception initializing DicomDirectory");
                 throw;
             }
         }
@@ -267,7 +270,7 @@ namespace ClearCanvas.Dicom
                 }
                 catch (Exception ex)
                 {
-                    DicomLogger.LogErrorException(ex, "Error adding image {0} to directory file", dicomFile.Filename);
+					Platform.Log(LogLevel.Error, ex, "Error adding image {0} to directory file", dicomFile.Filename);
                 }
             }
 
@@ -328,7 +331,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception ex)
             {
-                DicomLogger.LogErrorException(ex, "Error saving dicom File {0}", fileName);
+				Platform.Log(LogLevel.Error, ex, "Error saving dicom File {0}", fileName);
             }
         }
 
@@ -603,12 +606,13 @@ namespace ClearCanvas.Dicom
                     }
                     else
                     {
-                        DicomLogger.LogInfo( "Cannot find dicomTag {0} for record type {1}", dicomTag2 != null ? dicomTag2.ToString() : dicomTag.ToString(), recordType);
+                        Platform.Log(LogLevel.Info, 
+							"Cannot find dicomTag {0} for record type {1}", dicomTag2 != null ? dicomTag2.ToString() : dicomTag.ToString(), recordType);
                     }
                 }
                 catch (Exception ex)
                 {
-                    DicomLogger.LogErrorException(ex, "Exception adding dicomTag {0} to directory record for record type {1}", dicomTag, recordType);
+					Platform.Log(LogLevel.Error, ex, "Exception adding dicomTag {0} to directory record for record type {1}", dicomTag, recordType);
                 }
             }
 

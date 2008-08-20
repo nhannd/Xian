@@ -33,6 +33,7 @@
 using System;
 using System.Web.UI;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails
 {

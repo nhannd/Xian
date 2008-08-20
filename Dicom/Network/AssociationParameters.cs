@@ -54,9 +54,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net;
-using ClearCanvas.Dicom;
+using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {

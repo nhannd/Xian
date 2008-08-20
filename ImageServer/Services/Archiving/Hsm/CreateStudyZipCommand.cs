@@ -31,7 +31,7 @@
 
 using System;
 using System.IO;
-using ClearCanvas.DicomServices.Xml;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using Ionic.Utils.Zip;
 

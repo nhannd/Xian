@@ -32,6 +32,7 @@
 using System;
 using System.Text;
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
@@ -85,7 +86,7 @@ namespace ClearCanvas.Dicom
                     codec = DicomCodecRegistry.GetCodec(newTransferSyntax);
                     if (codec == null)
                     {
-                        DicomLogger.LogError("Unable to get registered codec for {0}", newTransferSyntax);
+                        Platform.Log(LogLevel.Error, "Unable to get registered codec for {0}", newTransferSyntax);
                         throw new DicomCodecException("No registered codec for: " + newTransferSyntax.Name);
                     }
                 }
@@ -113,7 +114,7 @@ namespace ClearCanvas.Dicom
                     codec = DicomCodecRegistry.GetCodec(TransferSyntax);
                     if (codec == null)
                     {
-                        DicomLogger.LogError("Unable to get registered codec for {0}", TransferSyntax);
+                        Platform.Log(LogLevel.Error, "Unable to get registered codec for {0}", TransferSyntax);
 
                         throw new DicomCodecException("No registered codec for: " + TransferSyntax.Name);
                     }

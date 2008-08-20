@@ -34,7 +34,7 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using CommonSR=ClearCanvas.Common.SR;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications

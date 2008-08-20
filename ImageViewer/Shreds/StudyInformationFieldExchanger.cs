@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Shreds

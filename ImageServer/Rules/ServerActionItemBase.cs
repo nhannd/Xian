@@ -2,7 +2,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
-using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Rules.Specifications;
 

@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

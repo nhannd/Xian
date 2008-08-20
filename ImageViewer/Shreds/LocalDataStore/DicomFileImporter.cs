@@ -40,7 +40,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.DicomServices.Xml;
 using System.Xml;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore

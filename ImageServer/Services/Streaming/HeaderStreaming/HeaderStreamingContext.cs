@@ -1,4 +1,4 @@
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
+using ClearCanvas.Dicom.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {

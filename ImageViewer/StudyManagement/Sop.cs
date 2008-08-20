@@ -33,7 +33,9 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.DicomServices;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {

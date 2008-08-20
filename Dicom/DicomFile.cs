@@ -53,10 +53,10 @@
 #endregion
 
 using System;
-using System.Text;
 using System.IO;
-
+using System.Text;
 using ClearCanvas.Dicom.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom
 {
@@ -485,7 +485,7 @@ namespace ClearCanvas.Dicom
                     DicomReadStatus stat = dsr.Read(stopTag, options);
                     if (stat != DicomReadStatus.Success)
                     {
-                        DicomLogger.LogError("Unexpected error when reading file: {0}", Filename);
+                        Platform.Log(LogLevel.Error, "Unexpected error when reading file: {0}", Filename);
                         throw new DicomException("Unexpected read error with file: " + Filename);
                     }
 
@@ -504,7 +504,7 @@ namespace ClearCanvas.Dicom
 
                 if (!FileHasPart10Header(iStream))
                 {
-                    DicomLogger.LogError("Reading DICOM file from stream, file does not have part 10 format header.");
+                    Platform.Log(LogLevel.Error, "Reading DICOM file from stream, file does not have part 10 format header.");
                     throw new DicomException("File being read from stream is not a part 10 format file");
                 }
             }
@@ -518,7 +518,7 @@ namespace ClearCanvas.Dicom
                 dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", "BogusTag", DicomVr.UNvr, false, 1, 1, false), options);
             if (readStat != DicomReadStatus.Success)
             {
-                DicomLogger.LogError("Unexpected error when reading file Meta info for file: {0}", Filename);
+                Platform.Log(LogLevel.Error, "Unexpected error when reading file Meta info for file: {0}", Filename);
                 throw new DicomException("Unexpected failure reading file Meta info for file: " + Filename);
             }
             dsr.Dataset = _dataSet;
@@ -526,7 +526,7 @@ namespace ClearCanvas.Dicom
             readStat = dsr.Read(stopTag, options);
             if (readStat != DicomReadStatus.Success)
             {
-                DicomLogger.LogError("Unexpected error ({0}) when reading file: {1}", readStat, Filename);
+                Platform.Log(LogLevel.Error, "Unexpected error ({0}) when reading file: {1}", readStat, Filename);
                 throw new DicomException("Unexpected failure (" + readStat + ") reading file: " + Filename);
             }
         }

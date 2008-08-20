@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;

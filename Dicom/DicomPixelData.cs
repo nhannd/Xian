@@ -76,6 +76,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
 
@@ -785,7 +786,7 @@ namespace ClearCanvas.Dicom
             IDicomCodec codec = DicomCodecRegistry.GetCodec(TransferSyntax);
             if (codec == null)
             {
-                DicomLogger.LogError("Unable to get registered codec for {0}", TransferSyntax);
+                Platform.Log(LogLevel.Error, "Unable to get registered codec for {0}", TransferSyntax);
 
                 throw new DicomCodecException("No registered codec for: " + TransferSyntax.Name);
             }

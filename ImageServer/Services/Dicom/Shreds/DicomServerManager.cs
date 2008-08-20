@@ -33,8 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.DicomServices;
-using ClearCanvas.DicomServices.Codec;
+using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -186,9 +185,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		#region Public Methods
 		protected override void Initialize()
 		{
-			//Load Codecs
-			DicomCodecHelper.RegisterCodecExtensions();
-
 			_changedEvent = delegate 
 									{
                                 		CheckPartitions();

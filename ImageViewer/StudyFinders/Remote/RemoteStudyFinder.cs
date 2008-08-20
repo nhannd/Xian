@@ -31,7 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.DicomServices.Scu;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;

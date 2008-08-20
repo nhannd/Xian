@@ -33,10 +33,12 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO: get rid of this
+	//TODO: get rid of this or incorporate into Dicom somehow.
 
 	/// <summary>
 	/// Represents a remote dicom server.

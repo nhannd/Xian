@@ -9,7 +9,6 @@ using System.Text;
 using System.Web;
 using System.Windows.Forms;
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.DicomServices.ServiceModel.Streaming;
 
 namespace ImageStreaming
 {

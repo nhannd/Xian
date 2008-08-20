@@ -29,43 +29,90 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Codec
 {
     /// <summary>
-    /// Registry of Codecs for compression and decompression.
+    /// Registry of <see cref="IDicomCodecFactory"/> implementations that extend <see cref="DicomCodecFactoryExtensionPoint"/>.
     /// </summary>
     public static class DicomCodecRegistry
     {
         #region Private Members
-        private static readonly Dictionary<TransferSyntax,IDicomCodecFactory> _dictionary = new Dictionary<TransferSyntax, IDicomCodecFactory>();
-        #endregion
+
+    	private static readonly Dictionary<TransferSyntax, IDicomCodecFactory> _dictionary;
+
+		#endregion
 
         #region Static Constructor
-        static DicomCodecRegistry()
+        
+		static DicomCodecRegistry()
         {
-        }
-        #endregion
+			_dictionary = new Dictionary<TransferSyntax, IDicomCodecFactory>();
 
-        #region Public Static Methods
-        /// <summary>
-        /// Register a codec factory with the library.
-        /// </summary>
-        /// <param name="syntax">The transfer syntax of the codec to register.</param>
-        /// <param name="codec">The codec factory instance.</param>
-        public static void RegisterCodec(TransferSyntax syntax, IDicomCodecFactory codec)
+			try
+			{
+				DicomCodecFactoryExtensionPoint ep = new DicomCodecFactoryExtensionPoint();
+				object[] codecFactories = ep.CreateExtensions();
+
+				foreach (IDicomCodecFactory codecFactory in codecFactories)
+					_dictionary[codecFactory.CodecTransferSyntax] = codecFactory;
+			}
+			catch(NotSupportedException)
+			{
+				Platform.Log(LogLevel.Info, "No dicom codec extension(s) exist.");
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "An error occurred while attempting to register the dicom codec extensions.");
+			}
+        }
+
+		#endregion
+
+		#region Public Static Methods
+
+		/// <summary>
+		/// Gets the <see cref="TransferSyntax"/>es of the available <see cref="IDicomCodecFactory"/> implementations.
+		/// </summary>
+		public static TransferSyntax[] GetCodecTransferSyntaxes()
 		{
-            if (_dictionary.ContainsKey(syntax))
-            {
-                _dictionary.Remove(syntax);
-            }
-            if (codec != null)
-		        _dictionary.Add(syntax, codec);
+			TransferSyntax[] syntaxes = new TransferSyntax[_dictionary.Count];
+			_dictionary.Keys.CopyTo(syntaxes, 0);
+			return syntaxes;
 		}
 
-        /// <summary>
-        /// Get a codec instance from the registry. 
+    	/// <summary>
+    	/// Gets an array of <see cref="IDicomCodec"/>s (one from each available <see cref="IDicomCodecFactory"/>).
+    	/// </summary>
+		public static IDicomCodec[] GetCodecs()
+		{
+			IDicomCodec[] codecs = new IDicomCodec[_dictionary.Count];
+			int i = 0;
+			foreach (IDicomCodecFactory factory in _dictionary.Values)
+				codecs[i++] = factory.GetDicomCodec();
+
+			return codecs;
+		}
+
+		/// <summary>
+		/// Gets an array <see cref="IDicomCodecFactory"/> instances.
+		/// </summary>
+		/// <returns></returns>
+		public static IDicomCodecFactory[] GetCodecFactories()
+		{
+			DicomCodecFactoryExtensionPoint ep = new DicomCodecFactoryExtensionPoint();
+			object[] extensions = ep.CreateExtensions();
+			IDicomCodecFactory[] codecFactories = new IDicomCodecFactory[extensions.Length];
+			extensions.CopyTo(codecFactories, 0);
+			return codecFactories;
+		}
+		
+		/// <summary>
+        /// Get a codec instance from the registry.
         /// </summary>
         /// <param name="syntax">The transfer syntax to get a codec for.</param>
         /// <returns>null if a codec has not been registered, an <see cref="IDicomCodec"/> instance otherwise.</returns>

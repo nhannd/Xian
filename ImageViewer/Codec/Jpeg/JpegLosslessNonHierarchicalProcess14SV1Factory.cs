@@ -33,7 +33,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Codec.Jpeg;
-using ClearCanvas.DicomServices.Codec;
 
 namespace ClearCanvas.ImageViewer.Codec.Jpeg
 {

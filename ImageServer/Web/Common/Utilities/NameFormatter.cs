@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageServer.Web.Common.Utilities
 {

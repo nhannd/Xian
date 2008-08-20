@@ -55,6 +55,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.IO
 {
@@ -511,7 +512,7 @@ namespace ClearCanvas.Dicom.IO
                         }
                         else
                         {
-                            DicomLogger.LogError("Encountered unexpected tag in stream: {0}", _tag.ToString());
+							Platform.Log(LogLevel.Error, "Encountered unexpected tag in stream: {0}", _tag.ToString());
                             // unexpected tag
                             return DicomReadStatus.UnknownError;
                         }
@@ -573,7 +574,7 @@ namespace ClearCanvas.Dicom.IO
                                 DicomReadStatus stat = idsr.Read(null, options);
                                 if (stat != DicomReadStatus.Success)
                                 {
-                                    DicomLogger.LogError("Unexpected parsing error ({0}) when reading sequence attribute: {1}.",stat, rec._tag.ToString());
+									Platform.Log(LogLevel.Error, "Unexpected parsing error ({0}) when reading sequence attribute: {1}.", stat, rec._tag.ToString());
                                     return stat;
                                 }
                             }
@@ -793,7 +794,7 @@ namespace ClearCanvas.Dicom.IO
             catch (EndOfStreamException e)
             {
                 // should never happen
-                DicomLogger.LogError("Unexpected exception when reading file: {0}", e.ToString());
+				Platform.Log(LogLevel.Error, "Unexpected exception when reading file: {0}", e.ToString());
                 return DicomReadStatus.UnknownError;
             }
         }

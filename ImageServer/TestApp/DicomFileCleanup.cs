@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.TestApp
@@ -75,7 +76,7 @@ namespace ClearCanvas.ImageServer.TestApp
 
             FileInfo[] files = dir.GetFiles();
 
-            DicomLogger.LogInfo("Scanning directory: {0}", dir.FullName);
+            Platform.Log(LogLevel.Info, "Scanning directory: {0}", dir.FullName);
 
             foreach (FileInfo file in files)
             {

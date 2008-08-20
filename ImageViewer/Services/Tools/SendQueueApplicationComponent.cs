@@ -34,6 +34,7 @@ using System.Collections.Generic;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;

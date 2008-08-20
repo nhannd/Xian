@@ -36,6 +36,7 @@ using System.Net;
 using System.Threading;
 using ClearCanvas.Dicom.Network;
 using NUnit.Framework;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Tests
 {
@@ -155,13 +156,10 @@ namespace ClearCanvas.Dicom.Tests
 
         public void OnClientClosed(DicomServer server, ServerAssociationParameters association)
         {
-            DicomLogger.LogInfo("Client has closed");
         }
 
         public void OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e)
         {
-            DicomLogger.LogErrorException(e, "Unexpected network error");
-
             Assert.Fail("Unexpected network error: " + e.Message);
         }
 
@@ -191,7 +189,6 @@ namespace ClearCanvas.Dicom.Tests
             bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
             if (!ok)
             {
-                DicomLogger.LogError("Unable to retrieve SOP Instance UID from request message.  Aborting association.");
                 server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
                 return;
             }
@@ -202,7 +199,6 @@ namespace ClearCanvas.Dicom.Tests
 
         public void OnReceiveResponseMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            DicomLogger.LogError("Unexpected OnReceiveResponseMessage callback.  Aborting Association.");
             server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
             Assert.Fail("Unexpected OnReceiveResponseMessage");
         }
