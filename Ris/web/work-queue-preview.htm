@@ -54,7 +54,11 @@
 				{
 					if (extendedProperties.hasOwnProperty(propertyName))
 					{
-						var p = { PropertyName: propertyName, PropertyValue: extendedProperties[propertyName] };
+						var propertyValue = propertyName == "AccessionNumber"
+							? Ris.formatAccessionNumber(extendedProperties[propertyName])
+							: extendedProperties[propertyName];
+						
+						var p = { PropertyName: propertyName, PropertyValue: propertyValue };
 						propertyArray.push(p);
 					}
 				}

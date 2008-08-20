@@ -414,9 +414,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 		[OperationEnablement("CanSendReportToQueue")]
 		public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
         {
+        	Order order = PersistenceContext.Load<Order>(request.OrderRef);
+
 			foreach (PublishRecipientDetail detail in request.Recipients)
             {
 				MailFaxWorkQueueItem.Schedule(
+					order.AccessionNumber,
 					request.ReportRef,
 					detail.PractitionerRef,
 					detail.ContactPointRef,

@@ -46,12 +46,14 @@ namespace ClearCanvas.Healthcare {
 	public static class MailFaxWorkQueueItem
 	{
 		public static WorkQueueItem Schedule(
+			string accessionNumber,
 			Enterprise.Common.EntityRef reportRef,
 			Enterprise.Common.EntityRef practitionerRef,
 			Enterprise.Common.EntityRef contactPointRef,
 			IPersistenceContext context)
 		{
 			WorkQueueItem workQueueItem = new WorkQueueItem("Mail/Fax Report");
+			workQueueItem.ExtendedProperties.Add("AccessionNumber", accessionNumber);
 			workQueueItem.ExtendedProperties.Add("ReportOID", reportRef.ToString(false, false));
 			workQueueItem.ExtendedProperties.Add("ExternalPractitionerOID", practitionerRef.ToString(false, false));
 			workQueueItem.ExtendedProperties.Add("ExternalPractitionerContactPointOID", contactPointRef.ToString(false, false));

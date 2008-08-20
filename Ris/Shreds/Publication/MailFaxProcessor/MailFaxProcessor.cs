@@ -14,6 +14,7 @@ namespace ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor
 			foreach (ResultRecipient recipient in step.Procedure.Order.ResultRecipients)
 			{
 				MailFaxWorkQueueItem.Schedule(
+					step.Procedure.Order.AccessionNumber,
 					step.ReportPart.Report.GetRef(),
 					recipient.PractitionerContactPoint.Practitioner.GetRef(),
 					recipient.PractitionerContactPoint.GetRef(),
