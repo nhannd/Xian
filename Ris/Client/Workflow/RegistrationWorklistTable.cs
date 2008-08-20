@@ -57,9 +57,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                 new TableColumn<RegistrationWorklistItem, IconSet>(SR.ColumnPriority,
                 delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority); }, 0.5f);
             priorityColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
-                                            {
-                                                return GetOrderPriorityIndex(item1.OrderPriority) - GetOrderPriorityIndex(item2.OrderPriority);
-                                            };
+                {
+                    return GetOrderPriorityIndex(item1.OrderPriority) - GetOrderPriorityIndex(item2.OrderPriority);
+                };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
             TableColumn<RegistrationWorklistItem, string> mrnColumn = 
@@ -103,6 +103,8 @@ namespace ClearCanvas.Ris.Client.Workflow
                 new TableColumn<RegistrationWorklistItem, string>(SR.ColumnTime,
                 delegate(RegistrationWorklistItem item) { return Format.Time(item.Time); }, 1.0f);
             scheduledForColumn.Visible = false;
+			scheduledForColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
+				{ return CompareNullableDateTime(item1.Time, item2.Time); };
 
             // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
@@ -149,5 +151,17 @@ namespace ClearCanvas.Ris.Client.Workflow
                     return null;
             }
         }
+
+		private static int CompareNullableDateTime(DateTime? time1, DateTime? time2)
+		{
+			if (time1 == null && time2 == null)
+				return 0;
+			else if (time1 == null)
+				return -1;
+			else if (time2 == null)
+				return 1;
+			else
+				return DateTime.Compare(time1.Value, time2.Value);
+		}
    }
 }
