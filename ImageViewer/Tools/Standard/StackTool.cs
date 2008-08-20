@@ -76,11 +76,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
-		public override string Tooltip
-		{
-			get { return base.Tooltip; }
-		}
-
 		public ActionModelNode SortMenuModel
 		{
 			get
@@ -207,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
 			CaptureBeginState(imageBox);
-			AdvanceImage(-1, imageBox);
+			AdvanceImage(-imageBox.Tiles.Count, imageBox);
 			CaptureEndState();
 		}
 
@@ -218,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
 			CaptureBeginState(imageBox);
-			AdvanceImage(+1, imageBox);
+			AdvanceImage(+imageBox.Tiles.Count, imageBox);
 			CaptureEndState();
 		}
 
