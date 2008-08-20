@@ -62,11 +62,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 				criteria.CreationTime.LessThanOrEqualTo(request.EndTime.Value);
 			}
 
-			WorkQueueAssembler assembler = new WorkQueueAssembler();
+			WorkQueueItemAssembler assembler = new WorkQueueItemAssembler();
 			return new ListWorkQueueItemsResponse(
 				CollectionUtils.Map<WorkQueueItem, WorkQueueItemSummary>(
 					this.PersistenceContext.GetBroker<IWorkQueueItemBroker>().Find(criteria, request.Page),
 					delegate(WorkQueueItem item) { return assembler.CreateWorkQueueItemSummary(item, this.PersistenceContext); }));
+		}
+
+		[ReadOperation]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.System.WorkQueue)]
+		public LoadWorkQueueItemForEditResponse LoadWorkQueueItemForEdit(LoadWorkQueueItemForEditRequest request)
+		{
+			WorkQueueItem item = PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
+			WorkQueueItemAssembler assembler = new WorkQueueItemAssembler();
+			return new LoadWorkQueueItemForEditResponse(assembler.CreateWorkQueueItemDetail(item, this.PersistenceContext));
 		}
 
 		[UpdateOperation]
@@ -83,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 			WorkQueueItem item = this.PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
 			item.Resubmit();
 			this.PersistenceContext.SynchState();
-			return new ResubmitWorkQueueItemResponse(new WorkQueueAssembler().CreateWorkQueueItemSummary(item, this.PersistenceContext));
+			return new ResubmitWorkQueueItemResponse(new WorkQueueItemAssembler().CreateWorkQueueItemSummary(item, this.PersistenceContext));
 		}
 
 		[UpdateOperation]

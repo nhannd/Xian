@@ -21,6 +21,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		ListWorkQueueItemsResponse ListWorkQueueItems(ListWorkQueueItemsRequest request);
 
 		/// <summary>
+		/// Load details for a specified work queue item
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		LoadWorkQueueItemForEditResponse LoadWorkQueueItemForEdit(LoadWorkQueueItemForEditRequest request);
+
+		/// <summary>
 		/// Purges all completed work queue items.
 		/// </summary>
 		/// <param name="request"></param>
