@@ -44,6 +44,7 @@ using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Text;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -360,33 +361,86 @@ namespace ClearCanvas.Ris.Client
 
 		public void SendReportToQueue()
 		{
-			try
+			string invalidDescription = "";
+			// Checks for invalid selections and prevents any from reaching the queue
+			if (HasInvalidSelections(out invalidDescription) == true)
 			{
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						SendReportToQueueRequest request = new SendReportToQueueRequest(this.ReportRef, this.OrderRef);
-						foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-						{
-							if (checkable.IsChecked)
-							{
-								ResultRecipientDetail detail = checkable.Item;
-								request.Recipients.Add(new PublishRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
-							}
-						}
-
-						if (request.Recipients.Count > 0)
-						{
-							service.SendReportToQueue(request);
-						}
-					});
-
-				this.Exit(ApplicationComponentExitCode.Accepted);
+				this.Host.ShowMessageBox("The following recipients could not be sent to the fax queue:\n" + invalidDescription, MessageBoxActions.Ok);
+				return;
 			}
-			catch (Exception e)
+			else
 			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-				this.Exit(ApplicationComponentExitCode.Error);
+				try
+				{
+					Platform.GetService<IReportingWorkflowService>(
+						delegate(IReportingWorkflowService service)
+						{
+							SendReportToQueueRequest request = new SendReportToQueueRequest(this.ReportRef);
+							foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+							{
+								if (checkable.IsChecked)
+								{
+									ResultRecipientDetail detail = checkable.Item;
+									request.Recipients.Add(new PublishRecipientDetail(detail.Practitioner.PractitionerRef, detail.ContactPoint.ContactPointRef));
+								}
+							}
+							if (request.Recipients.Count > 0)
+							{
+								service.SendReportToQueue(request);
+							}
+						});
+
+					this.Exit(ApplicationComponentExitCode.Accepted);
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, this.Host.DesktopWindow);
+					this.Exit(ApplicationComponentExitCode.Error);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Checks for invalid selections in recipients list based on abscence of mail, fax, or (soon) email
+		/// </summary>
+		/// <param name="invalidFaxDescription"></param>
+		/// <returns></returns>
+		private bool HasInvalidSelections(out string invalidFaxDescription)
+		{
+			string description = "";
+
+			CollectionUtils.ForEach<Checkable<ResultRecipientDetail>>(this.Recipients.Items, 
+				delegate(Checkable<ResultRecipientDetail> checkable)
+				{
+					if(checkable.IsChecked && IsInvalidContactPoint(checkable.Item))
+					{
+						description += Formatting.PersonNameFormat.Format(checkable.Item.Practitioner.Name) + "\n";
+					}
+				});
+			invalidFaxDescription = description;
+			return !string.IsNullOrEmpty(invalidFaxDescription);
+		}
+
+		/// <summary>
+		/// Checks for abscence of current fax, mail, or email properties
+		/// </summary>
+		/// <param name="resultRecipientDetail"></param>
+		/// <returns></returns>
+		private bool IsInvalidContactPoint(ResultRecipientDetail resultRecipientDetail)
+		{
+
+			if(resultRecipientDetail == null)
+				return true;
+			// TO DO: Server DataContract should indicate whether not Preffered Comm Mode is valid
+			// Temporarily using comparison to resolve validity of contact point
+			if (resultRecipientDetail.PreferredCommunicationMode.Code == "FAX")
+				return resultRecipientDetail.ContactPoint.CurrentFaxNumber == null;
+			else if (resultRecipientDetail.PreferredCommunicationMode.Code == "MAIL")
+				return resultRecipientDetail.ContactPoint.CurrentAddress == null;
+			//else if (resultRecipientDetail.PreferredCommunicationMode.Code == "EMAIL")
+			else
+			{
+				return (resultRecipientDetail.ContactPoint.CurrentFaxNumber == null && resultRecipientDetail.ContactPoint.CurrentAddress == null);
 			}
 		}
 
