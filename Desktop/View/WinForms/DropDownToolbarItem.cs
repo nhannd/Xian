@@ -73,6 +73,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			this.ShowDropDownArrow = true;
 
+			this.DropDown = new ContextMenuStrip();
 			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 		}
 

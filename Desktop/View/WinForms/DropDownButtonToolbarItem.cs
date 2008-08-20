@@ -177,6 +177,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.IconSetChanged += _actionIconSetChangedHandler;
 			_action.CheckedChanged += _actionCheckedChangedHandler;
 
+			this.DropDown = new ContextMenuStrip();
 			this.DropDownOpening += new EventHandler(OnDropDownOpening);
 
 			this.Text = _action.Label;
