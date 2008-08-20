@@ -211,6 +211,7 @@ a.collapsibleHeading {
 	font-style: italic;
 	padding-top:0.3em;
     padding-bottom:0.18em;
+	white-space: normal;
 }
 
 #patientNotesTable .checkedDivCell {
