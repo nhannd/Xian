@@ -118,7 +118,11 @@ namespace ClearCanvas.Ris.Client
 
 							// Duplicating an item, so the new canned text starts with fields pre-populated.  Set modified to true
 							if (_isDuplicate)
+							{
+								if (HasPersonalAdminAuthority)
+									_isEditingPersonal = !HasGroupAdminAuthority || _cannedTextDetail.IsPersonal;
 								this.Modified = true;
+							}
 						}
 					});
 
