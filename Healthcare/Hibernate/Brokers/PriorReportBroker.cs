@@ -168,7 +168,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			reportsQuery.Conditions.Add(HqlCondition.In("priorReport.Status", ReportStatus.P, ReportStatus.F, ReportStatus.C));
 
 			// consider only reports with relevant procedure types
-			reportsQuery.Conditions.Add(HqlCondition.In("priorProcedureType", relevantTypes));
+			if (relevantTypes.Count > 0)
+				reportsQuery.Conditions.Add(HqlCondition.In("priorProcedureType", relevantTypes));
 
 			IList<Report> reports = ExecuteHql<Report>(reportsQuery);
 
