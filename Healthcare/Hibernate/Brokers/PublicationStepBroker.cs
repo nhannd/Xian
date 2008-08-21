@@ -29,75 +29,14 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
-using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-
-
-	/// <summary>
-	/// PublicationStep entity
-	/// </summary>
-	public class PublicationStep : ReportingProcedureStep
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class PublicationStepBroker : EntityBroker<PublicationStep, PublicationStepSearchCriteria>, IPublicationStepBroker
 	{
-		private int _failureCount;
-		private DateTime? _lastFailureTime;
-
-		public PublicationStep()
-		{
-		}
-
-		public PublicationStep(ReportingProcedureStep previousStep)
-			: base(previousStep)
-		{
-			_failureCount = 0;
-			_lastFailureTime = null;
-		}
-
-		/// <summary>
-		/// This method is called from the constructor.  Use this method to implement any custom
-		/// object initialization.
-		/// </summary>
-		private void CustomInitialize()
-		{
-		}
-
-		public override string Name
-		{
-			get { return "Publication"; }
-		}
-
-		public virtual int FailureCount
-		{
-			get { return _failureCount; }
-		}
-
-		public virtual DateTime? LastFailureTime
-		{
-			get { return _lastFailureTime; }
-		}
-
-		public virtual void Fail()
-		{
-			_failureCount++;
-			_lastFailureTime = Platform.Time;
-		}
-
-		protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
-		{
-			// complete the report part when publication is complete
-			// (this.ReportPart != null) should always be true except perhaps during unit-tests
-			if (newState == ActivityStatus.CM && this.ReportPart != null)
-				this.ReportPart.Complete();
-
-			base.OnStateChanged(previousState, newState);
-		}
-
-		protected override ProcedureStep CreateScheduledCopy()
-		{
-			return new PublicationStep(this);
-		}
 	}
 }

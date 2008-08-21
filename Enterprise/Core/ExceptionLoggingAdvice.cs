@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Castle.DynamicProxy;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -22,30 +18,9 @@ namespace ClearCanvas.Enterprise.Core
             }
             catch (Exception e)
             {
-                try
-                {
-                    // log the error to the database
-                    using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
-                    {
-                        // disable change-set auditing for this context
-                        ((IUpdateContext) PersistenceScope.Current).ChangeSetRecorder = null;
-
-                        string operationName = string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name);
-
-                        DefaultExceptionRecorder recorder = new DefaultExceptionRecorder();
-                        ExceptionLogEntry logEntry = recorder.CreateLogEntry(operationName, e);
-
-                        PersistenceScope.Current.Lock(logEntry, DirtyState.New);
-
-                        scope.Complete();
-                    }
-                }
-                catch (Exception x)
-                {
-                    // if we fail to properly log the exception, there is nothing we can do about it
-                    // just log a message to the log file
-                    Platform.Log(LogLevel.Error, x);
-                }
+                ExceptionLogger.Log(
+                    string.Format("{0}.{1}", invocation.InvocationTarget.GetType().FullName, invocation.Method.Name), 
+                    e);
 
                 // rethrow the exception
                 throw;

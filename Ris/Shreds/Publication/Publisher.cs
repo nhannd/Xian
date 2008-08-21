@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
                 foreach (PublicationStep publicationStep in publicationSteps)
                 {
-                    CompletePublicationStep(publicationStep);
+                    PublishStep(publicationStep);
                 }
             }
         }
@@ -92,12 +92,15 @@ namespace ClearCanvas.Ris.Shreds.Publication
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
             {
                 // Get scheduled steps, where the "publishing cool-down" has elapsed
-                PublicationStepSearchCriteria criteria = new PublicationStepSearchCriteria();
-                criteria.State.EqualTo(ActivityStatus.SC);
-                criteria.Scheduling.Performer.Staff.IsNotNull();
-                criteria.Scheduling.StartTime.LessThan(Platform.Time);
-                criteria.Scheduling.StartTime.SortAsc(0);
+                PublicationStepSearchCriteria noFailures = GetCriteria();
+                noFailures.LastFailureTime.IsNull();
+                noFailures.Scheduling.StartTime.SortAsc(0);
 
+                PublicationStepSearchCriteria failures = GetCriteria();
+                failures.LastFailureTime.IsNotNull();
+                failures.LastFailureTime.LessThan(Platform.Time.AddMinutes(-5));
+
+                PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
                 SearchResultPage page = new SearchResultPage(0, _batchSize);
 
                 items = PersistenceScope.Current.GetBroker<IPublicationStepBroker>().Find(criteria, page);
@@ -108,18 +111,29 @@ namespace ClearCanvas.Ris.Shreds.Publication
             return items;
         }
 
+        private PublicationStepSearchCriteria GetCriteria()
+        {
+            PublicationStepSearchCriteria criteria = new PublicationStepSearchCriteria();
+            criteria.State.EqualTo(ActivityStatus.SC);
+            criteria.Scheduling.Performer.Staff.IsNotNull();
+            criteria.Scheduling.StartTime.LessThan(Platform.Time);
+            return criteria;
+        }
+
         /// <summary>
-        /// Completes the specified <see cref="PublicationStep"/>
+        /// Dispatches the specified <see cref="PublicationStep"/> to each <see cref="IPublicationStepProcessor"/>
+        /// and then completes the it.
         /// </summary>
         /// <param name="publicationStep"></param>
-        private void CompletePublicationStep(PublicationStep publicationStep)
+        private void PublishStep(PublicationStep publicationStep)
         {
-            using (PersistenceScope processScope = new PersistenceScope(PersistenceContextType.Update))
+            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
-                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
+                IUpdateContext context = (IUpdateContext)PersistenceScope.Current;
+                context.ChangeSetRecorder.OperationName = this.GetType().FullName;
                 try
                 {
-                    PersistenceScope.Current.Lock(publicationStep);
+                    context.Lock(publicationStep);
 
                     foreach (IPublicationStepProcessor processor in _publicationStepProcessors)
                     {
@@ -128,11 +142,13 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
                     publicationStep.Complete(publicationStep.AssignedStaff);
                 }
-                catch (Exception e)
+                catch(Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "{0}", publicationStep.ToString());
+                    ExceptionLogger.Log("Publisher.PublishStep", e);
+                    publicationStep.Fail();
                 }
-                processScope.Complete();
+
+                scope.Complete();
             }
         }
 
@@ -142,5 +158,16 @@ namespace ClearCanvas.Ris.Shreds.Publication
         }
     }
 
-    
+    //[ExtensionOf(typeof(PublicationStepProcessorExtensionPoint))]
+    public class DummyPublisher : IPublicationStepProcessor
+    {
+        #region IPublicationStepProcessor Members
+
+        public void Process(PublicationStep step, IPersistenceContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+    }
 }
