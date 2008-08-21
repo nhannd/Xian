@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client
 				exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleAddContactPoint + " - " + _practitionerName);
 
-				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointUnique(contactPoint))
+				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointNameUnique(contactPoint))
 					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageExternalPractitionerContactPointNotUnique, contactPoint.Name), MessageBoxActions.Ok);
 				else
 					break;
@@ -258,7 +258,7 @@ namespace ClearCanvas.Ris.Client
 					editor,
 					string.Format(SR.TitleUpdateContactPoint + " - " + _practitionerName, contactPoint.Name));
 
-				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointUnique(contactPoint))
+				if (exitCode == ApplicationComponentExitCode.Accepted && IsContactPointNameUnique(contactPoint))
 					this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageExternalPractitionerContactPointNotUnique, contactPoint.Name), MessageBoxActions.Ok);
 				else
 					break;
@@ -324,7 +324,7 @@ namespace ClearCanvas.Ris.Client
 			// if new, compare by name (this is a bit hokey because there is currently nothing to force name to be distinct)
 			if (x.ContactPointRef == null && y.ContactPointRef == null)
 				return x.Name == y.Name;
-			
+
 			// if only one is null, false
 			if(x.ContactPointRef == null || y.ContactPointRef == null)
 				return false;
@@ -384,12 +384,13 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		private bool IsContactPointUnique(ExternalPractitionerContactPointDetail detail)
+		private bool IsContactPointNameUnique(ExternalPractitionerContactPointDetail detail)
 		{
 			return CollectionUtils.Contains(this.Table.Items,
 				delegate(ExternalPractitionerContactPointDetail item)
 					{
-						if (IsSameItem(item, detail))
+						// Don't compare name with itself
+						if (ReferenceEquals(item, detail))
 							return false;
 
 						return Equals(item.Name, detail.Name);
