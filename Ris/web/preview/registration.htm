@@ -32,7 +32,16 @@
                         ListOrdersRequest: 	{ PatientRef: worklistItem.PatientRef, QueryDetailLevel: "Procedure" },
                         
                         // need the order detail only for order alerts, and only if OrderRef is not null
-                        GetOrderDetailRequest: worklistItem.OrderRef ? { OrderRef: worklistItem.OrderRef, IncludeAlerts: true, IncludeVisit: true } : null
+                        GetOrderDetailRequest: worklistItem.OrderRef ? 
+						{ 
+							OrderRef: worklistItem.OrderRef, 
+							IncludeAlerts: true, 
+							IncludeVisit: true,
+							IncludeNotes: true,
+							
+							// only include ordered procedures if report not yet created
+							IncludeProcedures: (worklistItem.ReportRef == null)
+						} : null
                     };
                     
                     var service = Ris.getPatientDataService();
@@ -128,7 +137,18 @@
                         else
                             createImagingRequestsTable($("pastProceduresTable"), pastProcedures, currentAccession);
 		            }
-	            }
+					
+					if (orderDetail && orderDetail.Notes.length)
+					{
+						createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+						createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+						createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+					}
+					else
+					{
+						Field.show($("notesSection"), false);
+					}
+				}
 	            catch(e)
 	            {
 	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
@@ -230,6 +250,34 @@
 					<tr>
 						<td width="120" class="propertyname">Policy Number</td>
 						<td colspan="3"><div id="PolicyNumber"/></td>
+					</tr>
+				</table>
+			</div>
+			
+			<div id="notesSection">
+				<p class="sectionheading">Order Notes</p>
+				<table id="generaNotesTable">
+					<tr><td class="sectionheading" colspan="3">General</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="protocolNotesTable">
+					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="prelimNotesTable">
+					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
 					</tr>
 				</table>
 			</div>

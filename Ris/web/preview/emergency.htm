@@ -44,7 +44,6 @@
 							OrderRef: worklistItem.OrderRef,
 							IncludeAlerts: true,
 							IncludeNotes: true,
-							NoteCategoriesFilter: ["PrelimDiagnosis"],
 
 							// only include ordered procedures if report not yet created
 							IncludeProcedures: (worklistItem.ReportRef == null)
@@ -64,7 +63,6 @@
 				{
 					Field.setValue($("myForm"), "");
 					return;
-
 				}
 
 				// update patient demography
