@@ -54,15 +54,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.Context.GetOperationEnablement("ReviseResidentReport") ||
-					this.Context.GetOperationEnablement("ReviseUnpublishedReport");
+				return this.Context.GetOperationEnablement("ReviseResidentReport");
 			}
 		}
 
 		public override bool CanAcceptDrop(ICollection<ReportingWorklistItem> items)
 		{
-			return this.Context.GetOperationEnablement("ReviseResidentReport") ||
-					this.Context.GetOperationEnablement("ReviseUnpublishedReport");
+			return this.Context.GetOperationEnablement("ReviseResidentReport");
 		}
 
 		protected override bool Execute(ReportingWorklistItem item)
@@ -71,16 +69,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ActivateIfAlreadyOpen(item))
 				return true;
 
-			ReportingWorklistItem replacementItem = null;
-
-			if (this.Context.GetOperationEnablement("ReviseResidentReport"))
-			{
-				replacementItem = ReviseResidentReport(item);
-			}
-			else if (this.Context.GetOperationEnablement("ReviseUnpublishedReport"))
-			{
-				replacementItem = ReviseUnpublishedReport(item);
-			}
+			ReportingWorklistItem replacementItem = ReviseResidentReport(item);
 
 			OpenReportEditor(replacementItem);
 
@@ -95,19 +84,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					ReviseResidentReportResponse response = service.ReviseResidentReport(new ReviseResidentReportRequest(item.ProcedureStepRef));
 					result = response.ReplacementInterpretationStep;
-				});
-
-			return result;
-		}
-
-		private ReportingWorklistItem ReviseUnpublishedReport(ReportingWorklistItem item)
-		{
-			ReportingWorklistItem result = null;
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					ReviseUnpublishedReportResponse response = service.ReviseUnpublishedReport(new ReviseUnpublishedReportRequest(item.ProcedureStepRef));
-					result = response.ReplacementVerificationStep;
 				});
 
 			return result;
