@@ -42,7 +42,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.Tools.Synchronization
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuSynchronization/MenuReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarSynchronization/ToolbarReferenceLines", "Toggle", Flags = ClickActionFlags.CheckAction)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarSynchronization/ToolbarReferenceLines", "Toggle", "ReferenceLineDropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActiveChanged")]
 	[Tooltip("activate", "TooltipReferenceLines")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CurrentReferenceLineToolSmall.png", "Icons.CurrentReferenceLineToolMedium.png", "Icons.CurrentReferenceLineToolLarge.png")]
@@ -79,6 +79,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private SynchronizationToolCoordinator _coordinator;
 
 		private static readonly float _oneDegreeInRadians = (float)(Math.PI / 180);
+
+		private IResourceResolver _resolver = new ResourceResolver(typeof (ReferenceLineTool).Assembly);
+		private ActionModelRoot _dropDownMenuModel;
 
 		#endregion
 
@@ -131,9 +134,55 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			remove { _activeChanged -= value; }
 		}
 
+		public ActionModelNode ReferenceLineDropDownMenuModel
+		{
+			get
+			{
+				if (_dropDownMenuModel == null)
+				{
+					_dropDownMenuModel = new ActionModelRoot();
+					ClickAction action = new ClickAction("showFirstAndLastReferenceLines",
+						new ActionPath("reference-line-dropdown/ShowFirstAndLastReferenceLines", _resolver),
+						ClickActionFlags.CheckAction, _resolver);
+
+					action.Checked = ShowFirstAndLastReferenceLines;
+					action.Label = SR.ShowFirstAndLastReferenceLines;
+					action.SetClickHandler(delegate { ToggleShowFirstAndLastReferenceLines(); });
+
+					_dropDownMenuModel.InsertAction(action);
+				}
+
+				return _dropDownMenuModel;
+			}
+		}
+
+		public bool ShowFirstAndLastReferenceLines
+		{
+			get
+			{
+				return SynchronizationToolSettings.Default.ShowFirstAndLastReferenceLines;
+			}
+			set
+			{
+				SynchronizationToolSettings.Default.ShowFirstAndLastReferenceLines = value;
+				SynchronizationToolSettings.Default.Save();
+
+				ClickAction showFirstAndLastAction = (ClickAction)((ActionNode)(ReferenceLineDropDownMenuModel.ChildNodes[0])).Action;
+				showFirstAndLastAction.Checked = ShowFirstAndLastReferenceLines;
+			}
+		}
+
 		public void Toggle()
 		{
 			Active = !Active;
+			RefreshAllReferenceLines();
+			_coordinator.OnRefreshedReferenceLines();
+		}
+
+		private void ToggleShowFirstAndLastReferenceLines()
+		{
+			ShowFirstAndLastReferenceLines = !ShowFirstAndLastReferenceLines;
+
 			RefreshAllReferenceLines();
 			_coordinator.OnRefreshedReferenceLines();
 		}
@@ -246,9 +295,10 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private IEnumerable<ReferenceLine> GetAllReferenceLines(DicomImagePlane targetImagePlane)
 		{
-			ReferenceLine firstReferenceLine;
-			ReferenceLine lastReferenceLine;
-			GetFirstAndLastReferenceLines(targetImagePlane, out firstReferenceLine, out lastReferenceLine);
+			ReferenceLine firstReferenceLine = null;
+			ReferenceLine lastReferenceLine = null;
+			if (ShowFirstAndLastReferenceLines)
+				GetFirstAndLastReferenceLines(targetImagePlane, out firstReferenceLine, out lastReferenceLine);
 
 			if (firstReferenceLine != null)
 				yield return firstReferenceLine;

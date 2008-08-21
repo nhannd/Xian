@@ -138,6 +138,9 @@
   <data name="PrefixSpatialLocatorTool" xml:space="preserve">
     <value>Spatial Locator</value>
   </data>
+  <data name="ShowFirstAndLastReferenceLines" xml:space="preserve">
+    <value>Show First and Last Reference Lines</value>
+  </data>
   <data name="ToolbarReferenceLines" xml:space="preserve">
     <value>Reference Lines</value>
   </data>
