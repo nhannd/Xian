@@ -282,7 +282,7 @@ namespace ClearCanvas.Dicom.Network
             long p1 = _m32.Pop();
             long p2 = _ms.Position;
             _ms.Position = p1;
-            //DicomLogger.LogInfo(" 32 bit PDV length: {0}, end position: {1} start position: {2}", (uint)(p2-(p1+4)),p2, p1 );
+            //Platform.Log(LogLevel.Info, " 32 bit PDV length: {0}, end position: {1} start position: {2}", (uint)(p2-(p1+4)),p2, p1 );
             _bw.Write((uint)(p2 - (p1 + 4)));
             _ms.Position = p2;
         }

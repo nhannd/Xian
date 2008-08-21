@@ -28,6 +28,7 @@ using namespace System;
 using namespace System::IO;
 using namespace System::Runtime::InteropServices;
 
+using namespace ClearCanvas::Common;
 using namespace ClearCanvas::Dicom;
 using namespace ClearCanvas::Dicom::Codec;
 
@@ -36,15 +37,15 @@ extern "C" {
 #include "OpenJPEG/j2k.h"
 
 	void opj_error_callback(const char *msg, void *usr) {
-		DicomLogger::LogError("OpenJPEG: {0}", gcnew String(msg));
+		Platform::Log(LogLevel::Error, "OpenJPEG: {0}", gcnew String(msg));
 	}
 
 	void opj_warning_callback(const char *msg, void *) {
-		DicomLogger::LogInfo("OpenJPEG Warning: {0}", gcnew String(msg));
+		Platform::Log(LogLevel::Info, "OpenJPEG Warning: {0}", gcnew String(msg));
 	}
 
 	void opj_info_callback(const char *msg, void *) {
-		DicomLogger::LogInfo("OpenJPEG: {0}", gcnew String(msg));
+		Platform::Log(LogLevel::Info, "OpenJPEG: {0}", gcnew String(msg));
 	}
 }
 namespace ClearCanvas {
@@ -398,11 +399,6 @@ void DicomJpeg2000Codec::Decode(DicomCompressedPixelData^ oldPixelData, DicomUnc
 	for (int frame = 0; frame < oldPixelData->NumberOfFrames; frame++) {
 		DecodeFrame(frame,oldPixelData,newPixelData,parameters);
 	}
-}
-
-void DicomJpeg2000Codec::Register() {
-//	DicomCodec::RegisterCodec(TransferSyntax::JPEG2000Lossy, DicomJpeg2000LossyCodec::typeid);
-//	DicomCodec::RegisterCodec(TransferSyntax::JPEG2000Lossless, DicomJpeg2000LosslessCodec::typeid);
 }
 
 } // Jpeg2000

@@ -30,20 +30,27 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Threading;
 
-using ClearCanvas.Dicom;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Samples
 {
-    public static class SampleUtilities
+    public struct LogInfo
+    {
+    	public DateTime Time;
+		public LogLevel Level;
+    	public string Message;
+    	public int ThreadId;
+    }
+
+	public static class Logger
     {
         private static TextBox _tb;
-        private static int _threadId;
-        public static void Log(DicomLogInfo info)
+
+		public static void Log(LogInfo info)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine();
@@ -69,11 +76,56 @@ namespace ClearCanvas.Dicom.Samples
             }
         }
 
-        public static void RegisterLogHandler(TextBox tb)
+		private static void Log(LogLevel level, Exception e, string message, params object[] formatArgs)
+		{
+			if (String.IsNullOrEmpty(message))
+				return;
+
+			StringBuilder builder = new StringBuilder();
+			builder.AppendFormat(message, formatArgs);
+			if (e != null)
+			{
+				builder.AppendLine();
+				builder.Append(e);
+			}
+
+			LogInfo info = new LogInfo();
+			info.Level = level;
+			info.Message = builder.ToString();
+			info.ThreadId = Thread.CurrentThread.ManagedThreadId;
+			info.Time = DateTime.Now;
+
+			Log(info);
+		}
+
+		public static void RegisterLogHandler(TextBox tb)
         {
             _tb = tb;
-            DicomLogger.LogDelegates += SampleUtilities.Log;
-            _threadId = Thread.CurrentThread.ManagedThreadId;
         }
-    }
+		
+		public static void LogError(string message, params object[] formatArgs)
+		{
+			Log(LogLevel.Error, null, message, formatArgs);
+		}
+
+		public static void LogErrorException(Exception e, string message, params object[] formatArgs)
+		{
+			Log(LogLevel.Error, e, message, formatArgs);
+		}
+
+		public static void LogInfo(string message, params object[] formatArgs)
+		{
+			Log(LogLevel.Info, null, message, formatArgs);
+		}
+
+		public static void LogWarn(string message, params object[] formatArgs)
+		{
+			Log(LogLevel.Warn, null, message, formatArgs);
+		}
+
+		public static void LogDebug(string message, params object[] formatArgs)
+		{
+			Log(LogLevel.Debug, null, message, formatArgs);
+		}
+	}
 }

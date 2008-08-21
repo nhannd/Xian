@@ -102,8 +102,6 @@ namespace Jpeg2000 {
 		virtual void Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomCodecParameters^ parameters);
 		virtual void Decode(DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomCodecParameters^ parameters);
 		virtual void DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomCodecParameters^ parameters);
-
-		static void Register();
 	};
 
 	public ref class DicomJpeg2000LossyCodec : public DicomJpeg2000Codec

@@ -26,7 +26,6 @@ public:
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
     virtual IDicomCodec^ GetDicomCodec();
-	static void Register();
 };
 
 public ref class DicomJpegProcess24CodecFactory : public IDicomCodecFactory {
@@ -36,7 +35,6 @@ public:
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
     virtual IDicomCodec^ GetDicomCodec();
-	static void Register();
 };
 
 public ref class DicomJpegLossless14CodecFactory : public IDicomCodecFactory {
@@ -46,7 +44,6 @@ public:
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
     virtual IDicomCodec^ GetDicomCodec();
-	static void Register();
 };
 
 public ref class DicomJpegLossless14SV1CodecFactory : public IDicomCodecFactory {
@@ -56,7 +53,6 @@ public:
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
     virtual IDicomCodec^ GetDicomCodec();
-	static void Register();
 };
 
 } // Jpeg

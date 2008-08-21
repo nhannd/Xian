@@ -28,6 +28,7 @@ using namespace System;
 using namespace System::IO;
 using namespace System::Threading;
 
+using namespace ClearCanvas::Common;
 using namespace ClearCanvas::Dicom::Codec;
 using namespace ClearCanvas::Dicom;
 

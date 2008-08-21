@@ -279,7 +279,7 @@ namespace ClearCanvas.Dicom.Samples
 
             if (!ok)
             {
-                DicomLogger.LogError("Unable to retrieve UIDs from request message, sending failure status.");
+                Logger.LogError("Unable to retrieve UIDs from request message, sending failure status.");
 
                 server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID,
                     DicomStatuses.ProcessingFailure);
@@ -309,7 +309,7 @@ namespace ClearCanvas.Dicom.Samples
             dicomFile.Save(DicomWriteOptions.None);
 
             String patientName = dicomFile.DataSet[DicomTags.PatientsName].GetString(0, "");
-            DicomLogger.LogInfo("Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
+			Logger.LogInfo("Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
 
             server.SendCStoreResponse(presentationID, message.MessageId,
                 sopInstanceUid.UID, 
@@ -318,7 +318,7 @@ namespace ClearCanvas.Dicom.Samples
 
         void IDicomServerHandler.OnReceiveResponseMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            DicomLogger.LogError("Unexpectedly received response mess on server.");
+			Logger.LogError("Unexpectedly received response mess on server.");
 
             server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.UnrecognizedPDU);
         }
@@ -327,22 +327,22 @@ namespace ClearCanvas.Dicom.Samples
 
         void IDicomServerHandler.OnReceiveReleaseRequest(DicomServer server, ServerAssociationParameters association)
         {
-            DicomLogger.LogInfo("Received association release request from  {0}.", association.CallingAE);
+			Logger.LogInfo("Received association release request from  {0}.", association.CallingAE);
         }
 
         void IDicomServerHandler.OnReceiveAbort(DicomServer server, ServerAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
-            DicomLogger.LogError("Unexpected association abort received.");
+			Logger.LogError("Unexpected association abort received.");
         }
 
         void IDicomServerHandler.OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e)
         {
-            DicomLogger.LogErrorException(e, "Unexpected network error over association from {0}.", association.CallingAE);
+            Logger.LogErrorException(e, "Unexpected network error over association from {0}.", association.CallingAE);
         }
 
         void IDicomServerHandler.OnDimseTimeout(DicomServer server, ServerAssociationParameters association)
         {
-            DicomLogger.LogInfo("Received DIMSE Timeout, continuing listening for messages");
+            Logger.LogInfo("Received DIMSE Timeout, continuing listening for messages");
         }
         
 

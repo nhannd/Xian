@@ -143,13 +143,6 @@ void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelDa
 	}
 }
 
-//void DicomJpegCodec::Register() {
-	//DicomCodec::RegisterCodec(TransferSyntax::JpegBaselineProcess1, DicomJpegProcess1Codec::typeid);
-	//DicomCodec::RegisterCodec(TransferSyntax::JpegExtendedProcess24, DicomJpegProcess24Codec::typeid);
-	//DicomCodec::RegisterCodec(TransferSyntax::JpegLosslessNonHierarchicalProcess14, DicomJpegLossless14Codec::typeid);
-	//DicomCodec::RegisterCodec(TransferSyntax::JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1, DicomJpegLossless14SV1Codec::typeid);
-//}
-
 } // Jpeg
 } // Codec
 } // Dicom

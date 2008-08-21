@@ -116,7 +116,7 @@ namespace ClearCanvas.Dicom.Network
         {
             uint len = Math.Min(GetBufferLength(), _max - (CurrentPduSize() + 6));
 
-            //DicomLogger.LogInfo("Created PDV of length: {0}",len);
+            //Platform.Log(LogLevel.Info, "Created PDV of length: {0}",len);
             if (_bytes == null || _bytes.Length != len || _pdu.PDVs.Count > 0)
             {
                 _bytes = new byte[len];

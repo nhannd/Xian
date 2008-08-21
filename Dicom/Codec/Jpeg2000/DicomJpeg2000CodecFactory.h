@@ -25,7 +25,6 @@ public:
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
     virtual IDicomCodec^ GetDicomCodec();
-	static void Register();
 };
 
 public ref class DicomJpeg2000LossyCodecFactory : public IDicomCodecFactory {
@@ -35,7 +34,6 @@ public:
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
     virtual IDicomCodec^ GetDicomCodec();
-	static void Register();
 };
 
 

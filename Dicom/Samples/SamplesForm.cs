@@ -47,15 +47,15 @@ namespace ClearCanvas.Dicom.Samples
         private const string STR_Verify = "Verify";
         #endregion
 
-        private StorageScu _storageScu = new StorageScu();
+		private StorageScu _storageScu = new StorageScu();
         private VerificationScu _verificationScu = new VerificationScu();
 
         public SamplesForm()
         {
-            InitializeComponent();
+			InitializeComponent();
             _buttonStorageScuVerify.Text = STR_Verify;
 
-            SampleUtilities.RegisterLogHandler(this.OutputTextBox);
+            Logger.RegisterLogHandler(this.OutputTextBox);
 
             if (String.IsNullOrEmpty(Properties.Settings.Default.ScpStorageFolder))
             {
@@ -77,7 +77,7 @@ namespace ClearCanvas.Dicom.Samples
                     }
                     catch (FileNotFoundException ex)
                     {
-                        DicomLogger.LogErrorException(ex, "Unexpectedly cannot find file: {0}", file);
+                        Logger.LogErrorException(ex, "Unexpectedly cannot find file: {0}", file);
                     }
             }
             
@@ -88,7 +88,7 @@ namespace ClearCanvas.Dicom.Samples
             int port;
             if (!int.TryParse(_textBoxStorageScuRemotePort.Text,out port))
             {
-                DicomLogger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
+                Logger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
                 return;
             }
 
@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom.Samples
             int port;
             if (!int.TryParse(_textBoxStorageScuRemotePort.Text, out port))
             {
-                DicomLogger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
+                Logger.LogError("Unable to parse port number: {0}", _textBoxStorageScuRemotePort.Text);
                 return;
             }
             IAsyncResult o_AsyncResult = _verificationScu.BeginVerify(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port, new AsyncCallback(VerifyComplete), null);
@@ -164,7 +164,7 @@ namespace ClearCanvas.Dicom.Samples
         private void VerifyComplete(IAsyncResult ar)
         {
             VerificationResult verificationResult = _verificationScu.EndVerify(ar);
-            DicomLogger.LogInfo("Verify result: " + verificationResult.ToString());
+            Logger.LogInfo("Verify result: " + verificationResult.ToString());
             SetVerifyButton(false);
         }
 

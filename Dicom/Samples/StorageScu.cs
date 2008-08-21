@@ -114,7 +114,7 @@ namespace ClearCanvas.Dicom.Samples
 
                 if (!sopClassInFile.Equals(dicomFile.SopClass.Uid))
                 {
-                    DicomLogger.LogError("SOP Class in Meta Info does not match SOP Class in DataSet");
+                    Logger.LogError("SOP Class in Meta Info does not match SOP Class in DataSet");
                     fileStruct.sopClass = SopClass.GetSopClass(sopClassInFile);
                 }
                 else
@@ -126,7 +126,7 @@ namespace ClearCanvas.Dicom.Samples
             }
             catch (DicomException e)
             {
-                DicomLogger.LogErrorException(e, "Unexpected exception when loading file for sending: {0}", file);
+                Logger.LogErrorException(e, "Unexpected exception when loading file for sending: {0}", file);
                 return false;
             }
             return true;
@@ -168,11 +168,11 @@ namespace ClearCanvas.Dicom.Samples
             {
                 if (_fileList.Count == 0)
                 {
-                    DicomLogger.LogInfo("Not sending, no files to send.");
+                    Logger.LogInfo("Not sending, no files to send.");
                     return;
                 }
 
-                DicomLogger.LogInfo("Preparing to connect to AE {0} on host {1} on port {2} and sending {3} images.", remoteAE, host, port, _fileList.Count);
+                Logger.LogInfo("Preparing to connect to AE {0} on host {1} on port {2} and sending {3} images.", remoteAE, host, port, _fileList.Count);
 
                 try
                 {
@@ -185,7 +185,7 @@ namespace ClearCanvas.Dicom.Samples
                         }
                     if (addr == null)
                     {
-                        DicomLogger.LogError("No Valid IP addresses for host {0}", host);
+                        Logger.LogError("No Valid IP addresses for host {0}", host);
                         return;
                     }
                     _assocParams = new ClientAssociationParameters(localAE, remoteAE, new IPEndPoint(addr, port));
@@ -196,7 +196,7 @@ namespace ClearCanvas.Dicom.Samples
                 }
                 catch (Exception e)
                 {
-                    DicomLogger.LogErrorException(e, "Unexpected exception trying to connect to Remote AE {0} on host {1} on port {2}", remoteAE, host, port);
+                    Logger.LogErrorException(e, "Unexpected exception trying to connect to Remote AE {0} on host {1} on port {2}", remoteAE, host, port);
                 }
             }
         }
@@ -218,7 +218,7 @@ namespace ClearCanvas.Dicom.Samples
             }
             catch (DicomException e)
             {
-                DicomLogger.LogErrorException(e, "Unexpected exception when loading DICOM file {0}",fileToSend.filename);
+                Logger.LogErrorException(e, "Unexpected exception when loading DICOM file {0}",fileToSend.filename);
 
                 return false;
             }
@@ -228,7 +228,7 @@ namespace ClearCanvas.Dicom.Samples
             byte pcid = association.FindAbstractSyntaxWithTransferSyntax(fileToSend.sopClass, dicomFile.TransferSyntax);
             if (pcid == 0)
             {
-                DicomLogger.LogError(
+                Logger.LogError(
                     "Unable to find matching negotiated presentation context for sop {0} and syntax {1}",
                     dicomFile.SopClass.Name, dicomFile.TransferSyntax.Name);
                 return false;
@@ -242,7 +242,7 @@ namespace ClearCanvas.Dicom.Samples
 
         public void OnReceiveAssociateAccept(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Association Accepted:\r\n{0}", association.ToString());
+            Logger.LogInfo("Association Accepted:\r\n{0}", association.ToString());
 
             _fileListIndex = 0;
 
@@ -252,7 +252,7 @@ namespace ClearCanvas.Dicom.Samples
                 _fileListIndex++;
                 if (_fileListIndex >= _fileList.Count)
                 {
-                    DicomLogger.LogInfo("Completed sending C-STORE-RQ messages, releasing association.");
+                    Logger.LogInfo("Completed sending C-STORE-RQ messages, releasing association.");
                     client.SendReleaseRequest();
                     return;
                 }
@@ -262,13 +262,13 @@ namespace ClearCanvas.Dicom.Samples
 
         public void OnReceiveAssociateReject(DicomClient client, ClientAssociationParameters association, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
         {
-            DicomLogger.LogInfo("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
+            Logger.LogInfo("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
             _dicomClient = null;
         }
 
         public void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            DicomLogger.LogError("Unexpected OnReceiveRequestMessage callback on client.");
+            Logger.LogError("Unexpected OnReceiveRequestMessage callback on client.");
 
             throw new Exception("The method or operation is not implemented.");
         }
@@ -277,7 +277,7 @@ namespace ClearCanvas.Dicom.Samples
         {
             if (message.Status.Status != DicomState.Success)
             {
-                DicomLogger.LogError("Failure status received in sending C-STORE: {0}", message.Status.Description);
+                Logger.LogError("Failure status received in sending C-STORE: {0}", message.Status.Description);
             }
 
             bool ok = false;
@@ -286,7 +286,7 @@ namespace ClearCanvas.Dicom.Samples
                 _fileListIndex++;
                 if (_fileListIndex >= _fileList.Count)
                 {
-                    DicomLogger.LogInfo("Completed sending C-STORE-RQ messages, releasing association.");
+                    Logger.LogInfo("Completed sending C-STORE-RQ messages, releasing association.");
                     client.SendReleaseRequest();
                     return;
                 }
@@ -297,25 +297,25 @@ namespace ClearCanvas.Dicom.Samples
 
         public void OnReceiveReleaseResponse(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Association released to {0}", association.CalledAE);
+            Logger.LogInfo("Association released to {0}", association.CalledAE);
             _dicomClient = null;
         }
 
         public void OnReceiveAbort(DicomClient client, ClientAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
-            DicomLogger.LogError("Unexpected association abort received from {0}", association.CalledAE);
+            Logger.LogError("Unexpected association abort received from {0}", association.CalledAE);
             _dicomClient = null;
         }
 
         public void OnNetworkError(DicomClient client, ClientAssociationParameters association, Exception e)
         {
-            DicomLogger.LogErrorException(e, "Unexpected network error");
+            Logger.LogErrorException(e, "Unexpected network error");
             _dicomClient = null;
         }
 
         public void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Timeout waiting for response message, continuing.");
+            Logger.LogInfo("Timeout waiting for response message, continuing.");
         }
 
         #endregion

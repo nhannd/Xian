@@ -98,7 +98,7 @@ namespace ClearCanvas.Dicom.Samples
                 _dicomClient = null;
             }
 
-            DicomLogger.LogInfo("Preparing to connect to AE {0} on host {1} on port {2} for verification.", remoteAE, remoteHost, remotePort);
+            Logger.LogInfo("Preparing to connect to AE {0} on host {1} on port {2} for verification.", remoteAE, remoteHost, remotePort);
             try
             {
                 IPAddress addr = null;
@@ -110,7 +110,7 @@ namespace ClearCanvas.Dicom.Samples
                     }
                 if (addr == null)
                 {
-                    DicomLogger.LogError("No Valid IP addresses for host {0}", remoteHost);
+                    Logger.LogError("No Valid IP addresses for host {0}", remoteHost);
                     _verificationResult = VerificationResult.Failed;
                 }
                 else
@@ -126,7 +126,7 @@ namespace ClearCanvas.Dicom.Samples
             }
             catch (Exception e)
             {
-                DicomLogger.LogErrorException(e, "Unexpected exception trying to connect to Remote AE {0} on host {1} on port {2}", remoteAE, remoteHost, remotePort);
+                Logger.LogErrorException(e, "Unexpected exception trying to connect to Remote AE {0} on host {1} on port {2}", remoteAE, remoteHost, remotePort);
             }
             return _verificationResult;
         }
@@ -142,7 +142,7 @@ namespace ClearCanvas.Dicom.Samples
         {
             if (_verificationResult != VerificationResult.Canceled)
             {
-                DicomLogger.LogInfo("Canceling verify...");
+                Logger.LogInfo("Canceling verify...");
                 _verificationResult = VerificationResult.Canceled;
                 if (_dicomClient != null)
                     _dicomClient.Close();
@@ -186,20 +186,20 @@ namespace ClearCanvas.Dicom.Samples
 
         public void OnReceiveAssociateAccept(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Association Accepted when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
+            Logger.LogInfo("Association Accepted when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
             SendVerificationRequest(client, association);
         }
 
         public void OnReceiveAssociateReject(DicomClient client, ClientAssociationParameters association, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
         {
-            DicomLogger.LogInfo("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
+            Logger.LogInfo("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
             _verificationResult = VerificationResult.Failed;
             ProgressEvent.Set();
         }
 
         public void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            DicomLogger.LogError("Unexpected OnReceiveRequestMessage callback on client.");
+            Logger.LogError("Unexpected OnReceiveRequestMessage callback on client.");
 
             throw new Exception("The method or operation is not implemented.");
         }
@@ -208,16 +208,16 @@ namespace ClearCanvas.Dicom.Samples
         {
             if (message.Status.Status != DicomState.Success)
             {
-                DicomLogger.LogError("Failure status received in sending verification: {0}", message.Status.Description);
+                Logger.LogError("Failure status received in sending verification: {0}", message.Status.Description);
                 _verificationResult = VerificationResult.Failed;
             }
             else if (_verificationResult == VerificationResult.Canceled)
             {
-                DicomLogger.LogInfo("Verification was canceled");
+                Logger.LogInfo("Verification was canceled");
             }
             else
             {
-                DicomLogger.LogInfo("Success status received in sending verification!");
+                Logger.LogInfo("Success status received in sending verification!");
                 _verificationResult = VerificationResult.Success;
             }
             client.SendReleaseRequest();
@@ -226,13 +226,13 @@ namespace ClearCanvas.Dicom.Samples
 
         public void OnReceiveReleaseResponse(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Association released to {0}", association.CalledAE);
+            Logger.LogInfo("Association released to {0}", association.CalledAE);
             ProgressEvent.Set();
         }
 
         public void OnReceiveAbort(DicomClient client, ClientAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
-            DicomLogger.LogError("Unexpected association abort received from {0}", association.CalledAE);
+            Logger.LogError("Unexpected association abort received from {0}", association.CalledAE);
             ProgressEvent.Set();
         }
 
@@ -240,7 +240,7 @@ namespace ClearCanvas.Dicom.Samples
         {
             if (_verificationResult != VerificationResult.Canceled)
             {
-                DicomLogger.LogErrorException(e, "Unexpected network error");
+                Logger.LogErrorException(e, "Unexpected network error");
                 _verificationResult = VerificationResult.Failed;
             }
             ProgressEvent.Set();
@@ -248,7 +248,7 @@ namespace ClearCanvas.Dicom.Samples
 
         public void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Timeout waiting for response message, continuing.");
+            Logger.LogInfo("Timeout waiting for response message, continuing.");
             _verificationResult = VerificationResult.TimeoutExpired;
             ProgressEvent.Set();
         }
