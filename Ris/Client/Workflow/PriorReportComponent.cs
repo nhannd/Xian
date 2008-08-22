@@ -35,6 +35,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using System;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -89,6 +90,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private List<PriorProcedureSummary> _allPriors;
 
 		private ChildComponentHost _reportViewComponentHost;
+		private AsyncLoader _loader;
 
 		/// <summary>
 		/// Constructor for showing priors based on a reporting step.
@@ -105,9 +107,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_reportViewComponentHost = new ChildComponentHost(this.Host, new ReportViewComponent(this));
 			_reportViewComponentHost.StartComponent();
 
+			_loader = new AsyncLoader();
+
 			UpdateReportList();
 
 			base.Start();
+		}
+
+		public override void Stop()
+		{
+			_loader.Dispose();
+
+			base.Stop();
 		}
 
 		#region Presentation Model
@@ -130,23 +141,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		private void UpdateReportList()
-		{
-			_reportList.Items.Clear();
-			if (_relevantPriorsOnly)
-			{
-				if (_relevantPriors == null)
-					_relevantPriors = LoadPriors(true);
-				_reportList.Items.AddRange(_relevantPriors);
-			}
-			else
-			{
-				if (_allPriors == null)
-					_allPriors = LoadPriors(false);
-				_reportList.Items.AddRange(_allPriors);
-			}
-		}
-
 		public ITable Reports
 		{
 			get { return _reportList; }
@@ -166,17 +160,45 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		public string PreviewUrl
-		{
-			get { return WebResourcesSettings.Default.ReportPreviewPageUrl; }
-		}
-
-		public string GetData(string tag)
-		{
-			return JsmlSerializer.Serialize(_selectedPrior, "report");
-		}
-
 		#endregion
+
+		private void UpdateReportList()
+		{
+			_reportList.Items.Clear();
+			if (_relevantPriorsOnly)
+			{
+				_loader.Run(
+					delegate
+					{
+						if (_relevantPriors == null)
+							_relevantPriors = LoadPriors(true);
+					},
+					delegate(Exception e)
+					{
+						if(e == null)
+							_reportList.Items.AddRange(_relevantPriors);
+						else 
+							Platform.Log(LogLevel.Error, e);
+					});
+
+			}
+			else
+			{
+				_loader.Run(
+					delegate
+					{
+						if (_allPriors == null)
+							_allPriors = LoadPriors(false);
+					},
+					delegate(Exception e)
+					{
+						if (e == null)
+							_reportList.Items.AddRange(_allPriors);
+						else
+							Platform.Log(LogLevel.Error, e);
+					});
+			}
+		}
 
 		private List<PriorProcedureSummary> LoadPriors(bool relevantOnly)
 		{

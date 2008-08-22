@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
+    <Compile Include="AsyncLoader.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyOrderReportsComponent.cs" />
