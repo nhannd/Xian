@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -77,7 +76,7 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 
             IDeviceEntityBroker selectDevice = updateContext.GetBroker<IDeviceEntityBroker>();
 
-            Device dev = CollectionUtils.FirstElement(selectDevice.Find(deviceSelectCriteria));
+            Device dev = selectDevice.FindOne(deviceSelectCriteria);
 			if (dev == null)
 			{
 				Platform.Log(LogLevel.Warn,

@@ -42,9 +42,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 FilesystemStudyStorageSelectCriteria searchCriteria = new FilesystemStudyStorageSelectCriteria();
                 searchCriteria.StudyStorageKey.EqualTo(Context.OriginalStudyLocation.GetKey());
                 searchCriteria.FilesystemKey.EqualTo(Context.OriginalStudyLocation.FilesystemKey);
-                IList<FilesystemStudyStorage> storageFilesystems = broker.Find(searchCriteria);
-                Debug.Assert(storageFilesystems.Count == 1);
-                FilesystemStudyStorage filesystemStudyStorage = storageFilesystems[0];
+                FilesystemStudyStorage filesystemStudyStorage = broker.FindOne(searchCriteria);
+                Debug.Assert(filesystemStudyStorage != null);
 
                 // Update Filesystem for the StudyStorage entry
                 filesystemStudyStorage.FilesystemKey = Context.Destination.Filesystem.GetKey();

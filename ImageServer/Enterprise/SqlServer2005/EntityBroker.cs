@@ -1154,8 +1154,16 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         #region IEntityBroker<TServerEntity,TSelectCriteria,TUpdateColumns> Members
 
+		public TServerEntity FindOne(TSelectCriteria criteria)
+		{
+			IList<TServerEntity> list = Find(criteria, 0, 1);
+			if (list.Count == 0)
+				return null;
 
-        public IList<TServerEntity> Find(TSelectCriteria criteria, int startIndex, int maxRows)
+			return list[0];
+		}
+
+    	public IList<TServerEntity> Find(TSelectCriteria criteria, int startIndex, int maxRows)
         {
             IList<TServerEntity> list = new List<TServerEntity>();
 

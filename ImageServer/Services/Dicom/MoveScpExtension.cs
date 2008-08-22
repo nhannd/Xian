@@ -305,12 +305,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             selectParms.AeTitle.EqualTo(remoteAe);
             selectParms.ServerPartitionKey.EqualTo(partition.GetKey());
 
-            IList<Device> list = select.Find(selectParms);
-
-            if (list.Count == 0)
-                return null;
-
-            return list[0];
+            return select.FindOne(selectParms);
         }
         #endregion
 

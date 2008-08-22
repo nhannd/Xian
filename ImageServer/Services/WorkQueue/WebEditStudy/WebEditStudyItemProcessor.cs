@@ -219,16 +219,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.ServerPartitionKey.EqualTo(partitionKey);
             criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-            IList<Study> studies = studyBroker.Find(criteria);
+            Study study = studyBroker.FindOne(criteria);
 
-            if (studies == null || studies.Count == 0)
+            if (study == null )
             {
                 // no study found. One possiblity this could happen is EditStudy entry was scheduled to happend after another StudyDelete.
                 Platform.Log(LogLevel.Error, "No study entity found for work queue item {0}", item.GetKey().Key);
                 return;
             }
 
-            _study = studies[0];
+            _study = study;
             IPatientEntityBroker patientBroker = ReadContext.GetBroker<IPatientEntityBroker>();
             _patient = patientBroker.Load(_study.PatientKey);
 

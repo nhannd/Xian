@@ -112,11 +112,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			using (IReadContext ctx = PersistentStore.OpenReadContext())
 			{
 				TIEntity select = ctx.GetBroker<TIEntity>();
-				IList<TServerEntity> list = select.Find(criteria);
-				if (list.Count > 0)
-					return list[0];
-
-				return null;
+				return select.FindOne(criteria);
 			}
 		}
 

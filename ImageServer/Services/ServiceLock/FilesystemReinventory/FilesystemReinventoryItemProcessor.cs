@@ -187,14 +187,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
 			criteria.ServerPartitionKey.EqualTo(partition.GetKey());
 			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-			IList<StudyStorage> storageList = broker.Find(criteria);
+			storage = broker.FindOne(criteria);
 
-			if (storageList.Count > 0)
-			{
-				storage = storageList[0];
+			if (storage != null)
 				return true;
-			}
-			storage = null;
+
 			return false;
 		}
 

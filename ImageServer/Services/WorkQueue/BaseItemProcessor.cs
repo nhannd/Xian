@@ -279,14 +279,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								updateContext.GetBroker<IServerTransferSyntaxEntityBroker>();
 							syntaxCriteria.Uid.EqualTo(theSyntax.UidString);
 
-							IList<ServerTransferSyntax> syntaxList = syntaxBroker.Find(syntaxCriteria);
-							if (syntaxList.Count == 0)
+							ServerTransferSyntax serverSyntax = syntaxBroker.FindOne(syntaxCriteria);
+							if (serverSyntax == null)
 							{
 								Platform.Log(LogLevel.Error, "Unable to load ServerTransferSyntax for {0}.  Unable to update study status.", theSyntax.Name);
 								return;
 							}
-
-        					ServerTransferSyntax serverSyntax = syntaxList[0];
 
 							// Get the FilesystemStudyStorage update broker ready
         					IFilesystemStudyStorageEntityBroker filesystemQueueBroker =

@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
@@ -52,7 +51,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             isNew = false;
 
-            Device device = null;
+            Device device;
 
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -63,8 +62,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 queryParameters.AeTitle.EqualTo(association.CallingAE);
                 queryParameters.ServerPartitionKey.EqualTo(partition.GetKey());
 
-                IList<Device> list = queryDevice.Find(queryParameters);
-                if (list.Count == 0)
+                device = queryDevice.FindOne(queryParameters);
+                if (device == null)
                 {
                     if (!partition.AcceptAnyDevice)
                     {
@@ -89,7 +88,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                         IDeviceEntityBroker insert = updateContext.GetBroker<IDeviceEntityBroker>();
 
-                        list.Add(insert.Insert(updateColumns));
+                        device = insert.Insert(updateColumns);
 
                         updateContext.Commit();
 
@@ -97,10 +96,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
                 }
 
-                if (list.Count > 0)
+                if (device != null)
                 {
-                    device = list[0];
-
                     // For DHCP devices, we always update the remote ip address, if its changed from what is in the DB.
                     if (device.Dhcp && !association.RemoteEndPoint.Address.ToString().Equals(device.IpAddress))
                     {

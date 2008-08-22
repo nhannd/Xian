@@ -77,6 +77,13 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <returns>A list of <see cref="ServerEntity"/> objects.</returns>
         IList<TServerEntity> Find(TSelectCriteria criteria, int startIndex, int maxRows);
 
+		/// <summary>
+		/// Retrieves an entity matching the specified criteria.
+		/// </summary>
+		/// <param name="criteria">The criteria.</param>
+		/// <returns>A <see cref="ServerEntity"/> object, or null if no results.</returns>
+		TServerEntity FindOne(TSelectCriteria criteria);
+
         /// <summary>
         /// Retrieves all entities matching the specified criteria.
         /// Caution: this method may return an arbitrarily large result set.

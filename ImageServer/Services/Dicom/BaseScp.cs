@@ -258,11 +258,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 					criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
 
-					IList<StudyStorage> storageList = selectBroker.Find(criteria);
-					if (storageList.Count > 0)
+					StudyStorage storage = selectBroker.FindOne(criteria);
+					if (storage != null)
 					{
-						StudyStorage storage = storageList[0];
-
 						Platform.Log(LogLevel.Warn,"Received SOP Instances for Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
 						return null;
 					}

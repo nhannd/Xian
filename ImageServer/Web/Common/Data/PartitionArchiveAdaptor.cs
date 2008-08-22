@@ -56,12 +56,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				queryParms.StudyInstanceUid.EqualTo(theStudy.StudyInstanceUid);
 				queryParms.ServerPartitionKey.EqualTo(theStudy.ServerPartitionKey);
 
-				IList<StudyStorage> list = query.Find(queryParms);
+				StudyStorage storage = query.FindOne(queryParms);
 				
 				IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
 
 				InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
-				parms.StudyStorageKey = list[0].Key;
+				parms.StudyStorageKey = storage.Key;
 
 				IList<RestoreQueue> storageList = broker.Find(parms);
 

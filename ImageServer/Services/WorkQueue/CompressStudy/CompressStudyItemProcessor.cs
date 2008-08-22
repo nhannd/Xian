@@ -108,6 +108,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					successfulProcessCount++;
 			}
 
+			if (successfulProcessCount > 0)
+				Platform.Log(LogLevel.Info,"Completed compression of study {0}", StorageLocation.StudyInstanceUid);
+
 			//TODO: Should we return true only if ALL uids have been processed instead?
 			return successfulProcessCount > 0;
 
