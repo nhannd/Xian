@@ -312,7 +312,7 @@ BEGIN
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
 			JOIN Filesystem on FilesystemStudyStorage.FilesystemGUID = Filesystem.GUID
 			JOIN ServerTransferSyntax on ServerTransferSyntax.GUID = FilesystemStudyStorage.ServerTransferSyntaxGUID
-		WHERE StudyStorage.ServerPartitionGuid = @ServerPartitionGUID and StudyStorage.StudyInstanceUid = @StudyInstanceUid
+		WHERE StudyStorage.ServerPartitionGUID = @ServerPartitionGUID and StudyStorage.StudyInstanceUid = @StudyInstanceUid
 	END
 	ELSE
 	BEGIN
