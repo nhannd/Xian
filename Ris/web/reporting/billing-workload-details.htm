@@ -31,12 +31,12 @@
 						return;
 					}
 					
-					if(context.BillingItems.length)
+					if(context.BillingItems && context.BillingItems.length)
 					{
 						createBillingItemsTable($("billingItemsTable"), context.BillingItems);
 					}
 
-					if(context.WorkloadUnitItems.length)
+					if(context.WorkloadUnitItems && context.WorkloadUnitItems.length)
 					{
 						createWorkloadUnitItemsTable($("workloadUnitItemsTable"), context.WorkloadUnitItems);
 						Field.setValue($("TotalWorkloads"), calculateTotalWorkloads(context.WorkloadUnitItems));
