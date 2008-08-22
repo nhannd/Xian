@@ -31,73 +31,109 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
-    [IconSet("apply", IconScheme.Colour, "ReplaceOrderSmall.png", "ReplaceOrderMedium.png", "ReplaceOrderLarge.png")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "ReplaceOrderSmall.png", "ReplaceOrderMedium.png", "ReplaceOrderLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Replace)]
+	public abstract class ReplaceOrderToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
+		where TItem : WorklistItemSummaryBase
+		where TContext : IWorkflowItemToolContext<TItem>
 
-    [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    public class ReplaceOrderTool : Tool<IWorkflowItemToolContext>
-    {
-        public event EventHandler EnabledChanged
-        {
-            add { this.Context.SelectionChanged += value; }
-            remove { this.Context.SelectionChanged -= value; }
-        }
+	{
+		public ReplaceOrderToolBase()
+			: base("ReplaceOrder")
+		{
+		}
 
-        public bool Enabled
-        {
-            get
-            {
-                if (this.Context.Selection.Items.Length != 1)
-                    return false;
-                WorklistItemSummaryBase item =
-                    (WorklistItemSummaryBase) CollectionUtils.FirstElement(this.Context.Selection.Items);
-                return item.OrderRef != null;
-            }
-        }
+		public override void Initialize()
+		{
+			base.Initialize();
 
-        public void Apply()
-        {
-            try
-            {
-                WorklistItemSummaryBase item = (WorklistItemSummaryBase)this.Context.Selection.Item;
-                OrderEditorComponent component = new OrderEditorComponent(
-                    item.PatientRef, 
-                    item.PatientProfileRef, 
-                    item.OrderRef,
-                    OrderEditorComponent.Mode.ReplaceOrder);
+			this.Context.RegisterWorkflowService(typeof(IOrderEntryService));
+		}
 
-                IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
+		protected abstract void InvalidateFolders();
 
-                workspace.Closed += delegate
-                    {
-                        if (component.ExitCode == ApplicationComponentExitCode.Accepted)
-                        {
-                            DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
-                            DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
-                        }
-                    };
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Context.DesktopWindow);
-            }
-        }
-    }
+		protected bool ExecuteCore(WorklistItemSummaryBase item)
+		{
+			OrderEditorComponent component = new OrderEditorComponent(
+				item.PatientRef,
+				item.PatientProfileRef,
+				item.OrderRef,
+				OrderEditorComponent.Mode.ReplaceOrder);
+
+			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
+				this.Context.DesktopWindow,
+				component,
+				string.Format(SR.TitleReplaceOrder, PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn)));
+
+			Type selectedFolderType = this.Context.SelectedFolder.GetType();
+			workspace.Closed += delegate
+				{
+					if (component.ExitCode == ApplicationComponentExitCode.Accepted)
+					{
+						InvalidateFolders();
+						DocumentManager.InvalidateFolder(selectedFolderType);
+					}
+				};
+
+			return true;
+		}
+	}
+
+	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+	public class RegistrationReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	{
+		protected override bool Execute(RegistrationWorklistItem item)
+		{
+			return ExecuteCore(item);
+		}
+
+		protected override void InvalidateFolders()
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ScheduledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.CancelledFolder));
+		}
+	}
+
+	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
+	public class BookingReplaceOrderTool : ReplaceOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
+	{
+		protected override bool Execute(RegistrationWorklistItem item)
+		{
+			return ExecuteCore(item);
+		}
+
+		protected override void InvalidateFolders()
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.ToBeScheduledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Registration.PendingProtocolFolder));
+		}
+	}
+
+	[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+	public class TechnologistReplaceOrderTool : ReplaceOrderToolBase<ModalityWorklistItem, ITechnologistWorkflowItemToolContext>
+	{
+		protected override bool Execute(ModalityWorklistItem item)
+		{
+			return ExecuteCore(item);
+		}
+
+		protected override void InvalidateFolders()
+		{
+			DocumentManager.InvalidateFolder(typeof(Folders.Technologist.ScheduledTechnologistWorkflowFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CancelledTechnologistWorkflowFolder));
+		}
+	}
 }

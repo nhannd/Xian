@@ -29,12 +29,8 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
-
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
@@ -43,7 +39,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     /// </summary>
     [RisServiceProvider]
     [ServiceContract]
-    public interface IOrderEntryService
+	[ServiceKnownType(typeof(RegistrationWorklistItem))]
+	[ServiceKnownType(typeof(ModalityWorklistItem))]
+	public interface IOrderEntryService : IWorkflowService
     {
         /// <summary>
         /// List active visits for the specified patient.  Orders can be placed on active visits.
@@ -142,26 +140,26 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [FaultContract(typeof(ConcurrentModificationException))]
         ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
 
-		/// <summary>
-		/// This method is for testing/demo purposes and is not intended to be called in production.
-		/// It shifts the order and associated visit in time by the specified number of minutes, which may be negative or positive.
-		/// </summary>
-		/// <remarks>
-		/// This method does not really belong on this interface but there was no other
-		/// convenient place to put it.
-		/// </remarks>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		[OperationContract]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
+        /// <summary>
+        /// This method is for testing/demo purposes and is not intended to be called in production.
+        /// It shifts the order and associated visit in time by the specified number of minutes, which may be negative or positive.
+        /// </summary>
+        /// <remarks>
+        /// This method does not really belong on this interface but there was no other
+        /// convenient place to put it.
+        /// </remarks>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
 
-		/// <summary>
-		/// Reserve an accession number.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		[OperationContract]
-		ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
+        /// <summary>
+        /// Reserve an accession number.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
     }
 }

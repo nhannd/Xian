@@ -32,25 +32,41 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Services.MimeDocumentService;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IOrderEntryService))]
-    public class OrderEntryService : ApplicationServiceBase, IOrderEntryService
+    public class OrderEntryService : WorkflowServiceBase<WorklistItemSummaryBase>, IOrderEntryService
     {
-        #region IOrderEntryService Members
+        public class WorklistItemKey
+        {
+            private readonly EntityRef _orderRef;
 
+            public WorklistItemKey(EntityRef orderRef)
+            {
+                _orderRef = orderRef;
+            }
+
+            public EntityRef OrderRef
+            {
+                get { return _orderRef; }
+            }
+        }
+
+        #region IOrderEntryService Members
 
         [ReadOperation]
         public ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request)
@@ -102,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             return new GetOrderEntryFormDataResponse(
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
-					PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
+                    PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                     delegate(Facility f)
                     {
                         return facilityAssembler.CreateFacilitySummary(f);
@@ -172,21 +188,21 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             // TODO: we need to build a list of orderable procedure types, based on what has already been ordered
             // for now, just return everything
             IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
-			IList<ProcedureType> rpTypes = broker.FindAll(false);
+            IList<ProcedureType> rpTypes = broker.FindAll(false);
 
             ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
             List<ProcedureTypeSummary> summaries = CollectionUtils.Map<ProcedureType, ProcedureTypeSummary>(rpTypes,
                    delegate(ProcedureType rpt)
-                       {
-                           return rptAssembler.CreateSummary(rpt);
-                       });
-            
+                   {
+                       return rptAssembler.CreateSummary(rpt);
+                   });
+
             // remove types that have already been ordered
             summaries = CollectionUtils.Reject<ProcedureTypeSummary>(summaries,
                       delegate(ProcedureTypeSummary s)
-                          {
-                              return request.OrderedProcedureTypes.Contains(s.ProcedureTypeRef);
-                          });
+                      {
+                          return request.OrderedProcedureTypes.Contains(s.ProcedureTypeRef);
+                      });
 
 
             return new ListOrderableProcedureTypesResponse(summaries);
@@ -212,7 +228,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new GetExternalPractitionerContactPointsResponse(
                 CollectionUtils.Map<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
                     sortedContactPoints,
-                    delegate (ExternalPractitionerContactPoint cp)
+                    delegate(ExternalPractitionerContactPoint cp)
                     {
                         return assembler.CreateExternalPractitionerContactPointDetail(cp, PersistenceContext);
                     }));
@@ -233,8 +249,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Create)]
-		public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Create)]
+        public PlaceOrderResponse PlaceOrder(PlaceOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
@@ -251,8 +267,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Modify)]
-		public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Modify)]
+        public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
@@ -260,7 +276,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             Order order = PersistenceContext.Load<Order>(request.OrderRef);
             ValidateOrderModifiable(order);
-            
+
             OrderEntryAssembler assembler = new OrderEntryAssembler();
             assembler.UpdateOrderFromRequisition(order, request.Requisition, this.CurrentUserStaff, PersistenceContext);
 
@@ -274,19 +290,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Replace)]
-		public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Replace)]
+        [OperationEnablement("CanReplaceOrder")]
+        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
             Platform.CheckMemberIsSet(request.Requisition, "Requisition");
 
             Order orderToReplace = PersistenceContext.Load<Order>(request.OrderRef);
-			ValidateOrderReplacable(orderToReplace);
+            ValidateOrderReplacable(orderToReplace);
 
-			// reason is optional
+            // reason is optional
             OrderCancelReasonEnum reason = (request.CancelReason != null) ?
-				EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext) : null;
+                EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext) : null;
 
             // place new order
             Order newOrder = PlaceOrderHelper(request.Requisition);
@@ -294,7 +311,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             // cancel existing order
             CancelOrderOperation op = new CancelOrderOperation();
-			op.Execute(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
+            op.Execute(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
 
 
             PersistenceContext.SynchState();
@@ -303,56 +320,79 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new ReplaceOrderResponse(orderAssembler.CreateOrderSummary(newOrder, PersistenceContext));
         }
 
-		[UpdateOperation]
-		public TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request)
-    	{
-			Platform.CheckForNullReference(request, "request");
-			Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
+        [UpdateOperation]
+        public TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request)
+        {
+            Platform.CheckForNullReference(request, "request");
+            Platform.CheckMemberIsSet(request.OrderRef, "OrderRef");
 
-			// load the order, explicitly ignoring the version (since this is only used for testing/demo data creation, we don't care)
-			Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
+            // load the order, explicitly ignoring the version (since this is only used for testing/demo data creation, we don't care)
+            Order order = PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
 
-			// shift the order, which will also shift all procedures, etc.
-			order.TimeShift(request.NumberOfMinutes);
+            // shift the order, which will also shift all procedures, etc.
+            order.TimeShift(request.NumberOfMinutes);
 
-			// shift the visit
-			order.Visit.TimeShift(request.NumberOfMinutes);
+            // shift the visit
+            order.Visit.TimeShift(request.NumberOfMinutes);
 
-			PersistenceContext.SynchState();
+            PersistenceContext.SynchState();
 
-			OrderAssembler orderAssembler = new OrderAssembler();
-			return new TimeShiftOrderResponse(orderAssembler.CreateOrderSummary(order, PersistenceContext));
-		}
+            OrderAssembler orderAssembler = new OrderAssembler();
+            return new TimeShiftOrderResponse(orderAssembler.CreateOrderSummary(order, PersistenceContext));
+        }
 
-		[UpdateOperation]
-		public ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request)
-		{
-			// obtain a new acc number
-			IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
-			string accNum = broker.GetNextAccessionNumber();
+        [UpdateOperation]
+        public ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request)
+        {
+            // obtain a new acc number
+            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
+            string accNum = broker.GetNextAccessionNumber();
 
-			return new ReserveAccessionNumberResponse(accNum);
-		}
+            return new ReserveAccessionNumberResponse(accNum);
+        }
 
-    	#endregion
+        #endregion
+
+        #region Operation Enablement
+
+        protected override object GetWorkItemKey(WorklistItemSummaryBase item)
+        {
+            return new WorklistItemKey(item.OrderRef);
+        }
+
+        public bool CanReplaceOrder(WorklistItemKey itemKey)
+        {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Replace))
+                return false;
+
+            // the worklist item may represent a patient without an order,
+            // in which case there is no order to cancel
+            if (itemKey.OrderRef == null)
+                return false;
+
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
+            return order.Status == OrderStatus.SC;
+        }
+
+        #endregion
 
         private void ValidateOrderModifiable(Order order)
         {
-            if(order.Status != OrderStatus.SC && order.Status != OrderStatus.IP)
+            if (order.Status != OrderStatus.SC && order.Status != OrderStatus.IP)
                 throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified.",
                     EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
         }
 
-		private void ValidateOrderReplacable(Order order)
-		{
-			if (order.Status != OrderStatus.SC)
-				throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be replaced.",
-					EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
+        private void ValidateOrderReplacable(Order order)
+        {
+            if (order.Status != OrderStatus.SC)
+                throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be replaced.",
+                    EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
 
-			if(CollectionUtils.Contains(order.Procedures,
-				delegate (Procedure p) { return p.DowntimeRecoveryMode;}))
-				throw new RequestValidationException("Downtime orders cannot be replaced.  You must cancel the order and create a new one.");
-		}
+            if (CollectionUtils.Contains(order.Procedures,
+                delegate(Procedure p) { return p.DowntimeRecoveryMode; }))
+                throw new RequestValidationException("Downtime orders cannot be replaced.  You must cancel the order and create a new one.");
+        }
 
         // TODO: ideally this should be done in the model layer
         private void ValidatePatientProfilesExist(Order order)
@@ -364,7 +404,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return profile.Mrn.AssigningAuthority.Equals(procedure.PerformingFacility.InformationAuthority);
                     });
-                if(!hasProfile)
+                if (!hasProfile)
                     throw new RequestValidationException(string.Format("{0} is not a valid performing facility for this patient because the patient does not have a demographics profile for this facility.",
                         procedure.PerformingFacility.Name));
             }
@@ -383,11 +423,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             List<ResultRecipient> resultRecipients = CollectionUtils.Map<ResultRecipientDetail, ResultRecipient>(
                 requisition.ResultRecipients,
                 delegate(ResultRecipientDetail s)
-                    {
-                        return new ResultRecipient(
-                            PersistenceContext.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
-                            EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
-                    });
+                {
+                    return new ResultRecipient(
+                        PersistenceContext.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
+                        EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
+                });
 
             // generate set of procedures
             // create a temp map from procedure back to its requisition, this will be needed later
@@ -395,27 +435,27 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Dictionary<Procedure, ProcedureRequisition> mapProcToReq = new Dictionary<Procedure, ProcedureRequisition>();
             List<Procedure> procedures = CollectionUtils.Map<ProcedureRequisition, Procedure>(
                 requisition.Procedures,
-                delegate (ProcedureRequisition req)
-                    {
-                        ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
-                        Procedure rp = new Procedure(rpt);
-                        mapProcToReq.Add(rp, req);
+                delegate(ProcedureRequisition req)
+                {
+                    ProcedureType rpt = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
+                    Procedure rp = new Procedure(rpt);
+                    mapProcToReq.Add(rp, req);
 
-						// important to set this flag prior to creating the procedure steps, because it may affect
-						// which procedure steps are created
-                    	rp.DowntimeRecoveryMode = requisition.IsDowntimeOrder;
-                        return rp;
-                    });
+                    // important to set this flag prior to creating the procedure steps, because it may affect
+                    // which procedure steps are created
+                    rp.DowntimeRecoveryMode = requisition.IsDowntimeOrder;
+                    return rp;
+                });
 
-			// get appropriate A# for this order
-        	string accNum = GetAccessionNumberForOrder(requisition);
+            // get appropriate A# for this order
+            string accNum = GetAccessionNumberForOrder(requisition);
 
             // generate a new order with the default set of procedures
             Order order = Order.NewOrder(
-				new OrderCreationArgs(
-					Platform.Time,
-					this.CurrentUserStaff,
-					null,
+                new OrderCreationArgs(
+                    Platform.Time,
+                    this.CurrentUserStaff,
+                    null,
                     accNum,
                     patient,
                     visit,
@@ -447,45 +487,45 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
             attachmentAssembler.Synchronize(order.Attachments, requisition.Attachments, this.PersistenceContext);
 
-			if (requisition.ExtendedProperties != null)
-			{
-				// copy properties individually so as not to overwrite any that were not sent by the client
-				foreach (KeyValuePair<string, string> pair in requisition.ExtendedProperties)
-				{
-					order.ExtendedProperties[pair.Key] = pair.Value;
-				}
-			}
+            if (requisition.ExtendedProperties != null)
+            {
+                // copy properties individually so as not to overwrite any that were not sent by the client
+                foreach (KeyValuePair<string, string> pair in requisition.ExtendedProperties)
+                {
+                    order.ExtendedProperties[pair.Key] = pair.Value;
+                }
+            }
 
             return order;
         }
 
-		private string GetAccessionNumberForOrder(OrderRequisition requisition)
-		{
-			// if this is a downtime requisition, validate the downtime A#, otherwise obtain a new A#
-			IAccessionNumberBroker accessionBroker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
-			if (requisition.IsDowntimeOrder)
-			{
-				// validate that the downtime A# is less than then current sequence position
-				string currentMaxAccession = accessionBroker.PeekNextAccessionNumber();
-				if (requisition.DowntimeAccessionNumber.CompareTo(currentMaxAccession) > -1)
-					throw new RequestValidationException("Invalid downtime accession number.");
+        private string GetAccessionNumberForOrder(OrderRequisition requisition)
+        {
+            // if this is a downtime requisition, validate the downtime A#, otherwise obtain a new A#
+            IAccessionNumberBroker accessionBroker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
+            if (requisition.IsDowntimeOrder)
+            {
+                // validate that the downtime A# is less than then current sequence position
+                string currentMaxAccession = accessionBroker.PeekNextAccessionNumber();
+                if (requisition.DowntimeAccessionNumber.CompareTo(currentMaxAccession) > -1)
+                    throw new RequestValidationException("Invalid downtime accession number.");
 
-				return requisition.DowntimeAccessionNumber;
-			}
-			else
-			{
-				// get new A#
-				return PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNextAccessionNumber();
-			}
-		}
+                return requisition.DowntimeAccessionNumber;
+            }
+            else
+            {
+                // get new A#
+                return PersistenceContext.GetBroker<IAccessionNumberBroker>().GetNextAccessionNumber();
+            }
+        }
 
         private void UpdateProceduresHelper(Order order, List<ProcedureRequisition> procedureReqs)
         {
             OrderEntryAssembler assembler = new OrderEntryAssembler();
 
-			// if any procedure is in downtime recovery mode, assume the entire order is a "downtime order"
-        	bool isDowntime =
-        		CollectionUtils.Contains(order.Procedures, delegate(Procedure p) { return p.DowntimeRecoveryMode; });
+            // if any procedure is in downtime recovery mode, assume the entire order is a "downtime order"
+            bool isDowntime =
+                CollectionUtils.Contains(order.Procedures, delegate(Procedure p) { return p.DowntimeRecoveryMode; });
 
             // deletions - remove any procedure not in the requisition
             List<Procedure> proceduresCopy = new List<Procedure>(order.Procedures);
@@ -499,7 +539,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         // if RP is still scheduled, just remove it from the order
                         order.RemoveProcedure(rp);
                     }
-                    else if(rp.Status == ProcedureStatus.IP)
+                    else if (rp.Status == ProcedureStatus.IP)
                     {
                         // if RP in-progress, discontinue it
                         rp.Discontinue();
@@ -515,11 +555,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 Procedure rp = CollectionUtils.SelectFirst(order.Procedures,
                     delegate(Procedure x) { return req.ProcedureIndex == x.Index; });
 
-                if(rp == null)
+                if (rp == null)
                 {
                     // create a new procedure for this requisition
                     rp = new Procedure(requestedType);
-                	rp.DowntimeRecoveryMode = isDowntime;
+                    rp.DowntimeRecoveryMode = isDowntime;
                     order.AddProcedure(rp);
 
                     // note: need to lock the new procedure now, prior to creating the procedure steps
@@ -532,10 +572,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 else
                 {
                     // validate that the type has not changed
-                    if(!rp.Type.Equals(requestedType))
+                    if (!rp.Type.Equals(requestedType))
                         throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
                 }
-                
+
                 // apply the requisition information to the actual procedure
                 assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
             }
