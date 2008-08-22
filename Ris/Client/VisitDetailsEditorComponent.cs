@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
 using System.Collections;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -63,10 +64,11 @@ namespace ClearCanvas.Ris.Client
         private readonly List<EnumValueInfo> _patientClassChoices;
         private readonly List<EnumValueInfo> _patientTypeChoices;
         private readonly List<EnumValueInfo> _admissionTypeChoices;
-        private readonly List<EnumValueInfo> _ambulatoryStatusChoices;
         private readonly List<EnumValueInfo> _visitStatusChoices;
 		private readonly List<FacilitySummary> _facilityChoices;
 		private readonly List<LocationSummary> _locationChoices;
+
+		private List<EnumValueInfo> _ambulatoryStatusChoices;
 
         /// <summary>
         /// Constructor
@@ -250,6 +252,25 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _admissionTypeChoices; }
         }
+
+		public IList AmbulatoryStatusChoices
+		{
+			get { return _ambulatoryStatusChoices; }
+		}
+
+		public EnumValueInfo AmbulatoryStatus
+		{
+			get { return CollectionUtils.FirstElement(_visit.AmbulatoryStatuses); }
+			set
+			{
+				if (!_visit.AmbulatoryStatuses.Contains(value))
+				{
+					_visit.AmbulatoryStatuses.Clear();
+					_visit.AmbulatoryStatuses.Add(value);
+					this.Modified = true;
+				}
+			}
+		}
 
         [ValidateNotNull]
         public EnumValueInfo VisitStatus
