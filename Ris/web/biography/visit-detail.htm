@@ -54,7 +54,7 @@
 						Field.setValue($("PatientType"), visitDetail.PatientType.Value);
 						Field.setValue($("AdmissionType"), visitDetail.AdmissionType.Value);
 						Field.setValue($("DischargeDisposition"), visitDetail.DischargeDisposition);
-						Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation);
+						Field.setValue($("CurrentLocation"), visitDetail.CurrentLocation ? visitDetail.CurrentLocation.Name : null);
 						Field.setValue($("PreAdmitNumber"), visitDetail.PreadmitNumber);
 						Field.setValue($("VipFlag"), visitDetail.VipIndicator ? "Yes" : "No");
 						
