@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                 {
                     String text = "";
                     //String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
-                                    //item.PatientsName, item.AccessionNumber, item.StudyDescription);
+                      //              item.PatientsName, item.AccessionNumber, item.StudyDescription);
                     MessageBox.Message += text;
                 }
                 MessageBox.Message += "</table>";

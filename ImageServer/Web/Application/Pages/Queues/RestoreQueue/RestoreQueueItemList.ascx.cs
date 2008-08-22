@@ -200,35 +200,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             RestoreQueueGridView.SelectedIndexChanged += new EventHandler(RestoreQueueGridView_SelectedIndexChanged);
         }
 
-        protected override void OnPreRender(EventArgs e)
-        {
-            base.OnPreRender(e);
-
-			if (Items == null)
-				return;
-
-            foreach (GridViewRow row in RestoreQueueGridView.Rows)
-            {
-                if (row.RowType==DataControlRowType.DataRow)
-                {
-					RestoreQueueSummary item = Items[row.RowIndex];
-                    
-                    if (item!=null)
-                    {
-                        //row.Attributes.Add("instanceuid", item.TheStudy.StudyInstanceUid);
-                        //row.Attributes.Add("serverae", item.ThePartition.AeTitle);
-                        //StudyController controller = new StudyController();
-                        //bool deleted = controller.IsScheduledForDelete(study.TheStudy);
-                        //if (deleted)
-                        //    row.Attributes.Add("deleted", "true");
-                        //if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-                        //    row.Attributes.Add("nearline", "true");
-                    }
-                }
-            }
-        }
-
-
         protected void RestoreQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
         {
             IList<Model.RestoreQueue> queueItems = SelectedItems;
@@ -307,6 +278,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         /// </remarks>
         public override void DataBind()
         {
+            RestoreQueueGridView.DataBind();
             RestoreQueueGridView.PagerSettings.Visible = false;
         }
 
