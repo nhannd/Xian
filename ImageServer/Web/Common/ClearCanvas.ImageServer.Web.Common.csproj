@@ -52,6 +52,9 @@
     <Compile Include="Data\ArchiveQueueController.cs" />
     <Compile Include="Data\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
+    <Compile Include="Data\RestoreQueueAdaptor.cs" />
+    <Compile Include="Data\RestoreQueueController.cs" />
+    <Compile Include="Data\RestoreQueueDataSource.cs" />
     <Compile Include="Data\PartitionArchiveDataAdapter.cs" />
     <Compile Include="Data\PartitionArchiveConfigController.cs" />
     <Compile Include="Data\FileSystemQueueController.cs" />
