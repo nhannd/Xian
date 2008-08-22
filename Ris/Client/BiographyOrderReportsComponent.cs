@@ -335,7 +335,10 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_context = value;
-				RefreshComponent();
+				if(this.IsStarted)
+				{
+					RefreshComponent();
+				}
 			}
 		}
 

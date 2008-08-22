@@ -60,10 +60,8 @@ namespace ClearCanvas.Ris.Client
 		private OrderListItem _selectedOrder;
 		private OrderDetail _orderDetail;
 
-		private ChildComponentHost _orderDetailComponentHost;
-		private ChildComponentHost _orderVisitComponentHost;
-		private ChildComponentHost _orderDocumentComponentHost;
-		private ChildComponentHost _orderReportsComponentHost;
+		private ChildComponentHost _rightHandComponentContainerHost;
+		private TabComponentContainer _rightHandComponentContainer;
 
 		private BiographyOrderDetailViewComponent _orderDetailComponent;
 		private VisitDetailViewComponent _visitDetailComponent;
@@ -92,30 +90,25 @@ namespace ClearCanvas.Ris.Client
 				});
 
 			_orderDetailComponent = new BiographyOrderDetailViewComponent();
-			_orderDetailComponentHost = new ChildComponentHost(this.Host, _orderDetailComponent);
-			_orderDetailComponentHost.StartComponent();
-
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
-			_orderVisitComponentHost = new ChildComponentHost(this.Host, _visitDetailComponent);
-			_orderVisitComponentHost.StartComponent();
-
 			_orderReportsComponent = new BiographyOrderReportsComponent();
-			_orderReportsComponentHost = new ChildComponentHost(this.Host, _orderReportsComponent);
-			_orderReportsComponentHost.StartComponent();
-
 			_orderDocumentComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
-			_orderDocumentComponentHost = new ChildComponentHost(this.Host, _orderDocumentComponent);
-			_orderDocumentComponentHost.StartComponent();
+
+			_rightHandComponentContainer = new TabComponentContainer();
+			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailComponent));
+			_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
+			_rightHandComponentContainer.Pages.Add(new TabPage("Reports", _orderReportsComponent));
+			_rightHandComponentContainer.Pages.Add(new TabPage("Attachments", _orderDocumentComponent));
+
+			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
+			_rightHandComponentContainerHost.StartComponent();
 
 			base.Start();
 		}
 
 		public override void Stop()
 		{
-			_orderDetailComponentHost.StopComponent();
-			_orderVisitComponentHost.StopComponent();
-			_orderReportsComponentHost.StopComponent();
-			_orderDocumentComponentHost.StopComponent();
+			_rightHandComponentContainerHost.StopComponent();
 
 			base.Stop();
 		}
@@ -141,24 +134,9 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public ApplicationComponentHost OrderDetailComponentHost
+		public ApplicationComponentHost RightHandComponentContainerHost
 		{
-			get { return _orderDetailComponentHost; }
-		}
-
-		public ApplicationComponentHost OrderVisitComponentHost
-		{
-			get { return _orderVisitComponentHost; }
-		}
-
-		public ApplicationComponentHost OrderReportsComponentHost
-		{
-			get { return _orderReportsComponentHost; }
-		}
-
-		public ApplicationComponentHost OrderDocumentComponentHost
-		{
-			get { return _orderDocumentComponentHost; }
+			get { return _rightHandComponentContainerHost; }
 		}
 
 		public string BannerText

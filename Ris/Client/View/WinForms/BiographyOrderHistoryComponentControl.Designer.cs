@@ -61,16 +61,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
 			this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.tabControl1 = new System.Windows.Forms.TabControl();
-			this._orderPage = new System.Windows.Forms.TabPage();
-			this._visitPage = new System.Windows.Forms.TabPage();
-			this._reportPage = new System.Windows.Forms.TabPage();
-			this._documentPage = new System.Windows.Forms.TabPage();
 			this._banner = new System.Windows.Forms.TextBox();
+			this._tabHostPanel = new System.Windows.Forms.Panel();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
-			this.tabControl1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _orderList
@@ -97,67 +92,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.AutoScroll = true;
+			this.splitContainer1.Panel2.Controls.Add(this._tabHostPanel);
 			this.splitContainer1.Panel2.Controls.Add(this._banner);
-			this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
 			this.splitContainer1.Size = new System.Drawing.Size(982, 586);
 			this.splitContainer1.SplitterDistance = 465;
 			this.splitContainer1.TabIndex = 1;
 			this.splitContainer1.TabStop = false;
-			// 
-			// tabControl1
-			// 
-			this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tabControl1.Controls.Add(this._orderPage);
-			this.tabControl1.Controls.Add(this._visitPage);
-			this.tabControl1.Controls.Add(this._reportPage);
-			this.tabControl1.Controls.Add(this._documentPage);
-			this.tabControl1.Location = new System.Drawing.Point(0, 68);
-			this.tabControl1.Name = "tabControl1";
-			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(513, 518);
-			this.tabControl1.TabIndex = 0;
-			// 
-			// _orderPage
-			// 
-			this._orderPage.Location = new System.Drawing.Point(4, 22);
-			this._orderPage.Name = "_orderPage";
-			this._orderPage.Padding = new System.Windows.Forms.Padding(3);
-			this._orderPage.Size = new System.Drawing.Size(505, 492);
-			this._orderPage.TabIndex = 0;
-			this._orderPage.Text = "Order Details";
-			this._orderPage.UseVisualStyleBackColor = true;
-			// 
-			// _visitPage
-			// 
-			this._visitPage.Location = new System.Drawing.Point(4, 22);
-			this._visitPage.Name = "_visitPage";
-			this._visitPage.Padding = new System.Windows.Forms.Padding(3);
-			this._visitPage.Size = new System.Drawing.Size(505, 492);
-			this._visitPage.TabIndex = 1;
-			this._visitPage.Text = "Visit Details";
-			this._visitPage.UseVisualStyleBackColor = true;
-			// 
-			// _reportPage
-			// 
-			this._reportPage.Location = new System.Drawing.Point(4, 22);
-			this._reportPage.Name = "_reportPage";
-			this._reportPage.Padding = new System.Windows.Forms.Padding(3);
-			this._reportPage.Size = new System.Drawing.Size(505, 492);
-			this._reportPage.TabIndex = 4;
-			this._reportPage.Text = "Reports";
-			this._reportPage.UseVisualStyleBackColor = true;
-			// 
-			// _documentPage
-			// 
-			this._documentPage.Location = new System.Drawing.Point(4, 22);
-			this._documentPage.Name = "_documentPage";
-			this._documentPage.Padding = new System.Windows.Forms.Padding(3);
-			this._documentPage.Size = new System.Drawing.Size(505, 492);
-			this._documentPage.TabIndex = 3;
-			this._documentPage.Text = "Attachments";
-			this._documentPage.UseVisualStyleBackColor = true;
 			// 
 			// _banner
 			// 
@@ -175,6 +115,16 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._banner.TabStop = false;
 			this._banner.Text = "Banner Message";
 			// 
+			// _tabHostPanel
+			// 
+			this._tabHostPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._tabHostPanel.Location = new System.Drawing.Point(4, 68);
+			this._tabHostPanel.Name = "_tabHostPanel";
+			this._tabHostPanel.Size = new System.Drawing.Size(506, 515);
+			this._tabHostPanel.TabIndex = 2;
+			// 
 			// BiographyOrderHistoryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -186,7 +136,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.splitContainer1.Panel2.ResumeLayout(false);
 			this.splitContainer1.Panel2.PerformLayout();
 			this.splitContainer1.ResumeLayout(false);
-			this.tabControl1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -195,11 +144,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.TableView _orderList;
 		private System.Windows.Forms.SplitContainer splitContainer1;
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage _orderPage;
-		private System.Windows.Forms.TabPage _visitPage;
-		private System.Windows.Forms.TabPage _documentPage;
-		private System.Windows.Forms.TabPage _reportPage;
 		private System.Windows.Forms.TextBox _banner;
+		private System.Windows.Forms.Panel _tabHostPanel;
     }
 }

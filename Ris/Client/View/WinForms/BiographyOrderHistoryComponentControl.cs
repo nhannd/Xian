@@ -56,21 +56,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_banner.Text = _component.BannerText;
 			_banner.DataBindings.Add("Text", _component, "BannerText", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			Control order = (Control)_component.OrderDetailComponentHost.ComponentView.GuiElement;
-			order.Dock = DockStyle.Fill;
-			_orderPage.Controls.Add(order);
-
-			Control report = (Control)_component.OrderReportsComponentHost.ComponentView.GuiElement;
-			report.Dock = DockStyle.Fill;
-			_reportPage.Controls.Add(report);
-
-			Control visit = (Control)_component.OrderVisitComponentHost.ComponentView.GuiElement;
-			visit.Dock = DockStyle.Fill;
-			_visitPage.Controls.Add(visit);
-
-			Control document = (Control)_component.OrderDocumentComponentHost.ComponentView.GuiElement;
-			document.Dock = DockStyle.Fill;
-			_documentPage.Controls.Add(document);
+			Control content = (Control)_component.RightHandComponentContainerHost.ComponentView.GuiElement;
+			content.Dock = DockStyle.Fill;
+			_tabHostPanel.Controls.Add(content);
 		}
     }
 }
