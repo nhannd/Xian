@@ -251,8 +251,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			public event EventHandler WorklistItemChanged
 			{
-				add { _owner._worklistItemManager.WorklistItemChanged += value; }
-				remove { _owner._worklistItemManager.WorklistItemChanged -= value; }
+				add { _owner._worklistItemChanged += value; }
+				remove { _owner._worklistItemChanged -= value; }
 			}
 
 			public ReportDetail Report
@@ -364,6 +364,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private OrderAdditionalInfoSummaryComponent _additionalInfoComponent;
 
 		private List<IReportingPage> _extensionPages;
+		private event EventHandler _worklistItemChanged;
 
 		/// <summary>
 		/// Constructor
@@ -927,6 +928,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				StartReportingWorklistItem();
 				UpdateChildComponents();
+
+				// notify extension pages that the worklist item has changed
+				EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
+
 				OpenImages();
 			}
 			else
