@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			_command = null;
 		}
-
+		
 		private void ZoomIn()
 		{
 			CaptureBeginState();
@@ -270,8 +270,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public void Apply(IPresentationImage image)
 		{
 			IImageSpatialTransform transform = (IImageSpatialTransform)_operation.GetOriginator(image);
-			transform.ScaleToFit = false;
-			transform.Scale = this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			IImageSpatialTransform referenceTransform = (IImageSpatialTransform)this.SelectedSpatialTransformProvider.SpatialTransform;
+
+			transform.Scale = referenceTransform.Scale;
+			transform.ScaleToFit = referenceTransform.ScaleToFit;
 		}
 	}
 }
