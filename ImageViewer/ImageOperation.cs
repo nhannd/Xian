@@ -34,9 +34,9 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A base definition of an <see cref="IImageOperation"/>.
+	/// Abstract base class for an undoable operation performed on an <see cref="IPresentationImage"/>.
 	/// </summary>
-	public abstract class ImageOperation : IImageOperation
+	public abstract class ImageOperation : IUndoableOperation<IPresentationImage>
 	{
 		/// <summary>
 		/// Default protected constructor.
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		#region IImageOperation Members
+		#region IUndoableOperation{T} Members
 
 		/// <summary>
 		/// Gets the object whose state is to be captured or restored.
@@ -57,12 +57,12 @@ namespace ClearCanvas.ImageViewer
 		/// Typically, operations are applied to some aspect of the presentation image,
 		/// such as zoom, pan, window/level, etc. That aspect will usually be 
 		/// encapsulated as an object that is owned by the
-		/// by <see cref="IPresentationImage"/>.  <see cref="IImageOperation.GetOriginator"/> allows
+		/// by <see cref="IPresentationImage"/>.  <see cref="IUndoableOperation{T}.GetOriginator"/> allows
 		/// the plugin developer to define what that object is.
 		/// </para>
 		/// <para>
-		/// <see cref="IImageOperation.AppliesTo"/> should not return true if <see cref="IImageOperation.GetOriginator"/> has returned null.
-		/// However, it is valid for <see cref="IImageOperation.GetOriginator"/> to return a non-null value and <see cref="IImageOperation.AppliesTo"/>
+		/// <see cref="IUndoableOperation{T}.AppliesTo"/> should not return true if <see cref="IUndoableOperation{T}.GetOriginator"/> has returned null.
+		/// However, it is valid for <see cref="IUndoableOperation{T}.GetOriginator"/> to return a non-null value and <see cref="IUndoableOperation{T}.AppliesTo"/>
 		/// to return false.
 		/// </para>
 		/// </remarks>
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer
 		/// Gets whether or not the operation is applicable for the input <see cref="IPresentationImage"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IImageOperation.AppliesTo"/> should never return true if <see cref="IImageOperation.GetOriginator"/> has returned null.
+		/// <see cref="IUndoableOperation{T}.AppliesTo"/> should never return true if <see cref="IUndoableOperation{T}.GetOriginator"/> has returned null.
 		/// </remarks>
 		/// <returns>
 		/// Unless overridden, returns true if <see cref="GetOriginator"/> returns a non-null value, otherwise false.

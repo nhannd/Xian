@@ -116,6 +116,8 @@
     <Compile Include="SuggestionProviderBase.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
+    <Compile Include="UndaobleOperationApplicator.cs" />
+    <Compile Include="IUndoableOperation.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />
     <Compile Include="Actions\Tests\ActionModelStoreTests.cs" />

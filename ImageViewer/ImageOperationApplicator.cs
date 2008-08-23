@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
@@ -52,25 +53,133 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public class ImageOperationApplicator : IMemorable
 	{
-		private delegate IEnumerable<IPresentationImage> GetImagesDelegate();
+		#region LinkedImageEnumerator class
 
-		private readonly IPresentationImage _presentationImage;
-		private readonly IImageOperation _operation;
-		private bool _applyToAllImageSets;
+		private class LinkedImageEnumerator : IEnumerable<IPresentationImage>
+		{
+			private readonly IPresentationImage _referenceImage;
+			private bool _applyToAllImageSets;
+			private bool _excludeReferenceImage;
+
+			public LinkedImageEnumerator(IPresentationImage referenceImage)
+			{
+				_referenceImage = referenceImage;
+				_applyToAllImageSets = false;
+				_excludeReferenceImage = false;
+			}
+
+			public bool ApplyToAllImageSets
+			{
+				get { return _applyToAllImageSets; }
+				set { _applyToAllImageSets = value; }
+			}
+
+			public bool ExcludeReferenceImage
+			{
+				get { return _excludeReferenceImage; }
+				set { _excludeReferenceImage = value; }
+			}
+
+			private IEnumerable<IPresentationImage> GetAllLinkedImages()
+			{
+				IDisplaySet parentDisplaySet = _referenceImage.ParentDisplaySet;
+				IImageSet parentImageSet = parentDisplaySet.ParentImageSet;
+
+				// If display set is linked and selected, then iterate through all the linked images
+				// from the other linked display sets
+				if (parentDisplaySet.Linked)
+				{
+					if (_applyToAllImageSets)
+					{
+						foreach (IImageSet imageSet in parentImageSet.ParentLogicalWorkspace.ImageSets)
+						{
+							foreach (IDisplaySet displaySet in imageSet.LinkedDisplaySets)
+							{
+								foreach (IPresentationImage image in GetAllLinkedImages(displaySet))
+									yield return image;
+							}
+						}
+					}
+					else
+					{
+						foreach (IDisplaySet currentDisplaySet in parentImageSet.LinkedDisplaySets)
+						{
+							foreach (IPresentationImage image in GetAllLinkedImages(currentDisplaySet))
+								yield return image;
+						}
+					}
+				}
+				// If display set is just selected, then iterate through all the linked images
+				// in that display set.
+				else
+				{
+					foreach (IPresentationImage image in GetAllLinkedImages(parentDisplaySet))
+						yield return image;
+				}
+			}
+
+			private IEnumerable<IPresentationImage> GetAllLinkedImages(IDisplaySet displaySet)
+			{
+				foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
+				{
+					if (image != _referenceImage)
+						yield return image;
+				}
+			}
+
+			private IEnumerable<IPresentationImage> GetImages()
+			{
+				if (!_excludeReferenceImage)
+					yield return _referenceImage;
+
+				foreach (IPresentationImage image in this.GetAllLinkedImages())
+					yield return image;
+			}
+
+			#region IEnumerable<IPresentationImage> Members
+
+			public IEnumerator<IPresentationImage> GetEnumerator()
+			{
+				return GetImages().GetEnumerator();
+			}
+
+			#endregion
+
+			#region IEnumerable Members
+
+			System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+			{
+				return GetImages().GetEnumerator();
+			}
+
+			#endregion
+		}
+
+		#endregion
+
+		private readonly UndoableOperationApplicator<IPresentationImage> _applicator;
+		private readonly LinkedImageEnumerator _imageEnumerator;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="presentationImage">The 'current' <see cref="IPresentationImage"/>.</param>
+		/// <param name="referenceImage">The 'current' (or reference) <see cref="IPresentationImage"/>.</param>
 		/// <param name="operation">The operation to be performed on the current <see cref="IPresentationImage"/> and/or its linked images.</param>
-		public ImageOperationApplicator(IPresentationImage presentationImage, IImageOperation operation)
+		public ImageOperationApplicator(IPresentationImage referenceImage, IUndoableOperation<IPresentationImage> operation)
 		{
-			Platform.CheckForNullReference(presentationImage, "presentationImage");
+			Platform.CheckForNullReference(referenceImage, "referenceImage");
 			Platform.CheckForNullReference(operation, "operation");
 
-			_presentationImage = presentationImage;
-			_operation = operation;
-			_applyToAllImageSets = false;
+			_imageEnumerator = new LinkedImageEnumerator(referenceImage);
+
+			_applicator = new UndoableOperationApplicator<IPresentationImage>(operation, _imageEnumerator);
+			_applicator.AppliedOperation += RedrawImage;
+			_applicator.ItemMementoSet += RedrawImage;
+		}
+
+		private static void RedrawImage(object sender, ItemEventArgs<IPresentationImage> e)
+		{
+			e.Item.Draw();
 		}
 
 		/// <summary>
@@ -91,63 +200,17 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public bool ApplyToAllImageSets
 		{
-			get { return _applyToAllImageSets; }
-			set { _applyToAllImageSets = value; }
-		}
-
-
-		#region IMemorable Members
-
-		/// <summary>
-		/// Captures the state of all image originators that will be affected by the <see cref="IImageOperation"/>.
-		/// </summary>
-		/// <remarks>
-		/// Only those originators for which <see cref="IImageOperation.AppliesTo"/> returns true <b>and</b>
-		/// <see cref="IImageOperation.GetOriginator"/> returns a non-null value will have their states 
-		/// captured.
-		/// </remarks>
-		public virtual object CreateMemento()
-		{
-			List<ImageOriginatorMemento> imageOriginatorMementos = new List<ImageOriginatorMemento>();
-			foreach (IPresentationImage image in GetAllImages())
-			{
-				IMemorable originator = GetOriginator(image);
-				if (originator != null)
-				{
-					object memento = originator.CreateMemento();
-					imageOriginatorMementos.Add(new ImageOriginatorMemento(image, originator, memento));
-				}
-			}
-
-			return new ImageOperationApplicatorMemento(imageOriginatorMementos);
+			get { return _imageEnumerator.ApplyToAllImageSets; }
+			set { _imageEnumerator.ApplyToAllImageSets = value; }
 		}
 
 		/// <summary>
-		/// Restores the state of all image originators that were affected by the <see cref="IImageOperation"/>.
-		/// </summary>
-		public virtual void SetMemento(object memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
-			ImageOperationApplicatorMemento applicatorMemento = memento as ImageOperationApplicatorMemento;
-			Platform.CheckForInvalidCast(applicatorMemento, "memento", typeof(ImageOperationApplicatorMemento).FullName);
-
-			// Apply memento to all originators of linked images
-			foreach (ImageOriginatorMemento imageOriginatorMemento in applicatorMemento.ImageOriginatorMementos)
-			{
-				imageOriginatorMemento.Originator.SetMemento(imageOriginatorMemento.Memento);
-				imageOriginatorMemento.PresentationImage.Draw();
-			}
-		}
-
-		#endregion
-
-		/// <summary>
-		/// Applies the same <see cref="IImageOperation"/> to the current image as well as all its linked images.
+		/// Applies the same <see cref="IUndoableOperation{T}"/> to the current image as well as all its linked images.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// <see cref="IImageOperation.Apply"/> will be called only for images where 
-		/// <see cref="IImageOperation.AppliesTo"/> has returned true <b>and</b> <see cref="IImageOperation.GetOriginator"/> 
+		/// <see cref="IUndoableOperation{T}.Apply"/> will be called only for images where 
+		/// <see cref="IUndoableOperation{T}.AppliesTo"/> has returned true <b>and</b> <see cref="IUndoableOperation{T}.GetOriginator"/> 
 		/// has returned a non-null value.
 		/// </para>
 		/// <para>
@@ -156,16 +219,17 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public void ApplyToAllImages()
 		{
-			Apply(GetAllImages);
+			_imageEnumerator.ExcludeReferenceImage = false;
+			_applicator.Apply();
 		}
 
 		/// <summary>
-		/// Applies the same <see cref="IImageOperation"/> to all linked images, but not the current image itself.
+		/// Applies the same <see cref="IUndoableOperation{T}"/> to all linked images, but not the current image itself.
 		/// </summary>
 		/// <remarks>
 		/// <para>
-		/// <see cref="IImageOperation.Apply"/> will be called only for images where 
-		/// <see cref="IImageOperation.AppliesTo"/> has returned true <b>and</b> <see cref="IImageOperation.GetOriginator"/> 
+		/// <see cref="IUndoableOperation{T}.Apply"/> will be called only for images where 
+		/// <see cref="IUndoableOperation{T}.AppliesTo"/> has returned true <b>and</b> <see cref="IUndoableOperation{T}.GetOriginator"/> 
 		/// has returned a non-null value.
 		/// </para>
 		/// <para>
@@ -174,86 +238,23 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public void ApplyToLinkedImages()
 		{
-			Apply(GetAllLinkedImages);
+			_imageEnumerator.ExcludeReferenceImage = true;
+			_applicator.Apply();
 		}
 
-		private void Apply(GetImagesDelegate getImages)
+		#region IMemorable Members
+
+		public object CreateMemento()
 		{
-			foreach (IPresentationImage image in getImages())
-			{
-				if (AppliesTo(image))
-				{
-					_operation.Apply(image);
-					image.Draw();
-				}
-			}
+			_imageEnumerator.ExcludeReferenceImage = false;
+			return _applicator.CreateMemento();
 		}
 
-		private IEnumerable<IPresentationImage> GetAllImages()
+		public void SetMemento(object memento)
 		{
-			yield return _presentationImage;
-
-			foreach (IPresentationImage image in this.GetAllLinkedImages())
-				yield return image;
+			_applicator.SetMemento(memento);
 		}
 
-		private IEnumerable<IPresentationImage> GetAllLinkedImages()
-		{
-			IDisplaySet parentDisplaySet = _presentationImage.ParentDisplaySet;
-			IImageSet parentImageSet = parentDisplaySet.ParentImageSet;
-
-			// If display set is linked and selected, then iterate through all the linked images
-			// from the other linked display sets
-			if (parentDisplaySet.Linked)
-			{
-				if (_applyToAllImageSets)
-				{
-					foreach (IImageSet imageSet in parentImageSet.ParentLogicalWorkspace.ImageSets)
-					{
-						foreach (IDisplaySet displaySet in imageSet.LinkedDisplaySets)
-						{
-							foreach (IPresentationImage image in GetAllLinkedImages(displaySet))
-								yield return image;
-						}
-					}
-				}
-				else
-				{
-					foreach (IDisplaySet currentDisplaySet in parentImageSet.LinkedDisplaySets)
-					{
-						foreach (IPresentationImage image in GetAllLinkedImages(currentDisplaySet))
-							yield return image;
-					}
-				} 
-			}
-			// If display set is just selected, then iterate through all the linked images
-			// in that display set.
-			else
-			{
-				foreach (IPresentationImage image in GetAllLinkedImages(parentDisplaySet))
-					yield return image;
-			}
-		}
-
-		private IEnumerable<IPresentationImage> GetAllLinkedImages(IDisplaySet displaySet)
-		{
-			foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
-			{
-				if (image != _presentationImage)
-					yield return image;
-			}
-		}
-
-		private bool AppliesTo(IPresentationImage image)
-		{
-			return GetOriginator(image) != null;
-		}
-
-		private IMemorable GetOriginator(IPresentationImage image)
-		{
-			IMemorable originator = _operation.GetOriginator(image);
-			bool applies = _operation.AppliesTo(image);
-			return applies ? originator : null;
-		}
+		#endregion
 	}
 }

@@ -549,4 +549,13 @@ Please check the log for more details.</value>
   <data name="LabelZoomFit" xml:space="preserve">
     <value>Fit to Tile</value>
   </data>
+  <data name="MenuMatchFieldOfView" xml:space="preserve">
+    <value>Match Field of View</value>
+  </data>
+  <data name="ToolbarMatchFieldOfView" xml:space="preserve">
+    <value>Match Field of View</value>
+  </data>
+  <data name="CommandMatchFieldOfView" xml:space="preserve">
+    <value>Match Field of View</value>
+  </data>
 </root>

@@ -133,6 +133,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Match Field of View.
+        /// </summary>
+        internal static string CommandMatchFieldOfView {
+            get {
+                return ResourceManager.GetString("CommandMatchFieldOfView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pan.
         /// </summary>
         internal static string CommandPan {
@@ -657,6 +666,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Match Field of View.
+        /// </summary>
+        internal static string MenuMatchFieldOfView {
+            get {
+                return ResourceManager.GetString("MenuMatchFieldOfView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Memory Usage.
         /// </summary>
         internal static string MenuMemoryUsage {
@@ -1095,6 +1113,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string ToolbarInvert {
             get {
                 return ResourceManager.GetString("ToolbarInvert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match Field of View.
+        /// </summary>
+        internal static string ToolbarMatchFieldOfView {
+            get {
+                return ResourceManager.GetString("ToolbarMatchFieldOfView", resourceCulture);
             }
         }
         

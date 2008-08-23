@@ -187,7 +187,6 @@
     <Compile Include="Graphics\SpatialTransformImageOperation.cs" />
     <Compile Include="IImageOperation.cs" />
     <Compile Include="ImageOperation.cs" />
-    <Compile Include="ImageOperationApplicatorMemento.cs" />
     <Compile Include="Imaging\AlgorithmCalculatedVoiLutLinear.cs" />
     <Compile Include="Imaging\ColorPixelData.cs" />
     <Compile Include="Graphics\GraphicSelectionChangedEventArgs.cs" />

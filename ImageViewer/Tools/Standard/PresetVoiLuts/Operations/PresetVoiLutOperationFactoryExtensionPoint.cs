@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		bool Valid { get; }
 	}
 
-	public interface IPresetVoiLutOperation : IImageOperation
+	public interface IPresetVoiLutOperation : IUndoableOperation<IPresentationImage>
 	{
 		string Name { get; }
 		string Description { get; }
