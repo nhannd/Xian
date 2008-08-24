@@ -303,14 +303,17 @@ namespace ClearCanvas.Common
                 {
                     lock (_syncRoot)
                     {
-						string commonDirectory =
-							string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _commonSubFolder);
+						if (_commonDirectory == null)
+						{
+							string commonDirectory =
+								string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _commonSubFolder);
 
-						if (Directory.Exists(commonDirectory))
-							_commonDirectory = commonDirectory;
-						else
-						    _commonDirectory = InstallDirectory;
-					}
+							if (Directory.Exists(commonDirectory))
+								_commonDirectory = commonDirectory;
+							else
+								_commonDirectory = InstallDirectory;
+						}
+                    }
                 }
 
                 return _commonDirectory;
