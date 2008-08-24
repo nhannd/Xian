@@ -53,6 +53,8 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Right));
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
+
+			_annotationItems.Add(new DFOVAnnotationItem());
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

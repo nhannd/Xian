@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
@@ -66,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (image == null)
 				return false;
 
-			IImageSpatialTransform transform = GetImageTransform(image);
+			ImageSpatialTransform transform = GetImageTransform(image);
 			if (transform == null)
 				return false;
 
@@ -79,29 +82,70 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void Apply(IPresentationImage image)
 		{
-			IImageSpatialTransform referenceTransform = GetImageTransform(ReferenceImage);
-			IImageSpatialTransform matchTransform = GetImageTransform(image);
+			ImageSpatialTransform matchTransform = GetImageTransform(image);
 
 			// this is the reference image box, so we just want to turn off 'scale to fit'
 			// and set the scale to be the same as the reference image.
 			if (image.ParentDisplaySet.ImageBox == ReferenceImageBox)
 			{
+				ImageSpatialTransform referenceTransform = GetImageTransform(ReferenceImage);
 				matchTransform.ScaleToFit = false;
 				matchTransform.Scale = referenceTransform.Scale;
 				return;
 			}
 
-			Frame referenceFrame = GetFrame(ReferenceImage);
-			Frame matchFrame = GetFrame(image);
-
-			//effective size in mm/pixel
-			float effectivePixelSize = (float)referenceFrame.NormalizedPixelSpacing.Column / referenceTransform.Scale;
+			//match * x = reference
+			float referenceDisplayedWidth = GetDisplayedWidth(ReferenceImage, ReferenceImage.ClientRectangle);
+			float matchDisplayedWidth = GetDisplayedWidth(image, image.ParentDisplaySet.ImageBox.Tiles[0].ClientRectangle);
 
 			matchTransform.ScaleToFit = false;
-			matchTransform.Scale = (float)matchFrame.NormalizedPixelSpacing.Column / effectivePixelSize;
+			matchTransform.Scale *= matchDisplayedWidth / referenceDisplayedWidth;
 		}
 
 		#endregion
+
+		#region Private Methods
+
+		private static float GetDisplayedWidth(IPresentationImage presentationImage, Rectangle clientRectangle)
+		{
+			ImageSpatialTransform transform = GetImageTransform(presentationImage);
+			Frame frame = GetFrame(presentationImage);
+
+			RectangleF sourceRectangle = new RectangleF(0, 0, frame.Columns, frame.Rows);
+			RectangleF destinationRectangle = transform.ConvertToDestination(sourceRectangle);
+			destinationRectangle = RectangleUtilities.Intersect(destinationRectangle, clientRectangle);
+
+			float effectivePixelSizeX = (float)frame.NormalizedPixelSpacing.Column / transform.Scale;
+			float effectivePixelSizeY = (float)frame.NormalizedPixelSpacing.Row / transform.Scale;
+
+			// DFOV in cm
+			if (!IsRotated(transform))
+				return Math.Abs(destinationRectangle.Width * effectivePixelSizeX / 10);
+			else
+				return Math.Abs(destinationRectangle.Width * effectivePixelSizeY / 10);
+		}
+
+		private static bool IsRotated(SpatialTransform transform)
+		{
+			float m12 = transform.CumulativeTransform.Elements[2];
+			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
+		}
+
+		private static ImageSpatialTransform GetImageTransform(IPresentationImage image)
+		{
+			if (image != null && image is ISpatialTransformProvider)
+				return ((ISpatialTransformProvider)image).SpatialTransform as ImageSpatialTransform;
+
+			return null;
+		}
+
+		private static Frame GetFrame(IPresentationImage image)
+		{
+			if (image != null && image is IImageSopProvider)
+				return ((IImageSopProvider)image).Frame;
+
+			return null;
+		}
 
 		private static void RedrawImage(object sender, ItemEventArgs<IPresentationImage> e)
 		{
@@ -120,20 +164,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		private static IImageSpatialTransform GetImageTransform(IPresentationImage image)
-		{
-			if (image != null && image is ISpatialTransformProvider)
-				return ((ISpatialTransformProvider)image).SpatialTransform as IImageSpatialTransform;
-
-			return null;
-		}
-
-		private static Frame GetFrame(IPresentationImage image)
-		{
-			if (image != null && image is IImageSopProvider)
-				return ((IImageSopProvider)image).Frame;
-
-			return null;
-		}
+		#endregion
 	}
 }

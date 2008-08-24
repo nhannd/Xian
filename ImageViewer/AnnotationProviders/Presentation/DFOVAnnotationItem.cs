@@ -29,58 +29,74 @@
 
 #endregion
 
-// Implement this later
+using System;
+using ClearCanvas.ImageViewer.Annotations;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.Iod;
+using System.Drawing;
+using ClearCanvas.ImageViewer.Mathematics;
 
-/*
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 {
-	internal sealed class DFOVAnnotationItem : ResourceResolvingAnnotationItem
+	internal sealed class DFOVAnnotationItem : AnnotationItem
 	{
-		public DFOVAnnotationItem(IAnnotationItemProvider ownerProvider)
-			: base("Presentation.DFOV", ownerProvider)
+		public DFOVAnnotationItem()
+			: base("Presentation.DFOV", new AnnotationResourceResolver(typeof(DFOVAnnotationItem).Assembly))
 		{ 
-		
 		}
 
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (presentationImage == null)
-				return string.Empty;
-
+				return String.Empty;
+				
 			IImageSopProvider imageSopProvider = presentationImage as IImageSopProvider;
-
 			if (imageSopProvider  == null)
-				return string.Empty;
-
-			ImageSop imageSop = imageSopProvider.ImageSop;
-
+				return String.Empty;
+				
 			ISpatialTransformProvider spatialTransformProvider = presentationImage as ISpatialTransformProvider;
-
 			if (spatialTransformProvider == null)
-				return string.Empty;
+				return String.Empty;
 
-			IImageSpatialTransform spatialTransform = spatialTransformProvider.SpatialTransform as IImageSpatialTransform;
-			spatialTransform.
+			ImageSpatialTransform transform = spatialTransformProvider.SpatialTransform as ImageSpatialTransform;
+			if (transform == null)
+				return String.Empty;
 
-			double pixelSpacingX, pixelSpacingY;
-			ImageSopHelper.GetModalityPixelSpacing(image.ImageSop, out pixelSpacingX, out pixelSpacingY);
+			Frame frame = imageSopProvider.Frame;
+			PixelSpacing normalizedPixelSpacing = frame.NormalizedPixelSpacing;
+			if (normalizedPixelSpacing.IsNull)
+				return String.Empty;
 
-			bool pixelSpacingInvalid =  pixelSpacingX <= float.Epsilon ||
-										pixelSpacingY <= float.Epsilon ||
-										double.IsNaN(pixelSpacingX) ||
-										double.IsNaN(pixelSpacingY);
+			RectangleF sourceRectangle = new RectangleF(0, 0, frame.Columns, frame.Rows);
+			RectangleF destinationRectangle = transform.ConvertToDestination(sourceRectangle);
+			destinationRectangle = RectangleUtilities.Intersect(destinationRectangle, presentationImage.ClientRectangle);
 
-			if (pixelSpacingInvalid)
- 				return String.Empty;
-  
+			float effectivePixelSizeX = (float)frame.NormalizedPixelSpacing.Column / transform.Scale;
+			float effectivePixelSizeY = (float)frame.NormalizedPixelSpacing.Row / transform.Scale;
+
+			double displayedFieldOfViewX;
+			double displayedFieldOfViewY;
+
 			// DFOV in cm
-			double displayedFieldOfViewX = imageSop.Columns * pixelSpacingX / 10;
-			double displayedFieldOfViewY = imageSop.Rows * pixelSpacingY / 10;
+			if (!IsRotated(transform))
+			{
+				displayedFieldOfViewX = Math.Abs(destinationRectangle.Width * effectivePixelSizeX / 10);
+				displayedFieldOfViewY = Math.Abs(destinationRectangle.Height * effectivePixelSizeY / 10);
+			}
+			else
+			{
+				displayedFieldOfViewX = Math.Abs(destinationRectangle.Height * effectivePixelSizeX / 10);
+				displayedFieldOfViewY = Math.Abs(destinationRectangle.Width * effectivePixelSizeY / 10);
+			}
 
-			string str = String.Format("{0:F1} x {1:F1} cm", displayedFieldOfViewX, displayedFieldOfViewY);
+			return String.Format("{0:F1} x {1:F1} cm", displayedFieldOfViewX, displayedFieldOfViewY);
+		}
 
-			return str;
+		private static bool IsRotated(SpatialTransform transform)
+		{
+			float m12 = transform.CumulativeTransform.Elements[2];
+			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
 		}
 	}
 }
-*/
