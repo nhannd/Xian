@@ -162,7 +162,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (scale <= 0)
 			{
 				transform.ScaleToFit = true;
-				transform.Scale = 1.0F;
 			}
 			else
 			{
