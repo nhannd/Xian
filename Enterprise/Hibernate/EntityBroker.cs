@@ -75,8 +75,14 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public IList<TEntity> Find(TSearchCriteria[] criteria, SearchResultPage page, bool cache)
         {
-            HqlQuery query = new HqlQuery(string.Format("from {0} x", typeof(TEntity).Name));
-            query.Page = page;
+			HqlProjectionQuery query = new HqlProjectionQuery(new HqlFrom(typeof(TEntity).Name, "x"));
+			query.Page = page;
+
+			// add fetch joins
+			foreach (string fetchJoin in GetDefaultFetchJoins())
+        	{
+        		query.Froms[0].Joins.Add(new HqlJoin("x." + fetchJoin, null, HqlJoinMode.Inner, true));
+        	}
 
             HqlOr or = new HqlOr();
             foreach (TSearchCriteria c in criteria)
@@ -188,5 +194,20 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (!NHibernateUtil.IsInitialized(association))
                 NHibernateUtil.Initialize(association);
         }
-    }
+
+		/// <summary>
+		/// Gets the set of fetch-joins that will be placed into the query by default.
+		/// </summary>
+		/// <remarks>
+		/// Sub-classes may override this to provide a default set of fetch-joins, where
+		/// each entry in the array is the name of a property or compound property on the
+		/// entity class (e.g. for a Procedure, one might have "Order" and "Order.Patient").
+		/// WARNING: this API is subject to change.
+		/// </remarks>
+		/// <returns></returns>
+		protected virtual string[] GetDefaultFetchJoins()
+		{
+			return new string[] { };
+		}
+	}
 }

@@ -43,5 +43,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
     public partial class PatientProfileBroker : EntityBroker<PatientProfile, PatientProfileSearchCriteria>, IPatientProfileBroker
     {
+		protected override string[] GetDefaultFetchJoins()
+		{
+			return new string[] {"Patient"};
+		}
     }
 }
