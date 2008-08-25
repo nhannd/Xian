@@ -613,6 +613,10 @@ var Table = {
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value;; }
 				if(column.size) input.size = column.size;
+
+                // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+                // This cannot be done in CSS since IE ignores the "type" pseudo selector.
+                input.style.padding = '0px';
 				
 				input.onkeyup = function()
 				{

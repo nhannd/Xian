@@ -107,7 +107,7 @@
 							getValue: function(item) { return item.weightValue; },
 							setValue: function(item, value) 
 							{ 
-								item.weightValue = parseFloat(value); 
+								item.weightValue = parseFloat(value) || null; 
 							},
 							getError: function(item) { return null; }
 						},
@@ -127,7 +127,7 @@
 						{	label: "Height",
 							cellType: "text",
 							getValue: function(item) { return item.heightValue; },
-							setValue: function(item, value) { item.heightValue = parseFloat(value); },
+							setValue: function(item, value) { item.heightValue = parseFloat(value) || null; },
 							getError: function(item) { return null; }
 						},
 						{	label: "cm/in",
@@ -146,7 +146,7 @@
 						{	label: "Blood Glucose Level",
 							cellType: "text",
 							getValue: function(item) { return item.bloodGlucoseLevel; },
-							setValue: function(item, value) { item.bloodGlucoseLevel = parseFloat(value); },
+							setValue: function(item, value) { item.bloodGlucoseLevel = parseFloat(value) || null; },
 							getError: function(item) { return null; }
 						},
 						{	label: "mmol/L, mg/DL",
@@ -171,13 +171,13 @@
 						{	label: "Heart Rate (bpm)",
 							cellType: "text",
 							getValue: function(item) { return item.heartRate; },
-							setValue: function(item, value) { item.heartRate = parseInt(value); item.heartRateUnit = "bpm"; },
+							setValue: function(item, value) { item.heartRate = parseInt(value) || null; item.heartRateUnit = "bpm"; },
 							getError: function(item) { return null; }
 						},
 						{	label: "Temperature (°C)",
 							cellType: "text",
 							getValue: function(item) { return item.temperature; },
-							setValue: function(item, value) { item.temperature = parseInt(value); item.temperatureUnit = "°C"; },
+							setValue: function(item, value) { item.temperature = parseInt(value) || null; item.temperatureUnit = "°C"; },
 							getError: function(item) { return null; }
 						},
 						{	label: "Body Surface Area",
