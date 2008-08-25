@@ -71,12 +71,24 @@
     <Compile Include="ComboBoxField.Designer.cs">
       <DependentUpon>ComboBoxField.cs</DependentUpon>
     </Compile>
+    <Compile Include="DragDropObject.cs" />
     <Compile Include="DropDownButtonToolbarItem.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="DropDownToolbarItem.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ConvertEnum.cs" />
+    <Compile Include="GalleryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="GalleryComponentControl.Designer.cs">
+      <DependentUpon>GalleryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GalleryComponentListViewControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="GalleryComponentView.cs" />
     <Compile Include="GalleryView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -465,6 +477,10 @@
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
     <None Include="Resources\ClearFilterMini.png" />
+    <EmbeddedResource Include="GalleryComponentControl.resx">
+      <DependentUpon>GalleryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\ClearFilterLarge.png" />
     <EmbeddedResource Include="Resources\ClearFilterMedium.png" />
     <None Include="Resources\navBackButton.Image.png" />

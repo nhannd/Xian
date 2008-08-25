@@ -40,6 +40,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+	[Obsolete]
 	public partial class GalleryView : UserControl
 	{
 		private IBindingList _gallery;
