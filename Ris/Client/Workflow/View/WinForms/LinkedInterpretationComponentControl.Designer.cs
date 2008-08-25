@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
 			this._worklistItemTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._okButton = new System.Windows.Forms.Button();
-			this._cancelButton = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
@@ -45,23 +44,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(319, 318);
+			this._okButton.Location = new System.Drawing.Point(399, 318);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 2;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
-			// 
-			// _cancelButton
-			// 
-			this._cancelButton.Location = new System.Drawing.Point(400, 318);
-			this._cancelButton.Name = "_cancelButton";
-			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 3;
-			this._cancelButton.Text = "Cancel";
-			this._cancelButton.UseVisualStyleBackColor = true;
-			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// label1
 			// 
@@ -77,7 +66,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._worklistItemTableView);
 			this.Name = "LinkedInterpretationComponentControl";
@@ -90,8 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TableView _worklistItemTableView;
-        private System.Windows.Forms.Button _okButton;
-        private System.Windows.Forms.Button _cancelButton;
+		private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Label label1;
     }
 }

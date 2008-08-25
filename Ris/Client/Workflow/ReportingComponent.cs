@@ -1010,9 +1010,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// if creating a new report, check for linked interpretations
 
 				List<ReportingWorklistItem> linkedInterpretations;
-				bool ok = PromptForLinkedInterpretations(item, out linkedInterpretations);
-				if (!ok)
-					return false;
+				PromptForLinkedInterpretations(item, out linkedInterpretations);
 
 				// start the interpretation step
 				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
