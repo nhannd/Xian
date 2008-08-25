@@ -20,9 +20,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class MatchFieldOfViewTool : ImageViewerTool, IUndoableOperation<IPresentationImage>
 	{
+		#region Private Fields
+
+		private float _referenceDisplayedWidth;
+		private RectangleF _referenceDisplayRectangle;
+
+		#endregion
+
 		public MatchFieldOfViewTool()
 		{
 		}
+
+		#region Private Properties
 
 		private IImageBox ReferenceImageBox
 		{
@@ -34,6 +43,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get { return base.ImageViewer.SelectedPresentationImage; }
 		}
 
+		#endregion
+
+		#region Public Methods
+
 		public void MatchFieldOfView()
 		{
 			if (!AppliesTo(ReferenceImage))
@@ -42,20 +55,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			UndoableOperationApplicator<IPresentationImage> applicator = 
 				new UndoableOperationApplicator<IPresentationImage>(this, GetAllImages());
 
+			applicator.AppliedOperation += RedrawImage;
 			applicator.ItemMementoSet += RedrawImage;
 
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandMatchFieldOfView;
 			command.BeginState = applicator.CreateMemento();
 
+			CalculateReferenceDisplayValues();
 			applicator.Apply();
 
 			command.EndState = applicator.CreateMemento();
 			if (!command.BeginState.Equals(command.EndState))
 				base.ImageViewer.CommandHistory.AddCommand(command);
-
-			base.ImageViewer.PhysicalWorkspace.Draw();
 		}
+
+		#endregion
 
 		#region IUndoableOperation<IPresentationImage> Members
 
@@ -66,11 +81,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public bool AppliesTo(IPresentationImage image)
 		{
-			if (image == null)
-				return false;
-
 			ImageSpatialTransform transform = GetImageTransform(image);
 			if (transform == null)
+				return false;
+
+			//mustn't be rotated at a non-right angle to the viewport.
+			if (transform.RotationXY % 90 != 0)
 				return false;
 
 			Frame frame = GetFrame(image);
@@ -84,51 +100,62 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			ImageSpatialTransform matchTransform = GetImageTransform(image);
 
-			// this is the reference image box, so we just want to turn off 'scale to fit'
-			// and set the scale to be the same as the reference image.
 			if (image.ParentDisplaySet.ImageBox == ReferenceImageBox)
 			{
+				// this is the reference image box, so we just want to turn off 'scale to fit'
+				// and set the scale to be the same as the reference image.
 				ImageSpatialTransform referenceTransform = GetImageTransform(ReferenceImage);
 				matchTransform.ScaleToFit = false;
 				matchTransform.Scale = referenceTransform.Scale;
-				return;
 			}
+			else
+			{
+				//get the displayed width (in mm) for the same size display rectangle in the image to be matched.
+				float matchDisplayedWidth = GetDisplayedWidth(image, _referenceDisplayRectangle);
 
-			//match * x = reference
-			float referenceDisplayedWidth = GetDisplayedWidth(ReferenceImage, ReferenceImage.ClientRectangle);
-			float matchDisplayedWidth = GetDisplayedWidth(image, image.ParentDisplaySet.ImageBox.Tiles[0].ClientRectangle);
+				float rescaleAmount = matchDisplayedWidth/_referenceDisplayedWidth;
+				matchTransform.ScaleToFit = false;
 
-			matchTransform.ScaleToFit = false;
-			matchTransform.Scale *= matchDisplayedWidth / referenceDisplayedWidth;
+				if (FloatComparer.AreEqual(rescaleAmount, 1.0F))
+					return;
+
+				matchTransform.Scale *= rescaleAmount;
+			}
 		}
 
 		#endregion
 
 		#region Private Methods
 
-		private static float GetDisplayedWidth(IPresentationImage presentationImage, Rectangle clientRectangle)
+		private void CalculateReferenceDisplayValues()
+		{
+			ImageSpatialTransform transform = GetImageTransform(ReferenceImage);
+			Frame frame = GetFrame(ReferenceImage);
+
+			//calculate the width (in mm) of the portion of the image that is visible on the display,
+			//as well as the display rectangle it occupies.
+
+			RectangleF sourceRectangle = new RectangleF(0, 0, frame.Columns, frame.Rows);
+			_referenceDisplayRectangle = transform.ConvertToDestination(sourceRectangle);
+			_referenceDisplayRectangle = RectangleUtilities.Intersect(_referenceDisplayRectangle, ReferenceImage.ClientRectangle);
+
+			_referenceDisplayedWidth = GetDisplayedWidth(ReferenceImage, _referenceDisplayRectangle);
+		}
+
+		#region Private Helper Methods
+
+		private static float GetDisplayedWidth(IPresentationImage presentationImage, RectangleF referenceDisplayedRectangle)
 		{
 			ImageSpatialTransform transform = GetImageTransform(presentationImage);
 			Frame frame = GetFrame(presentationImage);
 
-			RectangleF sourceRectangle = new RectangleF(0, 0, frame.Columns, frame.Rows);
-			RectangleF destinationRectangle = transform.ConvertToDestination(sourceRectangle);
-			destinationRectangle = RectangleUtilities.Intersect(destinationRectangle, clientRectangle);
-
 			float effectivePixelSizeX = (float)frame.NormalizedPixelSpacing.Column / transform.Scale;
 			float effectivePixelSizeY = (float)frame.NormalizedPixelSpacing.Row / transform.Scale;
 
-			// DFOV in cm
-			if (!IsRotated(transform))
-				return Math.Abs(destinationRectangle.Width * effectivePixelSizeX / 10);
+			if (transform.RotationXY == 90 || transform.RotationXY == 270)
+				return Math.Abs(referenceDisplayedRectangle.Width * effectivePixelSizeY / 10);
 			else
-				return Math.Abs(destinationRectangle.Width * effectivePixelSizeY / 10);
-		}
-
-		private static bool IsRotated(SpatialTransform transform)
-		{
-			float m12 = transform.CumulativeTransform.Elements[2];
-			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
+				return Math.Abs(referenceDisplayedRectangle.Width * effectivePixelSizeX / 10);
 		}
 
 		private static ImageSpatialTransform GetImageTransform(IPresentationImage image)
@@ -147,11 +174,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return null;
 		}
 
-		private static void RedrawImage(object sender, ItemEventArgs<IPresentationImage> e)
-		{
-			e.Item.Draw();
-		}
-
 		private IEnumerable<IPresentationImage> GetAllImages()
 		{
 			foreach (IImageBox imageBox in base.ImageViewer.PhysicalWorkspace.ImageBoxes)
@@ -164,6 +186,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
+		private static void RedrawImage(object sender, ItemEventArgs<IPresentationImage> e)
+		{
+			e.Item.Draw();
+		}
+
+		#endregion
 		#endregion
 	}
 }

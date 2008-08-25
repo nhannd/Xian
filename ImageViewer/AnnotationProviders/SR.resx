@@ -642,4 +642,7 @@
   <data name="ValueLossy" xml:space="preserve">
     <value>LOSSY</value>
   </data>
+  <data name="ValueNotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
 </root>

@@ -63,6 +63,9 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (transform == null)
 				return String.Empty;
 
+			if (transform.RotationXY % 90 != 0)
+				return SR.ValueNotApplicable;
+
 			Frame frame = imageSopProvider.Frame;
 			PixelSpacing normalizedPixelSpacing = frame.NormalizedPixelSpacing;
 			if (normalizedPixelSpacing.IsNull)
@@ -78,25 +81,18 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			double displayedFieldOfViewX;
 			double displayedFieldOfViewY;
 
-			// DFOV in cm
-			if (!IsRotated(transform))
-			{
-				displayedFieldOfViewX = Math.Abs(destinationRectangle.Width * effectivePixelSizeX / 10);
-				displayedFieldOfViewY = Math.Abs(destinationRectangle.Height * effectivePixelSizeY / 10);
-			}
-			else
+			if (transform.RotationXY == 90 || transform.RotationXY == 270)
 			{
 				displayedFieldOfViewX = Math.Abs(destinationRectangle.Height * effectivePixelSizeX / 10);
 				displayedFieldOfViewY = Math.Abs(destinationRectangle.Width * effectivePixelSizeY / 10);
 			}
+			else
+			{
+				displayedFieldOfViewX = Math.Abs(destinationRectangle.Width * effectivePixelSizeX / 10);
+				displayedFieldOfViewY = Math.Abs(destinationRectangle.Height * effectivePixelSizeY / 10);
+			}
 
 			return String.Format("{0:F1} x {1:F1} cm", displayedFieldOfViewX, displayedFieldOfViewY);
-		}
-
-		private static bool IsRotated(SpatialTransform transform)
-		{
-			float m12 = transform.CumulativeTransform.Elements[2];
-			return !FloatComparer.AreEqual(m12, 0.0f, 0.001f);
 		}
 	}
 }
