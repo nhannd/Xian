@@ -155,8 +155,8 @@ namespace ClearCanvas.Ris.Application.Services
 			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
 				delegate(string word)
 				{
-					// therefore it is safe to strip the dashes out
 					WorklistItemSearchCriteria c = new WorklistItemSearchCriteria(_procedureStepClass);
+					c.Order.AccessionNumber.StartsWith(word);
 					return c;
 				}));
 
