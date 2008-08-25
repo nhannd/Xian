@@ -209,7 +209,7 @@ namespace ClearCanvas.Ris.Client {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Mask applied to the \'%N\' placeholder in an Accession number format string")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("000-000-000")]
+        [global::System.Configuration.DefaultSettingValueAttribute("000000000")]
         public string AccessionNumberMask {
             get {
                 return ((string)(this["AccessionNumberMask"]));
