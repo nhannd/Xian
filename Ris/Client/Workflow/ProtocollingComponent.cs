@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_worklistRef = worklistRef;
 			_worklistClassName = worklistClassName;
 
-			_protocolNextItem = _componentMode == ProtocollingComponentMode.Assign;
+			_protocolNextItem = this.CanProtocolMultipleItems;
 
 			_skippedItems = new List<ReportingWorklistItem>();
 			_worklistCache = new Stack<ReportingWorklistItem>();
@@ -184,7 +184,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ShowStatusText
 		{
-			get { return _componentMode == ProtocollingComponentMode.Assign; }
+			get { return this.CanProtocolMultipleItems; }
 		}
 
 		/// <summary>
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ProtocolNextItemEnabled
 		{
-			get { return _componentMode == ProtocollingComponentMode.Assign; }
+			get { return this.CanProtocolMultipleItems; }
 		}
 
 		#region Accept
@@ -439,6 +439,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		#region Private methods
+
+		private bool CanProtocolMultipleItems
+		{
+			get { return _componentMode == ProtocollingComponentMode.Assign && (_worklistRef != null || _worklistClassName != null); }
+		}
 
 		/// <summary>
 		/// Invalidates source folders appropriate to current <see cref="ProtocollingComponentMode"/>
