@@ -153,18 +153,18 @@ namespace ClearCanvas.ImageViewer
 				MouseImageViewerTool mouseButtonHandler = tool as MouseImageViewerTool;
 				if (mouseButtonHandler != null)
 				{
+					//Active mouse button assignments take precedence over inactive ones.
 					if (mouseButtonHandler.Active && shortcut.Equals(mouseButtonHandler.MouseButton))
 						return mouseButtonHandler;
 				}
 			}
-
 
 			foreach (ITool tool in _setRegisteredTools.Keys)
 			{
 				MouseImageViewerTool mouseButtonHandler = tool as MouseImageViewerTool;
 				if (mouseButtonHandler != null)
 				{
-					if (shortcut.Equals(mouseButtonHandler.ModifiedMouseButtonShortcut))
+					if (shortcut.Equals(mouseButtonHandler.InactiveMouseButtonShortcut))
 						return mouseButtonHandler;
 				}
 			}

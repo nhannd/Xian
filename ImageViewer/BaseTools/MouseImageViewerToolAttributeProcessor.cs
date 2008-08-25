@@ -70,15 +70,15 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		private static void InitializeModifiedMouseToolButton(MouseImageViewerTool mouseTool)
 		{
-			object[] modifiedButtonAssignments = mouseTool.GetType().GetCustomAttributes(typeof(ModifiedMouseToolButtonAttribute), true);
+			object[] modifiedButtonAssignments = mouseTool.GetType().GetCustomAttributes(typeof(InactiveMouseToolButtonAttribute), true);
 			if (modifiedButtonAssignments == null || modifiedButtonAssignments.Length == 0)
 				return;
 
-			ModifiedMouseToolButtonAttribute attribute = (ModifiedMouseToolButtonAttribute)modifiedButtonAssignments[0];
+			InactiveMouseToolButtonAttribute attribute = (InactiveMouseToolButtonAttribute)modifiedButtonAssignments[0];
 
 			try
 			{
-				mouseTool.ModifiedMouseButtonShortcut = attribute.Shortcut;
+				mouseTool.InactiveMouseButtonShortcut = attribute.Shortcut;
 			}
 			catch (Exception e)
 			{
