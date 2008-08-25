@@ -522,8 +522,8 @@
   <data name="TitlePrintDowntimeForms" xml:space="preserve">
     <value>Print Downtime Forms</value>
   </data>
-  <data name="TitlePrintReport" xml:space="preserve">
-    <value>Print Report</value>
+  <data name="TitlePrintFaxReport" xml:space="preserve">
+    <value>Print/Fax Report</value>
   </data>
   <data name="TitleProtocollingFolderSystem" xml:space="preserve">
     <value>Protocolling</value>

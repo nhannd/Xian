@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
 					component,
-					SR.TitlePrintReport);
+					SR.TitlePrintFaxReport);
 
 				return exitCode == ApplicationComponentExitCode.Accepted;
 			}

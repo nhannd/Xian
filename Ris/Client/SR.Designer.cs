@@ -1600,11 +1600,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Print Report.
+        ///   Looks up a localized string similar to Print/Fax Report.
         /// </summary>
-        internal static string TitlePrintReport {
+        internal static string TitlePrintFaxReport {
             get {
-                return ResourceManager.GetString("TitlePrintReport", resourceCulture);
+                return ResourceManager.GetString("TitlePrintFaxReport", resourceCulture);
             }
         }
         

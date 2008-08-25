@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client
 				ApplicationComponent.LaunchAsDialog(
 					this.Context.DesktopWindow,
 					component,
-					SR.TitlePrintReport);
+					SR.TitlePrintFaxReport);
 			}
 			catch (Exception e)
 			{

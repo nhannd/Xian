@@ -631,8 +631,8 @@
   <data name="TitlePrevious" xml:space="preserve">
     <value>Previous Page</value>
   </data>
-  <data name="TitlePrintReport" xml:space="preserve">
-    <value>Print Report</value>
+  <data name="TitlePrintFaxReport" xml:space="preserve">
+    <value>Print/Fax Report</value>
   </data>
   <data name="TitleSearch" xml:space="preserve">
     <value>Search</value>
