@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	{
 		private object _item;
 		private Image _image;
-		private readonly string _description;
+		private readonly string _name;
 		private readonly Rectangle _displayRectangle;
 		private int _lockCount;
 
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			_item = item;
 			_image = image;
-			_description = description;
+			_name = description;
 			_displayRectangle = displayRectangle;
 		}
 
@@ -97,9 +97,15 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			get { return _image; }
 		}
 
+		public string Name
+		{
+			get { return _name; }
+			set { throw new NotImplementedException("Renaming clipboard items is not yet supported."); }
+		}
+
 		public string Description
 		{
-			get { return _description; }
+			get { return string.Empty; }
 		}
 
 		public Rectangle DisplayRectangle
@@ -128,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			if (_item != null && _item is IDisposable)
 			{
-				((IDisposable)_item).Dispose();
+				((IDisposable) _item).Dispose();
 				_item = null;
 			}
 			if (_image != null)

@@ -44,6 +44,11 @@ namespace ClearCanvas.Desktop
 		Image Image { get; }
 
 		/// <summary>
+		/// The name of the object.
+		/// </summary>
+		string Name { get; set; }
+
+		/// <summary>
 		/// A brief description of the object.
 		/// </summary>
 		string Description { get; }

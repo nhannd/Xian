@@ -33,10 +33,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.Windows.Forms.ColumnHeader colName;
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._listView = new System.Windows.Forms.ListView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			colName = new System.Windows.Forms.ColumnHeader();
 			this.SuspendLayout();
+			// 
+			// colName
+			// 
+			colName.Text = "Name";
 			// 
 			// _toolStrip
 			// 
@@ -50,6 +56,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _listView
 			// 
+			this._listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            colName});
 			this._listView.ContextMenuStrip = this._contextMenu;
 			this._listView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._listView.Location = new System.Drawing.Point(0, 25);
@@ -57,6 +65,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._listView.Size = new System.Drawing.Size(342, 251);
 			this._listView.TabIndex = 1;
 			this._listView.UseCompatibleStateImageBehavior = false;
+			this._listView.Resize += new System.EventHandler(this.OnListViewResize);
+			this._listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnAfterLabelEdit);
 			// 
 			// _contextMenu
 			// 

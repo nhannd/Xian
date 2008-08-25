@@ -30,14 +30,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -132,8 +131,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				foreach (int index in _listView.SelectedIndices)
 				{
 					object item = _listView.Items[index].Tag;
-					selectedItems.Add(CollectionUtils.SelectFirst(_gallery, 
-										delegate(object test) { return ((IGalleryItem) test).Item == item;  }));
+					selectedItems.Add(CollectionUtils.SelectFirst(_gallery,
+					                                              delegate(object test) { return ((IGalleryItem) test).Item == item; }));
 				}
 
 				return new Selection(selectedItems);
@@ -164,13 +163,57 @@ namespace ClearCanvas.Desktop.View.WinForms
 			set { _listView.MultiSelect = value; }
 		}
 
+		public bool ShowDescription
+		{
+			get { return _listView.View == System.Windows.Forms.View.Tile; }
+			set { _listView.View = value ? System.Windows.Forms.View.Tile : System.Windows.Forms.View.LargeIcon; }
+		}
+
+		public bool HideSelection
+		{
+			get { return _listView.HideSelection; }
+			set { _listView.HideSelection = value; }
+		}
+
+		public int MaxDescriptionLines
+		{
+			get { return _listView.Columns.Count - 1; }
+			set
+			{
+				if (value >= 0)
+				{
+					// add and remove columns as necessary to allow the correct number of description lines to show (first column is always the label/name)
+					while (_listView.Columns.Count - 1 > value)
+					{
+						_listView.Columns.RemoveAt(1);
+					}
+					while (_listView.Columns.Count - 1 < value)
+					{
+						_listView.Columns.Add("");
+					}
+				}
+			}
+		}
+
+		public Size ImageSize
+		{
+			get { return _listView.LargeImageList.ImageSize; }
+			set { _listView.LargeImageList.ImageSize = value; }
+		}
+
+		public bool AllowRenaming
+		{
+			get { return _listView.LabelEdit; }
+			set { _listView.LabelEdit = value; }
+		}
+
 		private void InitializeToolStrip()
 		{
 			ToolStripBuilder.Clear(_toolStrip.Items);
 
 			if (_toolbarModel != null)
 			{
-				ToolStripBuilder.BuildToolbar(_toolStrip.Items,_toolbarModel.ChildNodes);
+				ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
 			}
 		}
 
@@ -188,19 +231,33 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (_suppressGalleryChangeEvents)
 				return;
 
-			if (e.ListChangedType == ListChangedType.ItemAdded)
-				AddItem(_gallery[e.NewIndex]);
-			else if (e.ListChangedType == ListChangedType.ItemDeleted)
-				RemoveItem(e.NewIndex);
-			else if (e.ListChangedType == ListChangedType.ItemChanged)
-				UpdateItem(e.NewIndex);
+			switch (e.ListChangedType)
+			{
+				case ListChangedType.ItemAdded:
+					AddItem(_gallery[e.NewIndex]);
+					break;
+				case ListChangedType.ItemDeleted:
+					RemoveItem(e.NewIndex);
+					break;
+				case ListChangedType.ItemChanged:
+					UpdateItem(e.NewIndex);
+					break;
+				case ListChangedType.ItemMoved:
+					MoveItem(e.NewIndex, e.OldIndex);
+					break;
+				case ListChangedType.Reset:
+					ResetList();
+					break;
+			}
 		}
 
 		private void UpdateItem(int index)
 		{
 			ListViewItem lvi = _listView.Items[index];
+			IGalleryItem item = (IGalleryItem) _gallery[index];
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
-			_listView.LargeImageList.Images[keyIndex] = ((IGalleryItem) _gallery[index]).Image;
+			_listView.LargeImageList.Images[keyIndex] = item.Image;
+			// update name, description
 			_listView.RedrawItems(index, index, true);
 		}
 
@@ -210,7 +267,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			string imageKey = Guid.NewGuid().ToString();
 			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
-			ListViewItem lvi = new ListViewItem(galleryItem.Description, imageKey);
+			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
+			foreach (string line in galleryItem.Description.Split(new char[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries)
+				)
+			{
+				lvi.SubItems.Add(line, Color.Gray, Color.Transparent, _listView.Font);
+			}
 			lvi.Tag = galleryItem.Item;
 			_listView.Items.Add(lvi);
 		}
@@ -226,6 +288,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 				int i = Math.Min(index, _listView.Items.Count - 1);
 				_listView.Items[i].Selected = true;
 			}
+		}
+
+		private void MoveItem(int index, int oldIndex)
+		{
+			ListViewItem lvi = _listView.Items[oldIndex];
+			_listView.Items.RemoveAt(oldIndex);
+			_listView.Items.Insert(index, lvi);
+			_listView.Items[index].Selected = true;
+		}
+
+		private void ResetList()
+		{
+			_listView.Items.Clear();
+			_listView.LargeImageList.Images.Clear();
+
+			foreach (object item in _gallery)
+				AddItem(item);
 		}
 
 		private static IGalleryItem CastToGalleryItem(object item)
@@ -245,14 +324,21 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private ListViewItem ExtractListViewItem(IDataObject dataObject)
 		{
-			if (dataObject.GetDataPresent(typeof(ListViewItem)))
+			if (dataObject.GetDataPresent(typeof (ListViewItem)))
 			{
-				ListViewItem item = (ListViewItem)dataObject.GetData(typeof(ListViewItem));
+				ListViewItem item = (ListViewItem) dataObject.GetData(typeof (ListViewItem));
 				if (item.ListView == _listView)
 					return item;
 			}
 
 			return null;
+		}
+
+		private void OnListViewResize(object sender, EventArgs e)
+		{
+			// force tile sizing to fit within the control without horizontal scrolling
+			const int tileSpacing = 4;
+			_listView.TileSize = new Size(_listView.ClientSize.Width - 2*tileSpacing, this.ImageSize.Height + tileSpacing);
 		}
 
 		private void OnItemDrag(object sender, ItemDragEventArgs e)
@@ -264,7 +350,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					lvi.Selected = false;
 			}
 
-			ListViewItem draggedItem = (ListViewItem)e.Item;
+			ListViewItem draggedItem = (ListViewItem) e.Item;
 
 			DataObject data = new DataObject();
 			if (DragOutside)
@@ -282,7 +368,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			else
 				e.Effect = DragDropEffects.None;
 		}
-		
+
 		private void OnItemDragOver(object sender, DragEventArgs e)
 		{
 			// Retrieve the client coordinates of the mouse pointer.
@@ -299,17 +385,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 				// Confirm that the mouse pointer is not over the dragged item.
 				if (targetIndex > -1)
 				{
-					// Determine whether the mouse pointer is to the left or
-					// the right of the midpoint of the closest item and set
+					// Determine whether the mouse pointer is to the left(top) or
+					// the right(bottom) of the midpoint of the closest item and set
 					// the InsertionMark.AppearsAfterItem property accordingly.
 					Rectangle itemBounds = _listView.GetItemRect(targetIndex);
-					if (targetPoint.X > itemBounds.Left + (itemBounds.Width/2))
+					if (_listView.View == System.Windows.Forms.View.LargeIcon)
 					{
-						_listView.InsertionMark.AppearsAfterItem = true;
+						if (targetPoint.X > itemBounds.Left + (itemBounds.Width/2))
+						{
+							_listView.InsertionMark.AppearsAfterItem = true;
+						}
+						else
+						{
+							_listView.InsertionMark.AppearsAfterItem = false;
+						}
 					}
 					else
 					{
-						_listView.InsertionMark.AppearsAfterItem = false;
+						if (targetPoint.Y > itemBounds.Top + (itemBounds.Height/2))
+						{
+							_listView.InsertionMark.AppearsAfterItem = true;
+						}
+						else
+						{
+							_listView.InsertionMark.AppearsAfterItem = false;
+						}
 					}
 				}
 			}
@@ -349,31 +449,47 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// Insert a copy of the dragged item at the target index.
 			// A copy must be inserted before the original item is removed
 			// to preserve item index values. 
-			_listView.Items.Insert(targetIndex, (ListViewItem)draggedItem.Clone());
+			_listView.Items.Insert(targetIndex, (ListViewItem) draggedItem.Clone());
 
 			// Remove the original copy of the dragged item.
 			_listView.Items.Remove(draggedItem);
 
 			_suppressGalleryChangeEvents = true;
 
-			// Move the corresponding data object by inserting the dragged item
-			_gallery.Insert(targetIndex, _gallery[draggedIndex]);
-
-			// then remove the original dragged item.
+			// Alter the index if removing before inserting will change the meaning of the target index
 			if (draggedIndex < targetIndex)
-				_gallery.RemoveAt(draggedIndex);
-			else 
-				_gallery.RemoveAt(draggedIndex + 1);
+				targetIndex--;
+
+			object o = _gallery[draggedIndex];
+
+			// Move the corresponding data object by removing the original dragged item.
+			_gallery.RemoveAt(draggedIndex);
+
+			// then inserting the dragged item
+			_gallery.Insert(targetIndex, o);
 
 			_suppressGalleryChangeEvents = false;
 		}
 
+		private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)
+		{
+			try
+			{
+				((IGalleryItem) _gallery[e.Item]).Name = e.Label;
+			}
+			catch (Exception)
+			{
+				// if editing the name on the item fails, abort the label change
+				e.CancelEdit = true;
+			}
+		}
+
 		// Sorts ListViewItem objects by index.
-		private class ListViewIndexComparer : System.Collections.IComparer
+		private class ListViewIndexComparer : IComparer
 		{
 			public int Compare(object x, object y)
 			{
-				return ((ListViewItem)x).Index - ((ListViewItem)y).Index;
+				return ((ListViewItem) x).Index - ((ListViewItem) y).Index;
 			}
 		}
 

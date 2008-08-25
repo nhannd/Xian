@@ -29,12 +29,12 @@
 
 #endregion
 
-using System.Drawing;
-using ClearCanvas.Desktop;
 using System;
+using System.Drawing;
 using System.Threading;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
@@ -86,9 +86,15 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				get { return _icon; }
 			}
 
-			public string Description
+			public string Name
 			{
 				get { return _displaySet.Name; }
+				set { throw new NotSupportedException("Renaming thumbnails is not allowed."); }
+			}
+
+			public string Description
+			{
+				get { return string.Empty; }
 			}
 
 			public object Item
@@ -149,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				{
 					icon = CreateBitmap(_image);
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					Platform.Log(LogLevel.Error, e);
 					icon = CreateDummyBitmap(SR.MessageLoadFailed);
@@ -161,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			private void OnLoaded(object icon)
 			{
 				_icon.Dispose();
-				_icon = (Bitmap)icon;
+				_icon = (Bitmap) icon;
 
 				_loading = false;
 
@@ -199,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				image = image.CreateFreshCopy();
 
 				if (image is IAnnotationLayoutProvider)
-					((IAnnotationLayoutProvider)image).AnnotationLayout.Visible = false;
+					((IAnnotationLayoutProvider) image).AnnotationLayout.Visible = false;
 
 				Bitmap bmp = image.DrawToBitmap(_iconWidth, _iconHeight);
 				System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bmp);
@@ -228,7 +234,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				if (displaySet.PresentationImages.Count <= 2)
 					return displaySet.PresentationImages[0];
 
-				return displaySet.PresentationImages[displaySet.PresentationImages.Count / 2];
+				return displaySet.PresentationImages[displaySet.PresentationImages.Count/2];
 			}
 
 			#endregion
