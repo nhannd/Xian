@@ -395,12 +395,12 @@ CREATE TABLE [dbo].[WorkQueue](
 	[WorkQueueTypeEnum] [smallint] NOT NULL,
 	[WorkQueueStatusEnum] [smallint] NOT NULL, 
 	[WorkQueuePriorityEnum] [smallint] NOT NULL CONSTRAINT [DF_WorkQueue_WorkQueuePriorityEnum]  DEFAULT ((200)),
-	[ProcessorID] [varchar](256) NULL,
+	[ProcessorID] [varchar](128) NULL,
 	[ExpirationTime] [datetime] NULL,
 	[ScheduledTime] [datetime] NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_WorkQueue_InsertTime]  DEFAULT (getdate()),
 	[FailureCount] [int] NOT NULL CONSTRAINT [DF_WorkQueue_FailureCount]  DEFAULT ((0)),
-	[FailureDescription] [nvarchar](256) NULL,
+	[FailureDescription] [nvarchar](512) NULL,
 	[Data] [xml] NULL,
  CONSTRAINT [PK_WorkQueue] PRIMARY KEY CLUSTERED 
 (
@@ -715,7 +715,7 @@ BEGIN
 CREATE TABLE [dbo].[ServiceLock](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ServiceLock_GUID]  DEFAULT (newid()),
 	[ServiceLockTypeEnum] [smallint] NOT NULL,
-	[ProcessorId] [varchar](256) NULL,
+	[ProcessorId] [varchar](128) NULL,
 	[Lock] [bit] NOT NULL,
 	[ScheduledTime] [datetime] NOT NULL,
 	[FilesystemGUID] [uniqueidentifier] NULL,
@@ -977,7 +977,7 @@ CREATE TABLE [dbo].[RestoreQueue](
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[ScheduledTime] [datetime] NOT NULL,
 	[RestoreQueueStatusEnum] [smallint] NOT NULL,
-	[ProcessorId] [varchar](256) NULL,
+	[ProcessorId] [varchar](128) NULL,
  CONSTRAINT [PK_RestoreQueue] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -1023,7 +1023,7 @@ CREATE TABLE [dbo].[ArchiveQueue](
 	[ScheduledTime] [datetime] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[ArchiveQueueStatusEnum] [smallint] NOT NULL,
-	[ProcessorId] [varchar](256) NULL,
+	[ProcessorId] [varchar](128) NULL,
  CONSTRAINT [PK_ArchiveQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
