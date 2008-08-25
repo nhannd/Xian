@@ -72,11 +72,11 @@
                                                 <td>
                                                     <asp:Label ID="Label3" runat="server" Text="Folder Name" CssClass="DialogTextBoxLabel" /><br />
                                                     <asp:TextBox ID="PartitionFolderTextBox" runat="server" CausesValidation="true" ValidationGroup="vg1"
-                                                        ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"></asp:TextBox>
-                                                    <ccValidator:ConditionalRequiredFieldValidator ID="Conditionalrequiredfieldvalidator1"
-                                                        runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="true"
-                                                        Text="Folder Name is required" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="FolderHelp"></ccValidator:ConditionalRequiredFieldValidator>
+                                                        ToolTip="A unique folder name to store images within for the partition." CssClass="DialogTextBox"/>
+                                                    <ccValidator:ServerPartitionFolderValidator ID="PartitionFolderValidator"
+                                                        runat="server" ControlToValidate="PartitionFolderTextBox" Display="None" EnableClientScript="false"
+                                                        Text="Folder Name is not valid" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        InvalidInputIndicatorID="FolderHelp"/>
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="FolderHelp" runat="server" SkinID="InvalidInputIndicator" />

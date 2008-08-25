@@ -71,8 +71,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 _partition = value;
                 // put into viewstate to retrieve later
                 ViewState[ClientID + "_EdittedPartition"] = _partition;
-                if (value != null && !Page.IsPostBack)
-                    ServerPartitionValidator.OriginalAeTitle =  value.AeTitle;
+				if (value != null && !Page.IsPostBack)
+				{
+					ServerPartitionValidator.OriginalAeTitle = value.AeTitle;
+					PartitionFolderValidator.OriginalPartitionFolder = value.PartitionFolder;
+				}
             }
             get { return _partition; }
         }
@@ -130,6 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 {
                     _partition = ViewState[ClientID + "_EdittedPartition"] as ServerPartition;
                     ServerPartitionValidator.OriginalAeTitle = _partition.AeTitle;
+                	PartitionFolderValidator.OriginalPartitionFolder = _partition.PartitionFolder;
                 }
             }
         }
@@ -187,7 +191,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             DuplicateSopDropDownList.Items.Clear();
             foreach (DuplicateSopPolicyEnum policyEnum in DuplicateSopPolicyEnum.GetAll())
             {
-                DuplicateSopDropDownList.Items.Add(new ListItem(policyEnum.Description, policyEnum.Lookup));
+            	ListItem item = new ListItem(policyEnum.Description, policyEnum.Lookup);
+                DuplicateSopDropDownList.Items.Add(item);
             }
 
             if (Partition == null)

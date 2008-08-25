@@ -245,13 +245,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         protected global::System.Web.UI.WebControls.TextBox PartitionFolderTextBox;
         
         /// <summary>
-        /// Conditionalrequiredfieldvalidator1 control.
+        /// PartitionFolderValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator Conditionalrequiredfieldvalidator1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ServerPartitionFolderValidator PartitionFolderValidator;
         
         /// <summary>
         /// FolderHelp control.

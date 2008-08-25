@@ -294,7 +294,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
                     if (InvalidInputIndicator != null)
                     {
-                        InvalidInputIndicator.TooltipLabel.Text = Text;
+						if (String.IsNullOrEmpty(ErrorMessage))
+							InvalidInputIndicator.TooltipLabel.Text = Text;
+						else
+							InvalidInputIndicator.TooltipLabel.Text = ErrorMessage;
                         InvalidInputIndicator.Show();
                     }
 

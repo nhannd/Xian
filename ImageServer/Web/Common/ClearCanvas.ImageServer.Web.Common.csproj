@@ -111,6 +111,7 @@
     <Compile Include="WebControls\Validators\IInvalidInputIndicator.cs" />
     <Compile Include="WebControls\Validators\LengthValidator.cs" />
     <Compile Include="WebControls\ScriptTemplate.cs" />
+    <Compile Include="WebControls\Validators\ServerPartitionFolderValidator.cs" />
     <Compile Include="WebControls\Validators\ServerPartitionValidator.cs" />
     <Compile Include="WebControls\Validators\ServerRuleValidator.cs" />
     <Compile Include="WebControls\UI\ToolbarButton.cs" />
