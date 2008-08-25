@@ -74,16 +74,36 @@
     }
 
     function testEfwWithValidArgs() {
-        assertEquals("EFW", 70, BiometryCalculator.efw(true, true, 37.7, 12, 10.7));
-        assertEquals("EFW", 40, BiometryCalculator.efw(true, false, 37.7, 12, 10.7));
-        assertEquals("EFW", 60, BiometryCalculator.efw(false, true, 37.7, 12, 10.7));
-        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, 37.7, 12, 10.7));
+		// All expected values are calculated from eRIS.
+	
+		var ac1 = BiometryCalculator.abdomenCircumference(12, 12);
+		var fl1 = 12;
+		var bpdc1 = BiometryCalculator.correctedBpd(12, 12);
+	
+        assertEquals("EFW", 70, BiometryCalculator.efw(true, true, ac1, fl1, bpdc1));
+        assertEquals("EFW", 40, BiometryCalculator.efw(true, false, ac1, fl1, bpdc1));  // NB: this value is expected to be 30 based on Dr. Toi's spreadsheet, but 40 in the eRIS
+        assertEquals("EFW", 60, BiometryCalculator.efw(false, true, ac1, fl1, bpdc1));
+        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, ac1, fl1, bpdc1));
 
-        assertEquals("EFW", 580, BiometryCalculator.efw(true, true, 157.0, 50, 44.5));
-        assertEquals("EFW", 340, BiometryCalculator.efw(true, false, 157.0, 50, 44.5));
-        assertEquals("EFW", 620, BiometryCalculator.efw(false, true, 157.0, 50, 44.5));
-        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, 157.0, 50, 44.5));
-    }
+		var ac2 = BiometryCalculator.abdomenCircumference(50, 50);
+		var fl2 = 50;
+		var bpdc2 = BiometryCalculator.correctedBpd(50, 50);
+	
+        assertEquals("EFW", 580, BiometryCalculator.efw(true, true, ac2, fl2, bpdc2));
+        assertEquals("EFW", 340, BiometryCalculator.efw(true, false, ac2, fl2, bpdc2));
+        assertEquals("EFW", 620, BiometryCalculator.efw(false, true, ac2, fl2, bpdc2));
+        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, ac2, fl2, bpdc2));
+
+		var ac3 = BiometryCalculator.abdomenCircumference(75, 75);
+		var fl3 = 75;
+		var bpdc3 = BiometryCalculator.correctedBpd(75, 75);
+	
+		// These values are all 10 higher than values calculated via Dr. Toi's spreadsheet.
+        assertEquals("EFW", 1720, BiometryCalculator.efw(true, true, ac3, fl3, bpdc3));
+        assertEquals("EFW", 1130, BiometryCalculator.efw(true, false, ac3, fl3, bpdc3));
+        assertEquals("EFW", 1960, BiometryCalculator.efw(false, true, ac3, fl3, bpdc3));
+        assertEquals("EFW", 0, BiometryCalculator.efw(false, false, ac3, fl3, bpdc3));
+	}
 	</script>
  </body>
 </html>

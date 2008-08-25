@@ -21,6 +21,8 @@ var BiometryCalculator = {
 	
 	abdomenCircumference : function(a1, a2)
 	{
+		if (!a1) return 0;
+		if (!a2) return 0;
 		return (a1+a2)*1.57;
 	},
 	
