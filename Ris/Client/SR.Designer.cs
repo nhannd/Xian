@@ -1645,6 +1645,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Staff Groups.
+        /// </summary>
+        internal static string TitleStaffGroups {
+            get {
+                return ResourceManager.GetString("TitleStaffGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Address....
         /// </summary>
         internal static string TitleUpdateAddress {

@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client
 
 			StaffGroupSummaryComponent staffComponent = new StaffGroupSummaryComponent(true, query);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-				_desktopWindow, staffComponent, SR.TitleStaff);
+				_desktopWindow, staffComponent, SR.TitleStaffGroups);
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{

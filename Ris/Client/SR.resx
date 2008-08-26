@@ -646,6 +646,9 @@
   <data name="TitleStaff" xml:space="preserve">
     <value>Staff</value>
   </data>
+  <data name="TitleStaffGroups" xml:space="preserve">
+    <value>Staff Groups</value>
+  </data>
   <data name="TitleUpdateAddress" xml:space="preserve">
     <value>Update Address...</value>
   </data>
