@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
@@ -12,21 +9,23 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     [RisServiceProvider]
     public interface IOrderNoteService
     {
-		/// <summary>
-		/// Lists staff groups to which the current user belongs.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		[OperationContract]
-		ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request);
+        /// <summary>
+        /// Lists staff groups to which the current user belongs.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        ListStaffGroupsResponse ListStaffGroups(ListStaffGroupsRequest request);
 
-		/// <summary>
-		/// Add the current user to the specified staff groups.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		[OperationContract]
-		AddStaffGroupsResponse AddStaffGroups(AddStaffGroupsRequest request);
+        /// <summary>
+        /// Add the current user to the specified staff groups.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        AddStaffGroupsResponse AddStaffGroups(AddStaffGroupsRequest request);
 
         /// <summary>
         /// Queries the contents of a specified notebox.
@@ -59,6 +58,8 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         AcknowledgeAndPostResponse AcknowledgeAndPost(AcknowledgeAndPostRequest request);
     }
 }

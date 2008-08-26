@@ -39,9 +39,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     /// </summary>
     [RisServiceProvider]
     [ServiceContract]
-	[ServiceKnownType(typeof(RegistrationWorklistItem))]
-	[ServiceKnownType(typeof(ModalityWorklistItem))]
-	public interface IOrderEntryService : IWorkflowService
+    [ServiceKnownType(typeof(RegistrationWorklistItem))]
+    [ServiceKnownType(typeof(ModalityWorklistItem))]
+    public interface IOrderEntryService : IWorkflowService
     {
         /// <summary>
         /// List active visits for the specified patient.  Orders can be placed on active visits.
@@ -57,7 +57,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// <param name="request"><see cref="ListOrdersForPatientRequest"/></param>
         /// <returns><see cref="ListOrdersForPatientResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
         ListOrdersForPatientResponse ListActiveOrdersForPatient(ListOrdersForPatientRequest request);
 
         /// <summary>

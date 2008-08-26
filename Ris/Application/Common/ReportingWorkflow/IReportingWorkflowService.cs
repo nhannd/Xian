@@ -36,8 +36,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [RisServiceProvider]
     [ServiceContract]
-	[ServiceKnownType(typeof(ReportingWorklistItem))]
-	public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
+    [ServiceKnownType(typeof(ReportingWorklistItem))]
+    public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService
     {
         /// <summary>
         /// Start an interpretation step
@@ -45,8 +45,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="StartInterpretationRequest"/></param>
         /// <returns><see cref="StartInterpretationResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         StartInterpretationResponse StartInterpretation(StartInterpretationRequest request);
 
         /// <summary>
@@ -55,8 +55,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CompleteInterpretationForTranscriptionRequest"/></param>
         /// <returns><see cref="CompleteInterpretationForTranscriptionResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
 
         /// <summary>
@@ -85,8 +85,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CancelReportingStepRequest"/></param>
         /// <returns><see cref="CancelReportingStepResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request);
 
         /// <summary>
@@ -96,8 +96,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="ReviseResidentReportRequest"/></param>
         /// <returns><see cref="ReviseResidentReportResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         ReviseResidentReportResponse ReviseResidentReport(ReviseResidentReportRequest request);
 
         /// <summary>
@@ -106,8 +106,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="StartVerificationRequest"/></param>
         /// <returns><see cref="StartVerificationResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         StartVerificationResponse StartVerification(StartVerificationRequest request);
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CreateAddendumRequest"/></param>
         /// <returns><see cref="CreateAddendumResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         CreateAddendumResponse CreateAddendum(CreateAddendumRequest request);
 
         /// <summary>
@@ -137,16 +137,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="ReviseUnpublishedReportRequest"/></param>
         /// <returns><see cref="ReviseUnpublishedReportResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         ReviseUnpublishedReportResponse ReviseUnpublishedReport(ReviseUnpublishedReportRequest request);
 
         /// <summary>
         /// This provide a mean to complete a publication step.  It is meant for testing only. 
         /// </summary>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         PublishReportResponse PublishReport(PublishReportRequest request);
 
         /// <summary>
@@ -172,8 +172,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="SaveReportRequest"/></param>
         /// <returns><see cref="SaveReportResponse"/></returns>
         [OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         SaveReportResponse SaveReport(SaveReportRequest request);
 
         /// <summary>
@@ -184,27 +184,27 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         GetPriorsResponse GetPriors(GetPriorsRequest request);
 
-		[OperationContract]
-		SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request);
+        [OperationContract]
+        SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request);
 
-		/// <summary>
-		/// Reassigning a step to another radiologist.
-		/// </summary>
-		/// <param name="request"><see cref="ReassignProcedureStepRequest"/></param>
-		/// <returns><see cref="ReassignProcedureStepResponse"/></returns>
-		[OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request);
+        /// <summary>
+        /// Reassigning a step to another radiologist.
+        /// </summary>
+        /// <param name="request"><see cref="ReassignProcedureStepRequest"/></param>
+        /// <returns><see cref="ReassignProcedureStepResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        ReassignProcedureStepResponse ReassignProcedureStep(ReassignProcedureStepRequest request);
 
-		/// <summary>
-		/// This is basically a hack to allow entry of downtime reports for downtime recovery.
-		/// </summary>
-		/// <param name="request"></param>
-		/// <returns></returns>
-		[OperationContract]
-		[FaultContract(typeof(RequestValidationException))]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		CompleteDowntimeProcedureResponse CompleteDowntimeProcedure(CompleteDowntimeProcedureRequest request);
-	}
+        /// <summary>
+        /// This is basically a hack to allow entry of downtime reports for downtime recovery.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        CompleteDowntimeProcedureResponse CompleteDowntimeProcedure(CompleteDowntimeProcedureRequest request);
+    }
 }
