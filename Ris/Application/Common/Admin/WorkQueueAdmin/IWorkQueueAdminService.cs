@@ -34,6 +34,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
 		PurgeCompletedWorkQueueItemsResponse PurgeCompletedWorkQueueItems(PurgeCompletedWorkQueueItemsRequest request);
 
 		/// <summary>
@@ -43,6 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		/// <returns></returns>
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
 		ResubmitWorkQueueItemResponse ResubmitWorkQueueItem(ResubmitWorkQueueItemRequest request);
 
 		/// <summary>
@@ -52,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 		/// <returns></returns>
 		[OperationContract]
 		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
 		RemoveWorkQueueItemResponse RemoveWorkQueueItem(RemoveWorkQueueItemRequest request);
 	}
 }

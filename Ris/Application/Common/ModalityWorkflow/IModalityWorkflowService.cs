@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"><see cref="GetProcedurePlanRequest"/></param>
         /// <returns><see cref="GetProcedurePlanResponse"/></returns>
         [OperationContract]
-        GetProcedurePlanResponse GetProcedurePlan(GetProcedurePlanRequest request);
+		GetProcedurePlanResponse GetProcedurePlan(GetProcedurePlanRequest request);
 
         /// <summary>
         /// Returns a list of all modality performed procedure steps for a particular order.
@@ -60,8 +60,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
         /// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request);
 
         /// <summary>
         /// Discontinues a set of specified modality procedure steps.
@@ -69,8 +70,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
         /// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
         [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request);
 
         /// <summary>
         /// Completes a specified modality performed procedure step.
@@ -78,8 +80,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"><see cref="CompleteModalityPerformedProcedureStepRequest"/></param>
         /// <returns><see cref="CompleteModalityPerformedProcedureStepResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		CompleteModalityPerformedProcedureStepResponse CompleteModalityPerformedProcedureStep(CompleteModalityPerformedProcedureStepRequest request);
 
         /// <summary>
         /// Discontinues a specified modality performed procedure step.
@@ -87,7 +90,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         /// <param name="request"><see cref="DiscontinueModalityPerformedProcedureStepRequest"/></param>
         /// <returns><see cref="DiscontinueModalityPerformedProcedureStepResponse"/></returns>
         [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request);
     }
 }

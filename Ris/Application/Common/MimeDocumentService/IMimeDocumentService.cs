@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
         /// <param name="request"><see cref="GetDocumentDataRequest"/></param>
         /// <returns><see cref="GetDocumentDataResponse"/></returns>
         [OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
         GetDocumentDataResponse GetDocumentData(GetDocumentDataRequest request);
     }
 }

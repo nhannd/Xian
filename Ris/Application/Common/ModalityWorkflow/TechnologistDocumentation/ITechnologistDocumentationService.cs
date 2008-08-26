@@ -41,13 +41,16 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         LoadDataResponse LoadData(LoadDataRequest request);
 
         [OperationContract]
-        SaveDataResponse SaveData(SaveDataRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		SaveDataResponse SaveData(SaveDataRequest request);
 
         [OperationContract]
         CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request);
 
         [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request);
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request);
     }
 }

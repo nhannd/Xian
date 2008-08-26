@@ -61,6 +61,8 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        InvokeOperationResponse InvokeOperation(InvokeOperationRequest request); 
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		InvokeOperationResponse InvokeOperation(InvokeOperationRequest request); 
     }
 }
