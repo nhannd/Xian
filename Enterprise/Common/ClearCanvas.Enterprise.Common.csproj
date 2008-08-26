@@ -62,6 +62,7 @@
     <Compile Include="IServiceChannelConfiguration.cs" />
     <Compile Include="IServiceHostConfiguration.cs" />
     <Compile Include="ITimeService.cs" />
+    <Compile Include="IVersionedEquatable.cs" />
     <Compile Include="JsmlSerializer.cs" />
     <Compile Include="PasswordExpiredException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

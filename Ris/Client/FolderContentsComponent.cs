@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -272,12 +273,25 @@ namespace ClearCanvas.Ris.Client
 		private void ItemsTableChangedEventHandler(object sender, EventArgs e)
 		{
 			// update the selection appropriately - re-select the same items if possible
-			// (where "same" means that the items Equals() returns true, even if they are not the same object),
 			// otherwise just select the first item by default
+
+			// note: there are some subtleties here when attempting re-select the "same" items
+			// if the items support IVersionedEquatable, then we need to compare them using a version-insensitive comparison,
+			// but the new selection must consist of the instances that have the most current version
 			_selectedItems = _selectedFolder == null
 				? new Selection(CollectionUtils.FirstElement(_selectedFolder.ItemsTable.Items))
 				: new Selection(CollectionUtils.Select(_selectedFolder.ItemsTable.Items,
-					delegate(object item) { return _selectedItems.Contains(item); }));
+					delegate(object item)
+					{
+						return CollectionUtils.Contains(_selectedItems.Items,
+							delegate(object oldItem)
+							{
+								return (item is IVersionedEquatable)
+									? (item as IVersionedEquatable).Equals(oldItem, true) // ignore version if IVersionedEquatable
+									: Equals(item, oldItem);
+							});
+							
+					}));
 
 			// notify view about the updated selection table to the prior selection
 			NotifySelectedItemsChanged();

@@ -40,8 +40,26 @@ namespace ClearCanvas.Enterprise.Common
     /// Abstract base class for <see cref="EntityRef"/>
     /// </summary>
     [DataContract]
-    public class EntityRef
+    public class EntityRef : IVersionedEquatable<EntityRef>
     {
+		/// <summary>
+		/// Provides a null-safe means of checking for equality, optionally ignoring the version.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <param name="ignoreVersion"></param>
+		/// <returns></returns>
+		public static bool Equals(EntityRef x, EntityRef y, bool ignoreVersion)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
+			if (ReferenceEquals(x, null) || ReferenceEquals(y, null))
+				return false;
+
+			return x.Equals(y, ignoreVersion);
+		}
+
+
         private string _entityClass;
         private object _entityOid;
         private int _version;
@@ -106,26 +124,6 @@ namespace ClearCanvas.Enterprise.Common
         {
             get { return _version; }
             private set { _version = value; }
-        }
-
-        /// <summary>
-        /// Compares two instances of this class for value-based equality.  If <paramref name="ignoreVersion"/>
-        /// is true, the version will not be considered in the comparison.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="ignoreVersion"></param>
-        /// <returns></returns>
-        public bool Equals(object obj, bool ignoreVersion)
-        {
-            // if null then they can't be equal
-            EntityRef that = obj as EntityRef;
-            if (that == null)
-                return false;
-
-            // compare fields
-            return this._entityOid.Equals(that._entityOid)
-                && this._entityClass.Equals(that._entityClass)
-                && (ignoreVersion || this._version.Equals(that._version));
         }
 
         /// <summary>
@@ -223,6 +221,47 @@ namespace ClearCanvas.Enterprise.Common
         public static bool operator !=(EntityRef x, EntityRef y)
         {
             return !(x == y);
-        }
-    }
+		}
+
+		#region IVersionedEquatable
+
+		/// <summary>
+		/// Compares two instances of this class for value-based equality.  If <paramref name="ignoreVersion"/>
+		/// is true, the version will not be considered in the comparison.
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <param name="ignoreVersion"></param>
+		/// <returns></returns>
+		public bool Equals(object obj, bool ignoreVersion)
+		{
+			EntityRef that = obj as EntityRef;
+			return Equals(that, ignoreVersion);
+		}
+
+		#endregion
+
+		#region IVersionedEquatable<EntityRef> Members
+
+		public bool Equals(EntityRef other, bool ignoreVersion)
+		{
+			if (other == null)
+				return false;
+
+			// compare fields
+			return this._entityOid.Equals(other._entityOid)
+				&& this._entityClass.Equals(other._entityClass)
+				&& (ignoreVersion || this._version.Equals(other._version));
+		}
+
+		#endregion
+
+		#region IEquatable<EntityRef> Members
+
+		public bool Equals(EntityRef other)
+		{
+			return Equals(other, false);
+		}
+
+		#endregion
+	}
 }

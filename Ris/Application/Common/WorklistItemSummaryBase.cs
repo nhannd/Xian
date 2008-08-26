@@ -39,7 +39,7 @@ using System.Reflection;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class WorklistItemSummaryBase : DataContractBase, IEquatable<WorklistItemSummaryBase>
+    public class WorklistItemSummaryBase : DataContractBase, IVersionedEquatable<WorklistItemSummaryBase>
     {
         public WorklistItemSummaryBase(
             EntityRef procedureStepRef,
@@ -116,19 +116,13 @@ namespace ClearCanvas.Ris.Application.Common
         public DateTime? Time;
 
 		/// <summary>
-		/// Implements equality based on all entity-refs.
+		/// Implements equality based on all entity-refs, and is version-sensitive.
 		/// </summary>
 		/// <param name="worklistItemSummaryBase"></param>
 		/// <returns></returns>
     	public bool Equals(WorklistItemSummaryBase worklistItemSummaryBase)
     	{
-    		if (worklistItemSummaryBase == null) return false;
-    		if (!Equals(ProcedureStepRef, worklistItemSummaryBase.ProcedureStepRef)) return false;
-    		if (!Equals(ProcedureRef, worklistItemSummaryBase.ProcedureRef)) return false;
-    		if (!Equals(OrderRef, worklistItemSummaryBase.OrderRef)) return false;
-    		if (!Equals(PatientRef, worklistItemSummaryBase.PatientRef)) return false;
-    		if (!Equals(PatientProfileRef, worklistItemSummaryBase.PatientProfileRef)) return false;
-    		return true;
+			return Equals(worklistItemSummaryBase, false);
     	}
 
 		/// <summary>
@@ -155,5 +149,29 @@ namespace ClearCanvas.Ris.Application.Common
     		result = 29*result + PatientProfileRef.GetHashCode();
     		return result;
     	}
-    }
+
+		#region IVersionedEquatable<WorklistItemSummaryBase> Members
+
+		public bool Equals(WorklistItemSummaryBase other, bool ignoreVersion)
+		{
+			if (other == null) return false;
+			if (!EntityRef.Equals(ProcedureStepRef, other.ProcedureStepRef, ignoreVersion)) return false;
+			if (!EntityRef.Equals(ProcedureRef, other.ProcedureRef, ignoreVersion)) return false;
+			if (!EntityRef.Equals(OrderRef, other.OrderRef, ignoreVersion)) return false;
+			if (!EntityRef.Equals(PatientRef, other.PatientRef, ignoreVersion)) return false;
+			if (!EntityRef.Equals(PatientProfileRef, other.PatientProfileRef, ignoreVersion)) return false;
+			return true;
+		}
+
+		#endregion
+
+		#region IVersionedEquatable Members
+
+		public bool Equals(object other, bool ignoreVersion)
+		{
+			return Equals(other as WorklistItemSummaryBase, ignoreVersion);
+		}
+
+		#endregion
+	}
 }
