@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
    <head>
-      <title>Angio/Interventional Details</title>
+      <title>External Practitioner Editor - Additional Info</title>
       <link href="../../css/default.css" rel="stylesheet" type="text/css" />
       <script type="text/javascript" src="../../js/jsx.js"></script>
       <script type="text/javascript" src="../../js/jsml.js"></script>
@@ -17,10 +17,20 @@
             {
                scaleWidth();
          
-				if(Ris)
+				if(!Ris)
+					return;
+				
+				var context = Ris.getHealthcareContext();
+				if (context == null)
 				{
-					$("hmri").value = Ris.getTag("HmriNumber") || "";
+					Field.setValue($("myForm"), "");
+					return;
 				}
+				
+				$("hmri").value = Ris.getTag("HmriNumber") || "";
+				$("validated").checked = Ris.getTag("Validated") == "True" ? true : false;
+
+				Field.show($("ValidatedSection"), context.CanValidate);
             }
             catch(e)
             {
@@ -35,6 +45,10 @@
 			errorProvider.setError($("hmri"), (!$("hmri").value || $("hmri").value.match(/^\d+$/)) ? null : "HRMI # can only contain digits.");
 		 }
          
+		 function onValidatedChanged()
+		 {
+			Ris.setModified(true); // notify ris that data may have been modified
+		 }
          
          //////////////////////////////////////////////////////////////////////////
          // RIS integration API
@@ -51,6 +65,12 @@
          function saveData()
          {
             Ris.setTag("HmriNumber", $("hmri").value);
+			
+			var context = Ris.getHealthcareContext();
+			if (context.CanValidate)
+				Ris.setTag("Validated", $("validated").checked);
+			else
+				Ris.setTag("Validated", "False");	// automatically set validated to false if user doesn't have the authority to validate data
          }
          //////////////////////////////////////////////////////////////////////////
       </script>
@@ -59,6 +79,11 @@
     <form id="myForm">
 		<label for="hrmi">HMRI #</label>
 		<input id="hmri" type="text" onkeyup="onHmriChanged()" onchange="onHmriChanged()" />
+		<br/><br/>
+		<span id="ValidatedSection">
+			<label for="validated">Validated</label>
+			<input id="validated" type="checkbox" onMouseUp="onValidatedChanged()" onchange="onValidatedChanged()" />
+		</span>
 	</form>         
    </body>
 </html>

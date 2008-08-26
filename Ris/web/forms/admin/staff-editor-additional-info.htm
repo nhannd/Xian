@@ -18,11 +18,21 @@
 		{
 			scaleWidth();
 
-			if(Ris)
+			if(!Ris)
+				return;
+
+			var context = Ris.getHealthcareContext();
+			if (context == null)
 			{
-				$("hmri").value = Ris.getTag("HmriNumber") || "";
-				$("location").value = Ris.getTag("Location") || "";
+				Field.setValue($("myForm"), "");
+				return;
 			}
+			
+			$("hmri").value = Ris.getTag("HmriNumber") || "";
+			$("location").value = Ris.getTag("Location") || "";
+			$("validated").checked = Ris.getTag("Validated") == "True" ? true : false;
+
+			Field.show($("ValidatedSection"), context.CanValidate);
 		}
 		catch(e)
 		{
@@ -42,6 +52,11 @@
 		Ris.setModified(true);
 	}
 
+	 function onValidatedChanged()
+	 {
+		Ris.setModified(true); // notify ris that data may have been modified
+	 }
+	 
 	//////////////////////////////////////////////////////////////////////////
 	// RIS integration API
 	function hasValidationErrors()
@@ -58,6 +73,12 @@
 	{
 		Ris.setTag("HmriNumber", $("hmri").value);
 		Ris.setTag("Location", $("location").value);
+
+		var context = Ris.getHealthcareContext();
+		if (context.CanValidate)
+			Ris.setTag("Validated", $("validated").checked);
+		else
+			Ris.setTag("Validated", "False");	// automatically set validated to false if user doesn't have the authority to validate data
 	}
 	//////////////////////////////////////////////////////////////////////////
 </script>
@@ -66,9 +87,14 @@
 	<form id="myForm">
 		<label for="hrmi">HMRI #</label>
 		<input id="hmri" type="text" onkeyup="onHmriChanged()" onchange="onHmriChanged()" />
-		<br />
+		<br/><br/>
 		<label for="location">Location</label>
 		<input id="location" type="text" onkeyup="onLocationChanged()" onchange="onLocationChanged()" />
+		<br/><br/>
+		<span id="ValidatedSection">
+			<label for="validated">Validated</label>
+			<input id="validated" type="checkbox" onMouseUp="onValidatedChanged()" onchange="onValidatedChanged()" />
+		</span>
 	</form>
 </body>
 </html>
