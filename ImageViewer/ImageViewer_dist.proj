@@ -20,6 +20,19 @@
     </Otherwise>
   </Choose>
 
+  <Choose>
+    <When Condition=" '$(Platform)' != 'x64' ">
+      <PropertyGroup>
+        <SqlCeDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe</SqlCeDirectory>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <SqlCeDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe\x64</SqlCeDirectory>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
   <PropertyGroup>
 
     <!--Database-->
@@ -50,14 +63,8 @@
   </ItemGroup>
  
   <ItemGroup>
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceer30EN.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceme30.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceoledb30.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceqp30.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlcese30.dll" />
-    <SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll" />
+    <SqlCEFiles Include="$(SqlCeDirectory)\sqlce*.dll" />
+    <SqlCEFiles Include="$(SqlCeDirectory)\System.Data.SqlServerCe.dll" />
   </ItemGroup>
   
   <ItemGroup>
