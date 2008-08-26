@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
+	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
     {
