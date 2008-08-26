@@ -192,11 +192,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._recipientsTableLayout.ColumnCount = 2;
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._recipientsTableLayout.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._recipientsTableLayout.Controls.Add(this._recipients, 0, 2);
 			this._recipientsTableLayout.Controls.Add(this._staffRecipientLookup, 0, 1);
 			this._recipientsTableLayout.Controls.Add(this._groupRecipientLookup, 0, 0);
 			this._recipientsTableLayout.Controls.Add(this._groupRecipientAddButton, 1, 0);
 			this._recipientsTableLayout.Controls.Add(this._staffRecipientAddButton, 1, 1);
+			this._recipientsTableLayout.Controls.Add(this._recipients, 0, 2);
 			this._recipientsTableLayout.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._recipientsTableLayout.Location = new System.Drawing.Point(3, 16);
 			this._recipientsTableLayout.Margin = new System.Windows.Forms.Padding(0);
@@ -210,15 +210,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _recipients
 			// 
+			this._recipients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._recipients.AutoSize = true;
 			this._recipients.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._recipientsTableLayout.SetColumnSpan(this._recipients, 2);
-			this._recipients.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._recipients.Location = new System.Drawing.Point(3, 85);
+			this._recipients.Margin = new System.Windows.Forms.Padding(3, 3, 15, 3);
 			this._recipients.Name = "_recipients";
 			this._recipients.ReadOnly = false;
 			this._recipients.ShowToolbar = false;
-			this._recipients.Size = new System.Drawing.Size(265, 179);
+			this._recipients.Size = new System.Drawing.Size(253, 179);
 			this._recipients.TabIndex = 4;
 			// 
 			// _groupRecipientAddButton

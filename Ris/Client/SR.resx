@@ -477,6 +477,9 @@
   <data name="MessageNoProcedures" xml:space="preserve">
     <value>You must have at least one procedure.</value>
   </data>
+  <data name="MessageNoRecipientsSelected" xml:space="preserve">
+    <value>At least one recipient must be selected in order to post a note.</value>
+  </data>
   <data name="MessageResultsNotFound" xml:space="preserve">
     <value>No results were found using the specified criteria.</value>
     <comment>{0</comment>

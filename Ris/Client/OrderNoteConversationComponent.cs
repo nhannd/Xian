@@ -39,6 +39,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -119,12 +120,21 @@ namespace ClearCanvas.Ris.Client
 
 		private class RecipientTable : Table<Checkable<RecipientTableItem>>
 		{
-			public RecipientTable()
+			private OrderNoteConversationComponent _owner;
+			public RecipientTable(OrderNoteConversationComponent owner)
 			{
+				_owner = owner;
 				this.Columns.Add(new TableColumn<Checkable<RecipientTableItem>, bool>(
 					"Select",
 					delegate(Checkable<RecipientTableItem> item) { return item.IsChecked; },
-					delegate(Checkable<RecipientTableItem> item, bool value) { item.IsChecked = value; },
+					delegate(Checkable<RecipientTableItem> item, bool value)
+					{
+						item.IsChecked = value;
+						// bug: #2594: forces validation to refresh otherwise the screen doesn't update 
+						// only when validation is visible
+						if(_owner.ValidationVisible)
+							_owner.ShowValidation(true);
+					},
 					0.4f));
 
 				this.Columns.Add(new TableColumn<Checkable<RecipientTableItem>, string>(
@@ -218,6 +228,7 @@ namespace ClearCanvas.Ris.Client
 		private StaffGroupSummary _onBehalfOf;
 
 		private readonly RecipientTable _recipients;
+		private Checkable<RecipientTableItem> _selectedRecipient;
 
 		private ILookupHandler _staffLookupHandler;
 		private StaffSummary _selectedStaff = null;
@@ -245,7 +256,7 @@ namespace ClearCanvas.Ris.Client
 			_notes = new OrderNoteConversationTable();
 			_notes.CheckedItemsChanged += delegate { NotifyPropertyChanged("AcknowledgeEnabled"); };
 
-			_recipients = new RecipientTable();
+			_recipients = new RecipientTable(this);
 		}
 
 		#endregion
@@ -287,6 +298,20 @@ namespace ClearCanvas.Ris.Client
 					// Set default recipients list
 					InitializeRecipients(response.OrderNotes);
 				});
+
+			this.Validation.Add(new ValidationRule("SelectedRecipient",
+				delegate
+				{
+					bool atLeastOneRecipient = CollectionUtils.Contains<Checkable<RecipientTableItem>>(_recipients.Items,
+						delegate(Checkable<RecipientTableItem> checkable)
+						{
+							return checkable.IsChecked;
+						});
+
+					bool notPosting = _notes.HasUnacknowledgedNotes() && string.IsNullOrEmpty(_body);
+
+					return new ValidationResult(atLeastOneRecipient || notPosting, SR.MessageNoRecipientsSelected);
+				}));
 
 			base.Start();
 		}
@@ -373,6 +398,18 @@ namespace ClearCanvas.Ris.Client
 		public ITable Recipients
 		{
 			get { return _recipients; }
+		}
+
+		public ISelection SelectedRecipient
+		{
+			get { return new Selection(_selectedRecipient); }
+			set
+			{
+				if (value.Item != _selectedRecipient)
+				{
+					_selectedRecipient = (Checkable<RecipientTableItem>)value.Item;
+				}
+			}
 		}
 
 		#region Staff Recipients

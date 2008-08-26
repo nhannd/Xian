@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Ris.Client;
+using System;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -66,6 +67,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_recipients.Table = _component.Recipients;
+			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_staffRecipientLookup.LookupHandler = _component.StaffRecipientLookupHandler;
 			_staffRecipientLookup.DataBindings.Add("Value", _component, "SelectedStaffRecipient", true, DataSourceUpdateMode.OnPropertyChanged);

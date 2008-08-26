@@ -1141,6 +1141,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to At least one recipient must be selected in order to post a note..
+        /// </summary>
+        internal static string MessageNoRecipientsSelected {
+            get {
+                return ResourceManager.GetString("MessageNoRecipientsSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No results were found using the specified criteria..
         /// </summary>
         internal static string MessageResultsNotFound {
