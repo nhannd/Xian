@@ -446,8 +446,7 @@
 							cellType: "readonly",
 							getValue: function(item) 
 							{ 
-								item.age = item.age || _creatinineAge; 
-								return item.age.toFixed(0); 
+								return item.age = item.age || _creatinineAge; 
 							},
 							getError: function(item) { return null; },
 							setValue: function(item) { return; },
@@ -458,9 +457,9 @@
 							cellType: "readonly",
 							getValue: function(item) 
 							{ 
-								item.weight = item.weight || 
-									((data.vitals.weightUnit == "kg") ? parseFloat(data.vitals.weightValue) : parseFloat(data.vitals.weightValue) * 0.45359237) || 0; 
-								return item.weight.toFixed(0); 
+								return item.weight = item.weight 
+									|| ((data.vitals.weightUnit == "kg") ? Number(data.vitals.weightValue) : (Number(data.vitals.weightValue) * 0.45359237).roundTo(0)) 
+									|| 0; 
 							},
 							getError: function(item) { return null; },
 							setValue: function(item) { return; },
@@ -470,7 +469,7 @@
 						{	label: "Level",
 							cellType: "text",
 							getValue: function(item) { return item.level; },
-							setValue: function(item, value) { item.level = parseFloat(value); },
+							setValue: function(item, value) { item.level = parseFloat(value) || null; },
 							getError: function(item) { return null; }
 						},
 						{	label: "Staff",
@@ -492,8 +491,7 @@
 							{ 
 								try
 								{
-									item.clearance = CreatinineCalculator.calculateClearance(item.age, item.weight, item.sex, item.level);
-									return item.clearance.toFixed(2);
+									return item.clearance = CreatinineCalculator.calculateClearance(item.age, item.weight, item.sex, item.level).roundTo(2) || "N/A";
 								}
 								catch(e)
 								{
