@@ -13,7 +13,7 @@ var CreatinineCalculator =
 		age = parseFloat(age);
 		weight = parseFloat(weight);
 		level = parseFloat(level);
-		
+
 		if (["Male", "Female", "Unknown", "Other"].indexOf(sex) == -1)
 		{
 			throw "Invalid sex";

@@ -357,3 +357,19 @@ if (!Date.compare)
 		return dateOneMoreRecent ? -1 : 1;
 	}
 }
+
+if(!Number.prototype.roundTo)
+{
+	Number.prototype.roundTo = function(precision)
+	{
+		// any falsy values
+		if(!precision)
+		{
+			return Math.round(this);
+		}
+		else
+		{
+			return Number(this.toFixed(precision));
+		}
+	};
+}
