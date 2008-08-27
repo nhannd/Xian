@@ -33,5 +33,13 @@
     </Fields>
     <RowStyle CssClass="GlobalGridViewRow"/>
     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
-    
+    <EmptyDataTemplate>
+        <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" >
+            <asp:TableRow>
+                <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
+                    <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No Study Storage details for this study.</asp:panel>
+                </asp:TableCell>
+            </asp:TableRow>
+       </asp:Table>
+    </EmptyDataTemplate>
 </asp:DetailsView>
