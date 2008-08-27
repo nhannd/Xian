@@ -14,7 +14,7 @@
         <tr>
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px;">Studies</td>
             <td align="right" valign="bottom">
-                <asp:Panel CssClass="ToolbarButtons" style="padding-right: 1px;" runat="server">
+                <asp:Panel CssClass="ToolbarButtons" style="padding-right: 4px;" runat="server">
                     <ccUI:ToolbarButton runat="server" SkinID="MoveButton" ID="MoveButton" onClick="MoveButton_Click" />
                     <ccUI:ToolbarButton runat="server" SkinID="DoneButton" ID="DoneButton" onClientClick="window.location = '../Default.aspx';" />
                 </asp:Panel>
@@ -36,7 +36,7 @@
         <tr >
             <td class="MainContentSubTitle" style="vertical-align: bottom; padding-top: 5px; width: 100%">Destination Devices</td>
             <td align="right" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="AE Title" CssClass="SearchLabelDark" /><asp:TextBox ID="AETitleFilter" runat="server" CssClass="SearchTextBox" /></td>
-            <td align="right" nowrap="nowrap"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="SearchButton" onClick="SearchButton_Click" /></td>
+            <td align="right" nowrap="nowrap" style="padding-right: 6px;"><ccUI:ToolbarButton runat="server" ID="SearchButton" SkinID="SearchButton" onClick="SearchButton_Click" /></td>
         </tr>
 
         <tr><td colspan="3">
@@ -54,6 +54,6 @@
   
   </table>
     
-            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="5000" ShowOkButton="false" Title="Move Complete" />
+            <ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="Move Confirmation" />
     </ContentTemplate>
 </asp:UpdatePanel>

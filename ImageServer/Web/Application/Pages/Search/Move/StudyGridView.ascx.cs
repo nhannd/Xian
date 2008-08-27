@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
         public IList<Study> StudyList
         {
             get { return _studyList; }
+            set { _studyList = value; }
         }
 
         public ServerPartition Partition

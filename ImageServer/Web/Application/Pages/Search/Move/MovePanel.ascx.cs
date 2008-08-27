@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Web.UI;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
@@ -28,8 +30,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             }
         }
         private ServerPartition _partition;
-        // the controller used for interaction with the database.
         private DeviceConfigurationController _theController;
+        private IList<Study> _studies = new List<Study>();
 
         public ServerPartition Partition
         {
@@ -55,17 +57,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             // initialize the controller
             _theController = new DeviceConfigurationController();
 
-
             // setup child controls
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
-            GridPagerTop.Target = DeviceGridPanel.TheGrid;
-
-            GridPagerBottom.Target = DeviceGridPanel.TheGrid;
-
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid);
             GridPagerTop.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
+            GridPagerBottom.GetRecordCountMethod = delegate { return DeviceGridPanel.Devices.Count; };
 
-            TimedDialog.Confirmed += delegate(object data)
+            MoveConfirmation.Confirmed += delegate(object data)
                  {
                      Response.Redirect(ImageServerConstants.PageURLs.SearchPage); 
                  };
@@ -96,8 +94,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            LoadDevices();
+            ServerPartitionDataAdapter adaptor = new ServerPartitionDataAdapter();
+            ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+            criteria.AeTitle.EqualTo(Request.QueryString[ImageServerConstants.QueryStrings.ServerAE]);
+            _partition = adaptor.GetFirst(criteria);
+
+            for(int i=1;;i++)
+            {
+                string qs = string.Format(ImageServerConstants.QueryStrings.StudyUID + "{0}", i);
+                string studyuid = Request.QueryString[qs];
+
+                if(!string.IsNullOrEmpty(studyuid))
+                {
+                    _studies.Add(LoadStudy(studyuid));
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            StudyGridPanel.StudyList = _studies;
+            StudyGridPanel.DataBind();
+
+            LoadDevices();            
         }
+
+        protected Study LoadStudy(string studyInstanceUID)
+        {
+            if (String.IsNullOrEmpty(studyInstanceUID))
+                return null;
+
+            if (_partition == null)
+                return null;
+
+            StudyAdaptor studyAdaptor = new StudyAdaptor();
+            StudySelectCriteria criteria = new StudySelectCriteria();
+            criteria.StudyInstanceUid.EqualTo(studyInstanceUID);
+            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+            return studyAdaptor.GetFirst(criteria);
+        }
+
         /// <summary>
         /// Load the devices for the partition based on the filters specified in the filter panel.
         /// </summary>
@@ -143,33 +180,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
         {
             if (DeviceGridPanel.SelectedDevice != null)
             {
-                TimedDialog.Message =
-                    string.Format("The following studies have been placed in the WorkQueue to transfer to {0}:<BR/>",
-                                  this.DeviceGridPanel.SelectedDevice.AeTitle);
-                TimedDialog.Message += "<table>";
-                foreach (Study study in StudyGridView.StudyList)
-                {
-                    String text =
-                        String.Format(
-                            "<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>",
-                            study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                    TimedDialog.Message += text;
-                }
-                TimedDialog.Message += "</table>";
-
+                MoveConfirmation.Message = DialogHelper.createConfirmationMessage(string.Format(App_GlobalResources.SR.MoveStudyMessage, DeviceGridPanel.SelectedDevice.AeTitle));
+                
+                MoveConfirmation.Message += DialogHelper.createStudyTable(StudyGridView.StudyList);
+                    
                 // Create the move request, although it really isn't needed.
                 MoveRequest data = new MoveRequest();
                 data.Studies = StudyGridView.StudyList;
                 data.DestinationDevice = DeviceGridPanel.SelectedDevice;
-                TimedDialog.Data = data;
+                MoveConfirmation.Data = data;
 
                 StudyController studyController = new StudyController();
                 foreach (Study study in data.Studies)
                 {
                     studyController.MoveStudy(study, data.DestinationDevice);
-                }                
+                }
 
-                TimedDialog.Show();
+                MoveConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                MoveConfirmation.Show();
             }
         }
     }

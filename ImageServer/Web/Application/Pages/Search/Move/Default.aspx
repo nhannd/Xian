@@ -1,6 +1,6 @@
 <%@ Page Language="C#" MasterPageFile="~/Pages/Common/MainContentSection.master" AutoEventWireup="true" 
     EnableEventValidation="false" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.Default" 
-    Title="Move Studies" %>
+    Title="Move Studies | ClearCanvas ImageServer" %>
 
 <%@ Register Src="MovePanel.ascx" TagName="MovePanel" TagPrefix="localAsp" %>
 
