@@ -97,8 +97,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
             criteria.Patient.EqualTo(profile.Patient);
-            criteria.Status.EqualTo(OrderStatus.SC);
-            criteria.Status.EqualTo(OrderStatus.IP);
+            criteria.Status.In(new OrderStatus[] { OrderStatus.SC, OrderStatus.IP });
 
             OrderAssembler assembler = new OrderAssembler();
             return new ListOrdersForPatientResponse(
