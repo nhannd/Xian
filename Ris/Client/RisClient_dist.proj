@@ -32,7 +32,6 @@
   <ItemGroup>
     <ExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe" />
     <ExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe.config" />
-    <ExecutableFiles Include="$(TrunkDirectory)\Ris\RemotingClient\bin\$(Configuration)\RemotingClient.dll.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,7 +59,6 @@
     <!--<ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
     <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />-->
     <ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\..\RemotingClient\bin\$(Configuration)\RemotingClient.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -69,7 +67,6 @@
 
   <ItemGroup>
     <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
-    <AppConfigSourceFiles Include="$(TrunkDirectory)\Ris\RemotingClient\app.config" />
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
   </ItemGroup>
 

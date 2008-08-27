@@ -56,7 +56,6 @@
     <Compile Include="InstanceManagementServiceBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxiedServiceInstanceProvider.cs" />
-    <Compile Include="Remoting\EchoService.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
