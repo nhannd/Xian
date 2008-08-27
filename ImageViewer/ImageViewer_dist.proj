@@ -21,23 +21,24 @@
   </Choose>
 
   <Choose>
-    <When Condition=" '$(Platform)' != 'x64' ">
+    <When Condition=" '$(TargetPlatform)' == 'x64' ">
       <PropertyGroup>
-        <SqlCeDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe</SqlCeDirectory>
+        <BilinearInterpolationDirectory>$(SolutionDir)\..\ImageViewer\Rendering\BilinearInterpolation\$(TargetPlatform)\$(Configuration)</BilinearInterpolationDirectory>
+        <SqlCeBinariesDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe\$(TargetPlatform)</SqlCeBinariesDirectory>
+        <DatabaseFileEmptySource>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\$(TargetPlatform)\empty_viewer.sdf</DatabaseFileEmptySource>
       </PropertyGroup>
     </When>
     <Otherwise>
+      <!-- assumes Win32 -->
       <PropertyGroup>
-        <SqlCeDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe\x64</SqlCeDirectory>
+        <BilinearInterpolationDirectory>$(SolutionDir)\..\ImageViewer\Rendering\BilinearInterpolation\bin\$(Configuration)</BilinearInterpolationDirectory>
+        <SqlCeBinariesDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe</SqlCeBinariesDirectory>
+        <DatabaseFileEmptySource>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</DatabaseFileEmptySource>
       </PropertyGroup>
     </Otherwise>
   </Choose>
-
   <PropertyGroup>
 
-    <!--Database-->
-    <DatabaseFileEmptySource>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</DatabaseFileEmptySource>
-    
     <!--Hibernate Configuration-->
     <HibernateConfigurationFileName>ClearCanvas.Dicom.DataStore.cfg.xml</HibernateConfigurationFileName>
     <HibernateConfigurationFileSource>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\$(HibernateConfigurationFileName)</HibernateConfigurationFileSource>
@@ -63,8 +64,8 @@
   </ItemGroup>
  
   <ItemGroup>
-    <SqlCEFiles Include="$(SqlCeDirectory)\sqlce*.dll" />
-    <SqlCEFiles Include="$(SqlCeDirectory)\System.Data.SqlServerCe.dll" />
+    <SqlCEFiles Include="$(SqlCeBinariesDirectory)\sqlce*.dll" />
+    <SqlCEFiles Include="$(SqlCeBinariesDirectory)\System.Data.SqlServerCe.dll" />
   </ItemGroup>
   
   <ItemGroup>
@@ -125,7 +126,6 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Explorer\Dicom\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Layout\Basic\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Rendering\BilinearInterpolation\bin\$(Configuration)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
@@ -139,8 +139,9 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
+    <PluginFiles Include="$(BilinearInterpolationDirectory)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="$(ShredHostBuild)">
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Shreds\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.dll" />
   </ItemGroup>
