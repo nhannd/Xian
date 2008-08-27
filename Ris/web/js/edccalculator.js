@@ -1,6 +1,6 @@
 var EdcCalculator = {
 
-    daysToMilliseconds: function(days) {
+    _daysToMilliseconds: function(days) {
         if (isNaN(days)) throw {name:"Invalid parameter days", message:"days must be a number"};
         
         days = Number(days);
@@ -10,7 +10,7 @@ var EdcCalculator = {
     edcFromLmp: function(lmp) {
         if (isNaN(lmp)) return undefined;
 
-        return new Date(Number(lmp) + this.daysToMilliseconds(280));
+        return new Date(Number(lmp) + this._daysToMilliseconds(280));
     },
     
     differenceInWeeks: function(startDate, endDate) {
@@ -18,7 +18,7 @@ var EdcCalculator = {
         endDate = Number(endDate);
         
         var differenceInMilliseconds = endDate - startDate;
-        return differenceInMilliseconds / (1000 * 60 * 60 * 24 * 7);
+        return (differenceInMilliseconds / (1000 * 60 * 60 * 24 * 7)).roundTo(1);
     },
     
     edcFromTodaysAge: function(ageInWeeks) {
@@ -27,7 +27,7 @@ var EdcCalculator = {
         ageInWeeks = Number(ageInWeeks);
         
         var daysLeft = 280 - (ageInWeeks * 7);
-        var millisecondsLeft = this.daysToMilliseconds(daysLeft);
+        var millisecondsLeft = this._daysToMilliseconds(daysLeft);
         var today = new Date();
         
         return new Date(Number(today) + millisecondsLeft);

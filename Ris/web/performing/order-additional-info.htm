@@ -491,7 +491,7 @@
 							{ 
 								try
 								{
-									return item.clearance = CreatinineCalculator.calculateClearance(item.age, item.weight, item.sex, item.level).roundTo(2) || "N/A";
+									return item.clearance = CreatinineCalculator.calculateClearance(item.age, item.weight, item.sex, item.level) || "N/A";
 								}
 								catch(e)
 								{

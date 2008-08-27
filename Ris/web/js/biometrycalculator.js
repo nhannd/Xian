@@ -1,58 +1,98 @@
 var BiometryCalculator = {
+	_precision : 1,
 
 	crlWeeks : function(crl)
 	{
 		if (!crl) return 0;
-		return (40.447+1.125*crl-0.0058*Math.pow(crl,2))/7;
+		var result = (40.447+1.125*crl-0.0058*Math.pow(crl,2))/7;
+		return result.roundTo(this._precision);
 	},
 
-	bpdWeeks : function(bpd)
+	_bpdWeeksImpl : function(bpd)
 	{
-		if (!bpd) return 0;		
+		if (!bpd) return 0;
 		return 6.8954+0.26345*bpd+0.00000877*Math.pow(bpd, 3);
 	},
+	
+	bpdWeeks : function(bpd)
+	{
+		var result = this._bpdWeeksImpl(bpd);
+		return result.roundTo(this._precision);
+	},
 
-	correctedBpd : function(bpd, ofd)
+	_correctedBpdImpl : function(bpd, ofd)
 	{
 		if (!bpd) return 0;
 		if (!ofd) return bpd*1;
+
 		return Math.sqrt(bpd*ofd/1.265);
+	},
+	
+	correctedBpd : function(bpd, ofd)
+	{
+		var result = this._correctedBpdImpl(bpd, ofd);
+		return result.roundTo(this._precision);
+	},
+	
+	correctedBpdWeeks : function(bpd, ofd)
+	{
+		var bpdc = this._correctedBpdImpl(bpd, ofd);
+		var result = this._bpdWeeksImpl(bpdc);
+		return result.roundTo(this._precision);
+	},
+	
+	_abdomenCircumferenceImpl : function(a1, a2)
+	{
+		if (!a1) return 0;
+		if (!a2) return 0;
+
+		return (a1+a2)*1.57;
 	},
 	
 	abdomenCircumference : function(a1, a2)
 	{
-		if (!a1) return 0;
-		if (!a2) return 0;
-		return (a1+a2)*1.57;
+		var result = this._abdomenCircumferenceImpl(a1, a2);
+		return result.roundTo(this._precision);
 	},
 	
-	abdomenCircumferenceWeeks : function(ac)
+	abdomenCircumferenceWeeks : function(a1, a2)
 	{
+		var ac = this._abdomenCircumferenceImpl(a1, a2);
 		if (!ac) return 0;
-		return 7.607+0.07645*ac+0.0000393*Math.pow(ac, 2);
+
+		var result =  7.607+0.07645*ac+0.0000393*Math.pow(ac, 2);
+		return result.roundTo(this._precision);
 	},
 	
 	femurWeeks : function(fl)
 	{
 		if (!fl) return 0;
-		return 9.54+0.2977*fl+0.001039*Math.pow(fl, 2);
+
+		var result =  9.54+0.2977*fl+0.001039*Math.pow(fl, 2);
+		return result.roundTo(this._precision);
 	},
 	
 	hcWeeks : function(hc)
 	{
 		if (!hc) return 0;
-		return 0;
+
+		var result =  0;
+		return result.roundTo(this._precision);
 	},
 	
-	efw : function(useBpdcHc, useFl, ac, fl, bpdc)
+	efw : function(useBpdcHc, useFl, acX, acY, fl, bpd, ofd)
 	{
         useBpdcHc = !!useBpdcHc;
         useFl = !!useFl;
-        ac = Number(ac);
+        acX = Number(acX);
+        acY = Number(acY);
         fl = Number(fl);
-        bpdc = Number(bpdc);
+        bpd = Number(bpd);
+		ofd = Number(ofd);
 
         var exponent;
+		var ac = this._abdomenCircumferenceImpl(acX, acY);
+		var bpdc = this._correctedBpdImpl(bpd, ofd);
 
         if (useBpdcHc && useFl) {
             // Log10w=1.4787 - .003343ac*f +.001837b*b + .0458ac + .158f  (ac, f, b in cm)
@@ -99,6 +139,7 @@ var BiometryCalculator = {
 
 		if (!numOfMeasurements) return 0;
 		
-		return (corrBpdWks + acWks + flWks) / numOfMeasurements;
+		var result = (corrBpdWks + acWks + flWks) / numOfMeasurements;
+		return result.roundTo(this._precision);
 	}
 }

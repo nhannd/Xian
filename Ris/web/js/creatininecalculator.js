@@ -27,6 +27,7 @@ var CreatinineCalculator =
 			throw "Level must be greater than 0";
 		}
 		
-		return ((this._standardFactors[sex]["a"] - age) * this._standardFactors[sex]["b"] * weight) / level * this._standardFactors[sex]["c"];
+		var result = ((this._standardFactors[sex]["a"] - age) * this._standardFactors[sex]["b"] * weight) / level * this._standardFactors[sex]["c"];
+		return result.roundTo(2);
 	}
 }
