@@ -30,11 +30,13 @@
 #endregion
 
 using System.Threading;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using System.ServiceModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -77,16 +79,14 @@ namespace ClearCanvas.Ris.Application.Services
             {
 				if (_currentUserStaff == null)
 				{
-                    try
-                    {
-                        StaffSearchCriteria where = new StaffSearchCriteria();
-                        where.UserName.EqualTo(CurrentUser);
-                        _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
-                    }
-                    catch (EntityNotFoundException)
-                    {
+                    StaffSearchCriteria where = new StaffSearchCriteria();
+                    where.UserName.EqualTo(CurrentUser);
+					_currentUserStaff = CollectionUtils.FirstElement(
+						PersistenceContext.GetBroker<IStaffBroker>().Find(
+							new StaffSearchCriteria[] { where }, new SearchResultPage(0, 1), true));
+
+					if(_currentUserStaff == null)
                         throw new RequestValidationException(SR.ExceptionNoStaffForUser);
-                    }
                 }
 
                 return _currentUserStaff;
@@ -109,9 +109,10 @@ namespace ClearCanvas.Ris.Application.Services
                         FacilitySearchCriteria where = new FacilitySearchCriteria();
                         where.Code.EqualTo(settings.WorkingFacilityCode);
 
-                        // this will throw if the working facility code is invalid, but this should not happen
+                        // this will be null if the working facility code is invalid, but this should not happen
                         // (and if it does, there is nothing we can do about it)
-                        _workingFacility = PersistenceContext.GetBroker<IFacilityBroker>().FindOne(where);
+						_workingFacility = CollectionUtils.FirstElement(PersistenceContext.GetBroker<IFacilityBroker>().Find(
+							new FacilitySearchCriteria[] { where }, new SearchResultPage(0, 1), true));
                     }
                     _workingFacilityLoaded = true;
                 }
