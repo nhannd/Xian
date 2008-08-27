@@ -16,7 +16,7 @@
             <td align="right" valign="bottom">
                 <asp:Panel CssClass="ToolbarButtons" style="padding-right: 4px;" runat="server">
                     <ccUI:ToolbarButton runat="server" SkinID="MoveButton" ID="MoveButton" onClick="MoveButton_Click" />
-                    <ccUI:ToolbarButton runat="server" SkinID="DoneButton" ID="DoneButton" onClientClick="window.location = '../Default.aspx';" />
+                    <ccUI:ToolbarButton runat="server" SkinID="CancelButton" ID="CancelButton" onClientClick="window.location = '../Default.aspx';" />
                 </asp:Panel>
             </td>
         </tr>
