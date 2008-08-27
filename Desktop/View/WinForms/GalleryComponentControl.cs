@@ -111,6 +111,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (_component != null && _component.ToolbarModel != null)
 			{
 				ToolStripBuilder.BuildToolbar(_toolStrip.Items, _component.ToolbarModel.ChildNodes);
+				if (_toolStrip.Items.Count > 0)
+					_toolStrip.Visible = true;
 			}
 		}
 
@@ -175,9 +177,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			ListViewItem lvi = _listView.Items[index];
 			IGalleryItem item = (IGalleryItem) _gallery[index];
+
+			lvi.SubItems.Clear();
+			foreach (string line in item.Description.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries)) {
+				lvi.SubItems.Add(line, Color.Gray, Color.Transparent, _listView.Font);
+			}
+			lvi.Text = item.Name;
+
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
 			_listView.LargeImageList.Images[keyIndex] = item.Image;
-			// update name, description
 			_listView.RedrawItems(index, index, true);
 		}
 
@@ -193,8 +201,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			string imageKey = Guid.NewGuid().ToString();
 			_listView.LargeImageList.Images.Add(imageKey, galleryItem.Image);
 			ListViewItem lvi = new ListViewItem(galleryItem.Name, imageKey);
-			foreach (string line in galleryItem.Description.Split(new char[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries)
-				)
+			foreach (string line in galleryItem.Description.Split(new char[] {'\n', '\r'}, StringSplitOptions.RemoveEmptyEntries))
 			{
 				lvi.SubItems.Add(line, Color.Gray, Color.Transparent, _listView.Font);
 			}
@@ -283,6 +290,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				// if editing the name on the item fails, abort the label change
 				e.CancelEdit = true;
+			}
+		}
+
+		private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
+			if (e.KeyCode == Keys.F2) {
+				e.IsInputKey = true;
+			}
+		}
+
+		private void OnKeyDown(object sender, KeyEventArgs e) {
+			if (e.KeyCode == Keys.F2 && _listView.LabelEdit) {
+				if (_listView.FocusedItem != null) {
+					_listView.FocusedItem.BeginEdit();
+					e.Handled = true;
+					e.SuppressKeyPress = true;
+				}
 			}
 		}
 
@@ -418,8 +441,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			e.Effect = ConvertEnum.GetDragDropEffects(action);
 
 			DrawInsertionMark(-1, false, Point.Empty);
-
-			_listView.SelectedItems.Clear();
 		}
 
 		private void DrawInsertionMark(int index, bool drawBoxInsteadOfLine, Point cursorHint)
@@ -493,5 +514,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		#endregion
+
+		private void _listView_ItemActivate(object sender, EventArgs e) {
+			if(_listView.FocusedItem!=null)
+			{
+				IGalleryItem item = _listView.FocusedItem.Tag as IGalleryItem;
+				_component.Activate(item);
+			}
+		}
 	}
 }
