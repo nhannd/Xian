@@ -189,6 +189,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
         }
 
+        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid)
+        {
+            ItemName = singleItemLabel;
+            PuralItemName = multipleItemLabel;
+            Target = grid;
+        }
+
         #endregion Public methods
     }
 }
