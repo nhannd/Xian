@@ -115,7 +115,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
             }
 
             StudyGridPanel.StudyList = _studies;
-            StudyGridPanel.DataBind();
 
             LoadDevices();            
         }

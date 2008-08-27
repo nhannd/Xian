@@ -19,9 +19,7 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.StudyGridVie
                         </itemtemplate>
                     </asp:TemplateField>
                     <asp:BoundField DataField="StudyDescription" HeaderText="Description"></asp:BoundField>
-                    <asp:BoundField DataField="NumberOfRelatedSeries" HeaderText="Series" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
-                    <asp:BoundField DataField="NumberOfRelatedInstances" HeaderText="Instances" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"></asp:BoundField>
-                </Columns>
+                                    </Columns>
                 <EmptyDataTemplate>
                     <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
                         CssClass="GlobalGridViewHeader">
@@ -31,8 +29,6 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Search.Move.StudyGridVie
                             <asp:TableHeaderCell>Accession #</asp:TableHeaderCell>
                             <asp:TableHeaderCell>Study Date</asp:TableHeaderCell>
                             <asp:TableHeaderCell>Description</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Series</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Instances</asp:TableHeaderCell>
                         </asp:TableHeaderRow>
                     </asp:Table>
                 </EmptyDataTemplate>

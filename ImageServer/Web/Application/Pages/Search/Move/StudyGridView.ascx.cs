@@ -14,7 +14,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
         public IList<Study> StudyList
         {
             get { return _studyList; }
-            set { _studyList = value; }
+            set { _studyList = value;
+                  StudyListControl.DataSource = _studyList;
+            }
         }
 
         public ServerPartition Partition
@@ -26,7 +28,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search.Move
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            DataBind();
             StudyListControl.DataBind();
         }
 

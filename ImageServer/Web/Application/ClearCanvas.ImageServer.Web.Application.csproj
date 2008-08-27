@@ -152,6 +152,7 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DialogHelper.cs" />
     <Compile Include="Pages\Common\BarChart.aspx.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
