@@ -143,6 +143,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
 					LoadEnumerationValues();
 
+                	UpdateOperationEnablement();
                     NotifyPropertyChanged("SelectedEnumeration");
                     NotifyPropertyChanged("SelectedEnumerationClassName");
                 }
@@ -331,20 +332,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			base.OnSelectedItemsChanged();
 
-			// overriding base behaviour
-			if (_selectedEnumeration == null)
-			{
-				this.ActionModel.Add.Enabled = false;
-				this.ActionModel.Delete.Enabled = false;
-				this.ActionModel.Edit.Enabled = false;
-			}
-			else
-			{
-				this.ActionModel.Add.Enabled = _selectedEnumeration.CanAddRemoveValues;
-				this.ActionModel.Delete.Enabled = _selectedEnumeration.CanAddRemoveValues;
-				this.ActionModel.ToggleActivation.Enabled = _selectedEnumeration.CanAddRemoveValues;
-			}
-
+			UpdateOperationEnablement();
 		}
 
 		#endregion
@@ -354,5 +342,24 @@ namespace ClearCanvas.Ris.Client.Admin
 			this.Table.Items.Clear();
 			this.Table.Items.AddRange(this.PagingController.GetFirst());
 		}
-	}
+
+		private void UpdateOperationEnablement()
+		{
+			// overriding base behaviour
+			if (_selectedEnumeration == null)
+			{
+				this.ActionModel.Add.Enabled = false;
+				this.ActionModel.Edit.Enabled = false;
+				this.ActionModel.Delete.Enabled = false;
+				this.ActionModel.ToggleActivation.Enabled = false;
+			}
+			else
+			{
+				this.ActionModel.Add.Enabled = _selectedEnumeration.CanAddRemoveValues;
+				this.ActionModel.Edit.Enabled = this.SelectedItems.Count == 1;
+				this.ActionModel.Delete.Enabled = this.SelectedItems.Count > 0 && _selectedEnumeration.CanAddRemoveValues;
+				this.ActionModel.ToggleActivation.Enabled = this.SelectedItems.Count > 0 && _selectedEnumeration.CanAddRemoveValues;
+			}
+		}
+    }
 }
