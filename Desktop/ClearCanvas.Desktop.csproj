@@ -100,6 +100,7 @@
     <Compile Include="DragDropOption.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="FileDialogCreationArgs.cs" />
+    <Compile Include="GalleryItemEventArgs.cs" />
     <Compile Include="IApplicationView.cs" />
     <Compile Include="IDragDropObject.cs" />
     <Compile Include="IDesktopObject.cs" />

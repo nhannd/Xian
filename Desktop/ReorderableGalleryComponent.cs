@@ -241,18 +241,18 @@ namespace ClearCanvas.Desktop
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropLocalItem(IGalleryItem droppingItem, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
+		protected virtual DragDropOption PerformDropLocalItem(IGalleryItem droppedItem, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			DragDropOption performedAction = DragDropOption.None;
 			if (modifiers == ModifierFlags.None)
 			{
 				// we are dragging something, and the item we want to drop is the same as that which we are dragging
 				// then this is a reordering operation
-				int draggedIndex = base.DataSource.IndexOf(droppingItem);
+				int draggedIndex = base.DataSource.IndexOf(droppedItem);
 				if (draggedIndex < targetIndex)
 					targetIndex--;
-				base.DataSource.Remove(droppingItem);
-				base.DataSource.Insert(targetIndex, droppingItem);
+				base.DataSource.Remove(droppedItem);
+				base.DataSource.Insert(targetIndex, droppedItem);
 				this.DraggedItem = null;
 
 				performedAction = DragDropOption.Move;
@@ -260,27 +260,27 @@ namespace ClearCanvas.Desktop
 			return performedAction;
 		}
 
-		protected virtual DragDropOption PerformDropForeignItem(IGalleryItem droppingItem, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
+		protected virtual DragDropOption PerformDropForeignItem(IGalleryItem droppedItem, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppingData, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
+		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppedItem, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropLocalItem(IGalleryItem droppingItem, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
+		protected virtual DragDropOption PerformDropLocalItem(IGalleryItem droppedItem, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropForeignItem(IGalleryItem droppingItem, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
+		protected virtual DragDropOption PerformDropForeignItem(IGalleryItem droppedItem, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppingData, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
+		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppedItem, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}

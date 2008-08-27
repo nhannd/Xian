@@ -26,6 +26,7 @@ namespace ClearCanvas.Desktop
 		private ActionModelNode _menuModel;
 		private ActionModelNode _toolbarModel;
 
+		private GalleryItemEventHandler _itemActivated;
 		private EventHandler _selectionChanged;
 		private EventHandler _dataSourceChanged;
 
@@ -76,10 +77,48 @@ namespace ClearCanvas.Desktop
 		private class ToolContext : IGalleryToolContext
 		{
 			private GalleryComponent _component;
+			private event EventHandler _selectionChanged;
+			private event GalleryItemEventHandler _itemActivated;
 
 			public ToolContext(GalleryComponent component)
 			{
 				_component = component;
+				_component.SelectionChanged += FireSelectionChanged;
+				_component.ItemActivated += FireItemActivated;
+			}
+
+			~ToolContext()
+			{
+				_component.SelectionChanged -= FireSelectionChanged;
+				_component.ItemActivated -= FireItemActivated;
+				_component = null;
+			}
+
+			private void FireItemActivated(object sender, GalleryItemEventArgs e) {
+				if (_itemActivated != null)
+					_itemActivated(this, new GalleryItemEventArgs(e.Item));
+			}
+
+			private void FireSelectionChanged(object sender, EventArgs e) {
+				if (_selectionChanged != null)
+					_selectionChanged(this, new EventArgs());
+			}
+
+			public event EventHandler SelectionChanged
+			{
+				add { _selectionChanged += value; }
+				remove { _selectionChanged -= value; }
+			}
+
+			public event GalleryItemEventHandler ItemActivated
+			{
+				add { _itemActivated += value; }
+				remove { _itemActivated -= value; }
+			}
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
 			}
 
 			public IBindingList DataSource
@@ -95,6 +134,11 @@ namespace ClearCanvas.Desktop
 			public ISelection SelectedData
 			{
 				get { return _component.SelectedData; }
+			}
+
+			public void Activate(IGalleryItem item)
+			{
+				_component.Activate(item);
 			}
 
 			public void Select(IEnumerable<IGalleryItem> selection)
@@ -178,6 +222,12 @@ namespace ClearCanvas.Desktop
 			remove { _selectionChanged -= value; }
 		}
 
+		public event GalleryItemEventHandler ItemActivated
+		{
+			add { _itemActivated += value; }
+			remove { _itemActivated -= value; }
+		}
+
 		public void Select(IEnumerable<IGalleryItem> selection)
 		{
 			Platform.CheckForNullReference(selection, "selection");
@@ -210,9 +260,24 @@ namespace ClearCanvas.Desktop
 			NotifySelectionChanged();
 		}
 
+		public void Activate(IGalleryItem item)
+		{
+			if (_dataSource == null)
+				throw new InvalidOperationException(_msgNullDataSource);
+			if (!_dataSource.Contains(item))
+				throw new ArgumentException(_msgItemNotInDataSource, "item");
+
+			NotifyItemActivated(item);
+		}
+
 		private void NotifySelectionChanged()
 		{
 			EventsHelper.Fire(_selectionChanged, this, new EventArgs());
+		}
+
+		private void NotifyItemActivated(IGalleryItem item)
+		{
+			EventsHelper.Fire(_itemActivated, this, new GalleryItemEventArgs(item));
 		}
 
 		#endregion
