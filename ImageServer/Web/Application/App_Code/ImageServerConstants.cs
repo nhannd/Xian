@@ -69,4 +69,10 @@ public class ImageServerConstants
         public static readonly string Watermark = string.Format("~/App_Themes/{0}/images/Indicators/Watermark.gif", Theme);
     }
 
+    public class QueryStrings
+    {
+        public const string ServerAE = "serverae";
+        public const string StudyUID = "studyuid";
+    }
+
 }

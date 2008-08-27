@@ -37,13 +37,15 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Common.WebControls.Helpers;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Search.SearchPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 {
     [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Search.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Search.SearchPanel.js")]
-    public partial class SearchPanel : ScriptUserControl
+    public partial class SearchPanel : AJAXScriptControl
     {
         #region Private members
         private ServerPartition _serverPartition;
@@ -110,59 +112,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
         #endregion Public Properties  
 
-        #region Public Methods
+        #region Private Methods
 
-        /// <summary>
-        /// Remove all filter settings.
-        /// </summary>
-        public void Clear()
+        private void SetupChildControls()
         {
-            PatientId.Text = string.Empty;
-            PatientName.Text = string.Empty;
-            AccessionNumber.Text = string.Empty;
-            StudyDescription.Text = string.Empty;
-            StudyDate.Text = string.Empty;
-        }
-
-        public override void DataBind()
-        {
-            StudyListGridView.Partition = ServerPartition;
-            base.DataBind();
-            StudyListGridView.DataBind();
-        }
-
-        #endregion Public Methods
-
-        #region Constructors
-        public SearchPanel()
-            : base(false, HtmlTextWriterTag.Div)
-        {
-        }
-
-        #endregion Constructors
-
-        #region Protected Methods
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-
             StudyDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
             ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
             
-            // setup child controls
-            GridPagerBottom.Target = StudyListGridView.StudyListGrid;
-
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerStudySingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerStudyMultipleItems;
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerStudySingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerStudyMultipleItems;
-            GridPagerTop.Target = StudyListGridView.StudyListGrid;
-            GridPagerBottom.Target = StudyListGridView.StudyListGrid;
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid);
             GridPagerTop.GetRecordCountMethod = delegate
                               {
-								  return StudyListGridView.ResultCount;
+                                  return StudyListGridView.ResultCount;
                               };
             GridPagerBottom.GetRecordCountMethod = delegate
                                           {
@@ -189,41 +151,75 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                                 UpdatePanel.Update(); // force refresh
                             };
 
-			RestoreMessageBox.Confirmed += delegate(object data)
-							{
-								if (data is IList<Study>)
-								{
-									IList<Study> studies = data as IList<Study>;
-									foreach (Study study in studies)
-									{
-										_controller.RestoreStudy(study);
-									}
-								}
-								else if (data is Study)
-								{
-									Study study = data as Study;
-									_controller.RestoreStudy(study);
-								}
+            RestoreMessageBox.Confirmed += delegate(object data)
+                            {
+                                if (data is IList<Study>)
+                                {
+                                    IList<Study> studies = data as IList<Study>;
+                                    foreach (Study study in studies)
+                                    {
+                                        _controller.RestoreStudy(study);
+                                    }
+                                }
+                                else if (data is Study)
+                                {
+                                    Study study = data as Study;
+                                    _controller.RestoreStudy(study);
+                                }
 
-								DataBind();
-								UpdatePanel.Update(); // force refresh
-							};
+                                DataBind();
+                                UpdatePanel.Update(); // force refresh
+                            };
 
-			StudyListGridView.DataSourceCreated += delegate(StudyDataSource source)
-										{
-											source.Partition = ServerPartition;
+            StudyListGridView.DataSourceCreated += delegate(StudyDataSource source)
+                                        {
+                                            source.Partition = ServerPartition;
 
-											if (!String.IsNullOrEmpty(PatientId.Text))
-												source.PatientId = PatientId.Text;
-											if (!String.IsNullOrEmpty(PatientName.Text))
-												source.PatientName = PatientName.Text;
-											if (!String.IsNullOrEmpty(AccessionNumber.Text))
-												source.AccessionNumber = AccessionNumber.Text;
-											if (!String.IsNullOrEmpty(StudyDate.Text))
-												source.StudyDate = StudyDate.Text;
-											if (!String.IsNullOrEmpty(StudyDescription.Text))
-												source.StudyDescription = StudyDescription.Text;
-										};
+                                            if (!String.IsNullOrEmpty(PatientId.Text))
+                                                source.PatientId = PatientId.Text;
+                                            if (!String.IsNullOrEmpty(PatientName.Text))
+                                                source.PatientName = PatientName.Text;
+                                            if (!String.IsNullOrEmpty(AccessionNumber.Text))
+                                                source.AccessionNumber = AccessionNumber.Text;
+                                            if (!String.IsNullOrEmpty(StudyDate.Text))
+                                                source.StudyDate = StudyDate.Text;
+                                            if (!String.IsNullOrEmpty(StudyDescription.Text))
+                                                source.StudyDescription = StudyDescription.Text;
+                                        };
+        }
+
+        #endregion Private Methods
+
+        #region Public Methods
+
+        /// <summary>
+        /// Remove all filter settings.
+        /// </summary>
+        public void Clear()
+        {
+            PatientId.Text = string.Empty;
+            PatientName.Text = string.Empty;
+            AccessionNumber.Text = string.Empty;
+            StudyDescription.Text = string.Empty;
+            StudyDate.Text = string.Empty;
+        }
+
+        public override void DataBind()
+        {
+            StudyListGridView.Partition = ServerPartition;
+            base.DataBind();
+            StudyListGridView.DataBind();
+        }
+
+        #endregion Public Methods
+
+        #region Protected Methods
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            SetupChildControls();           
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -266,18 +262,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
             if (studies != null && studies.Count>0)
             {
-                if (studies.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleStudyDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleStudyDelete);
+                string message = studies.Count > 1 ? string.Format(App_GlobalResources.SR.MultipleStudyDelete) :
+                                                     string.Format(App_GlobalResources.SR.SingleStudyDelete);
 
-                MessageBox.Message += "<table>";
-                foreach (Study study in studies)
-                {
-                    String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
-                                    study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                    MessageBox.Message += text;
-                }
-                MessageBox.Message += "</table>";
+                MessageBox.Message = DialogHelper.createConfirmationMessage(message);
+                MessageBox.Message += DialogHelper.createStudyTable(studies);
 
+                MessageBox.Title = App_GlobalResources.Titles.DeleteStudyConfirmation;
                 MessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
                 MessageBox.Data = studies;
                 MessageBox.Show();
@@ -290,19 +281,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
 			if (studies != null && studies.Count > 0)
 			{
-				if (studies.Count > 1) RestoreMessageBox.Message = string.Format(App_GlobalResources.SR.MultipleStudyRestore);
-				else RestoreMessageBox.Message = string.Format(App_GlobalResources.SR.SingleStudyRestore);
+			    string message = studies.Count > 1 ? string.Format(App_GlobalResources.SR.MultipleStudyRestore):
+				                                    string.Format(App_GlobalResources.SR.SingleStudyRestore);
 
-				RestoreMessageBox.Message += "<table>";
-				foreach (Study study in studies)
-				{
-					String text = String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>",
-									study.PatientsName, study.AccessionNumber, study.StudyDescription);
-					RestoreMessageBox.Message += text;
-				}
-				RestoreMessageBox.Message += "</table>";
-
-				RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+			    RestoreMessageBox.Message = DialogHelper.createConfirmationMessage(message);
+                RestoreMessageBox.Message += DialogHelper.createStudyTable(studies);
+				
+			    RestoreMessageBox.Title = App_GlobalResources.Titles.RestoreStudyConfirmation;
+                RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
 				RestoreMessageBox.Data = studies;
 				RestoreMessageBox.Show();
 			}

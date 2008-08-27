@@ -129,8 +129,14 @@
   <data name="ArchiveQueue" xml:space="preserve">
     <value>Archive Queue</value>
   </data>
+  <data name="ArchiveQueuePageTitle" xml:space="preserve">
+    <value>Archive Queue | ClearCanvas ImageServer</value>
+  </data>
   <data name="Configure" xml:space="preserve">
     <value>Configure</value>
+  </data>
+  <data name="DeleteStudyConfirmation" xml:space="preserve">
+    <value>Delete Confirmation</value>
   </data>
   <data name="Devices" xml:space="preserve">
     <value>Devices</value>
@@ -147,6 +153,9 @@
   <data name="FileSystems" xml:space="preserve">
     <value>File Systems</value>
   </data>
+  <data name="MoveStudiesPageTitle" xml:space="preserve">
+    <value>Move Studies | ClearCanvas ImageServer</value>
+  </data>
   <data name="PartitionArchive" xml:space="preserve">
     <value>Partition Archive</value>
   </data>
@@ -156,8 +165,17 @@
   <data name="RestoreQueue" xml:space="preserve">
     <value>Restore Queue</value>
   </data>
+  <data name="RestoreQueuePageTitle" xml:space="preserve">
+    <value>Restore Queue | ClearCanvas ImageServer</value>
+  </data>
+  <data name="RestoreStudyConfirmation" xml:space="preserve">
+    <value>Restore Confirmation</value>
+  </data>
   <data name="Search" xml:space="preserve">
     <value>Search</value>
+  </data>
+  <data name="SearchPageTitle" xml:space="preserve">
+    <value>Search | ClearCanvas ImageServer</value>
   </data>
   <data name="Series" xml:space="preserve">
     <value>Series</value>
@@ -182,5 +200,8 @@
   </data>
   <data name="WorkQueue" xml:space="preserve">
     <value>Work Queue</value>
+  </data>
+  <data name="WorkQueuePageTitle" xml:space="preserve">
+    <value>Work Queue | ClearCanvas ImageServer</value>
   </data>
 </root>

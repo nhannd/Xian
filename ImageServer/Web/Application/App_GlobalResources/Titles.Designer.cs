@@ -97,11 +97,29 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive Queue | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string ArchiveQueuePageTitle {
+            get {
+                return ResourceManager.GetString("ArchiveQueuePageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure.
         /// </summary>
         internal static string Configure {
             get {
                 return ResourceManager.GetString("Configure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Confirmation.
+        /// </summary>
+        internal static string DeleteStudyConfirmation {
+            get {
+                return ResourceManager.GetString("DeleteStudyConfirmation", resourceCulture);
             }
         }
         
@@ -151,6 +169,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move Studies | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string MoveStudiesPageTitle {
+            get {
+                return ResourceManager.GetString("MoveStudiesPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Partition Archive.
         /// </summary>
         internal static string PartitionArchive {
@@ -178,11 +205,38 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore Queue | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string RestoreQueuePageTitle {
+            get {
+                return ResourceManager.GetString("RestoreQueuePageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore Confirmation.
+        /// </summary>
+        internal static string RestoreStudyConfirmation {
+            get {
+                return ResourceManager.GetString("RestoreStudyConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string Search {
             get {
                 return ResourceManager.GetString("Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string SearchPageTitle {
+            get {
+                return ResourceManager.GetString("SearchPageTitle", resourceCulture);
             }
         }
         
@@ -255,6 +309,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string WorkQueue {
             get {
                 return ResourceManager.GetString("WorkQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Work Queue | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string WorkQueuePageTitle {
+            get {
+                return ResourceManager.GetString("WorkQueuePageTitle", resourceCulture);
             }
         }
     }

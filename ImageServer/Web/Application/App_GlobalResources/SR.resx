@@ -222,6 +222,9 @@
   <data name="GridPagerWorkQueueSingleItem" xml:space="preserve">
     <value>Work Item Found</value>
   </data>
+  <data name="MoveStudyMessage" xml:space="preserve">
+    <value>The following studies will be moved to {0}:</value>
+  </data>
   <data name="MultipleArchiveQueueDelete" xml:space="preserve">
     <value>Are you sure you want to delete these Archive Queue items?</value>
   </data>

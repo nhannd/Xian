@@ -165,7 +165,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
         _sendSelectedStudies : function()
         {
             var studylist = $find(this._StudyListClientID);
-            // open the selected studies
+
             if (studylist!=null )
             {
                 var rows = studylist.getSelectedRowElements();
@@ -188,7 +188,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Sear
                             urlCount++;
                         }
                     }
-                    // load in the current window
+                    // load in the current window 
                     window.location = url;
                 }
             }

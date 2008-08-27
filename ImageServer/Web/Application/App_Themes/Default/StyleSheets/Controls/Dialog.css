@@ -137,6 +137,36 @@
     border: #618FAD 1px solid;
 }
 
+.ConfirmDialogMessage
+{
+    font-weight: bold;
+    font-size: 16px; 
+    color: #D13D4D;
+}
+
+.ConfirmDialogTable
+{
+    margin-top: 10px;
+    border: solid 1px black;
+}
+
+.ConfirmDialogHeadingText td
+{
+    color: #205F87;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+    border-bottom: solid 1px black;
+    background-color: #eeeeee;
+}
+
+.ConfirmDialogItemText td
+{
+    font-size: 14px;
+    text-align: left;
+    border-top: solid 2px #eeeeee;
+    background-color: white;
+}
 
 /*************************************************************************************************
 	
