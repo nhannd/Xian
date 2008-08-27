@@ -365,7 +365,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             SelectRow(rowIndex);
         
         }
-
         
         public void SelectRow(int rowIndex)
         {
@@ -381,7 +380,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             base.OnInit(e);
            
-            
             if (!DesignMode)
             {
                 if (Page.IsPostBack)
@@ -391,8 +389,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 else if (SelectedIndex>=0)
                 {
                     _selectedRows[SelectedIndex] = true;
-                        
                 }
+
+                PagerSettings.Visible = false;
             }
                     
         }
@@ -408,6 +407,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 e.Row.Attributes.Add("onmouseover", onMouseOver);
                 e.Row.Attributes.Add("onmouseout", onMouseOut);
             }
+        }
+
+        public void PageIndexChangedHandler(object sender, EventArgs e)
+        {
+            DataBind();
+        }
+
+        public void PageIndexChangingHandler(object sender, GridViewPageEventArgs e)
+        {
+            PageIndex = e.NewPageIndex;
+            DataBind();
         }
         
         #endregion Protected Methods
@@ -502,7 +512,5 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             return sb.ToString();
 
         }
-
-        
     }
 }
