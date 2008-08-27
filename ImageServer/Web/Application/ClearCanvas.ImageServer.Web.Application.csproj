@@ -167,6 +167,13 @@
     <Compile Include="Pages\Common\BasePage.aspx.designer.cs">
       <DependentUpon>BasePage.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Common\Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Common\MainContentSection.Master.cs">
       <DependentUpon>MainContentSection.Master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -347,6 +354,13 @@
     <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Error\Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Error\ErrorPage.aspx.cs">
       <DependentUpon>ErrorPage.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -367,6 +381,13 @@
     </Compile>
     <Compile Include="Pages\Help\About.aspx.designer.cs">
       <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Help\Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Help\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Help\Documentation.aspx.cs">
       <DependentUpon>Documentation.aspx</DependentUpon>
@@ -477,12 +498,12 @@
     </Compile>
     <Compile Include="Pages\SeriesDetails\SeriesDetails.cs" />
     <Compile Include="Pages\SeriesDetails\SeriesDetailsAssembler.cs" />
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsPage.aspx.cs">
-      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+    <Compile Include="Pages\SeriesDetails\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsPage.aspx.designer.cs">
-      <DependentUpon>SeriesDetailsPage.aspx</DependentUpon>
+    <Compile Include="Pages\SeriesDetails\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx.cs">
       <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
@@ -632,12 +653,12 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\StudyDetails.cs" />
     <Compile Include="Pages\Queues\WorkQueue\Edit\StudyDetailsAssembler.cs" />
-    <Compile Include="Pages\Queues\WorkQueue\Edit\ViewEdit.aspx.cs">
-      <DependentUpon>ViewEdit.aspx</DependentUpon>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Queues\WorkQueue\Edit\ViewEdit.aspx.designer.cs">
-      <DependentUpon>ViewEdit.aspx</DependentUpon>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetails.cs" />
     <Compile Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx.cs">
@@ -833,6 +854,7 @@
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
+    <Content Include="Pages\Common\Default.aspx" />
     <Content Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx" />
     <Content Include="Pages\Configure\PartitionArchive\Default.aspx" />
     <Content Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx" />
@@ -875,8 +897,10 @@
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx" />
     <Content Include="Pages\Configure\ServiceLocks\Default.aspx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
+    <Content Include="Pages\Error\Default.aspx" />
     <Content Include="Pages\Error\ErrorPage.aspx" />
     <Content Include="Pages\Help\About.aspx" />
+    <Content Include="Pages\Help\Default.aspx" />
     <Content Include="Pages\Help\Documentation.aspx" />
     <Content Include="Pages\Queues\ArchiveQueue\Default.aspx" />
     <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
@@ -895,7 +919,7 @@
     <EmbeddedResource Include="Pages\Search\SearchPanel.js" />
     <Content Include="Pages\Search\StudyListGridView.ascx" />
     <Content Include="Pages\SeriesDetails\PatientSummaryPanel.ascx" />
-    <Content Include="Pages\SeriesDetails\SeriesDetailsPage.aspx" />
+    <Content Include="Pages\SeriesDetails\Default.aspx" />
     <Content Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx" />
     <Content Include="Pages\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\SeriesDetails\StudySummaryPanel.ascx" />
@@ -919,7 +943,7 @@
     <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
-    <Content Include="Pages\Queues\WorkQueue\Edit\ViewEdit.aspx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\Default.aspx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\WebMoveStudyWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDetailsPanel.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />

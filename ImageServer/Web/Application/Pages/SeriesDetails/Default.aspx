@@ -1,5 +1,5 @@
-<%@ Page Language="C#" MasterPageFile="~/Pages/Common/MainContentSection.master" AutoEventWireup="true" Codebehind="SeriesDetailsPage.aspx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.SeriesDetailsPage" %>
+<%@ Page Language="C#" MasterPageFile="~/Pages/Common/MainContentSection.master" AutoEventWireup="true" Codebehind="Default.aspx.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails.Default" %>
 
 <%@ Register Src="SeriesDetailsPanel.ascx" TagName="SeriesDetailsPanel" TagPrefix="uc1" %>
 

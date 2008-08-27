@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit {
     
     
     /// <summary>
-    /// ViewEdit class.
+    /// Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ViewEdit {
+    public partial class Default {
         
         /// <summary>
         /// Table1 control.

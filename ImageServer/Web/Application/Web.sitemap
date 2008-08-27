@@ -18,6 +18,6 @@
         <siteMapNode url="~/Pages/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" />
     </siteMapNode>
 
-    <siteMapNode url="~/Pages/Help/About.aspx" title="$Resources: Titles, About"  />
+    <siteMapNode url="~/Pages/Help/Default.aspx" title="$Resources: Titles, About"  />
   </siteMapNode>
 </siteMap>

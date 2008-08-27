@@ -39,7 +39,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
-    public partial class ViewEdit : BasePage
+    public partial class Default : BasePage
     {
         #region Constants
         private const string SELECTED_WORKQUEUES_UIDS_KEY = "uid";

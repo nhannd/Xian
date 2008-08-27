@@ -41,7 +41,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails
 {
-    public partial class SeriesDetailsPage : BasePage
+    public partial class Default : BasePage
     {
         #region Constants
 

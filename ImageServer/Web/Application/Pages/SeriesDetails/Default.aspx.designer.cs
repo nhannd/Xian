@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.SeriesDetails {
     
     
     /// <summary>
-    /// SeriesDetailsPage class.
+    /// Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SeriesDetailsPage {
+    public partial class Default {
         
         /// <summary>
         /// LinkButton1 control.

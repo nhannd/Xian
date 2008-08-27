@@ -47,9 +47,9 @@ public class ImageServerConstants
     {
         public const string BarChartPage = "~/Pages/Common/BarChart.aspx?pct={0}&high={1}&low={2}";
         public const string MoveStudyPage = "~/Pages/Search/Move/Default.aspx";
-        public const string SeriesDetailsPage = "~/Pages/SeriesDetails/SeriesDetailsPage.aspx";
+        public const string SeriesDetailsPage = "~/Pages/SeriesDetails/Default.aspx";
         public const string StudyDetailsPage = "~/Pages/StudyDetails/Default.aspx";
-		public const string SearchPage = "~/Pages/Search";
+		public const string SearchPage = "~/Pages/Search/Default.aspx";
 	}
 
     public class ImageURLs
