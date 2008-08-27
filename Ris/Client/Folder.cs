@@ -94,12 +94,16 @@ namespace ClearCanvas.Ris.Client
 
 		private static readonly IconSet _closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
 		private static readonly IconSet _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
+		private static readonly IconSet _closedErrorIconSet = new IconSet(IconScheme.Colour, "FolderClosedErrorSmall.png", "FolderClosedErrorMedium.png", "FolderClosedErrorMedium.png");
+		private static readonly IconSet _openErrorIconSet = new IconSet(IconScheme.Colour, "FolderOpenErrorSmall.png", "FolderOpenErrorMedium.png", "FolderOpenErrorMedium.png");
 		private string _folderTooltip;
 		private int _totalItemCount = -1;
 
 		private TimeSpan _autoInvalidateInterval = TimeSpan.Zero;
 		private DateTime _lastUpdateTime = DateTime.MinValue;	// basically "never"
 		private bool _isUpdating;
+
+		private bool _inErrorState;
 
 		/// <summary>
 		/// Constructor
@@ -246,7 +250,13 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public IconSet IconSet
 		{
-			get { return _isOpen ? this.OpenIconSet : this.ClosedIconSet; }
+			get
+			{
+				if(InErrorState)
+					return _isOpen ? this.OpenErrorIconSet : this.ClosedErrorIconSet;
+				else
+					return _isOpen ? this.OpenIconSet : this.ClosedIconSet;
+			}
 		}
 
 		/// <summary>
@@ -466,6 +476,28 @@ namespace ClearCanvas.Ris.Client
 			get { return _openIconSet; }
 		}
 
+		/// <summary>
+		/// Gets the closed-error-state <see cref="IconSet"/>.
+		/// </summary>
+		/// <remarks>
+		/// Override this property to provide a custom closed-error-state  icon.
+		/// </remarks>
+		protected virtual IconSet ClosedErrorIconSet
+		{
+			get { return _closedErrorIconSet; }
+		}
+
+		/// <summary>
+		/// Gets the open-error-state <see cref="IconSet"/>.
+		/// </summary>
+		/// <remarks>
+		/// Override this property to provide a custom open-error-state icon.
+		/// </remarks>
+		protected virtual IconSet OpenErrorIconSet
+		{
+			get { return _openErrorIconSet; }
+		}
+
 		#endregion
 
 		#region Internal API
@@ -479,6 +511,16 @@ namespace ClearCanvas.Ris.Client
 
 
 		#region Protected members
+
+		protected bool InErrorState
+		{
+			get { return _inErrorState; }
+			set
+			{
+				_inErrorState = value;
+				NotifyIconChanged();
+			}
+		}
 
 		protected void NotifyTextChanged()
 		{

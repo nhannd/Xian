@@ -332,6 +332,7 @@ namespace ClearCanvas.Ris.Client
                 _itemsTable.Items.Clear();
                 _itemsTable.Items.AddRange(result.Items);
                 _itemsTable.Sort();
+				InErrorState = false;
 
                 NotifyItemsTableChanged();
             }
@@ -340,6 +341,7 @@ namespace ClearCanvas.Ris.Client
 				// since this was running in the background, we can't report the exception to the user
 				// because they would have no context for it, and it would be annoying
 				// therefore, just log it
+				InErrorState = true;
                 Platform.Log(LogLevel.Error, args.Exception);
             }
 
@@ -356,6 +358,7 @@ namespace ClearCanvas.Ris.Client
         {
             if (args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
+				InErrorState = false;
                 this.TotalItemCount = (int)args.Result;
             }
             else
@@ -363,6 +366,7 @@ namespace ClearCanvas.Ris.Client
 				// since this was running in the background, we can't report the exception to the user
 				// because they would have no context for it, and it would be annoying
 				// therefore, just log it
+				InErrorState = true;
 				Platform.Log(LogLevel.Error, args.Exception);
             }
 

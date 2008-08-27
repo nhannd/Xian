@@ -524,6 +524,14 @@
     <EmbeddedResource Include="Icons\ToggleActivationMedium.png" />
     <EmbeddedResource Include="Icons\ToggleActivationSmall.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\FolderClosedErrorLarge.png" />
+    <EmbeddedResource Include="Icons\FolderClosedErrorMedium.png" />
+    <EmbeddedResource Include="Icons\FolderClosedErrorSmall.png" />
+    <EmbeddedResource Include="Icons\FolderOpenErrorLarge.png" />
+    <EmbeddedResource Include="Icons\FolderOpenErrorMedium.png" />
+    <EmbeddedResource Include="Icons\FolderOpenErrorSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
