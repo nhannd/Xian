@@ -58,6 +58,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly FolderTreeRoot _folderTreeRoot;
 		private FolderTreeNode _selectedTreeNode;
         private event EventHandler _selectedFolderChanged;
+    	private event EventHandler _folderSystemIntialized;
 
         private readonly IFolderSystem _folderSystem;
     	private Timer _folderInvalidateTimer;
@@ -92,52 +93,69 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem.InvalidateFolders();
 		}
 
+		/// <summary>
+		/// Executes a search on this folder system.
+		/// </summary>
+		/// <param name="searchParams"></param>
 		internal void ExecuteSearch(SearchParams searchParams)
 		{
 			if (_folderSystem.SearchEnabled)
 				_folderSystem.ExecuteSearch(searchParams);
 		}
 
+		/// <summary>
+		/// Occurs when asynchronous initialization of this folder system has completed.
+		/// </summary>
+		internal event EventHandler FolderSystemInitialized
+		{
+			add { _folderSystemIntialized += value; }
+			remove { _folderSystemIntialized -= value; }
+		}
+
 		#region Application Component overrides
 
         public override void Start()
         {
-			// initialize the folder system on a background task
-			// in case it takes a long time
-			BackgroundTask task = new BackgroundTask(
+			AsyncLoader loader = new AsyncLoader();
+			loader.Run(
 				delegate
 				{
 					_folderSystem.Initialize();
-				}, false);
-        	task.Terminated += 
-				delegate(object sender, BackgroundTaskTerminatedEventArgs args)
+				},
+				delegate(Exception e)
 				{
-					if (args.Reason == BackgroundTaskTerminatedReason.Exception)
+					try
 					{
-						Platform.Log(LogLevel.Error, args.Exception);
-						return;
+						if (e != null)
+						{
+							Platform.Log(LogLevel.Error, e);
+							return;
+						}
+
+						// subscribe to events
+						_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
+						_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
+						_folderSystem.FoldersChanged += FoldersChangedEventHandler;
+						_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
+
+						// build the initial folder tree, but do not udpate it, as this will be done on demand
+						// when this folder system is selected
+						BuildFolderTree();
+
+						// this timer is responsible for monitoring the auto-invalidation of all folders
+						// in the folder system, and performing the appropriate invalidations
+						_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); });
+						_folderInvalidateTimer.IntervalMilliseconds = 1000; // resolution of 1 second
+						_folderInvalidateTimer.Start();
+
+						// notify that this folder system is now initialized
+						EventsHelper.Fire(_folderSystemIntialized, this, EventArgs.Empty);
 					}
-
-					// subscribe to events
-					_folderSystem.Folders.ItemAdded += FolderAddedEventHandler;
-					_folderSystem.Folders.ItemRemoved += FolderRemovedEventHandler;
-					_folderSystem.FoldersChanged += FoldersChangedEventHandler;
-					_folderSystem.FoldersInvalidated += FoldersInvalidatedEventHandler;
-
-					// build the initial folder tree
-					BuildFolderTree();
-
-					// invalidate all folders and update the entire tree
-					InvalidateFolders();
-
-					// this timer is responsible for monitoring the auto-invalidation of all folders
-					// in the folder system, and performing the appropriate invalidations
-					_folderInvalidateTimer = new Timer(delegate { AutoInvalidateFolders(); });
-					_folderInvalidateTimer.IntervalMilliseconds = 1000; // resolution of 1 second
-					_folderInvalidateTimer.Start();
-				};
-
-			task.Run();
+					finally
+					{
+						loader.Dispose();
+					}
+				});
 
 			base.Start();
 		}

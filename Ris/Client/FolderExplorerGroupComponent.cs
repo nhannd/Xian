@@ -181,6 +181,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
 					folderSystem.SetContext(new FolderSystemContext(this, explorer, contentComponent));
+					explorer.FolderSystemInitialized += new EventHandler(FolderSystemInitializedEventHandler);
 					_folderExplorerComponents.Add(folderSystem, explorer);
 
 					StackTabPage thisPage = new StackTabPage(
@@ -321,6 +322,22 @@ namespace ClearCanvas.Ris.Client
 		{
 			EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
 		}
+
+		/// <summary>
+		/// Handles the <see cref="FolderExplorerComponent.FolderSystemInitialized"/> event.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void FolderSystemInitializedEventHandler(object sender, EventArgs e)
+		{
+			// this event handler is only needed to force the initial invalidation of the
+			// first selected folder explorer
+			if(sender == _selectedFolderExplorer)
+			{
+				_selectedFolderExplorer.InvalidateFolders();
+			}
+		}
+
 
 		#endregion
 	}
