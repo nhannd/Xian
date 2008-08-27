@@ -57,15 +57,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _listView
 			// 
 			this._listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-			                                                                        	colName});
+            colName});
 			this._listView.ContextMenuStrip = this._contextMenu;
 			this._listView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._listView.InsertionBoxIndex = -1;
 			this._listView.Location = new System.Drawing.Point(0, 25);
 			this._listView.Name = "_listView";
 			this._listView.Size = new System.Drawing.Size(342, 251);
 			this._listView.TabIndex = 1;
 			this._listView.UseCompatibleStateImageBehavior = false;
+			this._listView.ItemActivate += new System.EventHandler(this._listView_ItemActivate);
+			this._listView.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
 			this._listView.Resize += new System.EventHandler(this.OnListViewResize);
+			this._listView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
 			this._listView.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.OnAfterLabelEdit);
 			// 
 			// _contextMenu
@@ -73,13 +77,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._contextMenu.Name = "_contextMenu";
 			this._contextMenu.Size = new System.Drawing.Size(61, 4);
 			// 
-			// GalleryView
+			// GalleryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._listView);
 			this.Controls.Add(this._toolStrip);
-			this.Name = "GalleryView";
+			this.Name = "GalleryComponentControl";
 			this.Size = new System.Drawing.Size(342, 276);
 			this.ResumeLayout(false);
 			this.PerformLayout();
