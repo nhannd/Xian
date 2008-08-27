@@ -10,7 +10,7 @@
 
     <!-- the ClassName is persisted only for the purpose of enforcing the unique constraint -->
     <property name="FullClassName" type="String">
-      <column name="FullClassName_" unique-key="WorklistNameAndClassName" not-null="true" length="1024"/>
+      <column name="FullClassName_" unique-key="WorklistNameAndClassName" not-null="true" length="200"/>
     </property>
     
     <property name="Name" type="String">
