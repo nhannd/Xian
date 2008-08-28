@@ -362,6 +362,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				// create variables for the index of the last row and the number of rows displayable
 				// by the control without scrolling
+				// row differential then becomes the index in which the all the last displayable rows starts at
 				int lastRow = _dataGridView.Rows.GetLastRow(new DataGridViewElementStates());
 				int displayedRows = _dataGridView.DisplayedRowCount(false) - 1;
 				int rowDifferential = lastRow - displayedRows; // calculate the differential 
@@ -373,15 +374,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 					// rows, then set the first viewable row to the first selection, if not, set it
 					// to the boundary
 					if (selectedRows[0] < rowDifferential)
-						_dataGridView.FirstDisplayedScrollingRowIndex = selectedRows[0];
+						FirstDisplayedScrollingRowIndex = selectedRows[0];
 					else if (selectedRows[0] > rowDifferential)
-						_dataGridView.FirstDisplayedScrollingRowIndex = rowDifferential;
+						FirstDisplayedScrollingRowIndex = rowDifferential;
 				}
 				// new tables obviously will have no entries in selectedRows therefore
 				// automatically set it to the row differential which will probably be 0
 				else
 				{
-					_dataGridView.FirstDisplayedScrollingRowIndex = rowDifferential;
+					FirstDisplayedScrollingRowIndex = 0;
 				}
 			}
 			// strange oddity, this part actually never gets activated for some strange reason
@@ -389,7 +390,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			else
 			{
 				if (FirstDisplayedScrollingRowIndex != 0)
-					_dataGridView.FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
+					FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
 			}
 		}
 
