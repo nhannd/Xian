@@ -23,7 +23,7 @@
   <Choose>
     <When Condition="$(DistributionBuild)">
       <PropertyGroup>
-        <DistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\ImageViewer\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
       </PropertyGroup>
     </When>
     <Otherwise>
