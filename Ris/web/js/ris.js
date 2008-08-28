@@ -229,10 +229,15 @@ if(window.external)
 	
 	// attach an event to suppress the "backspace" key, which in some cases invokes the browser Back function, clearing the form
 	document.attachEvent( "onkeydown", function () {
-			if(event.keyCode == 8) { // backspace
+		if(event.keyCode == 8) { // backspace
+			var el = document.activeElement;
+			// only allow the backspace key on INPUT text fields and TEXTAREA fields
+			if((el.tagName == "INPUT" && el.attributes["type"].value == "text") || el.tagName == "TEXTAREA")
+				event.returnValue = true;	
+			else
 				event.returnValue = false;
-			}
-		});
+		}
+	});
 }
 
 /*
