@@ -144,18 +144,26 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentNoteSelection == null) return;
 
-            // manually clone order note
-            OrderNoteDetail note = new OrderNoteDetail(
-                _currentNoteSelection.Category,
-                _currentNoteSelection.NoteBody,
-                null,
+			OrderNoteDetail notedetail;
+
+			// manually clone order note
+			notedetail = new OrderNoteDetail(
+				_currentNoteSelection.OrderNoteRef,
+				_currentNoteSelection.Category,
+				_currentNoteSelection.CreationTime,
+				_currentNoteSelection.PostTime,
+				_currentNoteSelection.Author,
+				_currentNoteSelection.OnBehalfOfGroup,
 				_currentNoteSelection.Urgent,
-				null,
-				null);
+				_currentNoteSelection.StaffRecipients,
+				_currentNoteSelection.GroupRecipients,
+				_currentNoteSelection.NoteBody,
+				_currentNoteSelection.CanAcknowledge
+				);
 
             try
             {
-                OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
+                OrderNoteEditorComponent editor = new OrderNoteEditorComponent(notedetail);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
@@ -164,8 +172,8 @@ namespace ClearCanvas.Ris.Client
                     _noteTable.Items.Remove(toBeRemoved);
                     _notes.Remove(toBeRemoved);
 
-                    _noteTable.Items.Add(note);
-                    _notes.Add(note);
+                    _noteTable.Items.Add(notedetail);
+                    _notes.Add(notedetail);
 
                     this.Modified = true;
                 }
