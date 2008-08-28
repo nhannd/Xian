@@ -161,16 +161,16 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow verification of radiology reports.")]
 				public const string Verify = "Workflow/Report/Verify";
 
-				[AuthorityToken(Description = "Allow radiology reports to be submitted for review.")]
+				[AuthorityToken(Description = "Allow radiology reports to be submitted for review by another radiologist.")]
 				public const string SubmitForReview = "Workflow/Report/Submit for Review";
 
-				[AuthorityToken(Description = "Allow reporting without specifying a supervisor")]
+				[AuthorityToken(Description = "Allow creation of radiology reports without specifying a supervisor.")]
 				public const string OmitSupervisor = "Workflow/Report/Omit Supervisor";
 
-				[AuthorityToken(Description = "Allow reassigning of a report to another radiologist.")]
+				[AuthorityToken(Description = "Allow re-assignment of a radiology report that is owned by another radiologist.")]
 				public const string Reassign = "Workflow/Report/Reassign";
 
-				[AuthorityToken(Description = "Allow cancelling of a report that is assigned to other radiologists.")]
+				[AuthorityToken(Description = "Allow cancellation of a radiology report that is owned by another radiologist.")]
 				public const string Cancel = "Workflow/Report/Cancel";
 			}
 
@@ -182,19 +182,19 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow acceptance of procedure protocols.")]
 				public const string Accept = "Workflow/Protocol/Accept";
 
-				[AuthorityToken(Description = "Allow orders that were rejected/suspended by the protocolling radiologist to be cancelled, or re-submitted for protocoling.")]
+				[AuthorityToken(Description = "Allow orders that were rejected by the radiologist to be cancelled or re-submitted for protocoling.")]
 				public const string Resubmit = "Workflow/Protocol/Resolve";
 
-				[AuthorityToken(Description = "Allow procedure protocols to be submitted for review.")]
+				[AuthorityToken(Description = "Allow procedure protocols to be submitted for review by another radiologist.")]
 				public const string SubmitForReview = "Workflow/Protocol/Submit for Review";
 
-				[AuthorityToken(Description = "Allow protocolling without specifying a supervisor")]
+				[AuthorityToken(Description = "Allow creation of procedure protocols without specifying a supervisor.")]
 				public const string OmitSupervisor = "Workflow/Protocol/Omit Supervisor";
 
-				[AuthorityToken(Description = "Allow reassigning of a protocol to another radiologist.")]
+				[AuthorityToken(Description = "Allow re-assignment of a procedure protocol that is currently owned by another radiologist.")]
 				public const string Reassign = "Workflow/Protocol/Reassign";
 
-				[AuthorityToken(Description = "Allow cancelling of a protocol that is assigned to other radiologists.")]
+				[AuthorityToken(Description = "Allow cancellation of a procedure protocol that is currently owned by another radiologist.")]
 				public const string Cancel = "Workflow/Protocol/Cancel";
 			}
 
