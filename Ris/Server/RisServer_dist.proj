@@ -5,7 +5,6 @@
 	</PropertyGroup>
 	
 	<PropertyGroup>
-		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
 		<JscriptDirectory>$(SolutionDir)..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
 		<SetupDirectory>$(SolutionDir)setup</SetupDirectory>

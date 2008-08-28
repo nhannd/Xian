@@ -21,22 +21,19 @@
   </Choose>
 
   <Choose>
-    <When Condition=" '$(TargetPlatform)' == 'x64' ">
+    <When Condition=" '$(TargetPlatform)' != 'x86' ">
       <PropertyGroup>
-        <BilinearInterpolationDirectory>$(SolutionDir)\..\ImageViewer\Rendering\BilinearInterpolation\$(TargetPlatform)\$(Configuration)</BilinearInterpolationDirectory>
-        <SqlCeBinariesDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe\$(TargetPlatform)</SqlCeBinariesDirectory>
-        <DatabaseFileEmptySource>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\$(TargetPlatform)\empty_viewer.sdf</DatabaseFileEmptySource>
+        <PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
       </PropertyGroup>
     </When>
     <Otherwise>
       <!-- assumes Win32 -->
       <PropertyGroup>
-        <BilinearInterpolationDirectory>$(SolutionDir)\..\ImageViewer\Rendering\BilinearInterpolation\bin\$(Configuration)</BilinearInterpolationDirectory>
-        <SqlCeBinariesDirectory>$(SolutionDir)\..\ReferencedAssemblies\SqlCe</SqlCeBinariesDirectory>
-        <DatabaseFileEmptySource>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</DatabaseFileEmptySource>
+        <PlatformSubFolder></PlatformSubFolder>
       </PropertyGroup>
     </Otherwise>
   </Choose>
+
   <PropertyGroup>
 
     <!--Hibernate Configuration-->
@@ -64,8 +61,8 @@
   </ItemGroup>
  
   <ItemGroup>
-    <SqlCEFiles Include="$(SqlCeBinariesDirectory)\sqlce*.dll" />
-    <SqlCEFiles Include="$(SqlCeBinariesDirectory)\System.Data.SqlServerCe.dll" />
+    <SqlCEFiles Include="$(SolutionDir)\..\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\sqlce*.dll" />
+    <SqlCEFiles Include="$(SolutionDir)\..\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
   </ItemGroup>
   
   <ItemGroup>
@@ -104,9 +101,7 @@
     <CodecFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg.dll" />
     <CodecFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg2000.dll" />
     <CodecFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Rle.dll" />
-    <CodecFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll" />
-    <CodecFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll" />
-    <CodecFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Rle.dll" />
+    <CodecFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\*.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
@@ -139,7 +134,7 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
-    <PluginFiles Include="$(BilinearInterpolationDirectory)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
@@ -165,7 +160,7 @@
     <!-- Copy database file -->
     <MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
     <Copy SkipUnchangedFiles="true" SourceFiles="@(DatabaseFiles)" DestinationFolder="$(DatabaseDirectory)" />
-    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(DatabaseFileEmptySource)" DestinationFiles="$(DatabaseFile)" />
+    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf" DestinationFiles="$(DatabaseFile)" />
   </Target>
   
   <Target Name="Copy Project Files" DependsOnTargets="Copy Database Files">

@@ -3,7 +3,26 @@
 <!-- then runs a solution specific msbuild proj to copy files specific to that solution. -->
 
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
+
+  <Choose>
+    <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
+      <PropertyGroup>
+        <BuildPlatform>x64</BuildPlatform>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' ">
+      <PropertyGroup>
+        <BuildPlatform>x86</BuildPlatform>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <BuildPlatform></BuildPlatform>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <PropertyGroup>
 		<TrunkDirectory>$(ProjectDir)\..\..\..</TrunkDirectory>
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>
 		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
@@ -33,7 +52,7 @@
 		<Message Text="Executing ClearCanvas post-build step" />
 
 		<!-- Delete contents of plugin directory -->
-		<Delete Files=".\$(PlatformFolderPrefix)\plugins\*.*" ContinueOnError="true"/>
+		<Delete Files=".\plugins\*.*" ContinueOnError="true"/>
 
 		<!-- Make required directories -->
 		<MakeDir Directories="@(DestinatonDirectories)" ContinueOnError="true"/>
@@ -44,7 +63,12 @@
 		<!-- Copy shared libraries -->
 		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true"/>
 
+    <!-- Override the value of TargetPlatform for this task. -->
+    <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
+      <Output TaskParameter="Value" PropertyName="TargetPlatform" />
+    </CreateProperty>
+
 		<!-- Run the solution specific build file -->
-		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform)" />
+		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
 	</Target>
 </Project>

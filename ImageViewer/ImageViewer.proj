@@ -1,14 +1,15 @@
 <Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <Choose>
     <When Condition="'$(TargetPlatform)' == 'x64'">
       <PropertyGroup>
-        <PlatformFolderPrefix>x64</PlatformFolderPrefix>
+        <PlatformSubFolder>x64</PlatformSubFolder>
       </PropertyGroup>
     </When>
     <Otherwise>
       <!-- assumes Win32 -->
       <PropertyGroup>
-        <PlatformFolderPrefix></PlatformFolderPrefix>
+        <PlatformSubFolder></PlatformSubFolder>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -22,7 +23,7 @@
   <Choose>
     <When Condition="$(DistributionBuild)">
       <PropertyGroup>
-        <DistributionDir>$(MSBuildProjectDirectory)\Distribution\Build\$(PlatformFolderPrefix)\$(Configuration)</DistributionDir>
+        <DistributionDir>$(MSBuildProjectDirectory)\Distribution\Build\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
       </PropertyGroup>
     </When>
     <Otherwise>

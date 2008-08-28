@@ -7,9 +7,9 @@
 		<PluginFiles Include="$(ProjectDir)\..\..\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg2000.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Rle.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
-		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
-		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
-		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Rle.dll"/>
+		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
+		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll"/>
 	</ItemGroup>
 	<Target Name="CopyPlugins">
 		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>

@@ -1,16 +1,14 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Choose>
-    <When Condition=" '$(Platform)' == 'x64' ">
+    <When Condition="'$(TargetPlatform)' == 'x64'">
       <PropertyGroup>
-        <PlatformSuffix>_x64</PlatformSuffix>
-        <PlatformFolderPrefix>x64</PlatformFolderPrefix>
+        <PlatformSubFolder>x64</PlatformSubFolder>
       </PropertyGroup>
     </When>
     <Otherwise>
       <!-- assumes Win32 -->
       <PropertyGroup>
-        <PlatformSuffix></PlatformSuffix>
-        <PlatformFolderPrefix></PlatformFolderPrefix>
+        <PlatformSubFolder></PlatformSubFolder>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -26,7 +24,7 @@
   <Choose>
     <When Condition="$(DistributionBuild)">
       <PropertyGroup>
-        <DistributionDir>$(MSBuildProjectDirectory)\..\..\..\Distribution\Build\$(PlatformFolderPrefix)\$(Configuration)</DistributionDir>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\..\..\Distribution\Build\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -39,14 +37,12 @@
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <SwigWrapperProperties>Configuration=$(Configuration);Platform=$(Platform);KeyFile=$(KeyFile)</SwigWrapperProperties>
-        <ImageViewerProperties>Configuration=$(Configuration);Platform=Any CPU;PlatformFolderPrefix=$(PlatformFolderPrefix);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageViewerProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageViewerProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <SwigWrapperProperties>Configuration=$(Configuration);Platform=$(Platform)</SwigWrapperProperties>
-        <ImageViewerProperties>Configuration=$(Configuration);Platform=Any CPU;PlatformFolderPrefix=$(PlatformFolderPrefix);DistributionDir=$(DistributionDir)</ImageViewerProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir)</ImageViewerProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>

@@ -16,8 +16,8 @@
   <ItemGroup>
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
-	<DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
-    <DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
+    <DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
   </ItemGroup>
 
   <ItemGroup>
