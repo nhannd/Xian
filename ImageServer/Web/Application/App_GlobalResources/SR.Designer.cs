@@ -106,6 +106,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected studies were moved to the work queue for deletion..
+        /// </summary>
+        internal static string DeleteConfirmationPlural {
+            get {
+                return ResourceManager.GetString("DeleteConfirmationPlural", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected study was moved to the work queue for deletion..
+        /// </summary>
+        internal static string DeleteConfirmationSingle {
+            get {
+                return ResourceManager.GetString("DeleteConfirmationSingle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DEVICEAE.
         /// </summary>
         internal static string DeviceAE {

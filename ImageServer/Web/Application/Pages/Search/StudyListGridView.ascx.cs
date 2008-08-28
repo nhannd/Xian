@@ -297,23 +297,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 
 		}
         #endregion
-
-        #region public methods
-        /// <summary>
-        /// Binds the list to the control.
-        /// </summary>
-        /// <remarks>
-        /// This method must be called after setting <seeaslo cref="Study"/> to update the grid with the list.
-        /// </remarks>
-        public override void DataBind()
-        {
-			//StudyListControl.PageIndex = PageIndex;
-
-            StudyListControl.PagerSettings.Visible = false;
-        }
-
-        #endregion // public methods
-
     }
 
 }

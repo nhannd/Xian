@@ -241,9 +241,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 		public override void DataBind()
 		{
 			GridView.DataBind();
-
-			GridView.PagerSettings.Visible = false;
-
 		}
 
 		#endregion // public methods

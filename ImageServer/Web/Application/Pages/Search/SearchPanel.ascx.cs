@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                                               return StudyListGridView.ResultCount;
                                           };
 
-            MessageBox.Confirmed += delegate(object data)
+            DeleteMessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Study>)
                                 {
@@ -140,15 +140,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                                     {
                                         _controller.DeleteStudy(study);
                                     }
+                                    DeleteConfirmation.Message = App_GlobalResources.SR.DeleteConfirmationPlural;
                                 }
                                 else if (data is Study)
                                 {
                                     Study study = data as Study;
                                     _controller.DeleteStudy(study);
+                                    DeleteConfirmation.Message = App_GlobalResources.SR.DeleteConfirmationSingle;
                                 }
 
                                 DataBind();
                                 UpdatePanel.Update(); // force refresh
+
+                                DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+                                DeleteConfirmation.Show();
                             };
 
             RestoreMessageBox.Confirmed += delegate(object data)
@@ -265,13 +270,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                 string message = studies.Count > 1 ? string.Format(App_GlobalResources.SR.MultipleStudyDelete) :
                                                      string.Format(App_GlobalResources.SR.SingleStudyDelete);
 
-                MessageBox.Message = DialogHelper.createConfirmationMessage(message);
-                MessageBox.Message += DialogHelper.createStudyTable(studies);
+                DeleteMessageBox.Message = DialogHelper.createConfirmationMessage(message);
+                DeleteMessageBox.Message += DialogHelper.createStudyTable(studies);
 
-                MessageBox.Title = App_GlobalResources.Titles.DeleteStudyConfirmation;
-                MessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-                MessageBox.Data = studies;
-                MessageBox.Show();
+                DeleteMessageBox.Title = App_GlobalResources.Titles.DeleteStudyConfirmation;
+                DeleteMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                DeleteMessageBox.Data = studies;
+                DeleteMessageBox.Show();
             }
         }
 

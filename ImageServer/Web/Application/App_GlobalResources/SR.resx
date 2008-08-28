@@ -132,6 +132,12 @@
   <data name="Default" xml:space="preserve">
     <value>Default</value>
   </data>
+  <data name="DeleteConfirmationPlural" xml:space="preserve">
+    <value>The selected studies were moved to the work queue for deletion.</value>
+  </data>
+  <data name="DeleteConfirmationSingle" xml:space="preserve">
+    <value>The selected study was moved to the work queue for deletion.</value>
+  </data>
   <data name="DeviceAE" xml:space="preserve">
     <value>DEVICEAE</value>
   </data>

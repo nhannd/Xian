@@ -279,7 +279,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         public override void DataBind()
         {
             RestoreQueueGridView.DataBind();
-            RestoreQueueGridView.PagerSettings.Visible = false;
         }
 
         #endregion // public methods

@@ -254,13 +254,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
         
         /// <summary>
-        /// MessageBox control.
+        /// DeleteMessageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteMessageBox;
         
         /// <summary>
         /// RestoreMessageBox control.
@@ -270,5 +270,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox RestoreMessageBox;
+        
+        /// <summary>
+        /// DeleteConfirmation control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteConfirmation;
     }
 }

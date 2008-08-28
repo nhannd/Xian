@@ -164,10 +164,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-
-            // The embeded grid control will show pager control if "allow paging" is set to true
-            // We want to use our own pager control instead so let's hide it.
-            GridView1.PagerSettings.Visible = false;
             GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
         }
 
@@ -389,8 +385,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
         public override void DataBind()
         {
             GridView1.DataBind();
-
-            GridView1.PagerSettings.Visible = false;
         }
 
         #endregion // public methods

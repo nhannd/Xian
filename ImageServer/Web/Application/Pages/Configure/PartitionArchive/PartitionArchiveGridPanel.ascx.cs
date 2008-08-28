@@ -122,8 +122,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
-
-            TheGrid.PagerSettings.Visible = false; // hide the paging control... we use a custom one outside this panel
         }
 
         protected void Page_Load(object sender, EventArgs e)
