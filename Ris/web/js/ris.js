@@ -226,6 +226,13 @@ if(window.external)
 	// redefine some browser functions to use Ris versions
 	window.confirm = Ris.confirm;
 	window.alert = Ris.alert;
+	
+	// attach an event to suppress the "backspace" key, which in some cases invokes the browser Back function, clearing the form
+	document.attachEvent( "onkeydown", function () {
+			if(event.keyCode == 8) { // backspace
+				event.returnValue = false;
+			}
+		});
 }
 
 /*
