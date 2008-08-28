@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Import the C++ DLL that implements the fixed point bilinear interpolation method.
 		/// </summary>
-		[DllImport("BilinearInterpolation.dll", EntryPoint = "InterpolateBilinear")]
+		[DllImport("ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll", EntryPoint = "InterpolateBilinear")]
 		private static extern int InterpolateBilinear
 		(
 			byte* pSrcPixelData,
