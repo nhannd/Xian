@@ -30,10 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
@@ -48,6 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
 
         private Unit _width;
         private Study _study;
+        private IList<ArchiveStudyStorage> _storage;
 
         #endregion Private members
         
@@ -74,7 +78,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
         {
             StudyController studyController = new StudyController();
             ArchiveQueueGridView.DataSource = studyController.GetArchiveQueueItems(_study);
-            ArchiveStudyStorageDetailsView.DataSource = studyController.GetArchiveStudyStorage(_study);
+            _storage = studyController.GetArchiveStudyStorage(_study);
+            ArchiveStudyStorageGridView.DataSource = _storage;
             base.DataBind();
         }
 
@@ -89,17 +94,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
             DataBind();
         }
 
-        protected void ArchiveStudyStorageDetailsView_DataBound(object sender, EventArgs e)
+        protected void ArchiveStudyStorageGridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            ArchiveStudyStorage archiveStudyStorage = ArchiveStudyStorageDetailsView.DataItem as ArchiveStudyStorage;
-            if (archiveStudyStorage != null)
-            {
-                Label xmlText = ArchiveStudyStorageDetailsView.FindControl("XmlText") as Label;
-                if (xmlText != null && archiveStudyStorage.ArchiveXml != null)
+                if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    xmlText.Text = XmlUtils.GetXmlDocumentAsString(archiveStudyStorage.ArchiveXml, true);
+                   int index = ArchiveStudyStorageGridView.PageIndex * ArchiveStudyStorageGridView.PageSize + e.Row.RowIndex;
+                    ArchiveStudyStorage storage = _storage[index];
+
+                    Label xmlLabel = e.Row.FindControl("XmlText") as Label;
+                    if (xmlLabel != null && storage.ArchiveXml != null)
+                    {
+                        xmlLabel.Text = XmlUtils.GetXmlDocumentAsString(storage.ArchiveXml, true);    
+                    }
+
+                    Label stsLabel = e.Row.FindControl("ServerTranseferSyntax") as Label;
+                    if (stsLabel != null && storage.ServerTransferSyntaxKey != null)
+                    {
+                        ServerTransferSyntaxAdaptor adaptor = new ServerTransferSyntaxAdaptor();
+                        ServerTransferSyntax sts = adaptor.Get(storage.ServerTransferSyntaxKey);
+
+                        if (sts != null)
+                        {
+                            stsLabel.Text = sts.Description;
+                        }
+                    }
                 }
             }
-        }
-    }
+        }       
 }

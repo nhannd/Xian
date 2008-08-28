@@ -49,25 +49,34 @@
 </asp:UpdatePanel>
 
 <div class="StudyDetailsSubTitle" style="margin-top: 9px;">Archive Study Storage</div>
-<asp:DetailsView ID="ArchiveStudyStorageDetailsView" runat="server" AutoGenerateRows="False" 
-                OnDataBound="ArchiveStudyStorageDetailsView_DataBound"
-                GridLines="Horizontal" CellPadding="4" CssClass="GlobalGridView" Width="100%">
-    <Fields>
-        <asp:BoundField DataField="ServerTransferSyntaxKey" HeaderText="Transfer Syntax: ">
-            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+<ccUI:GridView ID="ArchiveStudyStorageGridView" runat="server" 
+              AutoGenerateColumns="False" CssClass="GlobalGridView" 
+              CellPadding="0" CaptionAlign="Top" Width="100%"
+              SelectionMode="Disabled"
+              MouseHoverRowHighlightEnabled="false"
+              GridLines="Horizontal" BackColor="White" 
+              OnRowDataBound="ArchiveStudyStorageGridView_RowDataBound">
+    <Columns>
+        <asp:TemplateField HeaderText="Transfer Syntax">
+            <ItemTemplate>
+                <asp:Label ID="ServerTranseferSyntax" runat="server"></asp:Label>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:BoundField DataField="ArchiveTime" HeaderText="Archive Time">
         </asp:BoundField>
-        <asp:BoundField DataField="ArchiveTime" HeaderText="Archive Time: ">
-            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
-        </asp:BoundField>
-        <asp:TemplateField HeaderText="Archive XML: ">
-            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+        <asp:TemplateField HeaderText="Archive XML">
             <ItemTemplate>
                 <asp:Label ID="XmlText" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
-    </Fields>
+    </Columns>
     <EmptyDataTemplate>
         <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" >
+            <asp:TableHeaderRow CssClass="GlobalGridViewHeader">
+                <asp:TableHeaderCell>Transfer Syntax</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Archive Time</asp:TableHeaderCell>
+                <asp:TableHeaderCell>Archive XML</asp:TableHeaderCell>
+             </asp:TableHeaderRow>
             <asp:TableRow>
                 <asp:TableCell ColumnSpan="3" Height="50" HorizontalAlign="Center">
                     <asp:panel ID="Panel1" runat="server" CssClass="GlobalGridViewEmptyText">No Archive Study Storage items for this study.</asp:panel>
@@ -75,6 +84,9 @@
             </asp:TableRow>
        </asp:Table>
     </EmptyDataTemplate>
+                     
     <RowStyle CssClass="GlobalGridViewRow"/>
+    <HeaderStyle CssClass="GlobalGridViewHeader"/>
     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
-</asp:DetailsView>
+    <SelectedRowStyle  CssClass="GlobalGridViewSelectedRow" />
+</ccUI:GridView>

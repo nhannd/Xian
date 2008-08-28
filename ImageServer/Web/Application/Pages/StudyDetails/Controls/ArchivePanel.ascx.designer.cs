@@ -47,12 +47,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView ArchiveQueueGridView;
         
         /// <summary>
-        /// ArchiveStudyStorageDetailsView control.
+        /// ArchiveStudyStorageGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DetailsView ArchiveStudyStorageDetailsView;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView ArchiveStudyStorageGridView;
     }
 }
