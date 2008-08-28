@@ -53,6 +53,7 @@
     <Compile Include="Brokers\IDeleteWorkQueue.cs" />
     <Compile Include="Brokers\IInsertRestoreQueue.cs" />
     <Compile Include="Brokers\IQueryArchiveQueue.cs" />
+    <Compile Include="Brokers\IInsertReconcileQueue.cs" />
     <Compile Include="Brokers\IQueryRestoreQueue.cs" />
     <Compile Include="Brokers\IQueryServerPartitionTransferSyntaxes.cs" />
     <Compile Include="Brokers\IUpdateArchiveQueue.cs" />
@@ -105,6 +106,10 @@
     <Compile Include="EntityBrokers\IPartitionSopClassEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IReconcileAssessmentStatusEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IReconcileQueueEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IReconcileQueueUidEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IReconcileSchedulingStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IQueueStudyStateEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRestoreQueueEntityBroker.gen.cs" />
@@ -135,6 +140,10 @@
     <Compile Include="EntityBrokers\PartitionTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\PatientSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PatientUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileQueueSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileQueueUidSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileQueueUidUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\RestoreQueueSelectCriteria.gen.cs" />
@@ -174,6 +183,7 @@
     <Compile Include="Parameters\DeleteFilesystemStudyStorageParameters.cs" />
     <Compile Include="Parameters\InsertArchiveQueueParameters.cs" />
     <Compile Include="Parameters\InsertRestoreQueueParameters.cs" />
+    <Compile Include="Parameters\InsertReconcileQueueParameters.cs" />
     <Compile Include="Parameters\QueryArchiveQueueParameters.cs" />
     <Compile Include="Parameters\QueryRestoreQueueParameters.cs" />
     <Compile Include="Parameters\UpdateArchiveQueueParameters.cs" />
@@ -190,6 +200,10 @@
     <Compile Include="PartitionTransferSyntax.cs" />
     <Compile Include="PartitionTransferSyntax.gen.cs" />
     <Compile Include="Patient.gen.cs" />
+    <Compile Include="ReconcileAssessmentStatusEnum.gen.cs" />
+    <Compile Include="ReconcileQueue.gen.cs" />
+    <Compile Include="ReconcileQueueUid.gen.cs" />
+    <Compile Include="ReconcileSchedulingStatusEnum.gen.cs" />
     <Compile Include="QueueStudyStateEnum.gen.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="RestoreQueue.gen.cs" />

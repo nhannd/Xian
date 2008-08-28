@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\InsertReconcileQueue.cs" />
     <Compile Include="Brokers\WebQueryRestoreQueue.cs" />
     <Compile Include="Brokers\DeleteFilesystemStudyStorage.cs" />
     <Compile Include="Brokers\InsertArchiveQueue.cs" />
@@ -79,6 +80,10 @@
     <Compile Include="EntityBrokers\PartitionSopClassEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PatientEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileAssessmentStatusEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileQueueEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileQueueUidEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileSchedulingStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\QueueStudyStateEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\RestoreQueueEntityBroker.gen.cs" />
