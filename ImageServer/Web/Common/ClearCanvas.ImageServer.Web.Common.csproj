@@ -52,6 +52,7 @@
     <Compile Include="Data\ArchiveQueueController.cs" />
     <Compile Include="Data\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
+    <Compile Include="Data\ServerTransferSyntaxAdaptor.cs" />
     <Compile Include="Data\RestoreQueueAdaptor.cs" />
     <Compile Include="Data\RestoreQueueController.cs" />
     <Compile Include="Data\RestoreQueueDataSource.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Data\StudyController.cs" />
     <Compile Include="Data\StudyDataSource.cs" />
     <Compile Include="Data\StudyStorageAdaptor.cs" />
+    <Compile Include="Data\Summary.cs" />
     <Compile Include="Data\WorkQueueAdaptor.cs" />
     <Compile Include="Data\WorkQueueController.cs" />
     <Compile Include="Data\WorkQueueDataSource.cs" />
@@ -88,6 +90,9 @@
     </Compile>
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebControls\UI\GridViewContainer.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="WebControls\UI\PersonNameLabel.cs" />
