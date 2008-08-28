@@ -70,7 +70,7 @@ table td {
 }
 
 #myForm {
-	overflow: scroll;
+	overflow: auto;
 }
 
 .alerticons {
