@@ -1132,8 +1132,9 @@
     <PreBuildEvent>REM Prevent lock up by ASP.NET dev server in debug mode
 
 IF EXIST $(TargetPath).LOCKED (del $(TargetPath).LOCKED) ELSE (IF EXIST $(TargetPath) (move $(TargetPath) $(TargetPath).LOCKED))</PreBuildEvent>
-    <PostBuildEvent>REM Run PostBuild msbuild project
+    <PostBuildEvent>
+      REM Run PostBuild msbuild project
 
-c:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\MSBuild.exe  "$(ProjectDir)Builds\PostBuild.proj" "/property:ProjectDir=$(ProjectDir);Configuration=$(ConfigurationName)"</PostBuildEvent>
+      c:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\MSBuild.exe  "$(ProjectDir)Builds\PostBuild.proj" "/property:ProjectDir=$(ProjectDir);Configuration=$(ConfigurationName);TargetPlatform=$(TargetPlatform)"</PostBuildEvent>
   </PropertyGroup>
 </Project>
