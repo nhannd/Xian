@@ -1785,13 +1785,13 @@ BEGIN
 		set @InsertStudy = 1
 
 		INSERT into Study (GUID, ServerPartitionGUID, PatientGUID,
-				StudyInstanceUid, PatientsName, PatientId, PatientsBirthDate,
+				StudyInstanceUid, PatientsName, PatientId, IssuerOfPatientId, PatientsBirthDate,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
 				NumberOfStudyRelatedInstances, StudyStatusEnum,SpecificCharacterSet,QueueStudyStateEnum)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
-				@StudyInstanceUid, @PatientsName, @PatientId, @PatientsBirthDate,
+				@StudyInstanceUid, @PatientsName, @PatientId, @IssuerOfPatientId, @PatientsBirthDate,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
 				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum,@SpecificCharacterSet,@QueueStudyStateEnum)
 
@@ -2868,6 +2868,107 @@ BEGIN
 	EXEC sp_executesql  @count, N''@recordCount int OUT'', @recCount OUT
 	print @count
 	set @ResultCount = @recCount
+
+END
+' 
+END
+GO
+
+
+/****** Object:  StoredProcedure [dbo].[InsertReconcileInstance]    Script Date: 08/21/2008 15:21:03 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertReconcileQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: August 17, 2008
+-- Description:	
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertReconcileQueue] 
+	-- Add the parameters for the stored procedure here
+	@FilesystemGUID uniqueidentifier,
+	@ServerPartitionGUID uniqueidentifier, 
+	@StudyInstanceUid varchar(64),
+	@SeriesInstanceUid varchar(64),
+	@SopInstanceUid varchar(64),
+	@StudyStorageGUID uniqueidentifier=NULL,
+	
+	@PatientId nvarchar(64),
+	@PatientsName nvarchar(64),
+	@IssuerOfPatientId nvarchar(64),
+	@PatientsBirthDate varchar(8),
+	@PatientsSex varchar(2),
+	@AccessionNumber nvarchar(16)
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	DECLARE @ReconcileQueueGUID uniqueidentifier
+	DECLARE @AssessStateEnumPending smallint
+	DECLARE @SchedulingStatusEnumIdle smallint
+	DECLARE @SchedulingStatusEnumPending smallint
+	DECLARE @AlreadyExists bit
+	SET NOCOUNT ON;
+
+	BEGIN TRANSACTION
+
+		SELECT @AssessStateEnumPending=Enum FROM dbo.ReconcileAssessmentStatusEnum WHERE Lookup=''Pending''
+		SELECT @SchedulingStatusEnumIdle=Enum FROM dbo.ReconcileSchedulingStatusEnum WHERE Lookup=''Idle''
+		SELECT @SchedulingStatusEnumPending=Enum FROM dbo.ReconcileSchedulingStatusEnum WHERE Lookup=''Pending''
+
+		-- Find ReconcileQueue record with the matching fields 
+		SELECT @ReconcileQueueGUID = GUID 
+		FROM dbo.ReconcileQueue 
+		WHERE 
+				PatientId=@PatientId AND
+				PatientsName=@PatientsName AND
+				IssuerOfPatientId=@IssuerOfPatientId AND
+				StudyInstanceUid=@StudyInstanceUid AND
+				PatientsBirthDate=@PatientsBirthDate AND
+				PatientsSex=@PatientsSex AND
+				AccessionNumber=@AccessionNumber
+
+		-- No record with the matching fields, insert a new ReconcileQueue record.
+		IF @@ROWCOUNT = 0
+		BEGIN
+			
+			SET @ReconcileQueueGUID = newid()
+			INSERT INTO [dbo].[ReconcileQueue]
+				   ([GUID],[FilesystemGUID],[ServerPartitionGUID],[StudyStorageGUID],
+					[InsertTime],[LastUpdateTime],[ScheduledTime],[SchedulerID],[FailureDescription],[RetrialCount],[ReconcileAssessmentStatusEnum],[ReconcileSchedulingStatusEnum],
+					[PatientID],[IssuerOfPatientId],[PatientsName],[PatientsBirthdate],[PatientsSex],
+					[StudyInstanceUid],[AccessionNumber],[ReconcileData])
+			 VALUES(
+					@ReconcileQueueGUID,@FilesystemGUID,@ServerPartitionGUID,@StudyStorageGUID,
+					getdate(),getdate(),NULL,NULL,NULL,0,@AssessStateEnumPending,@SchedulingStatusEnumIdle,
+					@PatientID,@IssuerOfPatientId,@PatientsName,@PatientsBirthdate,@PatientsSex,
+					@StudyInstanceUid,@AccessionNumber,NULL)
+		END
+
+
+		-- Append ReconcileQueueUid record
+		INSERT INTO  [dbo].[ReconcileQueueUid]
+			   ([GUID],[ReconcileQueueGUID],[SeriesInstanceUid],[SopInstanceUid])
+		VALUES
+			   (newid(),@ReconcileQueueGUID,@SeriesInstanceUid,@SopInstanceUid)
+
+		-- Update the ReconcileQueue record
+		UPDATE [dbo].[ReconcileQueue]
+		SET    ReconcileSchedulingStatusEnum = @SchedulingStatusEnumPending
+		WHERE  GUID=@ReconcileQueueGUID AND ReconcileSchedulingStatusEnum<>@SchedulingStatusEnumPending
+	
+		UPDATE [dbo].[ReconcileQueue]
+		SET    LastUpdateTime = getdate()
+		WHERE  GUID=@ReconcileQueueGUID
+
+	COMMIT TRANSACTION
+
+	SELECT * FROM [dbo].[ReconcileQueue]
+	WHERE GUID=@ReconcileQueueGUID
 
 END
 ' 

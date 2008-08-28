@@ -54,6 +54,12 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _description;
         private DuplicateSopPolicyEnum _duplicateSopPolicyEnum;
         private System.Boolean _enabled;
+        private System.Boolean _matchAccesssionNumber;
+        private System.Boolean _matchIssuerOfPatientId;
+        private System.Boolean _matchPatientId;
+        private System.Boolean _matchPatientsBirthDate;
+        private System.Boolean _matchPatientsName;
+        private System.Boolean _matchPatientsSex;
         private System.String _partitionFolder;
         private System.Int32 _port;
         private System.Int32 _studyCount;
@@ -101,6 +107,42 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _enabled; }
         set { _enabled = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccesssionNumber")]
+        public System.Boolean MatchAccesssionNumber
+        {
+        get { return _matchAccesssionNumber; }
+        set { _matchAccesssionNumber = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
+        public System.Boolean MatchIssuerOfPatientId
+        {
+        get { return _matchIssuerOfPatientId; }
+        set { _matchIssuerOfPatientId = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
+        public System.Boolean MatchPatientId
+        {
+        get { return _matchPatientId; }
+        set { _matchPatientId = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
+        public System.Boolean MatchPatientsBirthDate
+        {
+        get { return _matchPatientsBirthDate; }
+        set { _matchPatientsBirthDate = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
+        public System.Boolean MatchPatientsName
+        {
+        get { return _matchPatientsName; }
+        set { _matchPatientsName = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
+        public System.Boolean MatchPatientsSex
+        {
+        get { return _matchPatientsSex; }
+        set { _matchPatientsSex = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
         public System.String PartitionFolder

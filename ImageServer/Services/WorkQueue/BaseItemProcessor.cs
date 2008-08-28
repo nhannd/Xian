@@ -41,6 +41,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -77,7 +78,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             get { return _storageLocationList[0]; }
         }
-
 
         protected IList<WorkQueueUid> WorkQueueUidList
         {
@@ -193,6 +193,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     }
                 );
             
+        }
+        
+        /// <summary>
+        /// Find the <see cref="Study"/> record in the database with the specified study instance uid and residing in the specified partition.
+        /// </summary>
+        /// <param name="studyInstanceUid"></param>
+        /// <param name="partition"></param>
+        /// <returns></returns>
+        protected Study FindStudy(string studyInstanceUid, ServerPartition partition)
+        {
+            IStudyEntityBroker broker = ReadContext.GetBroker<IStudyEntityBroker>();
+            StudySelectCriteria criteria = new StudySelectCriteria();
+            criteria.ServerPartitionKey.EqualTo(partition.GetKey());
+            criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
+            Study study = broker.FindOne(criteria);
+
+            return study;
         }
 
         /// <summary>

@@ -771,3 +771,56 @@ GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),105,'PurgeScheduled','Purge Scheduled','The study has been scheduled for purging')
 GO
+
+
+
+-- ReconcileAssessmentEnum inserts
+INSERT INTO [ImageServer].[dbo].[ReconcileAssessmentStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'Pending','Waiting for assessment','Waiting for users to determine how the images should be reconciled')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ReconcileAssessmentStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'Accept','Users have accepted the images','Users have decided to accept images with such information')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ReconcileAssessmentStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),102,'Reject','Users have rejected the images','Users have decided to reject images with such information')
+GO
+
+
+-- [ReconcileSchedulingStatusEnum] inserts
+INSERT INTO [ImageServer].[dbo].[ReconcileSchedulingStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'Idle','Idle','Waiting to expire or for more images')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ReconcileSchedulingStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),200,'Pending','Pending','Pending')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ReconcileSchedulingStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),201,'In Progress','In Progress','In Progress')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ReconcileSchedulingStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),202,'Completed','Completed','The Queue entry is completed.')
+GO
+
+INSERT INTO [ImageServer].[dbo].[ReconcileSchedulingStatusEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),203,'Failed','Failed','The Queue entry has failed.')
+GO

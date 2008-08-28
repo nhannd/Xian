@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -54,6 +56,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         private StudyProcessStatistics _statistics;
         private InstanceStatistics _instanceStats;
+        private ServerPartition _partition;
+        private Study _study;
+        private StudyCompareOptions _studyCompareOptions;
         
         #endregion
 
@@ -66,6 +71,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             _statistics = new StudyProcessStatistics();
         }
+
+        public ServerPartition Partition
+        {
+            get { return _partition; }
+            set { _partition = value; }
+        }
+
+        public Study Study
+        {
+            get { return _study; }
+            set { _study = value; }
+        }
+
         #endregion Constructors
 
         #region Private Methods
@@ -165,6 +183,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
 
         /// <summary>
+        /// Returns a value indicating whether the Dicom image must be reconciled.
+        /// </summary>
+        /// <param name="message">The Dicom message</param>
+        /// <returns></returns>
+        private bool ShouldReconcile(DicomMessageBase message)
+        {
+            Platform.CheckForNullReference(message, "message");
+            Platform.CheckForNullReference(_partition, "_partition");
+            Platform.CheckForNullReference(_studyCompareOptions, "_studyCompareOptions");
+
+            if (_study == null)
+            {
+                // the study doesn't exist in the database
+                return false;
+            }
+            else
+            {
+                StudyComparer comparer = new StudyComparer();
+                IList<DicomAttribute> list = comparer.Compare(message, _study, _studyCompareOptions);
+                return list != null && list.Count > 0;
+            }
+        }
+
+        /// <summary>
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
         /// </summary>
         /// <param name="item">The WorkQueue item to process</param>
@@ -195,68 +237,99 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _instanceStats.FileLoadTime.End();
                 _instanceStats.FileSize = (ulong) fileSize;
 
-                _instanceStats.Description = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
+                string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, null);
+                string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
 
-                // Get the Patients Name for processing purposes.
-                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
-                modality = file.DataSet[DicomTags.Modality].GetString(0, "");
-                
-                // Update the StudyStream object
-                insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
-                processor.AddCommand(insertStudyXmlCommand);
+                Debug.Assert(studyInstanceUid != null);
 
-                // Insert into the database, but only if its not a duplicate so the counts don't get off
-                if (!queueUid.Duplicate)
+                _instanceStats.Description = sopInstanceUid;
+
+                if (_study==null || _study.StudyInstanceUid!=studyInstanceUid)
                 {
-                    insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
-                    processor.AddCommand(insertInstanceCommand);
+                    _study = FindStudy(studyInstanceUid, Partition);
+                    // Note: if this is the first image in the study, _study will still be null at point
                 }
 
-                // Create a context for applying actions from the rules engine
-                ServerActionContext context =
-                    new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
-                context.CommandProcessor = processor;
-
-                // Run the rules engine against the object.
-                _sopProcessedRulesEngine.Execute(context);
-
-				// Do insert into the archival queue.  Note that we re-run this with each object processed
-				// so that the scheduled time is pushed back each time.  Note, however, if the study only 
-				// has one image, we could incorrectly insert an ArchiveQueue request, since the 
-				// study rules haven't been run.  We re-run the command when the study processed
-				// rules are run to remove out the archivequeue request again, if it isn't needed.
-            	context.CommandProcessor.AddCommand(
-            		new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, true));
-
-                // Do the actual processing
-                if (!processor.Execute())
+                if (ShouldReconcile(file))
                 {
-                    Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-					Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
-                    throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                    ReconcileImageContext context = new ReconcileImageContext(Partition, StorageLocation, file, path);
+                    InsertReconcileQueueCommand reconcileCmd = new InsertReconcileQueueCommand(context);
+                    CreateReconcileImageFileCommand createReconcileCmd = new CreateReconcileImageFileCommand(context);
+                    processor.AddCommand(reconcileCmd);
+                    processor.AddCommand(createReconcileCmd);
+
+                    if (!processor.Execute())
+                    {
+                        Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+                        Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
+                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                    }
+
                 }
                 else
                 {
-                    Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
-                                 patientsName);
+                    // Get the Patients Name for processing purposes.
+                    String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+                    modality = file.DataSet[DicomTags.Modality].GetString(0, "");
 
-                    if (insertInstanceCommand != null)
-                        keys = insertInstanceCommand.InsertKeys;
+                    // Update the StudyStream object
+                    insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
+                    processor.AddCommand(insertStudyXmlCommand);
 
-                    if (keys != null)
+                    // Insert into the database, but only if its not a duplicate so the counts don't get off
+                    if (!queueUid.Duplicate)
                     {
-                        // We've inserted a new Study, process Study Rules
-                        if (keys.InsertStudy)
-                        {
-                            ProcessStudyRules(item, file);
-                        }
+                        insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
+                        processor.AddCommand(insertInstanceCommand);
+                    }
 
-                        // We've inserted a new Series, process Series Rules
-                        if (keys.InsertSeries)
+                    // Create a context for applying actions from the rules engine
+                    ServerActionContext context =
+                        new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
+                    context.CommandProcessor = processor;
+
+                    // Run the rules engine against the object.
+                    _sopProcessedRulesEngine.Execute(context);
+
+                    // Do insert into the archival queue.  Note that we re-run this with each object processed
+                    // so that the scheduled time is pushed back each time.  Note, however, if the study only 
+                    // has one image, we could incorrectly insert an ArchiveQueue request, since the 
+                    // study rules haven't been run.  We re-run the command when the study processed
+                    // rules are run to remove out the archivequeue request again, if it isn't needed.
+                    context.CommandProcessor.AddCommand(
+                        new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, true));
+
+                    // Do the actual processing
+                    if (!processor.Execute())
+                    {
+                        Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+                        Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
+                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
+                                     patientsName);
+
+                        if (insertInstanceCommand != null)
+                            keys = insertInstanceCommand.InsertKeys;
+
+                        if (keys != null)
                         {
-                            ProcessSeriesRules(item, file);
+                            // We've inserted a new Study, process Study Rules
+                            if (keys.InsertStudy)
+                            {
+                                ProcessStudyRules(item, file);
+                            }
+
+                            // We've inserted a new Series, process Series Rules
+                            if (keys.InsertSeries)
+                            {
+                                ProcessSeriesRules(item, file);
+                            }
                         }
                     }
+
                 }
 
                 
@@ -296,6 +369,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private bool ProcessUidList(Model.WorkQueue item)
         {
             StudyXml studyXml;
+
+            LoadPartition();
 
             studyXml = LoadStudyXml(StorageLocation);
 
@@ -396,6 +471,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             
         }
+
+
+        private void LoadPartition()
+        {
+            Platform.CheckForNullReference(StorageLocation, "StorageLocation");
+            Partition = ServerPartition.Load(StorageLocation.ServerPartitionKey);
+
+            _studyCompareOptions = new StudyCompareOptions();
+            _studyCompareOptions.MatchAccessionNumber = _partition.MatchAccesssionNumber;
+            _studyCompareOptions.MatchIssuerOfPatientId = _partition.MatchIssuerOfPatientId;
+            _studyCompareOptions.MatchPatientId = _partition.MatchPatientId;
+            _studyCompareOptions.MatchPatientsBirthDate = _partition.MatchPatientsBirthDate;
+            _studyCompareOptions.MatchPatientsName = _partition.MatchPatientsName;
+            _studyCompareOptions.MatchPatientsSex = _partition.MatchPatientsSex;
+        }
+
         #endregion
 
         #region Protected Methods
@@ -467,6 +558,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Overridden Protected Method
 
+
         protected override void OnProcessItemEnd(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
@@ -525,6 +617,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
                                 //Load the storage location.
                                 LoadStorageLocation(item);
+                                
 
                                 // Process the images in the list
                                 successful = ProcessUidList(item);

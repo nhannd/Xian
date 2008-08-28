@@ -68,6 +68,30 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        public System.Boolean MatchAccesssionNumber
+        {
+            set { SubParameters["MatchAccesssionNumber"] = new EntityUpdateColumn<System.Boolean>("MatchAccesssionNumber", value); }
+        }
+        public System.Boolean MatchIssuerOfPatientId
+        {
+            set { SubParameters["MatchIssuerOfPatientId"] = new EntityUpdateColumn<System.Boolean>("MatchIssuerOfPatientId", value); }
+        }
+        public System.Boolean MatchPatientId
+        {
+            set { SubParameters["MatchPatientId"] = new EntityUpdateColumn<System.Boolean>("MatchPatientId", value); }
+        }
+        public System.Boolean MatchPatientsBirthDate
+        {
+            set { SubParameters["MatchPatientsBirthDate"] = new EntityUpdateColumn<System.Boolean>("MatchPatientsBirthDate", value); }
+        }
+        public System.Boolean MatchPatientsName
+        {
+            set { SubParameters["MatchPatientsName"] = new EntityUpdateColumn<System.Boolean>("MatchPatientsName", value); }
+        }
+        public System.Boolean MatchPatientsSex
+        {
+            set { SubParameters["MatchPatientsSex"] = new EntityUpdateColumn<System.Boolean>("MatchPatientsSex", value); }
+        }
         public System.String PartitionFolder
         {
             set { SubParameters["PartitionFolder"] = new EntityUpdateColumn<System.String>("PartitionFolder", value); }

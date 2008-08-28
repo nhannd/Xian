@@ -118,6 +118,72 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        public ISearchCondition<System.Boolean> MatchAccesssionNumber
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MatchAccesssionNumber"))
+              {
+                 SubCriteria["MatchAccesssionNumber"] = new SearchCondition<System.Boolean>("MatchAccesssionNumber");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchAccesssionNumber"];
+            } 
+        }
+        public ISearchCondition<System.Boolean> MatchIssuerOfPatientId
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MatchIssuerOfPatientId"))
+              {
+                 SubCriteria["MatchIssuerOfPatientId"] = new SearchCondition<System.Boolean>("MatchIssuerOfPatientId");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchIssuerOfPatientId"];
+            } 
+        }
+        public ISearchCondition<System.Boolean> MatchPatientId
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MatchPatientId"))
+              {
+                 SubCriteria["MatchPatientId"] = new SearchCondition<System.Boolean>("MatchPatientId");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientId"];
+            } 
+        }
+        public ISearchCondition<System.Boolean> MatchPatientsBirthDate
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MatchPatientsBirthDate"))
+              {
+                 SubCriteria["MatchPatientsBirthDate"] = new SearchCondition<System.Boolean>("MatchPatientsBirthDate");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsBirthDate"];
+            } 
+        }
+        public ISearchCondition<System.Boolean> MatchPatientsName
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MatchPatientsName"))
+              {
+                 SubCriteria["MatchPatientsName"] = new SearchCondition<System.Boolean>("MatchPatientsName");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsName"];
+            } 
+        }
+        public ISearchCondition<System.Boolean> MatchPatientsSex
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("MatchPatientsSex"))
+              {
+                 SubCriteria["MatchPatientsSex"] = new SearchCondition<System.Boolean>("MatchPatientsSex");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsSex"];
+            } 
+        }
         public ISearchCondition<System.String> PartitionFolder
         {
             get

@@ -46,6 +46,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["AccessionNumber"] = new EntityUpdateColumn<System.String>("AccessionNumber", value); }
         }
+       [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
+        public System.String IssuerOfPatientId
+        {
+            set { SubParameters["IssuerOfPatientId"] = new EntityUpdateColumn<System.String>("IssuerOfPatientId", value); }
+        }
        [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public System.Int32 NumberOfStudyRelatedInstances
         {

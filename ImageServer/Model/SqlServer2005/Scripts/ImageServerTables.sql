@@ -68,6 +68,12 @@ CREATE TABLE [dbo].[ServerPartition](
 	[DefaultRemotePort] [int] NOT NULL CONSTRAINT [DF_ServerPartition_DefaultRemotePort]  DEFAULT ((104)),
 	[StudyCount] [int] NOT NULL CONSTRAINT [DF_ServerPartition_StudyCount]  DEFAULT ((0)),
 	[DuplicateSopPolicyEnum] [smallint] NOT NULL,
+	[MatchAccesssionNumber] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchAccesssionNumber]  DEFAULT ((1)),
+	[MatchIssuerOfPatientId] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchIssuerOfPatientId]  DEFAULT ((1)),
+	[MatchPatientId] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientId]  DEFAULT ((1)),
+	[MatchPatientsBirthDate] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsBirthDate]  DEFAULT ((1)),
+	[MatchPatientsName] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsName]  DEFAULT ((1)),
+	[MatchPatientsSex] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsSex]  DEFAULT ((1)),
  CONSTRAINT [PK_ServerPartition] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -517,6 +523,7 @@ CREATE TABLE [dbo].[Study](
 	[StudyInstanceUid] [varchar](64) NOT NULL,
 	[PatientsName] [nvarchar](64) NULL,
 	[PatientId] [nvarchar](64) NULL,
+	[IssuerOfPatientId] [nvarchar](64) NULL,
 	[PatientsBirthDate] [varchar](8) NULL,
 	[PatientsSex] [varchar](2) NULL,
 	[StudyDate] [varchar](8) NULL,
@@ -1135,6 +1142,137 @@ END
 GO
 
 
+/****** Object:  Table [dbo].[ReconcileAssessmentStatusEnum]    Script Date: 08/27/2008 10:57:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReconcileAssessmentStatusEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ReconcileAssessmentStatusEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ReconcileAssessmentStatusEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32)  NOT NULL,
+	[Description] [nvarchar](32)  NOT NULL,
+	[LongDescription] [nvarchar](128)  NOT NULL,
+ CONSTRAINT [PK_ReconcileAssessmentStatusEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [STATIC]
+) ON [STATIC]
+
+END
+
+GO
+SET ANSI_PADDING OFF
+
+GO
+/****** Object:  Table [dbo].[ReconcileSchedulingStatusEnum]    Script Date: 08/27/2008 10:58:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReconcileSchedulingStatusEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ReconcileSchedulingStatusEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ReconcileSchedulingStatusEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32)  NOT NULL,
+	[Description] [nvarchar](32)  NOT NULL,
+	[LongDescription] [nvarchar](128)  NOT NULL,
+ CONSTRAINT [PK_ReconcileSchedulingStatusEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [STATIC]
+) ON [STATIC]
+
+END
+
+GO
+SET ANSI_PADDING OFF
+
+GO
+/****** Object:  Table [dbo].[ReconcileQueue]    Script Date: 08/27/2008 10:53:07 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReconcileQueue]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ReconcileQueue](
+	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_ReconcileQueue_GUID]  DEFAULT (newid()),
+	[FilesystemGUID] [uniqueidentifier] NOT NULL,
+	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[StudyStorageGUID] [uniqueidentifier] NULL,
+	[InsertTime] [datetime] NULL CONSTRAINT [DF_ReconcileQueue_InsertTime]  DEFAULT (getdate()),
+	[LastUpdateTime] [datetime] NULL CONSTRAINT [DF_ReconcileQueue_LastUpdateTime]  DEFAULT (getdate()),
+	[ScheduledTime] [datetime] NULL,
+	[SchedulerID] [nvarchar](64)  NULL,
+	[FailureDescription] [nvarchar](1024)  NULL,
+	[RetrialCount] [int] NULL CONSTRAINT [DF_ReconcileQueue_RetrialCount]  DEFAULT ((0)),
+	[ReconcileAssessmentStatusEnum] [smallint] NOT NULL,
+	[ReconcileSchedulingStatusEnum] [smallint] NOT NULL,
+	[PatientID] [nvarchar](50)  NOT NULL,
+	[IssuerOfPatientId] [nvarchar](50)  NOT NULL,
+	[PatientsName] [nvarchar](50)  NOT NULL,
+	[PatientsBirthdate] [varchar](50)  NOT NULL,
+	[PatientsSex] [varchar](1)  NOT NULL,
+	[StudyInstanceUid] [nvarchar](64)  NOT NULL,
+	[AccessionNumber] [nvarchar](64)  NOT NULL,
+	[ReconcileData] [xml] NULL,
+ CONSTRAINT [PK_ReconcileQueue] PRIMARY KEY CLUSTERED 
+(
+	[StudyInstanceUid] ASC,
+	[AccessionNumber] ASC,
+	[PatientID] ASC,
+	[IssuerOfPatientId] ASC,
+	[PatientsName] ASC,
+	[PatientsBirthdate] ASC,
+	[PatientsSex] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+END
+GO
+
+
+/****** Object:  Table [dbo].[ReconcileQueueUid]    Script Date: 08/27/2008 11:02:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReconcileQueueUid]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ReconcileQueueUid](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ReconcileQueueInstance_GUID]  DEFAULT (newid()),
+	[ReconcileQueueGUID] [uniqueidentifier] NOT NULL,
+	[SeriesInstanceUid] [varchar](64) NOT NULL,
+	[SopInstanceUid] [varchar](64) NOT NULL,
+ CONSTRAINT [PK_ReconcileQueueUid] PRIMARY KEY NONCLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+) ON [QUEUES]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ReconcileQueueUid]') AND name = N'IX_ReconcileQueueUid')
+CREATE CLUSTERED INDEX [IX_ReconcileQueueUid] ON [dbo].[ReconcileQueueUid] 
+(
+	[ReconcileQueueGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON, FILLFACTOR = 65) ON [QUEUES]
+GO
+
+
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
 ALTER TABLE [dbo].[ArchiveQueue]  WITH CHECK ADD  CONSTRAINT [FK_ArchiveQueue_ArchiveQueueStatusEnum] FOREIGN KEY([ArchiveQueueStatusEnum])
@@ -1496,3 +1634,5 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Alert_AlertLevelEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Alert]'))
 ALTER TABLE [dbo].[Alert]  WITH CHECK ADD  CONSTRAINT [FK_Alert_AlertLevelEnum] FOREIGN KEY([AlertLevelEnum])
 REFERENCES [dbo].[AlertLevelEnum] ([Enum])
+
+

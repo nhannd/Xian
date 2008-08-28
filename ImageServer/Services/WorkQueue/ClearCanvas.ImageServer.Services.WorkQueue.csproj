@@ -55,6 +55,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StudyProcess\InsertReconcileQueueCommand.cs" />
+    <Compile Include="StudyProcess\CreateReconcileImageFileCommand.cs" />
+    <Compile Include="StudyProcess\ReconcileImageContext.cs" />
+    <Compile Include="StudyProcess\StudyComparer.cs" />
     <Compile Include="TierMigrate\TierMigrateStudyFactoryExtension.cs" />
     <Compile Include="TierMigrate\TierMigrateDatabaseUpdateCommand.cs" />
     <Compile Include="TierMigrate\TierMigrateItemProcessor.cs" />

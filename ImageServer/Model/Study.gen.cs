@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private System.String _accessionNumber;
+        private System.String _issuerOfPatientId;
         private System.Int32 _numberOfStudyRelatedInstances;
         private System.Int32 _numberOfStudyRelatedSeries;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _patientKey;
@@ -75,6 +76,13 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _accessionNumber; }
         set { _accessionNumber = value; }
+        }
+        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="IssuerOfPatientId")]
+        public System.String IssuerOfPatientId
+        {
+        get { return _issuerOfPatientId; }
+        set { _issuerOfPatientId = value; }
         }
         [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedInstances")]

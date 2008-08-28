@@ -52,6 +52,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AccessionNumber"];
             } 
         }
+        public ISearchCondition<System.String> IssuerOfPatientId
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("IssuerOfPatientId"))
+              {
+                 SubCriteria["IssuerOfPatientId"] = new SearchCondition<System.String>("IssuerOfPatientId");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["IssuerOfPatientId"];
+            } 
+        }
         public ISearchCondition<System.Int32> NumberOfStudyRelatedInstances
         {
             get
