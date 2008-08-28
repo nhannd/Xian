@@ -19,12 +19,8 @@
 			</collection-id>
 			<key column="PatientProfileOID_"/>
 			<composite-element class="PatientIdentifier">
-				<property name="Id" type="String">
-					<column name="MrnId_" unique-key="Mrn" not-null="true" length="50"/>
-				</property>
-				<many-to-one name="AssigningAuthority" class="InformationAuthorityEnum">
-					<column name="MrnAssigningAuthority_" unique-key="Mrn" not-null="true"/>
-				</many-to-one>
+				<property name="Id" column="MrnId_" type="String" not-null="true" length="50"/>
+				<many-to-one name="AssigningAuthority" class="InformationAuthorityEnum" column="MrnAssigningAuthority_" not-null="true"/>
 			</composite-element>
 		</idbag>
 		<component name="Healthcard" class="HealthcardNumber">
