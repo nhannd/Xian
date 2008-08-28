@@ -118,7 +118,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
 				IList<Study> studies = new List<Study>();
                 for(int i=0; i<rows.Length; i++)
                 {
-                    studies.Add(Studies[rows[i]].TheStudy);
+					if (rows[i] < Studies.Count)
+						studies.Add(Studies[rows[i]].TheStudy);
                 }
 
                 return studies;
@@ -212,18 +213,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
                 if (row.RowType==DataControlRowType.DataRow)
                 {
 					StudySummary study = Studies[row.RowIndex];
-                    
-                    if (study!=null)
-                    {
-                        row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
-                        row.Attributes.Add("serverae", study.ThePartition.AeTitle);
-                        StudyController controller = new StudyController();
-                        bool deleted = controller.IsScheduledForDelete(study.TheStudy);
-                        if (deleted)
-                            row.Attributes.Add("deleted", "true");
+
+					if (study != null)
+					{
+						row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
+						row.Attributes.Add("serverae", study.ThePartition.AeTitle);
+						if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled)
+						    || study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.PurgeScheduled)
+							|| study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled)
+							|| study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled))
+							row.Attributes.Add("deleted", "true");
 						if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
 							row.Attributes.Add("nearline", "true");
-                    }
+					}
                 }
             }
         }

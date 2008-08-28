@@ -124,7 +124,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientID, PatientID.Text));
             }
 
-            if(!study.StudyDescription.Equals((StudyDescription.Text)))
+            if(String.IsNullOrEmpty(study.StudyDescription)
+				|| !study.StudyDescription.Equals((StudyDescription.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyDescription, StudyDescription.Text));
             }
@@ -134,12 +135,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyInstanceUID, StudyInstanceUID.Text));
             }
 
-            if(!study.StudyId.Equals((StudyID.Text)))
+			if (String.IsNullOrEmpty(study.StudyId)
+				|| !study.StudyId.Equals((StudyID.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyID, StudyID.Text));
             }
 
-            if(!study.AccessionNumber.Equals((AccessionNumber.Text)))
+			if (String.IsNullOrEmpty(study.AccessionNumber)
+				|| !study.AccessionNumber.Equals((AccessionNumber.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
             }
@@ -151,8 +154,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Controls
                         PhysicianSuffix.Text;
 
             dicomName = dicomName.Trim(new char[] { '^' });
-           
-            if(!study.ReferringPhysiciansName.Equals(dicomName))
+
+			if (String.IsNullOrEmpty(study.ReferringPhysiciansName)
+				|| !study.ReferringPhysiciansName.Equals(dicomName))
             {
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.ReferringPhysician, dicomName));
             }

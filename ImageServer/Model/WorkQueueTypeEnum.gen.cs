@@ -128,7 +128,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
           get { return _PurgeStudy; }
       }
       /// <summary>
-      /// Reprocess an entire study
+      /// Reprocess an entire study.
       /// </summary>
       public static WorkQueueTypeEnum ReprocessStudy
       {

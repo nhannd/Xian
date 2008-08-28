@@ -970,6 +970,7 @@
     <Content Include="App_Themes\Default\Global.skin" />
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
+    <None Include="Builds\PostBuild.proj" />
     <None Include="Pages\Queues\WorkQueue\.svn\all-wcprops" />
     <None Include="Pages\Queues\WorkQueue\.svn\entries" />
     <None Include="Pages\Queues\WorkQueue\.svn\format" />

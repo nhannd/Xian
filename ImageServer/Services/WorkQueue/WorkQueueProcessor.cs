@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
                 parms.ProcessorID = ServiceTools.ProcessorId;
 
                 parms.WorkQueueKey = item.GetKey();

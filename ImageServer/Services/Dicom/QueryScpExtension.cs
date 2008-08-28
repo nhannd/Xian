@@ -677,6 +677,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     {
                         find.Find(criteria, delegate(Study row)
                                                 {
+													if (row.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled)
+													 || row.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled))
+														return;
+
                                                     DicomMessage response = new DicomMessage();
                                                     PopulateStudy(subRead, response, tagList, row);
                                                     server.SendCFindResponse(presentationID, message.MessageId, response,

@@ -37,7 +37,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class InsertInstance : ProcedureQueryBroker<InstanceInsertParameters,InstanceKeys>,IInsertInstance
+    public class InsertInstance : ProcedureQueryBroker<InsertInstanceParameters,InstanceKeys>,IInsertInstance
     {
         public InsertInstance()
             : base("InsertInstance")

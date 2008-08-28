@@ -105,6 +105,7 @@
     <Compile Include="EntityBrokers\IPartitionSopClassEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IQueueStudyStateEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRestoreQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRestoreQueueStatusEnumBroker.gen.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="PartitionTransferSyntax.cs" />
     <Compile Include="PartitionTransferSyntax.gen.cs" />
     <Compile Include="Patient.gen.cs" />
+    <Compile Include="QueueStudyStateEnum.gen.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="RestoreQueue.gen.cs" />
     <Compile Include="RestoreQueueStatusEnum.gen.cs" />
@@ -225,10 +227,10 @@
     <Compile Include="DevicePreferredTransferSyntax.cs" />
     <Compile Include="Brokers\IQueryWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
-    <Compile Include="Parameters\InstanceInsertParameters.cs" />
+    <Compile Include="Parameters\InsertInstanceParameters.cs" />
     <Compile Include="Parameters\ModalitiesInStudyQueryParameters.cs" />
     <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />
-    <Compile Include="Parameters\WorkQueueUpdateParameters.cs" />
+    <Compile Include="Parameters\UpdateWorkQueueParameters.cs" />
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
     <Compile Include="StudyStatusEnum.gen.cs" />

@@ -55,8 +55,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private int _numberOfRelatedInstances;
 		private StudyStatusEnum _studyStatusEnum;
 		private string _modalitiesInStudy;
-		private Model.Study _theStudy;
+		private Study _theStudy;
 		private ServerPartition _thePartition;
+		private QueueStudyStateEnum _queueStudyStateEnum;
+
 		#endregion Private members
 
 		#region Public Properties
@@ -115,9 +117,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _studyStatusEnum = value; }
 		}
 
+		public QueueStudyStateEnum QueueStudyStateEnum
+		{
+			get { return _queueStudyStateEnum; }
+			set { _queueStudyStateEnum = value; }
+		}
+
 		public string StudyStatusEnumString
 		{
-			get { return _studyStatusEnum.Description; }
+			get
+			{
+				if (!_queueStudyStateEnum.Equals(Model.QueueStudyStateEnum.Idle))
+					return String.Format("{0}, {1}", _studyStatusEnum.Description, _queueStudyStateEnum.Description);
+
+				return _studyStatusEnum.Description;
+			}
 		}
 
 		public string ModalitiesInStudy
@@ -268,10 +282,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		public IEnumerable<StudySummary> Select(int startRowIndex, int maximumRows)
 		{
 			if (maximumRows == 0 || Partition == null) return new List<StudySummary>();
-			
+
 			StudySelectCriteria criteria = GetSelectCriteria();
 
-			IList<Study> studyList = _searchController.GetRangeStudies(criteria,startRowIndex,maximumRows);
+			IList<Study> studyList = _searchController.GetRangeStudies(criteria, startRowIndex, maximumRows);
 
 			_list = new List<StudySummary>();
 
@@ -297,30 +311,32 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		/// <summary>
-        /// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.
-        /// </summary>
-        /// <param name="study"></param>
-        /// <returns></returns>
-        /// <remark>
-        /// 
-        /// </remark>
-        private StudySummary CreateStudySummary(Study study)
-        {
-            StudySummary summary = new StudySummary();
+		/// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.
+		/// </summary>
+		/// <param name="study"></param>
+		/// <returns></returns>
+		/// <remark>
+		/// 
+		/// </remark>
+		private StudySummary CreateStudySummary(Study study)
+		{
+			StudySummary summary = new StudySummary();
 			StudyController controller = new StudyController();
 
-            summary.Key = study.GetKey();
-            summary.AccessionNumber = study.AccessionNumber;
-            summary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
-            summary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
-            summary.PatientId = study.PatientId;
-            summary.PatientsName = study.PatientsName;
-            summary.StudyDate = study.StudyDate;
-            summary.StudyDescription = study.StudyDescription;
-        	summary.StudyStatusEnum = study.StudyStatusEnum;
-        	summary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
+			summary.Key = study.GetKey();
+			summary.AccessionNumber = study.AccessionNumber;
+			summary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
+			summary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
+			summary.PatientId = study.PatientId;
+			summary.PatientsName = study.PatientsName;
+			summary.StudyDate = study.StudyDate;
+			summary.StudyDescription = study.StudyDescription;
+			summary.StudyStatusEnum = study.StudyStatusEnum;
+			summary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
 			summary.TheStudy = study;
 			summary.ThePartition = Partition;
-            return summary;
-        }}
+			summary.QueueStudyStateEnum = study.QueueStudyStateEnum;
+			return summary;
+		}
+	}
 }

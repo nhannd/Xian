@@ -107,6 +107,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 workqueueAdaptor.Add(columns);
             }
 
+			StudyUpdateColumns studyColumns = new StudyUpdateColumns();
+			studyColumns.QueueStudyStateEnum = QueueStudyStateEnum.DeleteScheduled;
+
+			StudyController studyController = new StudyController();
+			studyController.UpdateStudy(study, studyColumns);
+
             return true;
         }
 
@@ -171,8 +177,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             
             workqueueAdaptor.Add(columns);
 
+			StudyUpdateColumns studyColumns = new StudyUpdateColumns();
+			studyColumns.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
+
+			StudyController studyController = new StudyController();
+			studyController.UpdateStudy(study, studyColumns);
             return true;
         }
+
+		public bool UpdateStudy(Study study, StudyUpdateColumns columns)
+		{
+			return _adaptor.Update(study.Key, columns);
+		}
 
         public bool IsScheduledForEdit(Study study)
         {

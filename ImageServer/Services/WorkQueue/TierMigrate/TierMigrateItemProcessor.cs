@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                        WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
                         parms.ProcessorID = ServiceTools.ProcessorId;
 
                         parms.WorkQueueKey = item.GetKey();

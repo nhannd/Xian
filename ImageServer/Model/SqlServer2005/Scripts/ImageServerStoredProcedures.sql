@@ -605,7 +605,8 @@ CREATE PROCEDURE [dbo].[UpdateWorkQueue]
 	@FailureCount int,
 	@ExpirationTime datetime = null,
 	@ScheduledTime datetime = null,
-	@FailureDescription nvarchar(256) = null
+	@FailureDescription nvarchar(256) = null,
+	@QueueStudyStateEnum smallint = null
 AS
 BEGIN
 
@@ -619,10 +620,12 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	declare @CompletedStatusEnum as int
-	declare @PendingStatusEnum as int
-	declare @FailedStatusEnum as int
-	declare @IdleStatusEnum as int
+	declare @ServerPartitionGUID uniqueidentifier
+	declare @StudyInstanceUid varchar(64)
+	declare @CompletedStatusEnum as smallint
+	declare @PendingStatusEnum as smallint
+	declare @FailedStatusEnum as smallint
+	declare @IdleStatusEnum as smallint
 
 	select @CompletedStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Completed''
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
@@ -633,6 +636,15 @@ BEGIN
 
 	if @WorkQueueStatusEnum = @CompletedStatusEnum 
 	BEGIN
+		SELECT @ServerPartitionGUID=ServerPartitionGUID, @StudyInstanceUid=StudyInstanceUid
+		FROM StudyStorage WHERE GUID = @StudyStorageGUID 
+
+		if @QueueStudyStateEnum is not NULL
+		BEGIN
+			UPDATE Study SET QueueStudyStateEnum=@QueueStudyStateEnum 
+			WHERE ServerPartitionGUID=@ServerPartitionGUID AND StudyInstanceUid=@StudyInstanceUid
+		END
+
 		-- Completed
 		DELETE FROM WorkQueue where GUID = @WorkQueueGUID
 		
@@ -1677,12 +1689,14 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: August 17, 2007
 -- Modified:    April 24, 2008
--- Description:	
+-- Description:	Main insert routine for handling when new images are processed.  This routine
+--              determines if Patient/Study/Series need to be inserted, or the counts updated.
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertInstance] 
 	-- Add the parameters for the stored procedure here
 	@ServerPartitionGUID uniqueidentifier, 
 	@StudyStatusEnum smallint,
+	@QueueStudyStateEnum smallint,
 	@PatientId nvarchar(64) = null,
 	@PatientsName nvarchar(64) = null,
 	@IssuerOfPatientId nvarchar(64) = null,
@@ -1774,12 +1788,12 @@ BEGIN
 				StudyInstanceUid, PatientsName, PatientId, PatientsBirthDate,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
-				NumberOfStudyRelatedInstances, StudyStatusEnum,SpecificCharacterSet)
+				NumberOfStudyRelatedInstances, StudyStatusEnum,SpecificCharacterSet,QueueStudyStateEnum)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
 				@StudyInstanceUid, @PatientsName, @PatientId, @PatientsBirthDate,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
-				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum,@SpecificCharacterSet)
+				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum,@SpecificCharacterSet,@QueueStudyStateEnum)
 
 		UPDATE dbo.ServerPartition SET StudyCount=StudyCount+1
 		WHERE GUID=@ServerPartitionGUID
@@ -2516,6 +2530,9 @@ BEGIN
 
 	declare @StudyInstanceUid varchar(64)
 	declare @StudyGUID uniqueidentifier
+	declare @IdleQueueStudyStateEnum smallint 
+
+	SELECT @IdleQueueStudyStateEnum=Enum FROM QueueStudyStateEnum WHERE Lookup=''Idle''
 
 	-- Select key values
 	SELECT @StudyInstanceUid = StudyInstanceUid FROM StudyStorage WHERE GUID = @StudyStorageGUID
@@ -2530,7 +2547,7 @@ BEGIN
 	UPDATE Series SET StudyStatusEnum = @StudyStatusEnum
 	WHERE StudyGUID = @StudyGUID
 
-	UPDATE Study SET StudyStatusEnum = @StudyStatusEnum
+	UPDATE Study SET StudyStatusEnum = @StudyStatusEnum, QueueStudyStateEnum=@IdleQueueStudyStateEnum
 	WHERE GUID = @StudyGUID
 
 	UPDATE StudyStorage SET StudyStatusEnum = @StudyStatusEnum

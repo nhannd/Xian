@@ -754,3 +754,20 @@ GO
 INSERT INTO [ImageServer].[dbo].[AlertLevelEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),1004,'Critical','Critical','Critical alert')
 GO
+
+-- QueueStudyStateEnum inserts
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),101,'Idle','Idle','The study currently does not have any queue entries.')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),102,'DeleteScheduled','Delete Scheduled','The study is scheduled for deletion')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),103,'EditScheduled','Edit Scheduled','The study is scheduled for editing')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),104,'ProcessingScheduled','Processing','The study is being processed')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),105,'PurgeScheduled','Purge Scheduled','The study has been scheduled for purging')
+GO

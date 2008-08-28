@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected override void OnExecute(IUpdateContext updateContext)
         {
             // Setup the insert parameters
-            InstanceInsertParameters parms = new InstanceInsertParameters();
+            InsertInstanceParameters parms = new InsertInstanceParameters();
             _file.LoadDicomFields(parms);
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
 
@@ -82,6 +82,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				parms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
 			else
 				parms.StudyStatusEnum = StudyStatusEnum.Online;
+
+        	parms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
 
             // Get the Insert Instance broker and do the insert
             IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();

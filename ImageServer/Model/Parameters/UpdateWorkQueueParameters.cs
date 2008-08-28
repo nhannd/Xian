@@ -34,51 +34,55 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueUpdateParameters : ProcedureParameters
+    public class UpdateWorkQueueParameters : ProcedureParameters
     {
-        public WorkQueueUpdateParameters()
+        public UpdateWorkQueueParameters()
             : base("UpdateWorkQueue")
         { }
 
         public ServerEntityKey WorkQueueKey
         {
-            set { this.SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
+            set { SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
         }
 
         public ServerEntityKey StudyStorageKey
         {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
 
         public WorkQueueStatusEnum WorkQueueStatusEnum
         {
-            set { this.SubCriteria["WorkQueueStatusEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueStatusEnum", value); }
+            set { SubCriteria["WorkQueueStatusEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueStatusEnum", value); }
         }
 
         public DateTime ExpirationTime 
         {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
+            set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
         }
 
         public DateTime ScheduledTime
         {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
+            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
 
         public int FailureCount
         {
-            set { this.SubCriteria["FailureCount"] = new ProcedureParameter<int>("FailureCount", value); }
+            set { SubCriteria["FailureCount"] = new ProcedureParameter<int>("FailureCount", value); }
         }
 
         public string ProcessorID
         {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
+            set { SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
         }
 
         public string FailureDescription
         {
-            set { this.SubCriteria["FailureDescription"] = new ProcedureParameter<string>("FailureDescription", value); }
+            set { SubCriteria["FailureDescription"] = new ProcedureParameter<string>("FailureDescription", value); }
         }
 
+		public QueueStudyStateEnum QueueStudyStateEnum
+		{
+			set { SubCriteria["QueueStudyStateEnum"] = new ProcedureParameter<ServerEnum>("QueueStudyStateEnum", value); }
+		}
     }
 }

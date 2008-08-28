@@ -34,7 +34,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertInstance : IProcedureQueryBroker<InstanceInsertParameters,InstanceKeys>
+    public interface IInsertInstance : IProcedureQueryBroker<InsertInstanceParameters,InstanceKeys>
     {
     }
 }

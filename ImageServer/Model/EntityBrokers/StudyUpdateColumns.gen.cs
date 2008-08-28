@@ -80,6 +80,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["PatientsSex"] = new EntityUpdateColumn<System.String>("PatientsSex", value); }
         }
+        public QueueStudyStateEnum QueueStudyStateEnum
+        {
+            set { SubParameters["QueueStudyStateEnum"] = new EntityUpdateColumn<QueueStudyStateEnum>("QueueStudyStateEnum", value); }
+        }
        [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
         public System.String ReferringPhysiciansName
         {

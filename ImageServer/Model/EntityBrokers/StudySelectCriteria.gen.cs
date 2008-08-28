@@ -129,6 +129,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientsSex"];
             } 
         }
+        public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueStudyStateEnum"))
+              {
+                 SubCriteria["QueueStudyStateEnum"] = new SearchCondition<QueueStudyStateEnum>("QueueStudyStateEnum");
+              }
+              return (ISearchCondition<QueueStudyStateEnum>)SubCriteria["QueueStudyStateEnum"];
+            } 
+        }
         public ISearchCondition<System.String> ReferringPhysiciansName
         {
             get

@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _patientsBirthDate;
         private System.String _patientsName;
         private System.String _patientsSex;
+        private QueueStudyStateEnum _queueStudyStateEnum;
         private System.String _referringPhysiciansName;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private System.String _specificCharacterSet;
@@ -122,6 +123,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _patientsSex; }
         set { _patientsSex = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="QueueStudyStateEnum")]
+        public QueueStudyStateEnum QueueStudyStateEnum
+        {
+        get { return _queueStudyStateEnum; }
+        set { _queueStudyStateEnum = value; }
         }
         [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ReferringPhysiciansName")]

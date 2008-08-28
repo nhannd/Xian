@@ -362,10 +362,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 					{
 						IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-						WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+						UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
 						parms.WorkQueueKey = item.GetKey();
 						parms.StudyStorageKey = item.StudyStorageKey;
 						parms.ProcessorID = item.ProcessorID;
+						if (complete)
+							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 						WorkQueueSettings settings = WorkQueueSettings.Default;
 
@@ -395,6 +397,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (complete || !processedBatch && item.ExpirationTime < Platform.Time)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
+							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 							parms.FailureCount = item.FailureCount;
 							parms.ScheduledTime = scheduledTime;
 
@@ -453,7 +456,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 						{
 							IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-							WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+							UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
 							parms.WorkQueueKey = item.GetKey();
 							parms.StudyStorageKey = item.StudyStorageKey;
 							parms.ProcessorID = item.ProcessorID;
@@ -532,7 +535,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                         {
                             IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                            WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                            UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
                             parms.ProcessorID = ServiceTools.ProcessorId;
 
                             parms.WorkQueueKey = item.GetKey();
@@ -679,7 +682,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                    {
                        IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                       WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+                       UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
                        parms.WorkQueueKey = item.GetKey();
                        parms.StudyStorageKey = item.StudyStorageKey;
                        parms.ProcessorID = ServiceTools.ProcessorId;

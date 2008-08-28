@@ -131,6 +131,30 @@ END
 GO
 SET ANSI_PADDING OFF
 GO
+/****** Object:  Table [dbo].[QueueStudyStateEnum]    Script Date: 08/26/2008 15:22:09 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueueStudyStateEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[QueueStudyStateEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_QueueStudyStateEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_QueueStudyStateEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
 /****** Object:  Table [dbo].[WorkQueueTypeEnum]    Script Date: 07/16/2008 23:49:43 ******/
 SET ANSI_NULLS ON
 GO
@@ -504,6 +528,7 @@ CREATE TABLE [dbo].[Study](
 	[NumberOfStudyRelatedSeries] [int] NOT NULL,
 	[NumberOfStudyRelatedInstances] [int] NOT NULL,
 	[StudyStatusEnum] [smallint] NOT NULL,
+	[QueueStudyStateEnum] [smallint] NOT NULL CONSTRAINT [DF_Study_QueueStudyStateEnum]  DEFAULT ((101)),
  CONSTRAINT [PK_Study] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -1389,6 +1414,13 @@ ALTER TABLE [dbo].[Study]  WITH CHECK ADD  CONSTRAINT [FK_Study_StatusEnum] FORE
 REFERENCES [dbo].[StudyStatusEnum] ([Enum])
 GO
 ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_StatusEnum]
+GO
+/****** Object:  ForeignKey [FK_Study_QueueStudyStateEnum]    Script Date: 08/26/2008 15:22:17 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Study_QueueStudyStateEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Study]'))
+ALTER TABLE [dbo].[Study]  WITH CHECK ADD  CONSTRAINT [FK_Study_QueueStudyStateEnum] FOREIGN KEY([QueueStudyStateEnum])
+REFERENCES [dbo].[QueueStudyStateEnum] ([Enum])
+GO
+ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_QueueStudyStateEnum]
 GO
 /****** Object:  ForeignKey [FK_StudyStorage_ServerPartition]    Script Date: 07/17/2008 00:50:16 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyStorage_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
