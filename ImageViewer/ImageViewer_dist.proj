@@ -102,6 +102,7 @@
     <CodecFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg2000.dll" />
     <CodecFiles Include="$(SolutionDir)\..\ImageViewer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Rle.dll" />
     <CodecFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\*.dll" />
+    <CodecFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
