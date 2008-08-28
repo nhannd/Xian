@@ -128,7 +128,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		{
 			DicomFile file = CreateTestFile();
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Strict = false;
+			anonymizer.Options = DicomAnonymizerOptions.RelaxAllChecks;
 
 			try
 			{
@@ -141,7 +141,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			}
 
 			anonymizer = new DicomAnonymizer();
-			Assert.IsTrue(anonymizer.Strict); //strict by default
+			Assert.IsTrue(anonymizer.Options == DicomAnonymizerOptions.Default); //strict by default
 
 			//should throw.
 			anonymizer.Anonymize(CreateTestFile());
@@ -153,7 +153,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			Initialize();
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Strict = false;
+			anonymizer.Options = DicomAnonymizerOptions.RelaxAllChecks;
 			anonymizer.Anonymize(_file);
 
 			AfterAnonymize(new StudyData(), new SeriesData());
@@ -197,12 +197,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 
 		[Test]
 		[ExpectedException(typeof(DicomAnonymizerException))]
-		public void TestValidatePatientId()
+		public void TestValidatePatientIdNotEqual()
 		{
 			Initialize();
 
 			_file.DataSet[DicomTags.PatientId].SetStringValue("123");
-			StudyData studyPrototype = new StudyData();
+			StudyData studyPrototype = CreateStudyPrototype();
 			studyPrototype.PatientId = "123";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
@@ -212,12 +212,40 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 
 		[Test]
 		[ExpectedException(typeof(DicomAnonymizerException))]
-		public void TestValidatePatientsName()
+		public void TestValidatePatientIdNotEmpty() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientId].SetStringValue("123");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientId = "";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		public void TestValidatePatientIdAllowEmpty() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientId].SetStringValue("123");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientId = "";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.Options = DicomAnonymizerOptions.AllowEmptyPatientId;
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		[ExpectedException(typeof(DicomAnonymizerException))]
+		public void TestValidatePatientsNameNotEqual()
 		{
 			Initialize();
 
 			_file.DataSet[DicomTags.PatientsName].SetStringValue("Patient^Anonymous^Mr");
-			StudyData studyPrototype = new StudyData();
+			StudyData studyPrototype = CreateStudyPrototype();
 			studyPrototype.PatientsNameRaw = "PATIENT^ANONYMOUS";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
@@ -227,12 +255,40 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 
 		[Test]
 		[ExpectedException(typeof(DicomAnonymizerException))]
-		public void TestValidateAccession()
+		public void TestValidatePatientsNameNotEmpty() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientsName].SetStringValue("Patient^Anonymous^Mr");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientsNameRaw = "";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		public void TestValidatePatientsNameAllowEmpty() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientsName].SetStringValue("Patient^Anonymous^Mr");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientsNameRaw = "";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.Options = DicomAnonymizerOptions.AllowEmptyPatientName;
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		[ExpectedException(typeof(DicomAnonymizerException))]
+		public void TestValidateAccessionNotEqual()
 		{
 			Initialize();
 
 			_file.DataSet[DicomTags.AccessionNumber].SetStringValue("1234");
-			StudyData studyPrototype = new StudyData();
+			StudyData studyPrototype = CreateStudyPrototype();
 			studyPrototype.AccessionNumber = "1234";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
@@ -242,12 +298,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 
 		[Test]
 		[ExpectedException(typeof(DicomAnonymizerException))]
-		public void TestValidatePatientsBirthDate()
+		public void TestValidatePatientsBirthDateNotEqual()
 		{
 			Initialize();
 
 			_file.DataSet[DicomTags.PatientsBirthDate].SetStringValue("19760810");
-			StudyData studyPrototype = new StudyData();
+			StudyData studyPrototype = CreateStudyPrototype();
 			studyPrototype.PatientsBirthDateRaw = "19760810";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
@@ -256,13 +312,56 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		}
 
 		[Test]
+		public void TestValidatePatientsBirthDateAllowEqual() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientsBirthDate].SetStringValue("19760810");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientsBirthDateRaw = "19760810";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.Options = DicomAnonymizerOptions.AllowEqualBirthDate;
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
 		[ExpectedException(typeof(DicomAnonymizerException))]
-		public void TestValidateStudyId()
+		public void TestValidatePatientsBirthDateNotEmpty() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientsBirthDate].SetStringValue("19760810");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientsBirthDateRaw = "";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.Options = anonymizer.Options & ~DicomAnonymizerOptions.AllowEmptyBirthDate;
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		public void TestValidatePatientsBirthDateAllowEmpty() {
+			Initialize();
+
+			_file.DataSet[DicomTags.PatientsBirthDate].SetStringValue("19760810");
+			StudyData studyPrototype = CreateStudyPrototype();
+			studyPrototype.PatientsBirthDateRaw = "";
+
+			DicomAnonymizer anonymizer = new DicomAnonymizer();
+			anonymizer.Options = DicomAnonymizerOptions.AllowEmptyBirthDate;
+			anonymizer.StudyDataPrototype = studyPrototype;
+			anonymizer.Anonymize(_file);
+		}
+
+		[Test]
+		[ExpectedException(typeof(DicomAnonymizerException))]
+		public void TestValidateStudyIdNotEqual()
 		{
 			Initialize();
 
 			_file.DataSet[DicomTags.StudyId].SetStringValue("123");
-			StudyData studyPrototype = new StudyData();
+			StudyData studyPrototype = CreateStudyPrototype();
 			studyPrototype.StudyId = "123";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
@@ -313,6 +412,20 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			Assert.AreEqual(_anonymizedSeriesData.SeriesDescription, seriesPrototype.SeriesDescription);
 			Assert.AreEqual(_anonymizedSeriesData.ProtocolName, seriesPrototype.ProtocolName);
 			Assert.AreEqual(_anonymizedSeriesData.SeriesNumber, seriesPrototype.SeriesNumber);
+		}
+
+		private static StudyData CreateStudyPrototype()
+		{
+			StudyData studyPrototype = new StudyData();
+			studyPrototype.AccessionNumber = "0x0A11BA5E";
+			studyPrototype.PatientId = "216CA75";
+			studyPrototype.PatientsBirthDate = DateTime.Now;
+			studyPrototype.PatientsNameRaw = "PICARD^JEAN-LUC^^CPT.";
+			studyPrototype.PatientsSex = "M";
+			studyPrototype.StudyDate = DateTime.Now;
+			studyPrototype.StudyDescription = "Description of a study prototype, anonymized";
+			studyPrototype.StudyId = "STUDY158739";
+			return studyPrototype;
 		}
 
 		private static void ValidateNullDates(DateData anonymizedDateData)

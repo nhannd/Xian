@@ -43,14 +43,10 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 	public sealed class DicomAnonymizerException : DicomException
 	{
 		internal DicomAnonymizerException(string message, Exception innerException)
-			: base(message, innerException)
-		{
-		}
+			: base(message, innerException) {}
 
 		internal DicomAnonymizerException(string message)
-			: base(message)
-		{
-		}
+			: base(message) {}
 	}
 
 	/// <summary>
@@ -104,7 +100,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		private AnonymizeStudyDataDelegate _anonymizeStudyDataDelegate;
 		private AnonymizeSeriesDataDelegate _anonymizeSeriesDataDelegate;
 
-		private bool _strict = true;
+		private DicomAnonymizerOptions _options = DicomAnonymizerOptions.Default;
 
 		private DicomFile _currentFile;
 		private DateTime? _oldStudyDate;
@@ -120,23 +116,17 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public DicomAnonymizer()
-		{
-		}
+		public DicomAnonymizer() {}
 
 		#region Public Properties
 
 		/// <summary>
-		/// Gets whether or not anonymization should be strict; the default value is true.
+		/// Gets or sets the option flags in use by this DicomAnonymizer.
 		/// </summary>
-		/// <remarks>
-		/// Currently, <b>strict</b> just means that the Patient Id and PatientsName tags
-		/// in the resulting anonymized data set cannot be null.
-		/// </remarks>
-		public bool Strict
+		public DicomAnonymizerOptions Options
 		{
-			get { return _strict; }
-			set { _strict = value; }
+			get { return _options; }
+			set { _options = value; }
 		}
 
 		/// <summary>
@@ -200,7 +190,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		/// </remarks>
 		public AnonymizeStudyDataDelegate AnonymizeStudyDataDelegate
 		{
-			get { return _anonymizeStudyDataDelegate; }	
+			get { return _anonymizeStudyDataDelegate; }
 			set
 			{
 				if (_anonymizeStudyDataDelegate == value)
@@ -222,7 +212,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		/// When no delegate is set, all files are anonymized using the data in
 		/// <see cref="SeriesDataPrototype"/>.
 		/// </remarks>
-		public AnonymizeSeriesDataDelegate AnonymizeSeriesDataDelegate 
+		public AnonymizeSeriesDataDelegate AnonymizeSeriesDataDelegate
 		{
 			get { return _anonymizeSeriesDataDelegate; }
 			set
@@ -248,7 +238,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 			if (dicomFile.DataSet.IsEmpty())
 				dicomFile.Load();
-			
+
 			_currentFile = dicomFile;
 
 			try
@@ -262,7 +252,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				anonymizedSeriesData.SaveTo(_currentFile);
 				anonymizedStudyData.SaveTo(_currentFile);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				if (e is DicomAnonymizerException)
 					throw;
@@ -304,7 +294,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				// generate the new study uid
 				anonymizedData.StudyInstanceUid = DicomUid.GenerateUid().UID;
 
-				ValidateAnonymizedStudyData(originalData, anonymizedData);
+				ValidateAnonymizedStudyData(originalData, anonymizedData, _options);
 
 				_uidMap[originalData.StudyInstanceUid] = anonymizedData.StudyInstanceUid;
 
@@ -325,23 +315,24 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				return StudyDataPrototype.Clone();
 		}
 
-		private void ValidateAnonymizedStudyData(StudyData originalData, StudyData anonymizedData)
+		private void ValidateAnonymizedStudyData(StudyData originalData, StudyData anonymizedData, DicomAnonymizerOptions options)
 		{
 			ValidateNotEmpty(anonymizedData.StudyInstanceUid, "StudyInstanceUid");
 			ValidateNotEqual(originalData.StudyInstanceUid, anonymizedData.StudyInstanceUid, "StudyInstanceUid");
-
 			ValidatePatientNamesNotEqual(originalData.PatientsName, anonymizedData.PatientsName);
-
-			ValidateNotEqual(originalData.PatientId, anonymizedData.PatientId, "PatientId"); 
-			ValidateNotEqual(originalData.PatientsBirthDateRaw, anonymizedData.PatientsBirthDateRaw, "PatientsBirthDateRaw");
+			ValidateNotEqual(originalData.PatientId, anonymizedData.PatientId, "PatientId");
 			ValidateNotEqual(originalData.AccessionNumber, anonymizedData.AccessionNumber, "AccessionNumber");
 			ValidateNotEqual(originalData.StudyId, anonymizedData.StudyId, "StudyId");
 
-			if (_strict)
-			{
+			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEqualBirthDate))
+				ValidateNotEqual(originalData.PatientsBirthDateRaw, anonymizedData.PatientsBirthDateRaw, "PatientsBirthDateRaw");
+
+			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyBirthDate))
+				ValidateNotEmpty(anonymizedData.PatientsBirthDateRaw, "PatientsBirthDateRaw");
+			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyPatientId))
 				ValidateNotEmpty(anonymizedData.PatientId, "PatientId");
+			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyPatientName))
 				ValidateNotEmpty(anonymizedData.PatientsName, "PatientsName");
-			}
 		}
 
 		private static void ValidatePatientNamesNotEqual(PersonName original, PersonName anonymized)
@@ -379,7 +370,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 				anonymizedData.SeriesInstanceUid = DicomUid.GenerateUid().UID; // generate the series uid
 
-				ValidateAnonymizedSeriesData(originalData, anonymizedData);
+				ValidateAnonymizedSeriesData(originalData, anonymizedData, _options);
 
 				_uidMap[originalData.SeriesInstanceUid] = anonymizedData.SeriesInstanceUid;
 
@@ -397,7 +388,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				return SeriesDataPrototype.Clone();
 		}
 
-		private static void ValidateAnonymizedSeriesData(SeriesData originalData, SeriesData anonymizedData)
+		private static void ValidateAnonymizedSeriesData(SeriesData originalData, SeriesData anonymizedData, DicomAnonymizerOptions options)
 		{
 			ValidateNotEmpty(anonymizedData.SeriesInstanceUid, "SeriesInstanceUid");
 			ValidateNotEqual(originalData.SeriesInstanceUid, anonymizedData.SeriesInstanceUid, "SeriesInstanceUid");
@@ -482,14 +473,14 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 						Trace.WriteLine(String.Format("Removed: {0}", GetTagPathDescription()));
 						dataset[tag] = null;
 					});
-			
+
 			_currentTagPath.RemoveAt(_recursionLevel--);
 		}
 
 		private void RemapUidAttribute(DicomAttribute attribute)
 		{
 			int i = 0;
-			foreach (string oldUid in (string[])attribute.Values)
+			foreach (string oldUid in (string[]) attribute.Values)
 			{
 				if (!String.IsNullOrEmpty(oldUid))
 				{
@@ -503,7 +494,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 						newUid = DicomUid.GenerateUid().UID;
 						ValidateNotEmpty(newUid, "RemappedUid");
 						ValidateNotEqual(oldUid, newUid, "RemappedUid");
-						
+
 						_uidMap[oldUid] = newUid;
 					}
 
@@ -519,12 +510,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				int i = 0;
 				if (attribute is DicomAttributeDA)
 				{
-					foreach (string date in (string[])attribute.Values)
+					foreach (string date in (string[]) attribute.Values)
 						attribute.SetString(i++, AdjustDate(date, _studyDateDifference.Value));
 				}
 				else if (attribute is DicomAttributeDT)
 				{
-					foreach (string datetime in (string[])attribute.Values)
+					foreach (string datetime in (string[]) attribute.Values)
 						attribute.SetString(i++, AdjustDateTime(datetime, _studyDateDifference.Value));
 				}
 			}
@@ -613,6 +604,11 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			return DateTimeTagsToAdjust.Contains(attribute.Tag.TagValue);
 		}
 
+		private static bool IsOptionSet(DicomAnonymizerOptions options, DicomAnonymizerOptions flag)
+		{
+			return (options & flag) == flag;
+		}
+
 		private static IEnumerable<DicomAttributeCollection> GetSubCollections(DicomAttribute attribute)
 		{
 			if (attribute is DicomAttributeSQ && attribute.Values != null)
@@ -624,6 +620,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		}
 
 		#endregion
+
 		#endregion
 	}
 }
