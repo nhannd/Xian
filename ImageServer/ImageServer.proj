@@ -1,0 +1,54 @@
+<Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Choose>
+    <When Condition="'$(TargetPlatform)' == 'x64'">
+      <PropertyGroup>
+        <PlatformSubFolder>x64</PlatformSubFolder>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <!-- assumes Win32 -->
+      <PropertyGroup>
+        <PlatformSubFolder></PlatformSubFolder>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <!-- set out some defaults -->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <DistributionBuild>false</DistributionBuild>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="$(DistributionBuild)">
+      <PropertyGroup>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\ImageServer\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DistributionDir></DistributionDir>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
+    <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
+      <PropertyGroup>
+        <ImageServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageServerProperties>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <ImageServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir)</ImageServerProperties>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  
+	<Target Name="BuildSolution" >
+    <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
+    <MSBuild Projects="ImageServer.sln" Properties="$(ImageServerProperties)" />
+	</Target>
+
+</Project>
