@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		{
 		}
 
-		public override byte[] GetNormalizedPixelData()
+		protected override byte[] CreateNormalizedPixelData()
 		{
 			return new byte[]{0};
 

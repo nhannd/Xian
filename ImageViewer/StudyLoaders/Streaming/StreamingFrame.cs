@@ -1,6 +1,5 @@
 using System;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -26,47 +25,37 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_wadoServicePort = wadoServicePort;
 		}
 
-		public override byte[] GetNormalizedPixelData()
+		protected override byte[] CreateNormalizedPixelData()
 		{
-			if (_pixelData == null)
+			Uri uri = new Uri(String.Format("http://{0}:{1}/WADO", _host, _wadoServicePort));
+
+			StreamingClient client = new StreamingClient(uri);
+			byte[] pixelData = client.RetrievePixelData(
+				_aeTitle,
+				ParentImageSop.StudyInstanceUID,
+				ParentImageSop.SeriesInstanceUID,
+				ParentImageSop.SopInstanceUID,
+				FrameNumber - 1);
+
+			if (this.IsColor)
 			{
-				lock (_syncLock)
-				{
-					if (_pixelData == null)
-					{
-						Uri uri = new Uri(String.Format("http://{0}:{1}/WADO", _host, _wadoServicePort));
+				PhotometricInterpretation pi;
 
-						StreamingClient client = new StreamingClient(uri);
-						_pixelData = client.RetrievePixelData(
-							_aeTitle,
-							ParentImageSop.StudyInstanceUID,
-							ParentImageSop.SeriesInstanceUID,
-							ParentImageSop.SopInstanceUID,
-							FrameNumber - 1);
+				TransferSyntax ts = TransferSyntax.GetTransferSyntax(ParentImageSop.TransferSyntaxUID);
 
-						if (this.IsColor)
-						{
-							PhotometricInterpretation pi;
+				if ( ts == TransferSyntax.Jpeg2000ImageCompression ||
+					ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
+					ts == TransferSyntax.JpegExtendedProcess24 ||
+					ts == TransferSyntax.JpegBaselineProcess1 ||
+					ts == TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1)
+					pi = PhotometricInterpretation.Rgb;
+				else
+					pi = this.PhotometricInterpretation;
 
-							TransferSyntax ts = TransferSyntax.GetTransferSyntax(ParentImageSop.TransferSyntaxUID);
-
-							if ( ts == TransferSyntax.Jpeg2000ImageCompression ||
-								ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
-								ts == TransferSyntax.JpegExtendedProcess24 ||
-								ts == TransferSyntax.JpegBaselineProcess1 ||
-								ts == TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1)
-								pi = PhotometricInterpretation.Rgb;
-							else
-								pi = this.PhotometricInterpretation;
-
-							_pixelData = ToArgb(_pixelData, pi);
-						}
-					}
-				}
+				pixelData = ToArgb(pixelData, pi);
 			}
 
-			return _pixelData;
+			return pixelData;
 		}
-
 	}
 }

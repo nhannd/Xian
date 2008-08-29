@@ -52,8 +52,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly int _frameNumber;
 		private NormalizedPixelSpacing _normalizedPixelSpacing;
 		private ImagePlaneHelper _imagePlaneHelper;
-		protected volatile byte[] _pixelData;
-		protected readonly object _syncLock = new object();
+		private volatile byte[] _pixelData;
+		private readonly object _syncLock = new object();
 
 		#endregion
 
@@ -788,7 +788,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </para>
 		/// </remarks>
 		/// <seealso cref="ToArgb"/>
-		public virtual byte[] GetNormalizedPixelData()
+		public byte[] GetNormalizedPixelData()
 		{
 			if (_pixelData == null)
 			{
@@ -796,10 +796,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					if (_pixelData == null)
 					{
-						this.ParentImageSop.Load();
-
-						DicomMessageBase message = this.ParentImageSop.NativeDicomObject;
-						_pixelData = GetNormalizedPixelData(message);
+						_pixelData = CreateNormalizedPixelData();
 					}
 				}
 			}
@@ -807,7 +804,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _pixelData;
 		}
 
-		protected byte[] GetNormalizedPixelData(DicomMessageBase message)
+		protected virtual byte[] CreateNormalizedPixelData()
+		{
+			return CreateNormalizedPixelData(this.ParentImageSop.NativeDicomObject);
+		}
+
+		//TODO: these helpers should probably be static if they are to be truly general.
+		protected byte[] CreateNormalizedPixelData(DicomMessageBase message)
 		{
 			PhotometricInterpretation photometricInterpretation;
 			byte[] rawPixelData;
@@ -835,7 +838,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return rawPixelData;
 		}
 
-		protected byte[] GetNormalizedPixelData(byte[] compressedPixelData)
+		//TODO: this method seems unecessary, and I'm not certain it's correct.
+		protected byte[] CreateNormalizedPixelData(byte[] compressedPixelData)
 		{
 			DicomMessageBase message = ParentImageSop.NativeDicomObject;
 			PhotometricInterpretation photometricInterpretation;

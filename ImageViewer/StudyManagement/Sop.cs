@@ -116,7 +116,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private volatile bool _isDisposed = false;
 		private event EventHandler _disposing;
 		private volatile Series _parentSeries;
-		protected volatile bool _loaded = false;
+		private volatile bool _loaded = false;
+		private volatile bool _loading = false;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="Sop"/>.
@@ -143,14 +144,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				Load();
-				return _dicomMessage;
-			}
-		}
-
-		protected DicomMessageBase NativeDicomObjectInternal
-		{
-			get
-			{
 				return _dicomMessage;
 			}
 		}
@@ -697,27 +690,39 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		internal void Load()
+		private void Load()
 		{
-            if (_loaded)
-                return;
+			if (_loaded)
+				return;
 
-            lock (_syncLock)
-            {
-                if (_loaded)
-                    return;
+			lock (_syncLock)
+			{
+				if (_loaded)
+					return;
 
-                CheckIsDisposed();
+				if (_loading)
+					return;
 
-                LoadInternal();
-                _loaded = true;
-            }
+				//So that subclasses can access NativeDicomObject from within overrides of EnsureLoaded.
+				_loading = true;
+
+				try
+				{
+					CheckIsDisposed();
+
+					EnsureLoaded();
+					_loaded = true;
+				}
+				finally
+				{
+					_loading = false;
+				}
+			}
 
 		}
-
-		protected virtual void LoadInternal()
+		
+		protected virtual void EnsureLoaded()
 		{
-
 		}
 
 		#region Dicom Tag Retrieval Methods
@@ -913,8 +918,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			value = value ?? "";
 		}
 
-		//TODO: not sure about returning the attribute directly.
-
+		//TODO: should make DicomAttributeCollections read-only.
 		public DicomAttribute this[DicomTag tag]
 		{
 			get { return this[tag.TagValue]; }

@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private DicomFile DicomFile
 		{
-			get { return NativeDicomObjectInternal as DicomFile; }
+			get { return NativeDicomObject as DicomFile; }
 		}
 
-		protected override void LoadInternal()
+		protected override void EnsureLoaded()
 		{
             DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);
 		}

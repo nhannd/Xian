@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class VisibleDisplaySetPrefetchingStrategy : IPrefetchingStrategy
 	{
 		private IImageViewer _imageViewer;
-		private bool _stopped = false;
+		private volatile bool _stopped = false;
 		private SimpleBlockingThreadPool _threadPool;
 
 		/// <summary>
@@ -66,12 +66,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			if (_threadPool != null)
 			{
-				// Wait until all threads are done
-				while (_threadPool.ActiveCount > 0)
-					Thread.Sleep(5);
-
+				_threadPool.Stop(false);
 				_imageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
-				_threadPool.Stop();
 			}
 		}
 
@@ -92,8 +88,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				// Quit when we've received a signal to stop, or when the available
 				// memory has dropped below a certain threshold
-				if (_stopped || 
-					SystemResources.GetAvailableMemory(SizeUnits.Megabytes) < 100)
+				if (_stopped || SystemResources.GetAvailableMemory(SizeUnits.Megabytes) < 100)
 				{
 					return;
 				}
@@ -109,18 +104,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					IAnnotationLayout layout = annotations.AnnotationLayout;
 				}
-
-				//IImageGraphicProvider graphicProvider = image as IImageGraphicProvider;
-
-				//if (graphicProvider != null)
-				//{
-				//    GrayscaleImageGraphic grayscaleGraphic = graphicProvider.ImageGraphic as GrayscaleImageGraphic;
-
-				//    if (grayscaleGraphic != null)
-				//    {
-				//        IComposedLut lut = grayscaleGraphic.OutputLut;
-				//    }
-				//}
 			}
 		}
 	}

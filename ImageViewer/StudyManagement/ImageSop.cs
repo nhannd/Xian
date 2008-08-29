@@ -504,6 +504,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
+			base.Dispose(disposing);
+
 			if (disposing)
 			{
 				lock(_syncLock)
@@ -517,8 +519,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					}
 				}
 			}
-
-			base.Dispose(disposing);
 		}
 		
 		private void ValidateAllowableTransferSyntax()
