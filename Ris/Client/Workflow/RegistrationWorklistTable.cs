@@ -79,11 +79,13 @@ namespace ClearCanvas.Ris.Client.Workflow
                 delegate(RegistrationWorklistItem item)
                 {
                     // if there is no accession number, this item represents a patient only, not an order
-                    return item.AccessionNumber == null ? null : 
-                        string.Format("{0} {1} - {2}",
-						AccessionFormat.Format(item.AccessionNumber),
-						item.DiagnosticServiceName,
-						Format.Time(item.Time));
+                    if (item.AccessionNumber == null) return null;
+                    else
+                    {
+                        string description = string.Format("{0} {1}", AccessionFormat.Format(item.AccessionNumber), item.DiagnosticServiceName);
+                        if(item.Time.HasValue) description += string.Format(" - {0}", Format.Time(item.Time));
+                        return description;
+                    }
                 },
                 1.0f, DescriptionRow);
             descriptionRow.Comparison = null;
