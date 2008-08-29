@@ -1,6 +1,24 @@
 ﻿ <Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <Choose>
+   <Choose>
+     <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
+       <PropertyGroup>
+         <BuildPlatform>x64</BuildPlatform>
+       </PropertyGroup>
+     </When>
+     <When Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' ">
+       <PropertyGroup>
+         <BuildPlatform>x86</BuildPlatform>
+       </PropertyGroup>
+     </When>
+     <Otherwise>
+       <PropertyGroup>
+         <BuildPlatform></BuildPlatform>
+       </PropertyGroup>
+     </Otherwise>
+   </Choose>
+
+   <Choose>
     <When Condition="'$(TargetPlatform)' == 'x64'">
       <PropertyGroup>
         <PlatformSubFolder>x64</PlatformSubFolder>
