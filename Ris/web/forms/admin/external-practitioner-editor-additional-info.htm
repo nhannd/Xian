@@ -68,9 +68,16 @@
 			
 			var context = Ris.getHealthcareContext();
 			if (context.CanValidate)
+			{
 				Ris.setTag("Validated", $("validated").checked);
+
+				if ($("validated").checked)
+					Ris.setTag("LastValidated", Ris.formatDateTime(new Date()));
+			}
 			else
+			{
 				Ris.setTag("Validated", "False");	// automatically set validated to false if user doesn't have the authority to validate data
+			}
          }
          //////////////////////////////////////////////////////////////////////////
       </script>
