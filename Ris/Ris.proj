@@ -18,6 +18,10 @@
      </Otherwise>
    </Choose>
 
+   <PropertyGroup>
+     <TargetPlatform>$(BuildPlatform)</TargetPlatform>
+   </PropertyGroup>
+
    <Choose>
     <When Condition="'$(TargetPlatform)' == 'x64'">
       <PropertyGroup>
