@@ -250,31 +250,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Search
             DataBind();
         }
 
-        protected void ImageButton_Command(object sender, CommandEventArgs e)
-        {
-
-            // get the current page selected
-            int intCurIndex = StudyListControl.PageIndex;
-
-            switch (e.CommandArgument.ToString().ToLower())
-            {
-                case "first":
-                    StudyListControl.PageIndex = 0;
-                    break;
-                case "prev":
-                    StudyListControl.PageIndex = intCurIndex - 1;
-                    break;
-                case "next":
-                    StudyListControl.PageIndex = intCurIndex + 1;
-                    break;
-                case "last":
-                    StudyListControl.PageIndex = StudyListControl.PageCount;
-                    break;
-            }
-
-            DataBind();
-        }
-
 		protected void DisposeStudyDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
 		{
 			e.Cancel = true;

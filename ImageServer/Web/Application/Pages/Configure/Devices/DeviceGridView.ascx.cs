@@ -348,30 +348,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
             DataBind();
         }
 
-        protected void ImageButton_Command(object sender, CommandEventArgs e)
-        {
-            // get the current page selected
-            int intCurIndex = GridView1.PageIndex;
-
-            switch (e.CommandArgument.ToString().ToLower())
-            {
-                case "first":
-                    GridView1.PageIndex = 0;
-                    break;
-                case "prev":
-                    GridView1.PageIndex = intCurIndex - 1;
-                    break;
-                case "next":
-                    GridView1.PageIndex = intCurIndex + 1;
-                    break;
-                case "last":
-                    GridView1.PageIndex = GridView1.PageCount;
-                    break;
-            }
-
-            DataBind();
-        }
-
         #endregion
 
         #region public methods

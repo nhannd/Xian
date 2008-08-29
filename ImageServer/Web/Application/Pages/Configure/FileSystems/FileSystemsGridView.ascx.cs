@@ -360,30 +360,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             //  DataBind();
         }
 
-        protected void ImageButton_Command(object sender, CommandEventArgs e)
-        {
-            // get the current page selected
-            int intCurIndex = GridView1.PageIndex;
-
-            switch (e.CommandArgument.ToString().ToLower())
-            {
-                case ImageServerConstants.First:
-                    GridView1.PageIndex = 0;
-                    break;
-                case ImageServerConstants.Prev:
-                    GridView1.PageIndex = intCurIndex - 1;
-                    break;
-                case ImageServerConstants.Next:
-                    GridView1.PageIndex = intCurIndex + 1;
-                    break;
-                case ImageServerConstants.Last:
-                    GridView1.PageIndex = GridView1.PageCount;
-                    break;
-            }
-
-            DataBind();
-        }
-
         #region Private Static members
         static private bool _serviceIsOffline = false;
         static private DateTime _lastServiceAvailableTime = DateTime.Now;

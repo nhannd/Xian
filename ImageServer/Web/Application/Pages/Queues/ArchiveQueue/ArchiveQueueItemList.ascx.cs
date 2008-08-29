@@ -248,31 +248,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             DataBind();
         }
 
-        protected void ImageButton_Command(object sender, CommandEventArgs e)
-        {
-
-            // get the current page selected
-            int intCurIndex = ArchiveQueueGridView.PageIndex;
-
-            switch (e.CommandArgument.ToString().ToLower())
-            {
-                case "first":
-                    ArchiveQueueGridView.PageIndex = 0;
-                    break;
-                case "prev":
-                    ArchiveQueueGridView.PageIndex = intCurIndex - 1;
-                    break;
-                case "next":
-                    ArchiveQueueGridView.PageIndex = intCurIndex + 1;
-                    break;
-                case "last":
-                    ArchiveQueueGridView.PageIndex = ArchiveQueueGridView.PageCount;
-                    break;
-            }
-
-            DataBind();
-        }
-
 		protected void DisposeArchiveQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
 		{
 			e.Cancel = true;
