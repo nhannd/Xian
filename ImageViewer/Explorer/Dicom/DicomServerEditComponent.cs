@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_serverPort = DefaultPort;
 				_isStreaming = false;
 				_headerServicePort = DefaultHeaderServicePort;
-				_wadoServicePort = WadoServicePort;
+				_wadoServicePort = DefaultWadoServicePort;
 			}
 		}
 
