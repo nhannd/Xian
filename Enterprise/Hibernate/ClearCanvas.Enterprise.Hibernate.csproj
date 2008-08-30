@@ -1,4 +1,4 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,6 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ClearCanvas.Enterprise.Hibernate</RootNamespace>
     <AssemblyName>ClearCanvas.Enterprise.Hibernate</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -124,8 +129,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Ddl\AdditionalIndexProcessor.dbi.xml" />
-    <Content Include="hibernate.cfg.xml">
+    <Content Include="..\..\..\Ocelot\Model\hibernate.cfg.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Link>hibernate.cfg.xml</Link>
     </Content>
     <EmbeddedResource Include="Mappings\ExceptionLogEntry.hbm.xml" />
     <EmbeddedResource Include="Mappings\AuditLogEntry.hbm.xml" />
