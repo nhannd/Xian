@@ -324,21 +324,40 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnItemDrag(object sender, ItemDragEventArgs e)
 		{
-			ListViewItem lvi = (ListViewItem) e.Item;
-			IGalleryItem draggedItem = (IGalleryItem) lvi.Tag;
-			DragDropOption allowedActions = _component.BeginDrag(draggedItem);
+			List<IGalleryItem> list = new List<IGalleryItem>();
+			List<object> objectList = new List<object>();
+			ListViewItem specificLvi = (ListViewItem)e.Item;
+			IGalleryItem specificDraggedItem = (IGalleryItem)specificLvi.Tag;
+
+			if(_listView.SelectedItems.Count > 0)
+			{
+				foreach (ListViewItem lvi in _listView.SelectedItems)
+				{
+					IGalleryItem item = (IGalleryItem)lvi.Tag;
+					list.Add(item);
+					objectList.Add(item.Item);
+				}
+			}
+			else {
+				list.Add(specificDraggedItem);
+				objectList.Add(specificDraggedItem.Item);
+			}
+
+			IList<IGalleryItem> draggedItems = list.AsReadOnly();
+			DragDropOption allowedActions = _component.BeginDrag(draggedItems);
 			DragDropOption actualAction = DragDropOption.None;
 			if (allowedActions != DragDropOption.None)
 			{
 				DataObject data = new DataObject();
-				data.SetData(draggedItem);
-				data.SetData(draggedItem.Item);
+				data.SetData(draggedItems); // for GalleryComponent consumers, provide a list of the items that were dragged
+				data.SetData(objectList.ToArray()); // for foreign consumers, provide an array of the objects wrapped by the dragged/selected items
+				data.SetData(specificDraggedItem); // for foreign consumers, provide the actual item that was dragged, not the selected ones
 
 				DragDropEffects allowedEffects = ConvertEnum.GetDragDropEffects(allowedActions);
 				DragDropEffects actualEffect = _listView.DoDragDrop(data, allowedEffects);
 				actualAction = ConvertEnum.GetDragDropAction(actualEffect);
 			}
-			_component.EndDrag(draggedItem, actualAction);
+			_component.EndDrag(draggedItems, actualAction);
 		}
 
 		private void OnItemDragEnter(object sender, DragEventArgs e)

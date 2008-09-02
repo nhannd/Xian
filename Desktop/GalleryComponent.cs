@@ -330,23 +330,23 @@ namespace ClearCanvas.Desktop
 
 		/// <summary>
 		/// Signals the component that a drag &amp; drop operation involving the specified
-		/// <see cref="IGalleryItem"/> has started on the associated view.
+		/// <see cref="IGalleryItem"/>s has started on the associated view.
 		/// </summary>
 		/// <remarks>
 		/// </remarks>
-		/// <param name="draggedItem">The <see cref="IGalleryItem"/> being dragged.</param>
-		public virtual DragDropOption BeginDrag(IGalleryItem draggedItem)
+		/// <param name="draggedItems">The <see cref="IGalleryItem"/>s being dragged.</param>
+		public virtual DragDropOption BeginDrag(IList<IGalleryItem> draggedItems)
 		{
 			return DragDropOption.Copy;
 		}
 
 		/// <summary>
 		/// Signals the component that a drag &amp; drop operation involving the specified
-		/// <see cref="IGalleryItem"/> has ended with the given action being taken on the item by the drop target.
+		/// <see cref="IGalleryItem"/>s has ended with the given action being taken on the items by the drop target.
 		/// </summary>
-		/// <param name="draggedItem">The <see cref="IGalleryItem"/> that was dragged.</param>
-		/// <param name="action">The <see cref="DragDropOption"/> action that was taken on the item by the drop target.</param>
-		public virtual void EndDrag(IGalleryItem draggedItem, DragDropOption action)
+		/// <param name="draggedItems">The <see cref="IGalleryItem"/>s that were dragged.</param>
+		/// <param name="action">The <see cref="DragDropOption"/> action that was taken on the items by the drop target.</param>
+		public virtual void EndDrag(IList<IGalleryItem> draggedItems, DragDropOption action)
 		{
 		}
 
