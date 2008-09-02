@@ -196,15 +196,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Details.
-        /// </summary>
-        internal static string ColumnDetails {
-            get {
-                return ResourceManager.GetString("ColumnDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Direction.
         /// </summary>
         internal static string ColumnDirection {
@@ -394,6 +385,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to More....
+        /// </summary>
+        internal static string ColumnMore {
+            get {
+                return ResourceManager.GetString("ColumnMore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to MRN.
         /// </summary>
         internal static string ColumnMRN {
@@ -579,15 +579,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string ColumnSex {
             get {
                 return ResourceManager.GetString("ColumnSex", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show more details.
-        /// </summary>
-        internal static string ColumnShowMoreDetails {
-            get {
-                return ResourceManager.GetString("ColumnShowMoreDetails", resourceCulture);
             }
         }
         

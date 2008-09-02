@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Client
 
             _category = category;
             _notes = new List<OrderNoteDetail>();
-            _noteTable = new OrderNoteTable(UpdateNoteDetail);
+            _noteTable = new OrderNoteTable(this);
 
             _noteActionHandler = new CrudActionModel();
             _noteActionHandler.Add.SetClickHandler(AddNote);

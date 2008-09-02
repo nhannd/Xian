@@ -74,6 +74,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.DataGridView.RowPrePaint += SetCustomBackground;
             this.DataGridView.RowPostPaint += DisplayCellSubRows;
             this.DataGridView.RowPostPaint += OutlineCell;
+            this.DataGridView.RowPostPaint += SetLinkColor;
         }
 
         #region Design Time properties and Events
@@ -469,10 +470,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     {
                         dgcol = new DataGridViewLinkColumn();
                         DataGridViewLinkColumn linkColumn = (DataGridViewLinkColumn)dgcol;
-                        linkColumn.ActiveLinkColor = Color.White;
                         linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
-                        linkColumn.LinkColor = Color.Blue;
-                        linkColumn.TrackVisitedState = true;
+                        linkColumn.TrackVisitedState = false;
                         linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
                     }
                     else
@@ -682,7 +681,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private Rectangle GetAdjustedRowBounds(Rectangle rowBounds)
+        // Make all the link column the same color as the fore color
+        private void SetLinkColor(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            DataGridViewRow row = _dataGridView.Rows[e.RowIndex];
+            foreach (DataGridViewCell cell in row.Cells)
+            {
+                if (cell is DataGridViewLinkCell)
+                {
+                    DataGridViewLinkCell linkCell = (DataGridViewLinkCell)cell;
+                    linkCell.ActiveLinkColor = linkCell.LinkColor = linkCell.VisitedLinkColor 
+                        = row.Selected ? cell.InheritedStyle.SelectionForeColor : cell.InheritedStyle.ForeColor;
+                }
+            }
+        }
+
+	    private Rectangle GetAdjustedRowBounds(Rectangle rowBounds)
         {
             return new Rectangle(
                     (this.DataGridView.RowHeadersVisible ? this.DataGridView.RowHeadersWidth : 0) + rowBounds.Left,

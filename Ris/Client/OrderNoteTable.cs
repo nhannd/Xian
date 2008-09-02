@@ -39,14 +39,12 @@ namespace ClearCanvas.Ris.Client
 {
 	public class OrderNoteTable : Table<OrderNoteDetail>
 	{
-        public delegate void UpdateNoteDelegate(OrderNoteDetail notedetail);
+	    public OrderNoteSummaryComponent _component;
 
-        private readonly UpdateNoteDelegate _updateNoteDelegate;
-
-        public OrderNoteTable(UpdateNoteDelegate updateNoteDelegate)
+        public OrderNoteTable(OrderNoteSummaryComponent component)
 			: base(2)
 		{
-            _updateNoteDelegate = updateNoteDelegate;
+            _component = component;
 
 			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor,
 				delegate(OrderNoteDetail n) { return n.Author == null ? SR.LabelMe : StaffNameAndRoleFormat.Format(n.Author); },
@@ -55,21 +53,16 @@ namespace ClearCanvas.Ris.Client
 				delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime); },
 				0.25f));
 
-            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnDetails,
-                delegate(OrderNoteDetail n) { return SR.ColumnShowMoreDetails; },
-                delegate(OrderNoteDetail n) { OnClickMoreDetail(n); },
-                0.1f));
+            TableColumn<OrderNoteDetail, string> linkColumn = new TableColumn<OrderNoteDetail, string>(" ",
+                delegate(OrderNoteDetail n) { return SR.ColumnMore; },
+                0.05f);
+            linkColumn.ClickLinkDelegate = delegate(OrderNoteDetail n) { component.UpdateNoteDetail(n); };
+            this.Columns.Add(linkColumn);
 
             this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
                 delegate(OrderNoteDetail n) { return RemoveLineBreak(n.NoteBody); },
 				0.5f, 1));
 		}
-
-        private void OnClickMoreDetail(OrderNoteDetail n)
-        {
-            if (_updateNoteDelegate != null)
-                _updateNoteDelegate(n);
-        }
 
         private static string RemoveLineBreak(string input)
         {

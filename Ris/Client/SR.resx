@@ -162,9 +162,6 @@
   <data name="ColumnDescription" xml:space="preserve">
     <value>Description</value>
   </data>
-  <data name="ColumnDetails" xml:space="preserve">
-    <value>Details</value>
-  </data>
   <data name="ColumnDirection" xml:space="preserve">
     <value>Direction</value>
   </data>
@@ -228,6 +225,9 @@
   <data name="ColumnModality" xml:space="preserve">
     <value>Modality</value>
   </data>
+  <data name="ColumnMore" xml:space="preserve">
+    <value>More...</value>
+  </data>
   <data name="ColumnMRN" xml:space="preserve">
     <value>MRN</value>
   </data>
@@ -290,9 +290,6 @@
   </data>
   <data name="ColumnSex" xml:space="preserve">
     <value>Sex</value>
-  </data>
-  <data name="ColumnShowMoreDetails" xml:space="preserve">
-    <value>Show more details</value>
   </data>
   <data name="ColumnSite" xml:space="preserve">
     <value>Site</value>
