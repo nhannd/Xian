@@ -30,15 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client.Workflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
@@ -47,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
     /// </summary>
     public partial class LinkedInterpretationComponentControl : ApplicationComponentUserControl
     {
-        private LinkedInterpretationComponent _component;
+        private readonly LinkedInterpretationComponent _component;
 
         /// <summary>
         /// Constructor
@@ -58,17 +50,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             InitializeComponent();
 
             _component = component;
+            _sourceWorklistItem.Table = _component.SourceTable;
             _worklistItemTableView.Table = _component.CandidateTable;
         }
 
         private void _okButton_Click(object sender, EventArgs e)
         {
             _component.Accept();
-        }
-
-        private void _cancelButton_Click(object sender, EventArgs e)
-        {
-            _component.Cancel();
         }
     }
 }

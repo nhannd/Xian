@@ -56,13 +56,17 @@ namespace ClearCanvas.Ris.Client.Workflow
         private Table<Checkable<ReportingWorklistItem>> _candidateTable;
         private readonly List<ReportingWorklistItem> _candidates;
 
+        private readonly ReportingWorklistItem _sourceItem;
+        private ReportingWorklistTable _sourceTable;
+
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public LinkedInterpretationComponent(List<ReportingWorklistItem> candidateItems)
+        public LinkedInterpretationComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems)
         {
             _candidates = candidateItems;
+            _sourceItem = sourceItem;
         }
 
         public override void Start()
@@ -72,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                 delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; },
                 delegate(Checkable<ReportingWorklistItem> item, bool value) { item.IsChecked = value; }, 0.20f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnAccessionNumber,
-				delegate(Checkable<ReportingWorklistItem> item) { return AccessionFormat.Format(item.Item.AccessionNumber); }, 0.75f));
+                delegate(Checkable<ReportingWorklistItem> item) { return AccessionFormat.Format(item.Item.AccessionNumber); }, 0.75f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnImagingService,
                 delegate(Checkable<ReportingWorklistItem> item) { return item.Item.DiagnosticServiceName; }, 1.0f));
             _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
@@ -85,6 +89,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                 _candidateTable.Items.Add(new Checkable<ReportingWorklistItem>(item));
             }
 
+            _sourceTable = new ReportingWorklistTable();
+            _sourceTable.Items.Add(_sourceItem);
+
             base.Start();
         }
 
@@ -95,11 +102,16 @@ namespace ClearCanvas.Ris.Client.Workflow
                 return CollectionUtils.Map<Checkable<ReportingWorklistItem>, ReportingWorklistItem>(
                     CollectionUtils.Select(_candidateTable.Items,
                         delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; }),
-                            delegate (Checkable<ReportingWorklistItem> checkableItem) { return checkableItem.Item; });
+                            delegate(Checkable<ReportingWorklistItem> checkableItem) { return checkableItem.Item; });
             }
         }
 
         #region Presentation Model
+
+        public ITable SourceTable
+        {
+            get { return _sourceTable; }
+        }
 
         public ITable CandidateTable
         {
@@ -109,11 +121,6 @@ namespace ClearCanvas.Ris.Client.Workflow
         public void Accept()
         {
             this.Exit(ApplicationComponentExitCode.Accepted);
-        }
-
-        public void Cancel()
-        {
-            this.Exit(ApplicationComponentExitCode.None);
         }
 
         #endregion
