@@ -58,9 +58,18 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="val">The value.</param>
         public delegate void SetColumnValueDelegate<TObject, TValue>(TObject obj, TValue val);
 
+        /// <summary>
+        /// Delegate that is used to set the link action action of a column to an object.
+        /// </summary>
+        /// <typeparam name="TObject">The type of the object.</typeparam>
+        /// <param name="obj">The object to which the value is pushed.</param>
+        public delegate void SetColumnClickLinkDelegate<TObject>(TObject obj);
+
         private GetColumnValueDelegate<TItem, TColumn> _valueGetter;
 
-		private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
+        private SetColumnValueDelegate<TItem, TColumn> _valueSetter;
+
+        private SetColumnClickLinkDelegate<TItem> _linkActionSetter;
 
         /// <summary>
         /// Constructs a multi-cellrow table column.
@@ -68,6 +77,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="columnName">The name of the column.</param>
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
+        /// <param name="linkActionSetter">A delegate that accepts an item, and execute the link action for the item.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
         /// <param name="cellRow">The cell row this column will be displayed in.</param>
@@ -75,6 +85,7 @@ namespace ClearCanvas.Desktop.Tables
             string columnName,
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
+            SetColumnClickLinkDelegate<TItem> linkActionSetter,
             float widthFactor,
             Comparison<TItem> comparison,
             int cellRow)
@@ -82,6 +93,7 @@ namespace ClearCanvas.Desktop.Tables
         {
             _valueGetter = valueGetter;
             _valueSetter = valueSetter;
+            _linkActionSetter = linkActionSetter;
         }
 
         #region Multi-CellRow constructors
@@ -94,7 +106,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
         /// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnValueDelegate<TItem, TColumn> valueSetter, int cellRow)
-            : this(columnName, valueGetter, valueSetter, 1.0f, null, cellRow)
+            : this(columnName, valueGetter, valueSetter, null, 1.0f, null, cellRow)
         {
         }
 
@@ -112,7 +124,7 @@ namespace ClearCanvas.Desktop.Tables
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
             float widthFactor, 
             int cellRow)
-            : this(columnName, valueGetter, valueSetter, widthFactor, null, cellRow)
+            : this(columnName, valueGetter, valueSetter, null, widthFactor, null, cellRow)
         {
         }
 
@@ -123,7 +135,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="cellRow">The cell row this column will be display in.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, int cellRow)
-            : this(columnName, valueGetter, null, 1.0f, null, cellRow)
+            : this(columnName, valueGetter, null, null, 1.0f, null, cellRow)
         {
         }
 
@@ -135,7 +147,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
 		/// <param name="cellRow">The cell row this column will be displayed in.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, float widthFactor, int cellRow)
-            : this(columnName, valueGetter, null, widthFactor, null, cellRow)
+            : this(columnName, valueGetter, null, null, widthFactor, null, cellRow)
         {
         }
 
@@ -149,15 +161,17 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="columnName">The name of the column.</param>
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
+        /// <param name="linkActionSetter">A delegate that accepts an item, and execute the link action for the item.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         /// <param name="comparison">A custom comparison operator that is used for sorting based on this column.</param>
         public TableColumn(
             string columnName,
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
+            SetColumnClickLinkDelegate<TItem> linkActionSetter,
             float widthFactor,
             Comparison<TItem> comparison)
-            : this(columnName, valueGetter, valueSetter, widthFactor, comparison, 0)
+            : this(columnName, valueGetter, valueSetter, linkActionSetter, widthFactor, comparison, 0)
         {
         }
 
@@ -168,7 +182,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="valueSetter">A delegate that accepts an item and a value, and pushes the value to the item.  May be null if the column is read-only.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnValueDelegate<TItem, TColumn> valueSetter)
-            : this(columnName, valueGetter, valueSetter, 1.0f, null)
+            : this(columnName, valueGetter, valueSetter, null, 1.0f, null)
         {
         }
 
@@ -184,7 +198,7 @@ namespace ClearCanvas.Desktop.Tables
             GetColumnValueDelegate<TItem, TColumn> valueGetter,
             SetColumnValueDelegate<TItem, TColumn> valueSetter,
             float widthFactor)
-            :this(columnName, valueGetter, valueSetter, widthFactor, null)
+            :this(columnName, valueGetter, valueSetter, null, widthFactor, null)
         {
         }
 
@@ -194,7 +208,7 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="columnName">The name of the column.</param>
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter)
-            :this(columnName, valueGetter, null, 1.0f, null)
+            :this(columnName, valueGetter, null, null, 1.0f, null)
         {
         }
 
@@ -205,7 +219,19 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
         public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, float widthFactor)
-            : this(columnName, valueGetter, null, widthFactor, null)
+            : this(columnName, valueGetter, null, null, widthFactor, null)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a read-only single-cellrow table column with specific width factor but no comparison delegate.
+        /// </summary>
+        /// <param name="columnName">The name of the column.</param>
+        /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
+        /// <param name="clickAction">A delegate that accepts an item and apply an action on the item.</param>
+        /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
+        public TableColumn(string columnName, GetColumnValueDelegate<TItem, TColumn> valueGetter, SetColumnClickLinkDelegate<TItem> clickAction, float widthFactor)
+            : this(columnName, valueGetter, null, clickAction, widthFactor, null)
         {
         }
 
@@ -217,6 +243,14 @@ namespace ClearCanvas.Desktop.Tables
     	public override bool ReadOnly
         {
             get { return _valueSetter == null; }
+        }
+
+        /// <summary>
+        /// Indicates whether this column is clickable
+        /// </summary>
+        public override bool HasClickableLink
+        {
+            get { return _linkActionSetter != null; }
         }
 
     	///<summary>
@@ -236,6 +270,15 @@ namespace ClearCanvas.Desktop.Tables
     	public override void SetValue(object item, object value)
         {
             _valueSetter((TItem)item, (TColumn)value);
+        }
+
+        /// <summary>
+        /// Sets the click action of this column on the specified item.
+        /// </summary>
+        /// <param name="item">The item on which the value is to be set.</param>
+        public override void ClickLink(object item)
+        {
+            _linkActionSetter((TItem)item);
         }
     }
 }

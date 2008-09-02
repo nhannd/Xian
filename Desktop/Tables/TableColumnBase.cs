@@ -239,6 +239,11 @@ namespace ClearCanvas.Desktop.Tables
     	/// </summary>
     	public abstract bool ReadOnly { get; }
 
+        /// <summary>
+        /// Indicates whether this column is clickable
+        /// </summary>
+        public abstract bool HasClickableLink { get; }
+
     	/// <summary>
     	/// Gets the value of this column for the specified item.
     	/// </summary>
@@ -251,6 +256,12 @@ namespace ClearCanvas.Desktop.Tables
     	/// <param name="item">The item on which the value is to be set.</param>
     	/// <param name="value">The value.</param>
     	public abstract void SetValue(object item, object value);
+
+        /// <summary>
+        /// Sets the click action of this column on the specified item.
+        /// </summary>
+        /// <param name="item">The item on which the value is to be set.</param>
+        public abstract void ClickLink(object item);
 
     	/// <summary>
     	/// Get a comparer that can be used to sort items in the specified direction.

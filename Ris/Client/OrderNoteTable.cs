@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
@@ -38,18 +39,44 @@ namespace ClearCanvas.Ris.Client
 {
 	public class OrderNoteTable : Table<OrderNoteDetail>
 	{
-		public OrderNoteTable()
+        public delegate void UpdateNoteDelegate(OrderNoteDetail notedetail);
+
+        private readonly UpdateNoteDelegate _updateNoteDelegate;
+
+        public OrderNoteTable(UpdateNoteDelegate updateNoteDelegate)
 			: base(2)
 		{
+            _updateNoteDelegate = updateNoteDelegate;
+
 			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnAuthor,
 				delegate(OrderNoteDetail n) { return n.Author == null ? SR.LabelMe : StaffNameAndRoleFormat.Format(n.Author); },
 				0.25f));
 			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnPostTime,
 				delegate(OrderNoteDetail n) { return n.PostTime == null ? SR.LabelNew : Format.DateTime(n.PostTime); },
 				0.25f));
-			this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
-				delegate(OrderNoteDetail n) { return n.NoteBody; },
+
+            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnDetails,
+                delegate(OrderNoteDetail n) { return SR.ColumnShowMoreDetails; },
+                delegate(OrderNoteDetail n) { OnClickMoreDetail(n); },
+                0.1f));
+
+            this.Columns.Add(new TableColumn<OrderNoteDetail, string>(SR.ColumnComments,
+                delegate(OrderNoteDetail n) { return RemoveLineBreak(n.NoteBody); },
 				0.5f, 1));
 		}
+
+        private void OnClickMoreDetail(OrderNoteDetail n)
+        {
+            if (_updateNoteDelegate != null)
+                _updateNoteDelegate(n);
+        }
+
+        private static string RemoveLineBreak(string input)
+        {
+            string newString = input.Replace("\r\n", " ");
+            newString = newString.Replace("\r", " ");
+            newString = newString.Replace("\n", " ");
+            return newString;
+        }
 	}
 }

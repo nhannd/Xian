@@ -465,6 +465,16 @@ namespace ClearCanvas.Desktop.View.WinForms
                         // Otherwise WinForms will by default display an ugly icon with 'x'
                         dgcol.DefaultCellStyle.NullValue = null;
                     }
+                    else if (col.HasClickableLink)
+                    {
+                        dgcol = new DataGridViewLinkColumn();
+                        DataGridViewLinkColumn linkColumn = (DataGridViewLinkColumn)dgcol;
+                        linkColumn.ActiveLinkColor = Color.White;
+                        linkColumn.LinkBehavior = LinkBehavior.SystemDefault;
+                        linkColumn.LinkColor = Color.Blue;
+                        linkColumn.TrackVisitedState = true;
+                        linkColumn.SortMode = DataGridViewColumnSortMode.Automatic;
+                    }
                     else
                     {
                         // assume any other type of column will be displayed as text
@@ -1012,6 +1022,24 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             // Refresh the current table
             this.Table = _table;
+        }
+
+        private void _dataGridView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Ignore header cells
+            if (e.RowIndex == -1)
+                return;
+
+            DataGridViewColumn dgCol = _dataGridView.Columns[e.ColumnIndex];
+            if (dgCol is DataGridViewLinkColumn)
+            {
+                ITableColumn col = (ITableColumn)dgCol.Tag;
+                col.ClickLink(_table.Items[e.RowIndex]);
+            }
+            else if (dgCol is DataGridViewButtonColumn)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
