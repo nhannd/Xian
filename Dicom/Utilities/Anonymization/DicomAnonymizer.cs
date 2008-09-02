@@ -326,9 +326,6 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEqualBirthDate))
 				ValidateNotEqual(originalData.PatientsBirthDateRaw, anonymizedData.PatientsBirthDateRaw, "PatientsBirthDateRaw");
-
-			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyBirthDate))
-				ValidateNotEmpty(anonymizedData.PatientsBirthDateRaw, "PatientsBirthDateRaw");
 			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyPatientId))
 				ValidateNotEmpty(anonymizedData.PatientId, "PatientId");
 			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyPatientName))

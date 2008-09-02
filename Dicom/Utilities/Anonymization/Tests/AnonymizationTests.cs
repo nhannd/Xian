@@ -327,35 +327,6 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 
 		[Test]
 		[ExpectedException(typeof(DicomAnonymizerException))]
-		public void TestValidatePatientsBirthDateNotEmpty() {
-			Initialize();
-
-			_file.DataSet[DicomTags.PatientsBirthDate].SetStringValue("19760810");
-			StudyData studyPrototype = CreateStudyPrototype();
-			studyPrototype.PatientsBirthDateRaw = "";
-
-			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = anonymizer.Options & ~DicomAnonymizerOptions.AllowEmptyBirthDate;
-			anonymizer.StudyDataPrototype = studyPrototype;
-			anonymizer.Anonymize(_file);
-		}
-
-		[Test]
-		public void TestValidatePatientsBirthDateAllowEmpty() {
-			Initialize();
-
-			_file.DataSet[DicomTags.PatientsBirthDate].SetStringValue("19760810");
-			StudyData studyPrototype = CreateStudyPrototype();
-			studyPrototype.PatientsBirthDateRaw = "";
-
-			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = DicomAnonymizerOptions.AllowEmptyBirthDate;
-			anonymizer.StudyDataPrototype = studyPrototype;
-			anonymizer.Anonymize(_file);
-		}
-
-		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
 		public void TestValidateStudyIdNotEqual()
 		{
 			Initialize();

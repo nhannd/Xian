@@ -25,11 +25,6 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization {
 		/// </summary>
 		AllowEqualBirthDate = 0x04,
 
-		/// <summary>
-		/// Indicates that the anonymizer should not enforce a non-empty patient's birthdate in the anonymized data set.
-		/// </summary>
-		AllowEmptyBirthDate = 0x08,
-
 		#endregion
 
 		#region Group Flags
@@ -37,18 +32,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization {
 		/// <summary>
 		/// Indicates that the anonymizer should relax all optional attribute value checks in the anonymized data set.
 		/// </summary>
-		RelaxAllChecks = AllowEmptyPatientId | AllowEmptyPatientName | AllowEqualBirthDate | AllowEmptyBirthDate,
+		RelaxAllChecks = AllowEmptyPatientId | AllowEmptyPatientName | AllowEqualBirthDate,
 
 		/// <summary>
-		/// Indicates that the anonymizer should use its default behaviour, which is to allow an empty patient's birthdate and
-		/// to enforce non-empty and different values in all other checked attributes.
+		/// Indicates that the anonymizer should use its default behaviour, which is to enforce non-empty and different values in all checked attributes.
 		/// </summary>
-		Default = AllowEmptyBirthDate,
-
-		/// <summary>
-		/// Indicates that the anonymizer should enforce non-empty and different values in all checked attributes.
-		/// </summary>
-		None = 0x0
+		Default = 0x0
 
 		#endregion
 	}
