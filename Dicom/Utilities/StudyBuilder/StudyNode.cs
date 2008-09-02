@@ -6,10 +6,10 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 	/// <summary>
 	/// A <see cref="StudyBuilderNode"/> representing a study-level data node in the <see cref="StudyBuilder"/> tree hierarchy.
 	/// </summary>
-	public sealed class StudyNode : StudyBuilderNode, ICloneable
+	public sealed class StudyNode : StudyBuilderNode
 	{
 		private readonly SeriesNodeCollection _series;
-		private string _uid;
+		private string _instanceUid;
 		private string _description;
 		private DateTime? _dateTime;
 		private string _accessionNum;
@@ -21,25 +21,20 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		public StudyNode()
 		{
 			_series = new SeriesNodeCollection(this);
+			_instanceUid = StudyBuilder.NewUid();
 			_studyId = string.Format("ST{0}", this.Key);
 			_description = "Untitled Study";
 			_dateTime = System.DateTime.Now;
 			_accessionNum = "";
-			RegenerateUids();
 		}
 
 		/// <summary>
 		/// Constructs a new <see cref="StudyNode"/> using the specified study ID and default values for everything else.
 		/// </summary>
 		/// <param name="studyId">The desired study ID.</param>
-		public StudyNode(string studyId)
+		public StudyNode(string studyId) : this()
 		{
-			_series = new SeriesNodeCollection(this);
 			_studyId = studyId;
-			_description = "";
-			_dateTime = System.DateTime.Now;
-			_accessionNum = "";
-			RegenerateUids();
 		}
 
 		/// <summary>
@@ -53,25 +48,62 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			_description = dicomDataSet[DicomTags.StudyDescription].GetString(0, "");
 			_dateTime = DicomConverter.GetDateTime(dicomDataSet[DicomTags.StudyDate].GetDateTime(0), dicomDataSet[DicomTags.StudyTime].GetDateTime(0));
 			_accessionNum = dicomDataSet[DicomTags.AccessionNumber].GetString(0, "");
-			_uid = dicomDataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-			if (_uid == "")
-				RegenerateUids();
+			_instanceUid = dicomDataSet[DicomTags.StudyInstanceUid].GetString(0, "");
+			if (_instanceUid == "")
+				_instanceUid = StudyBuilder.NewUid();
 		}
+
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="copyDescendants"></param>
+		public StudyNode(StudyNode source, bool copyDescendants) {
+			_series = new SeriesNodeCollection(this);
+			_instanceUid = StudyBuilder.NewUid();
+			_studyId = source._studyId;
+			_description = source._description;
+			_dateTime = source._dateTime;
+			_accessionNum = source._accessionNum;
+
+			if(copyDescendants)
+			{
+				foreach (SeriesNode series in source._series)
+				{
+					_series.Add(series.Copy(true));
+				}
+			}
+		}
+
+		#region Misc
+
+		/// <summary>
+		/// Gets the parent of this node, or null if the node is not in a study builder tree.
+		/// </summary>
+		public new PatientNode Parent {
+			get { return base.Parent as PatientNode; }
+			internal set { base.Parent = value; }
+		}
+
+		#endregion
 
 		#region Data Properties
 
 		/// <summary>
 		/// Gets or sets the study instance UID.
 		/// </summary>
-		public string Uid
+		public string InstanceUid
 		{
-			get { return _uid; }
-			set
+			get { return _instanceUid; }
+			internal set
 			{
-				if (_uid != value)
+				if (_instanceUid != value)
 				{
-					_uid = value;
-					FirePropertyChanged("Uid");
+					if(string.IsNullOrEmpty(value))
+						value = StudyBuilder.NewUid();
+
+					_instanceUid = value;
+					FirePropertyChanged("InstanceUid");
 				}
 			}
 		}
@@ -148,70 +180,48 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// Writes the data in this node into the given <see cref="DicomAttributeCollection"/>
 		/// </summary>
 		/// <param name="dicomDataSet">The data set to write data into.</param>
-		internal void Update(DicomAttributeCollection dicomDataSet)
+		internal void Update(DicomAttributeCollection dicomDataSet, bool writeUid)
 		{
 			dicomDataSet[DicomTags.StudyId].SetStringValue(_studyId);
 			dicomDataSet[DicomTags.StudyDescription].SetStringValue(_description);
-			dicomDataSet[DicomTags.StudyDate].SetDateTime(0, _dateTime);
-			dicomDataSet[DicomTags.StudyTime].SetDateTime(0, _dateTime);
 			dicomDataSet[DicomTags.AccessionNumber].SetStringValue(_accessionNum);
-			dicomDataSet[DicomTags.StudyInstanceUid].SetStringValue(_uid);
-		}
 
-		/// <summary>
-		/// Forces the regeneration of all UIDs owned at the study-level.
-		/// </summary>
-		public void RegenerateUids()
-		{
-			this.Uid = DicomUid.GenerateUid().UID;
+			DicomConverter.SetDate(dicomDataSet[DicomTags.StudyDate], _dateTime);
+			DicomConverter.SetTime(dicomDataSet[DicomTags.StudyTime], _dateTime);
+
+			if (writeUid)
+				dicomDataSet[DicomTags.StudyInstanceUid].SetStringValue(_instanceUid);
 		}
 
 		#endregion
 
-		#region Cloning Methods
+		#region Copy Methods
 
 		/// <summary>
-		/// Performs a copy of the node.
+		/// Creates a new <see cref="StudyNode"/> with the same node data, nulling all references to other nodes.
 		/// </summary>
-		/// <remarks>
-		/// Clones of all decendant nodes are generated if the operation is a deep copy. If a shallow copy is performed, the new
-		/// node is generated without child nodes.</remarks>
-		/// <param name="deepCopy">True if the clone should be a deep copy; False if the clone should be a shallow copy.</param>
 		/// <returns>A copy of the node.</returns>
-		public StudyNode Clone(bool deepCopy)
-		{
-			StudyNode node = new StudyNode();
-			node._description = this._description;
-			node._dateTime = this._dateTime;
-			node._accessionNum = this._accessionNum;
-			node._studyId = this._studyId;
-			node._uid = this._uid;
-			if (deepCopy)
-			{
-				foreach (SeriesNode series in _series)
-				{
-					node.Series.Add(series.Clone(true));
-				}
-			}
-			return node;
+		public StudyNode Copy() {
+			return this.Copy(false, false);
 		}
 
 		/// <summary>
-		/// Performs a shallow copy of the node.
+		/// Creates a new <see cref="StudyNode"/> with the same node data, nulling all references to nodes outside of the copy scope.
 		/// </summary>
-		/// <returns>A shallow copy of the node.</returns>
-		public StudyNode Clone()
-		{
-			return this.Clone(false);
+		/// <param name="copyDescendants">Specifies that all the descendants of the node should also be copied.</param>
+		/// <returns>A copy of the node.</returns>
+		public StudyNode Copy(bool copyDescendants) {
+			return this.Copy(copyDescendants, false);
 		}
 
 		/// <summary>
-		/// Performs a shallow copy of the node.
+		/// Creates a new <see cref="StudyNode"/> with the same node data.
 		/// </summary>
-		/// <returns>A shallow copy of the node.</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone(false);
+		/// <param name="copyDescendants">Specifies that all the descendants of the node should also be copied.</param>
+		/// <param name="keepExtLinks">Specifies that references to nodes outside of the copy scope should be kept. If False, all references are nulled.</param>
+		/// <returns>A copy of the node.</returns>
+		public StudyNode Copy(bool copyDescendants, bool keepExtLinks) {
+			return new StudyNode(this, copyDescendants);
 		}
 
 		#endregion

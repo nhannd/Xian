@@ -5,7 +5,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 	/// <summary>
 	/// A <see cref="StudyBuilderNode"/> representing a patient-level data node in the <see cref="StudyBuilder"/> tree hierarchy.
 	/// </summary>
-	public sealed class PatientNode : StudyBuilderNode, ICloneable
+	public sealed class PatientNode : StudyBuilderNode
 	{
 		private readonly StudyNodeCollection _studies;
 		private string _patientId;
@@ -45,6 +45,26 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			_name = dicomDataSet[DicomTags.PatientsName].GetString(0, "");
 			_birthdate = DicomConverter.GetDateTime(dicomDataSet[DicomTags.PatientsBirthDate].GetDateTime(0), dicomDataSet[DicomTags.PatientsBirthTime].GetDateTime(0));
 			_sex = DicomConverter.GetSex(dicomDataSet[DicomTags.PatientsSex].GetString(0, ""));
+		}
+
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="copyDescendants"></param>
+		private PatientNode(PatientNode source, bool copyDescendants)
+		{
+			_studies = new StudyNodeCollection(this);
+			_patientId = source._patientId;
+			_name = source._name;
+			_birthdate = source._birthdate;
+			_sex = source._sex;
+
+			if (copyDescendants) {
+				foreach (StudyNode study in source._studies) {
+					_studies.Add(study.Copy(true));
+				}
+			}
 		}
 
 		#region Data Properties
@@ -125,56 +145,42 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		{
 			dicomDataSet[DicomTags.PatientId].SetStringValue(_patientId);
 			dicomDataSet[DicomTags.PatientsName].SetStringValue(_name);
-			dicomDataSet[DicomTags.PatientsBirthDate].SetDateTime(0, _birthdate);
-			dicomDataSet[DicomTags.PatientsBirthTime].SetDateTime(0, _birthdate);
 			dicomDataSet[DicomTags.PatientsSex].SetStringValue(DicomConverter.SetSex(_sex));
+
+			DicomConverter.SetDate(dicomDataSet[DicomTags.PatientsBirthDate], _birthdate);
+			DicomConverter.SetTime(dicomDataSet[DicomTags.PatientsBirthTime], _birthdate);
+
 		}
 
 		#endregion
 
-		#region Cloning Methods
+		#region Copy Methods
 
 		/// <summary>
-		/// Performs a copy of the node.
+		/// Creates a new <see cref="PatientNode"/> with the same node data, nulling all references to other nodes.
 		/// </summary>
-		/// <remarks>
-		/// Clones of all decendant nodes are generated if the operation is a deep copy. If a shallow copy is performed, the new
-		/// node is generated without child nodes.</remarks>
-		/// <param name="deepCopy">True if the clone should be a deep copy; False if the clone should be a shallow copy.</param>
 		/// <returns>A copy of the node.</returns>
-		public PatientNode Clone(bool deepCopy)
-		{
-			PatientNode node = new PatientNode();
-			node._birthdate = this._birthdate;
-			node._name = this._name;
-			node._patientId = this._patientId;
-			node._sex = this._sex;
-			if (deepCopy)
-			{
-				foreach (StudyNode study in _studies)
-				{
-					node.Studies.Add(study.Clone(true));
-				}
-			}
-			return node;
+		public PatientNode Copy() {
+			return this.Copy(false, false);
 		}
 
 		/// <summary>
-		/// Performs a shallow copy of the node.
+		/// Creates a new <see cref="PatientNode"/> with the same node data, nulling all references to nodes outside of the copy scope.
 		/// </summary>
-		/// <returns>A shallow copy of the node.</returns>
-		public PatientNode Clone()
-		{
-			return this.Clone(false);
+		/// <param name="copyDescendants">Specifies that all the descendants of the node should also be copied.</param>
+		/// <returns>A copy of the node.</returns>
+		public PatientNode Copy(bool copyDescendants) {
+			return this.Copy(copyDescendants, false);
 		}
 
 		/// <summary>
-		/// Performs a shallow copy of the node.
+		/// Creates a new <see cref="PatientNode"/> with the same node data.
 		/// </summary>
-		/// <returns>A shallow copy of the node.</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone(false);
+		/// <param name="copyDescendants">Specifies that all the descendants of the node should also be copied.</param>
+		/// <param name="keepExtLinks">Specifies that references to nodes outside of the copy scope should be kept. If False, all references are nulled.</param>
+		/// <returns>A copy of the node.</returns>
+		public PatientNode Copy(bool copyDescendants, bool keepExtLinks) {
+			return new PatientNode(this, copyDescendants);
 		}
 
 		#endregion

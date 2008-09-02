@@ -6,10 +6,10 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 	/// <summary>
 	/// A <see cref="StudyBuilderNode"/> representing a SOP instance-level data node in the <see cref="StudyBuilder"/> tree hierarchy.
 	/// </summary>
-	public sealed class SopInstanceNode : StudyBuilderNode, ICloneable
+	public sealed class SopInstanceNode : StudyBuilderNode
 	{
 		private readonly DicomFile _dicomFile;
-		private string _uid;
+		private string _instanceUid;
 
 		/// <summary>
 		/// Constructs a new <see cref="SopInstanceNode"/> using default values.
@@ -17,7 +17,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		public SopInstanceNode()
 		{
 			_dicomFile = new DicomFile("");
-			RegenerateUids();
+			_instanceUid = StudyBuilder.NewUid();
 		}
 
 		/// <summary>
@@ -27,9 +27,18 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		public SopInstanceNode(DicomMessageBase sourceDicomFile)
 		{
 			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(true), sourceDicomFile.DataSet.Copy(true));
-			_uid = sourceDicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-			if (_uid == "")
-				RegenerateUids();
+			_instanceUid = sourceDicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+			if (_instanceUid == "")
+				_instanceUid = StudyBuilder.NewUid();
+		}
+
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="source"></param>
+		private SopInstanceNode(SopInstanceNode source) {
+			_instanceUid = StudyBuilder.NewUid();
+			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true), source._dicomFile.DataSet.Copy(true));
 		}
 
 		#region Data Properties
@@ -37,40 +46,75 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// <summary>
 		/// Gets or sets the SOP instance UID.
 		/// </summary>
-		public string Uid
+		public string InstanceUid
 		{
-			get { return _uid; }
-			set
+			get { return _instanceUid; }
+			internal set
 			{
-				if (_uid != value)
+				if (_instanceUid != value)
 				{
-					_uid = value;
-					FirePropertyChanged("Uid");
+					if (string.IsNullOrEmpty(value))
+						value = StudyBuilder.NewUid();
+
+					_instanceUid = value;
+					FirePropertyChanged("InstanceUid");
 				}
 			}
 		}
 
 		#endregion
 
-		#region Update and Misc Members
+		#region Update Methods
 
 		/// <summary>
 		/// Writes the data in this node into the given <see cref="DicomAttributeCollection"/>.
 		/// </summary>
 		/// <param name="dataSet">The data set to write data into.</param>
-		/// <param name="imageNumber"></param>
-		internal void Update(DicomAttributeCollection dataSet, int imageNumber)
+		/// <param name="writeUid"></param>
+		internal void Update(DicomAttributeCollection dataSet, bool writeUid) 
 		{
-			dataSet[DicomTags.SopInstanceUid].SetStringValue(_uid);
-			dataSet[DicomTags.InstanceNumber].SetInt32(0, imageNumber);
+			int imageNumber = 0;
+			if (this.Parent != null)
+				imageNumber = this.Parent.Images.IndexOf(this) + 1;
+
+			DicomConverter.SetInt32(dataSet[DicomTags.InstanceNumber], imageNumber);
+
+			if (writeUid)
+				dataSet[DicomTags.SopInstanceUid].SetStringValue(_instanceUid);
+		}
+
+		#endregion
+
+		#region Copy Methods
+
+		/// <summary>
+		/// Creates a new <see cref="SopInstanceNode"/> with the same node data, nulling all references to other nodes.
+		/// </summary>
+		/// <returns>A copy of the node.</returns>
+		public SopInstanceNode Copy() {
+			return this.Copy(false);
 		}
 
 		/// <summary>
-		/// Forces the regeneration of all UIDs owned at the SOP instance-level.
+		/// Creates a new <see cref="SopInstanceNode"/> with the same node data.
 		/// </summary>
-		public void RegenerateUids()
+		/// <param name="keepExtLinks">Specifies that references to nodes outside of the copy scope should be kept. If False, all references are nulled.</param>
+		/// <returns>A copy of the node.</returns>
+		public SopInstanceNode Copy(bool keepExtLinks) {
+			return new SopInstanceNode(this);
+		}
+
+		#endregion
+
+		#region Misc
+
+		/// <summary>
+		/// Gets the parent of this node, or null if the node is not in a study builder tree.
+		/// </summary>
+		public new SeriesNode Parent
 		{
-			_uid = DicomUid.GenerateUid().UID;
+			get { return base.Parent as SeriesNode; }
+			internal set { base.Parent = value; }
 		}
 
 		/// <summary>
@@ -81,6 +125,11 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			get { return _dicomFile.DataSet; }
 		}
 
+		internal DicomFile DicomFile
+		{
+			get { return _dicomFile; }
+		}
+
 		/// <summary>
 		/// Exports the contents of the data set to a DICOM file in the specified directory.
 		/// </summary>
@@ -88,33 +137,11 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// The filename is automatically generated using the SOP instance uid and the &quot;.dcm&quot; extension.
 		/// </remarks>
 		/// <param name="path">The directory to export the data to.</param>
-		internal void ExportToDirectory(string path)
+		internal string ExportToDirectory(string path)
 		{
-			string filename = Path.Combine(path, _uid + ".dcm");
+			string filename = Path.Combine(path, _instanceUid + ".dcm");
 			_dicomFile.Save(filename);
-		}
-
-		#endregion
-
-		#region Cloning Methods
-
-		/// <summary>
-		/// Performs a copy of the node.
-		/// </summary>
-		/// <returns>A copy of the node.</returns>
-		public SopInstanceNode Clone()
-		{
-			SopInstanceNode node = new SopInstanceNode(_dicomFile);
-			return node;
-		}
-
-		/// <summary>
-		/// Performs a copy of the node.
-		/// </summary>
-		/// <returns>A copy of the node.</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone();
+			return filename;
 		}
 
 		#endregion

@@ -16,8 +16,8 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 	public abstract class StudyBuilderNode
 	{
 		private event PropertyChangedEventHandler _propertyChanged;
-		private StudyBuilderNode _parent = null;
 		private readonly string _key;
+		private StudyBuilderNode _parent = null;
 
 		internal StudyBuilderNode()
 		{

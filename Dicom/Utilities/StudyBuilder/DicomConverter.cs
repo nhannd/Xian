@@ -95,5 +95,43 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 					return "";
 			}
 		}
+
+		/// <summary>
+		/// Temporary workaround code in place of DicomAttribute.SetDateTime(0, value) which can throw a IndexOutOfRangeException if attribute is null
+		/// </summary>
+		/// <param name="attrib"></param>
+		/// <param name="value"></param>
+		[Obsolete]
+		public static void SetDate(DicomAttribute attrib, DateTime? value)
+		{
+		if(value.HasValue)
+			attrib.SetString(0, DateParser.ToDicomString(value.Value));
+		else
+			attrib.SetNullValue();
+		}
+
+		/// <summary>
+		/// Temporary workaround code in place of DicomAttribute.SetDateTime(0, value) which can throw a IndexOutOfRangeException if attribute is null
+		/// </summary>
+		/// <param name="attrib"></param>
+		/// <param name="value"></param>
+		[Obsolete]
+		public static void SetTime(DicomAttribute attrib, DateTime? value) {
+			if (value.HasValue)
+				attrib.SetString(0, string.Format(TimeParser.DicomFullTimeFormat, value.Value));
+			else
+				attrib.SetNullValue();
+		}
+
+		/// <summary>
+		/// Temporary workaround code in place of DicomAttribute.SetInt32(0, value) which can throw a IndexOutOfRangeException if attribute is null
+		/// </summary>
+		/// <param name="attrib"></param>
+		/// <param name="value"></param>
+		[Obsolete]
+		public static void SetInt32(DicomAttribute attrib, int value)
+		{
+			attrib.SetString(0, value.ToString());
+		}
 	}
 }

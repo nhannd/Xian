@@ -198,7 +198,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder {
 		StudyBuilderNode IUidCollection.this[string uid] {
 			get {
 				foreach (SeriesNode series in _series) {
-					if (series.Uid == uid)
+					if (series.InstanceUid == uid)
 						return series;
 				}
 				throw new KeyNotFoundException();
@@ -212,7 +212,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder {
 		/// <returns>True if the collection has such a node, False otherwise.</returns>
 		bool IUidCollection.Contains(string uid) {
 			foreach (SeriesNode series in _series) {
-				if (series.Uid == uid)
+				if (series.InstanceUid == uid)
 					return true;
 			}
 			return false;
@@ -225,7 +225,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder {
 		/// <param name="arrayIndex">The zero-based index in the array at which copying begins.</param>
 		void IUidCollection.CopyTo(string[] array, int arrayIndex) {
 			foreach (SeriesNode series in _series) {
-				array[arrayIndex++] = series.Uid;
+				array[arrayIndex++] = series.InstanceUid;
 			}
 		}
 
@@ -236,7 +236,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder {
 		IEnumerator<string> IUidCollection.GetEnumerator() {
 			List<string> list = new List<string>();
 			foreach (SeriesNode series in _series) {
-				list.Add(series.Uid);
+				list.Add(series.InstanceUid);
 			}
 			return list.GetEnumerator();
 		}

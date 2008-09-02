@@ -5,11 +5,12 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 	/// <summary>
 	/// A <see cref="StudyBuilderNode"/> representing a series-level data node in the <see cref="StudyBuilder"/> tree hierarchy.
 	/// </summary>
-	public sealed class SeriesNode : StudyBuilderNode, ICloneable
+	public sealed class SeriesNode : StudyBuilderNode
 	{
 		private readonly SopInstanceNodeCollection _images;
-		private string _uid;
+		private string _instanceUid;
 		private string _description;
+		private int _seriesNum;
 		private DateTime? _dateTime;
 
 		/// <summary>
@@ -18,9 +19,9 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		public SeriesNode()
 		{
 			_images = new SopInstanceNodeCollection(this);
+			_instanceUid = StudyBuilder.NewUid();
 			_description = "Untitled Series";
 			_dateTime = System.DateTime.Now;
-			RegenerateUids();
 		}
 
 		/// <summary>
@@ -34,25 +35,60 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			_dateTime =
 				DicomConverter.GetDateTime(dicomDataSet[DicomTags.SeriesDate].GetDateTime(0),
 				                           dicomDataSet[DicomTags.SeriesTime].GetDateTime(0));
-			_uid = dicomDataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-			if (_uid == "")
-				RegenerateUids();
+			_instanceUid = dicomDataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
+			if (_instanceUid == "")
+				_instanceUid = StudyBuilder.NewUid();
 		}
+
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="copyDescendants"></param>
+		private SeriesNode(SeriesNode source, bool copyDescendants) {
+			_images = new SopInstanceNodeCollection(this);
+			_instanceUid = StudyBuilder.NewUid();
+			_description = source._description;
+			_dateTime = source._dateTime;
+
+			if(copyDescendants)
+			{
+				foreach (SopInstanceNode sop in source._images)
+				{
+					_images.Add(sop.Copy());
+				}
+			}
+		}
+
+		#region Misc
+
+		/// <summary>
+		/// Gets the parent of this node, or null if the node is not in a study builder tree.
+		/// </summary>
+		public new StudyNode Parent {
+			get { return base.Parent as StudyNode; }
+			internal set { base.Parent = value; }
+		}
+
+		#endregion
 
 		#region Data Properties
 
 		/// <summary>
 		/// Gets or sets the series instance UID.
 		/// </summary>
-		public string Uid
+		public string InstanceUid
 		{
-			get { return _uid; }
-			set
+			get { return _instanceUid; }
+			internal set
 			{
-				if (_uid != value)
+				if (_instanceUid != value)
 				{
-					_uid = value;
-					FirePropertyChanged("Uid");
+					if (string.IsNullOrEmpty(value))
+						value = StudyBuilder.NewUid();
+
+					_instanceUid = value;
+					FirePropertyChanged("InstanceUid");
 				}
 			}
 		}
@@ -89,6 +125,19 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			}
 		}
 
+		public int SeriesNumber
+		{
+			get { return _seriesNum; }
+			set
+			{
+				if(_seriesNum != value)
+				{
+					_seriesNum = value;
+					FirePropertyChanged("SeriesNumber");
+				}
+			}
+		}
+
 		#endregion
 
 		#region Update Methods
@@ -97,68 +146,47 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// Writes the data in this node into the given <see cref="DicomAttributeCollection"/>.
 		/// </summary>
 		/// <param name="dicomDataSet">The data set to write data into.</param>
-		/// <param name="seriesNum"></param>
-		internal void Update(DicomAttributeCollection dicomDataSet, int seriesNum)
+		/// <param name="writeUid"></param>
+		internal void Update(DicomAttributeCollection dicomDataSet, bool writeUid)
 		{
-			dicomDataSet[DicomTags.SeriesInstanceUid].SetStringValue(_uid);
 			dicomDataSet[DicomTags.SeriesDescription].SetStringValue(_description);
-			dicomDataSet[DicomTags.SeriesDate].SetDateTime(0, _dateTime);
-			dicomDataSet[DicomTags.SeriesTime].SetDateTime(0, _dateTime);
-			dicomDataSet[DicomTags.SeriesNumber].SetInt32(0, seriesNum);
-		}
+			DicomConverter.SetDate(dicomDataSet[DicomTags.SeriesDate], _dateTime);
+			DicomConverter.SetTime(dicomDataSet[DicomTags.SeriesTime], _dateTime);
+			DicomConverter.SetInt32(dicomDataSet[DicomTags.SeriesNumber], _seriesNum);
 
-		/// <summary>
-		/// Forces the regeneration of all UIDs owned at the series-level.
-		/// </summary>
-		public void RegenerateUids()
-		{
-			_uid = DicomUid.GenerateUid().UID;
+			if (writeUid)
+				dicomDataSet[DicomTags.SeriesInstanceUid].SetStringValue(_instanceUid);
 		}
 
 		#endregion
 
-		#region Cloning Methods
+		#region Copy Methods
 
 		/// <summary>
-		/// Performs a copy of the node.
+		/// Creates a new <see cref="SeriesNode"/> with the same node data, nulling all references to other nodes.
 		/// </summary>
-		/// <remarks>
-		/// Clones of all decendant nodes are generated if the operation is a deep copy. If a shallow copy is performed, the new
-		/// node is generated without child nodes.</remarks>
-		/// <param name="deepCopy">True if the clone should be a deep copy; False if the clone should be a shallow copy.</param>
 		/// <returns>A copy of the node.</returns>
-		public SeriesNode Clone(bool deepCopy)
-		{
-			SeriesNode node = new SeriesNode();
-			node._description = this._description;
-			node._dateTime = this._dateTime;
-			node._uid = this._uid;
-			if (deepCopy)
-			{
-				foreach (SopInstanceNode sopInstance in this._images)
-				{
-					node._images.Add(sopInstance.Clone());
-				}
-			}
-			return node;
+		public SeriesNode Copy() {
+			return this.Copy(false, false);
 		}
 
 		/// <summary>
-		/// Performs a shallow copy of the node.
+		/// Creates a new <see cref="SeriesNode"/> with the same node data, nulling all references to nodes outside of the copy scope.
 		/// </summary>
-		/// <returns>A shallow copy of the node.</returns>
-		public SeriesNode Clone()
-		{
-			return this.Clone(false);
+		/// <param name="copyDescendants">Specifies that all the descendants of the node should also be copied.</param>
+		/// <returns>A copy of the node.</returns>
+		public SeriesNode Copy(bool copyDescendants) {
+			return this.Copy(copyDescendants, false);
 		}
 
 		/// <summary>
-		/// Performs a shallow copy of the node.
+		/// Creates a new <see cref="SeriesNode"/> with the same node data.
 		/// </summary>
-		/// <returns>A shallow copy of the node.</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone(false);
+		/// <param name="copyDescendants">Specifies that all the descendants of the node should also be copied.</param>
+		/// <param name="keepExtLinks">Specifies that references to nodes outside of the copy scope should be kept. If False, all references are nulled.</param>
+		/// <returns>A copy of the node.</returns>
+		public SeriesNode Copy(bool copyDescendants, bool keepExtLinks) {
+			return new SeriesNode(this, copyDescendants);
 		}
 
 		#endregion
