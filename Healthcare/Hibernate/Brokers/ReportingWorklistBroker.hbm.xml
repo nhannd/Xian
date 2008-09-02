@@ -5,9 +5,6 @@
     to a reference step (for combined reading).
     Parameters: 1. the reference InterpretationStep
                 2. the staff who is requesting the link candidates
-    
-    Note: this query is written entirely using theta joins because SQL-server does not allow
-    mixing ANSI joins and theta joins
   -->
   <query name="linkedInterpretationCandidates">
 		select otherStep
