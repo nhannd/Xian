@@ -10,35 +10,38 @@
     mixing ANSI joins and theta joins
   -->
   <query name="linkedInterpretationCandidates">
-    select otherStep
-    from InterpretationStep otherStep, InterpretationStep refStep,
-    Procedure otherProcedure, Procedure refProcedure,
-    ProcedureType otherProcedureType, ProcedureType refProcedureType
-    where otherProcedureType = otherProcedure.Type
-    and otherProcedure = otherStep.Procedure
-    and refProcedureType = refProcedure.Type
-    and refProcedure = refStep.Procedure
-    and refStep = ?
+		select otherStep
+		from InterpretationStep otherStep
+		join otherStep.Procedure otherProcedure
+		join otherProcedure.Type otherProcedureType,
+		InterpretationStep refStep
+		join refStep.Procedure refProcedure
+		join refProcedure.Type refProcedureType,
+		where
+		refStep = ?
 
-    <!-- otherProcedure must be for the same order -->
-    and otherProcedure.Order = refProcedure.Order
-    
-    <!-- otherStep must be SC -->
-    and otherStep.State = 'SC'
-    
-    <!-- otherProcedureType must be in the same reading group -->
-    and otherProcedureType in (
-      select elements(readingGroup.ProcedureTypes)
-      from ReadingGroup readingGroup
-      where refProcedureType in elements(readingGroup.ProcedureTypes)
-    )
-    <!-- otherStep must be either unassigned or assigned to the same staff -->
-    and (
-      otherStep.Scheduling.Performer.Staff is null
-      or otherStep.Scheduling.Performer.Staff = ?
-    )
-    <!-- exclude refStep from the results -->
-    and otherStep not in (refStep)
-  </query>
+		<!-- refStep must be SC -->
+		and refStep.State = 'SC'
+
+		<!-- otherProcedure must be for the same order -->
+		and otherProcedure.Order = refProcedure.Order
+
+		<!-- otherStep must be SC -->
+		and otherStep.State = 'SC'
+
+		<!-- otherProcedureType must be in the same reading group -->
+		and otherProcedureType in (
+		select elements(readingGroup.ProcedureTypes)
+		from ReadingGroup readingGroup
+		where refProcedureType in elements(readingGroup.ProcedureTypes)
+		)
+		<!-- otherStep must be either unassigned or assigned to the same staff -->
+		and (
+		otherStep.Scheduling.Performer.Staff is null
+		or otherStep.Scheduling.Performer.Staff = ?
+		)
+		<!-- exclude refStep from the results -->
+		and otherStep not in (refStep)
+	</query>
 
 </hibernate-mapping>

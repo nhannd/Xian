@@ -926,13 +926,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			if (this.WorklistItem != null)
 			{
-				StartReportingWorklistItem();
-				UpdateChildComponents();
+				try
+				{
+					StartReportingWorklistItem();
+					UpdateChildComponents(true);
+					// notify extension pages that the worklist item has changed
+					EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 
-				// notify extension pages that the worklist item has changed
-				EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
-
-				OpenImages();
+					OpenImages();
+				}
+				catch (Exception)
+				{
+					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Invalid);
+				}
 			}
 			else
 			{
@@ -982,12 +988,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 				});
 		}
 
-		private void UpdateChildComponents()
+		private void UpdateChildComponents(bool orderDetailIsCurrent)
 		{
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
 			_priorReportComponent.WorklistItem = this.WorklistItem;
 			_orderComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
-			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+
+			if (orderDetailIsCurrent)
+				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+			else
+				_additionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 
@@ -1043,6 +1053,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// if there are candidates, prompt user to select
 			if (candidates.Count > 0)
 			{
+				ResetChildComponents();
+
 				LinkedInterpretationComponent component = new LinkedInterpretationComponent(candidates);
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
@@ -1059,6 +1071,32 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return true;
 			}
 		}
+
+		private void ResetChildComponents()
+		{
+			// if no child components have been initialized, just return
+			if (_bannerHost == null)
+				return;
+
+			// force display of Order Details page.  Other pages may not have all the necessary data available to them
+			// (e.g. anything that needs the order extended properties)
+			_rightHandComponentContainer.CurrentPage = CollectionUtils.FirstElement(_rightHandComponentContainer.Pages);
+
+			_canCompleteInterpretationAndVerify = false;
+			_canCompleteVerification = false;
+			_canCompleteInterpretationForVerification = false;
+			_canCompleteInterpretationForTranscription = false;
+			_canSaveReport = false;
+
+			UpdateChildComponents(false);
+
+			// notify extension pages that the worklist item has changed
+			_report = null;
+			_activeReportPartIndex = 0;
+			_orderDetail = null;
+			EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
+		}
+
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify)]
 		private static EntityRef StartVerification(ReportingWorklistItem item)

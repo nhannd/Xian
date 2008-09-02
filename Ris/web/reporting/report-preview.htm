@@ -27,6 +27,13 @@
 				try
 				{
 					var report = Ris.getHealthcareContext();
+					
+					if (!report)
+					{
+						Field.show($("myForm"), false);
+						return;
+					}
+					
 					createProceduresTable($("proceduresTable"), report.Procedures);
 					createReportPreview($("preview"), report);
 				}

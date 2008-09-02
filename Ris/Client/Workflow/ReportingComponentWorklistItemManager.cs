@@ -11,7 +11,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public enum WorklistItemCompletedResult
 	{
 		Completed,
-		Skipped
+		Skipped,
+		Invalid
 	}
 
 	/// <summary>
@@ -75,9 +76,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <remarks>
+		/// Only one of worklistRef or worklistClassName should be specified.  worklistRef will take precedence if both are provided.
+		/// </remarks>
 		/// <param name="worklistItem">The initial worklist item for the <see cref="ReportingComponent"/></param>
 		/// <param name="folderName">Folder system name, displayed in status text</param>
 		/// <param name="worklistRef">An <see cref="EntityRef"/> for the folder from which additional worklist items should be loaded.</param>
+		/// <param name="worklistClassName">A name for the folder class from which additional worklist items should be loaded.</param>
 		public ReportingComponentWorklistItemManager(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
 			_worklistItem = worklistItem;
