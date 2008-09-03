@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -138,7 +139,14 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-
+        public static List<DiagnosticServiceSummary> diagnosticServices
+        {
+            get
+            {
+                InitReferenceDataCacheOnce();
+                return _diagnosticServices;
+            }
+        }
         private static void InitReferenceDataCacheOnce()
         {
             if (!_refDataCachedInitialized)
@@ -218,9 +226,12 @@ namespace ClearCanvas.Ris.Client
                 result.Add(CreatePatient());
             else
             {
+                
+                TimeSpan timespan = new TimeSpan(GetRandomInteger(0,100 * 365 * 24), 0, 0);
                 InitReferenceDataCacheOnce();
                 PatientProfileDetail profile = null;
-                DateTime now = Platform.Time;
+                DateTime birthDate = Platform.Time - timespan;
+                //DateTime birthDate = DateTime.Parse("01/01/2001");
 
                 profile = new PatientProfileDetail();
 
@@ -229,7 +240,7 @@ namespace ClearCanvas.Ris.Client
                 ChooseRandom(_patientEditorFormData.HealthcardAssigningAuthorityChoices),
                 "", null);
 
-                profile.DateOfBirth = now;
+                profile.DateOfBirth = birthDate;
                 profile.Sex = ChooseRandom(_patientEditorFormData.SexChoices);
                 profile.PrimaryLanguage = ChooseRandom(_patientEditorFormData.PrimaryLanguageChoices);
                 profile.Religion = ChooseRandom(_patientEditorFormData.ReligionChoices);
@@ -294,11 +305,11 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         public static PatientProfileSummary CreatePatient()
         {
+            TimeSpan timespan = new TimeSpan(GetRandomInteger(0,100 * 365 * 24), 0, 0);
             InitReferenceDataCacheOnce();
-
             PatientProfileDetail profile = null;
+            DateTime birthDate = Platform.Time - timespan;
 
-            DateTime now = Platform.Time;
 
             profile = new PatientProfileDetail();
 
@@ -311,7 +322,7 @@ namespace ClearCanvas.Ris.Client
                 ChooseRandom(_patientEditorFormData.HealthcardAssigningAuthorityChoices),
                 "", null);
 
-            profile.DateOfBirth = now;
+            profile.DateOfBirth = birthDate;
             profile.Sex = ChooseRandom(_patientEditorFormData.SexChoices);
             profile.PrimaryLanguage = ChooseRandom(_patientEditorFormData.PrimaryLanguageChoices);
             profile.Religion = ChooseRandom(_patientEditorFormData.ReligionChoices);
@@ -424,6 +435,7 @@ namespace ClearCanvas.Ris.Client
         {
             return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays,Modality,FacilityCode);
         }
+
         /// <summary>
         /// Create a random order on the specified visit.
         /// </summary>
