@@ -42,6 +42,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
 		private readonly GalleryComponent _component;
 		private IBindingList _gallery;
+		private bool _selectionEventsEnabled = true;
 
 		public GalleryComponentControl()
 		{
@@ -152,11 +153,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnListChanged(object sender, ListChangedEventArgs e)
 		{
+			_listView.SuspendLayout();
 			switch (e.ListChangedType)
 			{
 				case ListChangedType.ItemAdded:
 					InsertItem(e.NewIndex, _gallery[e.NewIndex]);
-					//AddItem(_gallery[e.NewIndex]);
 					break;
 				case ListChangedType.ItemDeleted:
 					RemoveItem(e.NewIndex);
@@ -171,6 +172,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					ResetList();
 					break;
 			}
+			_listView.ResumeLayout();
 		}
 
 		private void UpdateItem(int index)
@@ -251,21 +253,40 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#endregion
 
-		#region Selection Business
+		#region Selection and Activation Business
 
 		private void OnSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
+			if (!_selectionEventsEnabled)
+				return;
+
 			List<IGalleryItem> selectedItems = new List<IGalleryItem>();
+
+			// the focused item should always be the first item in the selection
+			if (_listView.FocusedItem != null)
+				selectedItems.Add((IGalleryItem)_listView.FocusedItem.Tag);
 
 			//when an item is removed from the list view, the 'selection changed' event fires
 			//before the item is removed, so the indices are out of sync and we can't rely on them
 			foreach (int index in _listView.SelectedIndices)
 			{
-				object item = _listView.Items[index].Tag;
-				selectedItems.Add((IGalleryItem) item);
+				ListViewItem lvi = _listView.Items[index];
+				if(lvi != _listView.FocusedItem)
+				{
+					object item = lvi.Tag;
+					selectedItems.Add((IGalleryItem) item);
+				}
 			}
 
 			_component.Select(selectedItems);
+		}
+
+		private void OnItemActivate(object sender, EventArgs e) {
+			if(_listView.FocusedItem!=null)
+			{
+				IGalleryItem item = _listView.FocusedItem.Tag as IGalleryItem;
+				_component.Activate(item);
+			}
 		}
 
 		#endregion
@@ -289,8 +310,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					((IGalleryItem) _gallery[e.Item]).Name = e.Label;
 					return;
 				}
-				catch (Exception)
-				{
+				catch (Exception) {
 					// if editing the name on the item fails, abort the label change
 				}
 			}
@@ -353,6 +373,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				objectList.Add(specificDraggedItem.Item);
 			}
 
+			_selectionEventsEnabled = false;
+
 			IList<IGalleryItem> draggedItems = list.AsReadOnly();
 			DragDropOption allowedActions = _component.BeginDrag(draggedItems);
 			DragDropOption actualAction = DragDropOption.None;
@@ -375,10 +397,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				ListViewItem lvi = _listView.Items[n];
 				if (savedSelection.Contains(lvi.Tag))
+				{
 					_listView.SelectedIndices.Add(n);
+					savedSelection.Remove(lvi.Tag);
+				}
+
 				if (lvi.Tag == savedFocus)
 					lvi.Focused = true;
 			}
+
+			_selectionEventsEnabled = true;
+
+			// if any previously-selected items are left in the list, then the selection has changed overall and we need to update the component selection
+			if(savedSelection.Count > 0)
+				OnSelectionChanged(null, null);
 		}
 
 		private void OnItemDragEnter(object sender, DragEventArgs e)
@@ -554,13 +586,5 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		#endregion
-
-		private void _listView_ItemActivate(object sender, EventArgs e) {
-			if(_listView.FocusedItem!=null)
-			{
-				IGalleryItem item = _listView.FocusedItem.Tag as IGalleryItem;
-				_component.Activate(item);
-			}
-		}
 	}
 }
