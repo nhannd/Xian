@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Application
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            Response.Redirect("~/Pages/Search/Default.aspx");
+            Response.Redirect(ImageServerConstants.PageURLs.SearchPage);
         }
     }
 }

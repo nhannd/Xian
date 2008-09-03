@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         /// <param name="itemKey"></param>
         public void ViewWorkQueueItem(ServerEntityKey itemKey)
         {
-            string url = String.Format("{0}?uid={1}", ResolveClientUrl("~/Pages/Queues/WorkQueue/Edit/ViewEdit.aspx"), itemKey.Key);
+            string url = String.Format("{0}?uid={1}", ResolveClientUrl(ImageServerConstants.PageURLs.WorkQueueItemDetailsPage), itemKey.Key);
 
             string script =
             @"      

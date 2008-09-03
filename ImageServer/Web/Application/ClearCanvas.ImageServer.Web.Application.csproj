@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -137,6 +137,9 @@
     </Compile>
     <Compile Include="Controls\TimedDialog.ascx.designer.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="GlobalMasterPage.master.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
@@ -851,6 +854,7 @@
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Global.asax" />
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />

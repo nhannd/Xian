@@ -50,6 +50,11 @@ public class ImageServerConstants
         public const string SeriesDetailsPage = "~/Pages/SeriesDetails/Default.aspx";
         public const string StudyDetailsPage = "~/Pages/StudyDetails/Default.aspx";
 		public const string SearchPage = "~/Pages/Search/Default.aspx";
+        public const string WorkQueueItemDetailsPage = "~/Pages/Queues/WorkQueue/Edit/Default.aspx";
+        public const string WebServices = "~/Services/webservice.htc";
+        public const string NumberFormatScript = "~/Scripts/NumberFormat154.js";
+        public const string ErrorPage = "~/Pages/Error/ErrorPage.aspx";
+        
 	}
 
     public class ImageURLs
