@@ -282,15 +282,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)
 		{
-			try
+			if(e.Label != null)
 			{
-				((IGalleryItem) _gallery[e.Item]).Name = e.Label;
+				try
+				{
+					((IGalleryItem) _gallery[e.Item]).Name = e.Label;
+					return;
+				}
+				catch (Exception)
+				{
+					// if editing the name on the item fails, abort the label change
+				}
 			}
-			catch (Exception)
-			{
-				// if editing the name on the item fails, abort the label change
-				e.CancelEdit = true;
-			}
+
+			e.CancelEdit = true;
 		}
 
 		private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e) {
@@ -329,6 +334,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			ListViewItem specificLvi = (ListViewItem)e.Item;
 			IGalleryItem specificDraggedItem = (IGalleryItem)specificLvi.Tag;
 
+			// save selection and focus
+			IList savedSelection = new List<IGalleryItem>();
+			object savedFocus = _listView.FocusedItem.Tag;
+
 			if(_listView.SelectedItems.Count > 0)
 			{
 				foreach (ListViewItem lvi in _listView.SelectedItems)
@@ -336,6 +345,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 					IGalleryItem item = (IGalleryItem)lvi.Tag;
 					list.Add(item);
 					objectList.Add(item.Item);
+					savedSelection.Add(item);
 				}
 			}
 			else {
@@ -358,6 +368,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 				actualAction = ConvertEnum.GetDragDropAction(actualEffect);
 			}
 			_component.EndDrag(draggedItems, actualAction);
+
+			// restore selection and focus
+			_listView.SelectedIndices.Clear();
+			for(int n = 0; n < _listView.Items.Count; n++)
+			{
+				ListViewItem lvi = _listView.Items[n];
+				if (savedSelection.Contains(lvi.Tag))
+					_listView.SelectedIndices.Add(n);
+				if (lvi.Tag == savedFocus)
+					lvi.Focused = true;
+			}
 		}
 
 		private void OnItemDragEnter(object sender, DragEventArgs e)
@@ -523,7 +544,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				Rectangle itemRect = _listView.GetItemRect(nearestIndex, ItemBoundsPortion.Entire);
 				if (clientPoint.X > itemRect.Left + itemRect.Width/2)
-					nearestIndex++;
+					nearestIndex+=1;
 			}
 			else if (nearestIndex < 0 && _listView.Items.Count == 0)
 			{
