@@ -408,11 +408,36 @@ var Table = {
 					inputDate.id = this.id + "_" + column.label + "_" + "dateinput" + row;
 					td.appendChild(inputDate);
 					if(column.size) inputDate.size = column.size;
-					inputDate.readOnly = "readonly";
-
                     // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
                     // This cannot be done in CSS since IE ignores the "type" pseudo selector.
                     inputDate.style.padding = '0px';
+					
+					// consider the edit complete when focus is lost
+					inputDate.onblur = function() 
+					{ 
+						// Just tabbing through an empty field, so don't assume a value
+						if (!inputDate.value && !column.getValue(obj))
+							return;
+						
+						var date;
+
+						try
+						{
+							date = Date.parseDate(inputDate.value, Ris.getDateFormat()) || new Date();
+						}
+						catch(e)
+						{
+							date = new Date();
+						}
+						
+						var extendedDate = column.getValue(obj) || new Date();
+						extendedDate.setDate(date.getDate());
+						extendedDate.setMonth(date.getMonth());
+						extendedDate.setYear(date.getYear());
+						column.setValue(obj, extendedDate);
+						table._onEditComplete(row, col); 
+					}
+
 
                     // launch calendar on click
 					var findButtonDate = document.createElement("span");
@@ -445,31 +470,29 @@ var Table = {
                     // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
                     // This cannot be done in CSS since IE ignores the "type" pseudo selector.
                     inputTime.style.padding = '0px';  
-
-					inputTime.onkeyup = function()
-					{
-						// if user blanked out the field, reset time
-						if(!this.value || this.value.length == 0)
-						{
-							var extendedDate = column.getValue(obj) || new Date();
-							extendedDate.setHours(0);  
-							extendedDate.setMinutes(0);  
-							column.setValue(obj, extendedDate);
-						}
-						table._onCellUpdate(row, col);
-					}
 					
 					// consider the edit complete when focus is lost
 					inputTime.onblur = function() 
 					{ 
-						var date = sstp_validateTimePicker(inputTime);
-						if(date)
+						// Just tabbing through an empty field, so don't assume a value
+						if (!inputTime.value && !column.getValue(obj))
+							return;
+						
+						var date;
+
+						try
 						{
-							var extendedDate = column.getValue(obj) || new Date();
-							extendedDate.setHours(date.getHours());  
-							extendedDate.setMinutes(date.getMinutes());  
-							column.setValue(obj, extendedDate);
+							date = sstp_validateTimePicker(inputTime) || new Date();
 						}
+						catch(e)
+						{
+							date = new Date();
+						}
+
+						var extendedDate = column.getValue(obj) || new Date();
+						extendedDate.setHours(date.getHours());  
+						extendedDate.setMinutes(date.getMinutes()); 
+						column.setValue(obj, extendedDate);
 						table._onEditComplete(row, col); 
 					}
 
@@ -842,5 +865,216 @@ var Field =
 	{
 		element.style.width = width;
 	}
+};
+
+/*
+ *  Date object patches adapted from source cited below.
+ */
+
+/*  Copyright Mihai Bazon, 2002-2005  |  www.bazon.net/mishoo
+ * -----------------------------------------------------------
+ *
+ * The DHTML Calendar, version 1.0 "It is happening again"
+ *
+ * Details and latest version at:
+ * www.dynarch.com/projects/calendar
+ *
+ * This script is developed by Dynarch.com.  Visit us at www.dynarch.com.
+ *
+ * This script is distributed under the GNU Lesser General Public License.
+ * Read the entire license text here: http://www.gnu.org/licenses/lgpl.html
+ */
+
+// $Id: calendar.js,v 1.51 2005/03/07 16:44:31 mishoo Exp $
+
+// BEGIN: DATE OBJECT PATCHES
+
+/** Adds the number of days array to the Date object. */
+Date._MD = new Array(31,28,31,30,31,30,31,31,30,31,30,31);
+
+// full month names
+Date._MN = new Array
+("January",
+ "February",
+ "March",
+ "April",
+ "May",
+ "June",
+ "July",
+ "August",
+ "September",
+ "October",
+ "November",
+ "December");
+
+/** Constants used for time computations */
+Date.SECOND = 1000 /* milliseconds */;
+Date.MINUTE = 60 * Date.SECOND;
+Date.HOUR   = 60 * Date.MINUTE;
+Date.DAY    = 24 * Date.HOUR;
+Date.WEEK   =  7 * Date.DAY;
+
+Date.parseDate = function(str, fmt) {
+
+	fmt = fmt.replace(/dddd/g, "%a")
+			.replace(/ddd/g, "%A")
+            .replace(/dd/g, "%z")   // use an intermediate substitution here
+            .replace(/d/g, "%e")
+            .replace(/MMMM/g, "%B")
+            .replace(/MMM/g, "%b")
+            .replace(/MM/g, "%m")
+            .replace(/HH/g, "%w")   // use an intermediate substitution here
+            .replace(/H/g, "%k")
+            .replace(/hh/g, "%I")
+            .replace(/h/g, "%l")
+            .replace(/mm/g, "%M")
+            .replace(/tt/g, "%p")
+            .replace(/ss/g, "%S")
+            .replace(/yyyy/g, "%Y")
+            .replace(/yy/g, "%y")
+            .replace(/%z/g, "%d")   // replace intermediate substitutions
+            .replace(/%w/g, "%H");  // replace intermediate substitutions
+
+	var today = new Date();
+	var y = 0;
+	var m = -1;
+	var d = 0;
+	var a = str.split(/\W+/);
+	var b = fmt.match(/%./g);
+	var i = 0, j = 0;
+	var hr = 0;
+	var min = 0;
+	for (i = 0; i < a.length; ++i) {
+		if (!a[i])
+			continue;
+		switch (b[i]) {
+		    case "%d":
+		    case "%e":
+			d = parseInt(a[i], 10);
+			break;
+
+		    case "%m":
+			m = parseInt(a[i], 10) - 1;
+			break;
+
+		    case "%Y":
+		    case "%y":
+			y = parseInt(a[i], 10);
+			(y < 100) && (y += (y > 29) ? 1900 : 2000);
+			break;
+
+		    case "%b":
+		    case "%B":
+			for (j = 0; j < 12; ++j) {
+				if (Date._MN[j].substr(0, a[i].length).toLowerCase() == a[i].toLowerCase()) { m = j; break; }
+			}
+			break;
+
+		    case "%H":
+		    case "%I":
+		    case "%k":
+		    case "%l":
+			hr = parseInt(a[i], 10);
+			break;
+
+		    case "%P":
+		    case "%p":
+			if (/pm/i.test(a[i]) && hr < 12)
+				hr += 12;
+			else if (/am/i.test(a[i]) && hr >= 12)
+				hr -= 12;
+			break;
+
+		    case "%M":
+			min = parseInt(a[i], 10);
+			break;
+		}
+	}
+	if (isNaN(y)) y = today.getFullYear();
+	if (isNaN(m)) m = today.getMonth();
+	if (isNaN(d)) d = today.getDate();
+	if (isNaN(hr)) hr = today.getHours();
+	if (isNaN(min)) min = today.getMinutes();
+	if (y != 0 && m != -1 && d != 0)
+		return new Date(y, m, d, hr, min, 0);
+	y = 0; m = -1; d = 0;
+	for (i = 0; i < a.length; ++i) {
+		if (a[i].search(/[a-zA-Z]+/) != -1) {
+			var t = -1;
+			for (j = 0; j < 12; ++j) {
+				if (Date._MN[j].substr(0, a[i].length).toLowerCase() == a[i].toLowerCase()) { t = j; break; }
+			}
+			if (t != -1) {
+				if (m != -1) {
+					d = m+1;
+				}
+				m = t;
+			}
+		} else if (parseInt(a[i], 10) <= 12 && m == -1) {
+			m = a[i]-1;
+		} else if (parseInt(a[i], 10) > 31 && y == 0) {
+			y = parseInt(a[i], 10);
+			(y < 100) && (y += (y > 29) ? 1900 : 2000);
+		} else if (d == 0) {
+			d = a[i];
+		}
+	}
+	if (y == 0)
+		y = today.getFullYear();
+	if (m != -1 && d != 0)
+		return new Date(y, m, d, hr, min, 0);
+	if (hr != 0 && min != 0)
+		return new Date(y, m, d, hr, min, 0);
+	return today;
+};
+
+/** Returns the number of days in the current month */
+Date.prototype.getMonthDays = function(month) {
+	var year = this.getFullYear();
+	if (typeof month == "undefined") {
+		month = this.getMonth();
+	}
+	if (((0 == (year%4)) && ( (0 != (year%100)) || (0 == (year%400)))) && month == 1) {
+		return 29;
+	} else {
+		return Date._MD[month];
+	}
+};
+
+/** Returns the number of day in the year. */
+Date.prototype.getDayOfYear = function() {
+	var now = new Date(this.getFullYear(), this.getMonth(), this.getDate(), 0, 0, 0);
+	var then = new Date(this.getFullYear(), 0, 0, 0, 0, 0);
+	var time = now - then;
+	return Math.floor(time / Date.DAY);
+};
+
+/** Returns the number of the week in year, as defined in ISO 8601. */
+Date.prototype.getWeekNumber = function() {
+	var d = new Date(this.getFullYear(), this.getMonth(), this.getDate(), 0, 0, 0);
+	var DoW = d.getDay();
+	d.setDate(d.getDate() - (DoW + 6) % 7 + 3); // Nearest Thu
+	var ms = d.valueOf(); // GMT
+	d.setMonth(0);
+	d.setDate(4); // Thu in Week 1
+	return Math.round((ms - d.valueOf()) / (7 * 864e5)) + 1;
+};
+
+/** Checks date and time equality */
+Date.prototype.equalsTo = function(date) {
+	return ((this.getFullYear() == date.getFullYear()) &&
+		(this.getMonth() == date.getMonth()) &&
+		(this.getDate() == date.getDate()) &&
+		(this.getHours() == date.getHours()) &&
+		(this.getMinutes() == date.getMinutes()));
+};
+
+Date.prototype.__msh_oldSetFullYear = Date.prototype.setFullYear;
+Date.prototype.setFullYear = function(y) {
+	var d = new Date(this);
+	d.__msh_oldSetFullYear(y);
+	if (d.getMonth() != this.getMonth())
+		this.setDate(28);
+	this.__msh_oldSetFullYear(y);
 };
 

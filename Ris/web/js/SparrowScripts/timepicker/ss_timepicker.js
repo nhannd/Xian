@@ -171,7 +171,7 @@
 
 		if (tl==1 ) {
 			if (sstp_isDigit(t)) {
-				ctl.value=t+":00 am";
+				t = t+":00 am";
 			}
 			else {
 				return null;
@@ -183,61 +183,61 @@
 					if (t.charAt(1)!=":") {
 						if (sstp_24Hr)
 						{
-							ctl.value= sstp_padZero(t) + ':00';
+							t = sstp_padZero(t) + ':00';
 						}
 						else {
-							ctl.value= t + ':00 am';
+							t = t + ':00 am';
 						}
 					} 
 					else {
 						if (sstp_24Hr)
 						{
-							ctl.value= sstp_padZero(t.substring(0,1)) + ':00';
+							t = sstp_padZero(t.substring(0,1)) + ':00';
 						}
 						else {
-							ctl.value= t + '00 am';
+							t = t + '00 am';
 						}
 					}
 				}
 				else if (parseInt(t,10)==24) {
 					if (sstp_24Hr)
 					{
-						ctl.value= "00:00";
+						t = "00:00";
 					}
 					else {
-						ctl.value= "0:00 am";
+						t = "0:00 am";
 					}
 				}
 				else if (parseInt(t,10)<24) {
 					if (sstp_24Hr)
 					{
-						ctl.value= sstp_padZero(t)+':00';
+						t = sstp_padZero(t)+':00';
 					}
 					else {
 						if (t.charAt(1)!=":") {
-							ctl.value= (t-12) + ':00 pm';
+							t = (t-12) + ':00 pm';
 						} 
 						else {
-							ctl.value= (t-12) + '00 pm';
+							t = (t-12) + '00 pm';
 						}
 					}
 				}
 				else if (parseInt(t,10)<=60) {
 					if (sstp_24Hr)
 					{
-						ctl.value= '00:'+sstp_padZero(t);
+						t = '00:'+sstp_padZero(t);
 					}
 					else {
-						ctl.value= '0:'+sstp_padZero(t)+' am';
+						t = '0:'+sstp_padZero(t)+' am';
 					}
 				}
 				else {
 					if (sstp_24Hr)
 					{
-						ctl.value= '01:'+sstp_padZero(t%60);
+						t = '01:'+sstp_padZero(t%60);
 					}
 					else {
-						ctl.value= '1:'+sstp_padZero(t%60)+' am';
+						t = '1:'+sstp_padZero(t%60)+' am';
 					}
 				}
 			}
@@ -245,10 +245,10 @@
    		    {
 				if ((t.charAt(0)==":")&&(sstp_isDigit(t.charAt(1)))) {
 					if (sstp_24Hr) {
-						ctl.value = "00:" + sstp_padZero(parseInt(t.charAt(1),10));
+						t = "00:" + sstp_padZero(parseInt(t.charAt(1),10));
 					}
 					else {
-						ctl.value = "0:" + sstp_padZero(parseInt(t.charAt(1),10)) + " am";
+						t = "0:" + sstp_padZero(parseInt(t.charAt(1),10)) + " am";
 					}
 				}
 				else {
@@ -256,111 +256,110 @@
 				}
 			}
 		}
-		else if (tl>=3) {
 
-			var arr = t.split(":");
-			if (t.indexOf(":") > 0)
+		var arr = t.split(":");
+		if (t.indexOf(":") > 0)
+		{
+			hr=parseInt(arr[0],10);
+			if (arr.length>2)
 			{
-				hr=parseInt(arr[0],10);
-				if (arr.length>2)
-				{
-					mn=parseInt(arr[2],10);
-				}
-				else {
-					mn=parseInt(arr[1],10);
-				}
-
-				if (!sstp_24Hr) {
-					if (t.indexOf("pm")>0) {
-						mode="pm";
-					}
-					else {
-						mode="am";
-					}
-				}
-				else {
-					mode="";
-				}
-
-				if (isNaN(hr)) {
-					hr=0;
-				} else {
-					if (hr>24) {
-						return null;
-					}
-					else if (hr==24) {
-						if (!sstp_24Hr) {
-							mode="am";
-							hr=0;
-						}
-					}
-					else if (hr>12) {
-						if (!sstp_24Hr) {
-							mode="pm";
-							hr-=12;
-						}
-					}
-				}
-			
-				if (isNaN(mn)) {
-					mn=0;
-				}
-				else {
-					if (mn>59) {
-						mn=mn%60;
-						hr+=1;
-					}
-				}
-			} else {
-
-				hr=parseInt(arr[0],10);
-
-				if (isNaN(hr)) {
-					hr=0;
-				} else {
-					if (hr>24) {
-						return null;
-					}
-					else if (hr==24) {
-						hr=0;
-						if (!sstp_24Hr) {
-							mode="am";
-						}
-					}
-					else if (hr>12) {
-						if (!sstp_24Hr) {
-							mode="pm";
-							hr-=12;
-						}
-					}
-				}
-
-				mn = 0;
+				mn=parseInt(arr[2],10);
 			}
-			
-			if (hr==24) {
-				hr=0;
-				if (!sstp_24Hr) {
+			else {
+				mn=parseInt(arr[1],10);
+			}
+
+			if (!sstp_24Hr) {
+				if (t.indexOf("pm")>0) {
+					mode="pm";
+				}
+				else {
 					mode="am";
 				}
 			}
-
-			var date = new Date();
-			date.setHours(hr);
-			date.setMinutes(mn);
-
-			if (sstp_24Hr) {
-				ctl.value=sstp_padZero(hr)+":"+sstp_padZero(mn);
-			}
 			else {
-				ctl.value=hr+":"+sstp_padZero(mn)+" "+mode;
-				if(mode=="pm")
-				{
-					date.setHours((date.getHours() == 12) ?  0 : date.getHours() + 12);
+				mode="";
+			}
+
+			if (isNaN(hr)) {
+				hr=0;
+			} else {
+				if (hr>24) {
+					return null;
+				}
+				else if (hr==24) {
+					if (!sstp_24Hr) {
+						mode="am";
+						hr=0;
+					}
+				}
+				else if (hr>12) {
+					if (!sstp_24Hr) {
+						mode="pm";
+						hr-=12;
+					}
 				}
 			}
-			
-			return date;
+		
+			if (isNaN(mn)) {
+				mn=0;
+			}
+			else {
+				if (mn>59) {
+					mn=mn%60;
+					hr+=1;
+				}
+			}
+		} else {
+
+			hr=parseInt(arr[0],10);
+
+			if (isNaN(hr)) {
+				hr=0;
+			} else {
+				if (hr>24) {
+					return null;
+				}
+				else if (hr==24) {
+					hr=0;
+					if (!sstp_24Hr) {
+						mode="am";
+					}
+				}
+				else if (hr>12) {
+					if (!sstp_24Hr) {
+						mode="pm";
+						hr-=12;
+					}
+				}
+			}
+
+			mn = 0;
 		}
+		
+		if (hr==24) {
+			hr=0;
+			if (!sstp_24Hr) {
+				mode="am";
+			}
+		}
+
+		var date = new Date();
+		date.setHours(hr);
+		date.setMinutes(mn);
+
+		if (sstp_24Hr) {
+			ctl.value=sstp_padZero(hr)+":"+sstp_padZero(mn);
+		}
+		else {
+			ctl.value=hr+":"+sstp_padZero(mn)+" "+mode;
+		}
+
+		if(!sstp_24Hr && mode==="pm" && hr < 12)
+		{
+			date.setHours(date.getHours() + 12);
+		}
+
+		return date;
 	}
 //-->
