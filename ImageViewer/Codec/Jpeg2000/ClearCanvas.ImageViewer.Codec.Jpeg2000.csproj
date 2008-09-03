@@ -30,7 +30,7 @@
   <ItemGroup>
     <Reference Include="ClearCanvas.Dicom.Codec.Jpeg2000, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Jpeg2000.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg2000.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

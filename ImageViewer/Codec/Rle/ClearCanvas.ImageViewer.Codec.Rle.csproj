@@ -30,7 +30,7 @@
   <ItemGroup>
     <Reference Include="ClearCanvas.Dicom.Codec.Rle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\ClearCanvas.Dicom.Codec.Rle.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
