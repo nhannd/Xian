@@ -57,7 +57,14 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		public StudyBuilderNode Parent
 		{
 			get { return _parent; }
-			internal set { _parent = value; }
+			internal set
+			{
+				if (_parent != value)
+				{
+					_parent = value;
+					FirePropertyChanged("Parent");
+				}
+			}
 		}
 
 		private static readonly SerialGenerator serialGener = new SerialGenerator();

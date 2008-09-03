@@ -144,17 +144,18 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 
 		#endregion
 
-		#region Public Helpers - Export
+		#region Public Helpers - Publish
 
 		/// <summary>
-		/// Builds the study tree and exports all the individual SOP instances to the specified directory.
+		/// Builds the study tree and publishes all the individual SOP instances to the specified directory.
 		/// </summary>
 		/// <remarks>
-		/// <para>The exported files use the SOP instance UID as the filename with a &quot;.dcm&quot; extension.</para>
+		/// <para>The published files use the SOP instance UID as the filename with a &quot;.dcm&quot; extension.</para>
 		/// <para>The <see cref="BuildTree"/> method is called automatically, and hence does not need to be explicitly called before invoking this method.</para>
 		/// </remarks>
-		/// <param name="path">The path of the directory to which the SOP instances are exported.</param>
-		public IList<string> Export(string path)
+		/// <param name="path">The path of the directory to which the SOP instances are saved.</param>
+		/// <returns>A list of the filenames of the resulting SOP instances.</returns>
+		public IList<string> Publish(string path)
 		{
 			List<SopInstanceNode> sops;
 
@@ -184,7 +185,18 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			return files.AsReadOnly();
 		}
 
-		public IList<string> Export(string localAE, string remoteAE, string remoteHost, int remotePort)
+		/// <summary>
+		/// Builds the study tree and publishes all the created studies to the specified application entity.
+		/// </summary>
+		/// <remarks>
+		/// <para>The <see cref="BuildTree"/> method is called automatically, and hence does not need to be explicitly called before invoking this method.</para>
+		/// </remarks>
+		/// <param name="localAE">The local AETITLE that is sending the studies.</param>
+		/// <param name="remoteAE">The AETITLE of the device that is receiving the studies.</param>
+		/// <param name="remoteHost">The hostname of the device that is receiving the studies.</param>
+		/// <param name="remotePort">The port number on which the device receiving the studies is listening.</param>
+		/// <returns>A list of the SOP instance UIDs that were created.</returns>
+		public IList<string> Publish(string localAE, string remoteAE, string remoteHost, int remotePort)
 		{
 			List<SopInstanceNode> sops;
 
