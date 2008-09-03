@@ -1339,15 +1339,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Note....
-        /// </summary>
-        internal static string TitleAddNote {
-            get {
-                return ResourceManager.GetString("TitleAddNote", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Phone Number....
         /// </summary>
         internal static string TitleAddPhoneNumber {
@@ -1524,6 +1515,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleNext {
             get {
                 return ResourceManager.GetString("TitleNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note Text.
+        /// </summary>
+        internal static string TitleNoteText {
+            get {
+                return ResourceManager.GetString("TitleNoteText", resourceCulture);
             }
         }
         
@@ -1713,15 +1713,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateExternalPractitioner {
             get {
                 return ResourceManager.GetString("TitleUpdateExternalPractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Note....
-        /// </summary>
-        internal static string TitleUpdateNote {
-            get {
-                return ResourceManager.GetString("TitleUpdateNote", resourceCulture);
             }
         }
         

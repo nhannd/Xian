@@ -543,9 +543,6 @@
   <data name="TitleAddExternalPractitioner" xml:space="preserve">
     <value>Add Practitioner</value>
   </data>
-  <data name="TitleAddNote" xml:space="preserve">
-    <value>Add Note...</value>
-  </data>
   <data name="TitleAddPhoneNumber" xml:space="preserve">
     <value>Add Phone Number...</value>
   </data>
@@ -605,6 +602,9 @@
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>
+  </data>
+  <data name="TitleNoteText" xml:space="preserve">
+    <value>Note Text</value>
   </data>
   <data name="TitleOrderNoteboxFolderSystem" xml:space="preserve">
     <value>Order Notes</value>
@@ -668,9 +668,6 @@
   </data>
   <data name="TitleUpdateExternalPractitioner" xml:space="preserve">
     <value>Edit Practitioner</value>
-  </data>
-  <data name="TitleUpdateNote" xml:space="preserve">
-    <value>Update Note...</value>
   </data>
   <data name="TitleUpdatePhoneNumber" xml:space="preserve">
     <value>Update Phone Number...</value>

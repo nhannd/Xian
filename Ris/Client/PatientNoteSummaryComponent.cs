@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _noteTable.Items.Add(note);
@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 PatientNoteEditorComponent editor = new PatientNoteEditorComponent(note, _noteCategoryChoices);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _notes.Remove(_currentNoteSelection);

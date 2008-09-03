@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 OrderNoteEditorComponent editor = new OrderNoteEditorComponent(note);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     _noteTable.Items.Add(note);
@@ -169,7 +169,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 OrderNoteEditorComponent editor = new OrderNoteEditorComponent(notedetail);
-                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateNote);
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleNoteText);
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
                     // delete and re-insert to ensure that TableView updates correctly
