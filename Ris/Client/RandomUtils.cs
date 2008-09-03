@@ -470,12 +470,11 @@ namespace ClearCanvas.Ris.Client
                             {
                                 dsResponse=service.LoadDiagnosticServiceBreakdown(
                                       new LoadDiagnosticServiceBreakdownRequest(ds.DiagnosticServiceRef));
-                                return (ds.Name == diagnosticServiceName) || (CollectionUtils.SelectFirst(dsResponse.DiagnosticServiceDetail.ProcedureTypes,
+                                return (ds.Name == diagnosticServiceName) || (!String.IsNullOrEmpty(Modality) && (CollectionUtils.SelectFirst(dsResponse.DiagnosticServiceDetail.ProcedureTypes,
                                                                                                         delegate(ProcedureTypeSummary ptd)
-                                                                                                        {
-                                                                                                            
+                                                                                                        {   
                                                                                                             return ptd.Name.IndexOf(Modality) == 0;
-                                                                                                        }) != null);
+                                                                                                        }) != null));
                             });
 
                         if (diagnosticService == null)
