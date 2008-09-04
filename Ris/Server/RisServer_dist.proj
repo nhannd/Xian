@@ -86,6 +86,7 @@
   <ItemGroup>
 	<ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
 	<ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
+	<ShredHostAppConfigSourceFiles  Include="$(HL7Directory)\Server\app.config" />
   </ItemGroup>
 
   <ItemGroup>
