@@ -30,58 +30,82 @@
 #endregion
 
 using ClearCanvas.Common.Statistics;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
 
-namespace ClearCanvas.ImageServer.Common.CommandProcessor
+namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
+
+
 	/// <summary>
-	/// Command for compressing a DICOM Sop Instance.
+	/// Stores statistics of a WorkQueue instance processing.
 	/// </summary>
-	public class DicomCompressCommand : ServerCommand
+	internal class CompressInstanceStatistics : StatisticsSet
 	{
-		private readonly DicomMessageBase _file;
-		private readonly IDicomCodec _codec;
-		private readonly DicomCodecParameters _parms;
-		private readonly TransferSyntax _syntax;
-		private bool _lossy;
-		private TimeSpanStatistics _timeSpan = new TimeSpanStatistics("CompressTime");
+		#region Constructors
+
+		public CompressInstanceStatistics()
+			: this("Instance")
+		{ }
+
+		public CompressInstanceStatistics(string name)
+			: base(name)
+		{ }
+
+		#endregion Constructors
+
+		#region Public Properties
+
+		public TimeSpanStatistics ProcessTime
+		{
+			get
+			{
+				if (this["ProcessTime"] == null)
+					this["ProcessTime"] = new TimeSpanStatistics("ProcessTime");
+
+				return (this["ProcessTime"] as TimeSpanStatistics);
+			}
+			set { this["ProcessTime"] = value; }
+		}
+
+		public ulong FileSize
+		{
+			set
+			{
+				this["FileSize"] = new ByteCountStatistics("FileSize", value);
+			}
+			get
+			{
+				if (this["FileSize"] == null)
+					this["FileSize"] = new ByteCountStatistics("FileSize");
+
+				return ((ByteCountStatistics) this["FileSize"]).Value;
+			}
+		}
+
+		public TimeSpanStatistics FileLoadTime
+		{
+			get
+			{
+				if (this["FileLoadTime"] == null)
+					this["FileLoadTime"] = new TimeSpanStatistics("FileLoadTime");
+
+				return (this["FileLoadTime"] as TimeSpanStatistics);
+			}
+			set { this["FileLoadTime"] = value; }
+		}
 
 		public TimeSpanStatistics CompressTime
 		{
-			get { return _timeSpan; }
+			get
+			{
+				if (this["CompressTime"] == null)
+					this["CompressTime"] = new TimeSpanStatistics("CompressTime");
+
+				return (this["CompressTime"] as TimeSpanStatistics);
+			}
+			set { this["CompressTime"] = value; }
 		}
-
-		public DicomCompressCommand(DicomMessageBase file, TransferSyntax syntax, IDicomCodec codec, DicomCodecParameters parms, bool lossy)
-			: base("DICOM Compress Command", true)
-		{
-			_file = file;
-			_syntax = syntax;
-			_codec = codec;
-			_parms = parms;
-			_lossy = lossy;
-		}
-
-		protected override void OnExecute()
-		{
-			// Check if its already in the right syntax.
-			if (_file.TransferSyntax.Equals(_syntax))
-				return;
-
-			_timeSpan.Start();
-
-			// Check for decompression first
-			if (_file.TransferSyntax.Encapsulated)
-				_file.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
-
-			_file.ChangeTransferSyntax(_syntax, _codec, _parms);
-
-			_timeSpan.End();
-		}
-
-		protected override void OnUndo()
-		{
-			
-		}
+		#endregion Public Properties
 	}
+
+
 }

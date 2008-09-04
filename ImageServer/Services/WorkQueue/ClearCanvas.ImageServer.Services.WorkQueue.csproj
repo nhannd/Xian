@@ -40,6 +40,8 @@
     <Compile Include="BaseItemProcessor.cs" />
     <Compile Include="CleanupStudy\CleanupStudyFactoryExtension.cs" />
     <Compile Include="CleanupStudy\CleanupStudyItemProcessor.cs" />
+    <Compile Include="CompressStudy\CompressInstanceStatistics.cs" />
+    <Compile Include="CompressStudy\CompressStudyStatistics.cs" />
     <Compile Include="DeleteStudy\DeleteStudyFactoryExtension.cs" />
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
     <Compile Include="CompressStudy\CompressStudyFactoryExtension.cs" />

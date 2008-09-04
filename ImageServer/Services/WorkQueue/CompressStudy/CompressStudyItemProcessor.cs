@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -47,6 +48,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
 	public class CompressStudyItemProcessor : BaseItemProcessor
 	{
+		#region Private Members
+		private CompressInstanceStatistics _instanceStats;
+		private CompressStudyStatistics _studyStats;
+		#endregion
+
 		private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml, IDicomCodecFactory theCodecFactory)
 		{
 			Platform.CheckForNullReference(item, "item");
@@ -120,14 +126,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		{
 			DicomFile file;
 
+			_instanceStats = new CompressInstanceStatistics();
+
+			_instanceStats.ProcessTime.Start();
+
 			// Use the command processor for rollback capabilities.
 			ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue Compress DICOM File");
+			string modality = String.Empty;
 
 			try
 			{
 				file = new DicomFile(path);
 
+				_instanceStats.FileLoadTime.Start();
 				file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
+				_instanceStats.FileLoadTime.End();
+
+				modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
+
+			    FileInfo fileInfo = new FileInfo(path);
+				_instanceStats.FileSize = (ulong)fileInfo.Length;
 
 				// Get the Patients Name for processing purposes.
 				String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
@@ -148,13 +166,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 				DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
 
-				context.CommandProcessor.AddCommand(
-					new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true));
+				DicomCompressCommand compressCommand =
+					new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
+				context.CommandProcessor.AddCommand(compressCommand);
 
 
 				if (processor.CommandCount == 1)
 				{
 					Platform.Log(LogLevel.Info, "No compression defined for object.");
+					_instanceStats.ProcessTime.End();
+					_studyStats.AddSubStats(_instanceStats);
 					return;
 				}
 
@@ -174,15 +195,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				// Do the actual processing
 				if (!processor.Execute())
 				{
+					_instanceStats.CompressTime.Add(compressCommand.CompressTime);
 					Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
 					Platform.Log(LogLevel.Error,"Compression file that failed: {0}",file.Filename);
 					throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
 				}
 				else
 				{
+					_instanceStats.CompressTime.Add(compressCommand.CompressTime);
 					Platform.Log(LogLevel.Info, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
 								 patientsName);
-
 				}
 			}
 			catch (Exception e)
@@ -190,83 +212,124 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
 							 processor.Description);
 				processor.Rollback();
+
 				throw new ApplicationException("Unexpected exception when compressing file.", e);
 			}
+			finally
+			{
+				_instanceStats.ProcessTime.End();
+				_studyStats.AddSubStats(_instanceStats);
+
+				_studyStats.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+				if (String.IsNullOrEmpty(modality) == false)
+					_studyStats.Modality = modality;
+
+				// Update the statistics
+				_studyStats.NumInstances++;
+			}
 		}
+
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
-            
-            // don't compress until the study has been completely processed.
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed});
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
-            if (relatedItems != null && relatedItems.Count > 0)
-            {
-                // can't do it now. Reschedule it for future
-                relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
-                                      {
-                                          return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
-                                      });
 
-                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
-                if (newScheduledTime < Platform.Time.AddMinutes(1))
-                    newScheduledTime = Platform.Time.AddMinutes(1);
+			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+			workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
+			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
 
-                PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
-                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
-            }
-            else
-            {
-                LoadUids(item);
-                LoadStorageLocation(item);
+			// don't compress until the study has been completely processed.
+			workQueueCriteria.WorkQueueStatusEnum.In(
+				new WorkQueueStatusEnum[]
+					{WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed});
+			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
+			if (relatedItems != null && relatedItems.Count > 0)
+			{
+				// can't do it now. Reschedule it for future
+				relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
+				                  	{
+				                  		return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
+				                  	});
 
-                if (WorkQueueUidList.Count == 0)
-                {
-                    // No UIDs associated with the WorkQueue item.  Set the status back to idle
-                    PostProcessing(item, false, false);
-                    return;
-                }
-                XmlElement element = item.Data.DocumentElement;
+				DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
+				if (newScheduledTime < Platform.Time.AddMinutes(1))
+					newScheduledTime = Platform.Time.AddMinutes(1);
 
-                string syntax = element.Attributes["syntax"].Value;
+				PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
+				Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime,
+				             StorageLocation.StudyInstanceUid);
+			}
+			else
+			{
+				LoadUids(item);
+				LoadStorageLocation(item);
 
-                TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+				if (WorkQueueUidList.Count == 0)
+				{
+					// No UIDs associated with the WorkQueue item.  Set the status back to idle
+					PostProcessing(item, false, false);
+					return;
+				}
+				XmlElement element = item.Data.DocumentElement;
 
-                Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
+				string syntax = element.Attributes["syntax"].Value;
 
-                IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
-                IDicomCodecFactory theCodecFactory = null;
-                foreach (IDicomCodecFactory codec in codecs)
-                    if (codec.CodecTransferSyntax.Equals(compressSyntax))
-                    {
-                        theCodecFactory = codec;
-                        break;
-                    }
+				TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
 
-                if (theCodecFactory == null)
-                {
-                    item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
-                    Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
-                    base.PostProcessingFailure(item, true);
-                    return;
-                }
+				Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid,
+				             ServerPartition.Load(item.ServerPartitionKey).AeTitle);
 
-                if (!ProcessUidList(item, theCodecFactory))
-                    PostProcessingFailure(item, false);
-                else
-                {
-                    if (compressSyntax.LossyCompressed)
-                        UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
-                    else
-                        UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
+				IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
+				IDicomCodecFactory theCodecFactory = null;
+				foreach (IDicomCodecFactory codec in codecs)
+					if (codec.CodecTransferSyntax.Equals(compressSyntax))
+					{
+						theCodecFactory = codec;
+						break;
+					}
 
-                    PostProcessing(item, true, false);  // batch processed, not complete
-                }
-            }
+				if (theCodecFactory == null)
+				{
+					item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
+					Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+					base.PostProcessingFailure(item, true);
+					return;
+				}
 
-		    
+				if (!ProcessUidList(item, theCodecFactory))
+					PostProcessingFailure(item, false);
+				else
+				{
+					if (compressSyntax.LossyCompressed)
+						UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
+					else
+						UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
+
+					PostProcessing(item, true, false); // batch processed, not complete
+				}
+			}
+		}
+
+		protected override void OnProcessItemEnd(Model.WorkQueue item)
+		{
+			Platform.CheckForNullReference(item, "item");
+
+			_studyStats.UidsLoadTime.Add(UidsLoadTime);
+			_studyStats.StorageLocationLoadTime.Add(StorageLocationLoadTime);
+			_studyStats.StudyXmlLoadTime.Add(StudyXmlLoadTime);
+			_studyStats.DBUpdateTime.Add(DBUpdateTime);
+
+			if (_studyStats.NumInstances > 0)
+			{
+				_studyStats.CalculateAverage();
+				StatisticsLogger.Log(LogLevel.Info, false, _studyStats);
+			}
+		}
+
+		protected override void OnProcessItemBegin(Model.WorkQueue item)
+		{
+			Platform.CheckForNullReference(item, "item");
+
+			_studyStats = new CompressStudyStatistics();
+			_studyStats.Description = String.Format("{0}", item.WorkQueueTypeEnum);
 		}
 	}
 }

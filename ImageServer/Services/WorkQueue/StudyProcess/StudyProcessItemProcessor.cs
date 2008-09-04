@@ -571,7 +571,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (_statistics.NumInstances > 0)
             {
                 _statistics.CalculateAverage();
-                StatisticsLogger.Log(LogLevel.Info, _statistics);
+                StatisticsLogger.Log(LogLevel.Info, false, _statistics);
             }
         }
 

@@ -49,36 +49,48 @@ namespace ClearCanvas.Common.Statistics
             _extensions = _xp.CreateExtensions();
         }
 
-        /// <summary>
+		/// <summary>
+        /// Logs a statistics.
+        /// </summary>
+        /// <param name="level">The log level used for logging the statistics</param>
+        /// <param name="recursive">Bool telling if the log should be recursive, or just display averages.</param>
+        /// <param name="statistics">The statistics to be logged</param>
+		public static void Log(LogLevel level, bool recursive, StatisticsSet statistics)
+		{
+			XmlElement el = statistics.GetXmlElement(doc, recursive);
+
+			using (StringWriter sw = new StringWriter())
+			{
+				XmlWriterSettings settings = new XmlWriterSettings();
+				settings.Indent = true;
+				settings.NewLineOnAttributes = false;
+				settings.OmitXmlDeclaration = true;
+				settings.Encoding = Encoding.UTF8;
+
+				XmlWriter writer = XmlWriter.Create(sw, settings);
+				el.WriteTo(writer);
+				writer.Flush();
+
+				Platform.Log(level, sw.ToString());
+
+				writer.Close();
+			}
+
+			foreach (IStatisticsLoggerListener extension in _extensions)
+			{
+				extension.OnStatisticsLogged(statistics);
+			}
+
+		}
+
+    	/// <summary>
         /// Logs a statistics.
         /// </summary>
         /// <param name="level">The log level used for logging the statistics</param>
         /// <param name="statistics">The statistics to be logged</param>
         public static void Log(LogLevel level, StatisticsSet statistics)
         {
-            XmlElement el = statistics.GetXmlElement(doc, true);
-
-            using (StringWriter sw = new StringWriter())
-            {
-                XmlWriterSettings settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.NewLineOnAttributes = false;
-                settings.OmitXmlDeclaration = true;
-                settings.Encoding = Encoding.UTF8;
-
-                XmlWriter writer = XmlWriter.Create(sw, settings);
-                el.WriteTo(writer);
-                writer.Flush();
-
-                Platform.Log(level, sw.ToString());
-
-                writer.Close();
-            }
-
-            foreach (IStatisticsLoggerListener extension in _extensions)
-            {
-                extension.OnStatisticsLogged(statistics);
-            }
+    		Log(level, true, statistics);
         }
     }
 }
