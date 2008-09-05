@@ -89,7 +89,6 @@
 					if (orderDetail)
 					{
 						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
-						Field.setValue($("PlacerNumber"), orderDetail.PlacerNumber);
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 						Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
@@ -207,8 +206,6 @@
 					<tr>
 						<td width="120" class="propertyname">Priority</td>
 						<td width="200"><div id="OrderPriority"/></td>
-						<td width="120" class="propertyname">Placer Number</td>
-						<td width="200"><div id="PlacerNumber"/></td>
 					</tr>
 					<tr>
 						<td width="120" class="propertyname">Ordering Facility</td>
