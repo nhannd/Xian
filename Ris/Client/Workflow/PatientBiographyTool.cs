@@ -82,8 +82,6 @@ namespace ClearCanvas.Ris.Client.Workflow
                 {
                     this.Enabled = DetermineEnablement();
                 };
-
-				((IRegistrationWorkflowItemToolContext)this.ContextBase).RegisterDoubleClickHandler(View, delegate { return this.Enabled; });
             }
 			else if (this.ContextBase is IReportingWorkflowItemToolContext)
 			{

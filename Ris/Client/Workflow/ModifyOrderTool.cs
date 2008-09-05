@@ -66,6 +66,8 @@ namespace ClearCanvas.Ris.Client.Workflow
                                && this.Context.SelectedItems.Count == 1
                                && CollectionUtils.FirstElement(this.Context.SelectedItems).OrderRef != null;
             };
+
+            this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
         }
 
         public bool Enabled
