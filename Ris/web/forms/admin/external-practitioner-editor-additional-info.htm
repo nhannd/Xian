@@ -29,6 +29,7 @@
 				
 				$("hmri").value = Ris.getTag("HmriNumber") || "";
 				$("validated").checked = Ris.getTag("Validated") == "True" ? true : false;
+				Field.setValue($("lastValidated"), "Last validated: " + (Ris.getTag("LastValidated") ? Ris.getTag("LastValidated") : "never"));
 
 				Field.show($("ValidatedSection"), context.CanValidate);
             }
@@ -90,6 +91,7 @@
 		<span id="ValidatedSection">
 			<label for="validated">Validated</label>
 			<input id="validated" type="checkbox" onMouseUp="onValidatedChanged()" onchange="onValidatedChanged()" />
+			<small id="lastValidated"/>
 		</span>
 	</form>         
    </body>
