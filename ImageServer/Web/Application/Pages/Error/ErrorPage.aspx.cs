@@ -14,8 +14,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 {
     public partial class ErrorPage : BasePage
     {
+
+
         protected void Page_Load(object sender, EventArgs e)
         {
+            if(Context.Items["ERROR_MESSAGE"] != null) {
+                ErrorMessageLabel.Text = Context.Items["ERROR_MESSAGE"].ToString();
+            } 
+            if (Context.Items["STACK_TRACE"] != null)
+            {
+                StackTraceTextBox.Text = Context.Items["STACK_TRACE"].ToString();
+                StackTraceTextBox.Visible = true;
+                StackTraceMessage.Visible = true;
+            }
+            if (Context.Items["DESCRIPTION"] != null)
+            {
+            DescriptionLabel.Text = Context.Items["DESCRIPTION"].ToString();
+            }
 
         }
     }

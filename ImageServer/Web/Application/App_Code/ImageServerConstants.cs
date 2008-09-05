@@ -80,4 +80,12 @@ public class ImageServerConstants
         public const string StudyUID = "studyuid";
     }
 
+    public class ContextKeys
+    {
+        public const string ErrorMessage = "ERROR_MESSAGE";
+        public const string Description = "DESCRIPTION";
+        public const string StackTrace = "STACK_TRACE";
+
+    }
+
 }

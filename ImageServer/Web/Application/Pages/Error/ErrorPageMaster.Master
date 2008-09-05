@@ -4,6 +4,30 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title></title>
+<script type="text/javascript">
+function toggleLayer( whichLayer )
+{
+  var elem, vis;
+  if( document.getElementById ) // this is the way the standards work
+    elem = document.getElementById( whichLayer );
+  else if( document.all ) // this is the way old msie versions work
+      elem = document.all[whichLayer];
+  else if( document.layers ) // this is the way nn4 works
+    elem = document.layers[whichLayer];
+  vis = elem.style;
+  // if the style.display value is blank we try to figure it out here
+  if(vis.display==''&&elem.offsetWidth!=undefined&&elem.offsetHeight!=undefined)
+    vis.display = (elem.offsetWidth!=0&&elem.offsetHeight!=0)?'block':'none';
+  vis.display = (vis.display==''||vis.display=='block')?'none':'block';
+}
+</script>
+
+<style type="text/css">
+div#StackTrace
+{
+  display: none;
+}
+</style>
 </head>
 <body class="ErrorBody">
     <form runat="server">
@@ -16,18 +40,23 @@
                     <div class="ErrorMessage">
                         <asp:ContentPlaceHolder ID="ErrorMessagePlaceHolder" runat="server" />
                     </div>
-                    <div class="Description">
-                        <asp:ContentPlaceHolder ID="DescriptionPlaceHolder" runat="server" />
-                        
+                    <div class="Description">                     
+                        <asp:ContentPlaceHolder ID="DescriptionPlaceHolder" runat="server" />                      
+
                         <p>For further assistance, try the following links:</p>
 		                <ul>
-		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca">ClearCanvas.ca</a></li>
 		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca/dnn/Community/Forums/tabid/69/view/topics/forumid/11/Default.aspx">ImageServer Users Forum</a></li>
 		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca/dnn/Community/Forums/tabid/69/view/topics/forumid/12/Default.aspx">ImageServer Developers Forum</a></li>
+		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca">ClearCanvas.ca</a></li>
 		                </ul>
-                    </div>
+		                                    </div>
                 </asp:TableCell></asp:TableRow>
-        </asp:Table>
+                <asp:TableRow>
+                    <asp:TableCell>
+		                                        <asp:ContentPlaceHolder ID="UserEscapePlaceHolder" runat="server" />
+                    </asp:TableCell>
+                </asp:TableRow>
+        </asp:Table>       
         </asp:Panel>
         </center>
     </form>

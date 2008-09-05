@@ -357,6 +357,13 @@
     <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Error\JavascriptRequired.aspx.cs">
+      <DependentUpon>JavascriptRequired.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\JavascriptRequired.aspx.designer.cs">
+      <DependentUpon>JavascriptRequired.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Error\Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
@@ -901,6 +908,7 @@
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx" />
     <Content Include="Pages\Configure\ServiceLocks\Default.aspx" />
     <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
+    <Content Include="Pages\Error\JavascriptRequired.aspx" />
     <Content Include="Pages\Error\Default.aspx" />
     <Content Include="Pages\Error\ErrorPage.aspx" />
     <Content Include="Pages\Help\About.aspx" />
@@ -930,6 +938,7 @@
     <Content Include="Pages\StudyDetails\Controls\ArchivePanel.ascx" />
     <Content Include="Pages\StudyDetails\Controls\StudyStorageView.ascx" />
     <Content Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx" />
+    <Content Include="Pages\StudyDetails\Controls\UserEscapeLinkBackground.png" />
     <Content Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx" />
     <Content Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
     <Content Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx" />

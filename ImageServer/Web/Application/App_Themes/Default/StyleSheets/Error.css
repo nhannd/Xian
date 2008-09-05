@@ -4,7 +4,7 @@
 }
 
 .Description {
-	background-color: #eeeeee;
+	background: #eeeeee url(../images/Error/ErrorDescriptionBackground.png) repeat-x top;
 	border: 1px solid #618FAD;
 	padding: 10px 10px 0px 10px;
 	margin-top: 10px;
@@ -42,7 +42,28 @@
 
 .ErrorLink
 {
-    color: #3D98D1;
+    color: #3D66D1;
+    text-decoration: underline;
+    font-weight: bold;
+    font-family: Sans-Serif;
+}
+
+.UserEscapeContainer
+{
+text-align: right; 
+margin-top: 10px; 
+padding-bottom: 5px; 
+font-family: sans-serif;
+}
+
+.UserEscapeLink
+{
     text-decoration: none;
     font-weight: bold;
+    font-size: 16px;
+    font-family: Sans-Serif;
+    color: White;
+    border: solid 1px #205F87; 
+    padding: 3px 5px 3px 5px; 
+    background: #8FC3E4 url(/App_Themes/Default/images/Error/UserEscapeLinkBackground.png) repeat-x;
 }
