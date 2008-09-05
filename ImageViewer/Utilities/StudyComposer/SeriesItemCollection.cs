@@ -30,6 +30,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 			return _map[node];
 		}
 
+		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			int id = base.IndexOf(sender as SeriesItem);
+			if (id >= 0)
+				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, id));
+		}
+
 		protected override object AddNewCore()
 		{
 			return new SeriesItem(new SeriesNode());
@@ -37,6 +44,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 
 		protected override void ClearItems()
 		{
+			foreach (SeriesItem item in _map.Values)
+			{
+				item.PropertyChanged -= Item_PropertyChanged;
+			}
 			base.ClearItems();
 			_map.Clear();
 			_list.Clear();
@@ -50,11 +61,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 				_list.Insert(index, node);
 
 			base.InsertItem(index, item);
+
+			item.PropertyChanged += Item_PropertyChanged;
 		}
 
 		protected override void RemoveItem(int index)
 		{
 			SeriesNode node = base[index].Node;
+
+			_map[node].PropertyChanged -= Item_PropertyChanged;
 			_map.Remove(node);
 			_list.Remove(node);
 
@@ -66,9 +81,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 			SeriesNode oldNode = base[index].Node;
 			SeriesNode newNode = item.Node;
 			_map.Add(newNode, item);
+			_map[oldNode].PropertyChanged -= Item_PropertyChanged;
 			_map.Remove(oldNode);
 			_list.Remove(oldNode);
 			_list.Insert(index, newNode);
+			item.PropertyChanged += Item_PropertyChanged;
 
 			base.SetItem(index, item);
 		}

@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 {
 	[ButtonAction("addnew", "studyComposer-toolbar/AddNew", "AddNew")]
 	[MenuAction("addnew", "studyComposer-context/AddNew", "AddNew")]
-	[VisibleStateObserver("addnew", "IsNotImageItemGallery", "DummyEvent")]
+	[VisibleStateObserver("addnew", "IsNotImageItemGallery", "IsNotImageItemGalleryChanged")]
 	[IconSet("addnew", IconScheme.Colour, "AddToolSmall.png", "AddToolSmall.png", "AddToolSmall.png")]
 	// Action: Delete
 	[ButtonAction("delete", "studyComposer-toolbar/Delete", "Delete")]
@@ -34,28 +34,38 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 	{
 		public void Delete()
 		{
-			try {
+			try
+			{
 				List<object> list = new List<object>();
-				foreach (object o in base.Context.Selection.Items) {
+				foreach (object o in base.Context.Selection.Items)
+				{
 					list.Add(o);
 				}
-				foreach (object o in list) {
+				foreach (object o in list)
+				{
 					base.Context.DataSource.Remove(o);
 				}
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
 
 		public void Clear()
 		{
-			try {
-				if (base.Context.DataSource.Count > 0) {
-					if (base.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteAllItems, MessageBoxActions.YesNo) == DialogBoxAction.Yes) {
+			try
+			{
+				if (base.Context.DataSource.Count > 0)
+				{
+					if (base.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteAllItems, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+					{
 						base.Context.DataSource.Clear();
 					}
 				}
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
@@ -65,29 +75,38 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 			if (!IsNotImageItemGallery)
 				return;
 
-			try {
+			try
+			{
 				object o = base.Context.DataSource.AddNew();
-				IStudyComposerItem item = (IStudyComposerItem)o;
+				IStudyComposerItem item = (IStudyComposerItem) o;
 				item.UpdateIcon();
 				base.Context.DataSource.Add(o);
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
 
 		public void ShowProperties()
 		{
-			try {
-				if (base.Context.SelectedData.Items.Length > 0) {
-					ShowProperties((IStudyComposerItem)base.Context.Selection.Items[0]);
+			try
+			{
+				if (base.Context.SelectedData.Items.Length > 0)
+				{
+					ShowProperties((IStudyComposerItem) base.Context.Selection.Items[0]);
 				}
-			} catch (Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
 
-		public void ShowProperties(IStudyComposerItem item) {
-			if (item != null) {
+		public void ShowProperties(IStudyComposerItem item)
+		{
+			if (item != null)
+			{
 				StudyComposerItemEditorComponent component = new StudyComposerItemEditorComponent(item);
 				base.Context.DesktopWindow.ShowDialogBox(component, component.Name);
 			}
@@ -116,8 +135,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 			this.AtLeastOneSelected = (base.Context.Selection.Items.Length > 0);
 		}
 
-		private void Context_ItemActivated(object sender, GalleryItemEventArgs e) {
-			ShowProperties((IStudyComposerItem)e.Item);
+		private void Context_ItemActivated(object sender, GalleryItemEventArgs e)
+		{
+			ShowProperties((IStudyComposerItem) e.Item);
 		}
 
 		#endregion
@@ -126,6 +146,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 
 		private bool _atLeastOneSelected = false;
 		public event EventHandler AtLeastOneSelectedChanged;
+
 		public bool AtLeastOneSelected
 		{
 			get { return _atLeastOneSelected; }
@@ -145,7 +166,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 			get { return !(base.Context.DataSource is BindingListWrapper<ImageItem>); }
 		}
 
-		public event EventHandler DummyEvent;
+		/// <summary>
+		/// Fired when the value of <see cref="IsNotImageItemGallery"/> changes.
+		/// </summary>
+		/// <remarks>However, since the value of <see cref="IsNotImageItemGallery"/> NEVER changes, this event never fires. Its presence is only to
+		/// allow the VisibleStateObserver attribute to have a dummy event to listen on.</remarks>
+		public event EventHandler IsNotImageItemGalleryChanged;
 
 		#endregion
 	}

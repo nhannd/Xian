@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 	/// </summary>
 	public class ImageItem : StudyComposerItemBase<SopInstanceNode>
 	{
-		private Image _baseIcon;
+		private readonly string _igKey;
 		private string _name = SR.FormatStudyComposerGenericImageLabelCaption;
 
 		public ImageItem(SopInstanceNode sopInstance, IPresentationImage pImage)
@@ -24,15 +24,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 			if (seriesDesc.Length > 0)
 				_name = string.Format("{0}: {1}", seriesDesc, _name);
 
+			_igKey = sopInstance.InstanceUid;
+
 			if (pImage != null)
-				base.Icon = _baseIcon = _helper.CreateImageIcon(pImage);
+			{
+				_cache.LoadIcon(_igKey, delegate() { return _helper.CreateImageIcon(pImage); }, this.RefreshIcon);
+			}
+			base.Icon = _cache[_igKey];
 		}
 
 		private ImageItem(ImageItem source) : this(source.Node.Copy(), null)
 		{
 			this._name = source._name;
-			this._baseIcon = (Image)source._baseIcon.Clone();
-			this.Icon = (Image)source.Icon.Clone();
+			this._igKey = source._igKey;
+			base.Icon = _cache[_igKey];
 		}
 
 		/// <summary>
@@ -42,6 +47,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		public ImageItem Copy()
 		{
 			return new ImageItem(this);
+		}
+
+		private void RefreshIcon() {
+			base.Icon = _cache[_igKey];
 		}
 
 		#region Overrides
@@ -67,8 +76,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		/// Regenerates the icon for a specific icon size.
 		/// </summary>
 		/// <param name="iconSize">The <see cref="Size"/> of the icon to generate.</param>
-		public override void UpdateIcon(Size iconSize)
-		{
+		public override void UpdateIcon(Size iconSize) {
+			Image _baseIcon = _cache[_igKey];
 			if (_baseIcon.Size != iconSize)
 			{
 				// if requesting a new icon size
@@ -102,10 +111,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		#region Statics
 
 		private static readonly IconHelper _helper = new IconHelper(64, 64);
+		private static readonly IconCache _cache = new IconCache();
 
 		static ImageItem()
 		{
 			_helper.IconSize = new Size(64, 64);
+		}
+
+		internal static void ClearIconCache()
+		{
+			_cache.Clear();
 		}
 
 		#endregion

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using ClearCanvas.Dicom.Utilities.StudyBuilder;
@@ -16,6 +17,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		{
 			base.Node = patient;
 			_studies = new StudyItemCollection(patient.Studies);
+			_studies.ListChanged += OnChildListChanged;
 		}
 
 		private PatientItem(PatientItem source) : this(source.Node.Copy(false))
@@ -39,6 +41,18 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		public PatientItem Copy()
 		{
 			return new PatientItem(this);
+		}
+
+		private void OnChildListChanged(object sender, ListChangedEventArgs e) {
+			switch (e.ListChangedType) {
+				case ListChangedType.Reset:
+				case ListChangedType.ItemAdded:
+				case ListChangedType.ItemDeleted:
+				case ListChangedType.ItemMoved:
+				case ListChangedType.ItemChanged:
+					UpdateIcon();
+					break;
+			}
 		}
 
 		#region Misc Helpers

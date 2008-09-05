@@ -30,6 +30,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 			return _map[node];
 		}
 
+		private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			int id = base.IndexOf(sender as StudyItem);
+			if (id >= 0)
+				base.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, id));
+		}
+
 		protected override object AddNewCore()
 		{
 			return new StudyItem(new StudyNode());
@@ -37,6 +44,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 
 		protected override void ClearItems()
 		{
+			foreach (StudyItem item in _map.Values)
+			{
+				item.PropertyChanged -= Item_PropertyChanged;
+			}
 			base.ClearItems();
 			_map.Clear();
 			_collection.Clear();
@@ -50,11 +61,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 				_collection.Add(node);
 
 			base.InsertItem(index, item);
+
+			item.PropertyChanged += Item_PropertyChanged;
 		}
 
 		protected override void RemoveItem(int index)
 		{
 			StudyNode node = base[index].Node;
+
+			_map[node].PropertyChanged -= Item_PropertyChanged;
 			_map.Remove(node);
 			_collection.Remove(node);
 
@@ -66,9 +81,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 			StudyNode oldNode = base[index].Node;
 			StudyNode newNode = item.Node;
 			_map.Add(newNode, item);
+			_map[oldNode].PropertyChanged -= Item_PropertyChanged;
 			_map.Remove(oldNode);
 			_collection.Remove(oldNode);
 			_collection.Add(newNode);
+			item.PropertyChanged += Item_PropertyChanged;
 
 			base.SetItem(index, item);
 		}

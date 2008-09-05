@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Utilities.StudyBuilder;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleComposerAdapter
 {
@@ -386,16 +387,25 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 					{
 						StudyItem study = (StudyItem) droppingItem;
 						if (modifiers == ModifierFlags.None)
-						{
-							if (patient.Studies.Contains(study))
-							{
-								allowed &= false;
-							}
-						}
+							allowed &= !(patient.Studies.Contains(study)); // disallow moves where the item is already in the target tree
 						else if (modifiers == ModifierFlags.Shift)
-						{
 							allowed &= true;
-						}
+					}
+					else if (droppingItem is SeriesItem)
+					{
+						SeriesItem series = (SeriesItem) droppingItem;
+						if (modifiers == ModifierFlags.None)
+							allowed &= (patient.Node != GetNodeAncestor(series.Node, 2)); // disallow moves where the item is already in the target tree
+						else if (modifiers == ModifierFlags.Shift)
+							allowed &= true;
+					}
+					else if (droppingItem is ImageItem)
+					{
+						ImageItem image = (ImageItem) droppingItem;
+						if (modifiers == ModifierFlags.None)
+							allowed &= (patient.Node != GetNodeAncestor(image.Node, 3)); // disallow moves where the item is already in the target tree
+						else if (modifiers == ModifierFlags.Shift)
+							allowed &= true;
 					}
 					else
 					{
@@ -406,13 +416,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 				if (allowed)
 				{
 					if (modifiers == ModifierFlags.None)
-					{
 						return DragDropOption.Move;
-					}
 					else if (modifiers == ModifierFlags.Shift)
-					{
 						return DragDropOption.Copy;
-					}
 				}
 				return DragDropOption.None;
 			}
@@ -440,6 +446,66 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 							action = DragDropOption.Copy;
 						}
 					}
+					else if (droppingItem is SeriesItem)
+					{
+						SeriesItem series = (SeriesItem) droppingItem;
+						if (modifiers == ModifierFlags.None)
+						{
+							StudyNode studyNode = (StudyNode) GetNodeAncestor(series.Node, 1);
+							PatientNode patientNode = (PatientNode) GetNodeAncestor(studyNode, 1);
+							if (patient.Node != patientNode)
+							{
+								StudyItem study = new StudyItem(studyNode.Copy(false));
+								study.Series.Add(series.Copy());
+								study.UpdateIcon();
+								patient.Studies.Add(study);
+								action = DragDropOption.Move;
+							}
+						}
+						else if (modifiers == ModifierFlags.Shift)
+						{
+							StudyNode studyNode = (StudyNode) GetNodeAncestor(series.Node, 1);
+							StudyItem study = new StudyItem(studyNode.Copy(false));
+							study.Series.Add(series.Copy());
+							study.UpdateIcon();
+							patient.Studies.Add(study);
+							action = DragDropOption.Copy;
+						}
+					}
+					else if (droppingItem is ImageItem)
+					{
+						ImageItem image = (ImageItem) droppingItem;
+						if (modifiers == ModifierFlags.None)
+						{
+							SeriesNode seriesNode = (SeriesNode) GetNodeAncestor(image.Node, 1);
+							StudyNode studyNode = (StudyNode) GetNodeAncestor(seriesNode, 1);
+							PatientNode patientNode = (PatientNode) GetNodeAncestor(studyNode, 1);
+							if (patient.Node != patientNode)
+							{
+								SeriesItem series = new SeriesItem(seriesNode.Copy(false));
+								StudyItem study = new StudyItem(studyNode.Copy(false));
+								series.Images.Add(image.Copy());
+								series.UpdateIcon();
+								study.Series.Add(series);
+								study.UpdateIcon();
+								patient.Studies.Add(study);
+								action = DragDropOption.Move;
+							}
+						}
+						else if (modifiers == ModifierFlags.Shift)
+						{
+							SeriesNode seriesNode = (SeriesNode) GetNodeAncestor(image.Node, 1);
+							StudyNode studyNode = (StudyNode) GetNodeAncestor(seriesNode, 1);
+							SeriesItem series = new SeriesItem(seriesNode.Copy(false));
+							StudyItem study = new StudyItem(studyNode.Copy(false));
+							series.Images.Add(image.Copy());
+							series.UpdateIcon();
+							study.Series.Add(series);
+							study.UpdateIcon();
+							patient.Studies.Add(study);
+							action = DragDropOption.Copy;
+						}
+					}
 				}
 				return action;
 			}
@@ -463,16 +529,17 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 					{
 						SeriesItem series = (SeriesItem) droppingItem;
 						if (modifiers == ModifierFlags.None)
-						{
-							if (study.Series.Contains(series))
-							{
-								allowed &= false;
-							}
-						}
+							allowed &= !(study.Series.Contains(series)); // disallow moves where the item is already in the target tree
 						else if (modifiers == ModifierFlags.Shift)
-						{
 							allowed &= true;
-						}
+					}
+					else if (droppingItem is ImageItem)
+					{
+						ImageItem image = (ImageItem) droppingItem;
+						if (modifiers == ModifierFlags.None)
+							allowed &= (study.Node != GetNodeAncestor(image.Node, 2)); // disallow moves where the item is already in the target tree
+						else if (modifiers == ModifierFlags.Shift)
+							allowed &= true;
 					}
 					else
 					{
@@ -483,13 +550,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 				if (allowed)
 				{
 					if (modifiers == ModifierFlags.None)
-					{
 						return DragDropOption.Move;
-					}
 					else if (modifiers == ModifierFlags.Shift)
-					{
 						return DragDropOption.Copy;
-					}
 				}
 				return DragDropOption.None;
 			}
@@ -517,6 +580,32 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 							action = DragDropOption.Copy;
 						}
 					}
+					else if (droppingItem is ImageItem)
+					{
+						ImageItem image = (ImageItem) droppingItem;
+						if (modifiers == ModifierFlags.None)
+						{
+							SeriesNode seriesNode = (SeriesNode) GetNodeAncestor(image.Node, 1);
+							StudyNode studyNode = (StudyNode) GetNodeAncestor(seriesNode, 1);
+							if (study.Node != studyNode)
+							{
+								SeriesItem series = new SeriesItem(seriesNode.Copy(false));
+								series.Images.Add(image.Copy());
+								series.UpdateIcon();
+								study.Series.Add(series);
+								action = DragDropOption.Move;
+							}
+						}
+						else if (modifiers == ModifierFlags.Shift)
+						{
+							SeriesNode seriesNode = (SeriesNode) GetNodeAncestor(image.Node, 1);
+							SeriesItem series = new SeriesItem(seriesNode.Copy(false));
+							series.Images.Add(image.Copy());
+							series.UpdateIcon();
+							study.Series.Add(series);
+							action = DragDropOption.Copy;
+						}
+					}
 				}
 				return action;
 			}
@@ -540,16 +629,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 					{
 						ImageItem image = (ImageItem) droppingItem;
 						if (modifiers == ModifierFlags.None)
-						{
-							if (series.Images.Contains(image))
-							{
-								allowed &= false;
-							}
-						}
+							allowed &= !(series.Images.Contains(image)); // disallow moves where the item is already in the target tree
 						else if (modifiers == ModifierFlags.Shift)
-						{
 							allowed &= true;
-						}
 					}
 					else
 					{
@@ -560,13 +642,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 				if (allowed)
 				{
 					if (modifiers == ModifierFlags.None)
-					{
 						return DragDropOption.Move;
-					}
 					else if (modifiers == ModifierFlags.Shift)
-					{
 						return DragDropOption.Copy;
-					}
 				}
 				return DragDropOption.None;
 			}
@@ -733,6 +811,20 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 			{
 				get { return true; }
 				set { throw new NotSupportedException(); }
+			}
+
+			protected static StudyBuilderNode GetNodeAncestor(StudyBuilderNode node, int parentLevel)
+			{
+				StudyBuilderNode result = null;
+				int level = 0;
+				while (node != null && level < parentLevel)
+				{
+					node = node.Parent;
+					level++;
+				}
+				if (level == parentLevel)
+					result = node;
+				return result;
 			}
 
 			protected override DragDropOption CheckDropLocalItems(IList<IGalleryItem> droppingItems, int targetIndex, DragDropOption actions, ModifierFlags modifiers)

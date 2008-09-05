@@ -41,6 +41,7 @@
     <Compile Include="Adapters\SimpleComposerAdapter\SimpleComposerAdapterTools.cs" />
     <Compile Include="Adapters\SimpleComposerAdapter\ImageCollection.cs" />
     <Compile Include="Adapters\SimpleComposerAdapter\StudyCollection.cs" />
+    <Compile Include="IconCache.cs" />
     <Compile Include="IconHelper.cs" />
     <Compile Include="ImageItem.cs" />
     <Compile Include="IStudyComposerItem.cs" />

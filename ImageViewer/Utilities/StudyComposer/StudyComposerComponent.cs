@@ -22,8 +22,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 	/// select publishing destinations. The composer component should only be consumed by an adapter component that provides a proper view of the composer.</para>
 	/// </remarks>
 	public class StudyComposerComponent : ApplicationComponent {
-		private event EventHandler _studyTreeUpdated;
-
 		private readonly StudyBuilder _studyBuilder;
 		private readonly PatientItemCollection _patients;
 
@@ -36,26 +34,21 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 			get { return _patients; }
 		}
 
-		public event EventHandler StudyTreeUpdated {
-			add { _studyTreeUpdated += value; }
-			remove { _studyTreeUpdated -= value; }
-		}
-
 		internal StudyBuilder StudyBuilder {
 			get { return _studyBuilder; }
 		}
 
-		protected virtual void FireStudyTreeUpdated() {
-			if (_studyTreeUpdated != null)
-				_studyTreeUpdated(this, new EventArgs());
-			Console.WriteLine("sumthing changed");
+		public override void Stop() {
+			// if it becomes possible to start multiple study composer components, then this needs to be fixed, else images in use might become disposed
+			ImageItem.ClearIconCache();
+
+			base.Stop();
 		}
 
 		#region Insert Helpers
 
 		public ImageItem InsertImage(IPresentationImage image) {
 			ImageItem node = DoInsertImage(image);
-			FireStudyTreeUpdated();
 			return node;
 		}
 
@@ -64,7 +57,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 			foreach (IPresentationImage image in images) {
 				list.Add(DoInsertImage(image));
 			}
-			FireStudyTreeUpdated();
 			return list.AsReadOnly();
 		}
 
