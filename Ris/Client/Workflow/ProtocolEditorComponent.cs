@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private readonly ProtocolCodeTable _availableProtocolCodes;
 		private readonly ProtocolCodeTable _selectedProtocolCodes;
-		private ProtocolCodeDetail _selectedProtocolCodesSelection;
+        private ProtocolCodeSummary _selectedProtocolCodesSelection;
 		private bool _canEdit;
 
 		private ILookupHandler _supervisorLookupHandler;
@@ -360,7 +360,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return new Selection(_selectedProtocolCodesSelection); }
 			set
 			{
-				_selectedProtocolCodesSelection = (ProtocolCodeDetail)value.Item;
+				_selectedProtocolCodesSelection = (ProtocolCodeSummary)value.Item;
 			}
 		}
 
