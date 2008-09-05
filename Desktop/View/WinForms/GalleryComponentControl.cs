@@ -151,28 +151,37 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Handling Changes in the Data Source
 
+		private delegate void OnListChangedDelegate(object sender, ListChangedEventArgs e);
+
 		private void OnListChanged(object sender, ListChangedEventArgs e)
 		{
-			_listView.SuspendLayout();
-			switch (e.ListChangedType)
+			if(_listView.InvokeRequired)
 			{
-				case ListChangedType.ItemAdded:
-					InsertItem(e.NewIndex, _gallery[e.NewIndex]);
-					break;
-				case ListChangedType.ItemDeleted:
-					RemoveItem(e.NewIndex);
-					break;
-				case ListChangedType.ItemChanged:
-					UpdateItem(e.NewIndex);
-					break;
-				case ListChangedType.ItemMoved:
-					MoveItem(e.NewIndex, e.OldIndex);
-					break;
-				case ListChangedType.Reset:
-					ResetList();
-					break;
+				_listView.Invoke(new OnListChangedDelegate(OnListChanged), sender, e);
 			}
-			_listView.ResumeLayout();
+			else
+			{
+				_listView.SuspendLayout();
+				switch (e.ListChangedType)
+				{
+					case ListChangedType.ItemAdded:
+						InsertItem(e.NewIndex, _gallery[e.NewIndex]);
+						break;
+					case ListChangedType.ItemDeleted:
+						RemoveItem(e.NewIndex);
+						break;
+					case ListChangedType.ItemChanged:
+						UpdateItem(e.NewIndex);
+						break;
+					case ListChangedType.ItemMoved:
+						MoveItem(e.NewIndex, e.OldIndex);
+						break;
+					case ListChangedType.Reset:
+						ResetList();
+						break;
+				}
+				_listView.ResumeLayout();
+			}
 		}
 
 		private void UpdateItem(int index)
