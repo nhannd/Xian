@@ -11,7 +11,7 @@
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
 
     <!-- this is special code that web service validation needs -->
-    <div id="service" style="behavior: url(<%= ResolveClientUrl("~/Services/webservices.htc") %>);" />
+    <div id="service" style="behavior: url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->
     <form id="MasterForm" runat="server" submitdisabledcontrols="true">
         <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/JavascriptRequired.aspx" />   
