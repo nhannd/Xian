@@ -240,7 +240,7 @@ namespace ClearCanvas.Ris.Client
             {
                 ExternalPractitionerSummary summary = JsmlSerializer.Deserialize<ExternalPractitionerSummary>(jsml);
                 ExternalPractitionerEditorComponent component = new ExternalPractitionerEditorComponent(summary.PractitionerRef);
-                LaunchAsDialog(_component.Host.DesktopWindow, component, SR.TitleExternalPractitioner);
+                LaunchAsDialog(_component.Host.DesktopWindow, component, SR.TitleExternalPractitioner + " - " + PersonNameFormat.Format(summary.Name));
             }
 
             public void OnScriptCompleted()
