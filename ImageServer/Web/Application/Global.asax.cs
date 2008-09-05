@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Web.Application
             string logMessage = string.Format("Message: {0}\nSource:{1}\nStack Trace:{2}", message, source, stackTrace);
             Platform.Log(LogLevel.Error, logMessage);           
 
-            //Context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, logMessage);
+            Context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, logMessage);
             Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);
         }
 
