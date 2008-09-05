@@ -80,10 +80,9 @@
     <Compile Include="EntityBrokers\PartitionSopClassEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PatientEntityBroker.gen.cs" />
-    <Compile Include="EntityBrokers\ReconcileAssessmentStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ReconcileQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ReconcileQueueUidEntityBroker.gen.cs" />
-    <Compile Include="EntityBrokers\ReconcileSchedulingStatusEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ReconcileReasonEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\QueueStudyStateEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\RestoreQueueEntityBroker.gen.cs" />
@@ -99,6 +98,7 @@
     <Compile Include="EntityBrokers\ServiceLockTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\StudyHistoryEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueEntityBroker.gen.cs" />

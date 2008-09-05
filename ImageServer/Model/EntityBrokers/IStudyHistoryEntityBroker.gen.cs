@@ -34,7 +34,8 @@
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
     using ClearCanvas.ImageServer.Enterprise;
+    using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-    public interface IReconcileSchedulingStatusEnumBroker: IEnumBroker<ReconcileSchedulingStatusEnum>
-    { }
+public interface IStudyHistoryEntityBroker : IEntityBroker<StudyHistory, StudyHistorySelectCriteria, StudyHistoryUpdateColumns>
+{ }
 }

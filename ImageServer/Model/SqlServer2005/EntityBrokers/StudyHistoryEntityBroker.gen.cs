@@ -34,10 +34,14 @@
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.EntityBrokers
 {
     using ClearCanvas.Common;
+    using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
     using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
 
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class ReconcileAssessmentStatusEnumBroker : EnumBroker<ReconcileAssessmentStatusEnum>, IReconcileAssessmentStatusEnumBroker
-    { }
+    public class StudyHistoryBroker : EntityBroker<StudyHistory, StudyHistorySelectCriteria, StudyHistoryUpdateColumns>, IStudyHistoryEntityBroker
+    {
+        public StudyHistoryBroker() : base("StudyHistory")
+        { }
+    }
 }

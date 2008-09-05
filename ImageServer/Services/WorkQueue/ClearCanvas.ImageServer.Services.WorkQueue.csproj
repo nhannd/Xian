@@ -59,8 +59,9 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StudyProcess\InsertReconcileQueueCommand.cs" />
-    <Compile Include="StudyProcess\CreateReconcileImageFileCommand.cs" />
+    <Compile Include="StudyProcess\MoveReconcileImageCommand.cs" />
     <Compile Include="StudyProcess\ReconcileImageContext.cs" />
+    <Compile Include="StudyProcess\ImageSetDescriptor.cs" />
     <Compile Include="StudyProcess\StudyComparer.cs" />
     <Compile Include="TierMigrate\TierMigrateStudyFactoryExtension.cs" />
     <Compile Include="TierMigrate\TierMigrateDatabaseUpdateCommand.cs" />
@@ -90,7 +91,8 @@
     <Compile Include="StudyProcess\InsertInstanceCommand.cs" />
     <Compile Include="StudyProcess\InsertStudyXmlCommand.cs" />
     <Compile Include="StudyProcess\StudyProcessFactoryExtension.cs" />
-    <Compile Include="StudyProcess\StudyProcessItemProcessor.cs" />
+    <Compile Include="StudyProcess\StudyProcessItemProcessor.cs">
+    </Compile>
     <Compile Include="WorkQueueFactoryExtensionPoint.cs" />
     <Compile Include="WorkQueueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

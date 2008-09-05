@@ -36,11 +36,22 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
-    public partial class ReconcileQueueSelectCriteria : EntitySelectCriteria
+    public partial class StudyHistorySelectCriteria : EntitySelectCriteria
     {
-        public ReconcileQueueSelectCriteria()
-        : base("ReconcileQueue")
+        public StudyHistorySelectCriteria()
+        : base("StudyHistory")
         {}
+        public ISearchCondition<System.Xml.XmlDocument> ChangeDescription
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ChangeDescription"))
+              {
+                 SubCriteria["ChangeDescription"] = new SearchCondition<System.Xml.XmlDocument>("ChangeDescription");
+              }
+              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ChangeDescription"];
+            } 
+        }
         public ISearchCondition<System.DateTime> InsertTime
         {
             get
@@ -50,28 +61,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["InsertTime"] = new SearchCondition<System.DateTime>("InsertTime");
               }
               return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
-            } 
-        }
-        public ISearchCondition<ReconcileReasonEnum> ReconcileReasonEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ReconcileReasonEnum"))
-              {
-                 SubCriteria["ReconcileReasonEnum"] = new SearchCondition<ReconcileReasonEnum>("ReconcileReasonEnum");
-              }
-              return (ISearchCondition<ReconcileReasonEnum>)SubCriteria["ReconcileReasonEnum"];
-            } 
-        }
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
-              {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey");
-              }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         public ISearchCondition<System.Xml.XmlDocument> StudyData

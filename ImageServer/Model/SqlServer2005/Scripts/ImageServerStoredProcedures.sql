@@ -3004,3 +3004,62 @@ END
 ' 
 END
 GO
+
+
+
+/****** Object:  StoredProcedure [dbo].[InsertReconcileQueue]    Script Date: 09/05/2008 15:21:03 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertReconcileQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: September 05, 2008
+-- Description:	Insert or update Reconcile Queue based on supplied data
+--				
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertReconcileQueue] 
+	-- Add the parameters for the stored procedure here
+	@ServerPartitionGUID uniqueidentifier,
+	@StudyStorageGUID uniqueidentifier,
+	@SeriesInstanceUid varchar(64),
+	@SopInstanceUid varchar(64),
+	@StudyData xml,
+	@ReconcileReasonEnum smallint
+AS
+BEGIN
+	
+	DECLARE @Guid uniqueidentifier
+	
+	BEGIN TRANSACTION
+
+	-- Look for existing ReconcileQueue entry
+	SELECT TOP 1 @Guid=GUID 
+	FROM	[dbo].[ReconcileQueue]
+	WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
+			AND  [StudyStorageGUID]=@StudyStorageGUID
+			AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
+	
+	IF @@ROWCOUNT = 0
+	BEGIN
+		-- PRINT ''Not found''
+		SET @Guid=newid()
+
+		INSERT INTO [dbo].[ReconcileQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[StudyData],[ReconcileReasonEnum])
+		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@StudyData,@ReconcileReasonEnum)
+	END
+
+
+	INSERT INTO [dbo].[ReconcileQueueUid]([GUID],[ReconcileQueueGUID],[SeriesInstanceUid],[SopInstanceUid])
+	VALUES (newid(),@Guid,@SeriesInstanceUid,@SopInstanceUid)
+	
+	COMMIT TRANSACTION
+	
+	SELECT * FROM [dbo].[ReconcileQueue] WHERE GUID=@Guid
+
+END
+'
+END
+GO

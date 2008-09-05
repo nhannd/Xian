@@ -35,6 +35,26 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
     using ClearCanvas.ImageServer.Enterprise;
 
-    public interface IReconcileAssessmentStatusEnumBroker: IEnumBroker<ReconcileAssessmentStatusEnum>
-    { }
+   public class StudyHistoryUpdateColumns : EntityUpdateColumns
+   {
+       public StudyHistoryUpdateColumns()
+       : base("StudyHistory")
+       {}
+        public System.Xml.XmlDocument ChangeDescription
+        {
+            set { SubParameters["ChangeDescription"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ChangeDescription", value); }
+        }
+        public System.DateTime InsertTime
+        {
+            set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
+        }
+        public System.Xml.XmlDocument StudyData
+        {
+            set { SubParameters["StudyData"] = new EntityUpdateColumn<System.Xml.XmlDocument>("StudyData", value); }
+        }
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        {
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+        }
+    }
 }

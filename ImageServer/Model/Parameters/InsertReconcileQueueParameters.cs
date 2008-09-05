@@ -1,77 +1,47 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class InsertReconcileQueueParameters : ProcedureParameters
+    public class InsertReconcileQueueParameters: ProcedureParameters
     {
         public InsertReconcileQueueParameters()
             : base("InsertReconcileQueue")
         {
-           
-        }
 
-        public ServerEntityKey FilesystemKey
-        {
-            set { SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
-        }
-
-        public ServerEntityKey ServerPartitionKey
-        {
-            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
         public ServerEntityKey StudyStorageKey
         {
             set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
-
-        public string StudyInstanceUid
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubCriteria["StudyInstanceUid"] = new ProcedureParameter<string>("StudyInstanceUid", value); }
+            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
-        public string SeriesInstanceUid
+        public String SeriesInstanceUid
         {
-            set { SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
+            set { SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<String>("SeriesInstanceUid", value); }
         }
 
-        public string SopInstanceUid
+        public String SopInstanceUid 
         {
-            set { SubCriteria["SopInstanceUid"] = new ProcedureParameter<string>("SopInstanceUid", value); }
+            set { SubCriteria["SopInstanceUid"] = new ProcedureParameter<String>("SopInstanceUid", value); }
         }
 
-        public string PatientId
+        public XmlDocument StudyData
         {
-            set { SubCriteria["PatientId"] = new ProcedureParameter<string>("PatientId", value); }
+            set { SubCriteria["StudyData"] = new ProcedureParameter<XmlDocument>("StudyData", value); }
         }
 
-        public string PatientsName
+        public ServerEnum ReconcileReasonEnum
         {
-            set { SubCriteria["PatientsName"] = new ProcedureParameter<string>("PatientsName", value); }
+            set { SubCriteria["ReconcileReasonEnum"] = new ProcedureParameter<ServerEnum>("ReconcileReasonEnum", value); }
         }
-
-        public string IssuerOfPatientId
-        {
-            set { SubCriteria["IssuerOfPatientId"] = new ProcedureParameter<string>("IssuerOfPatientId", value); }
-        }
-
-        public string PatientsBirthDate
-        {
-            set { SubCriteria["PatientsBirthDate"] = new ProcedureParameter<string>("PatientsBirthDate", value); }
-        }
-
-        public string PatientsSex
-        {
-            set { SubCriteria["PatientsSex"] = new ProcedureParameter<string>("PatientsSex", value); }
-        }
-
-        public string AccessionNumber
-        {
-            set { SubCriteria["AccessionNumber"] = new ProcedureParameter<string>("AccessionNumber", value); }
-        }
-
+        
     }
 }

@@ -39,47 +39,40 @@ namespace ClearCanvas.ImageServer.Model
     using ClearCanvas.ImageServer.Model.EntityBrokers;
 
     [Serializable]
-    public partial class ReconcileQueue: ServerEntity
+    public partial class StudyHistory: ServerEntity
     {
         #region Constructors
-        public ReconcileQueue():base("ReconcileQueue")
+        public StudyHistory():base("StudyHistory")
         {}
         #endregion
 
         #region Private Members
+        private System.Xml.XmlDocument _changeDescription;
         private System.DateTime _insertTime;
-        private ReconcileReasonEnum _reconcileReasonEnum;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private System.Xml.XmlDocument _studyData;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
-        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="InsertTime")]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
+        public System.Xml.XmlDocument ChangeDescription
+        {
+        get { return _changeDescription; }
+        set { _changeDescription = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
         public System.DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="ReconcileReasonEnum")]
-        public ReconcileReasonEnum ReconcileReasonEnum
-        {
-        get { return _reconcileReasonEnum; }
-        set { _reconcileReasonEnum = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
-        {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="StudyData")]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
         public System.Xml.XmlDocument StudyData
         {
         get { return _studyData; }
         set { _studyData = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="StudyStorageGUID")]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
@@ -88,17 +81,17 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Static Methods
-        static public ReconcileQueue Load(ServerEntityKey key)
+        static public StudyHistory Load(ServerEntityKey key)
         {
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 return Load(read, key);
             }
         }
-        static public ReconcileQueue Load(IReadContext read, ServerEntityKey key)
+        static public StudyHistory Load(IReadContext read, ServerEntityKey key)
         {
-            IReconcileQueueEntityBroker broker = read.GetBroker<IReconcileQueueEntityBroker>();
-            ReconcileQueue theObject = broker.Load(key);
+            IStudyHistoryEntityBroker broker = read.GetBroker<IStudyHistoryEntityBroker>();
+            StudyHistory theObject = broker.Load(key);
             return theObject;
         }
         #endregion

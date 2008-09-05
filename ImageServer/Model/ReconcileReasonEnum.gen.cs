@@ -40,71 +40,39 @@ namespace ClearCanvas.ImageServer.Model
     using System.Reflection;
 
 [Serializable]
-public partial class ReconcileSchedulingStatusEnum : ServerEnum
+public partial class ReconcileReasonEnum : ServerEnum
 {
       #region Private Static Members
-      private static readonly ReconcileSchedulingStatusEnum _Idle = GetEnum("Idle");
-      private static readonly ReconcileSchedulingStatusEnum _Pending = GetEnum("Pending");
-      private static readonly ReconcileSchedulingStatusEnum _InProgress = GetEnum("In Progress");
-      private static readonly ReconcileSchedulingStatusEnum _Completed = GetEnum("Completed");
-      private static readonly ReconcileSchedulingStatusEnum _Failed = GetEnum("Failed");
+      private static readonly ReconcileReasonEnum _InconsistentData = GetEnum("InconsistentData");
       #endregion
 
       #region Public Static Properties
       /// <summary>
-      /// Waiting to expire or for more images
+      /// Images must be reconciled because of inconsistent data.
       /// </summary>
-      public static ReconcileSchedulingStatusEnum Idle
+      public static ReconcileReasonEnum InconsistentData
       {
-          get { return _Idle; }
-      }
-      /// <summary>
-      /// Pending
-      /// </summary>
-      public static ReconcileSchedulingStatusEnum Pending
-      {
-          get { return _Pending; }
-      }
-      /// <summary>
-      /// In Progress
-      /// </summary>
-      public static ReconcileSchedulingStatusEnum InProgress
-      {
-          get { return _InProgress; }
-      }
-      /// <summary>
-      /// The Queue entry is completed.
-      /// </summary>
-      public static ReconcileSchedulingStatusEnum Completed
-      {
-          get { return _Completed; }
-      }
-      /// <summary>
-      /// The Queue entry has failed.
-      /// </summary>
-      public static ReconcileSchedulingStatusEnum Failed
-      {
-          get { return _Failed; }
+          get { return _InconsistentData; }
       }
 
       #endregion
 
       #region Constructors
-      public ReconcileSchedulingStatusEnum():base("ReconcileSchedulingStatusEnum")
+      public ReconcileReasonEnum():base("ReconcileReasonEnum")
       {}
       #endregion
       #region Public Members
       public override void SetEnum(short val)
       {
-          ServerEnumHelper<ReconcileSchedulingStatusEnum, IReconcileSchedulingStatusEnumBroker>.SetEnum(this, val);
+          ServerEnumHelper<ReconcileReasonEnum, IReconcileReasonEnumBroker>.SetEnum(this, val);
       }
-      static public List<ReconcileSchedulingStatusEnum> GetAll()
+      static public List<ReconcileReasonEnum> GetAll()
       {
-          return ServerEnumHelper<ReconcileSchedulingStatusEnum, IReconcileSchedulingStatusEnumBroker>.GetAll();
+          return ServerEnumHelper<ReconcileReasonEnum, IReconcileReasonEnumBroker>.GetAll();
       }
-      static public ReconcileSchedulingStatusEnum GetEnum(string lookup)
+      static public ReconcileReasonEnum GetEnum(string lookup)
       {
-          return ServerEnumHelper<ReconcileSchedulingStatusEnum, IReconcileSchedulingStatusEnumBroker>.GetEnum(lookup);
+          return ServerEnumHelper<ReconcileReasonEnum, IReconcileReasonEnumBroker>.GetEnum(lookup);
       }
       #endregion
 }
