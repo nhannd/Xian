@@ -321,10 +321,9 @@ namespace ClearCanvas.Ris.Client
 		/// <returns></returns>
 		protected override bool IsSameItem(ExternalPractitionerContactPointDetail x, ExternalPractitionerContactPointDetail y)
 		{
-			// if new, compare by name (this is a bit hokey because there is currently nothing to force name to be distinct)
-			if (x.ContactPointRef == null && y.ContactPointRef == null)
-				return x.Name == y.Name;
-
+            if (ReferenceEquals(x, y))
+                return true;
+            
 			// if only one is null, false
 			if(x.ContactPointRef == null || y.ContactPointRef == null)
 				return false;
@@ -390,7 +389,7 @@ namespace ClearCanvas.Ris.Client
 				delegate(ExternalPractitionerContactPointDetail item)
 					{
 						// Don't compare name with itself
-						if (ReferenceEquals(item, detail))
+						if (IsSameItem(item, detail))
 							return false;
 
 						return Equals(item.Name, detail.Name);
