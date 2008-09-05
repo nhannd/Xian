@@ -54,14 +54,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private readonly ManualResetEvent _threadStop;
         private bool _stop = false;
 
+    	private readonly List<WorkQueueTypeEnum> _supportedTypesList = new List<WorkQueueTypeEnum>();
+    	private readonly List<WorkQueueTypeEnum> _unsupportedTypesList = new List<WorkQueueTypeEnum>();
         #endregion
 
         #region Constructor
-        public WorkQueueProcessor(int numberThreads, ManualResetEvent threadStop)
+        public WorkQueueProcessor(int numberThreads, ManualResetEvent threadStop, string name)
         {
         	_threadStop = threadStop;
 			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
-        	_threadPool.ThreadPoolName = "WorkQueue Pool";
+        	_threadPool.ThreadPoolName = name + " Pool";
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
@@ -86,12 +88,64 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                      obj.GetType());
                 }
             }
-        }
-        #endregion
+	    }
+		#endregion
+
+		#region Public Properties
+
+		public List<WorkQueueTypeEnum> SupportedTypesList
+    	{
+    		get { return _supportedTypesList; }
+    	}
+
+    	public List<WorkQueueTypeEnum> UnsupportedTypesList
+    	{
+    		get { return _unsupportedTypesList; }
+    	}
+
+    	#endregion
 
         #region Methods
+		public string GetWorkQueueTypeString()
+		{
+			string typeString = String.Empty;
+			if (_supportedTypesList.Count > 0)
+			{
+				foreach (WorkQueueTypeEnum type in _supportedTypesList)
+				{
+					if (typeString.Length > 0)
+						typeString += "," + type.Enum;
+					else
+						typeString = type.Enum.ToString();
+				}
+			}
 
-        /// <summary>
+			if (_unsupportedTypesList.Count > 0)
+			{
+				foreach (WorkQueueTypeEnum defaultType in WorkQueueTypeEnum.GetAll())
+				{
+					bool found = false;
+					foreach (WorkQueueTypeEnum unsupportedType in _unsupportedTypesList)
+					{
+						if (unsupportedType.Equals(defaultType))
+						{
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+					{
+						if (typeString.Length > 0)
+							typeString += "," + defaultType.Enum;
+						else
+							typeString = defaultType.Enum.ToString();						
+					}
+				}				
+			}
+			return typeString;
+		}
+
+    	/// <summary>
         /// Stop the WorkQueue processor
         /// </summary>
 		public void Stop()
@@ -119,7 +173,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 parms.FailureCount = item.FailureCount + 1;
 				parms.FailureDescription = failureDescription;
 
-                WorkQueueSettings settings = WorkQueueSettings.Default;
+				WorkQueueSettings settings = WorkQueueSettings.Instance;
                 if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
                 {
                     Platform.Log(LogLevel.Error,
@@ -152,62 +206,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
         /// <summary>
-        /// Reset queue items that were unadvertly left in "in progress" state by previous run. 
-        /// </summary>
-        public void ResetFailedItems()
-        {
-            WorkQueueSettings settings = WorkQueueSettings.Default;
-
-            WorkQueueStatusEnum pending = WorkQueueStatusEnum.Pending;
-            WorkQueueStatusEnum failed = WorkQueueStatusEnum.Failed;
-
-            using (IUpdateContext ctx = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IWorkQueueReset reset = ctx.GetBroker<IWorkQueueReset>();
-                WorkQueueResetParameters parms = new WorkQueueResetParameters();
-                parms.ProcessorID = ServiceTools.ProcessorId;
-
-                // reschedule to start again now
-                parms.RescheduleTime = Platform.Time;
-                // retry will expire X minutes from now (so other process MAY NOT remove them)
-                parms.RetryExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-
-                // if an entry has been retried more than WorkQueueMaxFailureCount, it should be failed
-                parms.MaxFailureCount = settings.WorkQueueMaxFailureCount;
-                // failed item expires now (so other process can remove them if desired)
-                parms.FailedExpirationTime = Platform.Time;
-
-                IList<Model.WorkQueue> modifiedList = reset.Find(parms);
-
-                if (modifiedList != null)
-                {
-                    // output the list of items that have been reset
-                    foreach (Model.WorkQueue queueItem in modifiedList)
-                    {
-                        if (queueItem.WorkQueueStatusEnum.Equals(pending))
-                            Platform.Log(LogLevel.Info, "Cleanup: Reset Queue Item : {0} --> Status={1} Scheduled={2} ExpirationTime={3}",
-                                            queueItem.GetKey().Key,
-                                            queueItem.WorkQueueStatusEnum, 
-                                            queueItem.ScheduledTime, 
-                                            queueItem.ExpirationTime);
-                    }
-
-                    // output the list of items that have been failed because it exceeds the max retry count
-                    foreach (Model.WorkQueue queueItem in modifiedList)
-                    {
-                        if (queueItem.WorkQueueStatusEnum.Equals(failed))
-                            Platform.Log(LogLevel.Info, "Cleanup: Fail Queue Item  : {0} : FailureCount={1} ExpirationTime={2}",
-                                            queueItem.GetKey().Key,
-                                            queueItem.FailureCount,
-                                            queueItem.ExpirationTime);
-                    }                    
-                }     
-           
-                ctx.Commit();
-            }
-        }
-
-        /// <summary>
         /// The processing thread.
         /// </summary>
         /// <remarks>
@@ -219,16 +217,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			if (!_threadPool.Active)
 				_threadPool.Start();
 
-			// Reset any queue items related to this system that are in a "In Progress" state.
-            try
-            {
-                ResetFailedItems();
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Fatal, e,
-                             "Unable to reset WorkQueue items on startup.  There may be WorkQueue items orphaned in the queue.");
-            }
+        	string workQueueTypes = GetWorkQueueTypeString();
 
             while (true)
             {
@@ -243,6 +232,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
                             WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
                             parms.ProcessorID = ServiceTools.ProcessorId;
+							if (workQueueTypes.Length > 0)
+								parms.WorkQueueTypeEnumList = workQueueTypes;
 
 							queueListItem = select.FindOne(parms);
 
@@ -253,7 +244,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (queueListItem == null)
 						{
 							/* No result found */
-							_threadStop.WaitOne(WorkQueueSettings.Default.WorkQueueQueryDelay, false);
+							_threadStop.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
 							_threadStop.Reset();
 						}
 						else

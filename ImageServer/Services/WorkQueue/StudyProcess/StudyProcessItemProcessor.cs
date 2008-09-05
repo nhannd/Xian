@@ -441,7 +441,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     item.FailureDescription = e.Message;
 
                 sop.FailureCount++;
-                if ((sop.FailureCount > WorkQueueSettings.Default.WorkQueueMaxFailureCount) || sop.Duplicate)
+                if ((sop.FailureCount > WorkQueueSettings.Instance.WorkQueueMaxFailureCount) || sop.Duplicate)
                 {
                     sop.Failed = true;
                     if (sop.Extension != null)

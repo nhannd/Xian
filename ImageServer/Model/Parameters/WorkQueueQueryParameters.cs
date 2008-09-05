@@ -39,9 +39,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             : base("QueryWorkQueue")
         { }
 
-        public WorkQueueTypeEnum WorkQueueTypeEnum
+        public string WorkQueueTypeEnumList
         {
-            set { this.SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
+			set { this.SubCriteria["WorkQueueTypeEnumList"] = new ProcedureParameter<string>("WorkQueueTypeEnumList", value); }
         }
 
         public string ProcessorID

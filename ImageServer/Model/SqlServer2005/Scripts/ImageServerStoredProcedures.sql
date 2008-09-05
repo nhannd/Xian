@@ -995,13 +995,15 @@ EXEC dbo.sp_executesql @statement = N'
 -- History:
 --		Oct 29, 2007:	Add @ProcessorID
 --		Jan 9, 2008:	Fixed clustering bug
+--      Sep 4, 2008:    Added @WorkQueueStatusEnumList parameter
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
-	-- Add the parameters for the stored procedure here
-	@ProcessorID varchar(256), 
-	@WorkQueueTypeEnum smallint = 0
+	@ProcessorID varchar(256),
+	@WorkQueueTypeEnumList varchar(300) = null
+
 AS
 BEGIN
+
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	
@@ -1025,7 +1027,7 @@ BEGIN
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
 	
-    IF @WorkQueueTypeEnum = 0
+    IF @WorkQueueTypeEnumList is null
 	BEGIN
 		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 			@WorkQueueGUID = WorkQueue.GUID 
@@ -1039,16 +1041,44 @@ BEGIN
 	END
 	ELSE
 	BEGIN
+		-- Use a temp table, and join on it for retrieving multiple types
+		DECLARE @TempList table
+		(
+			Enum smallint
+		)
+
+		DECLARE @Enum varchar(10), @Pos int
+
+		SET @WorkQueueTypeEnumList = LTRIM(RTRIM(@WorkQueueTypeEnumList))+ '',''
+		SET @Pos = CHARINDEX('','', @WorkQueueTypeEnumList, 1)
+
+		IF REPLACE(@WorkQueueTypeEnumList, '','', '''') <> ''''
+		BEGIN
+			WHILE @Pos > 0
+			BEGIN
+				SET @Enum = LTRIM(RTRIM(LEFT(@WorkQueueTypeEnumList, @Pos - 1)))
+				IF @Enum <> ''''
+				BEGIN
+					INSERT INTO @TempList (Enum) VALUES (CAST(@Enum AS smallint)) --Use Appropriate conversion
+				END
+				SET @WorkQueueTypeEnumList = RIGHT(@WorkQueueTypeEnumList, LEN(@WorkQueueTypeEnumList) - @Pos)
+				SET @Pos = CHARINDEX('','', @WorkQueueTypeEnumList, 1)
+			END
+		END	
+
 		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-			@WorkQueueGUID = WorkQueue.GUID 
+				@WorkQueueGUID = WorkQueue.GUID 
 		FROM WorkQueue
+		JOIN 
+			@TempList t	ON WorkQueue.WorkQueueTypeEnum = t.Enum
 		JOIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
 			AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
-			AND WorkQueue.WorkQueueTypeEnum = @WorkQueueTypeEnum
 		ORDER BY WorkQueue.ScheduledTime
+
+
 	END
 
 	-- We have a record, now do the updates

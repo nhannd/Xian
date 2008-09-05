@@ -29,6 +29,10 @@
 
 #endregion
 
+using System;
+using System.Configuration;
+using ClearCanvas.Server.ShredHost;
+
 namespace ClearCanvas.ImageServer.Services.WorkQueue {
     
     
@@ -37,23 +41,176 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
     //  The PropertyChanged event is raised after a setting's value is changed.
     //  The SettingsLoaded event is raised after the setting values are loaded.
     //  The SettingsSaving event is raised before the setting values are saved.
-    internal sealed partial class WorkQueueSettings {
-        
-        public WorkQueueSettings() {
-            // // To add event handlers for saving and changing settings, uncomment the lines below:
-            //
-            // this.SettingChanging += this.SettingChangingEventHandler;
-            //
-            // this.SettingsSaving += this.SettingsSavingEventHandler;
-            //
-        }
-        
-        private void SettingChangingEventHandler(object sender, System.Configuration.SettingChangingEventArgs e) {
-            // Add code to handle the SettingChangingEvent event here.
-        }
-        
-        private void SettingsSavingEventHandler(object sender, System.ComponentModel.CancelEventArgs e) {
-            // Add code to handle the SettingsSaving event here.
-        }
-    }
+	internal sealed class WorkQueueSettings : ShredConfigSection
+	{
+		public const int DefaultWorkQueueQueryDelay = 10000;
+		public const int DefaultWorkQueueMaxFailureCount = 3;
+		public const int DefaultWorkQueueFailureDelayMinutes = 3;
+		public const int DefaultWorkQueueProcessDelayMedPrioritySeconds = 15;
+		public const int DefaultWorkQueueExpireDelaySeconds = 90;
+		public const int DefaultWorkQueueProcessDelayLowPrioritySeconds = 45;
+		public const int DefaultWorkQueueProcessDelayHighPrioritySeconds = 1;
+		public const int DefaultLowPriorityMaxBatchSize = 100;
+		public const int DefaultMedPriorityMaxBatchSize = 250;
+		public const int DefaultPrimaryWorkQueueThreadCount = 3;
+		public const int DefaultSecondaryWorkQueueThreadCount = 3;
+		public const string DefaultPrimaryWorkQueueTypes = "StudyProcess,AutoRoute,WebMoveStudy,ReprocessStudy,CleanupStudy,WebEditStudy";
+		public const string DefaultSecondaryWorkQueueTypes = "";
+
+		private static WorkQueueSettings _instance;
+
+		private WorkQueueSettings()
+		{
+		}
+
+		public static string SettingName
+		{
+			get { return "WorkQueueSettings"; }
+		}
+
+		public static WorkQueueSettings Instance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = ShredConfigManager.GetConfigSection(SettingName) as WorkQueueSettings;
+					if (_instance == null)
+					{
+						_instance = new WorkQueueSettings();
+						ShredConfigManager.UpdateConfigSection(SettingName, _instance);
+					}
+				}
+
+				return _instance;
+			}
+		}
+
+		public static void Save()
+		{
+			ShredConfigManager.UpdateConfigSection(SettingName, _instance);
+		}
+
+		#region Public Properties
+
+		[ConfigurationProperty("WorkQueueQueryDelay", DefaultValue = DefaultWorkQueueQueryDelay)]
+		public int WorkQueueQueryDelay
+		{
+			get { return ((int)(this["WorkQueueQueryDelay"])); }
+			set { this["WorkQueueQueryDelay"] = value; }
+		}
+
+		[ConfigurationProperty("WorkQueueMaxFailureCount", DefaultValue = DefaultWorkQueueMaxFailureCount)]
+		public int WorkQueueMaxFailureCount
+		{
+			get { return ((int)(this["WorkQueueMaxFailureCount"])); }
+			set { this["WorkQueueMaxFailureCount"] = value; }
+		}
+
+		[ConfigurationProperty("WorkQueueFailureDelayMinutes", DefaultValue = DefaultWorkQueueFailureDelayMinutes)]
+		public int WorkQueueFailureDelayMinutes
+		{
+			get { return ((int)(this["WorkQueueFailureDelayMinutes"])); }
+			set { this["WorkQueueFailureDelayMinutes"] = value; }
+		}
+
+		/// <summary>
+		/// The number of seconds delay between attempting to process a queue entry.
+		/// </summary>
+		[SettingsDescriptionAttribute("The number of seconds delay between attempting to process a queue entry.")]
+		[ConfigurationProperty("WorkQueueProcessDelayMedPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayMedPrioritySeconds)]
+		public int WorkQueueProcessDelayMedPrioritySeconds
+		{
+			get { return ((int)(this["WorkQueueProcessDelayMedPrioritySeconds"])); }
+			set { this["WorkQueueProcessDelayMedPrioritySeconds"] = value; }
+		}
+
+		/// <summary>
+		/// The number of seconds to delay after processing until the queue entry is deleted.
+		/// </summary>
+		[SettingsDescriptionAttribute("The number of seconds to delay after processing until the queue entry is deleted.")]
+		[ConfigurationProperty("WorkQueueExpireDelaySeconds", DefaultValue = DefaultWorkQueueExpireDelaySeconds)]
+		public int WorkQueueExpireDelaySeconds
+		{
+			get { return ((int)(this["WorkQueueExpireDelaySeconds"])); }
+			set { this["WorkQueueExpireDelaySeconds"] = value; }
+		}
+
+		[ConfigurationProperty("WorkQueueProcessDelayLowPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayLowPrioritySeconds)]
+		public int WorkQueueProcessDelayLowPrioritySeconds
+		{
+			get { return ((int)(this["WorkQueueProcessDelayLowPrioritySeconds"])); }
+			set { this["WorkQueueProcessDelayLowPrioritySeconds"] = value; }
+		}
+
+		[ConfigurationProperty("WorkQueueProcessDelayHighPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayHighPrioritySeconds)]
+		public int WorkQueueProcessDelayHighPrioritySeconds
+		{
+			get { return ((int)(this["WorkQueueProcessDelayHighPrioritySeconds"])); }
+			set { this["WorkQueueProcessDelayHighPrioritySeconds"] = value; }
+		}
+
+		[ConfigurationProperty("LowPriorityMaxBatchSize", DefaultValue = DefaultLowPriorityMaxBatchSize)]
+		public int LowPriorityMaxBatchSize
+		{
+			get { return ((int)(this["LowPriorityMaxBatchSize"])); }
+			set { this["LowPriorityMaxBatchSize"] = value; }
+		}
+
+		[ConfigurationProperty("MedPriorityMaxBatchSize", DefaultValue = DefaultMedPriorityMaxBatchSize)]
+		public int MedPriorityMaxBatchSize
+		{
+			get { return ((int)(this["MedPriorityMaxBatchSize"])); }
+			set { this["MedPriorityMaxBatchSize"] = value; }
+		}
+
+		[ConfigurationProperty("PrimaryWorkQueueThreadCount", DefaultValue = DefaultPrimaryWorkQueueThreadCount)]
+		public int PrimaryWorkQueueThreadCount
+		{
+			get { return ((int)(this["PrimaryWorkQueueThreadCount"])); }
+			set { this["PrimaryWorkQueueThreadCount"] = value; }
+		}
+
+		[ConfigurationProperty("SecondaryWorkQueueThreadCount", DefaultValue = DefaultPrimaryWorkQueueThreadCount)]
+		public int SecondaryWorkQueueThreadCount
+		{
+			get { return ((int)(this["SecondaryWorkQueueThreadCount"])); }
+			set { this["SecondaryWorkQueueThreadCount"] = value; }
+		}
+
+		[ConfigurationProperty("PrimaryWorkQueueTypes", DefaultValue = DefaultPrimaryWorkQueueTypes)]
+		public string PrimaryWorkQueueTypes
+		{
+			get { return ((string)(this["PrimaryWorkQueueTypes"])); }
+			set { this["PrimaryWorkQueueTypes"] = value; }
+		}
+
+		[ConfigurationProperty("SecondaryWorkQueueTypes", DefaultValue = DefaultSecondaryWorkQueueTypes)]
+		public string SecondaryWorkQueueTypes
+		{
+			get { return ((string)(this["SecondaryWorkQueueTypes"])); }
+			set { this["SecondaryWorkQueueTypes"] = value; }
+		}
+		#endregion
+
+		public override object Clone()
+		{
+			WorkQueueSettings clone = new WorkQueueSettings();
+
+			clone.WorkQueueQueryDelay = _instance.WorkQueueQueryDelay;
+			clone.WorkQueueMaxFailureCount = _instance.WorkQueueMaxFailureCount;
+			clone.WorkQueueFailureDelayMinutes = _instance.WorkQueueFailureDelayMinutes;
+			clone.WorkQueueProcessDelayMedPrioritySeconds = _instance.WorkQueueProcessDelayMedPrioritySeconds;
+			clone.WorkQueueExpireDelaySeconds = _instance.WorkQueueExpireDelaySeconds;
+			clone.WorkQueueProcessDelayLowPrioritySeconds = _instance.WorkQueueProcessDelayLowPrioritySeconds;
+			clone.WorkQueueProcessDelayHighPrioritySeconds = _instance.WorkQueueProcessDelayHighPrioritySeconds;
+			clone.LowPriorityMaxBatchSize = _instance.LowPriorityMaxBatchSize;
+			clone.MedPriorityMaxBatchSize = _instance.MedPriorityMaxBatchSize;
+			clone.PrimaryWorkQueueThreadCount = _instance.PrimaryWorkQueueThreadCount;
+			clone.SecondaryWorkQueueThreadCount = _instance.SecondaryWorkQueueThreadCount;
+			clone.PrimaryWorkQueueTypes = _instance.PrimaryWorkQueueTypes;
+			clone.SecondaryWorkQueueTypes = _instance.SecondaryWorkQueueTypes;
+			return clone;
+		}
+	}
 }

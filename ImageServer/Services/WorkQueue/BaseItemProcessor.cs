@@ -41,7 +41,6 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -222,7 +221,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             int maxSize;
 
-            WorkQueueSettings settings = WorkQueueSettings.Default;
+            WorkQueueSettings settings = WorkQueueSettings.Instance;
 
             if (item.WorkQueuePriorityEnum == WorkQueuePriorityEnum.Low)
             {
@@ -386,7 +385,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (complete)
 							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
-						WorkQueueSettings settings = WorkQueueSettings.Default;
+						WorkQueueSettings settings = WorkQueueSettings.Instance;
 
 
 						DateTime scheduledTime;
@@ -478,7 +477,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							parms.StudyStorageKey = item.StudyStorageKey;
 							parms.ProcessorID = item.ProcessorID;
 
-							WorkQueueSettings settings = WorkQueueSettings.Default;
+							WorkQueueSettings settings = WorkQueueSettings.Instance;
 
 							if (item.FailureDescription != null)
 								parms.FailureDescription = item.FailureDescription;
@@ -560,7 +559,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                             parms.FailureCount = item.FailureCount + 1;
                             parms.FailureDescription = failureDescription;
 
-                            WorkQueueSettings settings = WorkQueueSettings.Default;
+                            WorkQueueSettings settings = WorkQueueSettings.Instance;
                             if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
                             {
                                 Platform.Log(LogLevel.Error,
