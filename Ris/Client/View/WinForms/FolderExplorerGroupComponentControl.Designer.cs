@@ -53,6 +53,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _searchTextBox
 			// 
+			this._searchTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this._searchTextBox.Name = "_searchTextBox";
 			this._searchTextBox.Size = new System.Drawing.Size(100, 31);
 			this._searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this._searchTextBox_KeyDown);
