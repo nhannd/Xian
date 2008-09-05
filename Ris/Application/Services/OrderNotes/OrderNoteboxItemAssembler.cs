@@ -29,6 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 			}
 
 			return new OrderNoteboxItemSummary(
+				item.NoteRef,
 				item.OrderRef,
 				item.PatientRef,
 				item.PatientProfileRef,

@@ -6,11 +6,12 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
 {
 	[DataContract]
-	public class OrderNoteboxItemSummary : DataContractBase
+	public class OrderNoteboxItemSummary : DataContractBase, IVersionedEquatable<OrderNoteboxItemSummary>
 	{
 		/// <summary>
 		/// Constructor
 		/// </summary>
+		/// <param name="noteRef"></param>
 		/// <param name="orderRef"></param>
 		/// <param name="patientRef"></param>
 		/// <param name="patientProfileRef"></param>
@@ -28,6 +29,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// <param name="staffRecipients"></param>
 		/// <param name="groupRecipients"></param>
 		public OrderNoteboxItemSummary(
+			EntityRef noteRef,
 			EntityRef orderRef,
 			EntityRef patientRef,
 			EntityRef patientProfileRef,
@@ -45,6 +47,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 			List<StaffSummary> staffRecipients,
 			List<StaffGroupSummary> groupRecipients)
 		{
+			NoteRef = noteRef;
 			OrderRef = orderRef;
 			PatientRef = patientRef;
 			PatientProfileRef = patientProfileRef;
@@ -62,6 +65,11 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 			StaffRecipients = staffRecipients;
 			GroupRecipients = groupRecipients;
 		}
+		/// <summary>
+		/// Gets a reference to the note.
+		/// </summary>
+		[DataMember]
+		public EntityRef NoteRef;
 
 		/// <summary>
 		/// Gets a reference to the order.
@@ -159,5 +167,40 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 		/// </summary>
 		[DataMember]
 		public List<StaffGroupSummary> GroupRecipients;
+
+		public override int GetHashCode()
+		{
+			return NoteRef.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as OrderNoteboxItemSummary);
+		}
+
+		public bool Equals(OrderNoteboxItemSummary orderNoteboxItemSummary)
+		{
+			return Equals(orderNoteboxItemSummary, false);
+		}
+
+		#region IVersionedEquatable<OrderNoteboxItemSummary> Members
+
+		public bool Equals(OrderNoteboxItemSummary other, bool ignoreVersion)
+		{
+			if (other == null) return false;
+			return this.NoteRef.Equals(other.NoteRef, ignoreVersion);
+		}
+
+		#endregion
+
+		#region IVersionedEquatable Members
+
+		public bool Equals(object other, bool ignoreVersion)
+		{
+			return Equals(other as OrderNoteboxItemSummary, ignoreVersion);
+		}
+
+		#endregion
 	}
 }

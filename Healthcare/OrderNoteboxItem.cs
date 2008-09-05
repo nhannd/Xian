@@ -7,6 +7,7 @@ namespace ClearCanvas.Healthcare
 {
 	public class OrderNoteboxItem
 	{
+		private readonly EntityRef _noteRef;
 		private readonly EntityRef _orderRef;
 		private readonly EntityRef _patientRef;
 		private readonly EntityRef _patientProfileRef;
@@ -36,6 +37,7 @@ namespace ClearCanvas.Healthcare
 		public OrderNoteboxItem(Note note, Order order,
 			Patient patient, PatientProfile patientProfile, bool isAcknowledged)
 		{
+			_noteRef = note.GetRef();
 			_orderRef = order.GetRef();
 			_patientRef = patient.GetRef();
 			_patientProfileRef = patientProfile.GetRef();
@@ -57,6 +59,11 @@ namespace ClearCanvas.Healthcare
 					 return posting is StaffNotePosting ? (object)((StaffNotePosting)posting).Recipient :
 						 (object)((GroupNotePosting)posting).Recipient;
 				});
+		}
+
+		public EntityRef NoteRef
+		{
+			get { return _noteRef; }
 		}
 
 		public EntityRef OrderRef
