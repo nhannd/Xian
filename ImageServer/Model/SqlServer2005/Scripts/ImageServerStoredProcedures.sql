@@ -1069,15 +1069,15 @@ BEGIN
 		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 				@WorkQueueGUID = WorkQueue.GUID 
 		FROM WorkQueue
-		JOIN 
-			@TempList t	ON WorkQueue.WorkQueueTypeEnum = t.Enum
 		JOIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
 			ScheduledTime < getdate() 
 			AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
+			AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
 		ORDER BY WorkQueue.ScheduledTime
 
+		
 
 	END
 
