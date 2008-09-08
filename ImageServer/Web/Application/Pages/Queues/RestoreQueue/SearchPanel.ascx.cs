@@ -106,16 +106,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             // setup child controls
             GridPagerBottom.Target = RestoreQueueItemList.RestoreQueueGrid;
 
-            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerRestoreQueueSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerRestoreQueueMultipleItems;
+            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
             GridPagerTop.Target = RestoreQueueItemList.RestoreQueueGrid;
             GridPagerTop.GetRecordCountMethod = delegate
                               {
 								  return RestoreQueueItemList.ResultCount;
                               };
 
-            GridPagerBottom.ItemName = App_GlobalResources.Labels.GridPagerRestoreQueueSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.Labels.GridPagerRestoreQueueMultipleItems;
+            GridPagerBottom.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
             GridPagerBottom.Target = RestoreQueueItemList.RestoreQueueGrid;
             GridPagerBottom.GetRecordCountMethod = delegate
                               {
