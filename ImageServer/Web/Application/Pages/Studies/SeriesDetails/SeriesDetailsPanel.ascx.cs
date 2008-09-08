@@ -29,53 +29,55 @@
 
 #endregion
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.StudyDetails.Code
+using System;
+
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails
 {
     /// <summary>
-    /// Model object behind the <see cref="PatientSummaryPanel"/>
+    /// Panel within the <see cref="SeriesDetailsPage"/>
     /// </summary>
-    public class PatientSummary
+    public partial class SeriesDetailsPanel : System.Web.UI.UserControl
     {
         #region Private members
-        private string _patientId;
-        private string _issuerOfPatientId;
-        private string _patientName;
-        private string _birthdate;
-        private string _sex;
-
+        private Model.Study _study;
+        private Model.Series _series;
         #endregion Private members
 
+
         #region Public Properties
-        public string PatientId
+
+        public Model.Study Study
         {
-            get { return _patientId; }
-            set { _patientId = value; }
+            get { return _study; }
+            set { _study = value; }
         }
 
-        public string PatientName
+        public Model.Series Series
         {
-            get { return _patientName; }
-            set { _patientName = value; }
-        }
-
-        public string Birthdate
-        {
-            get { return _birthdate; }
-            set { _birthdate = value; }
-        }
-
-        public string Sex
-        {
-            get { return _sex; }
-            set { _sex = value; }
-        }
-
-        public string IssuerOfPatientId
-        {
-            get { return _issuerOfPatientId; }
-            set { _issuerOfPatientId = value; }
+            get { return _series; }
+            set { _series = value; }
         }
 
         #endregion Public Properties
+
+        #region Protected Properties
+
+        public override void DataBind()
+        {
+            if (_study != null)
+            {
+                PatientSummary.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(_study);
+
+                StudySummary.Study = _study;
+
+                if (Series != null)
+                    SeriesDetails.Series = _series;
+
+            }
+
+            base.DataBind();
+        }
+        #endregion Protected Properties
+
     }
 }

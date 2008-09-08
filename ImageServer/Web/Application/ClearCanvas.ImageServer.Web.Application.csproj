@@ -448,182 +448,174 @@
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\Default.aspx.cs">
+    <Compile Include="Pages\Studies\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Search\Default.aspx.designer.cs">
+    <Compile Include="Pages\Studies\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\Move\DeviceGridView.ascx.cs">
+    <Compile Include="Pages\Studies\Move\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\Move\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\Move\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Search\Move\DeviceGridView.ascx.designer.cs">
+    <Compile Include="Pages\Studies\Move\DeviceGridView.ascx.designer.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\Move\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Search\Move\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Search\Move\MovePanel.ascx.cs">
+    <Compile Include="Pages\Studies\Move\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Search\Move\MovePanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\Move\MovePanel.ascx.designer.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\Move\StudyGridView.ascx.cs">
+    <Compile Include="Pages\Studies\Move\StudyGridView.ascx.cs">
       <DependentUpon>StudyGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Search\Move\StudyGridView.ascx.designer.cs">
+    <Compile Include="Pages\Studies\Move\StudyGridView.ascx.designer.cs">
       <DependentUpon>StudyGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\SearchPanel.ascx.cs">
+    <Compile Include="Pages\Studies\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Search\SearchPanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Search\StudyListGridView.ascx.cs">
-      <DependentUpon>StudyListGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Search\StudyListGridView.ascx.designer.cs">
-      <DependentUpon>StudyListGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\SeriesDetails\PatientSummary.cs" />
-    <Compile Include="Pages\SeriesDetails\PatientSummaryAssembler.cs" />
-    <Compile Include="Pages\SeriesDetails\PatientSummaryPanel.ascx.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
-      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\SeriesDetails\SeriesDetails.cs" />
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsAssembler.cs" />
-    <Compile Include="Pages\SeriesDetails\Default.aspx.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\Default.aspx.designer.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummary.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryAssembler.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx.designer.cs">
+      <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetails.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsAssembler.cs" />
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx.cs">
       <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx.designer.cs">
       <DependentUpon>SeriesDetailsPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsView.ascx.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.cs">
       <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\SeriesDetailsView.ascx.designer.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx.designer.cs">
       <DependentUpon>SeriesDetailsView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\StudySummaryPanel.ascx.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\SeriesDetails\StudySummaryPanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx.designer.cs">
       <DependentUpon>StudySummaryPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Code\PatientSummary.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Code\PatientSummaryAssembler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Code\StudyDetails.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Code\StudyDetailsAssembler.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\ArchivePanel.ascx.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Code\PatientSummary.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Code\PatientSummaryAssembler.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Code\StudyDetails.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Code\StudyDetailsAssembler.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx.cs">
       <DependentUpon>ArchivePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\ArchivePanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx.designer.cs">
       <DependentUpon>ArchivePanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyStorageView.ascx.cs">
-      <DependentUpon>StudyStorageView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyStorageView.ascx.designer.cs">
-      <DependentUpon>StudyStorageView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx.cs">
-      <DependentUpon>FileSystemQueueGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx.designer.cs">
-      <DependentUpon>FileSystemQueueGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx.cs">
-      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx.designer.cs">
-      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\EditStudyDetailsDialog.ascx.cs">
       <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx.designer.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\EditStudyDetailsDialog.ascx.designer.cs">
       <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx.cs">
-      <DependentUpon>StudyDetailsTabs.ascx</DependentUpon>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\FileSystemQueueGridView.ascx.cs">
+      <DependentUpon>FileSystemQueueGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx.designer.cs">
-      <DependentUpon>StudyDetailsTabs.ascx</DependentUpon>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\FileSystemQueueGridView.ascx.designer.cs">
+      <DependentUpon>FileSystemQueueGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\PatientSummaryPanel.ascx.cs">
       <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\PatientSummaryPanel.ascx.designer.cs">
       <DependentUpon>PatientSummaryPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\SeriesGridView.ascx.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\SeriesGridView.ascx.cs">
       <DependentUpon>SeriesGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\SeriesGridView.ascx.designer.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\SeriesGridView.ascx.designer.cs">
       <DependentUpon>SeriesGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsPanel.ascx.cs">
       <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx.designer.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsPanel.ascx.designer.cs">
       <DependentUpon>StudyDetailsPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsTabs.ascx.cs">
+      <DependentUpon>StudyDetailsTabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsTabs.ascx.designer.cs">
+      <DependentUpon>StudyDetailsTabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsView.ascx.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx.designer.cs">
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx.cs">
+      <DependentUpon>StudyStorageView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx.designer.cs">
+      <DependentUpon>StudyStorageView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx.cs">
+      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx.designer.cs">
+      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyListGridView.ascx.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyListGridView.ascx.designer.cs">
+      <DependentUpon>StudyListGridView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetails.cs" />
     <Compile Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx.cs">
@@ -922,35 +914,34 @@
     <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />
     <Content Include="Pages\Queues\RestoreQueue\SearchPanel.ascx" />
-    <Content Include="Pages\Search\Default.aspx" />
-    <Content Include="Pages\Search\Move\DeviceGridView.ascx" />
-    <Content Include="Pages\Search\Move\Default.aspx" />
-    <Content Include="Pages\Search\Move\MovePanel.ascx" />
-    <Content Include="Pages\Search\Move\StudyGridView.ascx" />
-    <Content Include="Pages\Search\SearchPanel.ascx" />
-    <EmbeddedResource Include="Pages\Search\SearchPanel.js" />
-    <Content Include="Pages\Search\StudyListGridView.ascx" />
-    <Content Include="Pages\SeriesDetails\PatientSummaryPanel.ascx" />
-    <Content Include="Pages\SeriesDetails\Default.aspx" />
-    <Content Include="Pages\SeriesDetails\SeriesDetailsPanel.ascx" />
-    <Content Include="Pages\SeriesDetails\SeriesDetailsView.ascx" />
-    <Content Include="Pages\SeriesDetails\StudySummaryPanel.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\ArchivePanel.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\StudyStorageView.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\FileSystemQueueGridView.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\UserEscapeLinkBackground.png" />
-    <Content Include="Pages\StudyDetails\Controls\WorkQueueGridView.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\StudyDetailsTabs.ascx" />
-    <Content Include="Pages\StudyDetails\Default.aspx" />
-    <Content Include="Pages\StudyDetails\Controls\PatientSummaryPanel.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\SeriesGridView.ascx" />
-    <Content Include="Pages\StudyDetails\Controls\StudyDetailsView.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\WorkQueueGridView.js" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\FileSystemQueueGridView.js" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\SeriesGridView.js" />
-    <EmbeddedResource Include="Pages\StudyDetails\Controls\StudyDetailsPanel.ascx" />
-    <EmbeddedResource Include="Pages\StudyDetails\Scripts\StudyDetailsTabs.js" />
+    <Content Include="Pages\Studies\Default.aspx" />
+    <Content Include="Pages\Studies\Move\Default.aspx" />
+    <Content Include="Pages\Studies\Move\DeviceGridView.ascx" />
+    <Content Include="Pages\Studies\Move\MovePanel.ascx" />
+    <Content Include="Pages\Studies\Move\StudyGridView.ascx" />
+    <Content Include="Pages\Studies\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\Studies\SearchPanel.js" />
+    <Content Include="Pages\Studies\SeriesDetails\Default.aspx" />
+    <Content Include="Pages\Studies\SeriesDetails\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsPanel.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx" />
+    <Content Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\FileSystemQueueGridView.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\PatientSummaryPanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\SeriesGridView.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\StudyDetailsPanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\StudyDetailsTabs.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\StudyDetailsView.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Default.aspx" />
+    <Content Include="Pages\Studies\StudyDetails\Scripts\FileSystemQueueGridView.js" />
+    <Content Include="Pages\Studies\StudyDetails\Scripts\SeriesGridView.js" />
+    <Content Include="Pages\Studies\StudyDetails\Scripts\StudyDetailsTabs.js" />
+    <Content Include="Pages\Studies\StudyDetails\Scripts\WorkQueueGridView.js" />
+    <Content Include="Pages\Studies\StudyListGridView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />

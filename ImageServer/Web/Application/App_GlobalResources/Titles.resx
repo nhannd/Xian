@@ -162,6 +162,12 @@
   <data name="Queues" xml:space="preserve">
     <value>Queues</value>
   </data>
+  <data name="ReconcileQueue" xml:space="preserve">
+    <value>Reconcile Queue</value>
+  </data>
+  <data name="ReconcileQueuePageTitle" xml:space="preserve">
+    <value>Reconcile Queue | ClearCanvas ImageServer</value>
+  </data>
   <data name="RestoreQueue" xml:space="preserve">
     <value>Restore Queue</value>
   </data>
@@ -191,6 +197,12 @@
   </data>
   <data name="ServiceScheduling" xml:space="preserve">
     <value>Service Scheduling</value>
+  </data>
+  <data name="Studies" xml:space="preserve">
+    <value>Studies</value>
+  </data>
+  <data name="StudiesPageTitle" xml:space="preserve">
+    <value>Studies | ClearCanvas ImageServer</value>
   </data>
   <data name="StudyDetails" xml:space="preserve">
     <value>Study Details</value>
