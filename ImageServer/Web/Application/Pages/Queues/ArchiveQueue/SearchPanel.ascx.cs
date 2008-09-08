@@ -106,16 +106,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             // setup child controls
             GridPagerBottom.Target = ArchiveQueueItemList.ArchiveQueueGrid;
 
-            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerArchiveQueueSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerArchiveQueueMultipleItems;
+            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
+            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
             GridPagerTop.Target = ArchiveQueueItemList.ArchiveQueueGrid;
             GridPagerTop.GetRecordCountMethod = delegate
                               {
 								  return ArchiveQueueItemList.ResultCount;
                               };
 
-            GridPagerBottom.ItemName = App_GlobalResources.Labels.GridPagerArchiveQueueSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.Labels.GridPagerArchiveQueueMultipleItems;
+            GridPagerBottom.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
+            GridPagerBottom.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
             GridPagerBottom.Target = ArchiveQueueItemList.ArchiveQueueGrid;
             GridPagerBottom.GetRecordCountMethod = delegate
                               {
