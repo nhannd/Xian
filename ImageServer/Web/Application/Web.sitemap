@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0" enableLocalization="true">
 	<siteMapNode url="" title="Root"  description="">
-		<siteMapNode url="~/Pages/Search/Default.aspx" title="$Resources: Titles, Search"  />
+		<siteMapNode url="~/Pages/Search/Default.aspx" title="$Resources: Titles, Studies"  />
 
     <siteMapNode url="" title="$Resources: Titles, Queues">
       <siteMapNode url="~/Pages/Queues/WorkQueue/Default.aspx" title="$Resources: Titles, WorkQueue"  />
       <siteMapNode url="~/Pages/Queues/ArchiveQueue/Default.aspx" title="$Resources: Titles, ArchiveQueue"  />
       <siteMapNode url="~/Pages/Queues/RestoreQueue/Default.aspx" title="$Resources: Titles, RestoreQueue"  />
+      <siteMapNode url="~/Pages/Queues/ReconcileQueue/Default.aspx" title="$Resources: Titles, ReconcileQueue"  />
     </siteMapNode>
 	
 		<siteMapNode url="" title="$Resources: Titles, Configure">
