@@ -223,6 +223,10 @@ function createProceduresTable(htmlTable, procedures)
 			{   label: "Protocol Codes",
 				cellType: "html",
 				getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : ""; }
+			},
+			{   label: "Author",
+				cellType: "text",
+				getValue: function(item) { return item.Protocol && item.Protocol.Author ? Ris.formatPersonName(item.Protocol.Author.Name) : ""; }
 			}
 		 ]);
 		 
