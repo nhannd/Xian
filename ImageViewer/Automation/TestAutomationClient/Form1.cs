@@ -67,11 +67,12 @@ namespace TestAutomationClient
 				OpenStudiesResult result = client.OpenStudies(request);
 				if (result.ViewerSession != null)
 				{
-					bool shouldMatch = existingSessions.Count > 0 && _activateIfOpen.Checked;
-					if (shouldMatch && !existingSessions.Contains(result.ViewerSession.SessionId))
+					bool shouldExist = existingSessions.Count > 0 && _activateIfOpen.Checked;
+					bool exists = existingSessions.Contains(result.ViewerSession.SessionId);
+					if (shouldExist && !exists)
 						RemoveAllSessions();
-					
-					AddSession(result.ViewerSession.SessionId);
+					else if (!exists)
+						AddSession(result.ViewerSession.SessionId);
 				}
 
 				client.Close();
