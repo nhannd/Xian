@@ -15,7 +15,7 @@
 if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel']==null)
 {
 
-    Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Search');
+    Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Studies');
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
     //
