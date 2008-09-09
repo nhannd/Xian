@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -42,16 +43,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		// look up of study, series and sop objects without having to traverse
 		// the tree.
 		private PatientCollection _patients;
-		private StudyCollection _studies;
-		private SeriesCollection _series;
-		private SopCollection _sops;
+		private Dictionary<string, Study> _studies;
+		private Dictionary<string, Series> _series;
+		private Dictionary<string, Sop> _sops;
 
 		internal StudyTree()
 		{
 			_patients = new PatientCollection();
-			_studies = new StudyCollection();
-			_series = new SeriesCollection();
-			_sops = new SopCollection();
+			_studies = new Dictionary<string, Study>();
+			_series = new Dictionary<string, Series>();
+			_sops = new Dictionary<string, Sop>();
 		}
 
 		/// <summary>
@@ -63,21 +64,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _patients; }
 		}
 
-		private StudyCollection Studies
-		{
-			get { return _studies; }
-		}
-
-		private SeriesCollection Series
-		{
-			get { return _series; }
-		}
-
-		private SopCollection Sops
-		{
-			get { return _sops; }
-		}
-
 		/// <summary>
 		/// Gets a <see cref="Patient"/> with the specified patient ID.
 		/// </summary>
@@ -87,9 +73,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public Patient GetPatient(string patientId)
 		{
 			Platform.CheckForEmptyString(patientId, "patientId");
-
-			if (!_patients.ContainsKey(patientId))
-				return null;
 
 			return this.Patients[patientId];
 		}
@@ -104,10 +87,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
 
-			if (!this.Studies.ContainsKey(studyInstanceUID))
+			if (!_studies.ContainsKey(studyInstanceUID))
 				return null;
 
-			return this.Studies[studyInstanceUID];
+			return _studies[studyInstanceUID];
 		}
 
 		/// <summary>
@@ -120,10 +103,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForEmptyString(seriesInstanceUID, "seriesInstanceUID");
 
-			if (!this.Series.ContainsKey(seriesInstanceUID))
+			if (!_series.ContainsKey(seriesInstanceUID))
 				return null;
 
-			return this.Series[seriesInstanceUID];
+			return _series[seriesInstanceUID];
 		}
 
 		/// <summary>
@@ -136,10 +119,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForEmptyString(sopInstanceUID, "sopInstanceUID");
 
-			if (!this.Sops.ContainsKey(sopInstanceUID))
+			if (!_sops.ContainsKey(sopInstanceUID))
 				return null;
 
-			return this.Sops[sopInstanceUID];
+			return _sops[sopInstanceUID];
 		}
 
 		#region Private methods
@@ -155,7 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			image.IncrementReferenceCount();
 
-			if (this.Sops.ContainsKey(image.SopInstanceUID))
+			if (_sops.ContainsKey(image.SopInstanceUID))
 			{
 				image.DecrementReferenceCount();
 				return;
@@ -172,18 +155,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			AddPatient(image);
 			AddStudy(image);
 			AddSeries(image);
-			this.Sops[image.SopInstanceUID] = image;
+			_sops[image.SopInstanceUID] = image;
 		}
 
 		private void AddPatient(ImageSop sop)
 		{
-			if (_patients.ContainsKey(sop.PatientId))
+			if (_patients[sop.PatientId] != null)
 				return;
 
 			Patient patient = new Patient();
 			patient.SetSop(sop);
 
-			_patients[sop.PatientId] = patient;
+			_patients.Add(patient);
 		}
 
 		private void AddStudy(ImageSop sop)
@@ -194,7 +177,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			Patient patient = _patients[sop.PatientId];
 			Study study = new Study(patient);
 			study.SetSop(sop);
-			patient.Studies[study.StudyInstanceUID] = study;
+			patient.Studies.Add(study);
 
 			_studies[study.StudyInstanceUID] = study;
 		}
@@ -211,13 +194,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				Study study = _studies[sop.StudyInstanceUID];
 				series = new Series(study);
 				series.SetSop(sop);
-				study.Series[series.SeriesInstanceUID] = series;
+				study.Series.Add(series);
 
 				_series[series.SeriesInstanceUID] = series;
 			}
 
 			sop.ParentSeries = series;
-			series.Sops[sop.SopInstanceUID] = sop;
+			series.Sops.Add(sop);
 		}
 
 		#endregion

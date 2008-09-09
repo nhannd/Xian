@@ -61,11 +61,29 @@ namespace ClearCanvas.ImageViewer.Automation {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 1 study has failed to load..
+        /// </summary>
+        public static string MessageFormatStudyLoadFailure {
+            get {
+                return ResourceManager.GetString("MessageFormatStudyLoadFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} studies failed to load..
         /// </summary>
         public static string MessageFormatStudyLoadFailures {
             get {
                 return ResourceManager.GetString("MessageFormatStudyLoadFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 study had one or more images that failed to load..
+        /// </summary>
+        public static string MessagePartialStudyLoadFailure {
+            get {
+                return ResourceManager.GetString("MessagePartialStudyLoadFailure", resourceCulture);
             }
         }
         

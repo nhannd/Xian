@@ -33,6 +33,8 @@ using System;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop;
+using System.Collections;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -71,12 +73,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		void OnStudyTableViewSelectionChanged(object sender, EventArgs e)
 		{
-			_studyBrowserComponent.SetSelection(_studyTableView.Selection);
+			//The table view remembers the selection order, with the most recent being first.
+			//We actually want that same order, but in reverse.
+			_studyBrowserComponent.SetSelection(ReverseSelection(_studyTableView.Selection));
 		}
 
 		void OnStudyTableViewDoubleClick(object sender, EventArgs e)
 		{
 			_studyBrowserComponent.ItemDoubleClick();
+		}
+
+		private static ISelection ReverseSelection(ISelection selection)
+		{
+			ArrayList list = new ArrayList();
+
+			if (selection != null && selection.Items != null)
+			{
+				foreach (object o in selection.Items)
+					list.Add(o);
+
+				list.Reverse();
+			}
+
+			return new Selection(list);
 		}
 	}
 }

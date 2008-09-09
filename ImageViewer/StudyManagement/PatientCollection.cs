@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A collection of <see cref="Patient"/> objects.
 	/// </summary>
-	public class PatientCollection : ObservableDictionary<string, Patient>
+	public class PatientCollection : ObservableList<Patient>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="PatientCollection"/>.
@@ -44,6 +44,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public PatientCollection()
 		{
 
+		}
+
+		internal Patient this[string patientId]
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this, delegate(Patient patient) { return patient.PatientId == patientId; });
+			}
 		}
 	}
 }

@@ -238,8 +238,6 @@
     <Compile Include="Rendering\RendererBase.cs" />
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
-    <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
-    <Compile Include="SimpleImageLayoutManager.cs" />
     <Compile Include="StudyManagement\Frame.cs" />
     <Compile Include="StudyManagement\FrameCollection.cs" />
     <Compile Include="StudyManagement\IPrefetchingStrategy.cs" />

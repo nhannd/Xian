@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			return layoutManager ?? new SimpleImageLayoutManager();
+			return layoutManager ?? new LayoutManager();
 		}
 
 		/// <summary>
@@ -403,7 +403,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return StringUtilities.Combine<Patient>(this.StudyTree.Patients.Values, String.Format(" {0} ", SR.SeparatorPatientsLoaded),
+				return StringUtilities.Combine<Patient>(this.StudyTree.Patients, String.Format(" {0} ", SR.SeparatorPatientsLoaded),
 					delegate(Patient patient)
 					{
 						PersonName name = patient.PatientsName;

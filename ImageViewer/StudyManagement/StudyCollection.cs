@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A collection of <see cref="Study"/> objects.
 	/// </summary>
-	public class StudyCollection : ObservableDictionary<string, Study>
+	public class StudyCollection : ObservableList<Study>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyCollection"/>.
@@ -44,6 +44,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public StudyCollection()
 		{
 
+		}
+
+		internal Study this[string studyInstanceUid]
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this, delegate(Study study) { return study.StudyInstanceUID == studyInstanceUid; });
+			}
 		}
 	}
 }

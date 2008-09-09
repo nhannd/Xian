@@ -24,6 +24,60 @@ namespace ClearCanvas.ImageViewer.Automation
 
 		#region IViewerAutomation Members
 
+		public GetActiveViewerSessionsResult GetActiveViewerSessions()
+		{
+			List<ViewerSession> sessions = new List<ViewerSession>();
+
+			foreach (Workspace workspace in GetViewerWorkspaces())
+			{
+				IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+				if (viewer != null)
+				{
+					Guid? sessionGuid = ViewerSessionTool.GetSessionId(viewer);
+					if (sessionGuid != null)
+						sessions.Add(new ViewerSession((Guid) sessionGuid, GetPrimaryStudyInstanceUid(viewer)));
+				}
+			}
+
+			if (sessions.Count == 0)
+				throw new FaultException<NoActiveViewerSessionsFault>(new NoActiveViewerSessionsFault(), "No active viewer sessions were found.");
+
+			GetActiveViewerSessionsResult result = new GetActiveViewerSessionsResult();
+			result.ActiveViewerSessions = sessions;
+			return result;
+		}
+
+		public GetViewerSessionInfoResult GetViewerSessionInfo(GetViewerSessionInfoRequest request)
+		{
+			if (request == null)
+			{
+				string message = "The get viewer session info request cannot be null.";
+				Platform.Log(LogLevel.Error, message);
+				throw new FaultException(message);
+			}
+
+			if (request.ViewerSession == null || request.ViewerSession.Equals(Guid.Empty))
+			{
+				string message = "A valid viewer session id must be specified.";
+				Platform.Log(LogLevel.Error, message);
+				throw new FaultException(message);
+			}
+
+			IImageViewer viewer = ViewerSessionTool.GetViewer(request.ViewerSession.SessionId);
+			if (viewer == null)
+			{
+				string message = String.Format("The specified viewer session ({0}) was not found, " +
+									"likely because it has already been closed by the user.", request.ViewerSession.SessionId);
+				Platform.Log(LogLevel.Error, message);
+
+				throw new FaultException<ViewerSessionNotFoundFault>(new ViewerSessionNotFoundFault(message), _sessionNotFoundReason);
+			}
+
+			GetViewerSessionInfoResult result = new GetViewerSessionInfoResult();
+			result.AdditionalStudyInstanceUids = GetAdditionalStudyInstanceUids(viewer);
+			return result;
+		}
+
 		public OpenStudiesResult OpenStudies(OpenStudiesRequest request)
 		{
 			if (request == null)
@@ -33,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Automation
 				throw new FaultException(message);
 			}
 
-			if (request.StudyInstanceUids == null || request.StudyInstanceUids.Length == 0 || String.IsNullOrEmpty(request.StudyInstanceUids[0]))
+			if (request.StudyInstanceUids == null || request.StudyInstanceUids.Count == 0 || String.IsNullOrEmpty(request.StudyInstanceUids[0]))
 			{
 				string message = "At least one study instance uid must be specified.";
 				Platform.Log(LogLevel.Error, message);
@@ -46,7 +100,9 @@ namespace ClearCanvas.ImageViewer.Automation
 
 			try
 			{
-				Workspace workspace = GetViewerWorkspace(request.StudyInstanceUids[0]);
+				string primaryStudyInstanceUid = request.StudyInstanceUids[0];
+				Workspace workspace = GetViewerWorkspace(primaryStudyInstanceUid);
+
 				IImageViewer viewer;
 				if (activateIfOpen && workspace != null)
 				{
@@ -64,6 +120,12 @@ namespace ClearCanvas.ImageViewer.Automation
 						string message = "Failed to open any of the specified studies.";
 						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
 					}
+					else if (primaryStudyInstanceUid != GetPrimaryStudyInstanceUid(viewer))
+					{
+						viewer.Dispose();
+						string message = "Failed to open the primary study.";
+						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
+					}
 					else
 					{
 						OpenStudyHelper.Launch((ImageViewerComponent)viewer, windowBehaviour);
@@ -78,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Automation
 				if (viewerSession == null)
 					throw new ApplicationException("Failed to retrieve the session id for the specified viewer.");
 
-				result.ViewerSession = new ViewerSession(viewerSession.Value);
+				result.ViewerSession = new ViewerSession(viewerSession.Value, primaryStudyInstanceUid);
 				return result;
 			}
 			catch(Exception e)
@@ -233,7 +295,12 @@ namespace ClearCanvas.ImageViewer.Automation
 
 			StringBuilder messageBuilder = new StringBuilder();
 			if (totalFailures.Count > 0)
-				messageBuilder.AppendFormat(SR.MessageFormatStudyLoadFailures, totalFailures.Count);
+			{
+				if (totalFailures.Count == 1)
+					messageBuilder.Append(SR.MessageFormatStudyLoadFailure);
+				else
+					messageBuilder.AppendFormat(SR.MessageFormatStudyLoadFailures, totalFailures.Count);
+			}
 
 			int partialFailures = failures.Count - totalFailures.Count;
 			if (partialFailures != 0)
@@ -241,13 +308,47 @@ namespace ClearCanvas.ImageViewer.Automation
 				if (totalFailures.Count != 0)
 					messageBuilder.AppendLine();
 
-				messageBuilder.AppendFormat(SR.MessagePartialStudyLoadFailures, partialFailures);
+				if (partialFailures == 1)
+					messageBuilder.AppendFormat(SR.MessagePartialStudyLoadFailure);
+				else 
+					messageBuilder.AppendFormat(SR.MessagePartialStudyLoadFailures, partialFailures);
 			}
 
 			messageBuilder.AppendLine();
 			messageBuilder.Append(SR.MessagePleaseSeeLogs);
 
 			Application.ActiveDesktopWindow.ShowMessageBox(messageBuilder.ToString(), MessageBoxActions.Ok);
+		}
+
+		private static string GetPrimaryStudyInstanceUid(IImageViewer viewer)
+		{
+			foreach (Patient patient in viewer.StudyTree.Patients)
+			{
+				foreach (Study study in patient.Studies)
+				{
+					return study.StudyInstanceUID;
+				}
+			}
+
+			return null;
+		}
+
+		private static List<string> GetAdditionalStudyInstanceUids(IImageViewer viewer)
+		{
+			List<string> studyInstanceUids = new List<string>();
+
+			foreach (Patient patient in viewer.StudyTree.Patients)
+			{
+				foreach (Study study in patient.Studies)
+				{
+					studyInstanceUids.Add(study.StudyInstanceUID);
+				}
+			}
+
+			if (studyInstanceUids.Count > 0)
+				studyInstanceUids.RemoveAt(0);
+
+			return studyInstanceUids;
 		}
 
 		private static Workspace GetViewerWorkspace(IImageViewer viewer)
@@ -267,20 +368,8 @@ namespace ClearCanvas.ImageViewer.Automation
 			foreach (Workspace workspace in GetViewerWorkspaces())
 			{
 				IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
-
-				if (viewer.LogicalWorkspace.ImageSets.Count > 0 && viewer.LogicalWorkspace.ImageSets[0].DisplaySets.Count > 0)
-				{
-					IDisplaySet displaySet = viewer.LogicalWorkspace.ImageSets[0].DisplaySets[0];
-					if (displaySet.PresentationImages.Count > 0)
-					{
-						IPresentationImage image = displaySet.PresentationImages[0];
-						if (image is IImageSopProvider)
-						{
-							if ((image as IImageSopProvider).ImageSop.StudyInstanceUID == primaryStudyUid)
-								return workspace;
-						}
-					}
-				}
+				if (primaryStudyUid == GetPrimaryStudyInstanceUid(viewer))
+					return workspace;
 			}
 
 			return null;

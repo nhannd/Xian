@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A collection of <see cref="SeriesCollection"/> objects.
 	/// </summary>
-	public class SeriesCollection : ObservableDictionary<string, Series>
+	public class SeriesCollection : ObservableList<Series>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="SeriesCollection"/>.
@@ -44,6 +44,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public SeriesCollection()
 		{
 
+		}
+
+		internal Series this[string seriesInstanceUid]
+		{
+			get
+			{
+				return CollectionUtils.SelectFirst(this, delegate(Series series) { return series.SeriesInstanceUID == seriesInstanceUid; });
+			}
 		}
 	}
 }

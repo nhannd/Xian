@@ -17,6 +17,170 @@ namespace TestAutomationClient.ViewerAutomation
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
     [System.SerializableAttribute()]
+    public partial class GetActiveViewerSessionsResult : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private System.ComponentModel.BindingList<TestAutomationClient.ViewerAutomation.ViewerSession> ActiveViewerSessionsField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.ComponentModel.BindingList<TestAutomationClient.ViewerAutomation.ViewerSession> ActiveViewerSessions
+        {
+            get
+            {
+                return this.ActiveViewerSessionsField;
+            }
+            set
+            {
+                this.ActiveViewerSessionsField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+    [System.SerializableAttribute()]
+    public partial class ViewerSession : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PrimaryStudyInstanceUidField;
+        
+        private System.Guid SessionIdField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PrimaryStudyInstanceUid
+        {
+            get
+            {
+                return this.PrimaryStudyInstanceUidField;
+            }
+            set
+            {
+                this.PrimaryStudyInstanceUidField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid SessionId
+        {
+            get
+            {
+                return this.SessionIdField;
+            }
+            set
+            {
+                this.SessionIdField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+    [System.SerializableAttribute()]
+    public partial class GetViewerSessionInfoRequest : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private TestAutomationClient.ViewerAutomation.ViewerSession ViewerSessionField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public TestAutomationClient.ViewerAutomation.ViewerSession ViewerSession
+        {
+            get
+            {
+                return this.ViewerSessionField;
+            }
+            set
+            {
+                this.ViewerSessionField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+    [System.SerializableAttribute()]
+    public partial class GetViewerSessionInfoResult : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private System.ComponentModel.BindingList<string> AdditionalStudyInstanceUidsField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.ComponentModel.BindingList<string> AdditionalStudyInstanceUids
+        {
+            get
+            {
+                return this.AdditionalStudyInstanceUidsField;
+            }
+            set
+            {
+                this.AdditionalStudyInstanceUidsField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+    [System.SerializableAttribute()]
     public partial class OpenStudiesRequest : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
@@ -138,43 +302,6 @@ namespace TestAutomationClient.ViewerAutomation
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
     [System.SerializableAttribute()]
-    public partial class ViewerSession : object, System.Runtime.Serialization.IExtensibleDataObject
-    {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        private System.Guid SessionIdField;
-        
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
-        {
-            get
-            {
-                return this.extensionDataField;
-            }
-            set
-            {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid SessionId
-        {
-            get
-            {
-                return this.SessionIdField;
-            }
-            set
-            {
-                this.SessionIdField = value;
-            }
-        }
-    }
-    
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
-    [System.SerializableAttribute()]
     public partial class ActivateViewerSessionRequest : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
@@ -249,12 +376,35 @@ namespace TestAutomationClient.ViewerAutomation
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
     [System.SerializableAttribute()]
-    public partial class OpenStudiesFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class NoActiveViewerSessionsFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+    [System.SerializableAttribute()]
+    public partial class ViewerSessionNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string FailureDescriptionField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
@@ -269,7 +419,7 @@ namespace TestAutomationClient.ViewerAutomation
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string FailureDescription
         {
             get
@@ -286,12 +436,13 @@ namespace TestAutomationClient.ViewerAutomation
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts")]
     [System.SerializableAttribute()]
-    public partial class ViewerSessionNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class OpenStudiesFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string FailureDescriptionField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
@@ -306,7 +457,7 @@ namespace TestAutomationClient.ViewerAutomation
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string FailureDescription
         {
             get
@@ -324,6 +475,20 @@ namespace TestAutomationClient.ViewerAutomation
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation/contracts", ConfigurationName="TestAutomationClient.ViewerAutomation.IViewerAutomation", SessionMode=System.ServiceModel.SessionMode.NotAllowed)]
     public interface IViewerAutomation
     {
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/GetA" +
+            "ctiveViewerSessions", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/GetA" +
+            "ctiveViewerSessionsResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(TestAutomationClient.ViewerAutomation.NoActiveViewerSessionsFault), Action="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/GetA" +
+            "ctiveViewerSessionsNoActiveViewerSessionsFaultFault", Name="NoActiveViewerSessionsFault")]
+        TestAutomationClient.ViewerAutomation.GetActiveViewerSessionsResult GetActiveViewerSessions();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/GetV" +
+            "iewerSessionInfo", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/GetV" +
+            "iewerSessionInfoResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(TestAutomationClient.ViewerAutomation.ViewerSessionNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/GetV" +
+            "iewerSessionInfoViewerSessionNotFoundFaultFault", Name="ViewerSessionNotFoundFault")]
+        TestAutomationClient.ViewerAutomation.GetViewerSessionInfoResult GetViewerSessionInfo(TestAutomationClient.ViewerAutomation.GetViewerSessionInfoRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/Open" +
             "Studies", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/contracts/IViewerAutomation/Open" +
@@ -379,6 +544,16 @@ namespace TestAutomationClient.ViewerAutomation
         public ViewerAutomationClient(System.ServiceModel.Channels.Binding binding, System.ServiceModel.EndpointAddress remoteAddress) : 
                 base(binding, remoteAddress)
         {
+        }
+        
+        public TestAutomationClient.ViewerAutomation.GetActiveViewerSessionsResult GetActiveViewerSessions()
+        {
+            return base.Channel.GetActiveViewerSessions();
+        }
+        
+        public TestAutomationClient.ViewerAutomation.GetViewerSessionInfoResult GetViewerSessionInfo(TestAutomationClient.ViewerAutomation.GetViewerSessionInfoRequest request)
+        {
+            return base.Channel.GetViewerSessionInfo(request);
         }
         
         public TestAutomationClient.ViewerAutomation.OpenStudiesResult OpenStudies(TestAutomationClient.ViewerAutomation.OpenStudiesRequest request)
