@@ -41,26 +41,34 @@ namespace ClearCanvas.Ris.Client.Workflow
         public TechnologistDocumentationMppsSummaryTable()
         {
             this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
-                                 "Name",
+                                 SR.ColumnName,
                                  delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.Description; },
                                  5.0f));
 
             this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, string>(
-                                 "State",
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.State.Value; },
+                                 SR.ColumnState,
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return FormatStatus(mpps); },
                                  1.2f));
 
 			ITableColumn sortColumn = new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
-                                 "Start Time",
+                                 SR.ColumnStartTime,
                                  delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.StartTime; },
                                  1.5f);
 			this.Columns.Add(sortColumn);
 			this.Sort(new TableSortParams(sortColumn, true));
 
             this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
-                                 "End Time",
+                                 SR.ColumnEndTime,
                                  delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.EndTime; },
                                  1.5f));
+        }
+
+        private static string FormatStatus(ModalityPerformedProcedureStepDetail mpps)
+        {
+            if (mpps.State.Code == "CM")
+                return "Performed";
+            else
+                return mpps.State.Value;
         }
     }
 }

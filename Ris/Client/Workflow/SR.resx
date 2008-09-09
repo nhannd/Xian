@@ -258,6 +258,9 @@
   <data name="ColumnStartTime" xml:space="preserve">
     <value>Start Time</value>
   </data>
+  <data name="ColumnState" xml:space="preserve">
+    <value>State</value>
+  </data>
   <data name="ColumnStatus" xml:space="preserve">
     <value>Status</value>
   </data>
