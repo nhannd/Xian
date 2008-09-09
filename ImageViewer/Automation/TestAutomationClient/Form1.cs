@@ -241,16 +241,20 @@ namespace TestAutomationClient
 			if (studyInstanceUid == null)
 				return;
 
+			bool anySessions = false;
 			List<Guid> sessions = GetSessions(studyInstanceUid);
-			if (sessions.Count == 0)
-				return;
+			if (sessions.Count > 0)
+			{
+				anySessions = true;
+				object[] values = new object[sessions.Count];
+				for (int i = 0; i < values.Length; ++i)
+					values[i] = sessions[i];
 
-			object[] values = new object[sessions.Count];
-			for (int i = 0; i < values.Length; ++i)
-				values[i] = sessions[i];
+				_openSessions.Items.AddRange(values);
+				_openSessions.SelectedIndex = 0;
+			}
 
-			_openSessions.Items.AddRange(values);
-			_openSessions.SelectedIndex = 0;
+			_studyGrid.SelectedRows[0].Cells[4].Value = anySessions;
 		}
 
 		private void FormLoad(object sender, EventArgs e)
@@ -262,9 +266,9 @@ namespace TestAutomationClient
 			}
 		}
 
-		private static string[] CreateRowValues(IStudy study)
+		private static object[] CreateRowValues(IStudy study)
 		{
-			return new string[] { study.PatientsName.ToString(), study.PatientId, study.StudyDescription, study.StudyInstanceUid };
+			return new object[] { study.PatientsName.ToString(), study.PatientId, study.StudyDescription, study.StudyInstanceUid, false };
 		}
 	}
 }

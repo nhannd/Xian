@@ -40,12 +40,13 @@ namespace TestAutomationClient
 			this.Id = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.StudyDescription = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.StudyInstanceUid = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.ActiveSessions = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this._studyGrid)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _openStudy
 			// 
-			this._openStudy.Location = new System.Drawing.Point(561, 198);
+			this._openStudy.Location = new System.Drawing.Point(653, 196);
 			this._openStudy.Name = "_openStudy";
 			this._openStudy.Size = new System.Drawing.Size(194, 23);
 			this._openStudy.TabIndex = 0;
@@ -55,7 +56,7 @@ namespace TestAutomationClient
 			// 
 			// _activateViewer
 			// 
-			this._activateViewer.Location = new System.Drawing.Point(561, 227);
+			this._activateViewer.Location = new System.Drawing.Point(653, 225);
 			this._activateViewer.Name = "_activateViewer";
 			this._activateViewer.Size = new System.Drawing.Size(194, 23);
 			this._activateViewer.TabIndex = 1;
@@ -65,7 +66,7 @@ namespace TestAutomationClient
 			// 
 			// _closeViewer
 			// 
-			this._closeViewer.Location = new System.Drawing.Point(561, 256);
+			this._closeViewer.Location = new System.Drawing.Point(653, 254);
 			this._closeViewer.Name = "_closeViewer";
 			this._closeViewer.Size = new System.Drawing.Size(194, 23);
 			this._closeViewer.TabIndex = 2;
@@ -75,7 +76,7 @@ namespace TestAutomationClient
 			// 
 			// _startViewer
 			// 
-			this._startViewer.Location = new System.Drawing.Point(561, 169);
+			this._startViewer.Location = new System.Drawing.Point(653, 167);
 			this._startViewer.Name = "_startViewer";
 			this._startViewer.Size = new System.Drawing.Size(194, 23);
 			this._startViewer.TabIndex = 3;
@@ -92,10 +93,11 @@ namespace TestAutomationClient
             this.PatientsName,
             this.Id,
             this.StudyDescription,
-            this.StudyInstanceUid});
+            this.StudyInstanceUid,
+            this.ActiveSessions});
 			this._studyGrid.Location = new System.Drawing.Point(12, 12);
 			this._studyGrid.Name = "_studyGrid";
-			this._studyGrid.Size = new System.Drawing.Size(543, 290);
+			this._studyGrid.Size = new System.Drawing.Size(635, 290);
 			this._studyGrid.TabIndex = 5;
 			// 
 			// _activateIfOpen
@@ -103,7 +105,7 @@ namespace TestAutomationClient
 			this._activateIfOpen.AutoSize = true;
 			this._activateIfOpen.Checked = true;
 			this._activateIfOpen.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._activateIfOpen.Location = new System.Drawing.Point(562, 286);
+			this._activateIfOpen.Location = new System.Drawing.Point(654, 284);
 			this._activateIfOpen.Name = "_activateIfOpen";
 			this._activateIfOpen.Size = new System.Drawing.Size(137, 17);
 			this._activateIfOpen.TabIndex = 6;
@@ -113,7 +115,7 @@ namespace TestAutomationClient
 			// _openSessions
 			// 
 			this._openSessions.FormattingEnabled = true;
-			this._openSessions.Location = new System.Drawing.Point(562, 26);
+			this._openSessions.Location = new System.Drawing.Point(654, 24);
 			this._openSessions.Name = "_openSessions";
 			this._openSessions.Size = new System.Drawing.Size(193, 134);
 			this._openSessions.TabIndex = 7;
@@ -121,7 +123,7 @@ namespace TestAutomationClient
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(562, 12);
+			this.label1.Location = new System.Drawing.Point(654, 10);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(78, 13);
 			this.label1.TabIndex = 8;
@@ -152,11 +154,18 @@ namespace TestAutomationClient
 			this.StudyInstanceUid.ReadOnly = true;
 			this.StudyInstanceUid.Width = 200;
 			// 
+			// ActiveSessions
+			// 
+			this.ActiveSessions.HeaderText = "Sessions?";
+			this.ActiveSessions.Name = "ActiveSessions";
+			this.ActiveSessions.ReadOnly = true;
+			this.ActiveSessions.Width = 70;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(768, 314);
+			this.ClientSize = new System.Drawing.Size(859, 314);
 			this.Controls.Add(this._openSessions);
 			this.Controls.Add(this._activateIfOpen);
 			this.Controls.Add(this._studyGrid);
@@ -188,6 +197,7 @@ namespace TestAutomationClient
 		private System.Windows.Forms.DataGridViewTextBoxColumn Id;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StudyDescription;
 		private System.Windows.Forms.DataGridViewTextBoxColumn StudyInstanceUid;
+		private System.Windows.Forms.DataGridViewTextBoxColumn ActiveSessions;
 	}
 }
 
