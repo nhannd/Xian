@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceReference>
+	<ProxyGenerationParameters
+		ServiceReferenceUri="http://127.0.0.1:51122/ClearCanvas/ImageViewer/Automation?wsdl"
+		Name="ViewerAutomation"
+		NotifyPropertyChange="True"
+		UseObservableCollection="False">
+	</ProxyGenerationParameters>
+	<EndPoints>
+		<EndPoint
+			Address="http://localhost:51122/ClearCanvas/ImageViewer/Automation/Viewer%20Automation%20Service"
+			BindingConfiguration="BasicHttpBinding_IViewerAutomation"
+			Contract="TestAutomationClient.ViewerAutomation.IViewerAutomation"
+			>
+		</EndPoint>
+	</EndPoints>
+</ServiceReference>

@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using ClearCanvas.Common;
+using System.Runtime.InteropServices;
 
 [assembly: ClearCanvas.Common.Plugin()]
 
@@ -91,3 +92,4 @@ using ClearCanvas.Common;
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
+[assembly: ComVisible(true)]

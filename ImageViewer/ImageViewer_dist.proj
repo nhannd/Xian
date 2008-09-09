@@ -108,6 +108,7 @@
   <ItemGroup Condition="$(DesktopBuild)">
     <PluginFiles Include="$(SolutionDir)\..\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
+    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Automation\bin\$(Configuration)\ClearCanvas.ImageViewer.Automation.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />

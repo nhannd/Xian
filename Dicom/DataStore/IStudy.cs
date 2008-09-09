@@ -37,6 +37,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface IStudy
     {
+		//TODO: Specific character set is missing.
 		string StudyInstanceUid { get; }
 
 		PersonName PatientsName { get; }
