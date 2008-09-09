@@ -66,6 +66,7 @@ var StructuredReportForm = {
 		this._fetus = 0;
 
 		this._data.indicationsAndDates = this._data.indicationsAndDates || {};
+		this._data.indicationsAndDates.referenceDate = this._data.indicationsAndDates.referenceDate || new Date();
 		this._data.indicationsAndDates.lmp = this._data.indicationsAndDates.lmp || {};
 		this._data.indicationsAndDates.us = this._data.indicationsAndDates.us || {};
 		this._data.indicationsAndDates.establishedEDC = this._data.indicationsAndDates.establishedEDC || {};
@@ -397,6 +398,7 @@ var IndicationsAndDatesForm = {
 	{
 		var indicationChoices;
 		var reportType = source.obusReportType;
+		var referenceDate = source.indicationsAndDates.referenceDate;
 		
 		if(reportType == reportTypes[0])
 		{
@@ -456,12 +458,13 @@ var IndicationsAndDatesForm = {
                 setValue: function(item, value) { return; }
 			},
 			{
-				label: "Age from dates (wks)",
+				label: "Age on " + Ris.formatDate(referenceDate), 
 				cellType: "readonly",
 				getVisible: function(item) { return !!item.LMP; },
 				getValue: function(item) 
                 { 
-                    return item.lmpAge = EdcCalculator.differenceInWeeks(item.LMP, new Date()) || null; 
+                    item.lmpAge = EdcCalculator.differenceInWeeks(item.LMP, referenceDate) || null; 
+					return item.lmpAge + " wks";
                 },
                 setValue: function(item, value) { return; }
 			}
@@ -487,12 +490,13 @@ var IndicationsAndDatesForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "Age Today (wks)",
+				label: "Age on " + Ris.formatDate(referenceDate), 
 				cellType: "readonly",
 				getVisible: function(item) { return !!item.firstUltrasound && (!!item.firstUltrasoundAge || item.firstUltrasoundAge === 0); },
 				getValue: function(item)
                 { 
-                    return item.ageToday = EdcCalculator.differenceInWeeks(item.firstUltrasound, new Date()) + item.firstUltrasoundAge; 
+                    item.ultrasoundAge = EdcCalculator.differenceInWeeks(item.firstUltrasound, referenceDate) + item.firstUltrasoundAge; 
+					return item.ultrasoundAge + " wks";
                 },
                 setValue: function(item, value) { return; }
 			},
@@ -501,7 +505,7 @@ var IndicationsAndDatesForm = {
 				cellType: "readonly",
 				getValue: function(item) 
                 { 
-                    item.firstUltrasoundEdc = EdcCalculator.edcFromTodaysAge(item.ageToday);
+                    item.firstUltrasoundEdc = EdcCalculator.edcFromAge(item.ultrasoundAge, referenceDate);
                     return Ris.formatDate(item.firstUltrasoundEdc); 
                 },
 				getVisible: function(item) { return !!item.firstUltrasound && (!!item.firstUltrasoundAge || item.firstUltrasoundAge === 0); },
@@ -522,11 +526,12 @@ var IndicationsAndDatesForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "Age from EDC (wks)",
+				label: "Age on " + Ris.formatDate(referenceDate), 
 				cellType: "readonly",
 				getValue: function(item) 
                 { 
-                    return item.establishedEDCAge = EdcCalculator.ageFromEdc(item.establishedEDC) || null;
+                    item.establishedEDCAge = EdcCalculator.ageFromEdc(item.establishedEDC, referenceDate) || null;
+					return item.establishedEDCAge + " wks";
                 },
 				setValue: function(item, value) { return; },
 				getVisible: function(item) { return !!item.establishedEDC; }
@@ -970,13 +975,13 @@ var BiometryForm = {
 
 		efwTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 
-		var nuchalTranslucencyTable = Table.createTable($("nuchalTransparencyTable"),{ editInPlace: true, flow: true, checkBoxes: false},
+		var nuchalTransparencyTable = Table.createTable($("nuchalTransparencyTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			{
 				label: "mm", 
 				cellType: "text",
-				getValue: function(item) { return item.nuchalTranslucency; },
-				setValue: function(item, value) { item.nuchalTranslucency = value; },
+				getValue: function(item) { return item.nuchalTransparency; },
+				setValue: function(item, value) { item.nuchalTransparency = value; },
 				getError: function(item) { return null; },
 				getVisible: function(item) { return _me._reportType == reportTypes[1]; }
 			}
@@ -1278,7 +1283,7 @@ var CardiacForm = {
 				getError: function(item) { return null; }
 			},
 			{
-				label: "PO diameter",
+				label: "PA diameter",
 				cellType: "text",
 				getValue: function(item) { return item.poDiameter; },
 				setValue: function(item, value) { item.poDiameter = value; },

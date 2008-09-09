@@ -21,22 +21,22 @@ var EdcCalculator = {
         return (differenceInMilliseconds / (1000 * 60 * 60 * 24 * 7)).roundTo(1);
     },
     
-    edcFromTodaysAge: function(ageInWeeks) {
+    edcFromAge: function(ageInWeeks, referenceDate) {
         if (isNaN(ageInWeeks)) return undefined;
+        if (isNaN(referenceDate)) return undefined;
     
         ageInWeeks = Number(ageInWeeks);
         
         var daysLeft = 280 - (ageInWeeks * 7);
         var millisecondsLeft = this._daysToMilliseconds(daysLeft);
-        var today = new Date();
         
-        return new Date(Number(today) + millisecondsLeft);
+        return new Date(Number(referenceDate) + millisecondsLeft);
     },
     
-    ageFromEdc: function(edc) {
+    ageFromEdc: function(edc, referenceDate) {
         if (isNaN(edc)) return undefined;
+        if (isNaN(referenceDate)) return undefined;
 
-        var today = new Date();
-        return 40 - this.differenceInWeeks(today, edc);
+        return (40 - this.differenceInWeeks(referenceDate, edc)).roundTo(1);
     }
 }

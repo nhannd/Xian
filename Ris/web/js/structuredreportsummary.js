@@ -114,6 +114,7 @@ var IndicationsAndDatesPreview = {
 	initialize : function(source)
 	{
 		this._data = source;
+		var referenceDate = this._data.referenceDate;
 		
 		var indicationsAndDatesPreviewTable = Table.createTable($("indicationsAndDatesPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[
@@ -128,7 +129,7 @@ var IndicationsAndDatesPreview = {
 		[			
 			new readOnlyDateCell("Date of LMP", "LMP"),
 			new readOnlyDateCell("EDC", "lmpEdc"),
-			new readOnlyCell("Age from dates (wks)", "lmpAge")
+			new readOnlyAgeCell("lmpAge", referenceDate)
 		]);
 		
 		lmpPreviewTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -139,7 +140,7 @@ var IndicationsAndDatesPreview = {
 		[						
 			new readOnlyDateCell("1st Ultrasound", "firstUltrasound"),
 			new readOnlyCell("Age at 1st Ultrasound (wks)", "firstUltrasoundAge"),
-			new readOnlyCell("Age Today (wks)", "ageToday"),
+			new readOnlyAgeCell("ultrasoundAge", referenceDate),
 			new readOnlyDateCell("EDC", "firstUltrasoundEdc")
 		]);
 		
@@ -150,7 +151,7 @@ var IndicationsAndDatesPreview = {
 		var establishedEDCPreviewTable = Table.createTable($("establishedEDCPreviewTable"),{ editInPlace: true, flow: true, checkBoxes: false},
 		[			
 			new readOnlyDateCell("EDC", "establishedEDC"),
-			new readOnlyCell("Age from dates (wks)", "establishedEDCAge"),
+			new readOnlyAgeCell("establishedEDCAge", referenceDate),
 			new readOnlyCell("How Determined?", "edcMethod"),
 			new readOnlyDateCell("Transferred Date", "transferredDate")
 		]);
@@ -247,7 +248,7 @@ var BiometryPreview = {
 			new readOnlyBiometryCell("FL", "fl", "flWks"),
 			new readOnlyBiometryCell("Average Size", "", "avgWks"),
 			new readOnlyBiometryCell("HC", "hc", "hcWks"),
-			new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", function(item) { return ""; }),
+			new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", ""),
 			new readOnlyCell("EFW (gm)", "efw"),
 			new readOnlyCell("Centile", "efwCentile")
 		]);
@@ -475,7 +476,7 @@ var CardiacPreview = {
 			new readOnlyCell("PA crosses AO", "paCrossesAO"),
 			new readOnlyCell("Outlets symmetry", "outletsSymmetry"),
 			new readOnlyCell("AO diameter", "aoDiameter"),
-			new readOnlyCell("PO diameter", "poDiameter")
+			new readOnlyCell("PA diameter", "poDiameter")
 		]);
 
 		fourChamberViewPreviewTable.bindItems([source[fetus]]);
@@ -692,6 +693,18 @@ function readOnlyDateCell(label, prop)
 	this.cellType = "readonly";
 	//this.getValue = function(item) { return !isNaN(item[prop]) ? Ris.formatDate(item[prop]) : ""; };
 	this.getValue = function(item) { return Ris.formatDate(item[prop]); };
+	this.getVisible = function(item) { return item[prop] !== null && item[prop] !== undefined && item[prop] !== ""; };
+}
+
+/*
+	Cells with value formatted as an age
+*/
+function readOnlyAgeCell(prop, referenceDate)
+{
+	this.label = "Age on " + Ris.formatDate(referenceDate);
+	this.prop = prop;
+	this.cellType = "readonly";
+	this.getValue = function(item) { return item[prop] + " wks"; };
 	this.getVisible = function(item) { return item[prop] !== null && item[prop] !== undefined && item[prop] !== ""; };
 }
 
