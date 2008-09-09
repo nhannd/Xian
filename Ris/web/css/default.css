@@ -216,14 +216,12 @@ a.collapsibleHeading {
 
 #patientNotesTable .checkedDivCell {
 	padding:0;
-	width: 33%;
-	height: auto;
+	width: 32%;
 }
 
 #medicationsTable .checkedDivCell {
 	padding:0;
-	width: 33%;
-	height: auto;
+	width: 32%;
 }
 
 .errorProvider {

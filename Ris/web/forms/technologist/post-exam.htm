@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-	<title>Breast Imaging</title>
+	<title>Post Exam</title>
 	<link href="../../css/default.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" SRC="../../js/SparrowScripts/datepicker/ss_datepicker_settings.js"></script>
 	<script type="text/javascript" SRC="../../js/SparrowScripts/datepicker/ss_datepicker.js"></script>
@@ -109,7 +109,17 @@
 		function imageQualityCell(label, prop)
 		{
 			this.label = label;
-			this.cellType = "text";
+			this.cellType = "bool";
+			this.prop = prop;
+			this.getValue = function(item) { return item[this.prop]; };
+			this.setValue = function(item, value) { item[this.prop] = value; };
+			this.getError = function(item) { return null; };
+		}
+
+		function imageQualityCommentCell(prop)
+		{
+			this.label = "Comment";
+			this.cellType = "textarea";
 			this.prop = prop;
 			this.getValue = function(item) { return item[this.prop]; };
 			this.setValue = function(item, value) { item[this.prop] = value; };
@@ -121,10 +131,15 @@
 			var imageQualityTable = Table.createTable($("imageQualityTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
 				new imageQualityCell("Patient Moving", "patientMotion"),
+				new imageQualityCommentCell("patientMotionComment"),
 				new imageQualityCell("Artifacts", "artifacts"),
+				new imageQualityCommentCell("artifactsComment"),
 				new imageQualityCell("Scanner/Equipment Issues", "equipmentIssues"),
+				new imageQualityCommentCell("equipmentIssuesComment"),
 				new imageQualityCell("Changes/Variation to Protocol", "variationToProtocol"),
-				new imageQualityCell("Other", "other")
+				new imageQualityCommentCell("variationToProtocolComment"),
+				new imageQualityCell("Other", "other"),
+				new imageQualityCommentCell("otherComment")
 			]);
 
 			imageQualityTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -148,12 +163,12 @@
 				new patientNotesCell("Pt chose not to wear ear-plugs", "choseNotToWearEarplugs"),
 				new patientNotesCell("Pt had eyes covered", "hadEyesCovered"),
 				new patientNotesCell("Pt requires pillow, blanket", "requiresPillowBlanket"),
-				new patientNotesCell("Pt took sedation", "tookSedation"),
 				new patientNotesCell("Pt arrived by ambulance/wheeltrans", "arrivedByAmbulance"),
 				new patientNotesCell("Pt is in wheelchair", "wheelchair"),
 				new patientNotesCell("Pt is paraplegic", "paraplegic"),
 				new patientNotesCell("Pt requires Hoyer lift", "requiresHoyerLift"),
 				new patientNotesCell("Difficulty with IV access", "difficultyWithIVAccess"),
+				new NewLineField(),
 				{	label: "Other",
 					cellType: "textarea",
 					getValue: function(item) { return item.other; },
@@ -300,6 +315,9 @@
 		{
 		}
 	</script>
+	<style type="text/css">
+		#imageQualityTable .checkedDivCell { width: 20%; }
+	</style>
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">

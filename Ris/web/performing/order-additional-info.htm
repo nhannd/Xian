@@ -262,26 +262,27 @@
 
 				var medicationsTable = Table.createTable($("medicationsTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
-						{	label: "Not on ASA or Aspirin x1 week",
+						{	label: "On ASA or Aspirin x1 week",
 							cellType: "bool",
-							getValue: function(item) { return item.notOnAsaOrAspirint || false; },
-							setValue: function(item, value) { item.notOnAsaOrAspirint = value; },
+							getValue: function(item) { return item.onAsaOrAspirint || false; },
+							setValue: function(item, value) { item.onAsaOrAspirint = value; },
 							getError: function(item) { return null; }
 						},
-						{	label: "Not on Coumadin",
+						{	label: "On Coumadin",
 							cellType: "bool",
-							getValue: function(item) { return item.notOnCoumadin || false; },
-							setValue: function(item, value) { item.notOnCoumadin = value; },
+							getValue: function(item) { return item.onCoumadin || false; },
+							setValue: function(item, value) { item.onCoumadin = value; },
 							getError: function(item) { return null; }
 						},
-						{	label: "Not on Arthritis medication",
+						{	label: "On Arthritis medication",
 							cellType: "bool",
-							getValue: function(item) { return item.notOnArthritisMed || false; },
-							setValue: function(item, value) { item.notOnArthritisMed = value; },
+							getValue: function(item) { return item.onArthritisMed || false; },
+							setValue: function(item, value) { item.onArthritisMed = value; },
 							getError: function(item) { return null; }
 						},
+						new NewLineField(),
 						{	label: "Other medications",
-							cellType: "text",
+							cellType: "textarea",
 							getValue: function(item) { return item.otherMedication; },
 							setValue: function(item, value) { item.otherMedication = value; },
 							getError: function(item) { return null; }
@@ -690,7 +691,7 @@
 							getVisible: function(item) { return item.callbackStatus == "Yes"; },
 							getError: function(item) { return null; }
 						},
-						{	label: "Other",
+						{	label: "Comments",
 							cellType: "text",
 							size: 100,
 							getValue: function(item) { return item.otherCallback; },

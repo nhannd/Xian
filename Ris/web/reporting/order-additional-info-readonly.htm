@@ -160,25 +160,25 @@
 
 				var medicationsTable = Table.createTable($("medicationsTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
-						{	label: "Not on ASA or Aspirin x1 week",
+						{	label: "On ASA or Aspirin x1 week",
 							cellType: "bool",
 							readonly: true,
-							getValue: function(item) { return item.notOnAsaOrAspirint || false; },
-							setValue: function(item, value) { item.notOnAsaOrAspirint = value; },
+							getValue: function(item) { return item.onAsaOrAspirint || false; },
+							setValue: function(item, value) { item.onAsaOrAspirint = value; },
 							getError: function(item) { return null; }
 						},
-						{	label: "Not on Coumadin",
+						{	label: "On Coumadin",
 							cellType: "bool",
 							readonly: true,
-							getValue: function(item) { return item.notOnCoumadin || false; },
-							setValue: function(item, value) { item.notOnCoumadin = value; },
+							getValue: function(item) { return item.onCoumadin || false; },
+							setValue: function(item, value) { item.onCoumadin = value; },
 							getError: function(item) { return null; }
 						},
-						{	label: "Not on Arthritis medication",
+						{	label: "On Arthritis medication",
 							cellType: "bool",
 							readonly: true,
-							getValue: function(item) { return item.notOnArthritisMed || false; },
-							setValue: function(item, value) { item.notOnArthritisMed = value; },
+							getValue: function(item) { return item.onArthritisMed || false; },
+							setValue: function(item, value) { item.onArthritisMed = value; },
 							getError: function(item) { return null; }
 						},
 						new readOnlyCell("Other medications", "otherMedication")
@@ -307,7 +307,7 @@
 						new readOnlyCell("Call back exam?", "callbackStatus"),
 						new readOnlyCell("Mammo/US Callback", "mammoUltrasoundCallback"),
 						new readOnlyCell("Post-MRI Callback", "postMriCallback"),
-						new readOnlyCell("Other", "otherCallback")
+						new readOnlyCell("Comments", "otherCallback")
 					]);
 				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				table.bindItems([data.callBack]);

@@ -187,11 +187,19 @@
 				[
 					{  label: "Type",
 						cellType: "choice",
-						choices: ["EZHD", "Barium", "Sulfate"],
+						choices: ["EZHD", "Water", "Other"],
 						getValue: function(item) { return item.type; },
 						setValue: function(item, value) { item.type = value; },
 						getError: function(item) { return null; }
 					},
+					{  label: "Type (con'd)",
+						cellType: "text",
+						size: 20,
+						getValue: function(item) { return item.typeOther; },
+						setValue: function(item, value) { item.typeOther = value; },
+						getVisible: function(item) { return item.type == "Other"; },
+						getError: function(item) { return null; }
+					},                    
 					{  label: "Amount",
 						cellType: "text",
 						size: 10,
@@ -460,11 +468,19 @@
 				[
 					{  label: "Type",
 						cellType: "choice",
-						choices: ["Gadovist", "Magnevist", "Multihance", "Omniscan", "Primovist", "Vasovist"],
+						choices: ["Gadovist", "Magnevist", "Multihance", "Omniscan", "Primovist", "Vasovist", "Other"],
 						getValue: function(item) { return item.type; },
 						setValue: function(item, value) { item.type = value; },
 						getError: function(item) { return null; }
 					},
+					{  label: "Type (con'd)",
+						cellType: "text",
+						size: 20,
+						getValue: function(item) { return item.typeOther; },
+						setValue: function(item, value) { item.typeOther = value; },
+						getVisible: function(item) { return item.type == "Other"; },
+						getError: function(item) { return null; }
+					},                    
 					{  label: "Lot #",
 						cellType: "text",
 						size: 50,
@@ -609,17 +625,10 @@
 			var postProcessingTable = Table.createTable($("postProcessingTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
 				{	label: "Reconstructions Performed",
-					cellType: "choice",
+					cellType: "textarea",
 					choices: ["TODO"],
 					getValue: function(item) { return item.reconstructionsPerformed; },
 					setValue: function(item, value) { item.reconstructionsPerformed = value; },
-					getError: function(item) { return null; }
-				},
-				{	label: "3D Processing Protocol",
-					cellType: "choice",
-					choices: ["TODO"],
-					getValue: function(item) { return item.processingProtocol; },
-					setValue: function(item, value) { item.processingProtocol = value; },
 					getError: function(item) { return null; }
 				},
 				{	label: "Time Spent",
@@ -627,38 +636,11 @@
 					getValue: function(item) { return item.timeSpent; },
 					setValue: function(item, value) { item.timeSpent = value; },
 					getError: function(item) { return null; }
-				},
-				{	label: "Workstation",
-					cellType: "choice",
-					choices: ["TODO"],
-					getValue: function(item) { return item.workstation; },
-					setValue: function(item, value) { item.workstation = value; },
-					getError: function(item) { return null; }
-				},
-				{	label: "Workstation (con'd)",
-					cellType: "text",
-					getValue: function(item) { return item.workstationOther; },
-					setValue: function(item, value) { item.workstationOther = value; },
-					getVisible: function(item) { return item.workstation == "Other"; },
-					getError: function(item) { return null; }
 				}
 			]);
 
 			postProcessingTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 			postProcessingTable.bindItems([data.postProcessing]);
-
-			var postProcessingCommentsTable = Table.createTable($("postProcessingCommentsTable"), { editInPlace: true, flow: true, checkBoxes: false },
-			[
-				{	label: "Additional Comments",
-					cellType: "textarea",
-					getValue: function(item) { return item.additionalComments; },
-					setValue: function(item, value) { item.additionalComments = value; },
-					getError: function(item) { return null; }
-				}
-			]);
-
-			postProcessingCommentsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-			postProcessingCommentsTable.bindItems([data.postProcessing]);
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -754,7 +736,7 @@
 				<td class="tableheading"></td>
 			</tr>
 		</table>
-		<p class="sectionheading">Cardiac/3D Processing</p>
+		<p class="sectionheading">Post-Processing</p>
 		<p class="subsectionheading">Staff</p>
 		<div class="addDeleteButtons">
 			<input type="button" value="Add" onclick="javascript: onAddStaff()" />
@@ -765,11 +747,7 @@
 				<td colspan="2"><label><input id="staffCheckAllNone" type="checkbox" onclick="javascript: onStaffCheckAllNone()" />Select All/None</label></td>
 			</tr>
 		</table>
-		<p class="subsectionheading">Post-Processing</p>
 		<table id="postProcessingTable" width="100%">
-			<tr><td class="tableheading"></td></tr>
-		</table>
-		<table id="postProcessingCommentsTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 	</form>         
