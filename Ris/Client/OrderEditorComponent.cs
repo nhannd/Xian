@@ -870,7 +870,7 @@ namespace ClearCanvas.Ris.Client
 
         public void UpdateProcedureActionModel()
         {
-            _proceduresActionModel.Add.Enabled = true;
+            _proceduresActionModel.Add.Enabled = _selectedDiagnosticService != null;
             _proceduresActionModel.Edit.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
             _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
         }
@@ -953,6 +953,8 @@ namespace ClearCanvas.Ris.Client
                                }));
                     });
             }
+
+            UpdateProcedureActionModel();
 
             NotifyPropertyChanged("SelectedDiagnosticService");
         }
