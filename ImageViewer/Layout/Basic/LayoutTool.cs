@@ -45,8 +45,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 
     /// <summary>
-    /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
-    /// it so that it reflects the state of the active workspace.
+    /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf and coordinates
+    /// it so that it reflects the state of the active workspace, as well as provides a dropdown custom action
+    /// that can directly change the layout in the active imageviewer.
 	/// </summary>
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class LayoutTool : ImageViewerTool
@@ -63,6 +64,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_desktopWindow = null;
 		}
 
+		/// <summary>
+		/// Gets the action model for the layout drop down menu.
+		/// </summary>
 		public ActionModelNode LayoutDropDownMenuModel {
 			get {
 				if (_actionModel == null) {
@@ -81,6 +85,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+		/// <summary>
+		/// Sets the layout of the current imageviewer to the specified number of imageboxes.
+		/// </summary>
+		/// <param name="rows">The number of rows to show.</param>
+		/// <param name="columns">The number of columns to show.</param>
 		public void SetLayout(int rows, int columns)
 		{
 			LayoutComponent layoutComponent = new LayoutComponent(base.ImageViewer.DesktopWindow);
