@@ -151,6 +151,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contact Point.
+        /// </summary>
+        internal static string ColumnContactPoint {
+            get {
+                return ResourceManager.GetString("ColumnContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contact Type.
         /// </summary>
         internal static string ColumnContactType {
@@ -349,6 +358,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Laterality.
+        /// </summary>
+        internal static string ColumnLaterality {
+            get {
+                return ResourceManager.GetString("ColumnLaterality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License #.
         /// </summary>
         internal static string ColumnLicenseNumber {
@@ -493,6 +511,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Portable.
+        /// </summary>
+        internal static string ColumnPortable {
+            get {
+                return ResourceManager.GetString("ColumnPortable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Time.
         /// </summary>
         internal static string ColumnPostTime {
@@ -538,6 +565,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Procedure Description.
+        /// </summary>
+        internal static string ColumnProcedureDescription {
+            get {
+                return ResourceManager.GetString("ColumnProcedureDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Role.
         /// </summary>
         internal static string ColumnRole {
@@ -547,11 +583,29 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scheduled Start Time.
+        /// </summary>
+        internal static string ColumnScheduledStartTime {
+            get {
+                return ResourceManager.GetString("ColumnScheduledStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scheduled Step.
         /// </summary>
         internal static string ColumnScheduledStep {
             get {
                 return ResourceManager.GetString("ColumnScheduledStep", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scheduled Time.
+        /// </summary>
+        internal static string ColumnScheduledTime {
+            get {
+                return ResourceManager.GetString("ColumnScheduledTime", resourceCulture);
             }
         }
         
@@ -880,6 +934,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checked-in at {0}.
+        /// </summary>
+        internal static string FormatCheckedInTime {
+            get {
+                return ResourceManager.GetString("FormatCheckedInTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to From: {0} - {1}.
         /// </summary>
         internal static string FormatFrom {
@@ -894,6 +957,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string FormatFromOnBehalf {
             get {
                 return ResourceManager.GetString("FormatFromOnBehalf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not checked-in.
+        /// </summary>
+        internal static string FormatNotCheckedIn {
+            get {
+                return ResourceManager.GetString("FormatNotCheckedIn", resourceCulture);
             }
         }
         
@@ -921,6 +993,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string FormatOrderNoteboxFolderSystemTitle {
             get {
                 return ResourceManager.GetString("FormatOrderNoteboxFolderSystemTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} (Checked-in).
+        /// </summary>
+        internal static string FormatStatusCheckedIn {
+            get {
+                return ResourceManager.GetString("FormatStatusCheckedIn", resourceCulture);
             }
         }
         

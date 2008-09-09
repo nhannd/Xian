@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Client
                                  0.1f));
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
-                                 "Status",
+                                 SR.ColumnStatus,
                                  delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                                  {
                                  	return FormatStatus(checkable.Item);
@@ -97,12 +97,12 @@ namespace ClearCanvas.Ris.Client
                                  0.5f));
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
-                                 "Modality",
+                                 SR.ColumnModality,
                                  delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.Modality.Name; },
                                  0.5f));
 
 			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?> sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?>(
-								 "Scheduled Start Time",
+								 SR.ColumnScheduledStartTime,
 								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.ScheduledStartTime; },
 								 0.5f);
 
@@ -130,10 +130,14 @@ namespace ClearCanvas.Ris.Client
 
 			this.Columns.Add(sortColumn);
 
-            this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>("Procedure Description",
+            this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(SR.ColumnProcedureDescription,
                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                                     {
-                                        return string.Format("{0} - {1}", checkable.Item.rpDetail.Type.Name, checkable.Item.mpsDetail.ProcedureStepName);
+                                        return string.Format("{0} - {1}", 
+                                            checkable.Item.mpsDetail.ProcedureStepName, 
+                                            checkable.Item.rpDetail.CheckInTime == null 
+                                                ? SR.FormatNotCheckedIn
+                                                : string.Format(SR.FormatCheckedInTime, Format.DateTime(checkable.Item.rpDetail.CheckInTime)));
                                     },
                                 0.5f,
                                 ProcedureDescriptionRow));
@@ -145,7 +149,7 @@ namespace ClearCanvas.Ris.Client
     	{
 			if(item.mpsDetail.State.Code == "SC")
 				return item.rpDetail.CheckInTime.HasValue
-					? string.Format("{0} (Checked-in)", item.mpsDetail.State.Value)
+                    ? string.Format(SR.FormatStatusCheckedIn, item.mpsDetail.State.Value)
 					: item.mpsDetail.State.Value;
 			else
 	    		return item.mpsDetail.State.Value;

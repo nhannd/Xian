@@ -147,6 +147,9 @@
   <data name="ColumnComments" xml:space="preserve">
     <value>Comments</value>
   </data>
+  <data name="ColumnContactPoint" xml:space="preserve">
+    <value>Contact Point</value>
+  </data>
   <data name="ColumnContactType" xml:space="preserve">
     <value>Contact Type</value>
   </data>
@@ -213,6 +216,9 @@
   <data name="ColumnImagingService" xml:space="preserve">
     <value>Imaging Service</value>
   </data>
+  <data name="ColumnLaterality" xml:space="preserve">
+    <value>Laterality</value>
+  </data>
   <data name="ColumnLicenseNumber" xml:space="preserve">
     <value>License #</value>
   </data>
@@ -261,6 +267,9 @@
   <data name="ColumnPersonal" xml:space="preserve">
     <value>Personal</value>
   </data>
+  <data name="ColumnPortable" xml:space="preserve">
+    <value>Portable</value>
+  </data>
   <data name="ColumnPostTime" xml:space="preserve">
     <value>Time</value>
   </data>
@@ -276,11 +285,20 @@
   <data name="ColumnProcedure" xml:space="preserve">
     <value>Procedure</value>
   </data>
+  <data name="ColumnProcedureDescription" xml:space="preserve">
+    <value>Procedure Description</value>
+  </data>
   <data name="ColumnRole" xml:space="preserve">
     <value>Role</value>
   </data>
+  <data name="ColumnScheduledStartTime" xml:space="preserve">
+    <value>Scheduled Start Time</value>
+  </data>
   <data name="ColumnScheduledStep" xml:space="preserve">
     <value>Scheduled Step</value>
+  </data>
+  <data name="ColumnScheduledTime" xml:space="preserve">
+    <value>Scheduled Time</value>
   </data>
   <data name="ColumnScore" xml:space="preserve">
     <value>Score</value>
@@ -390,11 +408,17 @@
   <data name="ExceptionWeakSearchCriteria" xml:space="preserve">
     <value>Search criteria would return too many results.  Try repeating the search with different criteria.</value>
   </data>
+  <data name="FormatCheckedInTime" xml:space="preserve">
+    <value>Checked-in at {0}</value>
+  </data>
   <data name="FormatFrom" xml:space="preserve">
     <value>From: {0} - {1}</value>
   </data>
   <data name="FormatFromOnBehalf" xml:space="preserve">
     <value>From: {0} on behalf of {1} - {2}</value>
+  </data>
+  <data name="FormatNotCheckedIn" xml:space="preserve">
+    <value>Not checked-in</value>
   </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
@@ -404,6 +428,9 @@
   </data>
   <data name="FormatOrderNoteboxFolderSystemTitle" xml:space="preserve">
     <value>{0} [{1} item(s)]</value>
+  </data>
+  <data name="FormatStatusCheckedIn" xml:space="preserve">
+    <value>{0} (Checked-in)</value>
   </data>
   <data name="FormatTitleContextDescriptionOrderNoteConversation" xml:space="preserve">
     <value> - {0} {1} - {2}</value>
