@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="FormatRowsColumns" xml:space="preserve">
+    <value>{0}x{1}</value>
+  </data>
+  <data name="LabelCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
 </root>

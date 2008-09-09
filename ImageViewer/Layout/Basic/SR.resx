@@ -153,6 +153,9 @@
   <data name="TitleLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
   </data>
+  <data name="ToolbarLayoutChooser" xml:space="preserve">
+    <value>Choose Layout</value>
+  </data>
   <data name="ToolbarLayoutManager" xml:space="preserve">
     <value>LayoutManager</value>
   </data>

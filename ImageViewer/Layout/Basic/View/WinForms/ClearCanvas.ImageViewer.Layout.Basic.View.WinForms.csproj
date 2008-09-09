@@ -42,6 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LayoutChangerActionView.cs" />
+    <Compile Include="LayoutChangerToolStripItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="LayoutControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

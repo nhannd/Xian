@@ -169,6 +169,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Choose Layout.
+        /// </summary>
+        public static string ToolbarLayoutChooser {
+            get {
+                return ResourceManager.GetString("ToolbarLayoutChooser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LayoutManager.
         /// </summary>
         public static string ToolbarLayoutManager {

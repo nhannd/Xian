@@ -99,6 +99,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContextMenuLayoutTool.cs" />
+    <Compile Include="LayoutChangerAction.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="LayoutConfigurationPageProvider.cs" />
     <Compile Include="LayoutConfigurationSettings.cs" />

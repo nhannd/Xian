@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -38,8 +39,8 @@ using ClearCanvas.ImageViewer.BaseTools;
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
 	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager", "Show")]
-	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager", "Show")]
-	[Desktop.Actions.IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
+	[DropDownButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager", "Show", "LayoutDropDownMenuModel")]
+	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
 	[Tooltip("show", "TooltipLayoutManager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	{
 		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
 		private IDesktopWindow _desktopWindow;
+		private ActionModelRoot _actionModel;
 
 		/// <summary>
         /// Constructor
@@ -59,6 +61,35 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public LayoutTool()
 		{
 			_desktopWindow = null;
+		}
+
+		public ActionModelNode LayoutDropDownMenuModel {
+			get {
+				if (_actionModel == null) {
+					ActionModelRoot root = new ActionModelRoot();
+					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+					ActionPath path = new ActionPath("root/ToolbarLayoutChooser", resolver);
+					LayoutChangerAction action = new LayoutChangerAction("chooseLayout",
+						LayoutConfigurationSettings.MaximumImageBoxRows, 
+						LayoutConfigurationSettings.MaximumImageBoxColumns,
+						this.SetLayout, path, resolver);
+					root.InsertAction(action);
+					_actionModel = root;
+				}
+
+				return _actionModel;
+			}
+		}
+
+		public void SetLayout(int rows, int columns)
+		{
+			LayoutComponent layoutComponent = new LayoutComponent(base.ImageViewer.DesktopWindow);
+			InternalHost host = new InternalHost((DesktopWindow)base.ImageViewer.DesktopWindow, layoutComponent);
+			host.StartComponent();
+			layoutComponent.ImageBoxRows = rows;
+			layoutComponent.ImageBoxColumns = columns;
+			layoutComponent.ApplyImageBoxLayout();
+			host.StopComponent();
 		}
 
 		public void Show()
@@ -99,6 +130,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_shelves[_desktopWindow].Closed -= OnShelfClosed;
 			_shelves.Remove(_desktopWindow);
 			_desktopWindow = null;
+		}
+
+		private class InternalHost : ApplicationComponentHost
+		{
+			private readonly DesktopWindow _window;
+
+			public InternalHost(DesktopWindow window, IApplicationComponent component) : base(component)
+			{
+				_window = window;
+			}
+
+			public override DesktopWindow DesktopWindow {
+				get { return _window; }
+			}
 		}
 	}
 }
