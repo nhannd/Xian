@@ -202,6 +202,9 @@
     <Compile Include="SuggestComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="TableDimensionsPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="TestComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
