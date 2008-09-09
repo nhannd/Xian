@@ -53,12 +53,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// </summary>
     internal class StudyProcessorContext
     {
+        #region Private Members
         private Model.WorkQueue _item;
         private IReadContext _readContext;
         private IUpdateContext _updateContext;
         private ServerPartition _partition;
         private StudyStorageLocation _storageLocation;
         private Study _study;
+        #endregion
+
+        #region Constructors
+
+        public StudyProcessorContext(Model.WorkQueue item)
+        {
+            _item = item;
+            _partition = ServerPartition.Load(item.ServerPartitionKey);
+        }
+
+        #endregion
+
+        #region Public Properties
 
         public ServerPartition Partition
         {
@@ -107,11 +121,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { _storageLocation = value; }
         }
 
-        public StudyProcessorContext(Model.WorkQueue item)
-        {
-            _item = item;
-            _partition = ServerPartition.Load(item.ServerPartitionKey);
-        }
+        #endregion
+
+
     }
 
 
@@ -466,6 +478,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                          return false;
                                  });
         }
+
+        /// <summary>
+        /// Returns the path to a directory that can be used for storing images that need to be reconciled
+        /// </summary>
+        /// <returns></returns>
+        private string GetSuggestedTemporaryReconcileFolderPath()
+        {
+            string path = Path.Combine(_context.StorageLocation.FilesystemPath, _context.StorageLocation.PartitionFolder);
+            path = Path.Combine(path, "Reconcile");
+            path = Path.Combine(path, Guid.NewGuid().ToString());
+            return path;
+        }
         
         /// <summary>
         /// Schedules a reconciliation for the specified <see cref="DicomFile"/>
@@ -473,15 +497,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file"></param>
         private void ScheduleReconcile(DicomFile file)
         {
-            StudyHistory history = FindHistory(file);
-            if (history==null)
+            ReconcileImageContext reconcileContext = new ReconcileImageContext();
+            reconcileContext.Partition = _context.Partition;
+            reconcileContext.CurrentStudyLocation = StorageLocation;
+            reconcileContext.File = file;
+            reconcileContext.TempStoragePath = GetSuggestedTemporaryReconcileFolderPath();
+
+            reconcileContext.History = FindHistory(file);
+            if (reconcileContext.History == null)
             {
                 ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation");
-                ReconcileImageContext reconcileContext = new ReconcileImageContext();
-                reconcileContext.Partition = _context.Partition;
-                reconcileContext.StudyLocation = StorageLocation;
-                reconcileContext.File = file;
-
+                
                 InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
                 MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
                 processor.AddCommand(updateQueueCommand);
@@ -494,8 +520,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             else
             {
+                
                 // Insert 'ReconcileStudy' in the work queue
-                throw new NotImplementedException();
+                ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request");
+                InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(reconcileContext);
+                MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
+                
+                processor.AddCommand(insertCommand);
+                processor.AddCommand(moveFileCommand);
+
+                if (processor.Execute() == false)
+                {
+                    throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
+                }
             }
 
             

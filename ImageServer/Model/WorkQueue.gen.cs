@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _processorID;
         private System.DateTime _scheduledTime;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyHistoryKey;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
         private WorkQueuePriorityEnum _workQueuePriorityEnum;
         private WorkQueueStatusEnum _workQueueStatusEnum;
@@ -116,6 +117,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyHistoryGUID")]
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyHistoryKey
+        {
+        get { return _studyHistoryKey; }
+        set { _studyHistoryKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey

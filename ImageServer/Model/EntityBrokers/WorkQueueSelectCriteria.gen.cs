@@ -140,6 +140,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
+        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyHistoryKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyHistoryKey"))
+              {
+                 SubCriteria["StudyHistoryKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyHistoryKey");
+              }
+              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyHistoryKey"];
+            } 
+        }
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
         {
             get

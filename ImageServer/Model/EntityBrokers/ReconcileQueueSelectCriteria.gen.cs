@@ -52,6 +52,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
             } 
         }
+        public ISearchCondition<System.Xml.XmlDocument> QueueData
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueData"))
+              {
+                 SubCriteria["QueueData"] = new SearchCondition<System.Xml.XmlDocument>("QueueData");
+              }
+              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["QueueData"];
+            } 
+        }
         public ISearchCondition<ReconcileReasonEnum> ReconcileReasonEnum
         {
             get

@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(_context, "_context");
             Platform.CheckForNullReference(_context.Partition, "_context.Partition");
-            Platform.CheckForNullReference(_context.StudyLocation, "_context.StudyLocation");
+            Platform.CheckForNullReference(_context.CurrentStudyLocation, "_context.CurrentStudyLocation");
             Platform.CheckForNullReference(_context.File, "_context.File");
 
             ImageSetDescriptor desc = ImageSetDescriptor.Parse(_context.File);
@@ -37,11 +37,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             IInsertReconcileQueue broker = updateContext.GetBroker<IInsertReconcileQueue>();
             InsertReconcileQueueParameters parameters = new InsertReconcileQueueParameters();
             parameters.ServerPartitionKey = _context.Partition.GetKey();
-            parameters.StudyStorageKey = _context.StudyLocation.GetKey();
+            parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
             parameters.ReconcileReasonEnum = ReconcileReasonEnum.InconsistentData;
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             parameters.StudyData = descXml;
+
+            ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
+            data.StoragePath = _context.TempStoragePath;
+            XmlDocument xmlQueueData = new XmlDocument();
+            xmlQueueData.AppendChild(xmlQueueData.ImportNode(XmlUtils.Serialize(data), true));
+            parameters.QueueData = xmlQueueData;
 
             ReconcileQueue item = broker.FindOne(parameters);
             if (item==null)
@@ -50,6 +56,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
 
             _context.ReconcileQueue = item;
+
+            data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+            _context.TempStoragePath = data.StoragePath; // if a record already exists, use its storagefolder instead
         }
     }
 }

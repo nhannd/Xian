@@ -33,10 +33,17 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["SopInstanceUid"] = new ProcedureParameter<String>("SopInstanceUid", value); }
         }
 
+        
         public XmlDocument StudyData
         {
             set { SubCriteria["StudyData"] = new ProcedureParameter<XmlDocument>("StudyData", value); }
         }
+
+        public XmlDocument QueueData
+        {
+            set { SubCriteria["QueueData"] = new ProcedureParameter<XmlDocument>("QueueData", value); }
+        }
+
 
         public ServerEnum ReconcileReasonEnum
         {

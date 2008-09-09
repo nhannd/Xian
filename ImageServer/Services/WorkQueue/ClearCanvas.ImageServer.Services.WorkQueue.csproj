@@ -49,6 +49,9 @@
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
+    <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
+    <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
+    <Compile Include="ReconcileStudy\ReconcileStudyProcessorContext.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />
     <Compile Include="Shreds\WorkQueueServerExtension.cs" />
@@ -59,6 +62,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StudyProcess\InsertReconcileQueueCommand.cs" />
+    <Compile Include="StudyProcess\InsertReconcileStudyCommand.cs" />
     <Compile Include="StudyProcess\MoveReconcileImageCommand.cs" />
     <Compile Include="StudyProcess\ReconcileImageContext.cs" />
     <Compile Include="StudyProcess\ImageSetDescriptor.cs" />

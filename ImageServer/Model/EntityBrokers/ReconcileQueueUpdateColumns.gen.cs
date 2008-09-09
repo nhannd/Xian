@@ -44,6 +44,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
         }
+        public System.Xml.XmlDocument QueueData
+        {
+            set { SubParameters["QueueData"] = new EntityUpdateColumn<System.Xml.XmlDocument>("QueueData", value); }
+        }
         public ReconcileReasonEnum ReconcileReasonEnum
         {
             set { SubParameters["ReconcileReasonEnum"] = new EntityUpdateColumn<ReconcileReasonEnum>("ReconcileReasonEnum", value); }

@@ -7,12 +7,15 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    class ReconcileImageContext
+    public class ReconcileImageContext
     {
         private DicomFile _file;
         private StudyStorageLocation _studyLocation;
         private ServerPartition _partition;
         private ReconcileQueue _reconcileQueue;
+        private StudyHistory _history;
+
+        private string _storagePath;
 
         public DicomFile File
         {
@@ -20,7 +23,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { _file = value; }
         }
 
-        public StudyStorageLocation StudyLocation
+        public StudyStorageLocation CurrentStudyLocation
         {
             get { return _studyLocation; }
             set { _studyLocation = value; }
@@ -36,6 +39,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             get { return _reconcileQueue; }
             set { _reconcileQueue = value; }
+        }
+
+        public StudyHistory History
+        {
+            get { return _history; }
+            set { _history = value; }
+        }
+
+        public string TempStoragePath
+        {
+            get { return _storagePath; }
+            set { _storagePath = value; }
         }
     }
 

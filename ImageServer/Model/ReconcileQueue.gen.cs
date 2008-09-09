@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private System.DateTime _insertTime;
+        private System.Xml.XmlDocument _queueData;
         private ReconcileReasonEnum _reconcileReasonEnum;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private System.Xml.XmlDocument _studyData;
@@ -60,6 +61,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _insertTime; }
         set { _insertTime = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="QueueData")]
+        public System.Xml.XmlDocument QueueData
+        {
+        get { return _queueData; }
+        set { _queueData = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueue", ColumnName="ReconcileReasonEnum")]
         public ReconcileReasonEnum ReconcileReasonEnum

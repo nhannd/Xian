@@ -408,6 +408,7 @@ CREATE TABLE [dbo].[ServerRule](
 ) ON [PRIMARY]
 END
 GO
+
 /****** Object:  Table [dbo].[WorkQueue]    Script Date: 01/09/2008 15:04:24 ******/
 SET ANSI_NULLS ON
 GO
@@ -422,6 +423,7 @@ CREATE TABLE [dbo].[WorkQueue](
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[DeviceGUID] [uniqueidentifier] NULL,
+	[StudyHistoryGUID] [uniqueidentifier] NULL,
 	[WorkQueueTypeEnum] [smallint] NOT NULL,
 	[WorkQueueStatusEnum] [smallint] NOT NULL, 
 	[WorkQueuePriorityEnum] [smallint] NOT NULL CONSTRAINT [DF_WorkQueue_WorkQueuePriorityEnum]  DEFAULT ((200)),
@@ -459,6 +461,14 @@ IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Wo
 CREATE NONCLUSTERED INDEX [IX_WorkQueue_WorkQueuePriorityEnum] ON [dbo].[WorkQueue] 
 (
 	[WorkQueuePriorityEnum] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
+GO
+
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueue]') AND name = N'IX_WorkQueue_StudyHistoryGUID')
+CREATE NONCLUSTERED INDEX [IX_WorkQueue_StudyHistoryGUID] ON [dbo].[WorkQueue] 
+(
+	[StudyHistoryGUID] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
 GO
 
@@ -1166,7 +1176,7 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[ReconcileQueue]    Script Date: 09/05/2008 11:48:30 ******/
+/****** Object:  Table [dbo].[ReconcileQueue]    Script Date: 09/08/2008 10:46:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1174,9 +1184,10 @@ GO
 CREATE TABLE [dbo].[ReconcileQueue](
 	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_ReconcileQueue_GUID]  DEFAULT (newid()),
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
-	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_ReconcileQueue_InsertTime]  DEFAULT (getdate()),
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
-	[SourceData] [xml] NOT NULL,
+	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_ReconcileQueue_InsertTime]  DEFAULT (getdate()),
+	[StudyData] [xml] NOT NULL,
+	[QueueData] [xml] NOT NULL,
 	[ReconcileReasonEnum] [smallint] NOT NULL,
  CONSTRAINT [PK_ReconcileQueue] PRIMARY KEY CLUSTERED 
 (
@@ -1185,7 +1196,6 @@ CREATE TABLE [dbo].[ReconcileQueue](
 ) ON [PRIMARY]
 
 GO
-
 
 /****** Object:  Table [dbo].[ReconcileQueueUid]    Script Date: 09/05/2008 11:43:57 ******/
 SET ANSI_NULLS ON
@@ -1565,6 +1575,13 @@ REFERENCES [dbo].[WorkQueueStatusEnum] ([Enum])
 GO
 ALTER TABLE [dbo].[WorkQueue] CHECK CONSTRAINT [FK_WorkQueue_WorkQueueStatusEnum]
 GO
+
+/****** Object:  ForeignKey [FK_WorkQueue_StudyHistory]    Script Date: 09/08/2008 11:50:21 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueue_StudyHistory]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueue]'))
+ALTER TABLE [dbo].[WorkQueue]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueue_StudyHistory] FOREIGN KEY([StudyHistoryGUID])
+REFERENCES [dbo].[StudyHistory] ([GUID])
+GO
+
 /****** Object:  ForeignKey [FK_WorkQueue_WorkQueueTypeEnum]    Script Date: 07/17/2008 00:50:21 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueue_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueue]'))
 ALTER TABLE [dbo].[WorkQueue]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueue_WorkQueueTypeEnum] FOREIGN KEY([WorkQueueTypeEnum])
@@ -1590,26 +1607,40 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Alert_AlertLevelEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Alert]'))
 ALTER TABLE [dbo].[Alert]  WITH CHECK ADD  CONSTRAINT [FK_Alert_AlertLevelEnum] FOREIGN KEY([AlertLevelEnum])
 REFERENCES [dbo].[AlertLevelEnum] ([Enum])
+GO
 
 
 /****** Object:  ForeignKey [FK_ReconcileQueue_ServerPartition]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ReconcileQueue_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[ReconcileQueue]'))
 ALTER TABLE [dbo].[ReconcileQueue]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueue_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
 REFERENCES [dbo].[ServerPartition] ([GUID])
+GO
 
 
 /****** Object:  ForeignKey [FK_ReconcileQueue_ReconcileReasonEnum]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ReconcileQueue_ReconcileReasonEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ReconcileQueue]'))
 ALTER TABLE [dbo].[ReconcileQueue]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueue_ReconcileReasonEnum] FOREIGN KEY([ReconcileReasonEnum])
 REFERENCES [dbo].[ReconcileReasonEnum] ([Enum])
+GO
+
+/****** Object:  ForeignKey [FK_ReconcileQueue_StudyStorage]    Script Date: 09/08/2008 11:50:28 ******/
+ALTER TABLE [dbo].[ReconcileQueue]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueue_StudyStorage] FOREIGN KEY([StudyStorageGUID])
+REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
 
 
 /****** Object:  ForeignKey [FK_ReconcileQueueUid_ReconcileQueue]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ReconcileQueueUid_ReconcileQueue]') AND parent_object_id = OBJECT_ID(N'[dbo].[ReconcileQueueUid]'))
 ALTER TABLE [dbo].[ReconcileQueueUid]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueueUid_ReconcileQueue] FOREIGN KEY([ReconcileQueueGUID])
 REFERENCES [dbo].[ReconcileQueue] ([GUID])
+GO
 
 /****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/05/2008 11:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
 ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyStorage] FOREIGN KEY([StudyStorageGUID])
 REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
+
+
+
+

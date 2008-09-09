@@ -47,6 +47,7 @@
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\IInserReconcileQueue.cs" />
+    <Compile Include="Brokers\IInsertWorkQueueReconcileStudy.cs" />
     <Compile Include="Brokers\IWebQueryRestoreQueue.cs" />
     <Compile Include="Brokers\IDeleteFilesystemStudyStorage.cs" />
     <Compile Include="Brokers\IInsertArchiveQueue.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="Parameters\WebQueryArchiveQueueParameters.cs" />
     <Compile Include="Parameters\WebWorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueDeleteParameters.cs" />
+    <Compile Include="Parameters\WorkQueueReconcileStudyInsertParameters.cs" />
     <Compile Include="PartitionArchive.gen.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="PartitionSopClass.gen.cs" />
@@ -207,6 +209,7 @@
     <Compile Include="ReconcileQueue.gen.cs" />
     <Compile Include="ReconcileQueueUid.gen.cs" />
     <Compile Include="ReconcileReasonEnum.gen.cs" />
+    <Compile Include="ReconcileStudyWorkQueueData.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="RestoreQueue.gen.cs" />
     <Compile Include="RestoreQueueStatusEnum.gen.cs" />

@@ -76,6 +76,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyHistoryKey
+        {
+            set { SubParameters["StudyHistoryKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyHistoryKey", value); }
+        }
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
             set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }

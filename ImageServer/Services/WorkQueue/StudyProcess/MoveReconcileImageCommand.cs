@@ -23,17 +23,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         private string GetReconcileImageTempPath(DicomFile file)
         {
-            ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(_context.StudyLocation.FilesystemKey);
-
-            if (!fs.Writeable)
-            {
-                throw new ApplicationException(String.Format("Unexpected error: temporary filesystem '{0}' is not writable", fs.Filesystem.Description));
-            }
-
-            string path = Path.Combine(fs.Filesystem.FilesystemPath, _context.StudyLocation.PartitionFolder);
-            path = Path.Combine(path, "Reconcile");
-            path = Path.Combine(path, _context.ReconcileQueue.GetKey().Key.ToString());
-            path = Path.Combine(path, _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty) + ".dcm");
+            string path = Path.Combine(_context.TempStoragePath, file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty) + ".dcm");
             return path;
         }
 
@@ -41,7 +31,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected override void OnExecute()
         {
             Platform.CheckForNullReference(_context, "_context");
-            Platform.CheckForNullReference(_context.ReconcileQueue, "_context.ReconcileQueue");
+            Platform.CheckForNullReference(_context.TempStoragePath, "_context.TempStoragePath");
 
             _processor = new ServerCommandProcessor("Move Reconcile Image Processor");
 
