@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -25,8 +26,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 
 			this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftProtocolFolder), this);
-			this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
-		}
+            this.Context.RegisterDoubleClickHandler(
+                (IClickAction)CollectionUtils.SelectFirst(this.Actions,
+                    delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
+        }
 
 		public override bool Enabled
 		{

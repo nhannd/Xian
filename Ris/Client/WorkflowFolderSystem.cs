@@ -135,9 +135,9 @@ namespace ClearCanvas.Ris.Client
 				_owner.InvalidateFolders(folderClass);
 			}
 
-            public void RegisterDoubleClickHandler(ClickHandlerDelegate handler, DoubleClickHandlerEnablementDelegate enablement)
+            public void RegisterDoubleClickHandler(IClickAction clickAction)
             {
-                _owner._doubleClickHandlers.Add(new DoubleClickHandlerRegistration(handler, enablement));
+                _owner._doubleClickHandlers.Add(new DoubleClickHandlerRegistration(clickAction));
             }
 
             protected void RegisterDropHandler(Type folderClass, object dropHandler)
@@ -157,20 +157,18 @@ namespace ClearCanvas.Ris.Client
 
 		class DoubleClickHandlerRegistration
 		{
-			private readonly ClickHandlerDelegate _clickHandler;
-			private readonly DoubleClickHandlerEnablementDelegate _enablement;
+		    private readonly IClickAction _clickAction;
 
-			public DoubleClickHandlerRegistration(ClickHandlerDelegate clickHandler, DoubleClickHandlerEnablementDelegate enablement)
+			public DoubleClickHandlerRegistration(IClickAction clickAction)
 			{
-				_clickHandler = clickHandler;
-				_enablement = enablement;
+                _clickAction = clickAction;
 			}
 
 			public bool Handle()
 			{
-				if(_enablement())
+                if (_clickAction.Permissible && _clickAction.Enabled)
 				{
-					_clickHandler();
+                    _clickAction.Click();
 					return true;
 				}
 				return false;

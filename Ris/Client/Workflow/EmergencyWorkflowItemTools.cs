@@ -1,4 +1,6 @@
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -10,7 +12,9 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-			this.Context.RegisterDoubleClickHandler(Open, delegate { return this.Enabled; });
+            this.Context.RegisterDoubleClickHandler(
+                (IClickAction)CollectionUtils.SelectFirst(this.Actions,
+                    delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("pd"); }));
         }
 	}
 }

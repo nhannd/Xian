@@ -51,7 +51,9 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-            this.Context.RegisterDoubleClickHandler(Apply, delegate { return this.Enabled; });
+            this.Context.RegisterDoubleClickHandler(
+                (IClickAction)CollectionUtils.SelectFirst(this.Actions,
+                    delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
         }
 
         public bool Enabled

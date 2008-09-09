@@ -97,9 +97,8 @@ namespace ClearCanvas.Ris.Client
 		/// More than one tool may register a double-click handler, but at most one will receive
 		/// the notification.  The first handler whose enablement function returns true will receive the call. 
 		/// </remarks>
-		/// <param name="handler"></param>
-		/// <param name="enablement"></param>
-		void RegisterDoubleClickHandler(ClickHandlerDelegate handler, DoubleClickHandlerEnablementDelegate enablement);
+        /// <param name="clickAction"></param>
+		void RegisterDoubleClickHandler(IClickAction clickAction);
 
 		/// <summary>
 		/// Allows the tool to register a workflow service with the folder system.  When the selection changes,
