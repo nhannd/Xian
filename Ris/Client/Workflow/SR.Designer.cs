@@ -889,6 +889,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string TextSave {
+            get {
+                return ResourceManager.GetString("TextSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Today {0}.
         /// </summary>
         internal static string TextTodayTime {
@@ -912,6 +921,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TextUnknownValue {
             get {
                 return ResourceManager.GetString("TextUnknownValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update.
+        /// </summary>
+        internal static string TextUpdate {
+            get {
+                return ResourceManager.GetString("TextUpdate", resourceCulture);
             }
         }
         

@@ -62,7 +62,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
             _btnComplete.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_btnComplete.DataBindings.Add("Visible", _component, "CompleteVisible", true, DataSourceUpdateMode.OnPropertyChanged);
-			_btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnSave.DataBindings.Add("Text", _component, "SaveText", true, DataSourceUpdateMode.OnPropertyChanged);
+            _btnSave.DataBindings.Add("Enabled", _component, "SaveEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _assignedRadiologistLookup.LookupHandler = _component.RadiologistLookupHandler;
             _assignedRadiologistLookup.DataBindings.Add("Value", _component, "AssignedRadiologist", true, DataSourceUpdateMode.OnPropertyChanged);

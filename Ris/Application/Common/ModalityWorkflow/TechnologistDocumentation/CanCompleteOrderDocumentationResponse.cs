@@ -37,12 +37,16 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class CanCompleteOrderDocumentationResponse : DataContractBase
     {
-        public CanCompleteOrderDocumentationResponse(bool canComplete)
+        public CanCompleteOrderDocumentationResponse(bool canComplete, bool alreadyCompleted)
         {
             CanComplete = canComplete;
+            AlreadyCompleted = alreadyCompleted;
         }
 
         [DataMember]
         public bool CanComplete;
+
+        [DataMember]
+        public bool AlreadyCompleted;
     }
 }

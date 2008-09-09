@@ -96,12 +96,20 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 		public CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request)
 		{
 			if(!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept))
-				return new CanCompleteOrderDocumentationResponse(false);
+				return new CanCompleteOrderDocumentationResponse(false, false);
 
 			// order documentation can be completed if all modality steps have been terminated
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			return new CanCompleteOrderDocumentationResponse(CollectionUtils.TrueForAll(order.Procedures,
-				delegate(Procedure p) { return AreAllModalityStepsTerminated(p); }));
+
+            bool allModalityStepsTerminated = CollectionUtils.TrueForAll(order.Procedures,
+                delegate(Procedure p) { return AreAllModalityStepsTerminated(p); });
+
+            bool alreadyCompleted = CollectionUtils.Contains(order.Procedures,
+                delegate(Procedure p) { return p.DocumentationProcedureStep != null && p.DocumentationProcedureStep.IsTerminated; });
+
+			return new CanCompleteOrderDocumentationResponse(
+                allModalityStepsTerminated && alreadyCompleted == false,
+                alreadyCompleted);
 		}
 
 

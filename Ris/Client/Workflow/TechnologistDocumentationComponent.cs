@@ -181,6 +181,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         private TechnologistDocumentationOrderDetailsComponent _orderDetailsComponent;
 
         private bool _completeEnabled;
+        private bool _alreadyCompleted;
 
         #endregion
 
@@ -285,6 +286,11 @@ namespace ClearCanvas.Ris.Client.Workflow
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
+        }
+
+        public string SaveText
+        {
+            get { return _alreadyCompleted ? SR.TextUpdate : SR.TextSave; }    
         }
 
         public bool SaveEnabled
@@ -593,6 +599,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                                 service.CanCompleteOrderDocumentation(new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));
 
                             _completeEnabled = response.CanComplete;
+                            _alreadyCompleted = response.AlreadyCompleted;
                             this.NotifyPropertyChanged("CompleteEnabled");
                         });
             }

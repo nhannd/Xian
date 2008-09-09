@@ -393,6 +393,9 @@
   <data name="TextNotScheduled" xml:space="preserve">
     <value>Not Scheduled</value>
   </data>
+  <data name="TextSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="TextTodayTime" xml:space="preserve">
     <value>Today {0}</value>
   </data>
@@ -401,6 +404,9 @@
   </data>
   <data name="TextUnknownValue" xml:space="preserve">
     <value>Unknown</value>
+  </data>
+  <data name="TextUpdate" xml:space="preserve">
+    <value>Update</value>
   </data>
   <data name="TextXDaysAgo" xml:space="preserve">
     <value>{0} days ago</value>
