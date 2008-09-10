@@ -29,7 +29,6 @@
 
 #endregion
 
-
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
@@ -37,7 +36,6 @@ using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
