@@ -182,6 +182,35 @@ namespace ClearCanvas.Utilities.BuildTasks
 					UpdateNode(newConfigSection, sectionNode, xPath);
 				}
 
+				elementPath = "system.serviceModel/services";
+				XmlElement serviceModelServicesElement = configurationElement.SelectSingleNode(elementPath) as XmlElement;
+				if (serviceModelServicesElement != null)
+				{
+					XmlElement newServiceModelServiceElement = CreateElement(newConfigurationElement, elementPath, null, null);
+
+					foreach (XmlElement service in serviceModelServicesElement)
+					{
+						xPath = string.Format("service[@name='{0}']", service.GetAttribute("name"));
+						UpdateNode(newServiceModelServiceElement, service, xPath);
+					}
+				}
+
+				XmlElement serviceModelBehavioursElement = configurationElement.SelectSingleNode("system.serviceModel/behaviors") as XmlElement;
+				if (serviceModelBehavioursElement != null)
+				{
+					foreach (XmlElement behaviours in serviceModelBehavioursElement)
+					{
+						elementPath = string.Format("system.serviceModel/behaviors/{0}", behaviours.Name);
+						XmlElement newServiceModelBehaviourTypeElement = CreateElement(newConfigurationElement, elementPath, null, null);
+
+						foreach (XmlElement behaviour in behaviours)
+						{
+							xPath = string.Format("behavior[@name='{0}']", behaviour.GetAttribute("name"));
+							UpdateNode(newServiceModelBehaviourTypeElement, behaviour, xPath);
+						}
+					}
+				}
+
 				XmlElement serviceModelBindingsElement = configurationElement.SelectSingleNode("system.serviceModel/bindings") as XmlElement;
 				if (serviceModelBindingsElement != null)
 				{

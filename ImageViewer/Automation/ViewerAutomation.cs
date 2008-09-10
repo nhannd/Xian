@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Automation
 	/// <summary>
 	/// For internal use only.
 	/// </summary>
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = true, IncludeExceptionDetailInFaults = true, Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = true, ConfigurationName = "ViewerAutomation", Namespace = AutomationNamespace.Value)]
 	public class ViewerAutomation: IViewerAutomation
 	{
 		private static readonly string _sessionNotFoundReason = "The specified session was not found.";

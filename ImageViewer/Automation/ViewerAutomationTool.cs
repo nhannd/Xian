@@ -19,8 +19,6 @@ namespace ClearCanvas.ImageViewer.Automation
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ViewerAutomationTool : Tool<IDesktopToolContext>
 	{
-		private static readonly int _defaultPort = 51122;
-
 		private ServiceHost _host;
 		private int _count;
 
@@ -44,43 +42,16 @@ namespace ClearCanvas.ImageViewer.Automation
 				StopHost();
 		}
 
-		private static string GetUriBaseAddress(string customEndpoint, int? customPort)
-		{
-			if (!String.IsNullOrEmpty(customEndpoint))
-				customEndpoint = String.Format("/{0}", customEndpoint);
-			else
-				customEndpoint = "";
-
-			if (customPort == null)
-				customPort = _defaultPort;
-
-			return String.Format("http://localhost:{0}/ClearCanvas/ImageViewer/Automation{1}", customPort.Value, customEndpoint);
-		}
-
 		private void StartHost()
 		{
 			try
 			{
-				Uri baseAddress = new Uri(GetUriBaseAddress(null, null));
-
-				BasicHttpBinding binding = new BasicHttpBinding();
-				binding.Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts";
-
-				ServiceHost host = new ServiceHost(typeof(ViewerAutomation), baseAddress);
-
-				host.AddServiceEndpoint(typeof(IViewerAutomation), binding, "Viewer Automation Service");
-
-				//TODO: create explicit MEX endpoint.
-				ServiceMetadataBehavior metadataBehavior = host.Description.Behaviors.Find<ServiceMetadataBehavior>();
-				if (null == metadataBehavior)
-				{
-					metadataBehavior = new ServiceMetadataBehavior();
-					metadataBehavior.HttpGetEnabled = true;
-					host.Description.Behaviors.Add(metadataBehavior);
-				}
+				//For maximum flexibility, the service host is entirely configuration-based.
+				ServiceHost host = new ServiceHost(typeof(ViewerAutomation));
+				foreach (ServiceEndpoint endpoint in host.Description.Endpoints)
+					endpoint.Binding.Namespace = AutomationNamespace.Value;
 
 				host.Open();
-
 				_host = host;
 			}
 			catch (Exception e)

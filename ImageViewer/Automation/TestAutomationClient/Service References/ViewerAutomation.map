@@ -8,8 +8,8 @@
 	</ProxyGenerationParameters>
 	<EndPoints>
 		<EndPoint
-			Address="http://localhost:51122/ClearCanvas/ImageViewer/Automation/Viewer%20Automation%20Service"
-			BindingConfiguration="BasicHttpBinding_IViewerAutomation"
+			Address="http://localhost:51122/ClearCanvas/ImageViewer/Automation"
+			BindingConfiguration="ViewerAutomation"
 			Contract="TestAutomationClient.ViewerAutomation.IViewerAutomation"
 			>
 		</EndPoint>

@@ -60,7 +60,6 @@ namespace TestAutomationClient.ViewerAutomation
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string PrimaryStudyInstanceUidField;
         
         private System.Guid SessionIdField;
@@ -77,7 +76,7 @@ namespace TestAutomationClient.ViewerAutomation
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
         public string PrimaryStudyInstanceUid
         {
             get

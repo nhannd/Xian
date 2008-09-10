@@ -5,16 +5,21 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Automation
 {
+	internal static class AutomationNamespace
+	{
+		public const string Value = "http://www.clearcanvas.ca/imageViewer/automation/contracts";
+	}
+
 	#region Faults
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class NoActiveViewerSessionsFault
 	{
 		public NoActiveViewerSessionsFault()
 		{}
 	}
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class ViewerSessionNotFoundFault
 	{
 		private string _failureDescription;
@@ -37,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Automation
 
 	}
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesFault
 	{
 		private string _failureDescription;
@@ -63,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Automation
 
 	#region Viewer Session
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class ViewerSession
 	{
 		private Guid _sessionId;
@@ -99,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Automation
 		}
 	}
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class GetActiveViewerSessionsResult
 	{
 		private List<ViewerSession> _activeViewerSessions;
@@ -119,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Automation
 
 	#region Info
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class GetViewerSessionInfoRequest
 	{
 		private ViewerSession _viewerSession;
@@ -136,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Automation
 		}
 	}
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class GetViewerSessionInfoResult
 	{
 		private List<string> _additionalStudyInstanceUids;
@@ -203,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Automation
 		}
 	}
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesResult
 	{
 		private ViewerSession _viewerSession;
@@ -225,7 +230,7 @@ namespace ClearCanvas.ImageViewer.Automation
 		}
 	}
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesRequest
 	{
 		private List<string> _studyInstanceUids;
@@ -264,7 +269,7 @@ namespace ClearCanvas.ImageViewer.Automation
 
 	#region Close Viewer Session
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class CloseViewerSessionRequest
 	{
 		private ViewerSession _viewerSession;
@@ -285,7 +290,7 @@ namespace ClearCanvas.ImageViewer.Automation
 
 	#region Activate Viewer Session
 
-	[DataContract(Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class ActivateViewerSessionRequest
 	{
 		private ViewerSession _viewerSession;

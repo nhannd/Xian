@@ -2,7 +2,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Automation
 {
-	[ServiceContract(SessionMode = SessionMode.NotAllowed, Namespace = "http://www.clearcanvas.ca/imageViewer/automation/contracts")]
+	[ServiceContract(SessionMode = SessionMode.NotAllowed, ConfigurationName="IViewerAutomation", Namespace = AutomationNamespace.Value)]
 	public interface IViewerAutomation
 	{
 		[OperationContract(IsOneWay = false)]
