@@ -52,6 +52,9 @@
     <Compile Include="Data\ArchiveQueueController.cs" />
     <Compile Include="Data\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
+    <Compile Include="Data\ReconcileQueueAdaptor.cs" />
+    <Compile Include="Data\ReconcileQueueController.cs" />
+    <Compile Include="Data\ReconcileQueueDataSource.cs" />
     <Compile Include="Data\ServerTransferSyntaxAdaptor.cs" />
     <Compile Include="Data\RestoreQueueAdaptor.cs" />
     <Compile Include="Data\RestoreQueueController.cs" />

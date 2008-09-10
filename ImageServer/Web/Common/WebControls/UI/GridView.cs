@@ -229,14 +229,17 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         public void ClearSelections()
         {
             int[] rows = SelectedIndices;
-            if (rows != null)
+            if (rows != null && Rows != null)
             {
-                for (int i = 0; i < rows.Length; i++)
-                {
-                    int rowIndex = rows[i];
-                    Rows[rowIndex].RowState = DataControlRowState.Normal;
-                    Rows[rowIndex].Attributes["selected"] = "false";
-                }
+               if (Rows.Count > 0)
+               {
+                        for (int i = 0; i < rows.Length; i++)
+                        {
+                            int rowIndex = rows[i];
+                            Rows[rowIndex].RowState = DataControlRowState.Normal;
+                            Rows[rowIndex].Attributes["selected"] = "false";
+                        }
+                    }
             }
 
             _selectedRows = new Hashtable();
