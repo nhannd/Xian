@@ -140,20 +140,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                     {
                                         _controller.DeleteStudy(study);
                                     }
-                                    DeleteConfirmation.Message = App_GlobalResources.SR.DeleteConfirmationPlural;
                                 }
                                 else if (data is Study)
                                 {
                                     Study study = data as Study;
                                     _controller.DeleteStudy(study);
-                                    DeleteConfirmation.Message = App_GlobalResources.SR.DeleteConfirmationSingle;
                                 }
 
                                 DataBind();
                                 UpdatePanel.Update(); // force refresh
-
-                                DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
-                                DeleteConfirmation.Show();
                             };
 
             RestoreMessageBox.Confirmed += delegate(object data)
@@ -179,6 +174,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             StudyListGridView.DataSourceCreated += delegate(StudyDataSource source)
                                         {
                                             source.Partition = ServerPartition;
+                                            source.DateFormats = StudyDateCalendarExtender.Format;
 
                                             if (!String.IsNullOrEmpty(PatientId.Text))
                                                 source.PatientId = PatientId.Text;

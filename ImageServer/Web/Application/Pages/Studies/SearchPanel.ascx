@@ -91,6 +91,5 @@
 
         <ccAsp:MessageBox ID="DeleteMessageBox" runat="server" />    
         <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
-        <ccAsp:MessageBox ID="DeleteConfirmation" runat="server" />   
     </ContentTemplate>
 </asp:UpdatePanel>
