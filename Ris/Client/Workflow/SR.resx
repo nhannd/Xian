@@ -294,6 +294,9 @@
   <data name="ExceptionCannotReplaceOrder" xml:space="preserve">
     <value>Unable to place order</value>
   </data>
+  <data name="ExceptionCannotStartLinkedProcedures" xml:space="preserve">
+    <value>Unable to link the requested procedure(s).  Skipping to the next worklist item.</value>
+  </data>
   <data name="ExceptionConcurrencyPatientNotSaved" xml:space="preserve">
     <value>The patient was modified by another user.  Your changes could not be saved.</value>
   </data>

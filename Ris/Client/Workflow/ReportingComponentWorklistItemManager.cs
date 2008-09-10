@@ -138,6 +138,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		/// <summary>
+		/// Specify a list of <see cref="ReportingWorklistItem"/> that shouldn't be returned from <see cref="ProceedToNextWorklistItem"/>
+		/// </summary>
+		/// <param name="interpretations"></param>
+		public void IgnoreWorklistItems(List<ReportingWorklistItem> interpretations)
+		{
+			_skippedItems.AddRange(interpretations);
+			RefreshWorklistItemCache();
+		}
+
+		/// <summary>
 		/// Fired when the next worklist item is available.
 		/// </summary>
 		public event EventHandler WorklistItemChanged
@@ -230,6 +240,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void RefreshWorklistItemCache()
 		{
+			_worklistCache.Clear();
+
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{

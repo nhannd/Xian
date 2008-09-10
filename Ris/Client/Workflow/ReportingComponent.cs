@@ -137,12 +137,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </summary>
 		string ReportContent { get; set; }
 
-        /// <summary>
-        /// Gets or sets the extended properties for the active report part.
-        /// </summary>
-        Dictionary<string, string> ExtendedProperties { get; set; }
-        
-        /// <summary>
+		/// <summary>
+		/// Gets or sets the extended properties for the active report part.
+		/// </summary>
+		Dictionary<string, string> ExtendedProperties { get; set; }
+
+		/// <summary>
 		/// Gets or sets the supervisor for the active report part.
 		/// </summary>
 		StaffSummary Supervisor { get; set; }
@@ -283,7 +283,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		class ReportEditorContext : ReportingContext, IReportEditorContext
 		{
 			public ReportEditorContext(ReportingComponent owner)
-				:base(owner)
+				: base(owner)
 			{
 			}
 
@@ -307,13 +307,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				get { return Owner.SaveReportEnabled; }
 			}
 
-            public string ReportContent
-            {
+			public string ReportContent
+			{
 				get { return Owner.ReportContent; }
 				set { Owner.ReportContent = value; }
-            }
-    
-            public Dictionary<string, string> ExtendedProperties
+			}
+
+			public Dictionary<string, string> ExtendedProperties
 			{
 				get { return Owner._reportPartExtendedProperties; }
 				set { Owner._reportPartExtendedProperties = value; }
@@ -436,13 +436,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			if (_reportEditor != null)
 			{
-                _reportEditorHost.StopComponent();
+				_reportEditorHost.StopComponent();
 
-                if (_reportEditor is IDisposable)
-                {
-                    ((IDisposable)_reportEditor).Dispose();
-                    _reportEditor = null;
-                }
+				if (_reportEditor is IDisposable)
+				{
+					((IDisposable)_reportEditor).Dispose();
+					_reportEditor = null;
+				}
 			}
 
 			base.Stop();
@@ -568,7 +568,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				if(this.HasValidationErrors)
+				if (this.HasValidationErrors)
 				{
 					this.ShowValidation(true);
 					return;
@@ -577,13 +577,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
 					return;
 
-                // check for a prelim diagnosis
-                if (PreliminaryDiagnosis.ConversationExists(this.WorklistItem.OrderRef))
-                {
-                    if (PreliminaryDiagnosis.ShowConversationDialog(this.WorklistItem.OrderRef, this.Host.DesktopWindow)
-                        == ApplicationComponentExitCode.None)
-                        return;   // user cancelled out
-                }
+				// check for a prelim diagnosis
+				if (PreliminaryDiagnosis.ConversationExists(this.WorklistItem.OrderRef))
+				{
+					if (PreliminaryDiagnosis.ShowConversationDialog(this.WorklistItem.OrderRef, this.Host.DesktopWindow)
+						== ApplicationComponentExitCode.None)
+						return;   // user cancelled out
+				}
 
 				if (_canCompleteInterpretationAndVerify)
 				{
@@ -865,8 +865,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				 return (_canCompleteInterpretationAndVerify || _canCompleteVerification)
-					 && Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify);
+				return (_canCompleteInterpretationAndVerify || _canCompleteVerification)
+					&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify);
 			}
 		}
 
@@ -874,7 +874,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				 return _canCompleteInterpretationForVerification;
+				return _canCompleteInterpretationForVerification;
 			}
 		}
 
@@ -882,8 +882,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				 return _canCompleteInterpretationForTranscription
-					 && ReportingSettings.Default.EnableTranscriptionWorkflow;
+				return _canCompleteInterpretationForTranscription
+					&& ReportingSettings.Default.EnableTranscriptionWorkflow;
 			}
 		}
 
@@ -981,7 +981,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 							object supervisor;
 							if (_supervisorLookupHandler.Resolve(ReportingSettings.Default.SupervisorID, false, out supervisor))
 							{
-								_supervisor = (StaffSummary) supervisor;
+								_supervisor = (StaffSummary)supervisor;
 							}
 						}
 					}
@@ -1020,11 +1020,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// if creating a new report, check for linked interpretations
 
 				List<ReportingWorklistItem> linkedInterpretations;
-				PromptForLinkedInterpretations(item, out linkedInterpretations);
+				List<ReportingWorklistItem> candidateInterpretations;
+				PromptForLinkedInterpretations(item, out linkedInterpretations, out candidateInterpretations);
 
-				// start the interpretation step
-				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
-				item.ProcedureStepRef = StartInterpretation(item, linkedInterpretations, out _assignedStaff);
+				try
+				{
+					// start the interpretation step
+					// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+					item.ProcedureStepRef = StartInterpretation(item, linkedInterpretations, out _assignedStaff);
+				}
+				catch
+				{
+					// If start interpretation failed and there were candidates for linking, let the user know and move to next item.
+					if (candidateInterpretations.Count > 0 && this.IsStarted)
+					{
+						this.Host.ShowMessageBox(SR.ExceptionCannotStartLinkedProcedures, MessageBoxActions.Ok);
+						_worklistItemManager.IgnoreWorklistItems(candidateInterpretations);
+					}
+					throw;
+				}
 			}
 			else if (item.ProcedureStepName == StepType.Verification && item.ActivityStatus.Code == StepState.Scheduled)
 			{
@@ -1037,25 +1051,27 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 
-		private bool PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems)
+		private bool PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
 		{
 			linkedItems = new List<ReportingWorklistItem>();
+			candidateItems = new List<ReportingWorklistItem>();
 
 			// query server for link candidates
-			List<ReportingWorklistItem> candidates = null;
+			List<ReportingWorklistItem> anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
 			Platform.GetService<IReportingWorkflowService>(
 				delegate(IReportingWorkflowService service)
 				{
 					GetLinkableInterpretationsRequest request = new GetLinkableInterpretationsRequest(item.ProcedureStepRef);
-					candidates = service.GetLinkableInterpretations(request).IntepretationItems;
+					anonCandidates = service.GetLinkableInterpretations(request).IntepretationItems;
 				});
+			candidateItems.AddRange(anonCandidates);
 
 			// if there are candidates, prompt user to select
-			if (candidates.Count > 0)
+			if (candidateItems.Count > 0)
 			{
 				ResetChildComponents();
 
-				LinkedInterpretationComponent component = new LinkedInterpretationComponent(item, candidates);
+				LinkedInterpretationComponent component = new LinkedInterpretationComponent(item, candidateItems);
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
 				if (exitCode == ApplicationComponentExitCode.Accepted)
