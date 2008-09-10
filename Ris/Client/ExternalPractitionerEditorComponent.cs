@@ -161,7 +161,11 @@ namespace ClearCanvas.Ris.Client
 				});
 
 			_contactPointSummaryComponent = new ExternalPractitionerContactPointSummaryComponent(_practitionerRef,
-				formDataResponse.AddressTypeChoices, formDataResponse.PhoneTypeChoices, formDataResponse.ResultCommunicationModeChoices, Formatting.PersonNameFormat.Format(_practitionerDetail.Name));
+				formDataResponse.AddressTypeChoices, 
+                formDataResponse.PhoneTypeChoices, 
+                formDataResponse.ResultCommunicationModeChoices, 
+                Formatting.PersonNameFormat.Format(_practitionerDetail.Name),
+                false);
 			_contactPointSummaryComponent.SetModifiedOnListChange = true;
 
 			string rootPath = SR.TitleExternalPractitioner;

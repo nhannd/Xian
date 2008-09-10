@@ -181,15 +181,16 @@ namespace ClearCanvas.Ris.Client
 
 			// build the action model
 			_actionModel = new AdminActionModel(
-				true,
+                this.SupportsAdd,
 				this.SupportsEdit,
 				this.SupportsDelete,
 				this.SupportsDeactivation,
 				new ResourceResolver(this.GetType(), true));
 
-            _actionModel.Add.SetClickHandler(AddItems);
+            if (SupportsAdd)
+                _actionModel.Add.SetClickHandler(AddItems);
 
-			if (SupportsEdit)
+            if (SupportsEdit)
 			{
 				_actionModel.Edit.SetClickHandler(EditSelectedItems);
 				_actionModel.Edit.Enabled = false;
@@ -431,7 +432,7 @@ namespace ClearCanvas.Ris.Client
 			// double-click behaviour is different depending on whether we're running as a dialog box or not
 			if (_dialogMode)
 				Accept();
-			else
+			else if (SupportsEdit)
 				EditSelectedItems();
 		}
 
@@ -534,6 +535,15 @@ namespace ClearCanvas.Ris.Client
 
 			if (SupportsDeactivation)
 				_actionModel.ToggleActivation.Enabled = _selectedItems.Count > 0;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this component supports add.  The default is true.
+        /// Override this method to change support for edit.
+        /// </summary>
+        protected virtual bool SupportsAdd
+        {
+            get { return true; }
         }
 
 		/// <summary>

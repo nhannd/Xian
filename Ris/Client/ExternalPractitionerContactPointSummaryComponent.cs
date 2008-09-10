@@ -103,6 +103,7 @@ namespace ClearCanvas.Ris.Client
         private readonly IList<EnumValueInfo> _phoneTypeChoices;
         private readonly IList<EnumValueInfo> _resultCommunicationModeChoices;
 		private readonly string _practitionerName;
+        private readonly bool _supportsMergingOnly;
 
         /// <summary>
         /// Constructor for editing. Set the <see cref="Subject"/> property before starting.
@@ -112,14 +113,16 @@ namespace ClearCanvas.Ris.Client
 			IList<EnumValueInfo> addressTypeChoices, 
 			IList<EnumValueInfo> phoneTypeChoices, 
 			IList<EnumValueInfo> resultCommunicationModeChoices,
-			string practitionerName)
-            :base(false)
+			string practitionerName,
+            bool supportsMergingOnly)
+            : base(false)
         {
 			_practitionerRef = practitionerRef;
             _addressTypeChoices = addressTypeChoices;
             _phoneTypeChoices = phoneTypeChoices;
             _resultCommunicationModeChoices = resultCommunicationModeChoices;
 			_practitionerName = practitionerName;
+            _supportsMergingOnly = supportsMergingOnly;
         }
 
         /// <summary>
@@ -159,9 +162,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.InitializeActionModel(model);
 
-			_mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
-				SR.TitleMergePractitioner, MergeSelectedContactPoint);
-			_mergeContactPointAction.Enabled = false;
+            if (_supportsMergingOnly)
+            {
+                _mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
+                    SR.TitleMergeContactPoints, MergeSelectedContactPoint);
+                _mergeContactPointAction.Enabled = false;
+            }
 		}
 
 		protected override bool SupportsPaging
@@ -169,10 +175,25 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
+        protected override bool SupportsAdd
+        {
+            get { return _supportsMergingOnly == false; }
+        }
+
+        protected override bool SupportsEdit
+        {
+            get { return _supportsMergingOnly == false; }
+        }
+
 		protected override bool SupportsDelete
 		{
-			get { return true; }
-		}
+            get { return _supportsMergingOnly == false; }
+        }
+
+        protected override bool SupportsDeactivation
+        {
+            get { return _supportsMergingOnly == false; }
+        }
 
 		/// <summary>
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
@@ -338,9 +359,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			base.OnSelectedItemsChanged();
 
-			_mergeContactPointAction.Enabled =
-				(this.SelectedItems.Count == 1 ||
-				 this.SelectedItems.Count == 2);
+            if (_supportsMergingOnly)
+            {
+                _mergeContactPointAction.Enabled =
+                    (this.SelectedItems.Count == 1 ||
+                     this.SelectedItems.Count == 2);
+            }
 		}
 
 		public void MergeSelectedContactPoint()

@@ -117,6 +117,7 @@ namespace ClearCanvas.Ris.Client
         private string _lastName;
 
 		private Action _mergePractitionerAction;
+        private Action _mergeContactPointAction;
 
         /// <summary>
         /// Constructor
@@ -188,9 +189,13 @@ namespace ClearCanvas.Ris.Client
 			model.ToggleActivation.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner);
 
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
-				SR.TitleMergePractitioner, Merge);
+				SR.TitleMergePractitioner, MergePractitioner);
 			_mergePractitionerAction.Enabled = false;
-		}
+
+            _mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
+                SR.TitleMergeContactPoints, MergeContactPoint);
+            _mergeContactPointAction.Enabled = false;
+        }
 
 		protected override bool SupportsDelete
 		{
@@ -336,9 +341,11 @@ namespace ClearCanvas.Ris.Client
 			base.OnSelectedItemsChanged();
 
 			_mergePractitionerAction.Enabled =
-				(this.SelectedItems.Count == 1 ||
-				 this.SelectedItems.Count == 2);
-		}
+                (this.SelectedItems.Count == 1 ||
+			    this.SelectedItems.Count == 2);
+
+            _mergeContactPointAction.Enabled = this.SelectedItems.Count == 1;
+        }
 
 		private static ISpecification OrPermissions(string token1, string token2)
 		{
@@ -348,7 +355,7 @@ namespace ClearCanvas.Ris.Client
 			return or;
 		}
 
-		private void Merge()
+		private void MergePractitioner()
 		{
 			ExternalPractitionerSummary firstSelectedItem = this.SelectedItems.Count > 0 ? this.SelectedItems[0] : null;
 			ExternalPractitionerSummary secondSelectedItem = this.SelectedItems.Count > 1 ? this.SelectedItems[1] : null;
@@ -361,5 +368,35 @@ namespace ClearCanvas.Ris.Client
 				this.Table.Items.Remove(mergeComponent.SelectedDuplicate);
 			}
 		}
+
+        private void MergeContactPoint()
+        {
+            LoadExternalPractitionerEditorFormDataResponse formDataResponse = null;
+            ExternalPractitionerDetail practitioner = null;
+            Platform.GetService<IExternalPractitionerAdminService>(
+                delegate(IExternalPractitionerAdminService service)
+                {
+                    formDataResponse = service.LoadExternalPractitionerEditorFormData(new LoadExternalPractitionerEditorFormDataRequest());
+
+                    LoadExternalPractitionerForEditResponse response = service.LoadExternalPractitionerForEdit(new LoadExternalPractitionerForEditRequest(this.SelectedItems[0].PractitionerRef));
+                    practitioner = response.PractitionerDetail;
+                });
+
+            ExternalPractitionerContactPointSummaryComponent component = new ExternalPractitionerContactPointSummaryComponent(
+                practitioner.PractitionerRef,
+                formDataResponse.AddressTypeChoices,
+                formDataResponse.PhoneTypeChoices,
+                formDataResponse.ResultCommunicationModeChoices,
+                Formatting.PersonNameFormat.Format(practitioner.Name),
+                true);
+            component.SetModifiedOnListChange = true;
+
+            practitioner.ContactPoints.ForEach(delegate(ExternalPractitionerContactPointDetail p) { component.Subject.Add(p); });
+
+            LaunchAsDialog(
+                this.Host.DesktopWindow,
+                component,
+                SR.TitleMergeContactPoints);
+        }
     }
 }
