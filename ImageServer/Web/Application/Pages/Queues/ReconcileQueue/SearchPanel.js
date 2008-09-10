@@ -94,23 +94,23 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
                 var rows = itemlist.getSelectedRowElements();
                 if (rows.length>0)
                 {
-                    this._enableDeleteButton(true);
+                    this._enableReconcileButton(true);
                 }
                 else
                 {
-                    this._enableDeleteButton(false);
+                    this._enableReconcileButton(false);
                 }
             }
             else
             {
-                this._enableDeleteButton(false);
+                this._enableReconcileButton(false);
             }
         },     
         
-        _enableDeleteButton : function(en)
+        _enableReconcileButton : function(en)
         {
-            var deleteButton = $find(this._DeleteButtonClientID);
-            deleteButton.set_enable(en);
+            var reconcileButton = $find(this._ReconcileButtonClientID);
+            reconcileButton.set_enable(en);
         },
                      
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,13 +119,13 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         //
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
            
-        get_DeleteButtonClientID : function() {
-            return this._DeleteButtonClientID;
+        get_ReconcileButtonClientID : function() {
+            return this._ReconcileButtonClientID;
         },
 
-        set_DeleteButtonClientID : function(value) {
-            this._DeleteButtonClientID = value;
-            this.raisePropertyChanged('DeleteButtonClientID');
+        set_ReconcileButtonClientID : function(value) {
+            this._ReconcileButtonClientID = value;
+            this.raisePropertyChanged('ReconcileButtonClientID');
         },
                         
         get_ItemListClientID : function() {

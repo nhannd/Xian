@@ -83,24 +83,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         protected global::System.Web.UI.WebControls.Label Label5;
         
         /// <summary>
-        /// ClearScheduleDateButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton ClearScheduleDateButton;
-        
-        /// <summary>
-        /// ScheduleDate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox ScheduleDate;
-        
-        /// <summary>
         /// Label4 control.
         /// </summary>
         /// <remarks>
@@ -110,13 +92,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         protected global::System.Web.UI.WebControls.Label Label4;
         
         /// <summary>
-        /// StatusFilter control.
+        /// ReasonFilter control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList StatusFilter;
+        protected global::System.Web.UI.WebControls.DropDownList ReasonFilter;
         
         /// <summary>
         /// Panel1 control.
@@ -135,15 +117,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton SearchButton;
-        
-        /// <summary>
-        /// ScheduleDateCalendarExtender control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender ScheduleDateCalendarExtender;
         
         /// <summary>
         /// ToolBarUpdatePanel control.
@@ -170,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteItemButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ReconcileButton;
         
         /// <summary>
         /// Panel2 control.

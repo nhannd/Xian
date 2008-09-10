@@ -427,6 +427,27 @@
     <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.designer.cs">
       <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx.cs">
+      <DependentUpon>ReconcileQueueItemList.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx.designer.cs">
+      <DependentUpon>ReconcileQueueItemList.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx.designer.cs">
+      <DependentUpon>SearchPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx.cs">
       <DependentUpon>RestoreQueueItemList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -755,6 +776,8 @@
     <Content Include="App_Themes\Default\images\Buttons\NoEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKEnabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ReconcileDisabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\ReconcileEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReprocessDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReprocessEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\RestoreDisabled.png" />
@@ -910,6 +933,10 @@
     <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Queues\ArchiveQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx" />
+    <Content Include="Pages\Queues\ReconcileQueue\Default.aspx" />
+    <Content Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx" />
+    <Content Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\Queues\ReconcileQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx" />
     <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />
@@ -937,10 +964,10 @@
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Default.aspx" />
-    <Content Include="Pages\Studies\StudyDetails\Scripts\FileSystemQueueGridView.js" />
-    <Content Include="Pages\Studies\StudyDetails\Scripts\SeriesGridView.js" />
-    <Content Include="Pages\Studies\StudyDetails\Scripts\StudyDetailsTabs.js" />
-    <Content Include="Pages\Studies\StudyDetails\Scripts\WorkQueueGridView.js" />
+    <EmbeddedResource Include="Pages\Studies\StudyDetails\Scripts\FileSystemQueueGridView.js" />
+    <EmbeddedResource Include="Pages\Studies\StudyDetails\Scripts\SeriesGridView.js" />
+    <EmbeddedResource Include="Pages\Studies\StudyDetails\Scripts\StudyDetailsTabs.js" />
+    <EmbeddedResource Include="Pages\Studies\StudyDetails\Scripts\WorkQueueGridView.js" />
     <Content Include="Pages\Studies\StudyListGridView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />

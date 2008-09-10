@@ -56,10 +56,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         #region Public Properties
 
         [ExtenderControlProperty]
-        [ClientPropertyName("DeleteButtonClientID")]
-        public string DeleteButtonClientID
+        [ClientPropertyName("ReconcileButtonClientID")]
+        public string ReconcileButtonClientID
         {
-            get { return DeleteItemButton.ClientID; }
+            get { return ReconcileButton.ClientID; }
         }
 
         [ExtenderControlProperty]
@@ -80,8 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         {
             PatientId.Text = string.Empty;
             PatientName.Text = string.Empty;
-            ScheduleDate.Text = string.Empty;
-            StatusFilter.SelectedIndex = 0;
+            ReasonFilter.SelectedIndex = 0;
         }
 
         public override void DataBind()
@@ -98,9 +97,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
-            ScheduleDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
-           
+          
             // setup child controls
             GridPagerBottom.Target = ReconcileQueueItemList.ReconcileQueueGrid;
 
@@ -145,33 +142,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 			ReconcileQueueItemList.DataSourceCreated += delegate(ReconcileQueueDataSource source)
 										{
 											source.Partition = ((Default)Page).ServerPartition;
-                                            source.DateFormats = ScheduleDateCalendarExtender.Format;
 
 											if (!String.IsNullOrEmpty(PatientId.Text))
 												source.PatientId = PatientId.Text;
 											if (!String.IsNullOrEmpty(PatientName.Text))
 												source.PatientName = PatientName.Text;
-											if (!String.IsNullOrEmpty(ScheduleDate.Text))
-												source.ScheduledDate = ScheduleDate.Text;
 										};
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ScheduleDate.Text = Request[ScheduleDate.UniqueID];
-            if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                ScheduleDateCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleDateCalendarExtender.Format, null);
-            else
-                ScheduleDateCalendarExtender.SelectedDate = null;
+            IList<ReconcileReasonEnum> ReasonItems = ReconcileReasonEnum.GetAll();
 
-            IList<ReconcileReasonEnum> statusItems = ReconcileReasonEnum.GetAll();
-
-            int prevSelectedIndex = StatusFilter.SelectedIndex;
-            StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem("All", "All"));
-            foreach (ReconcileReasonEnum s in statusItems)
-                StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
-            StatusFilter.SelectedIndex = prevSelectedIndex;
+            int prevSelectedIndex = ReasonFilter.SelectedIndex;
+            ReasonFilter.Items.Clear();
+            ReasonFilter.Items.Add(new ListItem("All", "All"));
+            foreach (ReconcileReasonEnum s in ReasonItems)
+                ReasonFilter.Items.Add(new ListItem(s.Description, s.Lookup));
+            ReasonFilter.SelectedIndex = prevSelectedIndex;
 
 			if (ReconcileQueueItemList.IsPostBack)
 			{
@@ -198,7 +186,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 			DataBind();
         }
 
-        protected void DeleteItemButton_Click(object sender, EventArgs e)
+        protected void ReconcileButton_Click(object sender, EventArgs e)
         {
             IList<Model.ReconcileQueue> items = ReconcileQueueItemList.SelectedItems;
 
@@ -228,11 +216,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
             IList<Model.ReconcileQueue> items = ReconcileQueueItemList.SelectedItems;
             if (items != null)
             {
-				DeleteItemButton.Enabled = true;
+				ReconcileButton.Enabled = true;
             }
             else
             {
-                DeleteItemButton.Enabled = false;
+                ReconcileButton.Enabled = false;
             }
         }
 

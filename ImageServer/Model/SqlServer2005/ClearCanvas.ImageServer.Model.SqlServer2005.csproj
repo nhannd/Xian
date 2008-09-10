@@ -143,6 +143,7 @@
   <ItemGroup>
     <None Include="Scripts\ImageServerDatabase.sql" />
     <None Include="Scripts\ImageServerDefaultData.sql" />
+    <None Include="Scripts\ImageServerInitialization.sql" />
     <None Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
   </ItemGroup>

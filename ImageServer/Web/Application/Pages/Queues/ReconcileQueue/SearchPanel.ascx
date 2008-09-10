@@ -31,7 +31,7 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Reconcile Reason" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="StatusFilter" runat="server" CssClass="SearchDropDownList" ToolTip="Search the list by Reconcile Reason" />
+                                                <asp:DropDownList ID="ReasonFilter" runat="server" CssClass="SearchDropDownList" ToolTip="Search the list by Reconcile Reason" />
                                             </td>                
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
@@ -42,10 +42,6 @@
                                 </td>
                             </tr>
                         </table>
-                        <aspAjax:CalendarExtender ID="ScheduleDateCalendarExtender" runat="server" TargetControlID="ScheduleDate"
-                            CssClass="Calendar">
-                        </aspAjax:CalendarExtender>
-
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -55,7 +51,7 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="DeleteItemButton" runat="server" SkinID="DeleteButton" OnClick="DeleteItemButton_Click" />
+                                        <ccUI:ToolbarButton ID="ReconcileButton" runat="server" SkinID="ReconcileButton" OnClick="ReconcileButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
