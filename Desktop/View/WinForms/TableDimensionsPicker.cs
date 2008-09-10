@@ -497,14 +497,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 		#region System.Windows.Forms.Control Overrides
 
 		/// <summary>
-		/// This control does not support IME.
-		/// </summary>
-		protected override bool CanEnableIme
-		{
-			get { return false; }
-		}
-
-		/// <summary>
 		/// Gets the default size of the control.
 		/// </summary>
 		protected override Size DefaultSize
