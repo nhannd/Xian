@@ -226,12 +226,15 @@ a.collapsibleHeading {
 
 .errorProvider {
 	margin-left:0.5em;
-	position:relative;
-	top:-25%;
 	background-image:url(../images/errorprovider.gif);
 	background-repeat:no-repeat;
 	height:20px;
 	width:20px;
+}
+
+.divCell .errorProvider {
+	position:relative;
+	top:-25%;
 }
 
 .lookupButton {
