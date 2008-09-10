@@ -66,11 +66,11 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			this.Columns.Add(new TableColumn<DiagnosticServiceSummary, string>("ID",
 				delegate(DiagnosticServiceSummary rpt) { return rpt.Id; },
-				0.5f));
+				0.2f));
 
 			this.Columns.Add(new TableColumn<DiagnosticServiceSummary, string>("Name",
 				delegate(DiagnosticServiceSummary rpt) { return rpt.Name; },
-				0.5f));
+				1.0f));
 
 			this.Sort(new TableSortParams(this.Columns[columnSortIndex], true));
 		}

@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
 			this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnID,
 				delegate(LocationSummary loc) { return loc.Id; },
-				1.0f));
+				0.2f));
 
 			this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnName,
 				delegate(LocationSummary loc) { return loc.Name; },
@@ -49,11 +49,11 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnFacility,
                 delegate(LocationSummary loc) { return loc.Facility.Name; },
-                0.5f));
+                1.0f));
 
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnBuilding,
                 delegate(LocationSummary loc) { return loc.Building; },
-                1.0f));
+                0.5f));
 
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnFloor,
                 delegate(LocationSummary loc) { return loc.Floor; },
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnPointOfCare,
                 delegate(LocationSummary loc) { return loc.PointOfCare; },
-                1.0f));
+                0.5f));
 
             this.Columns.Add(new TableColumn<LocationSummary, string>(SR.ColumnRoom,
                 delegate(LocationSummary loc) { return loc.Room; },

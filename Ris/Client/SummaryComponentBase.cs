@@ -176,7 +176,7 @@ namespace ClearCanvas.Ris.Client
 					delegate(TSummary item)
 					{
 						return !GetItemDeactivated(item);
-					}, 0.1f));
+					}, 0.15f));
 			}
 
 			// build the action model

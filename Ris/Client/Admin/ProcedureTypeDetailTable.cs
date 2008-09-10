@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>(
 				"ID",
 				delegate(ProcedureTypeSummary procedureType) { return procedureType.Id; },
-				0.5f));
+				0.2f));
 
 			this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>(
 				"Name",

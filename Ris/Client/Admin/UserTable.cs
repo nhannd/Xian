@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserId,
                 delegate(UserSummary user) { return user.UserName; },
-                1.0f));
+                0.5f));
 
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserName,
                 delegate(UserSummary user) { return user.DisplayName; },
@@ -51,23 +51,23 @@ namespace ClearCanvas.Ris.Client.Admin
 
             this.Columns.Add(new TableColumn<UserSummary, string>("Created On",
                 delegate(UserSummary user) { return Format.DateTime(user.CreationTime); },
-                1.0f));
+                0.75f));
 
             this.Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
                delegate(UserSummary user) { return user.Enabled; },
-               1.0f));
+               0.25f));
 
             this.Columns.Add(new TableColumn<UserSummary, string>("Valid From",
                 delegate(UserSummary user) { return Format.DateTime(user.ValidFrom); },
-                1.0f));
+                0.75f));
 
             this.Columns.Add(new TableColumn<UserSummary, string>("Valid Until",
                delegate(UserSummary user) { return Format.DateTime(user.ValidUntil); },
-               1.0f));
+               0.75f));
 
             this.Columns.Add(new TableColumn<UserSummary, string>("Last Login Time",
                delegate(UserSummary user) { return Format.DateTime(user.LastLoginTime); },
-               1.0f));
+               0.75f));
         }
     }
 }

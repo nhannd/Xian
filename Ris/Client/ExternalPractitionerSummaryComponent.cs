@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client
 
 			this.Columns.Add(new TableColumn<ExternalPractitionerSummary, string>(SR.ColumnLicenseNumber,
 				delegate(ExternalPractitionerSummary item) { return item.LicenseNumber; },
-				1.0f));
+				0.5f));
 		}
 	}
 
