@@ -231,6 +231,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
+            LoadStorageLocation(item);
 
 			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
 			workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
@@ -254,14 +255,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					newScheduledTime = Platform.Time.AddMinutes(1);
 
 				PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
-				Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime,
-				             StorageLocation.StudyInstanceUid);
+				Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
 			}
 			else
 			{
 				LoadUids(item);
-				LoadStorageLocation(item);
-
+				
 				if (WorkQueueUidList.Count == 0)
 				{
 					// No UIDs associated with the WorkQueue item.  Set the status back to idle
