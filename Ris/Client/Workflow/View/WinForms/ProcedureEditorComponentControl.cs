@@ -30,15 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client.Workflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
@@ -47,13 +40,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
     /// </summary>
     public partial class ProcedureEditorComponentControl : ApplicationComponentUserControl
     {
-        private ProcedureEditorComponent _component;
+        private readonly ProcedureEditorComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public ProcedureEditorComponentControl(ProcedureEditorComponent component)
-            :base(component)
+            : base(component)
         {
             InitializeComponent();
 
@@ -77,13 +70,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
             _laterality.DataSource = _component.LateralityChoices;
             _laterality.DataBindings.Add("Value", _component, "SelectedLaterality", true, DataSourceUpdateMode.OnPropertyChanged);
-            
+
             _scheduledDate.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
             _scheduledDate.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
             _scheduledTime.DataBindings.Add("Value", _component, "ScheduledTime", true, DataSourceUpdateMode.OnPropertyChanged);
             _scheduledTime.DataBindings.Add("Enabled", _component, "IsScheduledTimeEditable");
 
             _portable.DataBindings.Add("Checked", _component, "PortableModality", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _checkedIn.DataBindings.Add("Checked", _component, "CheckedIn", true, DataSourceUpdateMode.OnPropertyChanged);
+            _checkedIn.DataBindings.Add("Enabled", _component, "IsCheckedInEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _okButton_Click(object sender, EventArgs e)

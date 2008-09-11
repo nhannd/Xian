@@ -30,15 +30,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using System.Collections;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -67,6 +65,8 @@ namespace ClearCanvas.Ris.Client
         private FacilitySummary _selectedFacility;
         private EnumValueInfo _selectedLaterality;
         private bool _portableModality;
+        private bool _checkedIn;
+        private readonly bool _isCheckedInEnabled;
 
         /// <summary>
         /// Constructor for add mode.
@@ -80,6 +80,9 @@ namespace ClearCanvas.Ris.Client
             _procedureTypeChoices = procedureTypeChoices;
             _facilityChoices = facilityChoices;
             _lateralityChoices = lateralityChoices;
+
+            // if the requisition's procedure type is null, then it is a new procedure and checked in can be edited.
+            _isCheckedInEnabled = _requisition.ProcedureType == null;
         }
 
         /// <summary>
@@ -87,26 +90,27 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public ProcedureEditorComponent(ProcedureRequisition requisition,
             List<FacilitySummary> facilityChoices, List<EnumValueInfo> lateralityChoices)
-            :this(requisition, facilityChoices, lateralityChoices, new List<ProcedureTypeSummary>())
+            : this(requisition, facilityChoices, lateralityChoices, new List<ProcedureTypeSummary>())
         {
         }
 
         public override void Start()
         {
-			_procedureTypeChoices.Sort(
-					delegate(ProcedureTypeSummary x, ProcedureTypeSummary y)
-					{
-						return x.Name.CompareTo(y.Name);
-					});
+            _procedureTypeChoices.Sort(
+                    delegate(ProcedureTypeSummary x, ProcedureTypeSummary y)
+                    {
+                        return x.Name.CompareTo(y.Name);
+                    });
 
-        	_procedureTypeSuggestionProvider =
-        		new DefaultSuggestionProvider<ProcedureTypeSummary>(_procedureTypeChoices, FormatProcedureType);
+            _procedureTypeSuggestionProvider =
+                new DefaultSuggestionProvider<ProcedureTypeSummary>(_procedureTypeChoices, FormatProcedureType);
 
             _selectedProcedureType = _requisition.ProcedureType;
             _scheduledTime = _requisition.ScheduledTime;
             _selectedFacility = _requisition.PerformingFacility;
             _selectedLaterality = _requisition.Laterality;
             _portableModality = _requisition.PortableModality;
+            _checkedIn = _requisition.CheckedIn;
 
             base.Start();
         }
@@ -155,7 +159,7 @@ namespace ClearCanvas.Ris.Client
 
         public IList FacilityChoices
         {
-            get { return _facilityChoices;  }
+            get { return _facilityChoices; }
         }
 
         public string FormatFacility(object facility)
@@ -169,7 +173,7 @@ namespace ClearCanvas.Ris.Client
             get { return _selectedFacility; }
             set
             {
-                if(!Equals(value, _selectedFacility))
+                if (!Equals(value, _selectedFacility))
                 {
                     _selectedFacility = value;
                     NotifyPropertyChanged("SelectedFacility");
@@ -213,7 +217,7 @@ namespace ClearCanvas.Ris.Client
             get { return _portableModality; }
             set
             {
-                if(value != _portableModality)
+                if (value != _portableModality)
                 {
                     _portableModality = value;
                     NotifyPropertyChanged("PortableModality");
@@ -221,9 +225,27 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public bool CheckedIn
+        {
+            get { return _checkedIn; }
+            set
+            {
+                if (value != _checkedIn)
+                {
+                    _checkedIn = value;
+                    NotifyPropertyChanged("CheckedIn");
+                }
+            }
+        }
+
+        public bool IsCheckedInEnabled
+        {
+            get { return _isCheckedInEnabled; }
+        }
+
         public void Accept()
         {
-            if(this.HasValidationErrors)
+            if (this.HasValidationErrors)
             {
                 this.ShowValidation(true);
                 return;
@@ -234,6 +256,7 @@ namespace ClearCanvas.Ris.Client
             _requisition.Laterality = _selectedLaterality;
             _requisition.PerformingFacility = _selectedFacility;
             _requisition.PortableModality = _portableModality;
+            _requisition.CheckedIn = _checkedIn;
 
             this.Exit(ApplicationComponentExitCode.Accepted);
         }

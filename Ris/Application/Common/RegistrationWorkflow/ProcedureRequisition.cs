@@ -30,10 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
@@ -50,6 +48,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             FacilitySummary performingFacility,
             EnumValueInfo laterality,
             bool portableModality,
+            bool checkedIn,
             EnumValueInfo status,
             bool canModify)
         {
@@ -59,6 +58,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.PerformingFacility = performingFacility;
             this.Laterality = laterality;
             this.PortableModality = portableModality;
+            this.CheckedIn = checkedIn;
             this.Status = status;
             this.CanModify = canModify;
         }
@@ -124,5 +124,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// </summary>
         [DataMember]
         public bool CanModify;
+
+        /// <summary>
+        /// Indicates if an existing procedure is checked in or not, and if a new procedure should be checked in upon creation.
+        /// </summary>
+        [DataMember]
+        public bool CheckedIn;
     }
 }

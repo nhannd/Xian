@@ -29,15 +29,14 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Workflow;
-using ClearCanvas.Ris.Application.Services.MimeDocumentService;
-using System.Collections.Generic;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -51,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-			ResultRecipientAssembler resultRecipientAssembler = new ResultRecipientAssembler();
+            ResultRecipientAssembler resultRecipientAssembler = new ResultRecipientAssembler();
 
             OrderRequisition requisition = new OrderRequisition();
             requisition.Patient = order.Patient.GetRef();
@@ -71,24 +70,24 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             requisition.Procedures = CollectionUtils.Map<Procedure, ProcedureRequisition>(
                 order.Procedures,
-                delegate(Procedure rp)
+                delegate(Procedure procedure)
                 {
-                    return CreateProcedureRequisition(rp, context);
+                    return CreateProcedureRequisition(procedure, context);
                 });
 
             requisition.Attachments = CollectionUtils.Map<OrderAttachment, OrderAttachmentSummary>(
                 order.Attachments,
                 delegate(OrderAttachment attachment)
-                    {
-                        return attachmentAssembler.CreateOrderAttachmentSummary(attachment);
-                    });
+                {
+                    return attachmentAssembler.CreateOrderAttachmentSummary(attachment);
+                });
 
             requisition.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
                 order.Notes,
                 delegate(OrderNote note)
-                    {
-                        return noteAssembler.CreateOrderNoteDetail(note, context);
-                    });
+                {
+                    return noteAssembler.CreateOrderNoteDetail(note, context);
+                });
 
             requisition.ExtendedProperties = new Dictionary<string, string>(order.ExtendedProperties);
 
@@ -121,7 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     return new ResultRecipient(
                         context.Load<ExternalPractitionerContactPoint>(s.ContactPoint.ContactPointRef, EntityLoadFlags.Proxy),
                         EnumUtils.GetEnumValue<ResultCommunicationMode>(s.PreferredCommunicationMode));
-                }).ForEach(delegate (ResultRecipient r) { order.ResultRecipients.Add(r);});
+                }).ForEach(delegate(ResultRecipient r) { order.ResultRecipients.Add(r); });
 
             // synchronize Order.Attachments from order requisition
             OrderAttachmentAssembler attachmentAssembler = new OrderAttachmentAssembler();
@@ -131,7 +130,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
             noteAssembler.SynchronizeOrderNotes(order, requisition.Notes, currentStaff, context);
 
-            if(requisition.ExtendedProperties != null)
+            if (requisition.ExtendedProperties != null)
             {
                 // copy properties individually so as not to overwrite any that were not sent by the client
                 foreach (KeyValuePair<string, string> pair in requisition.ExtendedProperties)
@@ -141,29 +140,30 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
         }
 
-        public ProcedureRequisition CreateProcedureRequisition(Procedure rp, IPersistenceContext context)
+        public ProcedureRequisition CreateProcedureRequisition(Procedure procedure, IPersistenceContext context)
         {
-            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
+            ProcedureTypeAssembler procedureTypeAssembler = new ProcedureTypeAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
             // create requisition
             return new ProcedureRequisition(
-                rptAssembler.CreateSummary(rp.Type),
-                rp.Index,
-                rp.ScheduledStartTime,
-                rp.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(rp.PerformingFacility),
-                EnumUtils.GetEnumValueInfo(rp.Laterality, context),
-                rp.Portable,
-                EnumUtils.GetEnumValueInfo(rp.Status, context),
-                IsProcedureModifiable(rp));
+                procedureTypeAssembler.CreateSummary(procedure.Type),
+                procedure.Index,
+                procedure.ScheduledStartTime,
+                procedure.PerformingFacility == null ? null : facilityAssembler.CreateFacilitySummary(procedure.PerformingFacility),
+                EnumUtils.GetEnumValueInfo(procedure.Laterality, context),
+                procedure.Portable,
+                procedure.ProcedureCheckIn.IsPreCheckIn == false,
+                EnumUtils.GetEnumValueInfo(procedure.Status, context),
+                IsProcedureModifiable(procedure));
         }
 
-        public void UpdateProcedureFromRequisition(Procedure rp, ProcedureRequisition requisition, IPersistenceContext context)
+        public void UpdateProcedureFromRequisition(Procedure procedure, ProcedureRequisition requisition, IPersistenceContext context)
         {
             // modify scheduling time/portability of procedure steps that are still scheduled
             // bug #1356 fix: don't modify scheduling time of reporting procedure steps
             // only pre-procedure steps and modality procedure steps are re-scheduled
-            List<ProcedureStep> modifiableSteps = CollectionUtils.Select(rp.ProcedureSteps,
+            List<ProcedureStep> modifiableSteps = CollectionUtils.Select(procedure.ProcedureSteps,
                 delegate(ProcedureStep ps) { return ps.IsPreStep || ps.Is<ModalityProcedureStep>(); });
 
             foreach (ProcedureStep step in modifiableSteps)
@@ -174,9 +174,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 }
             }
 
-            rp.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
-            rp.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
-            rp.Portable = requisition.PortableModality;
+            procedure.PerformingFacility = context.Load<Facility>(requisition.PerformingFacility.FacilityRef, EntityLoadFlags.Proxy);
+            procedure.Laterality = EnumUtils.GetEnumValue<Laterality>(requisition.Laterality);
+            procedure.Portable = requisition.PortableModality;
+
+            if(requisition.CheckedIn && procedure.ProcedureCheckIn.IsPreCheckIn)
+            {
+                procedure.ProcedureCheckIn.CheckIn(null);
+            }
         }
 
         public DiagnosticServiceTreeItem CreateDiagnosticServiceTreeItem(DiagnosticServiceTreeNode node)
@@ -192,9 +197,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         // better place to put it right now
         // note that the notion of "modifiable" here is specific to the idea of a "requisition"
         // The "requisition" is modifiable only as long as the procedure is in the SC status
-        private bool IsProcedureModifiable(Procedure rp)
+        private bool IsProcedureModifiable(Procedure procedure)
         {
-            return rp.Status == ProcedureStatus.SC;
+            return procedure.Status == ProcedureStatus.SC;
         }
     }
 }

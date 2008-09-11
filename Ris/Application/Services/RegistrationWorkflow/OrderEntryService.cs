@@ -267,6 +267,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         [UpdateOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Modify)]
+        [OperationEnablement("CanModifyOrder")]
         public ModifyOrderResponse ModifyOrder(ModifyOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -371,6 +372,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
             return order.Status == OrderStatus.SC;
+        }
+
+        public bool CanModifyOrder(WorklistItemKey itemKey)
+        {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Modify))
+                return false;
+
+            // the worklist item may represent a patient without an order,
+            // in which case there is no order to modify
+            if (itemKey.OrderRef == null)
+                return false;
+
+            return true;
         }
 
         #endregion

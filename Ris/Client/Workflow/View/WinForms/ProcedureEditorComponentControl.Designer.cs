@@ -36,6 +36,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._performingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._laterality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._portable = new System.Windows.Forms.CheckBox();
+			this._checkedIn = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// _okButton
@@ -127,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _portable
 			// 
 			this._portable.AutoSize = true;
-			this._portable.Location = new System.Drawing.Point(22, 210);
+			this._portable.Location = new System.Drawing.Point(15, 195);
 			this._portable.Margin = new System.Windows.Forms.Padding(2);
 			this._portable.Name = "_portable";
 			this._portable.Size = new System.Drawing.Size(65, 17);
@@ -135,10 +136,22 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._portable.Text = "Portable";
 			this._portable.UseVisualStyleBackColor = true;
 			// 
+			// _checkedIn
+			// 
+			this._checkedIn.AutoSize = true;
+			this._checkedIn.Location = new System.Drawing.Point(15, 219);
+			this._checkedIn.Margin = new System.Windows.Forms.Padding(2);
+			this._checkedIn.Name = "_checkedIn";
+			this._checkedIn.Size = new System.Drawing.Size(125, 17);
+			this._checkedIn.TabIndex = 8;
+			this._checkedIn.Text = "Patient is checked-in";
+			this._checkedIn.UseVisualStyleBackColor = true;
+			// 
 			// ProcedureEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._checkedIn);
 			this.Controls.Add(this._portable);
 			this.Controls.Add(this._laterality);
 			this.Controls.Add(this._performingFacility);
@@ -165,5 +178,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _performingFacility;
         private ClearCanvas.Desktop.View.WinForms.ComboBoxField _laterality;
         private System.Windows.Forms.CheckBox _portable;
+		private System.Windows.Forms.CheckBox _checkedIn;
     }
 }
