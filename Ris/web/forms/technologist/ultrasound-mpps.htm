@@ -86,8 +86,8 @@
 				"W381S",
 				"W382",
 				"W383",
-				"W384",
 				"W396",
+				"W397",
 				"WHC",
 				"Portable"
 			]
@@ -119,18 +119,25 @@
 				}
 
 				data.acquisition = data.acquisition || {};
+				data.acquisition.equipment = data.acquisition.equipment || [];
 				data.acquisition.startTime = data.acquisition.startTime || startTime;
 				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
 
+				data.consent = data.consent || {};
 				data.ivAccess = data.ivAccess || [];
 				data.ivContrast = data.ivContrast || [];
 				data.ultrasound = data.ultrasound || {};
+				data.probe = data.probe || {};
+				data.comments = data.comments || {};
 				
 				initAcquisitionTable(facility, modality);
 
+				initConsentTable();
 				initIVAccessTable();
 				initIVContrastTable();
 				initUltrasoundTable();
+				initProbeTable();
+				initCommentsTable();
 			}
 			catch(e)
 			{
@@ -141,7 +148,7 @@
 
 		function initAcquisitionTable(facility, modality)
 		{
-			var acquisitionTable = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			var acquisitionTable = Table.createTable($("acquisitionTable"), { editInPlace: true, flow: true, checkBoxes: true },
 			[
 				{  label: "Equipment/Device ID/Location",
 					cellType: "choice",
@@ -153,7 +160,7 @@
 			]);
 				
 			acquisitionTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-			acquisitionTable.bindItems([data.acquisition]);
+			acquisitionTable.bindItems(data.acquisition.equipment);
 			
 			var chaperoneTable = Table.createTable($("chaperoneTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
@@ -178,6 +185,14 @@
 					setValue: function(item, value) { item.chaperonePosition = value; },
 					getVisible: function(item) { return item.chaperonesUsed == "Yes"; },
 					getError: function(item) { return null; }
+				},
+				{	label: "Comment",
+					cellType: "textarea",
+					getValue: function(item) { return item.chaperoneComment; },
+					setValue: function(item, value) { item.chaperoneComment = value; },
+					getVisible: function(item) { return item.chaperonesUsed == "Yes"; },
+					getError: function(item) { return null; }
+				
 				}
 			]);
 				
@@ -186,7 +201,7 @@
 			
 			var radiologistTable = Table.createTable($("radiologistTable"), { editInPlace: true, flow: true, checkBoxes: false },
 			[
-				{	label: "Radiologist Scanned?",
+				{	label: "Clinical Staff Scanned?",
 					cellType: "choice",
 					choices: ["Yes", "No"],
 					getValue: function(item) { return item.radiologistScanned = item.radiologistScanned || "No"; },
@@ -206,6 +221,82 @@
 			radiologistTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 			radiologistTable.bindItems([data.acquisition]);
 			
+		}
+
+		function onAddAcquisition()
+		{
+			data.acquisition.equipment.add( {} );
+		}
+
+		function onDeleteAcquisition()
+		{
+			var checkedItems = $("acquisitionTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Delete selected Equipment/Device/Locations?"))
+				{
+						checkedItems.each(function(item) { data.acquisition.equipment.remove(item); });
+						$("acquisitionCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
+
+		function onAcquisitionCheckAllNone()
+		{
+			data.acquisition.equipment.each(function(item) { $("acquisitionTable").setItemCheckState(item, $("acquisitionCheckAllNone").checked); });
+		}
+
+		
+		function initConsentTable()
+		{
+			var consentTable = Table.createTable($("consentTable"), {editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Verbal Consent Obtained",
+					cellType: "bool",
+					getValue: function(item) { return item.verbalConsent; },
+					setValue: function(item, value) { item.verbalConsent = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+			
+			consentTable.errorProvider = errorProvider;
+			consentTable.bindItems([data.consent]);
+		}
+		
+		function initProbeTable()
+		{
+			var probeTable = Table.createTable($("probeTable"), {editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Probe Number",
+					cellType: "text",
+					getValue: function(item) { return item.probeNumber; },
+					setValue: function(item, value) { item.probeNumber = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+			
+			probeTable.errorProvider = errorProvider;
+			probeTable.bindItems([data.probe]);
+		}
+		
+		function initCommentsTable()
+		{
+			var commentsTable = Table.createTable($("commentsTable"), {editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Comments",
+					cellType: "textarea",
+					getValue: function(item) { return item.comment; },
+					setValue: function(item, value) { item.comment = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+			
+			commentsTable.errorProvider = errorProvider;
+			commentsTable.bindItems([data.comments]);
 		}
 		
 		function initIVAccessTable()
@@ -400,7 +491,18 @@
 		function saveData()
 		{
 			Ris.setTag("Documentation", JSML.create(data, "data"));
-			Ris.setTag("ExamLocation", data.acquisition.equipment);
+			Ris.setTag("ExamLocation", getLocationsString());
+		}
+		
+		function getLocationsString()
+		{
+			var locations = [];
+			var i;
+			for(i = 0; i < data.acquisition.equipment.length; i++)
+			{
+				locations.push(data.acquisition.equipment[i].equipment);
+			}
+			return locations.join(" ");
 		}
 		//////////////////////////////////////////////////////////////////////////
 	</script>
@@ -409,13 +511,23 @@
 	<form id="myForm">
 		<div id="readOnlyHeader">Changes to this form will not be saved.</div>
 		<p class="sectionheading">Exam Acquisition</p>
-		<table id="acquisitionTable" width="100%">
-			<tr><td class="tableheading"></td></tr>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddAcquisition()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteAcquisition()" />
+		</div>
+		<table id="acquisitionTable" border="1" width="100%">
+			<tr>
+				<td colspan="2"><input id="acquisitionCheckAllNone" type="checkbox" onclick="javascript:onAcquisitionCheckAllNone()">Select All/None</input></td>
+			</tr>
 		</table>
 		<table id="chaperoneTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 		<table id="radiologistTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<p class="sectionheading">Patient Consent</p>
+		<table id="consentTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 		<p class="sectionheading">IV - Access</p>
@@ -440,6 +552,14 @@
 		</table>
 		<p class="sectionheading">3D/4D Ultrasound</p>
 		<table id="ultrasoundTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<p class="sectionheading">Probe</p>
+		<table id="probeTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<p class="sectionheading">Comments</p>
+		<table id="commentsTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 	</form>
