@@ -461,23 +461,22 @@
 							getVisible: function(item) { return false; }
 
 						},
-						{	label: "Weight (kg)",
-							cellType: "readonly",
-							getValue: function(item) 
-							{ 
-								return item.weight = item.weight 
-									|| ((data.vitals.weightUnit == "kg") ? Number(data.vitals.weightValue) : (Number(data.vitals.weightValue) * 0.45359237).roundTo(0)) 
-									|| 0; 
-							},
-							getError: function(item) { return null; },
-							setValue: function(item) { return; },
-							getVisible: function(item) { return false; }
-
-						},
 						{	label: "Level",
 							cellType: "text",
 							getValue: function(item) { return item.level; },
 							setValue: function(item, value) { item.level = parseFloat(value) || null; },
+							getError: function(item) { return null; }
+						},
+						{	label: "African-American",
+							cellType: "bool",
+							getValue: function(item) { return item.africanAmerican; },
+							setValue: function(item, value) { item.africanAmerican = value; },
+							getError: function(item) { return null; }
+						},
+						{	label: "Creatinine methods recalibrated to be traceable to IDMS?",
+							cellType: "bool",
+							getValue: function(item) { return item.recalibrated; },
+							setValue: function(item, value) { item.recalibrated = value; },
 							getError: function(item) { return null; }
 						},
 						{	label: "Staff",
@@ -493,13 +492,14 @@
 							 setValue: function(item, value) { item.date = value; },
 							 getError: function(item) { return null; }
 						},
-						{	label: "Clearance",
+						{	label: "GFR",
 							cellType: "readonly",
 							getValue: function(item) 
 							{ 
 								try
 								{
-									return item.clearance = CreatinineCalculator.calculateClearance(item.age, item.weight, item.sex, item.level) || "N/A";
+									item.clearance = CreatinineCalculator.calculateGFR(item.level, item.age, item.sex, item.africanAmerican, item.recalibrated);
+									return item.clearance ? item.clearance + " " + CreatinineCalculator.gfrUnits() : "N/A";
 								}
 								catch(e)
 								{
@@ -511,7 +511,7 @@
 							cellType: "readonly",
 							getValue: function(item)
 							{
-								return item.sex + ", " + item.age + "-year-old , " + item.weight + " kg";
+								return item.sex + ", " + item.age + "-year-old";
 							}
 							
 						}
