@@ -67,6 +67,9 @@
 									
 					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
 					Field.show($("readOnlyHeader"), readOnly);
+					
+					var procedures = mpps.ModalityProcedureSteps.map(function(mps) { return mps.Procedure; });
+					initProceduresTable(procedures);
 				}
 
 				data.acquisition = data.acquisition || {};
@@ -643,6 +646,20 @@
 			postProcessingTable.bindItems([data.postProcessing]);
 		}
 
+		function initProceduresTable(procedures)
+		{
+			var htmlTable = $("procedureTable");
+			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+				 [
+					{   label: "Procedure",
+						cellType: "text",
+						getValue: function(item) { return item.Type.Name; }
+					}
+				 ]);
+				 
+			htmlTable.bindItems(procedures);
+		}
+		
 		//////////////////////////////////////////////////////////////////////////
 		// RIS integration API
 		function hasValidationErrors()
@@ -666,6 +683,12 @@
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
 		<div id="readOnlyHeader">Changes to this form will not be saved.</div>
+
+		<p class="sectionheading">Performed Procedure(s)</p>
+		<table id="procedureTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+
 		<p class="sectionheading">Exam Acquisition</p>
 		<table id="acquisitionTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
