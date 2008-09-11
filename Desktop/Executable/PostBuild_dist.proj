@@ -85,6 +85,11 @@
     <SharedPluginFiles Include="$(ProjectDir)\..\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
   </ItemGroup>
 
+  <!--Icon Files-->
+  <ItemGroup>
+    <IconFiles Include="$(ProjectDir)\app.ico" />  
+  </ItemGroup>
+  
   <!-- Execution files -->
   <ItemGroup>
     <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe" />
@@ -114,9 +119,12 @@
 		<Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
 
 		<!-- Copy license file -->
-		<Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
-		<!-- Copy execution files -->
+    <!-- Copy icon file -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(IconFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+
+    <!-- Copy execution files -->
 		<Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
 
     <!-- Override the value of TargetPlatform for this task. -->
