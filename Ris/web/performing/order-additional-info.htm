@@ -300,26 +300,33 @@
 							setValue: function(item, value) { item.pregnancyStatus = value; },
 							getError: function(item) { return item.pregnancyStatus ? null : "Value required"; }
 						},
+						{	label: "Pregnancy test performed?",
+							cellType: "choice",
+							choices: ["N/A", "No", "Yes"],
+							getValue: function(item) { return item.pregnancyTestPerformed || "N/A"; },
+							setValue: function(item, value) { item.pregnancyTestPerformed = value; },
+							getError: function(item) { return item.pregnancyTestPerformed ? null : "Value required"; }
+						},
 						{	label: "Consent obtained by",
 							cellType: "lookup",
 							lookup: function(query) { return Ris.resolveStaffName(query); },
 							getValue: function(item) { return item.pregnancyConsentObtainedBy; },
 							setValue: function(item, value) { item.pregnancyConsentObtainedBy = value; },
-							getVisible: function(item) { return item.pregnancyStatus == "Yes"; },
-							getError: function(item) { return item.pregnancyStatus == "Yes" ? "Value required" : null; }
+							getVisible: function(item) { return item.pregnancyStatus == "Yes" || item.pregnancyTestPerformed == "Yes"; },
+							getError: function(item) { return item.pregnancyStatus == "Yes" || item.pregnancyTestPerformed == "Yes" ? "Value required" : null; }
 						},
 						{	label: "Pregnancy Test Given - Result?",
 							cellType: "text",
 							getValue: function(item) { return item.pregnancyTestResult; },
 							setValue: function(item, value) { item.pregnancyTestResult = value; },
-						  getVisible: function(item) { return item.pregnancyStatus == "Yes"; },
+							getVisible: function(item) { return item.pregnancyStatus == "Yes" || item.pregnancyTestPerformed == "Yes"; },
 							getError: function(item) { return null; }
 						},
 						{	label: "LMP",
 							cellType: "date",
 							getValue: function(item) { return item.pregnancyLMP; },
 							setValue: function(item, value) { item.pregnancyLMP = value; },
-							getVisible: function(item) { return item.pregnancyStatus == "Yes"; },
+							getVisible: function(item) { return item.pregnancyStatus == "Yes" || item.pregnancyTestPerformed == "Yes"; },
 							getError: function(item) { return null; }
 						}
 					]);

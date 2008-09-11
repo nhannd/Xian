@@ -189,6 +189,7 @@
 				var pregnancyTable = Table.createTable($("pregnancyTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
 						new readOnlyCell("Is patient pregnant?", "pregnancyStatus"),
+						new readOnlyCell("Pregnancy test performed?", "pregnancyTestPerformed"),
 						new readOnlyCell("Consent obtained by", "pregnancyConsentObtainedBy"),
 						new readOnlyCell("Pregnancy Test Given - Result?", "pregnancyTestResult"),
 						new readOnlyDateCell("LMP", "pregnancyLMP")
