@@ -33,6 +33,7 @@ using System;
 using System.IO;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
 using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
@@ -89,7 +90,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         {
             try
             {
-                PersistentStore store = new PersistentStore();
+            	PersistentStore store = PersistentStoreRegistry.GetDefaultStore() as PersistentStore;
                 store.Initialize();
 
                 PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);

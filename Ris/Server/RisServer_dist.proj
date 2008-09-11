@@ -26,7 +26,7 @@
 	
 	<ItemGroup>
 		<ConfigFiles Include="$(SolutionDir)\..\Client\Workflow\actionmodels.xml" />
-		<ConfigFiles Include="$(EnterpriseDirectory)\Hibernate\hibernate.cfg.xml" />
+		<ConfigFiles Include="$(HealthcareDirectory)\Hibernate\hibernate.cfg.xml" />
 	</ItemGroup>
 	
 	<ItemGroup>

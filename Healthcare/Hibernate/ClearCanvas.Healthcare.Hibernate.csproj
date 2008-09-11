@@ -105,6 +105,7 @@
     <Compile Include="Brokers\WorkQueueItemBroker.cs" />
     <Compile Include="Brokers\WorkQueueItemBroker.gen.cs" />
     <Compile Include="DateTimeRangeHbm.cs" />
+    <Compile Include="HealthcarePersistentStore.cs" />
     <Compile Include="LateralityEnumHbm.gen.cs" />
     <Compile Include="NoteSeverityEnumHbm.gen.cs" />
     <Compile Include="OrderPriorityEnumHbm.gen.cs" />
@@ -276,6 +277,9 @@
     <EmbeddedResource Include="Mappings\PatientNote.hbm.xml" />
     <EmbeddedResource Include="Mappings\RadiologistAdminWorklists.hbm.xml" />
     <EmbeddedResource Include="Brokers\PatientHistoryBroker.hbm.xml" />
+    <EmbeddedResource Include="hibernate.cfg.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueItem.hbm.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />

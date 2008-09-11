@@ -29,28 +29,18 @@
 
 #endregion
 
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-
 using ClearCanvas.Common;
-
-using NHibernate;
-using NHibernate.Cfg;
-using NHibernate.Metadata;
-using NHibernate.Mapping;
-using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
+using NHibernate;
+using NHibernate.Mapping;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
     /// <summary>
     /// NHibernate implemenation of <see cref="IPersistentStore"/>.
     /// </summary>
-    [ExtensionOf(typeof(PersistentStoreExtensionPoint))]
-    public class PersistentStore : IPersistentStore
+    public abstract class PersistentStore : IPersistentStore
     {
         private ISessionFactory _sessionFactory;
         private NHibernate.Cfg.Configuration _cfg;
@@ -70,7 +60,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             _cfg = new NHibernate.Cfg.Configuration();
 
             // this will automatically read from the hibernate.xml.cfg file
-            _cfg.Configure();
+            _cfg.Configure(ConfigFileLocation);
 
             Platform.Log(LogLevel.Debug, "NHibernate connection string: {0}", _cfg.Properties["connection.connection_string"]);
 
@@ -131,6 +121,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             get { return _sessionFactory.GetAllClassMetadata(); }
         }
+
+		protected abstract string ConfigFileLocation { get; }
 
         /// <summary>
         /// Rather than explicitly specifying a cache-strategy in every class/collection mapping,
