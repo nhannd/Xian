@@ -2921,9 +2921,11 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertReconcileQueue] 
 	-- Add the parameters for the stored procedure here
+	@Description nvarchar(1024),
 	@ServerPartitionGUID uniqueidentifier,
 	@StudyStorageGUID uniqueidentifier,
 	@SeriesInstanceUid varchar(64),
+	@SeriesDescription nvarchar(64),
 	@SopInstanceUid varchar(64),
 	@StudyData xml,
 	@QueueData xml=NULL,
@@ -2947,13 +2949,13 @@ BEGIN
 		-- PRINT ''Not found''
 		SET @Guid=newid()
 
-		INSERT INTO [dbo].[ReconcileQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[StudyData],[QueueData],[ReconcileReasonEnum])
-		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@StudyData,@QueueData,@ReconcileReasonEnum)
+		INSERT INTO [dbo].[ReconcileQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[QueueData],[ReconcileReasonEnum])
+		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@ReconcileReasonEnum)
 	END
 
 
-	INSERT INTO [dbo].[ReconcileQueueUid]([GUID],[ReconcileQueueGUID],[SeriesInstanceUid],[SopInstanceUid])
-	VALUES (newid(),@Guid,@SeriesInstanceUid,@SopInstanceUid)
+	INSERT INTO [dbo].[ReconcileQueueUid]([GUID],[ReconcileQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
+	VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
 	
 	COMMIT TRANSACTION
 	

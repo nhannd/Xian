@@ -97,6 +97,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
+        public ImageSetField this[uint tag]
+        {
+            get
+            {
+                return _fields[DicomTagDictionary.GetDicomTag(tag)];
+            }
+        }
+
         protected void AddField(ImageSetField field)
         {
             _fields.Add(field.DicomTag, field);
@@ -111,6 +119,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             desc.AddField(new ImageSetField(message.DataSet[DicomTags.PatientsBirthDate]));
             desc.AddField(new ImageSetField(message.DataSet[DicomTags.PatientsSex]));
             desc.AddField(new ImageSetField(message.DataSet[DicomTags.AccessionNumber]));
+            desc.AddField(new ImageSetField(message.DataSet[DicomTags.StudyDate]));
             return desc;
         }
 

@@ -502,6 +502,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             reconcileContext.CurrentStudyLocation = StorageLocation;
             reconcileContext.File = file;
             reconcileContext.TempStoragePath = GetSuggestedTemporaryReconcileFolderPath();
+            reconcileContext.CurrentStudy = _context.Study;
 
             reconcileContext.History = FindHistory(file);
             if (reconcileContext.History == null)

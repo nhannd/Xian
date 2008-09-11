@@ -40,6 +40,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ReconcileQueueUpdateColumns()
        : base("ReconcileQueue")
        {}
+        public System.String Description
+        {
+            set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
+        }
         public System.DateTime InsertTime
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }

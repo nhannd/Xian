@@ -14,6 +14,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         }
 
+        public String Description
+        {
+            set { SubCriteria["Description"] = new ProcedureParameter<String>("Description", value); }
+        }
+
         public ServerEntityKey StudyStorageKey
         {
             set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
@@ -33,6 +38,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["SopInstanceUid"] = new ProcedureParameter<String>("SopInstanceUid", value); }
         }
 
+        public String SeriesDescription
+        {
+            set { SubCriteria["SeriesDescription"] = new ProcedureParameter<String>("SeriesDescription", value); }
+        }
         
         public XmlDocument StudyData
         {

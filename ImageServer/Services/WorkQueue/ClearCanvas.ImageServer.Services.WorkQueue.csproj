@@ -49,9 +49,13 @@
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
+    <Compile Include="ReconcileStudy\ReconcileDicomFileCommand.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyProcessorContext.cs" />
+    <Compile Include="ReconcileStudy\DicomFileUpdateCommandActionList.cs" />
+    <Compile Include="ReconcileStudy\SetTagAction.cs" />
+    <Compile Include="ReconcileStudy\UpdateImagesCommandXmlSpecification.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />
     <Compile Include="Shreds\WorkQueueServerExtension.cs" />

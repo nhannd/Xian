@@ -41,6 +41,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ReconcileQueueSelectCriteria()
         : base("ReconcileQueue")
         {}
+        public ISearchCondition<System.String> Description
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Description"))
+              {
+                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["Description"];
+            } 
+        }
         public ISearchCondition<System.DateTime> InsertTime
         {
             get

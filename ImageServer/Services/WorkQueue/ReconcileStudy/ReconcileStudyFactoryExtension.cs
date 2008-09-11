@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
-
     [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
     class ReconcileStudyFactoryExtension : IWorkQueueProcessorFactory
     {

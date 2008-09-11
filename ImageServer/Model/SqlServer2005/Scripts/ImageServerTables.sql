@@ -1186,6 +1186,7 @@ CREATE TABLE [dbo].[ReconcileQueue](
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_ReconcileQueue_InsertTime]  DEFAULT (getdate()),
+	[Description] [nvarchar](1024),
 	[StudyData] [xml] NOT NULL,
 	[QueueData] [xml] NOT NULL,
 	[ReconcileReasonEnum] [smallint] NOT NULL,
@@ -1207,6 +1208,7 @@ GO
 CREATE TABLE [dbo].[ReconcileQueueUid](
 	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_ReconcileQueueUid_GUID]  DEFAULT (newid()),
 	[ReconcileQueueGUID] [uniqueidentifier] NOT NULL,
+	[SeriesDescription] [nvarchar](64),
 	[SeriesInstanceUid] [varchar](64)  NOT NULL,
 	[SopInstanceUid] [varchar](64)  NOT NULL,
  CONSTRAINT [PK_ReconcileQueueUid] PRIMARY KEY CLUSTERED 

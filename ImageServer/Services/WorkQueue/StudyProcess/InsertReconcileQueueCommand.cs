@@ -1,8 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
@@ -11,6 +13,9 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    /// <summary>
+    /// Command for inserting a Reconcile Queue entry for a dicom file.
+    /// </summary>
     class InsertReconcileQueueCommand : ServerDatabaseCommand
     {
         private readonly ReconcileImageContext _context;
@@ -36,10 +41,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             IInsertReconcileQueue broker = updateContext.GetBroker<IInsertReconcileQueue>();
             InsertReconcileQueueParameters parameters = new InsertReconcileQueueParameters();
+            parameters.Description = GetImageSearchableDescription();
+
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
             parameters.ReconcileReasonEnum = ReconcileReasonEnum.InconsistentData;
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+            parameters.SeriesDescription = _context.File.DataSet[DicomTags.SeriesDescription].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             parameters.StudyData = descXml;
 
@@ -59,6 +67,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
             _context.TempStoragePath = data.StoragePath; // if a record already exists, use its storagefolder instead
+            
+        }
+
+        private string GetImageSearchableDescription()
+        {
+            StringBuilder text = new StringBuilder();
+            text.AppendFormat("{0}={1}", "ExistingPatientsName", _context.CurrentStudy.PatientsName);
+            text.Append(Environment.NewLine);
+            text.AppendFormat("{0}={1}", "NewPatientsName", _context.File.DataSet[DicomTags.PatientsName].GetString(0, String.Empty));
+
+            return text.ToString();
         }
     }
 }

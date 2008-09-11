@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 		protected override void OnExecute()
 		{
-			_file.Save(DicomWriteOptions.Default);
+            _file.Save(_path, DicomWriteOptions.Default);
 		}
 
 		protected override void OnUndo()

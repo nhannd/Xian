@@ -1,57 +1,91 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    /// <summary>
+    /// Represents the context of image reconciliation scheduling when an image is processed by the 'StudyProcess' processor
+    /// </summary>
     public class ReconcileImageContext
     {
+        #region Private Members
         private DicomFile _file;
-        private StudyStorageLocation _studyLocation;
+        private Study _existingStudy;
+        private StudyStorageLocation _existStudyLocation;
         private ServerPartition _partition;
         private ReconcileQueue _reconcileQueue;
         private StudyHistory _history;
 
         private string _storagePath;
+        #endregion
 
+        #region Public Properties
+
+        /// <summary>
+        /// The dicom file to be reconciled
+        /// </summary>
         public DicomFile File
         {
             get { return _file; }
             set { _file = value; }
         }
 
+        /// <summary>
+        /// The location of the existing study that has the same Study Instance Uid
+        /// </summary>
         public StudyStorageLocation CurrentStudyLocation
         {
-            get { return _studyLocation; }
-            set { _studyLocation = value; }
+            get { return _existStudyLocation; }
+            set { _existStudyLocation = value; }
         }
 
+        /// <summary>
+        /// The existing study that has the same Study Instance Uid
+        /// </summary>
+        public Study CurrentStudy
+        {
+            get { return _existingStudy; }
+            set { _existingStudy = value; }
+        }
+
+        /// <summary>
+        /// The Server Partition where the reconciliation takes place
+        /// </summary>
         public ServerPartition Partition
         {
             get { return _partition; }
             set { _partition = value; }
         }
 
+        /// <summary>
+        /// The reconcile queue entry created as a result of the reconciliation
+        /// </summary>
         public ReconcileQueue ReconcileQueue
         {
             get { return _reconcileQueue; }
             set { _reconcileQueue = value; }
         }
 
+        /// <summary>
+        /// The <see cref="StudyHistory"/> record for the existing study.
+        /// </summary>
         public StudyHistory History
         {
             get { return _history; }
             set { _history = value; }
         }
 
+        /// <summary>
+        /// The location on the filesystem where the images will be stored
+        /// </summary>
         public string TempStoragePath
         {
             get { return _storagePath; }
             set { _storagePath = value; }
         }
+
+        #endregion
     }
 
 }

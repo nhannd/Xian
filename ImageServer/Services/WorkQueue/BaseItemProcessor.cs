@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private TimeSpanStatistics _dBUpdateTime = new TimeSpanStatistics();
         private TimeSpanStatistics _studyXmlLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _processTime = new TimeSpanStatistics();
-
+        private Model.WorkQueue _workQueueItem;
         private IList<StudyStorageLocation> _storageLocationList;
         private IList<WorkQueueUid> _uidList;
 
@@ -124,6 +124,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get { 
                 return _storageLocationList; 
             }
+        }
+
+        protected Model.WorkQueue WorkQueueItem
+        {
+            get { return _workQueueItem; }
         }
 
         #endregion
@@ -770,6 +775,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         public void Process(Model.WorkQueue item)
         {
+            _workQueueItem = item;
+
             OnProcessItemBegin(item);
                         
             ProcessTime.Add(
