@@ -128,6 +128,7 @@
 				data.ivContrast = data.ivContrast || [];
 				data.ultrasound = data.ultrasound || {};
 				data.probe = data.probe || {};
+				data.pacs = data.pacs || {};
 				data.comments = data.comments || {};
 				
 				initAcquisitionTable(facility, modality);
@@ -137,6 +138,7 @@
 				initIVContrastTable();
 				initUltrasoundTable();
 				initProbeTable();
+				initPacsTable();
 				initCommentsTable();
 			}
 			catch(e)
@@ -221,6 +223,28 @@
 			radiologistTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 			radiologistTable.bindItems([data.acquisition]);
 			
+			var checkedByPhysicianTable = Table.createTable($("checkedByPhysicianTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Checked by Physician?",
+					cellType: "choice",
+					choices: ["Yes", "No"],
+					getValue: function(item) { return item.checkedByPhysician = item.checkedByPhysician || "No"; },
+					setValue: function(item, value) { item.checkedByPhysician = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Staff Name",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.checkedByPhysicianStaff; },
+					setValue: function(item, value) { item.checkedByPhysicianStaff = value; },
+					getVisible: function(item) { return item.checkedByPhysician == "Yes"; },
+					getError: function(item) { return null; }
+				}
+			]);
+				
+			checkedByPhysicianTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			checkedByPhysicianTable.bindItems([data.acquisition]);
+			
 		}
 
 		function onAddAcquisition()
@@ -297,6 +321,29 @@
 			
 			commentsTable.errorProvider = errorProvider;
 			commentsTable.bindItems([data.comments]);
+		}
+		
+		function initPacsTable()
+		{
+			var pacsTable = Table.createTable($("pacsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			[
+				{	label: "Number of Images",
+					cellType: "text",
+					getValue: function(item) { return item.images; },
+					setValue: function(item, value) { item.images = isNaN(value) ? item.images : Number(value); },
+					getError: function(item) { return null; }
+				},
+				{	label: "Server Checked By",
+					cellType: "lookup",
+					lookup: function(query) { return Ris.resolveStaffName(query); },
+					getValue: function(item) { return item.serverCheckedBy; },
+					setValue: function(item, value) { item.serverCheckedBy = value; },
+					getError: function(item) { return null; }
+				}
+			]);
+				
+			pacsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			pacsTable.bindItems([data.pacs]);
 		}
 		
 		function initIVAccessTable()
@@ -526,6 +573,9 @@
 		<table id="radiologistTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
+		<table id="checkedByPhysicianTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
 		<p class="sectionheading">Patient Consent</p>
 		<table id="consentTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
@@ -556,6 +606,10 @@
 		</table>
 		<p class="sectionheading">Probe</p>
 		<table id="probeTable" width="100%">
+			<tr><td class="tableheading"></td></tr>
+		</table>
+		<p class="sectionheading">PACS</p>
+		<table id="pacsTable" width="100%">
 			<tr><td class="tableheading"></td></tr>
 		</table>
 		<p class="sectionheading">Comments</p>
