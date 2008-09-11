@@ -366,7 +366,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
                         columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
                         columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-                        columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(15));
+                        columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
                         newItem = workQueueBroker.Insert(columns);
 
                         if (newItem!=null)

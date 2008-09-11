@@ -46,7 +46,6 @@ namespace ClearCanvas.ImageServer.TestApp
                 using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
                     IStudyEntityBroker studyBroker = ctx.GetBroker<IStudyEntityBroker>();
-                    StudySelectCriteria criteria = new StudySelectCriteria();
                     ServerEntityKey key = new ServerEntityKey("Study", guid);
                     Model.Study study = studyBroker.Load(key);
 

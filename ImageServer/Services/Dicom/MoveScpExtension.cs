@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.PatientId.EqualTo(patientId);
+			criteria.ServerPartitionKey.EqualTo(this.Partition.Key);
 
             IList<Study> studyList = select.Find(criteria);
 

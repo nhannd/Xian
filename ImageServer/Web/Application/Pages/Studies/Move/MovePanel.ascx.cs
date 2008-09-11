@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             StudyAdaptor studyAdaptor = new StudyAdaptor();
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.StudyInstanceUid.EqualTo(studyInstanceUID);
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+            criteria.ServerPartitionKey.EqualTo(Partition.Key);
             return studyAdaptor.GetFirst(criteria);
         }
 

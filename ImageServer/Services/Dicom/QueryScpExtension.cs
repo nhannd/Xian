@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             IStudyEntityBroker find = read.GetBroker<IStudyEntityBroker>();
 
             StudySelectCriteria criteria = new StudySelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+            criteria.ServerPartitionKey.EqualTo(Partition.Key);
             if (studyInstanceUid.Length > 1)
                 criteria.StudyInstanceUid.In(studyInstanceUid);
             else

@@ -1324,7 +1324,8 @@ namespace ClearCanvas.Dicom.Network
                             if (stat == DicomReadStatus.NeedMoreData)
                             {
 								Platform.Log(LogLevel.Error,
-                                    "Unexpected end of StreamReader.  More data needed after reading last PDV fraagment.");
+                            	             "Unexpected end of StreamReader.  More data needed ({0} bytes, last tag read {1}) after reading last PDV fragment.",
+											 _dimse.CommandReader.BytesNeeded, _dimse.CommandReader.LastTagRead.ToString());
                                 return false;
                             }
                             _dimse.CommandData = null;
@@ -1390,8 +1391,9 @@ namespace ClearCanvas.Dicom.Network
                         {
                             if (stat == DicomReadStatus.NeedMoreData)
                             {
-								Platform.Log(LogLevel.Error,
-                                    "Unexpected end of StreamReader.  More data needed after reading last PDV fraagment.");
+                            	Platform.Log(LogLevel.Error,
+                            	             "Unexpected end of StreamReader.  More data needed ({0} bytes, last tag read {1}) after reading last PDV fragment.",
+											 _dimse.DatasetReader.BytesNeeded, _dimse.DatasetReader.LastTagRead.ToString());
                                 return false;
                             }
                             _dimse.CommandData = null;

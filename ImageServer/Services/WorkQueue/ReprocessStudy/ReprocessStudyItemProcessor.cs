@@ -117,16 +117,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
     /// Information about the series of the study being reprocessed
     /// </summary>
     class SeriesInfo
-    {
-        private string _seriesUid;
+	{
+		#region Private Members
+		private string _seriesUid;
         private readonly Dictionary<string, SopInfo> _sopInstances = new Dictionary<string, SopInfo>();
+		#endregion
 
-        public SeriesInfo(string seriesUid)
+		#region Constructors
+		public SeriesInfo(string seriesUid)
         {
             _seriesUid = seriesUid;
-        }
+		}
+		#endregion
 
-        public string SeriesUid
+		#region Public Properties
+		public string SeriesUid
         {
             get { return _seriesUid; }
             set { _seriesUid = value; }
@@ -150,20 +155,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             }
         }
 
-
         public IEnumerable<SopInfo> Instances
         {
             get { return _sopInstances.Values; }
-        }
+		}
+		#endregion
 
-        public SopInfo AddInstance(string instanceUid)
+		#region Public Methods
+		public SopInfo AddInstance(string instanceUid)
         {
             SopInfo sop = new SopInfo(instanceUid);
             _sopInstances.Add(instanceUid, sop);
 
             return sop;
-        }
-    }
+		}
+		#endregion
+	}
 
     /// <summary>
     /// Information about the sop instance being reprocessed.
@@ -190,36 +197,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         }
 
         #endregion
-
     }
 
-    /// <summary>
-    /// Represents the context of the Study Reprocess operation
-    /// </summary>
-    class ReprocessStudyContext
-    {
-        #region Private Members
-        private Model.WorkQueue _item;
-        private IUpdateContext _updateContext;
-        #endregion
-
-        #region Public Properties
-        public IUpdateContext UpdateContext
-        {
-            get { return _updateContext; }
-            set { _updateContext = value; }
-        }
-
-        public Model.WorkQueue Item
-        {
-            get { return _item; }
-            set { _item = value; }
-        }
-        #endregion
-
-    }
-
-    class ReprocessStudyItemProcessor : BaseItemProcessor
+    public class ReprocessStudyItemProcessor : BaseItemProcessor
     {
         #region Private Members
         private StudyInfo _studyInfo;
@@ -233,22 +213,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.StudyStorageKey, "item.StudyStorageKey");
-
             
             LoadStorageLocation(item);
-            
-            using(IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                ReprocessStudyContext context = new ReprocessStudyContext();
-                context.UpdateContext = ctx;
-                context.Item = item;
 
-                CleanupDatabase(context);
-                CleanupDirectory();
-                ScheduleReprocess(context);
+			try
+			{
+				using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					CleanupDatabase(item, ctx);
+					ctx.Commit();
+				}
 
-                ctx.Commit();
-            }
+				CleanupDirectory();
+
+				ScheduleReprocess();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when reprocessing study: {0}", StorageLocation.StudyInstanceUid);
+				Platform.Log(LogLevel.Error,"Study may be in invalid unprocessed state.  Study location: {0}",StorageLocation.GetStudyPath());
+				throw;
+			}
         }
 
         #endregion
@@ -278,8 +263,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                             else
                             {
                                 SeriesInfo series = _studyInfo.AddSeries(seriesUid);
-                                series.AddInstance(SopInstanceUid);
-                            
+                                series.AddInstance(SopInstanceUid);                            
                             }
                         }
                         else
@@ -289,22 +273,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
                         }
 
                     }, true);
-
         }
-
         
-        private void CleanupDatabase(ReprocessStudyContext context)
+        private void CleanupDatabase(Model.WorkQueue item, IUpdateContext context)
         {
-            IDeleteStudyStorage broker = context.UpdateContext.GetBroker<IDeleteStudyStorage>();
+            IDeleteStudyStorage broker = context.GetBroker<IDeleteStudyStorage>();
             DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters();
 
-            parms.ServerPartitionKey = context.Item.ServerPartitionKey;
-            parms.StudyStorageKey = context.Item.StudyStorageKey;
+            parms.ServerPartitionKey = item.ServerPartitionKey;
+            parms.StudyStorageKey = item.StudyStorageKey;
             if (!broker.Execute(parms))
-                throw new ApplicationException("Cannot cleanup database");
+                throw new ApplicationException(String.Format("Cannot cleanup database for study: {0}",StorageLocation.StudyInstanceUid));
 
             // create new study storage
-            IInsertStudyStorage insertBroker = context.UpdateContext.GetBroker<IInsertStudyStorage>();
+            IInsertStudyStorage insertBroker = context.GetBroker<IInsertStudyStorage>();
             StudyStorageInsertParameters insertParams = new StudyStorageInsertParameters();
             insertParams.FilesystemKey = StorageLocation.FilesystemKey;
             insertParams.Folder = StorageLocation.StudyFolder;
@@ -316,33 +298,38 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             _newStorage = insertBroker.FindOne(insertParams);
 
 			if (_newStorage == null)
-                throw new ApplicationException("Cannot update database");
+				throw new ApplicationException(String.Format("Cannot update database for study: {0}", StorageLocation.StudyInstanceUid));
         }
 
-        private void ScheduleReprocess(ReprocessStudyContext context)
+        private void ScheduleReprocess()
         {
-            IInsertWorkQueueStudyProcess broker = context.UpdateContext.GetBroker<IInsertWorkQueueStudyProcess>();
-                    
-            foreach(SeriesInfo series in _studyInfo.Series)
-            {
-                foreach(SopInfo sop in series.Instances)
-                {
-                    WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
-                    parms.Duplicate = false;
-					parms.ExpirationTime = Platform.Time.Add(TimeSpan.FromSeconds(WorkQueueSettings.Instance.WorkQueueExpireDelaySeconds));
-                    parms.Extension = ".dcm";
-                    parms.ScheduledTime = Platform.Time;
-                    parms.SeriesInstanceUid = series.SeriesUid;
-                    parms.ServerPartitionKey = _newStorage.ServerPartitionKey;
-                    parms.SopInstanceUid = sop.SopInstanceUid;
-                    parms.StudyStorageKey = _newStorage.GetKey();
-                    parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-                    broker.Execute(parms);
-                }
-            }
+			foreach (SeriesInfo series in _studyInfo.Series)
+			{
+				// Use an update context per series to shrink down the transaction size.
+				// Long running transactions are a bad thing!!!
+				using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IInsertWorkQueueStudyProcess broker = ctx.GetBroker<IInsertWorkQueueStudyProcess>();
+
+					foreach (SopInfo sop in series.Instances)
+					{
+						WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
+						parms.Duplicate = false;
+						parms.ExpirationTime =
+							Platform.Time.Add(TimeSpan.FromSeconds(WorkQueueSettings.Instance.WorkQueueExpireDelaySeconds));
+						parms.Extension = ".dcm";
+						parms.ScheduledTime = Platform.Time;
+						parms.SeriesInstanceUid = series.SeriesUid;
+						parms.ServerPartitionKey = _newStorage.ServerPartitionKey;
+						parms.SopInstanceUid = sop.SopInstanceUid;
+						parms.StudyStorageKey = _newStorage.GetKey();
+						parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+						broker.Execute(parms);
+					}
+				}
+			}
         }
 
         #endregion
-
     }
 }

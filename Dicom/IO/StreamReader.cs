@@ -167,6 +167,11 @@ namespace ClearCanvas.Dicom.IO
         {
             get { return _need; }
         }
+
+    	public DicomTag LastTagRead
+    	{
+    		get { return _tag; }
+    	}
         #endregion
 
         private DicomReadStatus NeedMoreData(long count)
