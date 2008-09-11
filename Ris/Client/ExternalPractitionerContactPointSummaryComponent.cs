@@ -49,11 +49,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Name",
 				delegate(ExternalPractitionerContactPointDetail cp) { return cp.Name; },
-				1.0f));
+				0.5f));
 
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, string>("Description",
 				delegate(ExternalPractitionerContactPointDetail cp) { return cp.Description; },
-				1.0f));
+				0.5f));
 
 			this.Columns.Add(new TableColumn<ExternalPractitionerContactPointDetail, bool>("Default",
 				delegate(ExternalPractitionerContactPointDetail cp) { return cp.IsDefaultContactPoint; },
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					MakeDefaultContactPoint(cp);
 				},
-				1.0f));
+				0.15f));
 		}
 
 		public event EventHandler DefaultContactPointChanged
