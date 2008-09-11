@@ -47,13 +47,15 @@ namespace ClearCanvas.Dicom.DataStore
 
 					object propertyValue = property.ReturnProperty.GetValue(candidate, null);
 					string[] testValues = new string[]{};
+					//TODO: this is incorrect, it's only the criteria value that should be conditionally converted to
+					//an array.  The actual property value should always be converted.
 					if (property.AllowListMatching)
 					{
 						testValues = Convert.ToStringArray(propertyValue, property.ReturnPropertyConverter);
 					}
 					else
 					{
-						string testValue = Convert.ToString(propertyValue, property.ReturnPropertyConverter);
+						string testValue = Convert.ToDicomStringArray(propertyValue, property.ReturnPropertyConverter);
 						if (testValue != null)
 							testValues = new string[] { testValue };
 					}
@@ -63,6 +65,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 					//special case, we post-filter modalities in study when it contains wildcards b/c the hql query won't 
 					//always produce exactly the right results.  This will never happen anyway.
+
 					bool query = !String.IsNullOrEmpty(criteria) && ((!property.IsHigherLevelUnique && property.PostFilterOnly) || 
 									(property.Path.Equals(DicomTags.ModalitiesInStudy) && ContainsWildCharacters(criteria)));
 
@@ -109,14 +112,14 @@ namespace ClearCanvas.Dicom.DataStore
 						}
 						else if (property.Path.ValueRepresentation == DicomVr.DAvr)
 						{
-							//We currently don't post-filter on this VR, so it's 'optional' according to Dicom and is a match.
-
-							//The only date/time value we support querying on is Study Date, which is done in Hql.
+							//The raw Patient's Birth Date is in the database, and we could post-filter it, but it's optional,
+							//so we'll leave it for now. The only other date/time value we support querying on is Study Date, 
+							//which is done in Hql.
 							return true;
 						}
 						else if (property.Path.ValueRepresentation == DicomVr.TMvr)
 						{
-							//We currently don't post-filter on this VR, so it's 'optional' according to Dicom and is a match.
+							//TODO: to be totally compliant, we should be post-filtering on Study Time (it's in the database, but in raw form).
 							return true;
 						}
 						else if (property.Path.ValueRepresentation == DicomVr.DTvr)
@@ -126,6 +129,9 @@ namespace ClearCanvas.Dicom.DataStore
 						}
 						else if (ContainsWildCharacters(criteria)) // wildcard matching.
 						{
+							//Note: wildcard matching is supposed to be case-sensitive (except for PN) according to Dicom.
+							//However, in practice, it's a pain for the user; for example, when searching by Study Description.
+
 							testsPerformed = true;
 							string criteriaTest = criteria.Replace("*", "[\x21-\x7E]").Replace("?", ".");
 							//a match on any of the values is considered a match.
@@ -134,6 +140,8 @@ namespace ClearCanvas.Dicom.DataStore
 						}
 						else
 						{
+							//Note: single value matching is supposed to be case-sensitive (except for PN) according to Dicom.
+							//TODO: make it always case-insensitive, to be consistent with wildcard.
 							testsPerformed = true;
 							if (criteria.Equals(test)) //single value matching.
 								return true;

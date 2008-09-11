@@ -39,11 +39,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	public class FileRemover
 	{
 		private readonly string _topLevelDirectory;
+		private readonly List<string> _directoriesToDelete;
 
 		public FileRemover(string topLevelDirectory)
 		{
 			Platform.CheckForEmptyString(topLevelDirectory, "topLevelDirectory");
-			_topLevelDirectory = System.IO.Path.GetDirectoryName(topLevelDirectory);
+			_topLevelDirectory = Path.GetDirectoryName(topLevelDirectory);
+			_directoriesToDelete = new List<string>();
 		}
 
 		public void DeleteFilesInStudy(IStudy studyToRemove)
@@ -51,23 +53,24 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			DeleteSopInstanceFiles(studyToRemove.GetSopInstances());
 		}
 
+		public void CleanupEmptyDirectories()
+		{
+			DeleteEmptyDirectories(_directoriesToDelete);
+		}
+
 		private void DeleteSopInstanceFiles(IEnumerable<ISopInstance> sopInstancesToDelete)
 		{
-			List<string> directoriesToDelete = new List<string>();
 			foreach (ISopInstance sop in sopInstancesToDelete)
 			{
 				DeleteFileForSopInstance(sop);
 
-				string directoryName = System.IO.Path.GetDirectoryName(sop.GetLocationUri().LocalDiskPath);
-				if (directoriesToDelete.Contains(directoryName) == false)
-					directoriesToDelete.Add(directoryName);
+				string directoryName = Path.GetDirectoryName(sop.GetLocationUri().LocalDiskPath);
+				if (_directoriesToDelete.Contains(directoryName) == false)
+					_directoriesToDelete.Add(directoryName);
 			}
-
-			// Recursively delete directories that may be empty
-			DeleteEmptyDirectories(directoriesToDelete);
 		}
 
-		private void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
+		private static void DeleteFileForSopInstance(ISopInstance sopIntanceToDelete)
 		{
 			if (sopIntanceToDelete.GetLocationUri().IsFile == false)
 				return;
@@ -90,17 +93,15 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			List<string> parentDirectoriesToDelete = new List<string>();
 			foreach (string directoryName in directoriesToDelete)
 			{
-				if (Directory.Exists(directoryName))
+				DirectoryInfo directoryInfo = new DirectoryInfo(directoryName);
+				if (directoryInfo.Exists && 
+						directoryInfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0 && 
+						directoryInfo.FullName != _topLevelDirectory)
 				{
-					DirectoryInfo directoryInfo = new DirectoryInfo(directoryName);
-					if (directoryInfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
-					{
-						if (directoryInfo.FullName != _topLevelDirectory)
-						{
-							Directory.Delete(directoryName, true);
-							parentDirectoriesToDelete.Add(directoryInfo.Parent.FullName);
-						}
-					}
+					if (!parentDirectoriesToDelete.Contains(directoryInfo.Parent.FullName))
+						parentDirectoriesToDelete.Add(directoryInfo.Parent.FullName);
+
+					directoryInfo.Delete(true);
 				}
 			}
 

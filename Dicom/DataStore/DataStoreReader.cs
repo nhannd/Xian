@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					SessionManager.BeginReadTransaction();
 					IQuery query = Session.CreateQuery("FROM Study ORDER BY StoreTime_");
-					return Cast<IStudy>(query.List());
+					return Convert.Cast<IStudy>(query.List());
 				}
 				catch (Exception e)
 				{
@@ -118,7 +118,7 @@ namespace ClearCanvas.Dicom.DataStore
 					SessionManager.BeginReadTransaction();
 					IList studiesFound = Session.CreateQuery(hqlQuery).List();
 
-					QueryResultFilter<Study> filter = new QueryResultFilter<Study>(queryCriteria, Cast<Study>(studiesFound));
+					QueryResultFilter<Study> filter = new QueryResultFilter<Study>(queryCriteria, Convert.Cast<Study>(studiesFound));
 					return filter.GetResults();
 				}
 				catch (Exception e)
@@ -137,7 +137,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (study == null)
 					throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyUid));
 
-				QueryResultFilter<Series> filter = new QueryResultFilter<Series>(queryCriteria, Cast<Series>(study.GetSeries()));
+				QueryResultFilter<Series> filter = new QueryResultFilter<Series>(queryCriteria, Convert.Cast<Series>(study.GetSeries()));
 				return filter.GetResults();
 			}
 
@@ -162,7 +162,7 @@ namespace ClearCanvas.Dicom.DataStore
 					throw new ArgumentException(message);
 				}
 
-				QueryResultFilter<SopInstance> filter = new QueryResultFilter<SopInstance>(queryCriteria, Cast<SopInstance>(series.GetSopInstances()));
+				QueryResultFilter<SopInstance> filter = new QueryResultFilter<SopInstance>(queryCriteria, Convert.Cast<SopInstance>(series.GetSopInstances()));
 				return filter.GetResults();
 			}
 

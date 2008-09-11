@@ -37,23 +37,29 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface IStudy
     {
-		//TODO: Specific character set is missing.
-		string StudyInstanceUid { get; }
-
-		PersonName PatientsName { get; }
 		string PatientId { get; }
-		string StudyId { get; }
+		PersonName PatientsName { get; }
+		string PatientsSex { get; }
 
+		string StudyInstanceUid { get; }
+		string SpecificCharacterSet { get; }
+
+		string StudyId { get; }
 		string StudyDate { get; }
 		string StudyTime { get; }
 
 		string AccessionNumber { get; }
 		string StudyDescription { get; }
+		string[] ModalitiesInStudy { get; }
+
+		string ProcedureCodeSequenceCodeValue { get; }
+		string ProcedureCodeSequenceCodingSchemeDesignator { get; }
 
 		int NumberOfStudyRelatedSeries { get; }
 		int NumberOfStudyRelatedInstances { get; }
 
     	DateTime? GetStoreTime();
+
 		IEnumerable<ISeries> GetSeries();
 		IEnumerable<ISopInstance> GetSopInstances();
     }

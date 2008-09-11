@@ -212,6 +212,9 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
 		}
 
+		//TODO: not actually supposed to query on this tag, but it should be used to convert
+		//the values in the query response.  It also tells us what encoding should be used for the request values.
+
 		//Note: not actually a required tag, but we want it to be returned.
 		[QueryableProperty(DicomTags.SpecificCharacterSet, IsRequired = true)]
 		public virtual string SpecificCharacterSet
@@ -309,6 +312,12 @@ namespace ClearCanvas.Dicom.DataStore
 		string IStudy.StudyTime
 		{
 			get { return _studyTimeRaw; }
+		}
+
+		string[] IStudy.ModalitiesInStudy
+		{
+			//TODO: see if you can make the member field an array and return a dicom string array from the NHibernate property.
+			get { return DicomStringHelper.GetStringArray(_modalitiesInStudy ?? ""); }	
 		}
 
 		public DateTime? GetStoreTime()

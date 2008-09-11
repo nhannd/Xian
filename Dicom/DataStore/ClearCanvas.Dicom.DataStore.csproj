@@ -59,6 +59,7 @@
     <Compile Include="DataStoreReader.cs" />
     <Compile Include="DataAccessLayer.cs" />
     <Compile Include="DataStoreWriter.cs" />
+    <Compile Include="IStudyStorageLocator.cs" />
     <Compile Include="QueryableProperty.cs" />
     <Compile Include="DicomPersistentStore.cs" />
     <Compile Include="DicomPersistentStoreValidator.cs" />

@@ -8,7 +8,13 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	internal static class Convert
 	{
-		private static string ConvertToString(object value, TypeConverter converter)
+		internal static IEnumerable<T> Cast<T>(IEnumerable original)
+		{
+			foreach (T item in original)
+				yield return item;
+		}
+
+		private static string ToString(object value, TypeConverter converter)
 		{
 			if (value is string)
 				return (string)value;
@@ -16,13 +22,7 @@ namespace ClearCanvas.Dicom.DataStore
 				return converter.ConvertToInvariantString(value);
 		}
 
-		private static IEnumerable<string> Cast(IEnumerable source, TypeConverter converter)
-		{
-			foreach (object value in source)
-				yield return ConvertToString(value, converter);
-		}
-
-		public static string ToString(object value, TypeConverter converter)
+		public static string ToDicomStringArray(object value, TypeConverter converter)
 		{
 			if (value == null)
 				return null;
@@ -33,11 +33,11 @@ namespace ClearCanvas.Dicom.DataStore
 				if (array == null)
 					return null;
 
-				return DicomStringHelper.GetDicomStringArray(Cast(array, converter));
+				return DicomStringHelper.GetDicomStringArray(ToStringArray(array, converter));
 			}
 			else
 			{
-				return ConvertToString(value, converter);
+				return ToString(value, converter);
 			}
 		}
 
@@ -55,13 +55,13 @@ namespace ClearCanvas.Dicom.DataStore
 				string[] stringArray = new string[array.Length];
 				int i = 0;
 				foreach (object arrayValue in array)
-					stringArray[i++] = ConvertToString(arrayValue, converter);
+					stringArray[i++] = ToString(arrayValue, converter);
 
 				return stringArray;
 			}
 			else
 			{
-				return new string[] { ConvertToString(value, converter) };
+				return new string[] { ToString(value, converter) };
 			}
 		}
 	}

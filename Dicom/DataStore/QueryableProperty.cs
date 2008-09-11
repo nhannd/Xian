@@ -88,7 +88,9 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 			get { return _attribute.IsRequired; }
 		}
-		
+
+		//TODO: add a 'PostFilter' property so we don't have to special case ModalitiesInStudy.
+
 		public bool PostFilterOnly
 		{
 			get { return _attribute.PostFilterOnly; }

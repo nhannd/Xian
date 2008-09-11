@@ -36,6 +36,7 @@ using System.Reflection;
 using NHibernate;
 using NHibernate.Cfg;
 using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.Dicom.DataStore
     {
 	    private static readonly Configuration _hibernateConfiguration;
 		private static readonly ISessionFactory _sessionFactory;
-		private static volatile string _fileStoreDirectory;
+		private static volatile IStudyStorageLocator _studyStorageLocator;
 
 		private DataAccessLayer()
 		{
@@ -68,14 +69,11 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _sessionFactory; }
 		}
 
-		public static void SetFileStoreDirectory(string directory)
+		public static void SetStudyStorageLocator(IStudyStorageLocator locator)
 		{
-			if (String.IsNullOrEmpty(directory))
-				throw new ArgumentException("The specified directory must not be empty.");
-			if (!Directory.Exists(directory))
-				throw new ArgumentException(String.Format("The specified directory does not exist ({0})", directory));
+			Platform.CheckForNullReference(locator, "locator");
 
-			_fileStoreDirectory = Path.GetFullPath(directory);
+			_studyStorageLocator = locator;
 		}
 
 		public static IDataStoreReader GetIDataStoreReader()
@@ -90,8 +88,8 @@ namespace ClearCanvas.Dicom.DataStore
 
 		public static IDicomPersistentStore GetIDicomPersistentStore()
 		{
-			if (_fileStoreDirectory == null)
-				throw new InvalidOperationException("The file store directory must be set before the persistent store can be used.");
+			if (_studyStorageLocator == null)
+				throw new InvalidOperationException("The study storage locator must be set before the persistent store can be used.");
 
 			return new DicomPersistentStore();
 		}
@@ -106,18 +104,12 @@ namespace ClearCanvas.Dicom.DataStore
 			return new DataStoreWriter(SessionManager.Get());
         }
 
-		internal static string GetFileStoreDirectory()
+		internal static IStudyStorageLocator GetStudyStorageLocator()
 		{
-			return _fileStoreDirectory;
+			return _studyStorageLocator;
 		}
 
 		#region Helper Methods
-
-		internal static IEnumerable<T> Cast<T>(IEnumerable original)
-		{
-			foreach (T item in original)
-				yield return item;
-		}
 
 		private static bool ContainsWildCharacters(string criteria)
 		{

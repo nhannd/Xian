@@ -34,7 +34,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class DicomUri : IEquatable<DicomUri>
+    //TODO: Get rid of this?  It's always just converted to/from a string anyway.
+	public class DicomUri : IEquatable<DicomUri>
     {
 		private Uri _internalUriObject;
 

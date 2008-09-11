@@ -107,18 +107,17 @@ namespace ClearCanvas.Dicom.DataStore
 					study = new Study();
 					study.StoreTime = Platform.Time;
 
-					string studyStoragePath = GetFileStoreDirectory();
+					string studyStoragePath = GetStudyStorageLocator().GetStudyStorageDirectory(studyInstanceUid);
 					if (String.IsNullOrEmpty(studyStoragePath))
 						throw new DataStoreException("The study storage path is empty.");
 
-					string fileName = String.Format("{0}\\{1}.xml", studyStoragePath, studyInstanceUid);
-
-					if (!Path.IsPathRooted(fileName))
-						fileName = Path.GetFullPath(fileName);
+					studyStoragePath = Path.GetFullPath(studyStoragePath);
+					if (!Directory.Exists(studyStoragePath))
+						throw new DirectoryNotFoundException(String.Format("The specified directory does not exist ({0}).", studyStoragePath));
 
 					UriBuilder uriBuilder = new UriBuilder();
 					uriBuilder.Scheme = "file";
-					uriBuilder.Path = fileName;
+					uriBuilder.Path = Path.Combine(studyStoragePath, "studyXml.xml");
 
 					study.StudyXmlUri = new DicomUri(uriBuilder.Uri);
 					newStudy = true;
