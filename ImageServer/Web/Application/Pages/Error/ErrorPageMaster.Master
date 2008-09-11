@@ -49,13 +49,14 @@ div#StackTrace
 		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca/dnn/Community/Forums/tabid/69/view/topics/forumid/12/Default.aspx">ImageServer Developers Forum</a></li>
 		                    <li><a class="ErrorLink" href="http://www.clearcanvas.ca">ClearCanvas.ca</a></li>
 		                </ul>
-		                                    </div>
-                </asp:TableCell></asp:TableRow>
-                <asp:TableRow>
-                    <asp:TableCell>
-		                                        <asp:ContentPlaceHolder ID="UserEscapePlaceHolder" runat="server" />
-                    </asp:TableCell>
-                </asp:TableRow>
+		            </div>
+                </asp:TableCell>
+            </asp:TableRow>
+            <asp:TableRow>
+                <asp:TableCell>
+		            <asp:ContentPlaceHolder ID="UserEscapePlaceHolder" runat="server" />
+                </asp:TableCell>
+            </asp:TableRow>
         </asp:Table>       
         </asp:Panel>
         </center>

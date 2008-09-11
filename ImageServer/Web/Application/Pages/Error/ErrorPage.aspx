@@ -17,5 +17,5 @@
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="UserEscapePlaceHolder">
-    <div class="UserEscapeContainer" ><a href="../../Default.aspx" class="UserEscapeLink" style="">Return to Study Search</a> <a href="javascript:window.close()" class="UserEscapeLink">Close Window</a></div>
+    <table width="100%" class="UserEscapeTable"><tr><td class="UserEscapeCell"><a href="javascript:history.back()" class="UserEscapeLink">Back</a></td><td class="UserEscapeCell"><a href="/Default.aspx" class="UserEscapeLink">Studies</a></td><td class="UserEscapeCell"><a href="/Pages/Queues/WorkQueue/Default.aspx" class="UserEscapeLink">Queues</a></td><td class="UserEscapeCell"><a href="/Pages/Configure/Devices/Default.aspx" class="UserEscapeLink">Configure</a></td><td><a href="javascript:window.close()" class="UserEscapeLink">Close</a></td></tr></table>
 </asp:Content>
