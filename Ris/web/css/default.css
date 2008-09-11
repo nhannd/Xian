@@ -111,6 +111,13 @@ div.addDeleteButtons {
 	padding-left: 8px;
 }
 
+.performedprocedureheading {
+	font-family: Tahoma, Geneva, Arial;
+	font-size: 130%;
+	font-weight: bold;
+	color: #3D98D1;
+}
+
 .discrepancy {
 	background-color: #000080;
 	color: #FFFFFF;
