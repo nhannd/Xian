@@ -114,16 +114,16 @@ namespace ClearCanvas.ImageViewer.Automation
 					List<OpenStudyResult> loadFailures;
 					viewer = CreateViewer(request, out loadFailures);
 
-					if (viewer.StudyTree.Patients.Count == 0)
-					{
-						viewer.Dispose();
-						string message = "Failed to open any of the specified studies.";
-						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
-					}
-					else if (primaryStudyInstanceUid != GetPrimaryStudyInstanceUid(viewer))
+					if (primaryStudyInstanceUid != GetPrimaryStudyInstanceUid(viewer))
 					{
 						viewer.Dispose();
 						string message = "Failed to open the primary study.";
+						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
+					}
+					else if (viewer.StudyTree.Patients.Count == 0)
+					{
+						viewer.Dispose();
+						string message = "Failed to open any of the specified studies.";
 						throw new FaultException<OpenStudiesFault>(new OpenStudiesFault(message), message);
 					}
 					else
@@ -253,6 +253,7 @@ namespace ClearCanvas.ImageViewer.Automation
 
 		private static ImageViewerComponent CreateViewer(OpenStudiesRequest args, out List<OpenStudyResult> loadFailures)
 		{
+			//TODO: could change openstudyhelper to work this way and throw an exception rather than showing a dialog.
 			loadFailures = new List<OpenStudyResult>();
 
 			ImageViewerComponent component = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
