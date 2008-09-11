@@ -34,6 +34,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			: base(actionID, path, resourceResolver)
 		{
 			Platform.CheckForNullReference(callback, "callback");
+
+			base.Label = path.LastSegment.LocalizedText;
 			_setLayoutCallback = callback;
 			_maxRows = maxRows;
 			_maxColumns = maxColumns;

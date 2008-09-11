@@ -72,12 +72,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				if (_actionModel == null) {
 					ActionModelRoot root = new ActionModelRoot();
 					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-					ActionPath path = new ActionPath("root/ToolbarLayoutChooser", resolver);
-					LayoutChangerAction action = new LayoutChangerAction("chooseLayout",
+
+					ActionPath pathBoxes = new ActionPath("root/ToolbarLayoutBoxesChooser", resolver);
+					LayoutChangerAction actionBoxes = new LayoutChangerAction("chooseBoxLayout",
 						LayoutConfigurationSettings.MaximumImageBoxRows, 
 						LayoutConfigurationSettings.MaximumImageBoxColumns,
-						this.SetLayout, path, resolver);
-					root.InsertAction(action);
+						this.SetImageBoxLayout, pathBoxes, resolver);
+					root.InsertAction(actionBoxes);
+
+					ActionPath pathTiles = new ActionPath("root/ToolbarLayoutTilesChooser", resolver);
+					LayoutChangerAction actionTiles = new LayoutChangerAction("chooseTileLayout",
+						LayoutConfigurationSettings.MaximumTileRows,
+						LayoutConfigurationSettings.MaximumTileColumns,
+						this.SetTileLayout, pathTiles, resolver);
+					root.InsertAction(actionTiles);
+
 					_actionModel = root;
 				}
 
@@ -90,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		/// <param name="rows">The number of rows to show.</param>
 		/// <param name="columns">The number of columns to show.</param>
-		public void SetLayout(int rows, int columns)
+		public void SetImageBoxLayout(int rows, int columns)
 		{
 			LayoutComponent layoutComponent = new LayoutComponent(base.ImageViewer.DesktopWindow);
 			InternalHost host = new InternalHost((DesktopWindow)base.ImageViewer.DesktopWindow, layoutComponent);
@@ -98,6 +107,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			layoutComponent.ImageBoxRows = rows;
 			layoutComponent.ImageBoxColumns = columns;
 			layoutComponent.ApplyImageBoxLayout();
+			host.StopComponent();
+		}
+
+		/// <summary>
+		/// Sets the layout of the current imageviewer to the specified number of tiles.
+		/// </summary>
+		/// <param name="rows">The number of rows to show.</param>
+		/// <param name="columns">The number of columns to show.</param>
+		public void SetTileLayout(int rows, int columns) {
+			LayoutComponent layoutComponent = new LayoutComponent(base.ImageViewer.DesktopWindow);
+			InternalHost host = new InternalHost((DesktopWindow)base.ImageViewer.DesktopWindow, layoutComponent);
+			host.StartComponent();
+			layoutComponent.TileRows = rows;
+			layoutComponent.TileColumns= columns;
+			layoutComponent.ApplyTileLayout();
 			host.StopComponent();
 		}
 

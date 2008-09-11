@@ -120,7 +120,4 @@
   <data name="FormatRowsColumns" xml:space="preserve">
     <value>{0}x{1}</value>
   </data>
-  <data name="LabelCancel" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
 </root>

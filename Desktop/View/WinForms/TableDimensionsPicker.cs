@@ -4,8 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Desktop.View.WinForms
-{
+namespace ClearCanvas.Desktop.View.WinForms {
 	/// <summary>
 	/// A control for picking the dimensions of a table.
 	/// </summary>
@@ -14,8 +13,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	/// </remarks>
 	[DefaultEvent("DimensionsSelected")]
 	[DefaultProperty("Dimensions")]
-	public class TableDimensionsPicker : Control
-	{
+	public class TableDimensionsPicker : Control {
 		private static readonly Size DEFAULT_DIMS = new Size(4, 4);
 		private event EventHandler _dimensionsChanged;
 		private event EventHandler _maxDimensionsChanged;
@@ -26,18 +24,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private Size _maxDims;
 		private Size _dims;
 
-		private Color _cellBorderColor;
-		private int _cellBorderWidth;
-
-		private Color _highlightColor;
-		private Color _activeColor;
-
 		#region Constructors
 
 		/// <summary>
 		/// Constructs a <see cref="TableDimensionsPicker"/> showing four rows and columns.
 		/// </summary>
-		public TableDimensionsPicker() : this(DEFAULT_DIMS) {}
+		public TableDimensionsPicker() : this(DEFAULT_DIMS) { }
 
 		/// <summary>
 		/// Constructs a <see cref="TableDimensionsPicker"/> showing the specified number of rows and columns.
@@ -47,7 +39,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </remarks>
 		/// <param name="maxRows">The number of rows to show on the control, and hence the maximum the user can select.</param>
 		/// <param name="maxCols">The number of columns to show on the control, and hence the maximum the user can select.</param>
-		public TableDimensionsPicker(int maxRows, int maxCols) : this(new Size(maxCols, maxRows)) {}
+		public TableDimensionsPicker(int maxRows, int maxCols) : this(new Size(maxCols, maxRows)) { }
 
 		/// <summary>
 		/// Constructs a <see cref="TableDimensionsPicker"/> showing the specified table size.
@@ -56,14 +48,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <para>Dimension width and height are equivalent to table columns and rows, respectively.</para>
 		/// </remarks>
 		/// <param name="maxDimensions">The table size show on the control, and hence the maximum size the user can select.</param>
-		public TableDimensionsPicker(Size maxDimensions)
-		{
+		public TableDimensionsPicker(Size maxDimensions) {
+			//Platform
 			_maxDims = maxDimensions;
 			_hotDims = _dims = Size.Empty;
-			ResetCellBorderWidth();
-			ResetCellBorderColor();
-			ResetActiveColor();
-			ResetHighlightColor();
+			ResetCellSpacing();
+			ResetCellStyle();
+			ResetHotCellStyle();
+			ResetSelectedCellStyle();
 			base.Size = GetDefaultSize();
 			base.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 		}
@@ -72,165 +64,182 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Display Option Properties (and their Reset methods)
 
+		#region CellSpacing
+
+		private static readonly string _defaultCellSpacing = new TableDimensionsCellSpacing().ToString();
+		private TableDimensionsCellSpacing _cellSpacing;
+
 		/// <summary>
-		/// Gets or sets the pixel width of the cell borders.
+		/// Gets or sets the style of cells in the picker control.
 		/// </summary>
 		/// <remarks>
-		/// The default border width is 1.
+		/// The default style is to paint a border using the <see cref="SystemColors.WindowFrame">system frame color</see> and fill
+		/// the cell with the <see cref="SystemColors.Control">system control face color</see>.
 		/// </remarks>
-		[Bindable(true)]
 		[Category("Appearance")]
-		[DefaultValue(1)]
-		[Description("The pixel width of the cell borders.")]
-		public int CellBorderWidth
-		{
-			get { return _cellBorderWidth; }
-			set
-			{
-				if (_cellBorderWidth != value)
-				{
-					_cellBorderWidth = value;
+		[Description("The spacing between adjacent cells in the picker control.")]
+		public TableDimensionsCellSpacing CellSpacing {
+			get { return _cellSpacing; }
+			set {
+				if (_cellSpacing != value) {
+					if (value == null)
+						value = new TableDimensionsCellSpacing();
+
+					if (_cellSpacing != null)
+						((INotifyPropertyChanged)_cellSpacing).PropertyChanged -= StyleOrSpacingChanged;
+
+					_cellSpacing = value;
+					((INotifyPropertyChanged)_cellSpacing).PropertyChanged += StyleOrSpacingChanged;
+
 					base.Invalidate();
 				}
 			}
 		}
 
-		/// <summary>
-		/// Resets the pixel width of the cell borders to the default value of 1.
-		/// </summary>
-		public void ResetCellBorderWidth()
-		{
-			_cellBorderWidth = 1;
+		private void ResetCellSpacing() {
+			this.CellSpacing = new TableDimensionsCellSpacing();
 		}
 
-		/// <summary>
-		/// Gets or sets the color of the cell borders.
-		/// </summary>
-		/// <remarks>
-		/// The default border color is <see cref="Color.Black"/>.
-		/// </remarks>
-		[Bindable(true)]
-		[Category("Appearance")]
-		[Description("The color of the cell borders.")]
-		public Color CellBorderColor
-		{
-			get { return _cellBorderColor; }
-			set
-			{
-				if (_cellBorderColor != value)
-				{
-					_cellBorderColor = value;
-					base.Invalidate();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Resets the color of the cell borders to the default value of <see cref="Color.Black"/>.
-		/// </summary>
-		public void ResetCellBorderColor()
-		{
-			_cellBorderColor = Color.Black;
-		}
-
-		/// <summary>
-		/// Determines if the current color of the cell borders is the default value.
-		/// </summary>
-		/// <returns>False if it is the default, True otherwise.</returns>
-		public bool ShouldSerializeCellBorderColor()
-		{
-			return !(this.CellBorderColor == Color.Black);
-		}
-
-		/// <summary>
-		/// Gets or sets the hot-tracking color that will highlight the dimensions over which the cursor is hovering.
-		/// </summary>
-		/// <remarks>
-		/// The default hot-tracking color is <see cref="SystemColors.HotTrack"/>.
-		/// </remarks>
-		[Bindable(true)]
-		[Category("Appearance")]
-		[Description("The hot-tracking color that will highlight the dimensions over which the cursor is hovering.")]
-		public Color HighlightColor
-		{
-			get { return _highlightColor; }
-			set
-			{
-				if (_highlightColor != value)
-				{
-					_highlightColor = value;
-					base.Invalidate();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Resets the hot-tracking color that will highlight the dimensions over which the cursor is hovering to the default value of <see cref="SystemColors.HotTrack"/>.
-		/// </summary>
-		public void ResetHighlightColor()
-		{
-			_highlightColor = SystemColors.HotTrack;
-		}
-
-		/// <summary>
-		/// Determines if the current hot-tracking color is the default value.
-		/// </summary>
-		/// <returns>False if it is the default, True otherwise.</returns>
-		public bool ShouldSerializeHighlightColor()
-		{
-			return !(this.HighlightColor == SystemColors.HotTrack);
-		}
-
-		/// <summary>
-		/// Gets or sets the color that will highlight the currently selected dimensions.
-		/// </summary>
-		/// <remarks>
-		/// The default active color is <see cref="Color.Transparent"/>.
-		/// </remarks>
-		[Bindable(true)]
-		[Category("Appearance")]
-		[Description("The color that will highlight the currently selected dimensions.")]
-		public Color ActiveColor
-		{
-			get { return _activeColor; }
-			set
-			{
-				if (_activeColor != value)
-				{
-					_activeColor = value;
-					base.Invalidate();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Resets the color that will highlight the currently selected dimensions to the default value of <see cref="Color.Transparent"/>.
-		/// </summary>
-		public void ResetActiveColor()
-		{
-			_activeColor = Color.Transparent;
-		}
-
-		/// <summary>
-		/// Determined if the current selection color is the default value.
-		/// </summary>
-		/// <returns>False if it is the default, True otherwise.</returns>
-		public bool ShouldSerializeActiveColor()
-		{
-			return !(this.ActiveColor == Color.Transparent);
+		private bool ShouldSerializeCellSpacing() {
+			return this.CellSpacing.ToString() != _defaultCellSpacing;
 		}
 
 		#endregion
 
-		#region Designer Properties (and their Events and Reset methods)
+		#region CellStyle
+
+		private static readonly string _defaultCellStyle = new TableDimensionsCellStyle(SystemColors.Control, SystemColors.WindowFrame, 1).ToString();
+		private TableDimensionsCellStyle _cellStyle;
+
+		/// <summary>
+		/// Gets or sets the style of cells in the picker control.
+		/// </summary>
+		/// <remarks>
+		/// The default style is to paint a border using the <see cref="SystemColors.WindowFrame">system frame color</see> and fill
+		/// the cell with the <see cref="SystemColors.Control">system control face color</see>.
+		/// </remarks>
+		[Category("Appearance")]
+		[Description("The style of cells in the picker control.")]
+		public TableDimensionsCellStyle CellStyle {
+			get { return _cellStyle; }
+			set {
+				if (_cellStyle != value) {
+					if (value == null)
+						value = new TableDimensionsCellStyle();
+
+					if (_cellStyle != null)
+						((INotifyPropertyChanged)_cellStyle).PropertyChanged -= StyleOrSpacingChanged;
+
+					_cellStyle = value;
+					((INotifyPropertyChanged)_cellStyle).PropertyChanged += StyleOrSpacingChanged;
+
+					base.Invalidate();
+				}
+			}
+		}
+
+		private void ResetCellStyle() {
+			this.CellStyle = new TableDimensionsCellStyle(SystemColors.Control, SystemColors.WindowFrame, 1);
+		}
+
+		private bool ShouldSerializeCellStyle() {
+			return this.CellStyle.ToString() != _defaultCellStyle;
+		}
+
+		#endregion
+
+		#region HotCellStyle
+
+		private static readonly string _defaultHotCellStyle = new TableDimensionsCellStyle(SystemColors.HotTrack).ToString();
+		private TableDimensionsCellStyle _hotCellStyle;
+
+		/// <summary>
+		/// Gets or sets the style of hot-tracked cells in the picker control.
+		/// </summary>
+		/// <remarks>
+		/// The default style is to fill the hot-tracked cells with the <see cref="SystemColors.HotTrack">system hot-tracking color</see>.
+		/// </remarks>
+		[Category("Appearance")]
+		[Description("The style of hot-tracked cells in the picker control.")]
+		public TableDimensionsCellStyle HotCellStyle {
+			get { return _hotCellStyle; }
+			set {
+				if (_hotCellStyle != value) {
+					if (value == null)
+						value = new TableDimensionsCellStyle();
+
+					if (_hotCellStyle != null)
+						((INotifyPropertyChanged)_hotCellStyle).PropertyChanged -= StyleOrSpacingChanged;
+
+					_hotCellStyle = value;
+					((INotifyPropertyChanged)_hotCellStyle).PropertyChanged += StyleOrSpacingChanged;
+
+					base.Invalidate();
+				}
+			}
+		}
+
+		private void ResetHotCellStyle() {
+			this.HotCellStyle = new TableDimensionsCellStyle(SystemColors.HotTrack);
+		}
+
+		private bool ShouldSerializeHotCellStyle() {
+			return this.HotCellStyle.ToString() != _defaultHotCellStyle;
+		}
+
+		#endregion
+
+		#region SelectedCellStyle
+
+		private static readonly string _defaultSelectedCellStyle = new TableDimensionsCellStyle().ToString();
+		private TableDimensionsCellStyle _selectedCellStyle;
+
+		/// <summary>
+		/// Gets or sets the style of currently selected cells in the picker control.
+		/// </summary>
+		/// <remarks>
+		/// The default style is empty.
+		/// </remarks>
+		[Category("Appearance")]
+		[Description("The style of currently selected cells in the picker control.")]
+		public TableDimensionsCellStyle SelectedCellStyle {
+			get { return _selectedCellStyle; }
+			set {
+				if (_selectedCellStyle != value) {
+					if (value == null)
+						value = new TableDimensionsCellStyle();
+
+					if (_selectedCellStyle != null)
+						((INotifyPropertyChanged)_selectedCellStyle).PropertyChanged -= StyleOrSpacingChanged;
+
+					_selectedCellStyle = value;
+					((INotifyPropertyChanged)_selectedCellStyle).PropertyChanged += StyleOrSpacingChanged;
+
+					base.Invalidate();
+				}
+			}
+		}
+
+		private void ResetSelectedCellStyle() {
+			this.SelectedCellStyle = new TableDimensionsCellStyle();
+		}
+
+		private bool ShouldSerializeSelectedCellStyle() {
+			return this.SelectedCellStyle.ToString() != _defaultSelectedCellStyle;
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Dimension Properties (and their Events and Reset methods)
 
 		/// <summary>
 		/// Fired when the <see cref="MaxDimensions"/> property changes.
 		/// </summary>
 		[Description("Fired when the maximum dimensions change.")]
 		[Category("Property Changed")]
-		public event EventHandler MaxDimensionsChanged
-		{
+		public event EventHandler MaxDimensionsChanged {
 			add { _maxDimensionsChanged += value; }
 			remove { _maxDimensionsChanged -= value; }
 		}
@@ -238,8 +247,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <summary>
 		/// Notifies listeners that the <see cref="MaxDimensions"/> property has changed.
 		/// </summary>
-		protected virtual void NotifyMaxDimensionsChanged()
-		{
+		protected virtual void NotifyMaxDimensionsChanged() {
 			_hotDims = Size.Empty;
 			base.Invalidate();
 
@@ -256,13 +264,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 		[Bindable(true)]
 		[Category("Behavior")]
 		[Description("The maximum dimensions to show on the control.")]
-		public Size MaxDimensions
-		{
+		public Size MaxDimensions {
 			get { return _maxDims; }
-			set
-			{
-				if (_maxDims != value)
-				{
+			set {
+				if (_maxDims != value) {
+					Platform.CheckPositive(value.Height, "value");
+					Platform.CheckPositive(value.Width, "value");
+
 					_maxDims = value;
 					NotifyMaxDimensionsChanged();
 				}
@@ -270,20 +278,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
-		/// Resets the maximum dimensions to show on the control to the default value of 4x4.
+		/// Resets the <see cref="MaxDimensions"/> property to the default value.
 		/// </summary>
-		public void ResetMaxDimensions()
-		{
+		public void ResetMaxDimensions() {
 			_maxDims = DEFAULT_DIMS;
 		}
 
-		/// <summary>
-		/// Determines if the maximum dimensions to show on the control is the default value.
-		/// </summary>
-		/// <returns>False if it is the default, True otherwise.</returns>
-		public bool ShouldSerializeMaxDimensions()
-		{
-			return !(_maxDims == DEFAULT_DIMS);
+		private bool ShouldSerializeMaxDimensions() {
+			return _maxDims != DEFAULT_DIMS;
 		}
 
 		/// <summary>
@@ -296,8 +298,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </remarks>
 		[Description("Fired when the user selects new dimensions.")]
 		[Category("Action")]
-		public event TableDimensionsEventHandler DimensionsSelected
-		{
+		public event TableDimensionsEventHandler DimensionsSelected {
 			add { _dimensionsSelected += value; }
 			remove { _dimensionsSelected -= value; }
 		}
@@ -305,8 +306,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <summary>
 		/// Notifies listeners that the user has selected new dimensions.
 		/// </summary>
-		protected virtual void NotifyDimensionsSelected()
-		{
+		protected virtual void NotifyDimensionsSelected() {
 			if (_dimensionsSelected != null)
 				_dimensionsSelected(this, new TableDimensionsEventArgs(this.Dimensions));
 		}
@@ -316,8 +316,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Description("Fired when the currently selected dimensions change.")]
 		[Category("Property Changed")]
-		public event EventHandler DimensionsChanged
-		{
+		public event EventHandler DimensionsChanged {
 			add { _dimensionsChanged += value; }
 			remove { _dimensionsChanged -= value; }
 		}
@@ -327,8 +326,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		/// <param name="newDims">The new value of the property.</param>
 		/// <param name="oldDims">The old value of the property.</param>
-		protected virtual void NotifyDimensionsChanged(Size newDims, Size oldDims)
-		{
+		protected virtual void NotifyDimensionsChanged(Size newDims, Size oldDims) {
 			base.Invalidate(GetInvalidRegion(newDims, oldDims));
 
 			if (_dimensionsChanged != null)
@@ -344,13 +342,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the dimensions are greater than the <see cref="MaxDimensions"/>.</exception>
 		[Category("Behavior")]
 		[Description("The currently selected dimensions.")]
-		public Size Dimensions
-		{
+		public Size Dimensions {
 			get { return _dims; }
-			set
-			{
-				if (_dims != value)
-				{
+			set {
+				if (_dims != value) {
 					Platform.CheckArgumentRange(value.Height, 0, MaxDimensions.Height, "value");
 					Platform.CheckArgumentRange(value.Width, 0, MaxDimensions.Width, "value");
 
@@ -362,40 +357,32 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
-		/// Resets the currently selected dimensions to the default value of 0x0.
+		/// Resets the <see cref="Dimensions"/> property to the default value.
 		/// </summary>
-		public void ResetDimensions()
-		{
+		public void ResetDimensions() {
 			_dims = Size.Empty;
 		}
 
-		/// <summary>
-		/// Determines if the currently selected dimensions are the default values.
-		/// </summary>
-		/// <returns>False if it is the default, True otherwise.</returns>
-		public bool ShouldSerializeDimensions()
-		{
-			return !(_dims == Size.Empty);
+		private bool ShouldSerializeDimensions() {
+			return _dims != Size.Empty;
 		}
 
 		/// <summary>
-		/// Fired when the <see cref="HotTrackingDimensions"/> property changes.
+		/// Fired when the <see cref="HotDimensions"/> property changes.
 		/// </summary>
 		[Description("Fired when the hot-tracked dimensions change.")]
 		[Category("Property Changed")]
-		public event EventHandler HotTrackingDimensionsChanged
-		{
+		public event EventHandler HotDimensionsChanged {
 			add { _hotDimensionsChanged += value; }
 			remove { _hotDimensionsChanged -= value; }
 		}
 
 		/// <summary>
-		/// Notifies listeners that the <see cref="HotTrackingDimensions"/> property has changed.
+		/// Notifies listeners that the <see cref="HotDimensions"/> property has changed.
 		/// </summary>
 		/// <param name="newDims">The new value of the property.</param>
 		/// <param name="oldDims">The old value of the property.</param>
-		protected virtual void NotifyHotTrackingDimensionsChanged(Size newDims, Size oldDims)
-		{
+		protected virtual void NotifyHotDimensionsChanged(Size newDims, Size oldDims) {
 			base.Invalidate(GetInvalidRegion(newDims, oldDims));
 
 			if (_hotDimensionsChanged != null)
@@ -410,16 +397,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </remarks>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Size HotTrackingDimensions
-		{
+		public Size HotDimensions {
 			get { return _hotDims; }
-			private set
-			{
-				if (_hotDims != value)
-				{
+			private set {
+				if (_hotDims != value) {
 					Size old = _hotDims;
 					_hotDims = value;
-					NotifyHotTrackingDimensionsChanged(old, value);
+					NotifyHotDimensionsChanged(old, value);
 				}
 			}
 		}
@@ -433,8 +417,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int MaxRows
-		{
+		public int MaxRows {
 			get { return this.MaxDimensions.Height; }
 			set { this.MaxDimensions = new Size(value, this.MaxColumns); }
 		}
@@ -444,8 +427,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int MaxColumns
-		{
+		public int MaxColumns {
 			get { return this.MaxDimensions.Width; }
 			set { this.MaxDimensions = new Size(this.MaxRows, value); }
 		}
@@ -455,9 +437,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int HotTrackingRows
-		{
-			get { return this.HotTrackingDimensions.Height; }
+		public int HotRows {
+			get { return this.HotDimensions.Height; }
 		}
 
 		/// <summary>
@@ -465,9 +446,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int HotTrackingColumns
-		{
-			get { return this.HotTrackingDimensions.Width; }
+		public int HotColumns {
+			get { return this.HotDimensions.Width; }
 		}
 
 		/// <summary>
@@ -475,8 +455,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int Rows
-		{
+		public int Rows {
 			get { return this.Dimensions.Height; }
 			set { this.Dimensions = new Size(value, this.Columns); }
 		}
@@ -486,8 +465,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public int Columns
-		{
+		public int Columns {
 			get { return this.Dimensions.Width; }
 			set { this.Dimensions = new Size(this.Rows, value); }
 		}
@@ -499,17 +477,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <summary>
 		/// Gets the default size of the control.
 		/// </summary>
-		protected override Size DefaultSize
-		{
+		protected override Size DefaultSize {
 			get { return GetDefaultSize(); }
 		}
 
 		/// <summary>
 		/// This control is always drawn double buffered.
 		/// </summary>
-		protected override bool DoubleBuffered
-		{
-			get { return false; }
+		protected override bool DoubleBuffered {
+			get { return true; }
 			set { }
 		}
 
@@ -518,8 +494,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override Color ForeColor
-		{
+		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set { }
 		}
@@ -529,8 +504,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override Font Font
-		{
+		public override Font Font {
 			get { return base.Font; }
 			set { }
 		}
@@ -540,8 +514,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override RightToLeft RightToLeft
-		{
+		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set { }
 		}
@@ -551,8 +524,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override string Text
-		{
+		public override string Text {
 			get { return string.Empty; }
 			set { }
 		}
@@ -562,8 +534,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// </summary>
 		/// <returns>An ordered pair of type <see cref="T:System.Drawing.Size"></see> representing the width and height of a rectangle.</returns>
 		/// <param name="proposedSize">The custom-sized area for a control.</param>
-		public override Size GetPreferredSize(Size proposedSize)
-		{
+		public override Size GetPreferredSize(Size proposedSize) {
 			return this.DefaultSize;
 		}
 
@@ -571,14 +542,25 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Event Overrides
 
+		protected override void OnEnabledChanged(EventArgs e) {
+			if (base.Enabled) {
+				Point p = base.PointToClient(Cursor.Position);
+				if (new Rectangle(Point.Empty, base.Size).Contains(p))
+					this.HotDimensions = new Size(GetCellAtPoint(p.X, p.Y));
+			} else {
+				this.HotDimensions = Size.Empty;
+			}
+			base.OnEnabledChanged(e);
+		}
+
 		///<summary>
 		///Raises the <see cref="E:System.Windows.Forms.Control.MouseMove"></see> event.
 		///</summary>
 		///
 		///<param name="e">A <see cref="T:System.Windows.Forms.MouseEventArgs"></see> that contains the event data. </param>
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			this.HotTrackingDimensions = new Size(GetCellAtPoint(e.X, e.Y));
+		protected override void OnMouseMove(MouseEventArgs e) {
+			if (base.Enabled)
+				this.HotDimensions = new Size(GetCellAtPoint(e.X, e.Y));
 			base.OnMouseMove(e);
 		}
 
@@ -587,9 +569,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 		///</summary>
 		///
 		///<param name="e">An <see cref="T:System.EventArgs"></see> that contains the event data. </param>
-		protected override void OnMouseLeave(EventArgs e)
-		{
-			this.HotTrackingDimensions = Size.Empty;
+		protected override void OnMouseLeave(EventArgs e) {
+			if (base.Enabled)
+				this.HotDimensions = Size.Empty;
 			base.OnMouseLeave(e);
 		}
 
@@ -598,11 +580,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 		///</summary>
 		///
 		///<param name="e">An <see cref="T:System.Windows.Forms.MouseEventArgs"></see> that contains the event data. </param>
-		protected override void OnMouseClick(MouseEventArgs e)
-		{
-			this.Dimensions = new Size(GetCellAtPoint(e.X, e.Y));
-			base.OnMouseClick(e);
-			NotifyDimensionsSelected();
+		protected override void OnMouseClick(MouseEventArgs e) {
+			if (base.Enabled) {
+				this.Dimensions = new Size(GetCellAtPoint(e.X, e.Y));
+				base.OnMouseClick(e);
+				NotifyDimensionsSelected();
+			} else {
+				base.OnMouseClick(e);
+			}
 		}
 
 		///<summary>
@@ -610,54 +595,33 @@ namespace ClearCanvas.Desktop.View.WinForms
 		///</summary>
 		///
 		///<param name="e">A <see cref="T:System.Windows.Forms.PaintEventArgs"></see> that contains the event data. </param>
-		protected override void OnPaint(PaintEventArgs e)
-		{
+		protected override void OnPaint(PaintEventArgs e) {
+			int maxRow = this.MaxRows;
+			int maxCol = this.MaxColumns;
+			int selRow = this.Rows;
+			int selCol = this.Columns;
+			int hotRow = this.HotRows;
+			int hotCol = this.HotColumns;
+			int ctlWid = base.Width;
+			int ctlHgt = base.Height;
+
 			base.OnPaint(e);
 
-			using (Bitmap bmp = new Bitmap(base.Width, base.Height))
-			{
-				using (Graphics g = Graphics.FromImage(bmp))
-				{
-					// paint the background if it's not transparent
-					if (base.BackColor != Color.Transparent)
-					{
-						SolidBrush bkgBrush = new SolidBrush(base.BackColor);
-						g.FillRectangle(bkgBrush, 0, 0, bmp.Width, bmp.Height);
-						bkgBrush.Dispose();
-					}
+			Rectangle[,] cellBounds = new Rectangle[maxRow, maxCol];
+			for (int r = 0; r < maxRow; r++) {
+				for (int c = 0; c < maxCol; c++) {
+					cellBounds[r, c] = GetCellBounds(r + 1, c + 1);
+				}
+			}
 
-					// paint the last selected dimensions if it's not transparent
-					if (this.ActiveColor != Color.Transparent)
-					{
-						SolidBrush selBrush = new SolidBrush(this.ActiveColor);
-						g.FillRectangle(selBrush, 0, 0, GetColumnBoundary(_dims.Width), GetRowBoundary(_dims.Height));
-						selBrush.Dispose();
-					}
-
-					// paint the hot-tracked dimensions if it's not transparent
-					if (this.HighlightColor != Color.Transparent)
-					{
-						SolidBrush hotBrush = new SolidBrush(this.HighlightColor);
-						g.FillRectangle(hotBrush, 0, 0, GetColumnBoundary(_hotDims.Width), GetRowBoundary(_hotDims.Height));
-						hotBrush.Dispose();
-					}
-
-					// paint the cell borders if it's not transparent
-					if (this.CellBorderColor != Color.Transparent)
-					{
-						Pen bdrPen = new Pen(this.CellBorderColor, this.CellBorderWidth);
-						for (int n = 0; n <= _maxDims.Height; n++)
-						{
-							int y = GetRowBoundary(n);
-							g.DrawLine(bdrPen, 0, y, bmp.Width - 1, y);
-						}
-						for (int n = 0; n <= _maxDims.Width; n++)
-						{
-							int x = GetColumnBoundary(n);
-							g.DrawLine(bdrPen, x, 0, x, bmp.Height - 1);
-						}
-						bdrPen.Dispose();
-					}
+			using (Bitmap bmp = new Bitmap(ctlWid, ctlHgt)) {
+				using (Graphics g = Graphics.FromImage(bmp)) {
+					PaintCellInteriors(g, cellBounds, this.CellStyle.FillColor, maxRow, maxCol);
+					PaintCellInteriors(g, cellBounds, this.SelectedCellStyle.FillColor, selRow, selCol);
+					PaintCellInteriors(g, cellBounds, this.HotCellStyle.FillColor, hotRow, hotCol);
+					PaintCellBorders(g, cellBounds, this.CellStyle.BorderColor, this.CellStyle.BorderWidth, maxRow, maxCol);
+					PaintCellBorders(g, cellBounds, this.SelectedCellStyle.BorderColor, this.SelectedCellStyle.BorderWidth, selRow, selCol);
+					PaintCellBorders(g, cellBounds, this.HotCellStyle.BorderColor, this.HotCellStyle.BorderWidth, hotRow, hotCol);
 				}
 
 				// draw the invalid region to the control surface
@@ -670,8 +634,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		///</summary>
 		///
 		///<param name="e">An <see cref="T:System.EventArgs"></see> that contains the event data. </param>
-		protected override void OnResize(EventArgs e)
-		{
+		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
 			base.Invalidate();
 		}
@@ -680,10 +643,41 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Helper Methods
 
-		private Size GetDefaultSize()
-		{
-			const int DEFAULT_CELL_LENGTH = 48;
-			return new Size(DEFAULT_CELL_LENGTH*MaxDimensions.Width, DEFAULT_CELL_LENGTH*MaxDimensions.Height);
+		private static void PaintCellBorders(Graphics g, Rectangle[,] cellBounds, Color lineColor, int lineWidth, int rows, int columns) {
+			if (!lineColor.IsEmpty && lineColor != Color.Transparent && lineWidth > 0) {
+				Pen pen = new Pen(lineColor, 1);
+				for (int r = 0; r < rows; r++) {
+					for (int c = 0; c < columns; c++) {
+						Rectangle bounds = cellBounds[r, c];
+						for (int n = 0; n < lineWidth; n++) {
+							g.DrawRectangle(pen, bounds.Left + n, bounds.Top + n, bounds.Width - 2 * n - 1, bounds.Height - 2 * n - 1);
+						}
+					}
+				}
+				pen.Dispose();
+			}
+		}
+
+		private static void PaintCellInteriors(Graphics g, Rectangle[,] cellBounds, Color fillColor, int rows, int columns) {
+			if (!fillColor.IsEmpty && fillColor != Color.Transparent) {
+				SolidBrush brush = new SolidBrush(fillColor);
+				for (int r = 0; r < rows; r++) {
+					for (int c = 0; c < columns; c++) {
+						g.FillRectangle(brush, cellBounds[r, c]);
+					}
+				}
+				brush.Dispose();
+			}
+		}
+
+		private Size GetDefaultSize() {
+			// this method is only called for default cell spacing (and that is 0) so we don't compute with it here
+			const int DEFAULT_CELL_LENGTH = 24;
+			return new Size(DEFAULT_CELL_LENGTH * this.MaxDimensions.Width, DEFAULT_CELL_LENGTH * this.MaxDimensions.Height);
+		}
+
+		private void StyleOrSpacingChanged(object sender, PropertyChangedEventArgs e) {
+			base.Invalidate();
 		}
 
 		/// <summary>
@@ -692,10 +686,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="newSize">The new dimensions.</param>
 		/// <param name="oldSize">The old dimensions.</param>
 		/// <returns>The invalid region to repaint.</returns>
-		protected Region GetInvalidRegion(Size newSize, Size oldSize)
-		{
-			Region r = new Region(new Rectangle(0, 0, GetColumnBoundary(oldSize.Width), GetRowBoundary(oldSize.Height)));
-			r.Union(new Rectangle(0, 0, GetColumnBoundary(newSize.Width), GetRowBoundary(newSize.Height)));
+		protected Region GetInvalidRegion(Size newSize, Size oldSize) {
+			Region r = new Region(new Rectangle(Point.Empty, new Size(GetCellBounds(oldSize.Height + 1, oldSize.Width + 1).Location)));
+			r.Union(new Rectangle(Point.Empty, new Size(GetCellBounds(newSize.Height + 1, newSize.Width + 1).Location)));
 			return r;
 		}
 
@@ -705,31 +698,27 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <param name="x">The X position of the cursor in client coordinates.</param>
 		/// <param name="y">The Y position of the cursor in client coordinates.</param>
 		/// <returns>The coordinates of the cell.</returns>
-		protected Point GetCellAtPoint(int x, int y)
-		{
-			int rows = Math.Min(MaxDimensions.Height, 1 + (int) (1.0*MaxDimensions.Height*y/base.Height));
-			int cols = Math.Min(MaxDimensions.Width, 1 + (int) (1.0*MaxDimensions.Width*x/base.Width));
+		protected Point GetCellAtPoint(int x, int y) {
+			int rows = Math.Min(MaxDimensions.Height, 1 + (int)(1.0 * MaxDimensions.Height * y / (base.Height + this.CellSpacing.Vertical)));
+			int cols = Math.Min(MaxDimensions.Width, 1 + (int)(1.0 * MaxDimensions.Width * x / (base.Width + this.CellSpacing.Horizontal)));
 			return new Point(cols, rows);
 		}
 
 		/// <summary>
-		/// Computes the X coordinate of the ith column border.
+		/// Computes the rectangular boundaries of the given cell.
 		/// </summary>
-		/// <param name="col">The index of the column border.</param>
-		/// <returns>The X coordinate in client coordinates.</returns>
-		protected int GetColumnBoundary(int col)
-		{
-			return Math.Min(base.Width - 1, (int) (1.0*base.Width*col/_maxDims.Width));
-		}
-
-		/// <summary>
-		/// Computes the Y coordinate of the ith row border.
-		/// </summary>
-		/// <param name="row">The index of the row border.</param>
-		/// <returns>The Y coordinate in client coordinates.</returns>
-		protected int GetRowBoundary(int row)
-		{
-			return Math.Min(base.Height - 1, (int) (1.0*base.Height*row/_maxDims.Height));
+		/// <param name="row">The row of the cell.</param>
+		/// <param name="column">The column of the cell.</param>
+		/// <returns>The location and dimensions of the cell.</returns>
+		protected Rectangle GetCellBounds(int row, int column) {
+			// this algorithm allows the cell spacing to remain constant while the cell widths vary in order to handle round off error
+			float avgCellWidth = ((1 - this.MaxColumns) * this.CellSpacing.Horizontal + base.Width - 1) * 1.0f / this.MaxColumns;
+			float avgCellHeight = ((1 - this.MaxRows) * this.CellSpacing.Vertical + base.Height - 1) * 1.0f / this.MaxRows;
+			int left = (int)(avgCellWidth * (column - 1)) + (column - 1) * this.CellSpacing.Horizontal;
+			int top = (int)(avgCellHeight * (row - 1)) + (row - 1) * this.CellSpacing.Vertical;
+			int width = (int)(avgCellWidth * (column)) + (column - 1) * this.CellSpacing.Horizontal - left + 1;
+			int height = (int)(avgCellHeight * (row)) + (row - 1) * this.CellSpacing.Vertical - top + 1;
+			return new Rectangle(left, top, width, height);
 		}
 
 		#endregion
@@ -747,41 +736,310 @@ namespace ClearCanvas.Desktop.View.WinForms
 	/// <summary>
 	/// Provides data for the <see cref="TableDimensionsPicker.DimensionsSelected"/> event.
 	/// </summary>
-	public class TableDimensionsEventArgs : EventArgs
-	{
+	public class TableDimensionsEventArgs : EventArgs {
 		private Size _dimensions;
 
 		/// <summary>
 		/// Constructs a <see cref="TableDimensionsEventArgs"/>.
 		/// </summary>
 		/// <param name="dimensions">The selected dimensions.</param>
-		public TableDimensionsEventArgs(Size dimensions)
-		{
+		public TableDimensionsEventArgs(Size dimensions) {
 			_dimensions = dimensions;
 		}
 
 		/// <summary>
 		/// Gets the selected dimensions.
 		/// </summary>
-		public Size Dimensions
-		{
+		public Size Dimensions {
 			get { return _dimensions; }
 		}
 
 		/// <summary>
 		/// Gets the selected number of rows (height of the selected dimensions).
 		/// </summary>
-		public int Rows
-		{
+		public int Rows {
 			get { return _dimensions.Height; }
 		}
 
 		/// <summary>
 		/// Gets the selected number of columns (width of the selected dimensions).
 		/// </summary>
-		public int Columns
-		{
+		public int Columns {
 			get { return _dimensions.Width; }
+		}
+	}
+
+	#endregion
+
+	#region TableDimensionsCellStyle
+
+	/// <summary>
+	/// Represents the style for a cells in a <see cref="TableDimensionsPicker"/> control.
+	/// </summary>
+	[TypeConverter(typeof(ExpandableObjectConverter))]
+	public sealed class TableDimensionsCellStyle : INotifyPropertyChanged {
+		private event PropertyChangedEventHandler _propertyChanged;
+		private Color _fillColor;
+		private Color _borderColor;
+		private int _borderWidth;
+
+		/// <summary>
+		/// Constructs a <see cref="TableDimensionsCellStyle"/> using default values.
+		/// </summary>
+		public TableDimensionsCellStyle() {
+			ResetFillColor();
+			ResetBorderColor();
+			ResetBorderWidth();
+		}
+
+		/// <summary>
+		/// Constructs a <see cref="TableDimensionsCellStyle"/> using the specified interior color and no borders.
+		/// </summary>
+		public TableDimensionsCellStyle(Color fillColor) {
+			_fillColor = fillColor;
+			ResetBorderColor();
+			ResetBorderWidth();
+		}
+
+		/// <summary>
+		/// Constructs a <see cref="TableDimensionsCellStyle"/> using the specified border color, border width and no interior color.
+		/// </summary>
+		public TableDimensionsCellStyle(Color borderColor, int borderWidth) {
+			ResetFillColor();
+			_borderColor = borderColor;
+			_borderWidth = borderWidth;
+		}
+
+		/// <summary>
+		/// Constructs a <see cref="TableDimensionsCellStyle"/> using the specified interior color, border color and border width.
+		/// </summary>
+		public TableDimensionsCellStyle(Color fillColor, Color borderColor, int borderWidth) {
+			_fillColor = fillColor;
+			_borderColor = borderColor;
+			_borderWidth = borderWidth;
+		}
+
+		/// <summary>
+		/// Notifies listeners that the style has changed.
+		/// </summary>
+		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
+			add { _propertyChanged += value; }
+			remove { _propertyChanged -= value; }
+		}
+
+		private void FirePropertyChanged(string propertyName) {
+			if (_propertyChanged != null)
+				_propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		/// <summary>
+		/// Gets or sets the color of the cell interiors.
+		/// </summary>
+		[Bindable(true)]
+		[Category("Appearance")]
+		[Description("The color of the cell interiors.")]
+		public Color FillColor {
+			get { return _fillColor; }
+			set {
+				if (_fillColor != value) {
+					_fillColor = value;
+					FirePropertyChanged("FillColor");
+				}
+			}
+		}
+
+		private void ResetFillColor() {
+			this.FillColor = Color.Empty;
+		}
+
+		private bool ShouldSerializeFillColor() {
+			return _fillColor != Color.Empty;
+		}
+
+		/// <summary>
+		/// Gets or sets the color of the cell borders.
+		/// </summary>
+		[Bindable(true)]
+		[Category("Appearance")]
+		[Description("The color of the cell borders.")]
+		public Color BorderColor {
+			get { return _borderColor; }
+			set {
+				if (_borderColor != value) {
+					_borderColor = value;
+					FirePropertyChanged("BorderColor");
+
+					if (!_borderColor.IsEmpty && this.BorderWidth <= 0)
+						this.BorderWidth = 1;
+				}
+			}
+		}
+
+		private void ResetBorderColor() {
+			this.BorderColor = Color.Empty;
+		}
+
+		private bool ShouldSerializeBorderColor() {
+			return _borderColor != Color.Empty;
+		}
+
+		/// <summary>
+		/// Gets or sets the pixel width of the cell borders.
+		/// </summary>
+		[Bindable(true)]
+		[Category("Appearance")]
+		[DefaultValue(0)]
+		[Description("The pixel width of the cell borders.")]
+		public int BorderWidth {
+			get { return _borderWidth; }
+			set {
+				if (_borderWidth != value) {
+					Platform.CheckNonNegative(value, "value");
+
+					_borderWidth = value;
+					FirePropertyChanged("BorderWidth");
+
+					if (_borderWidth > 0 && this.BorderColor.IsEmpty)
+						this.BorderColor = Color.Black;
+				}
+			}
+		}
+
+		private void ResetBorderWidth() {
+			this.BorderWidth = 0;
+		}
+
+		/// <summary>
+		/// Returns a string that fully describes the style.
+		/// </summary>
+		/// <returns>A string representation of the style.</returns>
+		public override string ToString() {
+			return string.Format("Fill: {0}; Border: {1}, {2}", ConvertColor(_fillColor), ConvertColor(_borderColor), _borderWidth);
+		}
+
+		private static string ConvertColor(Color color) {
+			if (color.IsNamedColor)
+				return color.Name;
+			else if (color.IsEmpty)
+				return "Empty";
+			else if (color.A > 0)
+				return string.Format("ARGB({3:x2}{0:x2}{1:x2}{2:x2})", color.R, color.G, color.B, color.A);
+			return string.Format("RGB({0:x2}{1:x2}{2:x2})", color.R, color.G, color.B);
+		}
+	}
+
+	#endregion
+
+	#region TableDimensionsCellSpacing
+
+	/// <summary>
+	/// Represents the spacing between adjacent cells in a <see cref="TableDimensionsPicker"/> control.
+	/// </summary>
+	[TypeConverter(typeof(ExpandableObjectConverter))]
+	public sealed class TableDimensionsCellSpacing : INotifyPropertyChanged {
+		private event PropertyChangedEventHandler _propertyChanged;
+		private int _horizontal;
+		private int _vertical;
+
+		/// <summary>
+		/// Constructs a new <see cref="TableDimensionsCellSpacing"/> using the default values.
+		/// </summary>
+		public TableDimensionsCellSpacing() {
+			ResetHorizontal();
+			ResetVertical();
+		}
+
+		/// <summary>
+		/// Constructs a new <see cref="TableDimensionsCellSpacing"/> using the specified spacing.
+		/// </summary>
+		/// <param name="horizontal">The horizontal spacing between cells.</param>
+		/// <param name="vertical">The vertical spacing between cells.</param>
+		public TableDimensionsCellSpacing(int horizontal, int vertical) {
+			_horizontal = horizontal;
+			_vertical = vertical;
+		}
+
+		/// <summary>
+		/// Constructs a new <see cref="TableDimensionsCellSpacing"/> using the specified spacing dimensions.
+		/// </summary>
+		/// <param name="spacing">The dimensions of the spacing between cells (where <see cref="Size.Width">Width</see>
+		/// is the horizontal spacing, and <see cref="Size.Height">Height</see> is the vertical).</param>
+		public TableDimensionsCellSpacing(Size spacing) {
+			_horizontal = spacing.Width;
+			_vertical = spacing.Height;
+		}
+
+		/// <summary>
+		/// Constructs a new <see cref="TableDimensionsCellSpacing"/> using the specified spacing dimensions.
+		/// </summary>
+		/// <param name="spacing">The dimensions of the spacing between cells (where <see cref="Point.X">X</see>
+		/// is the horizontal spacing, and <see cref="Point.Y">Y</see> is the vertical).</param>
+		public TableDimensionsCellSpacing(Point spacing) {
+			_horizontal = spacing.X;
+			_vertical = spacing.Y;
+		}
+
+		/// <summary>
+		/// Notifies listeners that the spacing has changed.
+		/// </summary>
+		event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged {
+			add { _propertyChanged += value; }
+			remove { _propertyChanged -= value; }
+		}
+
+		private void FirePropertyChanged(string propertyName) {
+			if (_propertyChanged != null)
+				_propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		/// <summary>
+		/// Gets or sets the pixel width of the space between horizontally adjacent cells.
+		/// </summary>
+		[Bindable(true)]
+		[Category("Appearance")]
+		[DefaultValue(0)]
+		[Description("The pixel width of the space between horizontally adjacent cells.")]
+		public int Horizontal {
+			get { return _horizontal; }
+			set {
+				if (_horizontal != value) {
+					_horizontal = value;
+					FirePropertyChanged("Horizontal");
+				}
+			}
+		}
+
+		private void ResetHorizontal() {
+			this.Horizontal = 0;
+		}
+
+		/// <summary>
+		/// Gets or sets the pixel height of the space between vertically adjacent cells.
+		/// </summary>
+		[Bindable(true)]
+		[Category("Appearance")]
+		[DefaultValue(0)]
+		[Description("The pixel height of the space between vertically adjacent cells.")]
+		public int Vertical {
+			get { return _vertical; }
+			set {
+				if (_vertical != value) {
+					_vertical = value;
+					FirePropertyChanged("Vertical");
+				}
+			}
+		}
+
+		private void ResetVertical() {
+			this.Vertical = 0;
+		}
+
+		/// <summary>
+		/// Returns a string that fully describes the cell spacing.
+		/// </summary>
+		/// <returns>A string representation of the spacing.</returns>
+		public override string ToString() {
+			return string.Format("{0}, {1}", _horizontal, _vertical);
 		}
 	}
 
