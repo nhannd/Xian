@@ -602,8 +602,6 @@ namespace ClearCanvas.Desktop.View.WinForms {
 			int selCol = this.Columns;
 			int hotRow = this.HotRows;
 			int hotCol = this.HotColumns;
-			int ctlWid = base.Width;
-			int ctlHgt = base.Height;
 
 			base.OnPaint(e);
 
@@ -614,19 +612,12 @@ namespace ClearCanvas.Desktop.View.WinForms {
 				}
 			}
 
-			using (Bitmap bmp = new Bitmap(ctlWid, ctlHgt)) {
-				using (Graphics g = Graphics.FromImage(bmp)) {
-					PaintCellInteriors(g, cellBounds, this.CellStyle.FillColor, maxRow, maxCol);
-					PaintCellInteriors(g, cellBounds, this.SelectedCellStyle.FillColor, selRow, selCol);
-					PaintCellInteriors(g, cellBounds, this.HotCellStyle.FillColor, hotRow, hotCol);
-					PaintCellBorders(g, cellBounds, this.CellStyle.BorderColor, this.CellStyle.BorderWidth, maxRow, maxCol);
-					PaintCellBorders(g, cellBounds, this.SelectedCellStyle.BorderColor, this.SelectedCellStyle.BorderWidth, selRow, selCol);
-					PaintCellBorders(g, cellBounds, this.HotCellStyle.BorderColor, this.HotCellStyle.BorderWidth, hotRow, hotCol);
-				}
-
-				// draw the invalid region to the control surface
-				e.Graphics.DrawImageUnscaledAndClipped(bmp, e.ClipRectangle);
-			}
+			PaintCellInteriors(e.Graphics, cellBounds, this.CellStyle.FillColor, maxRow, maxCol);
+			PaintCellInteriors(e.Graphics, cellBounds, this.SelectedCellStyle.FillColor, selRow, selCol);
+			PaintCellInteriors(e.Graphics, cellBounds, this.HotCellStyle.FillColor, hotRow, hotCol);
+			PaintCellBorders(e.Graphics, cellBounds, this.CellStyle.BorderColor, this.CellStyle.BorderWidth, maxRow, maxCol);
+			PaintCellBorders(e.Graphics, cellBounds, this.SelectedCellStyle.BorderColor, this.SelectedCellStyle.BorderWidth, selRow, selCol);
+			PaintCellBorders(e.Graphics, cellBounds, this.HotCellStyle.BorderColor, this.HotCellStyle.BorderWidth, hotRow, hotCol);
 		}
 
 		///<summary>
