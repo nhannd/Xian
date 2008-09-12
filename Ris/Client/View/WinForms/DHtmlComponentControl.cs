@@ -108,12 +108,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
         {
-        	Uri newUri = _component.HtmlPageUrl;
-
-			if(Equals(_webBrowser.Url, newUri))
-				_webBrowser.Refresh();
-			else 
-				_webBrowser.Navigate(_component.HtmlPageUrl);
+			// navigate to the new URI
+			// Bug #2845 even if it is the same URI, we want to navigate rather than refresh, so that scroll position is reset to top
+			_webBrowser.Navigate(_component.HtmlPageUrl);
         }
 
         private void NavigatingEventHandler(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)
