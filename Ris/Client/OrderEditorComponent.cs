@@ -292,7 +292,7 @@ namespace ClearCanvas.Ris.Client
                                       delegate(ProcedureRequisition item)
                                       {
                                           return (item.Laterality == null || item.Laterality.Code == "N")
-                                              ? "" : item.Laterality.Code;
+                                              ? "" : item.Laterality.Value;
                                       }));
             _proceduresTable.Columns.Add(new TableColumn<ProcedureRequisition, bool>("Port.",
                                       delegate(ProcedureRequisition item) { return item.PortableModality; }));
