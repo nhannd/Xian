@@ -94,6 +94,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 
         	StaffGroupSearchCriteria where = new StaffGroupSearchCriteria();
 			where.Name.SortAsc(0);
+			if (request.ElectiveGroupsOnly)
+				where.Elective.EqualTo(true);
 
             IStaffGroupBroker broker = PersistenceContext.GetBroker<IStaffGroupBroker>();
 			IList<StaffGroup> items = broker.Find(where, request.Page);

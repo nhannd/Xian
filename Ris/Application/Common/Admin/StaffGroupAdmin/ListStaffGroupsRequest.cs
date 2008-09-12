@@ -17,5 +17,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
             :base(page)
         {
         }
-    }
+
+		/// <summary>
+		/// If true, only elective staff groups will be returned.
+		/// </summary>
+		[DataMember]
+		public bool ElectiveGroupsOnly;
+	}
 }

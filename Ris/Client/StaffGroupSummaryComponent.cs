@@ -99,6 +99,7 @@ namespace ClearCanvas.Ris.Client
     public class StaffGroupSummaryComponent : SummaryComponentBase<StaffGroupSummary, StaffGroupSummaryTable, ListStaffGroupsRequest>
     {
     	private readonly string _initialFilterText;
+    	private readonly bool _electiveGroupsOnly;
 
         /// <summary>
         /// Constructor
@@ -112,10 +113,12 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="dialogMode"></param>
 		/// <param name="intialFilterText"></param>
-		public StaffGroupSummaryComponent(bool dialogMode, string intialFilterText)
+		/// <param name="electiveGroupsOnly"></param>
+		public StaffGroupSummaryComponent(bool dialogMode, string intialFilterText, bool electiveGroupsOnly)
 			:base(dialogMode)
 		{
 			_initialFilterText = intialFilterText;
+			_electiveGroupsOnly = electiveGroupsOnly;
 		}
 
     	/// <summary>
@@ -159,6 +162,8 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         protected override IList<StaffGroupSummary> ListItems(ListStaffGroupsRequest request)
         {
+			request.ElectiveGroupsOnly = _electiveGroupsOnly;
+
             ListStaffGroupsResponse listResponse = null;
             Platform.GetService<IStaffGroupAdminService>(
                 delegate(IStaffGroupAdminService service)
