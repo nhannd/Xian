@@ -626,9 +626,9 @@ var Table = {
 					if(result)
 					{
 						column.setValue(obj, result);
- 						//input.value = column.getValue(obj) || "";
 						table._onCellUpdate(row, col);
 						table._onEditComplete(row, col);
+						input.style.backgroundColor = "white";	// revert field background color since the query is resolved
 					}
 				}
 				
@@ -643,13 +643,21 @@ var Table = {
 				
 				input.onkeyup = function()
 				{
-					if(event.keyCode == 13) // pressing ENTER key executes lookup
-						doLookup();
-					else
+					switch(event.keyCode)
 					{
-						// any manual edit clears the underlying item
-						column.setValue(obj, null);
-						table._onCellUpdate(row, col);
+						case 13:
+							doLookup();
+							break;
+						case 9:	// tab into the control
+						case 16: // backtab into the control
+							break;
+						default:
+							// any manual edit clears the underlying item
+							column.setValue(obj, null);
+							table._onCellUpdate(row, col);
+							
+							// if there are any characters in the input field, change color to indicate to user that the query is unresolved
+							input.style.backgroundColor = (input.value && column.getValue(obj) === null) ? "yellow" : "white";
 					}
 				}				
 				
