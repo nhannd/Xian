@@ -19,7 +19,8 @@
 
 		var oralTypes = 
 		[
-			"TODO"
+			"Barium",
+			"Other"
 		]
 
 		var rectalTypes =
@@ -162,6 +163,8 @@
 				data.acquisition = data.acquisition || {};
 				data.acquisition.startTime = data.acquisition.startTime || startTime;
 				data.acquisition.stopTime = data.acquisition.stopTime || stopTime;
+				
+				data.acquisition.repeats = data.acquisition.repeats || [];
 				data.acquisition.repeatReasons = data.acquisition.repeatReasons || {};
 
 				initAcquisitionTable(facility, modality);
@@ -240,20 +243,37 @@
 					getValue: function(item) { return item.fluoroTime; },
 					setValue: function(item, value) { item.fluoroTime = value; },
 					getError: function(item) { return null; }
-				},
-				{	label: "Number of Repeats",
-					cellType: "text",
-					getValue: function(item) { return item.numberRepeats; },
-					setValue: function(item, value) { item.numberRepeats = value; },
-					getError: function(item) { return null; }
 				}
 			]);
 
 			additionalAcquisitionTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 			additionalAcquisitionTable.bindItems([data.acquisition]);
 
-			var repeatReasonsTable = Table.createTable($("repeatReasonsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+			var repeatsTable = Table.createTable($("repeatsTable"), { editInPlace: true, flow: true, checkBoxes: true },
 			[
+			
+				{	label: "Number of Repeats",
+					cellType: "text",
+					getValue: function(item) { return item.numberRepeats; },
+					setValue: function(item, value) { item.numberRepeats = value; },
+					getError: function(item) { return null; }
+				},
+				{	label: "Body Part",
+					cellType: "choice",
+					choices: ["Chest", "Abdomen", "Cervical Spine", "Thoracic Spine", "Lumbar Spine", "Ribs", "Sternum", "Clavicle", "AC Joints", "SC Joints", "Shoulder", "Scapula", "Humerus", "Elbow", "Forearm", "Wrist", "Hand", "Finger", "Pelvis", "Hip", "Femur", "Knee", "Tibia/Fibula", "Ankle", "Foot", "Toe", "Skull", "Facial Bones", "Nasal Bones", "Mandible", "TMJs", "Sinuses", "Mastoids", "Orbits", "Other"],
+					getValue: function(item) { return item.bodyPart; },
+					setValue: function(item, value) { item.bodyPart = value; },
+					getError: function(item) { return null; }				
+				},
+				{	label: "Body Part - Other",
+					cellType: "text",
+					size: 50,
+					getValue: function(item) { return item.bodyPartOther; },
+					setValue: function(item, value) { item.bodyPartOther = value; },
+					getVisible: function(item) { return item.bodyPart == "Other"; },
+					getError: function(item) { return null; }				
+				},
+				new NewLineField(),
 				new RepeatReasonCell("Patient motion", "patientMotion"),
 				new RepeatReasonCell("Positioning", "positioning"),
 				new RepeatReasonCell("Processing fault", "processingFault"),
@@ -267,8 +287,8 @@
 				new RepeatReasonCell("Centering", "centering")
 			]);
 
-			repeatReasonsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-			repeatReasonsTable.bindItems([data.acquisition]);
+			repeatsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+			repeatsTable.bindItems(data.acquisition.repeats);
 		}
 		
 		function RepeatReasonCell(label, prop)
@@ -281,6 +301,32 @@
 			this.getError = function(item) { return null; };
 		}
 
+		function onAddRepeat()
+		{
+			data.acquisition.repeats.add( { repeatReasons: {} } );
+		}
+
+		function onDeleteRepeat()
+		{
+			var checkedItems = $("repeatsTable").getCheckedItems();
+			if(checkedItems.length > 0)
+			{
+				if(confirm("Delete selected oral contrast documentation?"))
+				{
+					checkedItems.each(function(item) { data.acquisition.repeats.remove(item); });
+					$("repeatCheckAllNone").checked = false;
+				}
+			}
+			else
+			{
+				alert("Nothing selected");
+			}
+		}
+
+		function onOralCheckAllNone()
+		{
+			data.acquisition.repeats.each(function(item) { $("repeatsTable").setItemCheckState(item, $("repeatCheckAllNone").checked); });
+		}
 		function initOralTable()
 		{
 			var oralTable = Table.createTable($("oralTable"), 
@@ -291,6 +337,13 @@
 							choices: oralTypes,
 							getValue: function(item) { return item.type; },
 							setValue: function(item, value) { item.type = value; },
+							getError: function(item) { return null; }
+						},
+						{  label: "Type - Other",
+							cellType: "text",
+							getValue: function(item) { return item.typeOther; },
+							setValue: function(item, value) { item.typeOther = value; },
+							getVisible: function(item) { return item.type == "Other"; },
 							getError: function(item) { return null; }
 						},
 						{  label: "Amount",
@@ -444,8 +497,15 @@
 		<table id="additionalAcquisitionTable">
 			<tr><td class="tableheading"></td></tr>
 		</table>
-		<table id="repeatReasonsTable">
-			<tr><td class="">Repeat Reasons</td></tr>
+		<p class="sectionheading">Repeats</p>
+		<div class="addDeleteButtons">
+			<input type="button" value="Add" onclick="javascript: onAddRepeat()" />
+			<input type="button" value="Delete" onclick="javascript: onDeleteRepeat()" />
+		</div>
+		<table id="repeatsTable" border="1">
+			<tr>
+				<td colspan="2"><input id="repeatCheckAllNone" type="checkbox" onclick="javascript:onRepeatCheckAllNone()">Select All/None</input></td>
+			</tr>
 		</table>
 		<p class="sectionheading">Oral</p>
 		<div class="addDeleteButtons">
