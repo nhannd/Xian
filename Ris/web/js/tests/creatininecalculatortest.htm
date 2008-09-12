@@ -52,6 +52,43 @@
         assertEquals("Male", 12.00, CreatinineCalculator.calculateClearance(60, 50, "Male", 400).roundTo(2));
         assertEquals("Female", 10.20, CreatinineCalculator.calculateClearance(60, 50, "Female", 400).roundTo(2));
     }
-  </script>
+
+    function testGFRInvalidSex() {
+        try {
+            CreatinineCalculator.calculateGFR(100, 50, "InvalidSex", true, true);
+        }
+        catch (e)
+        {
+            assertNotNull("Invalid sex exception thrown", e);
+        }
+    }
+    
+    function testGFRInvalidAge()
+    {
+        try {
+            CreatinineCalculator.calculateGFR(100, 10, "Male", true, true);
+        }
+        catch (e)
+        {
+            assertNotNull("Invalid age exception thrown", e);
+        }
+        try {
+            CreatinineCalculator.calculateGFR(100, 90, "Male", true, true);
+        }
+        catch (e)
+        {
+            assertNotNull("Invalid age exception thrown", e);
+        }
+    }
+    
+    function testGFRValidInput()
+	{
+        assertEquals("Base", 83, CreatinineCalculator.calculateGFR(100, 50, "Male", true, true));
+        assertEquals("Female", 62, CreatinineCalculator.calculateGFR(100, 50, "Female", true, true));
+        assertEquals("Level Changed", 37, CreatinineCalculator.calculateGFR(200, 50, "Male", true, true));
+        assertEquals("Other race", 69, CreatinineCalculator.calculateGFR(100, 50, "Male", false, true));
+        assertEquals("Not Recalibrated", 88, CreatinineCalculator.calculateGFR(100, 50, "Male", true, false));
+	}
+    </script>
  </body>
 </html>
