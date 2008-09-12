@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _isDuplicate; }
 		}
 
-		public bool CanChangeType
+        public bool CanChangeType
 		{
 			get { return _canChangeType &&  _staffGroupChoices.Count > 0; }
 		}
@@ -180,7 +180,16 @@ namespace ClearCanvas.Ris.Client
 			set { this.IsEditingPersonal = !value; }
 		}
 
-		public bool AcceptEnabled
+        public bool IsReadOnly
+        {
+            get
+            {
+                return _isEditingPersonal && !HasPersonalAdminAuthority ||
+                        !_isEditingPersonal && !HasGroupAdminAuthority;
+            }
+        }
+
+        public bool AcceptEnabled
 		{
 			get { return this.Modified; }
 		}

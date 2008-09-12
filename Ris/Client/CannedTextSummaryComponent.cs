@@ -297,22 +297,9 @@ namespace ClearCanvas.Ris.Client
 				_copyCannedTextToClipboardAction.Enabled = true;
 
 				this.ActionModel.Add.Enabled = HasPersonalAdminAuthority || HasGroupAdminAuthority;
-
-				if (selectedItem.IsPersonal)
-				{
-					this.ActionModel.Edit.Enabled = HasPersonalAdminAuthority;
-					this.ActionModel.Delete.Enabled = HasPersonalAdminAuthority;
-				}
-				else if (selectedItem.IsGroup)
-				{
-					this.ActionModel.Edit.Enabled = HasGroupAdminAuthority;
-					this.ActionModel.Delete.Enabled = HasGroupAdminAuthority;
-				}
-				else
-				{
-					this.ActionModel.Edit.Enabled = false;
-					this.ActionModel.Delete.Enabled = false;
-				}
+				this.ActionModel.Delete.Enabled = 
+                    selectedItem.IsPersonal && HasPersonalAdminAuthority || 
+                    selectedItem.IsGroup && HasGroupAdminAuthority;
 			}
 			else
 			{
