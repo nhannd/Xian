@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
@@ -46,20 +47,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </remarks>
 	public class InsertRemoveOverlayGraphicUndoableCommand : DrawableUndoableCommand
 	{
-		private IGraphic _graphic;
-		private int _restoreIndex;
+		private readonly IList<GraphicItem> _graphicOps;
+		private bool _flagReverse = true;
 
 		private InsertRemoveOverlayGraphicUndoableCommand(IOverlayGraphicsProvider overlayGraphicsProvider, IGraphic graphic, int graphicIndex)
 			: base((IPresentationImage)overlayGraphicsProvider)
 		{
 			Platform.CheckForNullReference(graphic, "graphic");
 
+			GraphicItem item;
 			if (!overlayGraphicsProvider.OverlayGraphics.Contains(graphic))
-				_graphic = graphic;
+				item = new GraphicItem(graphic, graphicIndex);
 			else 
-				_graphic = null;
+				item = new GraphicItem(graphic);
 
-			_restoreIndex = graphicIndex;
+			_graphicOps = new List<GraphicItem>(1);
+			_graphicOps.Add(item);
+		}
+
+		private InsertRemoveOverlayGraphicUndoableCommand(IOverlayGraphicsProvider overlayGraphicsProvider, IList<GraphicItem> graphicOps)
+			: base((IPresentationImage)overlayGraphicsProvider) {
+			Platform.CheckForNullReference(graphicOps, "graphics");
+			Platform.CheckPositive(graphicOps.Count, "graphics");
+
+			_graphicOps = graphicOps;
 		}
 
 		private GraphicCollection OverlayGraphics
@@ -67,24 +78,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return ((IOverlayGraphicsProvider) base.Drawable).OverlayGraphics; }	
 		}
 
-		private void Insert()
-		{
-			OverlayGraphics.Insert(_restoreIndex, _graphic);
-			_graphic = null;
-		}
-
-		private void Remove()
-		{
-			_graphic = OverlayGraphics[_restoreIndex];
-			OverlayGraphics.RemoveAt(_restoreIndex);
-		}
-
 		private void Toggle()
 		{
-			if (_graphic != null)
-				Insert();
-			else
-				Remove();
+			if(_flagReverse)
+			{
+				int count = _graphicOps.Count;
+				for(int n = 0; n < count; n++)
+					_graphicOps[n].Toggle(this.OverlayGraphics);
+			}
+			else 
+			{
+				int count = _graphicOps.Count;
+				for (int n = count - 1; n >= 0; n-- ) 
+					_graphicOps[n].Toggle(this.OverlayGraphics);
+			}
+			_flagReverse = !_flagReverse;
 		}
 
 		/// <summary>
@@ -166,5 +174,142 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			return new InsertRemoveOverlayGraphicUndoableCommand(overlayProvider, graphic, overlayProvider.OverlayGraphics.IndexOf(graphic));
 		}
+
+		/// <summary>
+		/// Factory method for creating an <see cref="InsertRemoveOverlayGraphicUndoableCommand"/> that,
+		/// on undo, will insert a list of <see cref="IGraphic"/>s into an <see cref="IPresentationImage"/>'s overlay graphics
+		/// at the corresponding indices in specified list.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The input <see cref="IPresentationImage"/> must implement <see cref="IOverlayGraphicsProvider"/> or an
+		/// <see cref="InvalidCastException"/> will be thrown.
+		/// </para>
+		/// <para>
+		/// The input <paramref name="graphics"/> must not exist in the <see cref="IPresentationImage"/>'s overlay graphics or
+		/// an <see cref="InvalidOperationException"/> will be thrown.
+		/// </para>
+		/// <para>
+		/// The inputs <param name="graphics"/> and <param name="restoreIndices"/> must have the same length or an <see cref="ArgumentException"/>
+		/// will be thrown.
+		/// </para>
+		/// </remarks>
+		public static InsertRemoveOverlayGraphicUndoableCommand GetInsertCommand(IPresentationImage presentationImage, IList<IGraphic> graphics, IList<int> restoreIndices) {
+			Platform.CheckForNullReference(presentationImage, "presentationImage");
+			Platform.CheckForNullReference(graphics, "graphic");
+			Platform.CheckPositive(graphics.Count, "graphics");
+			Platform.CheckForNullReference(restoreIndices, "restoreIndices");
+			Platform.CheckTrue(graphics.Count == restoreIndices.Count, "graphics and restoreIndices must be the same length");
+
+			IOverlayGraphicsProvider overlayProvider = presentationImage as IOverlayGraphicsProvider;
+			Platform.CheckForInvalidCast(overlayProvider, "presentationImage", typeof(IOverlayGraphicsProvider).FullName);
+
+			foreach (IGraphic graphic in graphics) {
+				if (overlayProvider.OverlayGraphics.Contains(graphic))
+					throw new InvalidOperationException("Cannot create 'insert' command; one or more graphics are already in the collection.");
+			}
+
+			int count = overlayProvider.OverlayGraphics.Count;
+			List<GraphicItem> list = new List<GraphicItem>(graphics.Count);
+			for (int n = 0; n < graphics.Count; n++)
+			{
+				Platform.CheckIndexRange(restoreIndices[n], 0, count++, overlayProvider.OverlayGraphics);
+				list.Add(new GraphicItem(graphics[n], restoreIndices[n]));
+			}
+
+			return new InsertRemoveOverlayGraphicUndoableCommand(overlayProvider, list.AsReadOnly());
+		}
+
+		/// <summary>
+		/// Factory method for creating an <see cref="InsertRemoveOverlayGraphicUndoableCommand"/> that, 
+		/// on undo, will remove a list of <see cref="IGraphic"/>s from an <see cref="IPresentationImage"/>'s overlay graphics.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The input <see cref="IPresentationImage"/> must implement <see cref="IOverlayGraphicsProvider"/> or an
+		/// <see cref="InvalidCastException"/> will be thrown.
+		/// </para>
+		/// <para>
+		/// The input <paramref name="graphics"/> must exist in the <see cref="IPresentationImage"/>'s overlay graphics or
+		/// an <see cref="InvalidOperationException"/> will be thrown.
+		/// </para>
+		/// </remarks>
+		public static InsertRemoveOverlayGraphicUndoableCommand GetRemoveCommand(IPresentationImage presentationImage, IList<IGraphic> graphics) {
+			Platform.CheckForNullReference(presentationImage, "presentationImage");
+			Platform.CheckForNullReference(graphics, "graphics");
+			Platform.CheckPositive(graphics.Count, "graphics");
+
+			IOverlayGraphicsProvider overlayProvider = presentationImage as IOverlayGraphicsProvider;
+			Platform.CheckForInvalidCast(overlayProvider, "presentationImage", typeof(IOverlayGraphicsProvider).FullName);
+
+			foreach (IGraphic graphic in graphics)
+			{
+				if (!overlayProvider.OverlayGraphics.Contains(graphic))
+					throw new InvalidOperationException("Cannot create 'remove' command; one or more graphics are not currently in the collection.");
+			}
+
+			List<GraphicItem> list = new List<GraphicItem>(graphics.Count);
+			for (int n = 0; n < graphics.Count; n++) {
+				list.Add(new GraphicItem(graphics[n]));
+			}
+
+			return new InsertRemoveOverlayGraphicUndoableCommand(overlayProvider, list.AsReadOnly());
+		}
+
+		#region GraphicItem Class
+
+		/// <summary>
+		/// Represents an IGraphic to be inserted at a certain index, or removed
+		/// </summary>
+		private class GraphicItem {
+			private readonly IGraphic _graphic;
+			private int _index;
+
+			/// <summary>
+			/// Creates an item representing deleting the specified graphic.
+			/// </summary>
+			/// <param name="graphic"></param>
+			public GraphicItem(IGraphic graphic)
+				: this(graphic, -1) {
+			}
+
+			/// <summary>
+			/// Creates an item representing inserting the specified graphic at the given index, or remove the graphic if the index is less than 0.
+			/// </summary>
+			/// <param name="graphic"></param>
+			/// <param name="index"></param>
+			public GraphicItem(IGraphic graphic, int index)
+			{
+				_graphic = graphic;
+				_index = index;
+			}
+
+			public IGraphic Graphic
+			{
+				get { return _graphic; }
+			}
+
+			public int Index
+			{
+				get { return _index; }
+			}
+
+			public void Toggle(GraphicCollection overlayGraphics)
+			{
+				// use the index as a state toggle to determine if we are inserting it at this index, or removing it (from whatever index the item is actually at)
+				if (_index >= 0)
+				{
+					overlayGraphics.Insert(_index, _graphic);
+					_index = -1;
+				}
+				else
+				{
+					_index = overlayGraphics.IndexOf(_graphic);
+					overlayGraphics.Remove(_graphic);
+				}
+			}
+		}
+
+		#endregion
 	}
 }

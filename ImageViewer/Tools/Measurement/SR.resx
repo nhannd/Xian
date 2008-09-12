@@ -238,4 +238,10 @@
     <value>An error has occurred while analyzing the Roi.
 Please check the log for more details.</value>
   </data>
+  <data name="DeleteAllGraphics" xml:space="preserve">
+    <value>Delete All</value>
+  </data>
+  <data name="DeleteAllMeasurementGraphics" xml:space="preserve">
+    <value>Delete All Measurements</value>
+  </data>
 </root>

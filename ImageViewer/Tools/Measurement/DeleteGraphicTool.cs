@@ -29,8 +29,11 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 
@@ -41,6 +44,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MenuAction("delete", "basicgraphic-menu/DeleteGraphic", "Delete")]
 	[Tooltip("delete", "DeleteGraphic")]
+
+	[MenuAction("deleteall", "basicgraphic-menu/DeleteAllGraphics", "DeleteAll")]
+	[Tooltip("deleteall", "DeleteAllGraphics")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
 
@@ -77,6 +83,78 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			command.Name = SR.NameDeleteGraphic;
 
 			viewer.CommandHistory.AddCommand(command);
+		}
+
+		/// <summary>
+		/// Delete all measurements tool for the graphic context menu
+		/// </summary>
+		public void DeleteAll()
+		{
+			IGraphic graphic = this.Context.Graphic;
+			if (graphic == null)
+				return;
+
+			IPresentationImage image = graphic.ParentPresentationImage;
+			if (image == null || !(image is IOverlayGraphicsProvider))
+				return;
+
+			//the parent image will be null once the graphic is removed, so we store the history
+			// and the presentation image first.
+			IImageViewer viewer = this.Context.Graphic.ImageViewer;
+
+			UndoableCommand command = DeleteAllGraphics(image);
+
+			viewer.CommandHistory.AddCommand(command);
+		}
+
+		/// <summary>
+		/// Delete all measurements tool for the general imageviewer tile context menu
+		/// </summary>
+		[MenuAction("deleteall", "imageviewer-contextmenu/DeleteAllMeasurementGraphics", "DeleteAll")]
+		[Tooltip("deleteall", "DeleteAllMeasurementGraphics")]
+		[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+		public class DeleteAllMeasurementGraphicsTool : ImageViewerTool
+		{
+			public void DeleteAll()
+			{
+				IPresentationImage image = base.SelectedPresentationImage;
+				if (image == null || !(image is IOverlayGraphicsProvider))
+					return;
+
+				IImageViewer viewer = base.ImageViewer;
+
+				UndoableCommand command = DeleteAllGraphics(image);
+
+				viewer.CommandHistory.AddCommand(command);
+			}
+		}
+
+		/// <summary>
+		/// Deletes all the the measurements from a particular image and generates the corresponding undo command
+		/// </summary>
+		/// <param name="image">The <see cref="IPresentationImage"/>; must also be an <see cref="IOverlayGraphicsProvider"/></param>
+		/// <returns>The undo command.</returns>
+		private static UndoableCommand DeleteAllGraphics(IPresentationImage image) 
+		{
+			List<IGraphic> graphics = new List<IGraphic>();
+			List<int> indices = new List<int>();
+			IOverlayGraphicsProvider overlayProvider = (IOverlayGraphicsProvider)image;
+
+			for (int n=0; n< overlayProvider.OverlayGraphics.Count; n++)
+			{
+				IGraphic graphic = overlayProvider.OverlayGraphics[n];
+				if (graphic is InteractiveGraphics.RoiGraphic) { // assume all measurements derive from roigraphic
+					graphics.Add(graphic);
+					indices.Add(n);
+				}
+			}
+
+			foreach (IGraphic graphic in graphics) {
+				overlayProvider.OverlayGraphics.Remove(graphic);
+			}
+			image.Draw();
+
+			return InsertRemoveOverlayGraphicUndoableCommand.GetInsertCommand(image, graphics.AsReadOnly(), indices.AsReadOnly());
 		}
 	}
 }

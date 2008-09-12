@@ -106,6 +106,24 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete All.
+        /// </summary>
+        public static string DeleteAllGraphics {
+            get {
+                return ResourceManager.GetString("DeleteAllGraphics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete All Measurements.
+        /// </summary>
+        public static string DeleteAllMeasurementGraphics {
+            get {
+                return ResourceManager.GetString("DeleteAllMeasurementGraphics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string DeleteGraphic {
