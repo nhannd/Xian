@@ -91,7 +91,10 @@
 				
 				initAcquisitionTable(facility);  
 
-				StructuredReportForm.create(data, $("structuredReport"));
+				if(!readOnly)
+				{
+					StructuredReportForm.create(data, $("structuredReport"));
+				}
 			}
 			catch(e)
 			{
