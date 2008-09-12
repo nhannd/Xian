@@ -558,4 +558,7 @@ Please check the log for more details.</value>
   <data name="CommandMatchFieldOfView" xml:space="preserve">
     <value>Match Field of View</value>
   </data>
+  <data name="StandardTools" xml:space="preserve">
+    <value>Standard Tools</value>
+  </data>
 </root>

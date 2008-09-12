@@ -133,10 +133,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			Point sourcePointRounded = Point.Truncate(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
-			//TODO: Make these user preferences later.
-			bool showPixelValue = true;
-			bool showModalityValue = true;
-			bool showVoiValue = true;
+			Config.ToolSettings settings = Config.ToolSettings.Default;
+			bool isCT = (String.Compare(_selectedImageSop.Modality, "CT", true) == 0);
+			bool showPixelValue = !isCT || settings.ShowCTRawPixelValue;
+			bool showModalityValue = isCT || settings.ShowNonCTModPixelValue;
+			bool showVoiValue = settings.ShowVOIPixelValue;
 
 			string probeString = String.Format("LOC: x={0}, y={1}", SR.LabelNotApplicable, SR.LabelNotApplicable);
 			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);

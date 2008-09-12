@@ -1000,6 +1000,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Standard Tools.
+        /// </summary>
+        internal static string StandardTools {
+            get {
+                return ResourceManager.GetString("StandardTools", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Preset.
         /// </summary>
         internal static string TitleAddPreset {

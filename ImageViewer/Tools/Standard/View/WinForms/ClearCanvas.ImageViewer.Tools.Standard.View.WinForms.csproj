@@ -43,6 +43,13 @@
       <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CineApplicationComponentView.cs" />
+    <Compile Include="StandardToolsConfigComponentView.cs" />
+    <Compile Include="StandardToolsConfigComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StandardToolsConfigComponentControl.Designer.cs">
+      <DependentUpon>StandardToolsConfigComponentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -123,6 +130,10 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StandardToolsConfigComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StandardToolsConfigComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
