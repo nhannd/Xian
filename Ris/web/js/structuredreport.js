@@ -33,6 +33,8 @@ var StructuredReportForm = {
 			this._data.obusReportType = null;
 
 			this._initializeData(this._data);
+			
+			this.refreshPreview();
 		}
 	},
 
