@@ -59,6 +59,7 @@ namespace ClearCanvas.Ris.Application.Services
 			return new ProcedureStepDetail(
 				ps.GetRef(),
 				ps.Name,
+                ps.GetType().Name,
 				EnumUtils.GetEnumValueInfo(ps.State, context),
 				ps.CreationTime,
 				ps.Scheduling == null ? null : ps.Scheduling.StartTime,

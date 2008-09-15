@@ -104,6 +104,15 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
         [DataMember]
         public EnumValueInfo ProcedureStatus;
 
+        [DataMember]
+        public FacilitySummary ProcedurePerformingFacility;
+
+        [DataMember]
+        public bool ProcedurePortable;
+
+        [DataMember]
+        public EnumValueInfo ProcedureLaterality;
+
         #endregion
     }
 }

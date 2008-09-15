@@ -92,9 +92,6 @@
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 						Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
-						Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
-						Field.setValue($("SchedulingRequestDateTime"), Ris.formatDateTime(orderDetail.SchedulingRequestTime));
-						Field.setValue($("EnteredDateTime"), Ris.formatDateTime(orderDetail.EnteredTime));
 						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 						if (orderDetail.CancelReason)
 							Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
@@ -147,6 +144,11 @@
 					{
 						Field.show($("notesSection"), false);
 					}
+					
+					if (orderDetail && orderDetail.Procedures.length)
+						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+					else
+						Field.show($("proceduresTable"), false);
 				}
 	            catch(e)
 	            {
@@ -195,32 +197,22 @@
 			</table>
 
 			<div id="consultationOverviewSection">
-				<p class="sectionheading">Imaging Consultation Overview</p>
+				<p class="sectionheading">Imaging Service</p>
 				<table width="100%" border="0">
 					<tr>
-						<td width="120" class="propertyname">Imaging Service</td>
-						<td width="200"><div id="DiagnosticService"/></td>
 						<td width="120" class="propertyname">Accession Number</td>
 						<td width="200"><div id="AccessionNumber"/></td>
-					</tr>
-					<tr>
 						<td width="120" class="propertyname">Priority</td>
 						<td width="200"><div id="OrderPriority"/></td>
 					</tr>
 					<tr>
-						<td width="120" class="propertyname">Ordering Facility</td>
-						<td width="200"><div id="OrderingFacility"/></td>
-						<td width="120" class="propertyname">Scheduling Request Time</td>
-						<td width="200"><div id="SchedulingRequestDateTime"/></td>
-					</tr>
-					<tr>
 						<td width="120" class="propertyname">Ordering Physician</td>
 						<td width="200"><div id="OrderingPhysician"/></td>
-						<td width="120" class="propertyname">Entered Time</td>
-						<td width="200"><div id="EnteredDateTime"/></td>
+						<td width="120" class="propertyname">Ordering Facility</td>
+						<td width="200"><div id="OrderingFacility"/></td>
 					</tr>
 					<tr>
-						<td width="120" class="propertyname">Reason for Study</td>
+						<td width="120" class="propertyname">Indication</td>
 						<td colspan="3"><div id="ReasonForStudy"/></td>
 					</tr>
 					<tr id="CancelReasonSection">
@@ -228,8 +220,16 @@
 						<td width="200" colspan="4"><div id="CancelReason"/></td>
 					</tr>
 				</table>
-				<br>
-				
+				<table border="0" id="proceduresTable">
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Status</td>
+						<td>Schedule</td>
+						<td>Start/End Time</td>
+						<td>Performing Staff</td>
+					</tr>
+				</table>
+
 				<p class="sectionheading">Insurance</p>
 				<table>	
 					<tr>
@@ -286,7 +286,7 @@
 			            <td>Procedure</td>
 			            <td>Schedule</td>
 			            <td>Status</td>
-			            <td>Ordering Facility</td>
+			            <td>Performing Facility</td>
 			            <td>Ordering Physician</td>
 		            </tr>
 		        </table>
@@ -299,7 +299,7 @@
 			            <td>Procedure</td>
 			            <td>Schedule</td>
 			            <td>Status</td>
-			            <td>Ordering Facility</td>
+			            <td>Performing Facility</td>
 			            <td>Ordering Physician</td>
 		            </tr>
 		        </table>

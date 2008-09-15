@@ -150,7 +150,7 @@
 							Field.show($("notesSection"), false);
 
 						if (orderDetail.Procedures.length)
-							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+							createProtocolProceduresTable($("proceduresTable"), orderDetail.Procedures);
 						else
 							Field.show($("proceduresTable"), false);
 					}
@@ -317,10 +317,10 @@
 				<p class="sectionheading">Active Requests for Imaging Consultation</p>
 		        <table width="100%" border="0" id="activeProceduresTable">
 		            <tr class="tableheading">
-			            <td>Requested Procedure</td>
+			            <td>Procedure</td>
 			            <td>Schedule</td>
 			            <td>Status</td>
-			            <td>Ordering Facility</td>
+			            <td>Performing Facility</td>
 			            <td>Ordering Physician</td>
 		            </tr>
 		        </table>
@@ -330,10 +330,10 @@
 				<p class="sectionheading">Past Requests for Imaging Consultation</p>
 		        <table width="100%" border="0" id="pastProceduresTable">
 		            <tr class="tableheading">
-			            <td>Requested Procedure</td>
+			            <td>Procedure</td>
 			            <td>Schedule</td>
 			            <td>Status</td>
-			            <td>Ordering Facility</td>
+			            <td>Performing Facility</td>
 			            <td>Ordering Physician</td>
 		            </tr>
 		        </table>

@@ -130,6 +130,9 @@ namespace ClearCanvas.Ris.Application.Services.BrowsePatientData
             data.ProcedureCheckInTime = rp.ProcedureCheckIn.CheckInTime;
             data.ProcedureCheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
             data.ProcedureStatus = EnumUtils.GetEnumValueInfo(rp.Status, context);
+            data.ProcedurePerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
+            data.ProcedurePortable = rp.Portable;
+            data.ProcedureLaterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
         }
 
         private void UpdateListItem(ReportListItem data, Report report, IPersistenceContext context)

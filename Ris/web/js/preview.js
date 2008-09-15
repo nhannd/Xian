@@ -90,6 +90,52 @@ function getDescriptiveTime(dateTime)
 	}
 }
 
+function formatProcedureName(procedureType, portable, laterality)
+{
+	var procedureDecorator = portable ? "Portable" : null;
+	if (laterality.Code != "N")
+		procedureDecorator = procedureDecorator ? procedureDecorator + "/" + laterality.Value : laterality.Value;
+
+	procedureDecorator = procedureDecorator ? "(" + procedureDecorator + ")" : null;
+	return procedureType.Name + procedureDecorator;
+}
+
+function formatProcedureSchedule(scheduledStartTime, schedulingRequestTime)
+{
+	if (scheduledStartTime)
+		return getDescriptiveTime(scheduledStartTime); 
+	else if (schedulingRequestTime)
+		return "Requested for " + getDescriptiveTime(schedulingRequestTime);
+	else
+		return "Not scheduled";
+}
+
+function formatProcedureStatus(status, scheduledStartTime, startTime, checkInTime, checkOutTime)
+{
+	if (!scheduledStartTime && !startTime)
+		return "Unscheduled";
+
+	if (status.Code == 'SC' && checkInTime)
+		return "Checked-In";
+	
+	if ((status.Code == 'IP' || status.Code == 'CM') && checkOutTime)
+		return "Completed";
+
+	return status.Value; 
+}
+
+function formatProcedureStartEndTime(startTime, checkOutTime)
+{
+	if (!startTime)
+		return "Not started";
+
+	if (checkOutTime)
+		return "Ended " + getDescriptiveTime(checkOutTime);
+	else
+		return "Started " + getDescriptiveTime(startTime);
+}
+	
+
 var gImagingRequestsTablePractitioners = [];	// hack: global array to hold practitioners that appear in the table, so that javascript callback can use the practitioner object
 function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccessionNumber)
 {
@@ -97,47 +143,23 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 		 [
 			{   label: "Procedure",
 				cellType: "text",
-				getValue: function(item) { return item.ProcedureType.Name; }
+				getValue: function(item) { return formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
 			},
 			{   label: "Schedule",
 				cellType: "text",
-				getValue: function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime == null 
-					? "Requested for " + getDescriptiveTime(item.SchedulingRequestTime) 
-					: getDescriptiveTime(item.ProcedureScheduledStartTime); 
-				}
+				getValue: function(item) { return formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime); }
 			},
 			{   label: "Status",
 				cellType: "text",
-				getValue: function(item) 
-				{ 
-					if (item.ProcedureScheduledStartTime == null)
-						return "Unscheduled";
-
-					if (item.ProcedureStatus.Code == 'SC' && item.ProcedureCheckInTime != null)
-						return "Checked-In";
-					
-					if ((item.ProcedureStatus.Code == 'IP' || item.ProcedureStatus.Code == 'CM') 
-						&& item.ProcedureCheckOutTime != null)
-						return "Completed";
-
-					return  item.ProcedureStatus.Value; 
-				}
+				getValue: function(item) { return formatProcedureStatus(item.ProcedureStatus, item.ProcedureScheduledStartTime, item.ProcedureStartTime, item.ProcedureCheckInTime, item.ProcedureCheckOutTime); }
 			},
-			{   label: "Ordering Facility",
+			{   label: "Performing Facility",
 				cellType: "text",
-				getValue: function(item) { return item.OrderingFacility.Code; }
+				getValue: function(item) { return formatPerformingFacility(item); }
 			},
 			{   label: "Ordering Physician",
 				cellType: "html",
-				getValue: function(item) 
-				{ 
-					// return "<a href=\"javascript:Ris.openPractitionerDetails('" + JSML.create(item.OrderingPractitioner, "Practitioner") + "')\">" 
-						// + Ris.formatPersonName(item.OrderingPractitioner.Name)
-						// + "</a>"; 
-					return Ris.formatPersonName(item.OrderingPractitioner.Name);
-				}
+				getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitioner.Name); }
 			},
 			{
 				label: "Ordering Physician Lookup",
@@ -152,15 +174,20 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 				}
 			}
 		 ]);
-		 
-		if (highlightAccessionNumber)
+
+	function formatPerformingFacility(item)
+	{
+		 return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility.Code : "";
+	}
+	
+	if (highlightAccessionNumber)
+	{
+		htmlTable.renderRow = function(sender, args)
 		{
-			htmlTable.renderRow = function(sender, args)
-			{
-				if(args.item.AccessionNumber == highlightAccessionNumber)
-					args.htmlRow.className = "highlight";
-			};
-		}
+			if(args.item.AccessionNumber == highlightAccessionNumber)
+				args.htmlRow.className = "highlight";
+		};
+	}
 		 
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(patientOrderData);
@@ -204,32 +231,138 @@ function createProceduresTable(htmlTable, procedures)
 		 [
 			{   label: "Procedure",
 				cellType: "text",
-				getValue: function(item) { return item.Type.Name; }
+				getValue: function(item) { return formatProcedureName(item.Type, item.Portable, item.Laterality); }
 			},
-			{   label: "Protocol Status",
-				cellType: "html",
-				getValue: function(item) 
-				{ 
-					if(!item.Protocol) return "Not Protocolled";
-					
-					var status = item.Protocol.Status.Value;
-					if(item.Protocol.Status.Code == "RJ")
-					{
-						status = status + " - "+ item.Protocol.RejectReason.Value;
-					}
-					return status; 
-				}
+			{   label: "Status",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureStatus(item.Status, item.ScheduledStartTime, item.StartTime, item.CheckInTime, item.CheckOutTime); }
 			},
-			{   label: "Protocol Codes",
-				cellType: "html",
-				getValue: function(item) { return item.Protocol ? String.combine(item.Protocol.Codes.map(function(code) { return code.Name; }), "<br>") : ""; }
+			{   label: "Schedule",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureSchedule(item.ScheduledStartTime, null); }
+			},
+			{   label: "Start/End Time",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureStartEndTime(item.StartTime, item.CheckOutTime); }
+			},
+			{   label: "Performing Staff",
+				cellType: "text",
+				getValue: function(item) { return formatPerformingStaff(item); }
+			}
+		 ]);
+
+	function formatPerformingStaff(procedure)
+	{
+		var firstMps = procedure.ProcedureSteps.select(
+			function(step) { return step.StepClassName == "ModalityProcedureStep"; }).firstElement();
+
+		if (!firstMps)
+			return "";
+		else if (firstMps.Performer)
+			return Ris.formatPersonName(firstMps.Performer.Name);
+		else if (firstMps.ScheduledPerformer)
+			return Ris.formatPersonName(firstMps.ScheduledPerformer.Name);
+		else
+			return "";
+	}
+
+	htmlTable.rowCycleClassNames = ["row0", "row1"];
+	htmlTable.bindItems(procedures);
+}
+
+function createProtocolProceduresTable(htmlTable, procedures)
+{
+	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+		 [
+			{   label: "Procedure",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureName(item.Type, item.Portable, item.Laterality); }
+			},
+			{   label: "Status",
+				cellType: "text",
+				getValue: function(item) { return formatProtocolStatus(item.Protocol); }
+			},
+			{   label: "Protocol",
+				cellType: "text",
+				getValue: function(item) { return formatProtocolCode(item.Protocol); }
 			},
 			{   label: "Author",
 				cellType: "text",
-				getValue: function(item) { return item.Protocol && item.Protocol.Author ? Ris.formatPersonName(item.Protocol.Author.Name) : ""; }
+				getValue: function(item) { return formatProtocolAuthor(item.Protocol); }
+			},
+			{   label: "WTIS",
+				cellType: "text",
+				getValue: function(item) { return formatProtocolUrgency(item.Protocol); }
 			}
 		 ]);
-		 
+	
+	function formatProtocolStatus(protocol)
+	{
+		if(!protocol)
+			return "Not Protocolled";
+
+		if(protocol.Status.Code == "RJ")
+			return protocol.Status.Value + " - "+ item.Protocol.RejectReason.Value;
+
+		return protocol.Status.Value; 
+	}
+	
+	function formatProtocolCode(protocol)
+	{
+		if (!protocol)
+			return "";
+			
+		return String.combine(item.Protocol.Codes.map(
+			function(code) { return code.Name; }), 
+			"<br>");
+	}
+	
+	function formatProtocolAuthor(protocol)
+	{
+		if (!protocol || !protocol.Author)
+			return "";
+		
+		return Ris.formatPersonName(protocol.Author.Name);
+	}
+	
+	function formatProtocolUrgency(protocol)
+	{
+		if (!protocol)
+			return "";
+			
+		return protocol.Urgency.Value;
+	}
+	
+	htmlTable.rowCycleClassNames = ["row0", "row1"];
+	htmlTable.bindItems(procedures);
+}
+
+function createReportingProceduresTable(htmlTable, procedures)
+{
+	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+		 [
+			{   label: "Procedure",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureName(item.Type, item.Portable, item.Laterality); }
+			},
+			{   label: "Status",
+				cellType: "text",
+				getValue: function(item) { return "TODO"; }
+			},
+			{   label: "Start/End Time",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureStartEndTime(item.StartTime, item.CheckOutTime); }
+			},
+			{   label: "Performing Staff",
+				cellType: "text",
+				getValue: function(item) { return formatPerformingStaff(item); }
+			},
+			{   label: "Owner",
+				cellType: "text",
+				getValue: function(item) { return return "TODO"; }
+			}
+		 ]);
+
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(procedures);
 }
@@ -270,7 +403,6 @@ function createOrderNotesTable(htmlTable, notes, categoryFilter)
 	htmlTable.rowCycleClassNames = ["row1", "row0"];
 	htmlTable.bindItems(filteredNotes);
 }
-
 
 function orderRequestScheduledDateComparison(data1, data2)
 {
