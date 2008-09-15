@@ -153,12 +153,12 @@
 						if (activeProcedures.length == 0)
 							Field.show($("activeProceduresSection"), false);
 						else
-							createImagingRequestsTable($("activeProceduresTable"), activeProcedures, currentAccession);
+							createImagingServiceTable($("activeImagingServiceTable"), activeProcedures, currentAccession);
 
 						if (pastProcedures.length == 0)
 							Field.show($("pastProceduresSection"), false);
 						else
-							createImagingRequestsTable($("pastProceduresTable"), pastProcedures, currentAccession);
+							createImagingServiceTable($("pastImagingServiceTable"), pastProcedures, currentAccession);
 					}
 				}
 				catch(e)
@@ -247,8 +247,8 @@
 			</div>
 
 			<div id="activeProceduresSection">
-				<p class="sectionheading">Active Requests for Imaging Consultation</p>
-				<table border="0" id="activeProceduresTable">
+				<p class="sectionheading">Active Imaging Service</p>
+				<table border="0" id="activeImagingServiceTable">
 					<tr class="tableheading">
 						<td>Procedure</td>
 						<td>Schedule</td>
@@ -260,8 +260,8 @@
 			</div>
 
 			<div id="pastProceduresSection">
-				<p class="sectionheading">Past Requests for Imaging Consultation</p>
-				<table border="0" id="pastProceduresTable">
+				<p class="sectionheading">Past Imaging Service</p>
+				<table border="0" id="pastImagingServiceTable">
 					<tr class="tableheading">
 						<td>Procedure</td>
 						<td>Schedule</td>

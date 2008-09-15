@@ -93,10 +93,10 @@ function getDescriptiveTime(dateTime)
 function formatProcedureName(procedureType, portable, laterality)
 {
 	var procedureDecorator = portable ? "Portable" : null;
-	if (laterality.Code != "N")
+	if (laterality && laterality.Code != "N")
 		procedureDecorator = procedureDecorator ? procedureDecorator + "/" + laterality.Value : laterality.Value;
 
-	procedureDecorator = procedureDecorator ? "(" + procedureDecorator + ")" : null;
+	procedureDecorator = procedureDecorator ? "(" + procedureDecorator + ")" : "";
 	return procedureType.Name + procedureDecorator;
 }
 
@@ -131,13 +131,26 @@ function formatProcedureStartEndTime(startTime, checkOutTime)
 
 	if (checkOutTime)
 		return "Ended " + getDescriptiveTime(checkOutTime);
-	else
-		return "Started " + getDescriptiveTime(startTime);
+
+	return "Started " + getDescriptiveTime(startTime);
 }
-	
+
+function formatProcedurePerformingStaff(procedure)
+{
+	var firstMps = procedure.ProcedureSteps.select(function(step) { return step.StepClassName == "ModalityProcedureStep"; }).firstElement();
+
+	if (!firstMps)
+		return "";
+	else if (firstMps.Performer)
+		return Ris.formatPersonName(firstMps.Performer.Name);
+	else if (firstMps.ScheduledPerformer)
+		return Ris.formatPersonName(firstMps.ScheduledPerformer.Name);
+	else
+		return "";
+}
 
 var gImagingRequestsTablePractitioners = [];	// hack: global array to hold practitioners that appear in the table, so that javascript callback can use the practitioner object
-function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccessionNumber)
+function createImagingServiceTable(htmlTable, patientOrderData, highlightAccessionNumber)
 {
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
@@ -158,7 +171,7 @@ function createImagingRequestsTable(htmlTable, patientOrderData, highlightAccess
 				getValue: function(item) { return formatPerformingFacility(item); }
 			},
 			{   label: "Ordering Physician",
-				cellType: "html",
+				cellType: "text",
 				getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitioner.Name); }
 			},
 			{
@@ -247,24 +260,9 @@ function createProceduresTable(htmlTable, procedures)
 			},
 			{   label: "Performing Staff",
 				cellType: "text",
-				getValue: function(item) { return formatPerformingStaff(item); }
+				getValue: function(item) { return formatProcedurePerformingStaff(item); }
 			}
 		 ]);
-
-	function formatPerformingStaff(procedure)
-	{
-		var firstMps = procedure.ProcedureSteps.select(
-			function(step) { return step.StepClassName == "ModalityProcedureStep"; }).firstElement();
-
-		if (!firstMps)
-			return "";
-		else if (firstMps.Performer)
-			return Ris.formatPersonName(firstMps.Performer.Name);
-		else if (firstMps.ScheduledPerformer)
-			return Ris.formatPersonName(firstMps.ScheduledPerformer.Name);
-		else
-			return "";
-	}
 
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(procedures);
@@ -302,7 +300,7 @@ function createProtocolProceduresTable(htmlTable, procedures)
 			return "Not Protocolled";
 
 		if(protocol.Status.Code == "RJ")
-			return protocol.Status.Value + " - "+ item.Protocol.RejectReason.Value;
+			return protocol.Status.Value + " - "+ protocol.RejectReason.Value;
 
 		return protocol.Status.Value; 
 	}
@@ -312,9 +310,7 @@ function createProtocolProceduresTable(htmlTable, procedures)
 		if (!protocol)
 			return "";
 			
-		return String.combine(item.Protocol.Codes.map(
-			function(code) { return code.Name; }), 
-			"<br>");
+		return String.combine(protocol.Codes.map(function(code) { return code.Name; }), "<br>");
 	}
 	
 	function formatProtocolAuthor(protocol)
@@ -355,11 +351,11 @@ function createReportingProceduresTable(htmlTable, procedures)
 			},
 			{   label: "Performing Staff",
 				cellType: "text",
-				getValue: function(item) { return formatPerformingStaff(item); }
+				getValue: function(item) { return formatProcedurePerformingStaff(item); }
 			},
 			{   label: "Owner",
 				cellType: "text",
-				getValue: function(item) { return return "TODO"; }
+				getValue: function(item) { return "TODO"; }
 			}
 		 ]);
 
