@@ -69,7 +69,7 @@
   </Choose>
   
 	<Target Name="BuildSolution" >
-    <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
+    <!--<RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />-->
     <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
 	</Target>
 

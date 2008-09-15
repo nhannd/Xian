@@ -75,7 +75,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		private Pen _pen;
 		private SolidBrush _brush;
-		private bool _firstImage;
 
 		/// <summary>
 		/// Default constructor.
@@ -124,7 +123,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 		protected override void Initialize(DrawArgs drawArgs)
 		{
 			base.Initialize(drawArgs);
-			_firstImage = true;
 		}
 
 		/// <summary>
@@ -151,14 +149,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			clock.Start();
 
 			if (Surface.FinalBuffer != null)
-			{
-				if (Surface.ClipRectangle.Width != 0 && Surface.ClipRectangle.Height != 0)
-				{
-					System.Drawing.Graphics graphics = System.Drawing.Graphics.FromHdc(Surface.ContextID);
-					Surface.FinalBuffer.RenderTo(graphics, Surface.ClipRectangle);
-					graphics.Dispose();
-				}
-			}
+				Surface.FinalBuffer.RenderToScreen();
 
 			clock.Stop();
 			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.Refresh", clock.Seconds);
@@ -174,55 +165,22 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			const int bytesPerPixel = 4;
 
-			if (_firstImage)
+			Surface.ImageBuffer.Graphics.Clear(Color.Black);
+
+			BitmapData bitmapData = Surface.ImageBuffer.Bitmap.LockBits(
+				new Rectangle(0, 0, Surface.ImageBuffer.Bitmap.Width, Surface.ImageBuffer.Bitmap.Height),
+				ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
+
+			try
 			{
-				// If we're rendering the first image in the scene graph, 
-				// render it directly to the final buffer, since there's no
-				// alpha compositing to worry about.  95% of the time, there will only
-				// be one image in the scene graph, so optimize for that case
-				BitmapData bitmapData = Surface.FinalBuffer.Bitmap.LockBits(
-					new Rectangle(0, 0, Surface.FinalBuffer.Bitmap.Width, Surface.FinalBuffer.Bitmap.Height),
-					ImageLockMode.ReadWrite,
-					Surface.FinalBuffer.Bitmap.PixelFormat);
-
-				try
-				{
-					ImageRenderer.Render(imageGraphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, Surface.ClientRectangle);
-				}
-				finally
-				{
-					_firstImage = false;
-					Surface.FinalBuffer.Bitmap.UnlockBits(bitmapData);
-				}
+				ImageRenderer.Render(imageGraphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, Surface.ClientRectangle);
 			}
-			else
+			finally
 			{
-				// If we're rendering a subsequent image in the scene graph, we render
-				// to a temporary buffer first, then we render that buffer to the final
-				// buffer to produce the desired compositing result.  Not very efficient
-				// approach, since ideally, we'd do the compositing right on the final
-				// buffer, but this will do for now.
-				Bitmap bmp = new Bitmap(Surface.FinalBuffer.Width, Surface.FinalBuffer.Height, PixelFormat.Format32bppArgb);
-
-				BitmapData bitmapData = bmp.LockBits(
-					new Rectangle(0, 0, bmp.Width, bmp.Height),
-					ImageLockMode.ReadWrite,
-					bmp.PixelFormat);
-
-				try
-				{
-					// Render to temporary buffer
-					ImageRenderer.Render(imageGraphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, Surface.ClientRectangle);
-				}
-				finally
-				{
-					bmp.UnlockBits(bitmapData);
-				}
-
-				// Perform compositing by rendering temporary buffer to final buffer
-				System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(Surface.FinalBuffer.Bitmap);
-				g.DrawImage(bmp, Surface.ClientRectangle, Surface.ClientRectangle, GraphicsUnit.Pixel);
+				Surface.ImageBuffer.Bitmap.UnlockBits(bitmapData);
 			}
+
+			Surface.FinalBuffer.RenderImage(Surface.ImageBuffer);
 
 			clock.Stop();
 			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.DrawImageGraphic", clock.Seconds);

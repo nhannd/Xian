@@ -90,6 +90,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
 			_tileController.CaptureChanging += new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
+
+			this.DoubleBuffered = false;
+			this.SetStyle(ControlStyles.DoubleBuffer, false);
+			this.SetStyle(ControlStyles.OptimizedDoubleBuffer, false);
+			this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.Opaque, true);
 		}
 
 		public Tile Tile
@@ -148,27 +153,34 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
+			System.Drawing.Graphics graphics = this.CreateGraphics();
+
 			if (this.Surface != null)
 			{
+				this.Surface.WindowID = this.Handle;
+				this.Surface.ContextID = graphics.GetHdc();
 				this.Surface.ClientRectangle = this.ClientRectangle;
 				this.Surface.ClipRectangle = this.ClientRectangle;
+
+				DrawArgs args = new DrawArgs(
+					this.Surface,
+					new WinformsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
+					ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
+
+				try
+				{
+					_tile.Draw(args);
+				}
+				catch (Exception ex)
+				{
+					MessageBox mb = new MessageBox();
+					mb.Show(ex.Message);
+				}
+
+				graphics.ReleaseHdc(this.Surface.ContextID);
+				graphics.Dispose();
 			}
 
-			DrawArgs args = new DrawArgs(
-				this.Surface, 
-				new WinformsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
-				ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
-
-			try
-			{
-				_tile.Draw(args);
-			}
-			catch (Exception ex)
-			{
-				MessageBox mb = new MessageBox();
-				mb.Show(ex.Message);
-			}
-			
 			Invalidate();
 			Update();
 
@@ -215,6 +227,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			}
 			else
 			{
+				this.Surface.WindowID = this.Handle;
 				this.Surface.ContextID = e.Graphics.GetHdc();
 				this.Surface.ClientRectangle = this.ClientRectangle;
 				this.Surface.ClipRectangle = e.ClipRectangle;
@@ -237,7 +250,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				e.Graphics.ReleaseHdc(this.Surface.ContextID);
 			}
 
-			base.OnPaint(e);
+			//base.OnPaint(e);
 		}
 
 		protected override void OnPaintBackground(PaintEventArgs e)

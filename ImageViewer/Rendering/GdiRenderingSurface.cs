@@ -40,7 +40,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 	internal sealed class GdiRenderingSurface : IRenderingSurface
 	{
 		private ImageBuffer _imageBuffer;
-		private ImageBuffer _finalBuffer;
+		private BackBuffer _finalBuffer;
+
 		private IntPtr _windowID;
 		private IntPtr _contextID;
 		private Rectangle _clientRectangle;
@@ -48,14 +49,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		public GdiRenderingSurface(IntPtr windowID, int width, int height)
 		{
-			if (width == 0 || height == 0)
-				return;
-
-			this.ClientRectangle = new Rectangle(0, 0, width, height);
+			_imageBuffer = new ImageBuffer();
+			_finalBuffer = new BackBuffer();
 
 			_windowID = windowID;
+			this.ClientRectangle = new Rectangle(0, 0, width, height);
 		}
-
 
 		#region IRenderingSurface Members
 
@@ -68,7 +67,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 		public IntPtr ContextID 
 		{
 			get { return _contextID; }
-			set { _contextID = value; }
+			set 
+			{ 
+				_contextID = value;
+				FinalBuffer.ContextID = _contextID;
+			}
 		}
 
 		/// <summary>
@@ -90,7 +93,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 				if (_clientRectangle != value)
 				{
 					_clientRectangle = value;
-					CreateBuffers(_clientRectangle.Width, _clientRectangle.Height);
+					_imageBuffer.Size = new Size(_clientRectangle.Width, _clientRectangle.Height);
+					_finalBuffer.ClientRectangle = _clientRectangle;
 				}
 			}
 		}
@@ -108,7 +112,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			set { _clipRectangle = value; }
 		}
 
-
 		#endregion
 
 		public ImageBuffer ImageBuffer
@@ -116,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			get { return _imageBuffer; }
 		}
 
-		public ImageBuffer FinalBuffer
+		public BackBuffer FinalBuffer
 		{
 			get { return _finalBuffer; }
 		}
@@ -147,30 +150,18 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			if (disposing)
 			{
-				DisposeOffscreenBuffers();
-			}
-		}
+				if (_imageBuffer != null)
+				{
+					_imageBuffer.Dispose();
+					_imageBuffer = null;
+				}
 
-		private void DisposeOffscreenBuffers()
-		{
-			if (_imageBuffer != null)
-			{
-				_imageBuffer.Dispose();
-				_imageBuffer = null;
+				if (_finalBuffer != null)
+				{
+					_finalBuffer.Dispose();
+					_finalBuffer = null;
+				}
 			}
-			if (_finalBuffer != null)
-			{
-				_finalBuffer.Dispose();
-				_finalBuffer = null;
-			}
-		}
-
-		private void CreateBuffers(int width, int height)
-		{
-			DisposeOffscreenBuffers();
-
-			_imageBuffer = new ImageBuffer(width, height);
-			_finalBuffer = new ImageBuffer(width, height);
 		}
 	}
 }

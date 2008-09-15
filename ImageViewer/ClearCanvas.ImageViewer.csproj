@@ -233,6 +233,7 @@
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
+    <Compile Include="Rendering\BackBuffer.cs" />
     <Compile Include="Rendering\GDIRenderer.cs" />
     <Compile Include="Rendering\IRendererFactory.cs" />
     <Compile Include="Rendering\RendererBase.cs" />

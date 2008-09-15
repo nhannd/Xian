@@ -37,65 +37,85 @@ using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-    internal class ImageBuffer : IDisposable
+	internal class ImageBuffer : IDisposable
     {
-		protected System.Drawing.Graphics _graphics;
-        protected Bitmap _bitmap;
+        private Bitmap _bitmap;
+		private System.Drawing.Graphics _graphics;
+		private Size _size;
 
-        public ImageBuffer(int width, int height)
+        public ImageBuffer()
         {
-            Initialize(width, height);
-        }
-
-        protected virtual void Initialize(int width, int height)
-        {
-            _bitmap = new Bitmap(width, height);
-			_graphics = System.Drawing.Graphics.FromImage(_bitmap);
-            _graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-            _graphics.Clear(Color.Black);
-        }
-
-		public virtual void RenderTo(System.Drawing.Graphics dest, Rectangle rect)
-        {
-            dest.DrawImage(_bitmap, rect, rect, GraphicsUnit.Pixel);
         }
 
 		public System.Drawing.Graphics Graphics
+		{
+			get
+			{
+				if (_graphics == null)
+				{
+					_graphics = System.Drawing.Graphics.FromImage(this.Bitmap);
+					//_graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+				}
+
+				return _graphics;
+			}
+		}
+
+        public Size Size
         {
-            get { return _graphics; }
-        }
+            get { return _size; }
+			set
+			{
+				if (_size == value)
+					return;
+
+				_size = value;
+				DisposeBuffer();
+			}
+		}
+
+		public int Width
+		{
+			get { return _size.Width; }	
+		}
+
+		public int Height
+		{
+			get { return _size.Height; }	
+		}
 
 		public Bitmap Bitmap
 		{
-			get { return _bitmap; }
+			get
+			{
+				if (_bitmap == null && !_size.IsEmpty)
+					_bitmap = new Bitmap(_size.Width, _size.Height);
+
+				return _bitmap;
+			}
 		}
 
-        public int Height
+		public void Dispose()
         {
-            get { return _bitmap.Height; }
+			DisposeBuffer();
         }
 
-        public int Width
-        {
-            get { return _bitmap.Width; }
-        }
+		private void DisposeBuffer()
+		{
+			if (_graphics != null)
+			{
+				_graphics.Flush();
+				_graphics.Dispose();
+				// MUST set bitmaps and graphics to null after disposal, 
+				// or app will occasionally crash on exit
+				_graphics = null;
+			}
 
-        public virtual void Dispose()
-        {
-            if (_graphics != null)
-            {
-                _graphics.Flush();
-                _graphics.Dispose();
-                // MUST set bitmaps and graphics to null after disposal, 
-                // or app will occasionally crash on exit
-                _graphics = null;
-            }
-
-            if (_bitmap != null)
-            {
-                _bitmap.Dispose();
-                _bitmap = null;
-            }
-        }
-    }
+			if (_bitmap != null)
+			{
+				_bitmap.Dispose();
+				_bitmap = null;
+			}
+		}
+	}
 }
