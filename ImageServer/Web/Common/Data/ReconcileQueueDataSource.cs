@@ -42,46 +42,50 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
 		#region Private members
 
-		private string _patientID;
-		private string _patientName;
-		private ServerPartition _thePartition;
-		private ReconcileQueue _theReconcileQueueItem;
+		private string _existingPatientName;
+        private string _conflictingPatientName;
+	    private string _studyInstanceUID;
+	    private DateTime _receivedTime;
+	    private ReconcileQueue _reconcileQueueItem;
+	    private ServerPartition _partition;
 		#endregion Private members
 
 		#region Public Properties
 
-		public string StatusString
+        public ReconcileQueue TheReconcileQueueItem
+        {
+            get { return _reconcileQueueItem; }
+            set { _reconcileQueueItem = value; }
+        }
+
+	    public ServerPartition ThePartition
+	    {
+            get { return _partition; }
+            set { _partition = value;}
+	    }
+
+		public string ExistingPatientName
 		{
-			get { return _theReconcileQueueItem.ReconcileReasonEnum.Description; }
+			get { return _existingPatientName; }
+			set { _existingPatientName = value; }
 		}
 
-		public string PatientId
-		{
-			get { return _patientID; }
-			set { _patientID = value; }
-		}
+        public string ConflictingPatientName
+        {
+            get { return _conflictingPatientName; }
+            set { _conflictingPatientName = value; }
+        }
 
-		public string PatientsName
-		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
-
-		public ServerEntityKey Key
-		{
-			get { return _theReconcileQueueItem.Key; }
-		}
-
-		public ReconcileQueue TheReconcileQueueItem
-		{
-			get { return _theReconcileQueueItem; }
-			set { _theReconcileQueueItem = value; }
-		}
-		public ServerPartition ThePartition
-		{
-			get { return _thePartition; }
-			set { _thePartition = value; }
-		}
+	    public DateTime ReceivedTime
+	    {
+            get { return _receivedTime; }
+            set { _receivedTime = value; }
+	    }
+	    public string StudyInstanceUID
+	    {
+            get { return _studyInstanceUID; }
+            set { _studyInstanceUID = value; }
+	    }
 		#endregion Public Properties
 	}
 
@@ -94,38 +98,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		#region Private Members
 		private ReconcileQueueController _searchController = new ReconcileQueueController();
-		private string _accessionNumber;
-		private string _patientId;
-		private string _patientName;
-		private string _scheduledDate;
+		private string _description;
+		private string _insertTime;
 		private int _resultCount;
 		private ServerPartition _partition;
 		private ReconcileReasonEnum _reasonEnum;
+
 		private string _dateFormats;
 		private IList<ReconcileQueueSummary> _list = new List<ReconcileQueueSummary>();
 		private IList<ServerEntityKey> _searchKeys;
 		#endregion
 
 		#region Public Properties
-		public string AccessionNumber
+        
+        public string Description
 		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
+			get { return _description; }
+			set { _description = value; }
 		}
-		public string PatientName
+		public string InsertTime
 		{
-			get { return _patientName; }
-			set { _patientName = value; }
-		}
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
-		public string ScheduledDate
-		{
-			get { return _scheduledDate; }
-			set { _scheduledDate = value; }
+			get { return _insertTime; }
+			set { _insertTime = value; }
 		}
 		public ServerPartition Partition
 		{
@@ -177,27 +171,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				return archiveQueueList;
 			}
 
-			WebQueryReconcileQueueParameters parameters = new WebQueryReconcileQueueParameters();
-			parameters.StartIndex = startRowIndex;
-			parameters.MaxRowCount = 25;
-			if (Partition != null)
-				parameters.ServerPartitionKey = Partition.Key;
-			parameters.AccessionNumber = AccessionNumber;
-			parameters.PatientId = PatientId;
-			parameters.PatientsName = PatientName;
-			if (String.IsNullOrEmpty(ScheduledDate))
-				parameters.ScheduledTime = null;
-			else
-				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
+			ReconcileQueueSelectCriteria criteria = new ReconcileQueueSelectCriteria();
 
-			parameters.AccessionNumber = AccessionNumber;
+            // only query for device in this partition
+            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
-			if (ReasonEnum != null)
-				parameters.ReconcileReasonEnum = ReasonEnum;
+            if (!String.IsNullOrEmpty(Description))
+            {
+                string key = Description + "%";
+                key = key.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.Description.Like(key);
+            }
 
-			IList<ReconcileQueue> list = _searchController.FindReconcileQueue(parameters);
+            if (!String.IsNullOrEmpty(InsertTime))
+            {
+                DateTime insertTime = DateTime.Parse(InsertTime);
+                criteria.InsertTime.Like(insertTime);
+            }
 
-			resultCount = parameters.ResultCount;
+			IList<ReconcileQueue> list = _searchController.GetReconcileQueueItems(criteria);
 
 			return list;
 		}
@@ -210,7 +203,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			_list = new List<ReconcileQueueSummary>();
 			foreach (ReconcileQueue item in list)
-				_list.Add(CreateWorkQueueSummary(item));
+				_list.Add(CreateReconcileQueueSummary(item));
 
 			if (ReconcileQueueFoundSet != null)
 				ReconcileQueueFoundSet(_list);
@@ -238,35 +231,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// <remark>
 		/// 
 		/// </remark>
-		private ReconcileQueueSummary CreateWorkQueueSummary(ReconcileQueue item)
+		private ReconcileQueueSummary CreateReconcileQueueSummary(ReconcileQueue item)
 		{
 			ReconcileQueueSummary summary = new ReconcileQueueSummary();
 			summary.TheReconcileQueueItem = item;
 			summary.ThePartition = Partition;
 
 			// Fetch the patient info:
-			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-			StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
-			if (storages == null)
-			{
-				summary.PatientId = "N/A";
-				summary.PatientsName = "N/A";
-				return summary;
-			}
-			StudyAdaptor studyAdaptor = new StudyAdaptor();
+
+            String patientNames = item.Description.Substring(item.Description.IndexOf("=") + 1);
+		    summary.ExistingPatientName = patientNames.Substring(0, patientNames.IndexOf("\r\n"));
+	    	summary.ConflictingPatientName = patientNames.Substring(patientNames.IndexOf("=") + 1);
+
+            StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
+            StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);           
+            StudyAdaptor studyAdaptor = new StudyAdaptor();
 			StudySelectCriteria studycriteria = new StudySelectCriteria();
 			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
 			IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
-			if (studyList == null || studyList.Count == 0)
+			if (studyList != null && studyList.Count > 0)
 			{
-				summary.PatientId = "N/A";
-				summary.PatientsName = "N/A";
-			}
-			else
-			{
-				summary.PatientId = studyList[0].PatientId;
-				summary.PatientsName = studyList[0].PatientsName;
+				summary.StudyInstanceUID = studyList[0].StudyInstanceUid;
 			}
 
 			return summary;

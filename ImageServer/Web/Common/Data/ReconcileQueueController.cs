@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
@@ -43,34 +44,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
         private readonly ReconcileQueueAdaptor _adaptor = new ReconcileQueueAdaptor();
 
-
-		/// <summary>
-		/// Gets a list of <see cref="ReconcileQueue"/> items with specified criteria
-		/// </summary>
-		/// <param name="parameters"></param>
-		/// <returns></returns>
-		public IList<ReconcileQueue> FindReconcileQueue(WebQueryReconcileQueueParameters parameters)
-		{
-			try
-			{
-				IList<ReconcileQueue> list;
-
-				IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-
-				using (IReadContext ctx = _store.OpenReadContext())
-				{
-					IWebQueryReconcileQueue broker = ctx.GetBroker<IWebQueryReconcileQueue>();
-					list = broker.Find(parameters);
-				}
-
-				return list;
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, "FindReconcileQueue failed", e);
-				return new List<ReconcileQueue>();
-			}
-		}
+        public IList<ReconcileQueue> GetReconcileQueueItems(ReconcileQueueSelectCriteria criteria)
+        {
+            return _adaptor.Get(criteria);
+        }
 
         public bool DeleteReconcileQueueItem(ReconcileQueue item)
         {
