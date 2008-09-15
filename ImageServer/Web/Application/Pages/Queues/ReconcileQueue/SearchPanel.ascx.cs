@@ -78,7 +78,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// </summary>
         public void Clear()
         {
-            PatientId.Text = string.Empty;
             PatientName.Text = string.Empty;
             ReasonFilter.SelectedIndex = 0;
         }
@@ -97,6 +96,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
+            ReceivedDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
+
+            ClearReceivedDateButton.OnClientClick = "document.getElementById('" + ReceivedDate.ClientID + "').value=''; return false;";
           
             // setup child controls
             GridPagerBottom.Target = ReconcileQueueItemList.ReconcileQueueGrid;
@@ -143,24 +146,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 										{
 											source.Partition = ((Default)Page).ServerPartition;
 
-											if (!String.IsNullOrEmpty(PatientId.Text))
-												source.PatientId = PatientId.Text;
 											if (!String.IsNullOrEmpty(PatientName.Text))
-												source.PatientName = PatientName.Text;
+												source.Description = PatientName.Text;
+                                            if (!String.IsNullOrEmpty(ReceivedDate.Text))
+                                                source.InsertTime = ReceivedDate.Text;
 										};
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            IList<ReconcileReasonEnum> ReasonItems = ReconcileReasonEnum.GetAll();
-
-            int prevSelectedIndex = ReasonFilter.SelectedIndex;
-            ReasonFilter.Items.Clear();
-            ReasonFilter.Items.Add(new ListItem("All", "All"));
-            foreach (ReconcileReasonEnum s in ReasonItems)
-                ReasonFilter.Items.Add(new ListItem(s.Description, s.Lookup));
-            ReasonFilter.SelectedIndex = prevSelectedIndex;
-
 			if (ReconcileQueueItemList.IsPostBack)
 			{
 				DataBind();

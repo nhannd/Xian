@@ -427,6 +427,13 @@
     <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.designer.cs">
       <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx.cs">
+      <DependentUpon>ReconcileDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx.designer.cs">
+      <DependentUpon>ReconcileDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Queues\ReconcileQueue\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -823,9 +830,12 @@
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabInactiveLeft.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabInactiveMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Tabs\TabInactiveRight.png" />
+    <Content Include="App_Themes\Default\images\Error\ErrorDescriptionBackground.png" />
     <Content Include="App_Themes\Default\images\Error\ErrorMessageBackground.png" />
+    <Content Include="App_Themes\Default\images\Error\UserEscapeLinkBackground.png" />
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
+    <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\QueryFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\RetrieveFeature.png" />
@@ -933,6 +943,7 @@
     <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Queues\ArchiveQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx" />
+    <Content Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx" />
     <Content Include="Pages\Queues\ReconcileQueue\Default.aspx" />
     <Content Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx" />
     <Content Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx" />

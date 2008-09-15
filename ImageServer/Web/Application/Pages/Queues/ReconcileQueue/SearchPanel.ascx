@@ -21,24 +21,23 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Name" />
+                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
-                                                    EnableViewState="False" /><br />
-                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
+                                                <asp:Label ID="Label2" runat="server" Text="Date Received " CssClass="SearchTextBoxLabel" 
+                                                    EnableViewState="False" />
+                                                <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" /><br />
+                                                <asp:TextBox ID="ReceivedDate" runat="server" CssClass="SearchTextBox" />
                                             </td>
-                                            <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Reconcile Reason" CssClass="SearchTextBoxLabel"
-                                                    EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="ReasonFilter" runat="server" CssClass="SearchDropDownList" ToolTip="Search the list by Reconcile Reason" />
-                                            </td>                
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>
                                 </asp:Panel>
+                                    <aspAjax:CalendarExtender ID="ReceivedDateCalendarExtender" runat="server" TargetControlID="ReceivedDate"
+                                        CssClass="Calendar">
+                                    </aspAjax:CalendarExtender>
                                 </td>
                             </tr>
                         </table>

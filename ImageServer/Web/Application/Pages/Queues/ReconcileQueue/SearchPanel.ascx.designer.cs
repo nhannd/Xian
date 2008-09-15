@@ -45,16 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-        
-        /// <summary>
-        /// PatientName control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientName;
-        
+            
         /// <summary>
         /// Label2 control.
         /// </summary>
@@ -71,7 +62,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientId;
+        protected global::System.Web.UI.WebControls.TextBox PatientName;
+
+        /// <summary>
+        /// PatientId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox ReceivedDate;
         
         /// <summary>
         /// Label5 control.
@@ -117,6 +117,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton SearchButton;
+
+        /// <summary>
+        /// ScheduleCalendarExtender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.CalendarExtender ReceivedDateCalendarExtender;
+
+        /// <summary>
+        /// SearchButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton ClearReceivedDateButton;
         
         /// <summary>
         /// ToolBarUpdatePanel control.

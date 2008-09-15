@@ -98,12 +98,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
                 }
                 else
                 {
-                    this._enableReconcileButton(false);
+                    this._enableReconcileButton(true);
                 }
             }
             else
             {
-                this._enableReconcileButton(false);
+                this._enableReconcileButton(true);
             }
         },     
         

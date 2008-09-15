@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         #region Events
         /// <summary>
-        /// Defines the handler for <seealso cref="OnStudySelectionChanged"/> event.
+        /// Defines the handler for <seealso cref="OnQueueItemSelectionChanged"/> event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedStudies"></param>
@@ -197,7 +197,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            ReconcileQueueGridView.SelectedIndexChanged += new EventHandler(ReconcileQueueGridView_SelectedIndexChanged);
+            ReconcileQueueGridView.SelectedIndexChanged += ReconcileQueueGridView_SelectedIndexChanged;
+        }
+
+        protected void ReconcileQueueGridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                ReconcileQueueSummary summary = e.Row.DataItem as ReconcileQueueSummary;
+                Label studyInstanceUID = e.Row.FindControl("StudyInstanceUID") as Label;
+                studyInstanceUID.Text = summary.StudyInstanceUID;
+
+                Label ep = e.Row.FindControl("ExistingPatient") as Label;
+                ep.Text = summary.ExistingPatientName;
+
+                Label cp = e.Row.FindControl("ConflictingPatient") as Label;
+                cp.Text = summary.ConflictingPatientName;
+            }
         }
 
         protected void ReconcileQueueGridView_SelectedIndexChanged(object sender, EventArgs e)

@@ -11,30 +11,28 @@
 				<ccUI:GridView ID="ReconcileQueueGridView" runat="server" SkinID="CustomGlobalGridView"
 					OnSelectedIndexChanged="ReconcileQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="ReconcileQueueGridView_PageIndexChanging"
+					OnRowDataBound="ReconcileQueueGridView_RowDataBound"
 					SelectionMode="Multiple" DataSourceID="ReconcileQueueDataSourceObject">
 					<Columns>
-						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
-							<itemtemplate>
-                            <ccUI:PersonNameLabel ID="PatientName" runat="server" PersonName='<%# Eval("PatientsName") %>' PersonNameType="Dicom"></ccUI:PersonNameLabel>
-                        </itemtemplate>
-						</asp:TemplateField>
-						<asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
+					    <asp:BoundField DataField="StudyInstanceUID" HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 						</asp:BoundField>
-						<asp:BoundField DataField="ScheduledDateTime" HeaderText="Scheduled Time" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:BoundField DataField="ExistingPatient" HeaderText="Existing Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 						</asp:BoundField>
-						<asp:BoundField DataField="StatusString" HeaderText="Status" HeaderStyle-HorizontalAlign="Center"
-							ItemStyle-HorizontalAlign="Center" />
+						<asp:BoundField DataField="ConflictingPatient" HeaderText="Conflicting Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						</asp:BoundField>
+						<asp:BoundField DataField="InsertTime" HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						</asp:BoundField>
 					</Columns>
 					<EmptyDataTemplate>
 						<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
 							CssClass="GlobalGridViewHeader">
-							<asp:TableHeaderRow>
-								<asp:TableHeaderCell HorizontalAlign="Left">Patient Name</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Patient ID</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Scheduled Time</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Status</asp:TableHeaderCell>
+							<asp:TableHeaderRow Height="23px">
+								<asp:TableHeaderCell HorizontalAlign="Left">Study Instance UID</asp:TableHeaderCell>
+								<asp:TableHeaderCell HorizontalAlign="Left">Existing Patient</asp:TableHeaderCell>
+								<asp:TableHeaderCell HorizontalAlign="Left">Conflicting Patient</asp:TableHeaderCell>
+								<asp:TableHeaderCell HorizontalAlign="Center">Time Received</asp:TableHeaderCell>
 							</asp:TableHeaderRow>
-						</asp:Table>
+                        </asp:Table>							
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
