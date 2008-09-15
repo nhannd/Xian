@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     AccessionFormat.Format(item.AccessionNumber), 
                     item.DiagnosticServiceName,
                     item.ProcedureName, 
-                    Format.Time(item.Time)); },
+                    Format.DateTime(item.Time)); },
                 1.0f, DescriptionRow);
 
             // Invisible but sortable columns

@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     else
                     {
                         string description = string.Format("{0} {1}", AccessionFormat.Format(item.AccessionNumber), item.DiagnosticServiceName);
-                        if(item.Time.HasValue) description += string.Format(" - {0}", Format.Time(item.Time));
+                        if(item.Time.HasValue) description += string.Format(" - {0}", Format.DateTime(item.Time));
                         return description;
                     }
                 },
