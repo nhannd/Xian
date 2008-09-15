@@ -285,3 +285,6 @@ img {
 	);
 }
 
+input.unresolved {
+	background-color: #FFF5C3;
+}

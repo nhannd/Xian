@@ -380,7 +380,8 @@ var Table = {
                 
                 // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
                 // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-                input.style.padding = '0px';
+                input.style.padding = '2px';
+				input.style.border = '1px solid #969696';
 			}
 			else
 			if(["textarea"].indexOf(column.cellType) > -1)
@@ -408,9 +409,11 @@ var Table = {
 					inputDate.id = this.id + "_" + column.label + "_" + "dateinput" + row;
 					td.appendChild(inputDate);
 					if(column.size) inputDate.size = column.size;
+					
                     // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
                     // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-                    inputDate.style.padding = '0px';
+					inputDate.style.padding = '2px';
+					inputDate.style.border = '1px solid #969696';
 					
 					// consider the edit complete when focus is lost
 					inputDate.onblur = function() 
@@ -469,7 +472,8 @@ var Table = {
 
                     // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
                     // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-                    inputTime.style.padding = '0px';  
+					inputTime.style.padding = '2px';
+					inputTime.style.border = '1px solid #969696';
 					
 					// consider the edit complete when focus is lost
 					inputTime.onblur = function() 
@@ -563,7 +567,10 @@ var Table = {
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value; }
 				if(column.size) input.style.width = column.size + "pc"; // set width in chars
-                
+				
+				input.style.marginTop = '1px';
+				input.style.marginBottom = '1px';
+				
 				// choices may be an array, or a function that returns an array
 				var choices = (typeof(column.choices) == "function") ? column.choices(obj) : column.choices;
 				addOptions(input, choices);
@@ -590,7 +597,7 @@ var Table = {
 				  td.appendChild(label);
 
 				  var input = document.createElement("input");
-				input.type = "checkbox";
+				  input.type = "checkbox";
 				  label.appendChild(input);
 				  
 				  if(column.readonly)
@@ -628,7 +635,8 @@ var Table = {
 						column.setValue(obj, result);
 						table._onCellUpdate(row, col);
 						table._onEditComplete(row, col);
-						input.style.backgroundColor = "white";	// revert field background color since the query is resolved
+						//input.style.backgroundColor = "white";	// revert field background color since the query is resolved
+						input.className = "";
 					}
 				}
 				
@@ -639,7 +647,8 @@ var Table = {
 
                 // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
                 // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-                input.style.padding = '0px';
+                input.style.padding = '2px';
+				input.style.border = '1px solid #969696';
 				
 				input.onkeyup = function()
 				{
@@ -657,7 +666,8 @@ var Table = {
 							table._onCellUpdate(row, col);
 							
 							// if there are any characters in the input field, change color to indicate to user that the query is unresolved
-							input.style.backgroundColor = (input.value && column.getValue(obj) === null) ? "yellow" : "white";
+							//input.style.backgroundColor = (input.value && column.getValue(obj) === null) ? "yellow" : "white";
+							input.className = (input.value && column.getValue(obj) === null) ? "unresolved" : "";
 					}
 				}				
 				
