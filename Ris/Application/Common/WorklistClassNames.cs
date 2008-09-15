@@ -167,6 +167,9 @@ namespace ClearCanvas.Ris.Application.Common
 		#region Radiologist Admin Worklist Class Names
 
 		[WorklistClassName]
+		public const string ReportingAdminUnreportedWorklist = "ReportingAdminUnreportedWorklist";
+
+		[WorklistClassName]
 		public const string ReportingAdminAssignedWorklist = "ReportingAdminAssignedWorklist";
 
 		[WorklistClassName]

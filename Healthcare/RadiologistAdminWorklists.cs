@@ -12,6 +12,24 @@ namespace ClearCanvas.Healthcare
 	}
 
 	/// <summary>
+	/// ReportingAdminToBeReportedWorklist entity
+	/// </summary>
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(true)]
+	[WorklistClassDescription("ReportingAdminUnreportedWorklistDescription")]
+	public class ReportingAdminUnreportedWorklist : RadiologistAdminWorklist
+	{
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
+		{
+			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStepClass = typeof(InterpretationStep);
+			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepScheduledStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+			return new ReportingWorklistItemSearchCriteria[] { criteria };
+		}
+	}
+
+	/// <summary>
 	/// ReportingAdminAssignedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]

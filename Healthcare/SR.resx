@@ -283,10 +283,10 @@
     <value>Procedure</value>
   </data>
   <data name="ProtocollingAdminAssignedWorklist" xml:space="preserve">
-    <value>Protocolling Admin</value>
+    <value>Active Protocolling Items</value>
   </data>
   <data name="ProtocollingAdminAssignedWorklistDescription" xml:space="preserve">
-    <value>Lists active procedures with protocols that are assigned to a radiologist.</value>
+    <value>Lists active procedures that are currently in protocolling by a radiologist.</value>
   </data>
   <data name="ReadingGroup" xml:space="preserve">
     <value>Reading Group</value>
@@ -361,10 +361,16 @@
     <value>Report</value>
   </data>
   <data name="ReportingAdminAssignedWorklist" xml:space="preserve">
-    <value>Reporting Admin</value>
+    <value>Active Reporting Items</value>
   </data>
   <data name="ReportingAdminAssignedWorklistDescription" xml:space="preserve">
-    <value>Lists active procedures that have been assigned to a radiologist.</value>
+    <value>Lists active procedures that are currently in reporting by a radiologist.</value>
+  </data>
+  <data name="ReportingAdminUnreportedWorklist" xml:space="preserve">
+    <value>Un-reported</value>
+  </data>
+  <data name="ReportingAdminUnreportedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been performed but not yet reported.</value>
   </data>
   <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
     <value>To be Protocolled</value>

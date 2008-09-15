@@ -8,15 +8,22 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 	public abstract class RadiologistAdmin
 	{
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingAdminUnreportedWorklist)]
+		[FolderPath("Unreported Items", true)]
+		public class ReportingAdminUnreportedFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingAdminAssignedWorklist)]
-		[FolderPath("Reporting Admin", true)]
+		[FolderPath("Active Reporting Items", true)]
 		public class ReportingAdminAssignedFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(RadiologistAdminWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ProtocollingAdminAssignedWorklist)]
-		[FolderPath("Protocolling Admin", true)]
+		[FolderPath("Active Protocolling Items", true)]
 		public class ProtocollingAdminAssignedFolder : ReportingWorkflowFolder
 		{
 		}

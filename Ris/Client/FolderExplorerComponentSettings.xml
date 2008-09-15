@@ -64,6 +64,7 @@
     <folder id="SentItemsFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RadiologistAdminWorkflowFolderSystem">
+    <folder id="ReportingAdminUnreportedFolder" />
     <folder id="ReportingAdminAssignedFolder" />
     <folder id="ProtocollingAdminAssignedFolder" />
     <folder id="RadiologistAdminSearchFolder" />

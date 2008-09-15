@@ -120,7 +120,7 @@ namespace ClearCanvas.Healthcare
     /// TechnologistUndocumentedWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
-    [WorklistSupportsTimeFilter(false)]
+    [WorklistSupportsTimeFilter(true)]
     [WorklistClassDescription("TechnologistUndocumentedWorklistDescription")]
     public class TechnologistUndocumentedWorklist : TechnologistWorklist
     {
