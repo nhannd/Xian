@@ -73,14 +73,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#region Protected members
 
+		protected override void OnParentChanged(EventArgs e) {
+			SetParentForm(base.ParentForm);
+	
+			base.OnParentChanged(e);
+		}
+
 		protected override void OnLoad(EventArgs e)
 		{
-			if (_parentForm == null)
-			{
-				_parentForm = this.ParentForm;
-				_parentForm.Move += new EventHandler(OnParentMoved);
-			}
-
 			AddImageBoxControls(_physicalWorkspace);
 
 			base.OnLoad(e);
@@ -170,6 +170,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			control.SuspendLayout();
 			this.Controls.Add(control);
 			control.ResumeLayout(false);
+		}
+
+		private void SetParentForm(Form value) {
+			if (_parentForm != value) {
+				if (_parentForm != null)
+					_parentForm.Move -= OnParentMoved;
+
+				_parentForm = value;
+
+				if (_parentForm != null)
+					_parentForm.Move += OnParentMoved;
+			}
 		}
 
 		#endregion
