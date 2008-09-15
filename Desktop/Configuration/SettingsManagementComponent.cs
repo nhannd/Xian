@@ -232,6 +232,14 @@ namespace ClearCanvas.Desktop.Configuration
             {
                 get { return _value != _startingValue; }
             }
+
+			/// <summary>
+			/// Marks this property as being clean again.
+			/// </summary>
+			public void MarkClean()
+			{
+				_startingValue = _value;
+			}
         }
 
         #endregion
@@ -503,9 +511,11 @@ namespace ClearCanvas.Desktop.Configuration
 						null, null,    // save to the default profile
 						values);
 
-                    // refresh the table so that properties are no longer marked dirty
-                    FillSettingsPropertiesTable(values);
-                    UpdateActionEnablement();
+                    // mark all properties as clean again
+					foreach (SettingsProperty p in _settingsPropertiesTable.Items)
+						p.MarkClean();
+
+					UpdateActionEnablement();
 
                     // update any loaded instances
                     ApplicationSettingsRegistry.Instance.Reload(_selectedSettingsGroup);
