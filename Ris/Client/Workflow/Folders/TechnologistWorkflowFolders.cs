@@ -39,14 +39,14 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 	{
 		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.TechnologistScheduledWorklist)]
-		[FolderPath("Scheduled", true)]
+		[FolderPath("Scheduled")]
 		public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(TechnologistWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.TechnologistCheckedInWorklist)]
-		[FolderPath("Checked In")]
+		[FolderPath("Checked In", true)]
 		public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
 		{
 		}
