@@ -339,7 +339,7 @@ Please ensure that the name/keystroke combination is unique.</value>
     <value>Colour Maps</value>
   </data>
   <data name="PresetVoiLuts" xml:space="preserve">
-    <value>Window Level Presets</value>
+    <value>Window/Level Presets</value>
   </data>
   <data name="Added" xml:space="preserve">
     <value>added</value>

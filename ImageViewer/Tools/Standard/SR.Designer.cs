@@ -937,7 +937,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Window Level Presets.
+        ///   Looks up a localized string similar to Window/Level Presets.
         /// </summary>
         internal static string PresetVoiLuts {
             get {
