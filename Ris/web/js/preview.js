@@ -149,6 +149,26 @@ function formatProcedurePerformingStaff(procedure)
 		return "";
 }
 
+function filterProcedureByModality(procedures, modalityIdFilter)
+{
+	var isStepInModality = function (step)
+	{
+		return modalityIdFilter.find(
+			function(id) 
+			{
+				return step.Modality.Id == id; 
+			}) != null;
+	}
+	
+	var isProcedureInModality = function (p)
+	{
+		var mps = p.ProcedureSteps.select(function(step) { return step.StepClassName == "ModalityProcedureStep"; });
+		return mps.find(isStepInModality) != null;
+	}
+
+	return procedures.select(isProcedureInModality);
+}
+
 var gImagingRequestsTablePractitioners = [];	// hack: global array to hold practitioners that appear in the table, so that javascript callback can use the practitioner object
 function createImagingServiceTable(htmlTable, patientOrderData, highlightAccessionNumber)
 {
@@ -281,7 +301,7 @@ function createProtocolProceduresTable(htmlTable, procedures)
 				getValue: function(item) { return formatProtocolStatus(item.Protocol); }
 			},
 			{   label: "Protocol",
-				cellType: "text",
+				cellType: "html",
 				getValue: function(item) { return formatProtocolCode(item.Protocol); }
 			},
 			{   label: "Author",

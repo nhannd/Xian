@@ -107,10 +107,15 @@
 							Field.setValue($("InsuredsRelationshipToPatient"), visitDetail.ExtendedProperties.InsuredsRelationshipToPatient);
 							Field.setValue($("PolicyNumber"), visitDetail.ExtendedProperties.PolicyNumber);
 						}
+						
+						if (orderDetail.Procedures.length)
+							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+						else
+							Field.show($("proceduresTable"), false);
 					}
 					else
 					{
-						Field.show($("consultationOverviewSection"), false);
+						Field.show($("orderDetailsSection"), false);
 					}
 					
                     // update active and past RIC tables
@@ -144,11 +149,6 @@
 					{
 						Field.show($("notesSection"), false);
 					}
-					
-					if (orderDetail && orderDetail.Procedures.length)
-						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
-					else
-						Field.show($("proceduresTable"), false);
 				}
 	            catch(e)
 	            {
@@ -196,7 +196,7 @@
 				</tr>
 			</table>
 
-			<div id="consultationOverviewSection">
+			<div id="orderDetailsSection">
 				<p class="sectionheading">Imaging Service</p>
 				<table width="100%" border="0">
 					<tr>
