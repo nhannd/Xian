@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
 			_priorReportsComponentHost.StartComponent();
 
-			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem.OrderRef));
+            _orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem.PatientRef, _worklistItem.OrderRef));
 			_orderDetailViewComponentHost.StartComponent();
 
 			base.Start();

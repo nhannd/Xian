@@ -44,16 +44,13 @@
 							OrderRef: healchareContext.OrderRef,
 							IncludeAlerts: true,
 							IncludeNotes: true,
-
-							// only include ordered procedures if report not yet created
-							IncludeProcedures: (healchareContext.ReportRef == null)
+							IncludeProcedures: true
 						},
 					// only request the report detail if there is a report     
 					GetReportDetailRequest: healchareContext.ReportRef == null ? null : { ReportRef: healchareContext.ReportRef }
 				};
 
 				var service = Ris.getPatientDataService();
-
 				var data = service.getData(request);
 
 				if (data == null || data.length == 0)
@@ -86,41 +83,41 @@
 					$("alerts").innerHTML = alertHtml;
 				}
 
-				var orderDetail = data.GetOrderDetailResponse.Order;
-				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-
-
-				// update Imaging Consultation Overview
-				Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
-				Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
-				Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
-				Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
-				Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
-
-				var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;
-
-				var selectedProcedure = procedures.find(function(rp) { return rp.ProcedureRef == healchareContext.ProcedureRef; });
-				if (selectedProcedure)
+				var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
+				if (orderDetail)
 				{
-					Field.setValue($("procedure"), selectedProcedure.Type.Name);
-					Field.setValue($("ProcedureStartTime"), "TODO");
-					Field.setValue($("ProcedureEndTime"), "TODO");
-				}
+					Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
+					Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
+					Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+					Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
+					Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
+					if (orderDetail.CancelReason)
+						Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
+					else
+						Field.show($("CancelReasonSection"), false);
+				
+					if (orderDetail.Procedures.length)
+						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+					else
+						Field.show($("proceduresTable"), false);
 
-				if(orderDetail.Notes.length)
-				{
-					createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
-					createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-					createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+					if(orderDetail.Notes.length)
+					{
+						createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+						createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+						createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+					}
+					else
+					{
+						Field.show($("notesSection"), false);
+					}
 				}
-				else
-					Field.show($("notesSection"), false);
 
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 				if (reportDetail)
 				{
 					var procedures = reportDetail.Procedures;
-					createProceduresTable($("proceduresTable"), procedures);
+					createProtocolProceduresTable($("proceduresTable"), procedures);
 					createReportPreview($("report"), reportDetail);
 				}
 				else
@@ -166,75 +163,71 @@
 			</tr>
 		</table>
 
+		<div id="orderDetailsSection">
+			<p class="sectionheading">Imaging Service</p>
+			<table width="100%" border="0">
+				<tr>
+					<td width="120" class="propertyname">Accession Number</td>
+					<td width="200"><div id="AccessionNumber"/></td>
+					<td width="120" class="propertyname">Priority</td>
+					<td width="200"><div id="OrderPriority"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Ordering Physician</td>
+					<td width="200"><div id="OrderingPhysician"/></td>
+					<td width="120" class="propertyname">Ordering Facility</td>
+					<td width="200"><div id="OrderingFacility"/></td>
+				</tr>
+				<tr>
+					<td width="120" class="propertyname">Indication</td>
+					<td colspan="3"><div id="ReasonForStudy"/></td>
+				</tr>
+				<tr id="CancelReasonSection">
+					<td width="120" class="propertyname">Cancel Reason</td>
+					<td width="200" colspan="4"><div id="CancelReason"/></td>
+				</tr>
+			</table>
+			<table border="0" id="proceduresTable">
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Status</td>
+					<td>Schedule</td>
+					<td>Start/End Time</td>
+					<td>Performing Staff</td>
+				</tr>
+			</table>
 
-		<p class="sectionheading">Imaging Consultation Overview</p>
-		<table width="100%" border="0">
-			<tr>
-				<td width="120" class="propertyname">Accession Number</td>
-				<td width="200"><div id="AccessionNumber"/></td>
-				<td width="120" class="propertyname">Priority</td>
-				<td width="200"><div id="OrderPriority"/></td>
-			</tr>
-			<tr>
-				<td width="120" class="propertyname">Ordering Physician</td>
-				<td width="200"><div id="OrderingPhysician"/></td>
-				<td width="120" class="propertyname">Ordering Facility</td>
-				<td width="200"><div id="OrderingFacility"/></td>
-			</tr>
-			<tr>
-				<td width="120" class="propertyname">Imaging Service</td>
-				<td width="200"><div id="DiagnosticService"/></td>
-				<td width="120" class="propertyname">Procedure</td>
-				<td width="200"><div id="procedure"/></td>
-			</tr>
-			<tr>
-				<td width="120" class="propertyname">Procedure Start Time</td>
-				<td width="200"><div id="ProcedureStartTime"/></td>
-				<td width="120" class="propertyname">Procedure End Time</td>
-				<td width="200"><div id="ProcedureEndTime"/></td>
-			</tr>
-		</table>
-
-		<div id="notesSection">
-			<p class="sectionheading">Order Notes</p>
-			<table id="generaNotesTable">
-				<tr><td class="sectionheading" colspan="3">General</td></tr>
-				<tr class="tableheading">
-					<td>Comment</td>
-					<td>Time</td>
-					<td>Author</td>
-				</tr>
-			</table>
-			<table id="protocolNotesTable">
-				<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-				<tr class="tableheading">
-					<td>Comment</td>
-					<td>Time</td>
-					<td>Author</td>
-				</tr>
-			</table>
-			<table id="prelimNotesTable">
-				<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-				<tr class="tableheading">
-					<td>Comment</td>
-					<td>Time</td>
-					<td>Author</td>
-				</tr>
-			</table>
+			<div id="notesSection">
+				<p class="sectionheading">Order Notes</p>
+				<table id="generaNotesTable">
+					<tr><td class="sectionheading" colspan="3">General</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="protocolNotesTable">
+					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+				<table id="prelimNotesTable">
+					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+					<tr class="tableheading">
+						<td>Comment</td>
+						<td>Time</td>
+						<td>Author</td>
+					</tr>
+				</table>
+			</div>
 		</div>
 
 		<div id="reportSection">
 			<p id="reportheading" class="sectionheading">Report</p>
-			<table border="0" id="proceduresTable">
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Protocol</td>
-					<td>Code</td>
-					<td>Author</td>
-				</tr>
-				<!-- this empty row is here so the color of the first data row is consistent with other previews -->
-				<tr colspan="3"></tr>
-			</table>
 			<div id="report"></div>
 		</div>
 	</form>

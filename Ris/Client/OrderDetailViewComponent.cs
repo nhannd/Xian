@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client
 			public EntityRef OrderRef;
 		}
 
-		private OrderContext _context;
+        protected DataContractBase _context;
 
 		public OrderDetailViewComponent()
 			: this(null)
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client
 
 		protected abstract string PageUrl { get; }
 
-		public OrderContext Context
+        public virtual DataContractBase Context
 		{
 			get { return _context; }
 			set

@@ -29,17 +29,17 @@
 
                     // construct request object
                     var request = {
+                        GetPatientProfileDetailRequest:
+                             {
+                                PatientProfileRef: worklistItem.PatientProfileRef,
+                                IncludeAlerts: true
+                             },
                         GetOrderDetailRequest: worklistItem.OrderRef == null ? null : 
                              { 
                                 OrderRef: worklistItem.OrderRef,
                                 IncludeAlerts: true,
                                 IncludeProcedures: true,
                                 IncludeNotes: true
-                             },
-                        GetPatientProfileDetailRequest:
-                             {
-                                PatientProfileRef: worklistItem.PatientProfileRef,
-                                IncludeAlerts: true
                              },
                         
                         // list other relevant orders
@@ -95,51 +95,28 @@
 	                var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
 					if(orderDetail)
 					{
+						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
+						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
+						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+						Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
+						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
+						if (orderDetail.CancelReason)
+							Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
+						else
+							Field.show($("CancelReasonSection"), false);
 					
-		                // update Imaging Consultation Overview
-	                    Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
-	                    Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
-	                    Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
-	                    Field.setValue($("OrderingFacility"), orderDetail.OrderingFacility.Name);
-	                    
-	                    // locate the selected mps
-	                    var selectedPS;
-	                    orderDetail.Procedures.each(
-	                        function(rp) { rp.ProcedureSteps.each(
-	                            function(mps) { if(mps.ProcedureStepRef == worklistItem.ProcedureStepRef) selectedPS = mps; });
-	                        });
-	                        
-	                    if(selectedPS)
-	                    {    
-		                    // update Selected MPS Detail
-	                        Field.setValue($("PerformingStaff"), selectedPS.Performer ? Ris.formatPersonName(selectedPS.Performer.Name) : null);
-	                        Field.setValue($("ScheduledStartTime"), Ris.formatDateTime(selectedPS.ScheduledStartTime));
-	                        Field.setValue($("StartTime"), Ris.formatDateTime(selectedPS.StartTime));
-	                        Field.setValue($("EndTime"), Ris.formatDateTime(selectedPS.EndTime));
-	                    }
+						if (orderDetail.Procedures.length)
+							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+						else
+							Field.show($("proceduresTable"), false);
 
-		                // build a list of items for the Imaging Service breakdown table
-		                var breakdownItems = [];
-		                orderDetail.Procedures.each(
-		                    function(rp)
-		                    {
-		                        rp.ProcedureSteps.each(
-		                            function(mps)
-		                            {
-		                                breakdownItems.add(
-		                                    {
-		                                        DiagnosticService: orderDetail.DiagnosticService.Name,
-		                                        Procedure: rp.Type.Name,
-		                                        Step: mps.ProcedureStepName,
-		                                        State: mps.State.Value,
-		                                        Active: (mps.ProcedureStepRef == worklistItem.ProcedureStepRef)
-		                                    });
-		                            });
-		                    });
+						// select CT and MRI procedures
+						var filteredProcedures = filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+						if (filteredProcedures.length)
+							createProtocolProceduresTable($("protocolProceduresTable"), filteredProcedures);
+						else
+							Field.show($("protocolSection"), false);
 
-	                    var dsTable = createDiagnosticServiceBreakdownTable($("dsBreakdownTable"), breakdownItems);
-		            
-						var orderDetail = data.GetOrderDetailResponse.Order;
 						if(orderDetail.Notes.length)
 						{
 							createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
@@ -147,19 +124,14 @@
 							createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
 						}
 						else
+						{
 							Field.show($("notesSection"), false);
-
-						if (orderDetail.Procedures.length)
-							createProtocolProceduresTable($("proceduresTable"), orderDetail.Procedures);
-						else
-							Field.show($("proceduresTable"), false);
+						}
 					}
 					else
 					{
-						// hide the entire "current order" section
-						Field.show($("currentOrderSection"), false);
+						Field.show($("orderDetailsSection"), false);
 					}
-					
 
 					// update active and past RIC tables
    		            var patientOrderData = data.ListOrdersResponse.Orders;
@@ -228,51 +200,52 @@
 				</tr>
 			</table>
     		
-			<div id="currentOrderSection">
-				<p class="sectionheading">Imaging Consultation Overview</p>
-	            <table width="100%" border="0">
-	                <tr>
-	                    <td width="120" class="propertyname">Accession Number</td>
-	                    <td width="200"><div id="AccessionNumber"/></td>
-	                    <td width="120" class="propertyname">Priority</td>
-	                    <td width="200"><div id="OrderPriority"/></td>
-	                </tr>
-	                <tr>
-	                    <td width="120" class="propertyname">Ordering Physician</td>
-	                    <td width="200"><div id="OrderingPhysician"/></td>
-	                    <td width="120" class="propertyname">Ordering Facility</td>
-	                    <td width="200"><div id="OrderingFacility"/></td>
-	                </tr>
-	            </table>
-
-				<p class="sectionheading">Imaging Service Breakdown</p>
-	            <table width="100%" border="0" id="dsBreakdownTable">
-		            <tr class="tableheading">
-			            <td>Imaging Service</td>
-			            <td>Procedure</td>
-			            <td>Procedure Step</td>
-			            <td>Status</td>
-		            </tr>
-	                <!--<tr>
-	                    <td colspan="6" class="tableheading"></td>
-	                </tr>-->
-	            </table>
-
-				<p class="sectionheading">Selected MPS Details</p>
-	            <table width="100%" border="0" id="mpsDetailsTable">
-	                <tr>
-	                    <td width="120"  class="propertyname">Scheduled Start Time</td>
-	                    <td width="200"><div id="ScheduledStartTime"/></td>
-	                    <td width="120"  class="propertyname">Start Time</td>
-	                    <td width="200"><div id="StartTime"/></td>
+			<div id="orderDetailsSection">
+				<p class="sectionheading">Imaging Service</p>
+				<table width="100%" border="0">
+					<tr>
+						<td width="120" class="propertyname">Accession Number</td>
+						<td width="200"><div id="AccessionNumber"/></td>
+						<td width="120" class="propertyname">Priority</td>
+						<td width="200"><div id="OrderPriority"/></td>
 					</tr>
 					<tr>
-	                    <td width="120" class="propertyname">Performing Staff</td>
-	                    <td width="200"><div id="PerformingStaff"/></td>
-	                    <td width="120" class="propertyname">End Time</td>
-	                    <td width="200"><div id="EndTime"/></td>
+						<td width="120" class="propertyname">Ordering Physician</td>
+						<td width="200"><div id="OrderingPhysician"/></td>
+						<td width="120" class="propertyname">Ordering Facility</td>
+						<td width="200"><div id="OrderingFacility"/></td>
 					</tr>
-	            </table>
+					<tr>
+						<td width="120" class="propertyname">Indication</td>
+						<td colspan="3"><div id="ReasonForStudy"/></td>
+					</tr>
+					<tr id="CancelReasonSection">
+						<td width="120" class="propertyname">Cancel Reason</td>
+						<td width="200" colspan="4"><div id="CancelReason"/></td>
+					</tr>
+				</table>
+				<table border="0" id="proceduresTable">
+					<tr class="tableheading">
+						<td>Procedure</td>
+						<td>Status</td>
+						<td>Schedule</td>
+						<td>Start/End Time</td>
+						<td>Performing Staff</td>
+					</tr>
+				</table>
+
+				<div id="protocolSection">
+					<p class="sectionheading">Protocols</p>
+					<table border="0" id="protocolProceduresTable">
+						<tr class="tableheading">
+							<td>Procedure</td>
+							<td>Protocol</td>
+							<td>Code</td>
+							<td>Author</td>
+							<td>WTIS</td>
+						</tr>
+					</table>
+				</div>
 
 				<div id="notesSection">
 					<p class="sectionheading">Order Notes</p>
@@ -301,16 +274,6 @@
 						</tr>
 					</table>
 				</div>
-
-				<p class="sectionheading">Ordered Procedures</p>
-				<table border="0" id="proceduresTable">
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Protocol</td>
-						<td>Code</td>
-						<td>Author</td>
-					</tr>
-				</table>
 			</div>
 		
 			<div id="activeProceduresSection">

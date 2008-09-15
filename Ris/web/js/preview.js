@@ -226,38 +226,6 @@ function createImagingServiceTable(htmlTable, patientOrderData, highlightAccessi
 	htmlTable.bindItems(patientOrderData);
 }
 
-function createDiagnosticServiceBreakdownTable(htmlTable, breakdownItems)
-{
-	var dsTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
-		 [
-			{   label: "Imaging Service",
-				cellType: "text",
-				getValue: function(item) { return item.DiagnosticService; }
-			},
-			{   label: "Requested Procedure",
-				cellType: "text",
-				getValue: function(item) { return item.Procedure; }
-			},
-			{   label: "Step",
-				cellType: "text",
-				getValue: function(item) { return item.Step; }
-			},
-			{   label: "Status",
-				cellType: "text",
-				getValue: function(item) { return item.State; }
-			}
-		 ]);
-		 
-	dsTable.rowCycleClassNames = ["row0", "row1"];
-	dsTable.renderRow = function(sender, args)
-	{
-		if(args.item.Active)
-			args.htmlRow.className = "highlight";
-	};
-	
-	dsTable.bindItems(breakdownItems);
-}
-
 function createProceduresTable(htmlTable, procedures)
 {
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },

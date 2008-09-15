@@ -35,18 +35,19 @@
 							PatientProfileRef: worklistItem.PatientProfileRef, 
 							IncludeAlerts: true 
 						},
-						ListOrdersRequest: 	
-						{ 
-							PatientRef: worklistItem.PatientRef, 
-							QueryDetailLevel: "Procedure" 
-						},
-						// need the order detail only for order alerts, and only if OrderRef is not null
 						GetOrderDetailRequest: worklistItem.OrderRef == null ? null : 
 						{ 
 							OrderRef: worklistItem.OrderRef, 
 							IncludeAlerts: true,
 							IncludeProcedures: true,
 							IncludeNotes: true
+						},
+
+						// list other relevant orders
+						ListOrdersRequest: 	
+						{ 
+							PatientRef: worklistItem.PatientRef, 
+							QueryDetailLevel: "Procedure" 
 						}
 					};
 

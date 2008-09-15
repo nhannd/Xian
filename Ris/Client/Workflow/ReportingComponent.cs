@@ -394,7 +394,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_rightHandComponentContainer = new TabComponentContainer();
 			_rightHandComponentContainer.ValidationStrategy = new AllComponentsValidationStrategy();
 
-			_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.OrderRef);
+			_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
 
 			_priorReportComponent = new PriorReportComponent(this.WorklistItem);
@@ -992,7 +992,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
 			_priorReportComponent.WorklistItem = this.WorklistItem;
-			_orderComponent.Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
+            _orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 
 			if (orderDetailIsCurrent)
 				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
