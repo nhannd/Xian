@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[MenuAction("calibrate", "basicgraphic-menu/MenuCalibrationTool", "Calibrate")]
 	[EnabledStateObserver("calibrate", "Enabled", "EnabledChanged")]
+	[GroupHint("calibrate", "Tools.Image.Measurement.Calibrate")]
 	[Tooltip("calibrate", "TooltipCalibrationTool")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]

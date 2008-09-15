@@ -29,8 +29,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
@@ -40,12 +42,17 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[MenuAction("closemenu", "basicgraphic-menu/MenuClose")]
+	[GroupHint("closemenu", "Tools.Image.Measurement.MenuClose")]
 	[Tooltip("closemenu", "CloseMenu")]
 
 	[MenuAction("delete", "basicgraphic-menu/DeleteGraphic", "Delete")]
+	[IconSet("delete", IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolMedium.png", "DeleteToolLarge.png")]
+	[GroupHint("delete", "Tools.Image.Measurement.Delete")]
 	[Tooltip("delete", "DeleteGraphic")]
 
 	[MenuAction("deleteall", "basicgraphic-menu/DeleteAllGraphics", "DeleteAll")]
+	[IconSet("deleteall", IconScheme.Colour, "DeleteAllToolSmall.png", "DeleteAllToolMedium.png", "DeleteAllToolLarge.png")]
+	[GroupHint("deleteall", "Tools.Image.Measurement.DeleteAll")]
 	[Tooltip("deleteall", "DeleteAllGraphics")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
@@ -108,28 +115,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		}
 
 		/// <summary>
-		/// Delete all measurements tool for the general imageviewer tile context menu
-		/// </summary>
-		[MenuAction("deleteall", "imageviewer-contextmenu/DeleteAllMeasurementGraphics", "DeleteAll")]
-		[Tooltip("deleteall", "DeleteAllMeasurementGraphics")]
-		[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-		public class DeleteAllMeasurementGraphicsTool : ImageViewerTool
-		{
-			public void DeleteAll()
-			{
-				IPresentationImage image = base.SelectedPresentationImage;
-				if (image == null || !(image is IOverlayGraphicsProvider))
-					return;
-
-				IImageViewer viewer = base.ImageViewer;
-
-				UndoableCommand command = DeleteAllGraphics(image);
-
-				viewer.CommandHistory.AddCommand(command);
-			}
-		}
-
-		/// <summary>
 		/// Deletes all the the measurements from a particular image and generates the corresponding undo command
 		/// </summary>
 		/// <param name="image">The <see cref="IPresentationImage"/>; must also be an <see cref="IOverlayGraphicsProvider"/></param>
@@ -143,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			for (int n=0; n< overlayProvider.OverlayGraphics.Count; n++)
 			{
 				IGraphic graphic = overlayProvider.OverlayGraphics[n];
-				if (graphic is InteractiveGraphics.RoiGraphic) { // assume all measurements derive from roigraphic
+				if (IsMeasurementGraphic(graphic)) {
 					graphics.Add(graphic);
 					indices.Add(n);
 				}
@@ -156,5 +141,129 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			return InsertRemoveOverlayGraphicUndoableCommand.GetInsertCommand(image, graphics.AsReadOnly(), indices.AsReadOnly());
 		}
+
+		/// <summary>
+		/// This method defines what graphics are considered measurement graphics and are hence removed by this tool
+		/// </summary>
+		/// <param name="graphic">The graphic in question</param>
+		/// <returns>True if graphic is a measurement graphic; False otherwise.</returns>
+		private static bool IsMeasurementGraphic(IGraphic graphic)
+		{
+			return (graphic is InteractiveGraphics.RoiGraphic); // assume all measurements derive from roigraphic
+		}
+
+		#region Delete All (ImageViewerTool)
+
+		/// <summary>
+		/// Delete all measurements tool for the general imageviewer tile context menu
+		/// </summary>
+		[MenuAction("deleteall", "imageviewer-contextmenu/DeleteAllMeasurementGraphics", "DeleteAll")]
+		[VisibleStateObserver("deleteall", "DeleteAllVisible", "DeleteAllVisibleChanged")]
+		[IconSet("deleteall", IconScheme.Colour, "DeleteAllToolSmall.png", "DeleteAllToolMedium.png", "DeleteAllToolLarge.png")]
+		[GroupHint("deleteall", "Tools.Image.Measurement.DeleteAll")]
+		[Tooltip("deleteall", "DeleteAllMeasurementGraphics")]
+		[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+		public class DeleteAllMeasurementGraphicsTool : ImageViewerTool
+		{
+			public event EventHandler DeleteAllVisibleChanged;
+
+			private IOverlayGraphicsProvider _currentOverlayProvider;
+			private bool _deleteAllVisible;
+
+			public void DeleteAll()
+			{
+				IPresentationImage image = base.SelectedPresentationImage;
+				if (image == null || !(image is IOverlayGraphicsProvider))
+					return;
+
+				IImageViewer viewer = base.ImageViewer;
+
+				UndoableCommand command = DeleteAllGraphics(image);
+
+				viewer.CommandHistory.AddCommand(command);
+			}
+
+			public bool DeleteAllVisible
+			{
+				get { return _deleteAllVisible; }
+				private set
+				{
+					if (_deleteAllVisible != value)
+					{
+						_deleteAllVisible = value;
+						EventsHelper.Fire(DeleteAllVisibleChanged, this, new EventArgs());
+					}
+				}
+			}
+
+			/// <summary>
+			/// Updates the <see cref="DeleteAllVisible"/> property
+			/// </summary>
+			private void UpdateDeleteAllVisible()
+			{
+				IOverlayGraphicsProvider overlayProvider = base.SelectedOverlayGraphicsProvider;
+				if (overlayProvider != null) {
+					foreach (IGraphic graphic in overlayProvider.OverlayGraphics) {
+						if (IsMeasurementGraphic(graphic))
+						{
+							this.DeleteAllVisible = true;
+							return;
+						}
+					}
+				}
+				this.DeleteAllVisible = false;
+			}
+
+			private IOverlayGraphicsProvider CurrentOverlayGraphicsProvider
+			{
+				set
+				{
+					if (_currentOverlayProvider != value)
+					{
+						if (_currentOverlayProvider != null) {
+							_currentOverlayProvider.OverlayGraphics.ItemAdded -= OverlayGraphics_ListChanged;
+							_currentOverlayProvider.OverlayGraphics.ItemChanged -= OverlayGraphics_ListChanged;
+							_currentOverlayProvider.OverlayGraphics.ItemRemoved -= OverlayGraphics_ListChanged;
+						}
+
+						_currentOverlayProvider = value;
+
+						if (_currentOverlayProvider != null)
+						{
+							_currentOverlayProvider.OverlayGraphics.ItemAdded += OverlayGraphics_ListChanged;
+							_currentOverlayProvider.OverlayGraphics.ItemChanged += OverlayGraphics_ListChanged;
+							_currentOverlayProvider.OverlayGraphics.ItemRemoved += OverlayGraphics_ListChanged;
+						}
+					}
+				}
+			}
+
+			private void OverlayGraphics_ListChanged(object sender, ListEventArgs<IGraphic> e) {
+				UpdateDeleteAllVisible();
+			}
+
+			protected override void Dispose(bool disposing) {
+				// force an unsub when tool is being disposed
+				this.CurrentOverlayGraphicsProvider = null; 
+
+				base.Dispose(disposing);
+			}
+
+			protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e) {
+				base.OnPresentationImageSelected(sender, e);
+
+				// keep track of this so we can sub/unsub to list events
+				this.CurrentOverlayGraphicsProvider = e.SelectedPresentationImage as IOverlayGraphicsProvider; 
+			}
+
+			protected override void OnTileSelected(object sender, TileSelectedEventArgs e) {
+				base.OnTileSelected(sender, e);
+
+				// OnPresentationImageSelected does not fire when selected tile has no image
+				UpdateDeleteAllVisible(); 
+			}
+		}
+
+		#endregion
 	}
 }
