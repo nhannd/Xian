@@ -47,6 +47,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ImageServerDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="TestReconcileForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TestReconcileForm.Designer.cs">
+      <DependentUpon>TestReconcileForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Service References\services.cs">
       <DependentUpon>services.map</DependentUpon>
     </Compile>
@@ -84,6 +90,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="TestReconcileForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TestReconcileForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestEditStudy.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestEditStudy.cs</DependentUpon>

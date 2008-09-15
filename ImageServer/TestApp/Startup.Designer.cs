@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.TestHeaderStreamButton = new System.Windows.Forms.Button();
             this.buttonCompression = new System.Windows.Forms.Button();
             this.TestEditStudyButton = new System.Windows.Forms.Button();
+            this.TestReconcileButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -74,11 +75,22 @@ namespace ClearCanvas.ImageServer.TestApp
             this.TestEditStudyButton.UseVisualStyleBackColor = true;
             this.TestEditStudyButton.Click += new System.EventHandler(this.buttonEditStudy_Click);
             // 
+            // TestReconcileButton
+            // 
+            this.TestReconcileButton.Location = new System.Drawing.Point(28, 228);
+            this.TestReconcileButton.Name = "TestReconcileButton";
+            this.TestReconcileButton.Size = new System.Drawing.Size(183, 59);
+            this.TestReconcileButton.TabIndex = 2;
+            this.TestReconcileButton.Text = "Reconcile";
+            this.TestReconcileButton.UseVisualStyleBackColor = true;
+            this.TestReconcileButton.Click += new System.EventHandler(this.TestReconcileButton_Click);
+            // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 226);
+            this.ClientSize = new System.Drawing.Size(467, 399);
+            this.Controls.Add(this.TestReconcileButton);
             this.Controls.Add(this.TestEditStudyButton);
             this.Controls.Add(this.buttonCompression);
             this.Controls.Add(this.TestHeaderStreamButton);
@@ -95,5 +107,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button TestHeaderStreamButton;
         private System.Windows.Forms.Button buttonCompression;
         private System.Windows.Forms.Button TestEditStudyButton;
+        private System.Windows.Forms.Button TestReconcileButton;
     }
 }

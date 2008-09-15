@@ -53,7 +53,6 @@
     <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyProcessorContext.cs" />
-    <Compile Include="ReconcileStudy\DicomFileUpdateCommandActionList.cs" />
     <Compile Include="ReconcileStudy\SetTagAction.cs" />
     <Compile Include="ReconcileStudy\UpdateImagesCommandXmlSpecification.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />

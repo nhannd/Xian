@@ -39,5 +39,11 @@ namespace ClearCanvas.ImageServer.TestApp
             TestEditStudyForm test = new TestEditStudyForm();
             test.Show();
         }
+
+        private void TestReconcileButton_Click(object sender, EventArgs e)
+        {
+            TestReconcileForm test = new TestReconcileForm();
+            test.Show();
+        }
     }
 }
