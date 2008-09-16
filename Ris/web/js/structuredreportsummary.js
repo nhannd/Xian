@@ -196,6 +196,7 @@ var GeneralPreview = {
 			new readOnlyCell("Twin Type", "twinType"),
 			new readOnlyCell("FH Activity", "fhActivity"),
 			new readOnlyCell("Are you sure FH activity is absent?", "fhActivityConfirmation"),
+			new readOnlyCell("FH Rate", "fhRate"),
 			new readOnlyCell("Presentation", "presentation"),
 			new readOnlyCell("AFV", "afv"),
 			new readOnlyCell("Placenta", "placenta"),
@@ -204,7 +205,12 @@ var GeneralPreview = {
 			new readOnlyCell("Left Adnexa", "leftAdnexa"),
 			new readOnlyCell("Yolk Sac", "yolkSac"),
 			new readOnlyCell("Cervix", "cervix"),
-			new readOnlyCell("Apposed Length", "apposedLength"),
+			{
+				label: "Apposed Length",
+				cellType: "readonly",
+				getValue: function(item) { return item.apposedLength + " cm"; },
+				getVisible: function(item) { return item.apposedLength !== null && item.apposedLength !== undefined && item.apposedLength !== ""; }
+			},
 			new readOnlyCell("Cervix Assessed", "cervixAssessed")
 		]);
 
@@ -249,6 +255,9 @@ var BiometryPreview = {
 			new readOnlyBiometryCell("Average Size", "", "avgWks"),
 			new readOnlyBiometryCell("HC", "hc", "hcWks"),
 			new readOnlyBiometryCell("Nuchal Transparency", "nuchalTransparency", ""),
+			new readOnlyBiometryCell("GS Diam 1", "gs1", ""),
+			new readOnlyBiometryCell("Diam 2", "gs2", ""),
+			new readOnlyBiometryCell("Diam 3", "gs3", "gsWks"),
 			new readOnlyCell("EFW (gm)", "efw"),
 			new readOnlyCell("Centile", "efwCentile")
 		]);
@@ -310,7 +319,13 @@ var AnatomyPreview = {
 			new readOnlyCell("Eyes", "eyes"),
 			new readOnlyCell("Orbital ratio (i/o)", "orbitalRatio"),
 			new readOnlyCell("Mouth", "mouth"),
-			new readOnlyCell("Profile", "profile")
+			new readOnlyCell("Profile", "profile"),
+			{
+				label: "Nasal Bone",
+				cellType: "readonly",
+				getValue: function(item) { return item.nasalBone + " mm"; },
+				getVisible: function(item) { return item.nasalBone !== null && item.nasalBone !== undefined && item.nasalBone !== ""; }
+			}
 		]);
 		
 		var spinePreviewTable = Table.createTable($("spinePreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
@@ -337,7 +352,8 @@ var AnatomyPreview = {
 			new readOnlyCell("Abdominal wall", "abdominalWall"),
 			new readOnlyCell("Kidneys - RT", "kidneysRt"),
 			new readOnlyCell("Kidneys - LT", "kidneysLt"),
-			new readOnlyCell("Bladder", "bladder")
+			new readOnlyCell("Bladder", "bladder"),
+			new readOnlyCell("Bowel", "bowel")
 		]);
 		
 		var genitaliaPreviewTable = Table.createTable($("genitaliaPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
@@ -462,7 +478,7 @@ var CardiacPreview = {
 		var fourChamberViewPreviewTable = Table.createTable($("fourChamberViewPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 		[
 			new readOnlyCell("Heart/Thoracic Ratio", "heartThoracicRatio"),
-			new readOnlyCell("Ventricals symmetrical in size", "ventricalsSymmetrical"),
+			new readOnlyCell("Ventricles symmetrical in size", "ventriclesSymmetrical"),
 			new readOnlyCell("RV Diameter", "rvDiameter"),
 			new readOnlyCell("LV Diameter", "lvDiameter"),
 			new readOnlyCell("Thin and mobile valves", "thinMobileValves"),
@@ -514,7 +530,7 @@ var WellBeingPreview = {
 			new readOnlyAssessedCell("Well-being", "assessed")
 		]);
 
-		var bpsPreviewTable = Table.createTable($("bpsPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
+		var bppPreviewTable = Table.createTable($("bppPreviewTable"+fetus),{ editInPlace: true, flow: true, checkBoxes: false},
 		[
 			new readOnlyCell("AFV", "afv"),
 			new readOnlyCell("Amount", "afvAmount"),
@@ -526,13 +542,13 @@ var WellBeingPreview = {
 			new readOnlyCell("NST", "nst"),
             new NewLineField(),
 			{
-				label: "BPS",
+				label: "BPP",
 				cellType: "readonly",
 				getValue: function(item) { return item.bpsTotal + (!isNaN(item.nst) ? "/10" : "/8"); },
 				setValue: function(item, value) { return; },
 				getError: function(item) { return null; }
 			},
-			new readOnlyCell("BPS Score", "bpsScore"),
+			new readOnlyCell("BPP Score", "bpsScore"),
             new NewLineField(),
 			{
 				label: "AFI",
@@ -574,13 +590,14 @@ var WellBeingPreview = {
 			new readOnlyCell("Max Length", "maxLength"),
 			new readOnlyCell("Max Depth", "maxDepth"),
 			new readOnlyCell("Grannum grade", "grannumGrade"),
-			new readOnlyCell("Texture", "texture")
+			new readOnlyCell("Texture", "texture"),
+			new readOnlyCell("Cord Insertion", "cordInsertion")
 		]);
 
 		wellBeingAssessedPreviewTable.bindItems([source[fetus]]);
 		this._onWellBeingChanged(source[fetus].assessed == "Assessed", fetus);
 		
-		bpsPreviewTable.bindItems([source[fetus]]);
+		bppPreviewTable.bindItems([source[fetus]]);
 		dopplerUmbilicalArteryPreviewTable.bindItems([source[fetus]]);
 		dopplerUmbilicalVeinPreviewTable.bindItems([source[fetus]]);
 		dopplerUterineArteryPreviewTable.bindItems([source[fetus]]);
@@ -592,7 +609,7 @@ var WellBeingPreview = {
 	{
 		var display = show ? "block" : "none";
 
-		document.getElementById("bpsPreviewTable"+fetus).style.display = display;
+		document.getElementById("bppPreviewTable"+fetus).style.display = display;
 		document.getElementById("dopplerHeading"+fetus).style.display = display;
 		document.getElementById("dopplerUmbilicalArteryPreviewTable"+fetus).style.display = display;
 		document.getElementById("dopplerUmbilicalVeinPreviewTable"+fetus).style.display = display;
@@ -612,8 +629,8 @@ var WellBeingPreview = {
 		html+= 	"				<tr><td class=\"tableheading\"></td></tr>";
 		html+= 	"			</table>";
 		html+= 	"			<div class=\"wellBeingBpsColumn\" style=\"{width:48%;float:left;}\">";
-		html+= 	"				<table id=\"bpsPreviewTable" + fetus + "\">";
-		html+= 	"					<tr><td class=\"tableheading\">BPS</td></tr>";
+		html+= 	"				<table id=\"bppPreviewTable" + fetus + "\">";
+		html+= 	"					<tr><td class=\"tableheading\">BPP</td></tr>";
 		html+= 	"				</table>";
 		html+= 	"			</div>";
 		html+= 	"			<div class=\"wellBeingDopplerColumn\"  style=\"{width:48%;float:right;}\">";

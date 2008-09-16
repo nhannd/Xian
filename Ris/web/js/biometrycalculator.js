@@ -80,6 +80,17 @@ var BiometryCalculator = {
 		return result.roundTo(this._precision);
 	},
 	
+	gsWeeks : function(gs1, gs2, gs3)
+	{
+		if (!gs1) return null;
+		if (!gs2) return null;
+		if (!gs3) return null;
+
+		var result = (gs1+gs2+gs3)/3*0.132+4.299;  // Nyberg
+		//var result = ((gs1+gs2+gs3)/30+2.543)/0.702;  // Hellman.AmJOG 103:789. 1969
+		return result.roundTo(this._precision);
+	},
+	
 	efw : function(useBpdcHc, useFl, acX, acY, fl, bpd, ofd)
 	{
         useBpdcHc = !!useBpdcHc;
