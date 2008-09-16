@@ -1,0 +1,18 @@
+<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- ImageViewerSamples specific postbuild step -->
+
+	<ItemGroup>
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
+  </ItemGroup>
+
+	<Target Name="Copy Files">
+    <!-- Run the image viewer build file -->
+    <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
+
+		<!-- Copy ImageViewer plugins -->
+		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+	</Target>
+</Project>
+
