@@ -111,9 +111,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			{
 				foreach (InstanceXml instanceXml in seriesXml)
 				{
-					string filename = instanceXml.SopInstanceUid + ".dcm";
 					DicomFile file = new DicomFile(
-						filename,
+						string.Empty,
 						new DicomAttributeCollection(),
 						instanceXml.Collection);
 
