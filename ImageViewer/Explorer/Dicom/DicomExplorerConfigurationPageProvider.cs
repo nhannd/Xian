@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>(SR.DicomExplorerConfiguration));
+			listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>("DicomExplorerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

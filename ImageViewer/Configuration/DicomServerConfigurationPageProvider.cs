@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-            listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>(SR.DicomServerConfiguration));
+            listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

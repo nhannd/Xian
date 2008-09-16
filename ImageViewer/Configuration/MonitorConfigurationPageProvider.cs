@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<MonitorConfigurationApplicationComponent>(SR.MonitorConfiguration));
+			listPages.Add(new ConfigurationPage<MonitorConfigurationApplicationComponent>("MonitorConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

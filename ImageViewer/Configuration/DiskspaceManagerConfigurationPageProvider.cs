@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-            listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>(SR.DiskspaceManagerConfiguration));
+            listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}
