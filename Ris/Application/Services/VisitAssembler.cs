@@ -60,6 +60,9 @@ namespace ClearCanvas.Ris.Application.Services
 			FacilityAssembler facilityAssembler = new FacilityAssembler();
         	summary.Facility = visit.Facility == null ? null : facilityAssembler.CreateFacilitySummary(visit.Facility);
 
+			LocationAssembler locationAssembler = new LocationAssembler();
+			summary.CurrentLocation = visit.CurrentLocation == null ? null : locationAssembler.CreateLocationSummary(visit.CurrentLocation);
+
             return summary;
         }
 

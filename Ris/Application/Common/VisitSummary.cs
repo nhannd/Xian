@@ -54,7 +54,8 @@ namespace ClearCanvas.Ris.Application.Common
             string status,
             DateTime? admitTime,
             DateTime? dischargeTime,
-			FacilitySummary facility)
+			FacilitySummary facility, 
+			LocationSummary currentLocation)
         {
             this.VisitRef = visitRef;
             this.PatientRef = patientRef;
@@ -66,6 +67,7 @@ namespace ClearCanvas.Ris.Application.Common
             this.AdmitTime = admitTime;
             this.DischargeTime = dischargeTime;
         	this.Facility = facility;
+        	this.CurrentLocation = currentLocation;
         }
 
         [DataMember]
@@ -97,6 +99,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
     	public FacilitySummary Facility;
+
+		[DataMember]
+		public LocationSummary CurrentLocation;
 
         public bool Equals(VisitSummary visitSummary)
         {

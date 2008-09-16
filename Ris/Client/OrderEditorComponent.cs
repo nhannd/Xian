@@ -497,7 +497,6 @@ namespace ClearCanvas.Ris.Client
         public string FormatVisit(object visit)
         {
             VisitSummary v = (VisitSummary)visit;
-
             StringBuilder visitIdentity = new StringBuilder();
             if (v.Facility != null)
             {
@@ -505,6 +504,13 @@ namespace ClearCanvas.Ris.Client
                 visitIdentity.Append(" ");
             }
             visitIdentity.Append(v.VisitNumber.Id);
+
+			if(v.CurrentLocation != null)
+			{
+				visitIdentity.Append(", ");
+				visitIdentity.Append(v.CurrentLocation.Name);
+				visitIdentity.Append(",");
+			}
 
             StringBuilder visitType = new StringBuilder();
             visitType.Append(v.PatientClass);
