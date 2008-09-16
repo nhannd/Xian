@@ -214,7 +214,9 @@ namespace ClearCanvas.Ris.Client
                 StaffSummary staff = null;
                 StaffLookupHandler lookupHandler = new StaffLookupHandler(_component.Host.DesktopWindow);
                 bool resolved = lookupHandler.ResolveName(search, out staff);
-                if(!resolved)
+
+				// bug #2896: the name may "resolve" to nothing, so we still need to check if staff actually has a value 
+                if(!resolved || staff == null)
                 {
                     resolved = lookupHandler.ResolveNameInteractive(search, out staff);
                 }
