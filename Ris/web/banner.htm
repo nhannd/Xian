@@ -56,7 +56,9 @@
 					if (patientProfile)
 					{
 						Field.setValue($("name"), patientName);
+						$("name").title = patientName;
 						Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+						$("mrn").title =  Ris.formatMrn(patientProfile.Mrn);
 						Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 						Field.setValue($("agesex"), 
@@ -99,24 +101,38 @@
 				
 			}
 		</script>
+		<style>
+			.patientnameheading {
+				overflow:hidden; 
+				text-overflow:ellipsis; 
+				white-space: nowrap;
+			}
+
+			.patientmrnheading {
+				overflow:hidden; 
+				text-overflow:ellipsis; 
+				white-space: nowrap;
+			}
+			
+			.nameMrnColumn {
+				overflow:hidden;
+				float:left;
+				text-overflow: ellipsis;
+				width: 18%;
+			}
+		</style>
 	</head>
-	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
-			<table border="0" id="bannerTable" width="100%">
+			<span class="nameMrnColumn">
+				<div class="patientnameheading" id="name"></div>
+				<div class="patientmrnheading"id="mrn"></div>
+			</span>
+  			<table border="0" id="bannerTable" width="80%" style="{position:absolute; top: 0px;}">
 				<tr>
 					<td>
 						<table border="0" id="profileTable">
 							<tr>
-								<td>
-									<table border="0" id="patientTable">
-										<tr>
-											<td class="patientnameheading"><div id="name" /></td>
-										</tr>
-										<tr>
-											<td class="patientmrnheading"><div id="mrn" /></td>
-										</tr>
-									</table>
-								</td>
 								<td>
 									<table border="0" id="profileTable">
 										<tr>
@@ -156,7 +172,6 @@
 								</td>
 							</tr>
 						</table>
-
 					</td>
 					<td align="right" class="alerticons">
 						<div id="alerts" />
