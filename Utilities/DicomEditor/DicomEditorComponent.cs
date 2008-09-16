@@ -87,6 +87,10 @@ namespace ClearCanvas.Utilities.DicomEditor
 		IDesktopWindow DesktopWindow { get; }
 
 		void UpdateDisplay();
+
+		bool IsLocalFile { get; }
+
+		event EventHandler IsLocalFileChanged;
 	}
 
     [AssociateView(typeof(DicomEditorComponentViewExtensionPoint))]
@@ -168,7 +172,18 @@ namespace ClearCanvas.Utilities.DicomEditor
             public void UpdateDisplay()
             {
                 _component.UpdateComponent();
-            }
+			}
+
+        	public bool IsLocalFile
+        	{
+				get { return _component.IsLocalFile; }
+        	}
+
+			public event EventHandler IsLocalFileChanged
+			{
+				add { _component._isLocalFileChanged += value; }
+				remove { _component._isLocalFileChanged -= value; }
+			}
 
             #endregion
         }
@@ -366,6 +381,13 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         #endregion
 
+		/// <summary>
+		/// Loads the specified DICOM file into the editor component.
+		/// </summary>
+		/// <remarks>
+		/// <para>If the specified <paramref name="file">filename</paramref> does not exist, an exception will be thrown.</para>
+		/// </remarks>
+		/// <param name="file">The filename of the DICOM file to load.</param>
         public void Load(string file)
         {
             DicomFile dicomFile = new DicomFile(file);
@@ -375,7 +397,40 @@ namespace ClearCanvas.Utilities.DicomEditor
             _loadedFiles.Add(dicomFile);
             _position = 0;
             _dirtyFlags.Add(false);
+			this.IsLocalFile = true;
         }
+
+		/// <summary>
+		/// Loads a copy of the specified in-memory DICOM file into the editor component.
+		/// </summary>
+		/// <remarks>
+		/// <para>The editor will make changes to a new copy of the specified in-memory file, so changes do not propagate to any
+		/// other places where the same file may be open.</para>
+		/// <para>If the file exists on disk, then the editor will reload the file from disk to ensure all data is available.
+		/// If the file does not exist on disk, then currently the editor opens in readonly mode with export functions disabled.</para>
+		/// </remarks>
+		/// <param name="file">The filename of the DICOM file to load.</param>
+		public void Load(DicomFile file)
+		{
+			DicomFile dicomFile;
+			bool isLocal = System.IO.File.Exists(file.Filename);
+			if (isLocal)
+			{
+				// ideally, we would have some way to know if file is fully loaded,
+				// so we know if we can simply copy the dataset instead of re-reading from disk
+				dicomFile = new DicomFile(file.Filename);
+				dicomFile.Load(ClearCanvas.Dicom.DicomReadOptions.Default);
+			}
+			else
+			{
+				dicomFile = new DicomFile(file.Filename, file.MetaInfo.Copy(true), file.DataSet.Copy(true));
+			}
+
+			_loadedFiles.Add(dicomFile);
+			_position = 0;
+			_dirtyFlags.Add(false);
+			this.IsLocalFile = isLocal;
+		}
 
         public void Clear()
         {
@@ -460,7 +515,20 @@ namespace ClearCanvas.Utilities.DicomEditor
         public Table<DicomEditorTag> DicomTagData
         {
             get { return _dicomTagData; }
-        }
+		}
+
+    	private bool IsLocalFile
+    	{
+    		get { return _isLocalFile; }
+			set
+			{
+				if (_isLocalFile != value)
+				{
+					_isLocalFile = value;
+					EventsHelper.Fire(_isLocalFileChanged, this, new EventArgs());
+				}
+			}
+    	}
 
         #region Private Members
 
@@ -483,6 +551,10 @@ namespace ClearCanvas.Utilities.DicomEditor
         private ClickHandlerDelegate _defaultActionHandler;
         private ActionModelRoot _toolbarModel;
         private ActionModelRoot _contextMenuModel;
+
+    	private bool _isLocalFile;
+		private event EventHandler _isLocalFileChanged;
+
         #endregion
 
     }

@@ -61,13 +61,15 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
             base.Initialize();
             this.Enabled = true;
             this.Context.DisplayedDumpChanged += new EventHandler<DisplayedDumpChangedEventArgs>(OnDisplayedDumpChanged);
+			this.Context.IsLocalFileChanged += new EventHandler(OnIsLocalFileChanged);
         }
 
         public bool Enabled
         {
             get { return _enabled; }
-            protected set
-            {
+			protected set 
+			{
+				value = value & this.Context.IsLocalFile;
                 if (_enabled != value)
                 {
                     _enabled = value;
@@ -100,6 +102,10 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         protected void OnDisplayedDumpChanged(object sender, DisplayedDumpChangedEventArgs e)
         {
             this.Enabled = !e.IsCurrentTheOnly;
-        }
+		}
+
+		private void OnIsLocalFileChanged(object sender, EventArgs e) {
+			this.Enabled = base.Context.IsLocalFile;
+		}  
     }
 }

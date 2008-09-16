@@ -132,7 +132,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     _component.Clear();
                 }
 
-                _component.Load(file.Filename);
+                _component.Load(file);
             }
             else if (this.ContextBase is ILocalImageExplorerToolContext)
             {

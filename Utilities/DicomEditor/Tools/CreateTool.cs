@@ -62,6 +62,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
             base.Initialize();
             this.Enabled = true;
             this.Context.SelectedTagChanged += new EventHandler(OnSelectedTagChanged);
+			this.Context.IsLocalFileChanged += new EventHandler(OnIsLocalFileChanged);
         }
 
         public bool Enabled
@@ -69,6 +70,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
             get { return _enabled; }
             protected set
             {
+            	value = value & this.Context.IsLocalFile;
                 if (_enabled != value)
                 {
                     _enabled = value;
@@ -112,6 +114,10 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
                 this.Enabled = false;
             else
                 this.Enabled = true;
-        }   
+		}
+
+		private void OnIsLocalFileChanged(object sender, EventArgs e) {
+			this.Enabled = base.Context.IsLocalFile;
+		}  
     }
 }
