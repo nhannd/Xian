@@ -72,6 +72,7 @@
     <Compile Include="StudyDeleteAction\StudyDeleteActionItem.cs" />
     <Compile Include="StudyDeleteAction\StudyDeleteActionOperator.cs" />
     <Compile Include="StudyDeleteAction\Sample_StudyDelete.cs" />
+    <Compile Include="Tier1RetentionAction\Sample_Tier1Retention.cs" />
     <Compile Include="Tier1RetentionAction\Tier1RetentionActionItem.cs" />
     <Compile Include="Tier1RetentionAction\Tier1RetentionActionOperator.cs" />
   </ItemGroup>
@@ -126,6 +127,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Tier1RetentionAction\Sample_StudyDateTier1Retention.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

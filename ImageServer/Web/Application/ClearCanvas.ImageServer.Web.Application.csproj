@@ -427,13 +427,6 @@
     <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.designer.cs">
       <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx.cs">
-      <DependentUpon>ReconcileDialog.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx.designer.cs">
-      <DependentUpon>ReconcileDialog.ascx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Queues\ReconcileQueue\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -943,7 +936,6 @@
     <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Queues\ArchiveQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx" />
-    <Content Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx" />
     <Content Include="Pages\Queues\ReconcileQueue\Default.aspx" />
     <Content Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx" />
     <Content Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx" />
