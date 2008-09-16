@@ -105,13 +105,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			tw.Close();
 
 			byte[] buffer = ms.GetBuffer();
-
+			
 			GZipStream compressedzipStream = new GZipStream(theGzipStream, CompressionMode.Compress, true);
-			compressedzipStream.Write(buffer, 0, buffer.Length);
+			compressedzipStream.Write(buffer, 0, (int)ms.Length);
 			// Close the stream.
 			compressedzipStream.Close();
 
-			theXmlStream.Write(buffer, 0, buffer.Length);
+			theXmlStream.Write(buffer, 0, (int)ms.Length);
 		}
 
 		public static void ReadGzip(XmlDocument theDoc, Stream theStream)
