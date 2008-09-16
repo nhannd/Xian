@@ -40,7 +40,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	[Obsolete]
+	[Obsolete("This control has been deprecated and will be removed in the future. Use GalleryComponent-derived components instead.")]
 	public partial class GalleryView : UserControl
 	{
 		private IBindingList _gallery;
@@ -339,7 +339,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			// force tile sizing to fit within the control without horizontal scrolling
 			const int tileSpacing = 4;
-			_listView.TileSize = new Size(_listView.ClientSize.Width - 2*tileSpacing, this.ImageSize.Height + tileSpacing);
+			_listView.TileSize = new Size(
+				Math.Max(3 * this.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2 * tileSpacing),
+						     this.ImageSize.Height + tileSpacing
+			);
 		}
 
 		private void OnItemDrag(object sender, ItemDragEventArgs e)

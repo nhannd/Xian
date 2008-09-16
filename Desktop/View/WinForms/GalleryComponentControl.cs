@@ -306,8 +306,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			// force tile sizing to fit within the control without horizontal scrolling
 			const int tileSpacing = 4;
-			_listView.TileSize =
-				new Size(_listView.ClientSize.Width - 2*tileSpacing, _listView.LargeImageList.ImageSize.Height + tileSpacing);
+			_listView.TileSize = new Size(
+				Math.Max(3 * _listView.LargeImageList.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2 * tileSpacing),
+				             _listView.LargeImageList.ImageSize.Height + tileSpacing
+			);
 		}
 
 		private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)
