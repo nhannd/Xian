@@ -1081,11 +1081,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Window &amp; Level.
+        ///   Looks up a localized string similar to Window/Level.
         /// </summary>
-        internal static string TitleWindowAndLevel {
+        internal static string TitleWindowLevel {
             get {
-                return ResourceManager.GetString("TitleWindowAndLevel", resourceCulture);
+                return ResourceManager.GetString("TitleWindowLevel", resourceCulture);
             }
         }
         
@@ -1216,7 +1216,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Window &amp; Level.
+        ///   Looks up a localized string similar to Window/Level.
         /// </summary>
         internal static string ToolbarWindowLevel {
             get {
@@ -1369,7 +1369,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Window &amp; Level.
+        ///   Looks up a localized string similar to Window/Level.
         /// </summary>
         internal static string TooltipWindowLevel {
             get {

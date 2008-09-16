@@ -250,7 +250,7 @@
     <value>Stack</value>
   </data>
   <data name="TooltipWindowLevel" xml:space="preserve">
-    <value>Window &amp; Level</value>
+    <value>Window/Level</value>
   </data>
   <data name="TooltipZoom" xml:space="preserve">
     <value>Zoom</value>
@@ -283,7 +283,7 @@
     <value>Stack</value>
   </data>
   <data name="ToolbarWindowLevel" xml:space="preserve">
-    <value>Window &amp; Level</value>
+    <value>Window/Level</value>
   </data>
   <data name="ToolbarZoom" xml:space="preserve">
     <value>Zoom</value>
@@ -440,8 +440,8 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TitleEditPreset" xml:space="preserve">
     <value>Edit Preset</value>
   </data>
-  <data name="TitleWindowAndLevel" xml:space="preserve">
-    <value>Window &amp; Level</value>
+  <data name="TitleWindowLevel" xml:space="preserve">
+    <value>Window/Level</value>
   </data>
   <data name="MenuCine" xml:space="preserve">
     <value>Cine</value>
