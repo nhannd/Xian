@@ -635,14 +635,17 @@ var Table = {
 						column.setValue(obj, result);
 						table._onCellUpdate(row, col);
 						table._onEditComplete(row, col);
-						//input.style.backgroundColor = "white";	// revert field background color since the query is resolved
-						input.className = "";
+						input.className = "";	// revert field background color since the query is resolved
 					}
 				}
 				
 				var input = document.createElement("input");
 				td.appendChild(input);
-				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value;; }
+				td._setCellDisplayValue = function(value)
+				{
+					input.value = (value === undefined || value === null) ? "" : value;
+					input.className = "";
+				}
 				if(column.size) input.size = column.size;
 
                 // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
@@ -666,7 +669,6 @@ var Table = {
 							table._onCellUpdate(row, col);
 							
 							// if there are any characters in the input field, change color to indicate to user that the query is unresolved
-							//input.style.backgroundColor = (input.value && column.getValue(obj) === null) ? "yellow" : "white";
 							input.className = (input.value && column.getValue(obj) === null) ? "unresolved" : "";
 					}
 				}				
