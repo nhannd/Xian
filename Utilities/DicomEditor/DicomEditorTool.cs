@@ -119,7 +119,9 @@ namespace ClearCanvas.Utilities.DicomEditor
                 //be completely refactored in the very near future to make use of the methods the pacs uses to parse the tags.
                 //Addendum to Comment above - HH 07/27/07 - Turns out that our implementation continues to remove the pixel data for optimization at this time so 
                 //the workaround is still needed.
-                file = new DicomFile(file.Filename);
+				//Addendum to Comment above - JY 09/16/08 - Somewhere along the line, things were changed that made this line redundant - the only reference to
+				//it after this point is at +11 lines or so, and all it does is get file.Filename. Therefore, I am commenting this line out.
+                //file = new DicomFile(file.Filename);
 
                 if (_component == null)
                 {
