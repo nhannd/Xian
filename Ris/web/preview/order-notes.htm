@@ -115,16 +115,9 @@
 
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 				if (reportDetail)
-				{
-					var procedures = reportDetail.Procedures;
-					createProtocolProceduresTable($("proceduresTable"), procedures);
 					createReportPreview($("report"), reportDetail);
-				}
 				else
-				{
-					// hide report section
 					Field.show($("reportSection"), false);
-				}
 			}
 			catch(e)
 			{

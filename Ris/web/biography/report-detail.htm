@@ -42,30 +42,19 @@
 					};
 
 					var service = Ris.getPatientDataService();
-
 					var data = service.getData(request);
 
 					if (data == null || data.length == 0)
 					{
 						Field.setValue($("myForm"), "");
 						return;
-
 					}
 
 					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-					
 					if (reportDetail)
-					{
-						var procedures = reportDetail.Procedures;
-						createProtocolProceduresTable($("proceduresTable"), procedures);
 						createReportPreview($("report"), reportDetail);
-					}
 					else
-					{
-						// hide report section
-						Field.show($("proceduresTable"), false);
 						Field.show($("reportSection"), false);
-					}
 				}
 				catch(e)
 				{
@@ -79,16 +68,6 @@
 		<form id="myForm">
 			<div id="reportSection">
 				<p id="reportheading" class="sectionheading">Report</p>
-				<table border="0" id="proceduresTable">
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Protocol</td>
-						<td>Code</td>
-						<td>Author</td>
-					</tr>
-					<!-- this empty row is here so the color of the first data row is consistent with other previews -->
-					<tr colspan="3"></tr>
-				</table>
 				<div id="report"></div>
 			</div>
 		</form>

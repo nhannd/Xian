@@ -323,6 +323,11 @@ function createProtocolProceduresTable(htmlTable, procedures)
 
 function createReportingProceduresTable(htmlTable, procedures)
 {
+	var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "VerificationStep", "PublicationStep"];
+	var activeStatusCode = ["SC", "IP"];
+	var isActiveReportingStep = function(step) { return reportingStepNames.indexOf(step.StepClassName) >= 0 && activeStatusCode.indexOf(step.State.Code) >= 0; };
+	var isCompletedPublicationStep = function(step) { return step.StepClassName == "PublicationStep" && step.State.Code == "CM"; };
+
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
 			{   label: "Procedure",
@@ -331,7 +336,7 @@ function createReportingProceduresTable(htmlTable, procedures)
 			},
 			{   label: "Status",
 				cellType: "text",
-				getValue: function(item) { return "TODO"; }
+				getValue: function(item) { return formatProcedureReportingStatus(item); }
 			},
 			{   label: "Start/End Time",
 				cellType: "text",
@@ -343,10 +348,68 @@ function createReportingProceduresTable(htmlTable, procedures)
 			},
 			{   label: "Owner",
 				cellType: "text",
-				getValue: function(item) { return "TODO"; }
+				getValue: function(item) { return formatProcedureReportingOwner(item); }
 			}
 		 ]);
 
+	function formatProcedureReportingStatus(procedure)
+	{
+		var activeReportingStep = procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
+		var completedPublicationStep = procedure.ProcedureSteps.select(isCompletedPublicationStep).firstElement();
+		var lastStep = activeReportingStep ? activeReportingStep : completedPublicationStep;
+		var isAddendum = activeReportingStep && completedPublicationStep;
+
+		var stepName = lastStep.ProcedureStepName;
+		var addendumPrefix = isAddendum ? "Addendum " : "";
+		
+		var formattedStatus;
+		switch(lastStep.State.Code)
+		{
+			case "SC": formattedStatus = "Pending " + stepName;
+				if (stepName == "Verification")
+					formattedStatus = "To Be Revised";
+					
+				break;
+			case "IP": formattedStatus = stepName + " In Progress"; 
+				if (stepName == "Verification")
+					formattedStatus = "Revising";
+
+				break;
+			case "SU": formattedStatus = stepName + " Suspended"; break;
+			case "CM": formattedStatus = stepName + " Completed";
+				// Exceptions to formatting
+				if (stepName == "Verification")
+					formattedStatus = "Verified";
+				else if (stepName == "Publication")
+					formattedStatus = "Published";
+					
+				break;
+				
+			case "DC": formattedStatus = stepName + " Cancelled"; break;
+			default: break;
+		}
+		
+		return addendumPrefix + formattedStatus;
+	}
+	
+	function formatProcedureReportingOwner(procedure)
+	{
+		var activeReportingStep = procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
+		var completedPublicationStep = procedure.ProcedureSteps.select(isCompletedPublicationStep).firstElement();
+		var lastStep = activeReportingStep ? activeReportingStep : completedPublicationStep;
+
+		if (!lastStep)
+			return "";
+
+		if (lastStep.Performer)
+			return Ris.formatPersonName(lastStep.Performer.Name)
+		
+		if (lastStep.ScheduledPerformer)
+			return Ris.formatPersonName(lastStep.ScheduledPerformer.Name);
+			
+		return "";
+	}
+		 
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(procedures);
 }
@@ -553,54 +616,6 @@ function formatReportPerformer(reportPart)
 	return formattedReport;
 }
 
-function formatReportingStepStatus(step, reportPartIndex)
-{
-	var stepName = step.ProcedureStepName;
-	var addendumPrefix = reportPartIndex > 0 ? "Addendum " : "";
-	
-	var formattedStatus;
-	switch(step.State.Code)
-	{
-		case "SC": formattedStatus = "Pending " + stepName;
-			if (stepName == "Verification")
-				formattedStatus = "To Be Revised";
-				
-			break;
-		case "IP": formattedStatus = stepName + " In Progress"; 
-			if (stepName == "Verification")
-				formattedStatus = "Revising";
-
-			break;
-		case "SU": formattedStatus = stepName + " Suspended"; break;
-		case "CM": formattedStatus = stepName + " Completed";
-			// Exceptions to formatting
-			if (stepName == "Verification")
-				formattedStatus = "Verified";
-			else if (stepName == "Publication")
-				formattedStatus = "Published";
-				
-			break;
-			
-		case "DC": formattedStatus = stepName + " Cancelled"; break;
-		default: break;
-	}
-	
-	return addendumPrefix + formattedStatus;
-}
-
-function formatProtocollingStepStatus(step)
-{
-	switch(step.State.Code)
-	{
-		case "SC": return "Pending Protocol";
-		case "IP": return "Protocolling In Progress";
-		case "SU":
-		case "DC":
-		case "CM": return "Protocolling Completed";
-		default: return "";
-	}
-}
-
 /*
 // Useful test code for calculating patient age
 function testPatientAge()
@@ -698,7 +713,6 @@ function getPatientAgeInYears(dateOfBirth, deathIndicator, timeOfDeath)
 
 	return age;
 }
-
 
 function isProcedureStatusActive(procedureStatus)
 {

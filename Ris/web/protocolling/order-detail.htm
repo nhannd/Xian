@@ -33,12 +33,6 @@
                                 IncludeNotes: true,
 								NoteCategoriesFilter: ["General"],
 								IncludeProcedures: true
-							},
-						// list other relevant orders
-						ListOrdersRequest:
-							{
-								PatientRef: context.PatientRef,
-								QueryDetailLevel: "Procedure"
 							}
 					};
 
@@ -65,9 +59,9 @@
 							Field.show($("CancelReasonSection"), false);
 
 						if (orderDetail.Procedures.length)
-							createReportingProceduresTable($("reportingProceduresTable"), orderDetail.Procedures);
+							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
 						else
-							Field.show($("reportingProceduresTable"), false);
+							Field.show($("proceduresTable"), false);
 							
 						if(orderDetail.Notes.length)
 						{
@@ -78,27 +72,6 @@
 						else
 						{
 							Field.show($("notesSection"), false);
-						}
-
-						// update active and past RIC tables
-						var patientOrderData = data.ListOrdersResponse.Orders;
-						if (patientOrderData)
-						{
-							var activeProcedures = getActiveProcedures(patientOrderData);
-							var pastProcedures = getNonActiveProcedures(patientOrderData);
-
-							// add a renderRow handler to highlight the correct row
-							var currentAccession = orderDetail.AccessionNumber;
-							
-							if (activeProcedures.length == 0)
-								Field.show($("activeProceduresSection"), false);
-							else
-								createImagingServiceTable($("activeImagingServiceTable"), activeProcedures, currentAccession);
-							
-							if (pastProcedures.length == 0)
-								Field.show($("pastProceduresSection"), false);
-							else
-								createImagingServiceTable($("pastImagingServiceTable"), pastProcedures, currentAccession);
 						}
 					}
 					else
@@ -141,13 +114,13 @@
 						<td width="200" colspan="4"><div id="CancelReason"/></td>
 					</tr>
 				</table>
-				<table id="reportingProceduresTable">
+				<table border="0" id="proceduresTable">
 					<tr class="tableheading">
 						<td>Procedure</td>
 						<td>Status</td>
+						<td>Schedule</td>
 						<td>Start/End Time</td>
 						<td>Performing Staff</td>
-						<td>Owner</td>
 					</tr>
 				</table>
 				
@@ -179,32 +152,7 @@
 					</table>
 				</div>
 			</div>
-			
-			<div id="activeProceduresSection">
-				<p class="sectionheading">Active Imaging Service</p>
-		        <table width="100%" border="0" id="activeImagingServiceTable">
-		            <tr class="tableheading">
-			            <td>Procedure</td>
-			            <td>Schedule</td>
-			            <td>Status</td>
-			            <td>Performing Facility</td>
-			            <td>Ordering Physician</td>
-		            </tr>
-		        </table>
-			</div>
-			
-			<div id="pastProceduresSection">
-				<p class="sectionheading">Past Imaging Service</p>
-		        <table width="100%" border="0" id="pastImagingServiceTable">
-		            <tr class="tableheading">
-			            <td>Procedure</td>
-			            <td>Schedule</td>
-			            <td>Status</td>
-			            <td>Performing Facility</td>
-			            <td>Ordering Physician</td>
-		            </tr>
-		        </table>
-			</div>
+
 		</form>
 	</body>
 </html>
