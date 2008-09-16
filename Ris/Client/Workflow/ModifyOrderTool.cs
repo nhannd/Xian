@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
@@ -96,6 +97,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
 	public class RegistrationModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
 	{
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Context.RegisterDoubleClickHandler(
+				(IClickAction)CollectionUtils.SelectFirst(
+					this.Actions,
+					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
+		}
+
 		protected override bool Execute(RegistrationWorklistItem item)
 		{
 			return ExecuteCore(item);
@@ -111,6 +122,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public class BookingModifyOrderTool : ModifyOrderToolBase<RegistrationWorklistItem, IRegistrationWorkflowItemToolContext>
 	{
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			this.Context.RegisterDoubleClickHandler(
+				(IClickAction)CollectionUtils.SelectFirst(
+					this.Actions,
+					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
+		}
+
 		protected override bool Execute(RegistrationWorklistItem item)
 		{
 			return ExecuteCore(item);
