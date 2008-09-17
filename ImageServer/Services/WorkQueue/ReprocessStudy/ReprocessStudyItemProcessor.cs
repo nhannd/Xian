@@ -218,15 +218,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
 			try
 			{
+				ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
+				Platform.Log(LogLevel.Info, "Started reprocess of study {0} on partition {1}", StorageLocation.StudyInstanceUid,
+							 partition.Description);
+				CleanupDirectory();
+
+				// Warning, this may end up causing problems w/ a long running transaction.
+				// We're inserting all the WorkQueueUid entries, for a large study this may
+				// take some time, and cause the WorkQueue table to be locked for awhile, 
+				// and potentially causing deadlocks.  We may have to adjust the ScheduleReprocess()
+				// routine to commit more often.
 				using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
 					CleanupDatabase(item, ctx);
+					ScheduleReprocess(ctx);
 					ctx.Commit();
 				}
 
-				CleanupDirectory();
-
-				ScheduleReprocess();
+				Platform.Log(LogLevel.Info, "Completed reprocessing of study {0} on partition {1}", StorageLocation.StudyInstanceUid,
+				             partition.Description);
 			}
 			catch (Exception e)
 			{
@@ -301,35 +311,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 				throw new ApplicationException(String.Format("Cannot update database for study: {0}", StorageLocation.StudyInstanceUid));
         }
 
-        private void ScheduleReprocess()
-        {
+		private void ScheduleReprocess(IUpdateContext ctx)
+		{
 			foreach (SeriesInfo series in _studyInfo.Series)
 			{
-				// Use an update context per series to shrink down the transaction size.
-				// Long running transactions are a bad thing!!!
-				using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-				{
-					IInsertWorkQueueStudyProcess broker = ctx.GetBroker<IInsertWorkQueueStudyProcess>();
+				IInsertWorkQueueStudyProcess broker = ctx.GetBroker<IInsertWorkQueueStudyProcess>();
 
-					foreach (SopInfo sop in series.Instances)
-					{
-						WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
-						parms.Duplicate = false;
-						parms.ExpirationTime =
-							Platform.Time.Add(TimeSpan.FromSeconds(WorkQueueSettings.Instance.WorkQueueExpireDelaySeconds));
-						parms.Extension = ".dcm";
-						parms.ScheduledTime = Platform.Time;
-						parms.SeriesInstanceUid = series.SeriesUid;
-						parms.ServerPartitionKey = _newStorage.ServerPartitionKey;
-						parms.SopInstanceUid = sop.SopInstanceUid;
-						parms.StudyStorageKey = _newStorage.GetKey();
-						parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-						broker.Execute(parms);
-					}
+				foreach (SopInfo sop in series.Instances)
+				{
+					WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
+					parms.Duplicate = false;
+					parms.ExpirationTime =
+						Platform.Time.Add(TimeSpan.FromSeconds(WorkQueueSettings.Instance.WorkQueueExpireDelaySeconds));
+					parms.Extension = ".dcm";
+					parms.ScheduledTime = Platform.Time;
+					parms.SeriesInstanceUid = series.SeriesUid;
+					parms.ServerPartitionKey = _newStorage.ServerPartitionKey;
+					parms.SopInstanceUid = sop.SopInstanceUid;
+					parms.StudyStorageKey = _newStorage.GetKey();
+					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+					broker.Execute(parms);
 				}
 			}
-        }
+		}
 
-        #endregion
+    	#endregion
     }
 }
