@@ -340,10 +340,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				Device dest = deviceAdaptor.Get(item.DeviceKey);
 
 				summary.Notes = String.Format("Destination AE : {0}", dest.AeTitle);
+
+				if (item.FailureDescription != null)
+				{
+					if (item.FailureDescription.Length > 60)
+					{
+						summary.Notes = String.Format("{0}, Failure: {1} ...", summary.Notes, item.FailureDescription.Substring(0, 60));
+					}
+					else
+						summary.Notes = String.Format("{0}, Failure: {1}", summary.Notes, item.FailureDescription);
+				}
 			}
-			else if (item.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed
-					&& item.FailureDescription != null)
+			else if (item.FailureDescription != null)
 			{
+				// This used to only be shown when the status was "Failed" for a 
+				// queue entry.  We now show it any time there's 
 				if (item.FailureDescription.Length > 60)
 				{
 					summary.Notes = item.FailureDescription.Substring(0, 60);
