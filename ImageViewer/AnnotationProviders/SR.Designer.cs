@@ -493,6 +493,33 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Image Laterality and View Position.
+        /// </summary>
+        internal static string Dicom_GeneralImage_Composite_LateralityViewPosition_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_Composite_LateralityViewPosition_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        internal static string Dicom_GeneralImage_Composite_LateralityViewPosition_Format {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_Composite_LateralityViewPosition_Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lat/Pos.
+        /// </summary>
+        internal static string Dicom_GeneralImage_Composite_LateralityViewPosition_Label {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_Composite_LateralityViewPosition_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Content Date.
         /// </summary>
         internal static string Dicom_GeneralImage_ContentDate_DisplayName {
@@ -561,6 +588,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Dicom_GeneralImage_ImageComments_Label {
             get {
                 return ResourceManager.GetString("Dicom_GeneralImage_ImageComments_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image Laterality.
+        /// </summary>
+        internal static string Dicom_GeneralImage_ImageLaterality_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_ImageLaterality_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lat.
+        /// </summary>
+        internal static string Dicom_GeneralImage_ImageLaterality_Label {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_ImageLaterality_Label", resourceCulture);
             }
         }
         
@@ -669,6 +714,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string Dicom_GeneralImage_QualityControlImage_Label {
             get {
                 return ResourceManager.GetString("Dicom_GeneralImage_QualityControlImage_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to View Position.
+        /// </summary>
+        internal static string Dicom_GeneralImage_ViewPosition_DisplayName {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_ViewPosition_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pos.
+        /// </summary>
+        internal static string Dicom_GeneralImage_ViewPosition_Label {
+            get {
+                return ResourceManager.GetString("Dicom_GeneralImage_ViewPosition_Label", resourceCulture);
             }
         }
         

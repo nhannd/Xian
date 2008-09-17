@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dicom\LateralityViewPositionAnnotationItem.cs" />
     <Compile Include="Dicom\ImagePlaneAnnotationItemProvider.cs" />
     <Compile Include="Dicom\InstanceNumberAnnotationItem.cs" />
     <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />

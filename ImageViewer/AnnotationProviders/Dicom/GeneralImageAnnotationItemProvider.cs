@@ -241,6 +241,33 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						DicomDataFormatHelper.BooleanFormatter
 					)
 				);
+
+			_annotationItems.Add
+				(
+					new LateralityViewPositionAnnotationItem
+					(
+						"Dicom.GeneralImage.ViewPosition",
+						false, true
+					)
+				);
+
+			_annotationItems.Add
+				(
+					new LateralityViewPositionAnnotationItem
+					(
+						"Dicom.GeneralImage.ImageLaterality",
+						true, false
+					)
+				);
+			
+			_annotationItems.Add
+				(
+					new LateralityViewPositionAnnotationItem
+					(
+						"Dicom.GeneralImage.Composite.LateralityViewPosition",
+						true, true
+					)
+				);
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

@@ -261,6 +261,15 @@
   <data name="Dicom_GeneralImage_AcquisitionTime_Label" xml:space="preserve">
     <value>Acq</value>
   </data>
+  <data name="Dicom_GeneralImage_Composite_LateralityViewPosition_DisplayName" xml:space="preserve">
+    <value>Image Laterality and View Position</value>
+  </data>
+  <data name="Dicom_GeneralImage_Composite_LateralityViewPosition_Format" xml:space="preserve">
+    <value>{0}/{1}</value>
+  </data>
+  <data name="Dicom_GeneralImage_Composite_LateralityViewPosition_Label" xml:space="preserve">
+    <value>Lat/Pos</value>
+  </data>
   <data name="Dicom_GeneralImage_ContentDate_DisplayName" xml:space="preserve">
     <value>Content Date</value>
   </data>
@@ -284,6 +293,12 @@
   </data>
   <data name="Dicom_GeneralImage_ImageComments_Label" xml:space="preserve">
     <value>Img. Comm.</value>
+  </data>
+  <data name="Dicom_GeneralImage_ImageLaterality_DisplayName" xml:space="preserve">
+    <value>Image Laterality</value>
+  </data>
+  <data name="Dicom_GeneralImage_ImageLaterality_Label" xml:space="preserve">
+    <value>Lat</value>
   </data>
   <data name="Dicom_GeneralImage_ImagesInAcquisition_DisplayName" xml:space="preserve">
     <value>Images In Acquisition</value>
@@ -320,6 +335,12 @@
   </data>
   <data name="Dicom_GeneralImage_QualityControlImage_Label" xml:space="preserve">
     <value>Quality Control</value>
+  </data>
+  <data name="Dicom_GeneralImage_ViewPosition_DisplayName" xml:space="preserve">
+    <value>View Position</value>
+  </data>
+  <data name="Dicom_GeneralImage_ViewPosition_Label" xml:space="preserve">
+    <value>Pos</value>
   </data>
   <data name="Dicom_GeneralSeries_BodyPartExamined_DisplayName" xml:space="preserve">
     <value>Body Part Examined</value>
