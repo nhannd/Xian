@@ -38,7 +38,7 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
-	/// This class is used to execute and undo a series of <see cref="ServerCommand"/> instances.
+	/// This class is used to execute and undo a series of <see cref="IServerCommand"/> instances.
 	/// </summary>
 	/// <remarks>
 	/// <para>
@@ -65,8 +65,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	{
 		#region Private Members
 		private readonly string _description;
-		private readonly Stack<ServerCommand> _stack = new Stack<ServerCommand>();
-		private readonly Queue<ServerCommand> _queue = new Queue<ServerCommand>();
+        private readonly Stack<IServerCommand> _stack = new Stack<IServerCommand>();
+        private readonly Queue<IServerCommand> _queue = new Queue<IServerCommand>();
 		private string _failureReason;
 		private IUpdateContext _updateContext = null;
 		#endregion
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// Add a command to the processor.
 		/// </summary>
 		/// <param name="command">The command to add.</param>
-		public void AddCommand(ServerCommand command)
+		public void AddCommand(IServerCommand command)
 		{
 			_queue.Enqueue(command);
 		}
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
 			while (_queue.Count > 0)
 			{
-				ServerCommand command = _queue.Dequeue();
+                IServerCommand command = _queue.Dequeue();
                 
 				ServerDatabaseCommand dbCommand = command as ServerDatabaseCommand;
 
@@ -189,18 +189,16 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 			while (_stack.Count > 0)
 			{
-				using(ServerCommand command = _stack.Pop())
+			    IServerCommand command = _stack.Pop();
+				
+				try
 				{
-					try
-					{
-						command.Undo();
-					}
-					catch (Exception e)
-					{
-						Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
-					}
+					command.Undo();
 				}
-                
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
+				}  
 			}
 
 		}
@@ -217,13 +215,15 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 			foreach (ServerCommand command in _queue)
 			{
-				command.Dispose();
+                if (command is IDisposable)
+				    (command as IDisposable).Dispose();
 			}
 
 			while (_stack.Count > 0)
 			{
-				ServerCommand command = _stack.Pop();
-				command.Dispose();
+                IDisposable command = _stack.Pop() as IDisposable;
+				if (command !=null)
+                    command.Dispose();
 
 			}
 		}

@@ -225,7 +225,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 					{
 						WorkQueueTypeEnum val = WorkQueueTypeEnum.GetEnum(type);
 						if (val != null)
-							_theProcessor.SupportedTypesList.Add(val);
+						{
+                            if (_theProcessor.SupportedTypesList.Contains(val))
+                            {
+                                Platform.Log(LogLevel.Warn,
+                                             "Multiple work queue processor plugins found that are capable of handling '{0}' work queue entries. Only the first plugin is used.",
+                                             val.Lookup);
+                            }
+                            else
+                                _theProcessor.SupportedTypesList.Add(val);
+						}
+							
 					}
 				}
 			}				

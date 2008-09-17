@@ -43,6 +43,12 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             return folderSize;
         }
 
+        public static void Move(string sourceDirectory, string targetDirectory)
+        {
+            Copy(sourceDirectory, targetDirectory);
+            DeleteIfExists(sourceDirectory);
+        }
+
         public static void Copy(string sourceDirectory, string targetDirectory)
         {
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
@@ -98,8 +104,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             if (deleteParent)
             {
                 // delete the parent too
-                if (parent.GetFiles().Length == 0 && parent.GetDirectories().Length == 0)
-                    parent.Delete(true);
+                DeleteIfEmpty(parent.FullName);
             }
             
             

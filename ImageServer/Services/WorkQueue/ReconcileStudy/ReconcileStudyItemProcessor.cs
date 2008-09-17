@@ -5,15 +5,10 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -25,9 +20,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     {
         #region Private Members
         private ReconcileStudyProcessorContext _context;
-        private ReconcileDicomFileCommand _reconcileCommand;
-        private UpdateDicomFileCommand _updateDicomFileCommand;
         private ReconcileStudyWorkQueueData _reconcileQueueData;
+        List<IReconcileServerCommand> _commandList = null;
         #endregion
 
         #region Overridden Protected Method
@@ -35,8 +29,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.Data, "item.Data");
-            Platform.CheckForNullReference(item.StudyHistoryKey, "item.StudyHistoryKey");
-
+            
             if (CannotStart())
             {
                 WorkQueueSettings settings = WorkQueueSettings.Instance;
@@ -53,13 +46,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 }
                 else
                 {
+                    Platform.Log(LogLevel.Info, "Reconcililation started. GUID={0}.", WorkQueueItem.GetKey());
+
                     _reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
 
                     LoadStorageLocation(item);
 
+                    InitializeContext();
+                    
                     ProcessUidList();
 
-                    PostProcessing(item, WorkQueueUidList.Count > 0, WorkQueueUidList.Count == 0);
+                    Complete(item);
                 }
             }
            
@@ -89,6 +86,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private void Complete(Model.WorkQueue item)
         {
             PostProcessing(item, false, true);
+            Platform.Log(LogLevel.Info, "Reconciliation completed");
         }
 
         private void ProcessUidList()
@@ -99,39 +97,59 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             }
         }
 
-        private void SetupCommands(DicomFile file)
+        
+        private void SetupCommands(ServerCommandProcessor processor)
         {
-            if (_updateDicomFileCommand==null)
+            // only set up the command once
+            if (_commandList==null)
             {
-                XmlDocument changeDescXml = _context.History.ChangeDescription;
-                XmlNode updateImagesNode = changeDescXml.SelectSingleNode("UpdateImages");
-                if (updateImagesNode != null)
+                ReconcileCommandXmlParser parser = new ReconcileCommandXmlParser();
+                _commandList = parser.Parse(_context.WorkQueueItem.Data);
+
+                if (_commandList == null || _commandList.Count == 0)
                 {
-                    UpdateImagesCommandXmlSpecification specs = new UpdateImagesCommandXmlSpecification();
-                    specs.Parse(changeDescXml.SelectSingleNode("UpdateImages"));
-                    _updateDicomFileCommand = new UpdateDicomFileCommand(specs.ActionList);
+                    // look for commands in the History record
+                    if (_context.History != null && _context.History.ChangeDescription!=null)
+                        _commandList = parser.Parse(_context.History.ChangeDescription);
+                }
+
+                foreach (IReconcileServerCommand command in _commandList)
+                {
+                    Platform.Log(LogLevel.Info, "Command: {0}", command.Description);
                 }
             }
 
-            if (_reconcileCommand==null)
-                _reconcileCommand = new ReconcileDicomFileCommand();
 
+            if (_commandList==null || _commandList.Count==0)
+            {
+                throw new ApplicationException("Command is not specified for this entry");
+            }
 
-            _updateDicomFileCommand.DicomFile = file;
-            _reconcileCommand.Context = _context;
-            _reconcileCommand.DicomFile = file;
+            foreach (IReconcileServerCommand command in _commandList)
+            {
+                command.Context = _context;
+                processor.AddCommand(command);
+            }
         }
 
-        private void SetupContext(DicomFile file)
+        private void InitializeContext()
         {
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
-
             _context = new ReconcileStudyProcessorContext();
             _context.WorkQueueItem = WorkQueueItem;
             _context.Partition = ServerPartition.Load(StorageLocation.ServerPartitionKey);
             _context.Data = _reconcileQueueData;
-            _context.History = StudyHistory.Load(WorkQueueItem.StudyHistoryKey);
-            _context.ExistingStudyStorageLocation = StorageLocation;   
+            _context.History = WorkQueueItem.StudyHistoryKey != null
+                                   ? StudyHistory.Load(WorkQueueItem.StudyHistoryKey)
+                                   : null;
+
+            _context.ExistingStudyStorageLocation = StorageLocation; // Note: 
+            
+        }
+
+        private void SetupContext(DicomFile file)
+        {
+            _context.ReconcileImage = file;
         }
 
 
@@ -140,7 +158,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             string imagePath = GetCurrentImagePath(uid);
             Debug.Assert(File.Exists(imagePath));
             
-            Platform.Log(LogLevel.Info, "Reconciling image : {0} in {1}", uid.SopInstanceUid, imagePath);
+            Platform.Log(LogLevel.Debug, "Reconciling image : {0} in {1}", uid.SopInstanceUid, imagePath);
             ProcessFile(uid, imagePath);
 
             DeleteWorkQueueUid(uid);
@@ -155,18 +173,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
         private void ProcessFile(WorkQueueUid uid, string path)
         {
-            
+            Platform.Log(LogLevel.Debug, "Reconciling {0}", path);
             DicomFile file = new DicomFile(path);
             file.Load(DicomReadOptions.StorePixelDataReferences);
-
-            SetupContext(file);
-            SetupCommands(file);
-
+            
             using(ServerCommandProcessor processor = new ServerCommandProcessor("Reconcile File"))
             {
-                processor.AddCommand(_updateDicomFileCommand);
-                processor.AddCommand(_reconcileCommand);
-
+                SetupContext(file);
+                SetupCommands(processor);
+                
                 if (!processor.Execute())
                 {
                     throw new ApplicationException(
@@ -185,4 +200,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         #endregion
 
     }
+
+    
+
+    
 }

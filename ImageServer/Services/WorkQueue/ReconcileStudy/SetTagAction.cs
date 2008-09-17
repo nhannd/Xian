@@ -7,72 +7,115 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
+    /// <summary>
+    /// Defines the interface for actions which are defined based on <see cref="TagUpdateSpecification"/>
+    /// </summary>
+    /// <remark>
+    /// A <see cref="ITagBasedUpdateAction"> action consist of <see cref="TagUpdateSpecification"/>
+    /// describing the tags that need to be updated and what the new values are.
+    /// </remark>
+    public interface ITagBasedUpdateAction
+    {
+        /// <summary>
+        /// Gets the specifications which define the action
+        /// </summary>
+        List<TagUpdateSpecification> Specifications { get; }
+    }
 
     /// <summary>
-    /// Helper class to represent the content specified in a "SetTag" xml node.
+    /// Tag level update specifications.
     /// </summary>
-    class UpdateSpecification
+    /// <remarks>
+    /// <see cref="TagUpdateSpecification"/> specificies the tag that needs to be updated and its new value.
+    /// </remarks>
+    public class TagUpdateSpecification
     {
-        private List<DicomTag> _parentTags = null;
-        private DicomTag _targetTag = null;
-        private string _value = null;
+        #region Private Members
+        private readonly List<DicomTag> _parentTags = null;
+        private readonly DicomTag _targetTag = null;
+        private readonly string _value = null;
+        #endregion
 
-        public UpdateSpecification(List<DicomTag> parentTags, DicomTag tag, String value)
+        #region Constructors
+
+        /// <summary>
+        /// Creates an instance of <see cref="TagUpdateSpecification"/> for specified Dicom tag and value.
+        /// </summary>
+        /// <param name="parentTags">Ascendant tag in the Dicom image</param>
+        /// <param name="tag">The tag that needs to be updated</param>
+        /// <param name="value">The new value for the tag</param>
+        public TagUpdateSpecification(List<DicomTag> parentTags, DicomTag tag, String value)
         {
             _parentTags = parentTags;
             _targetTag = tag;
             _value = value;
         }
+        #endregion
 
+        /// <summary>
+        /// Gets the parents of the <see cref="TargetTag"/>
+        /// </summary>
         public List<DicomTag> ParentTags
         {
             get { return _parentTags; }
-            set { _parentTags = value; }
         }
 
+        /// <summary>
+        /// Gets the Dicom tag whose value will be updated.
+        /// </summary>
         public DicomTag TargetTag
         {
             get { return _targetTag; }
-            set { _targetTag = value; }
         }
 
+        /// <summary>
+        /// Gets the value to be set according to the specications
+        /// </summary>
         public string Value
         {
             get { return _value; }
-            set { _value = value; }
         }
 
 
     }
 
     /// <summary>
-    /// Represents a "SetTag" action within a "UpdateImages" command
+    /// Represents a "SetTag" action that can be applied to a Dicom file.
     /// </summary>
-    class SetTagAction : IDicomFileUpdateCommandAction
+    /// <remarks>
+    /// </remarks>
+    class SetTagAction : IDicomFileUpdateCommandAction, ITagBasedUpdateAction
     {
-        private UpdateSpecification specifications;
+        #region Private Members
+        private readonly TagUpdateSpecification _specifications;
+        #endregion
 
-        public UpdateSpecification Specifications
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="SetTagAction"/> based on the given specifications.
+        /// </summary>
+        /// <param name="specifications"></param>
+        public SetTagAction (TagUpdateSpecification specifications)
         {
-            get { return specifications; }
-            set { specifications = value; }
+            _specifications = specifications;
         }
+        #endregion
 
         #region IDicomFileUpdateCommandAction Members
 
         public void Apply(DicomFile file)
         {
-            Platform.Log(LogLevel.Info, "Updating dicom file...");
+            Platform.Log(LogLevel.Debug, "Updating dicom file...");
 
             DicomAttribute attribute = FindAttribute(file.DataSet);
             if (attribute != null)
             {
-                Platform.Log(LogLevel.Info, "Updating {0} to '{1}'", attribute.Tag, Specifications.Value);
+                Platform.Log(LogLevel.Debug, "Updating {0} to '{1}'", attribute.Tag, _specifications.Value);
 
-                if (Specifications.Value == null)
+                if (_specifications.Value == null)
                     attribute.SetNullValue();
                 else
-                    attribute.SetStringValue(Specifications.Value);
+                    attribute.SetStringValue(_specifications.Value);
             }
         }
 
@@ -81,9 +124,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             if (collection == null)
                 return null;
 
-            if (Specifications.ParentTags != null)
+            if (_specifications.ParentTags != null)
             {
-                foreach (DicomTag tag in Specifications.ParentTags)
+                foreach (DicomTag tag in _specifications.ParentTags)
                 {
                     DicomAttribute sq = collection[tag] as DicomAttributeSQ;
                     if (sq == null)
@@ -102,9 +145,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 }
             }
 
-            return collection[Specifications.TargetTag];
+            return collection[_specifications.TargetTag];
         }
 
         #endregion
-    }
+    
+        #region ITagBasedUpdateAction Members
+
+        public List<TagUpdateSpecification>  Specifications
+        {
+	        get {
+	            List<TagUpdateSpecification> list = new List<TagUpdateSpecification>();
+	            list.Add(_specifications);
+	            return list;
+            }
+        }
+
+        #endregion
+}
 }

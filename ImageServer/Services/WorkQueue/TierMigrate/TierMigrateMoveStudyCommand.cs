@@ -1,10 +1,11 @@
+using System;
 using System.IO;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
-    class TierMigrateMoveStudyFolderCommand:ServerCommand
+    class TierMigrateMoveStudyFolderCommand:ServerCommand, IDisposable
     {
         #region Private Memeber
         private TierMigrationContext _context = null;
@@ -31,7 +32,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             if (_processor != null)
                 _processor.Dispose();
@@ -40,7 +41,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             {
                 DirectoryUtility.DeleteIfExists(Context.OriginalStudyLocation.GetStudyPath(), true);
             }
-            base.Dispose();
         }
 
         protected override void OnExecute()

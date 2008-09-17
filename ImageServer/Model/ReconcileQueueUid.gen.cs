@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _reconcileQueueKey;
+        private System.String _seriesDescription;
         private System.String _seriesInstanceUid;
         private System.String _sopInstanceUid;
         #endregion
@@ -59,6 +60,13 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _reconcileQueueKey; }
         set { _reconcileQueueKey = value; }
+        }
+        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueueUid", ColumnName="SeriesDescription")]
+        public System.String SeriesDescription
+        {
+        get { return _seriesDescription; }
+        set { _seriesDescription = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="ReconcileQueueUid", ColumnName="SeriesInstanceUid")]

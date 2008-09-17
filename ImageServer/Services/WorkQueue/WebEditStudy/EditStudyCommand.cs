@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
     /// <summary>
     /// Server Command for editting a study
     /// </summary>
-    public class EditStudyCommand : ServerCommand
+    public class EditStudyCommand : ServerCommand, IDisposable
     {
         #region Private Members
         private EditStudyContext _context = null;
@@ -116,15 +116,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #endregion
 
         #region Public Methods
-        public override void Dispose()
+        public void Dispose()
         {
             if (_processor != null)
                 _processor.Dispose();
 
             if (Context != null)
                 DirectoryUtility.DeleteIfExists(Context.TempOutRootFolder);
-
-            base.Dispose();
         }
 
         #endregion

@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
     /// appropriate location if necessary. It uses <see cref="IActionItem{EditStudyContext}"/> plugins
     /// as part of its operation to actual update the contents of the study dicom files. 
     /// </remarks>
-    internal class StudyFolderUpdateCommand : EditStudyActionCommandBase
+    internal class StudyFolderUpdateCommand : EditStudyActionCommandBase, IDisposable
     {
         #region Private Members
         private readonly IActionSet<EditStudyContext> _action = null;
@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         #region Public Methods
 
-        public override void Dispose()
+        public void Dispose()
         {
             string backupFolder = Context.OriginalStorageLocation.GetStudyPath() + ".tobedeleted";
 
@@ -234,7 +234,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 // ignore
                 Platform.Log(LogLevel.Warn, e, "Cleanup failed but ignored");
             }
-            base.Dispose();
         }
 
         #endregion

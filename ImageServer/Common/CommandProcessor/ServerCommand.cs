@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// file and database operations to allow undoing of the operations.  This
 	/// abstract class is used as the interface for the command.</para>
 	/// </remarks>
-	public abstract class ServerCommand:IDisposable
+	public abstract class ServerCommand: IServerCommand
 	{
 		#region Private Members
 		private string _description;
@@ -133,15 +133,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 		protected abstract void OnExecute();
 		protected abstract void OnUndo();
-		#endregion
-
-		#region IDisposable Members
-
-		public virtual void Dispose()
-		{
-            
-		}
-
 		#endregion
 	}
 }

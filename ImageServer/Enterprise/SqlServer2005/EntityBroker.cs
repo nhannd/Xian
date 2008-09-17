@@ -135,7 +135,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             StringBuilder sb = new StringBuilder();
             String sqlColumnName;
             String sqlParmName;
-            object[] values = new object[sc.Values.Length];
+            object[] values = null;
+
+             
 
             // With the Server, all primary keys end with "Key".  The database implementation itself
             // names these columns with the name GUID instead of Key.
@@ -156,20 +158,31 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             // Now go through the actual input parameters.  Replace references to ServerEntityKey with
             // the GUID itself for these parameters, and replace ServerEnum derived references with the 
             // value of the enum in the array so the input parameters work properly.
-            for (int i = 0; i < sc.Values.Length; i++)
+
+            if (sc.Values!=null && sc.Values.Length>0)
             {
-                ServerEntityKey key = sc.Values[i] as ServerEntityKey;
-                if (key != null)
-                    values[i] = key.Key;
-                else
+                values = new object[sc.Values.Length];
+                for (int i = 0; i < sc.Values.Length; i++)
                 {
-                    ServerEnum e = sc.Values[i] as ServerEnum;
-                    if (e != null)
-                        values[i] = e.Enum;
+                    ServerEntityKey key = sc.Values[i] as ServerEntityKey;
+                    if (key != null)
+                        values[i] = key.Key;
                     else
-                        values[i] = sc.Values[i];
+                    {
+                        ServerEnum e = sc.Values[i] as ServerEnum;
+                        if (e != null)
+                            values[i] = e.Enum;
+                        else
+                            values[i] = sc.Values[i];
+                    }
                 }
             }
+            else
+            {
+                values = new object[1];
+                values[0] = DBNull.Value;
+            }
+            
 
             // Generate the actual WHERE clauses based on the type of condition.
             switch (sc.Test)

@@ -1,3 +1,4 @@
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -6,7 +7,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// <summary>
     /// Encapsulated the context of the image reconciliation operation.
     /// </summary>
-    class ReconcileStudyProcessorContext
+    public class ReconcileStudyProcessorContext
     {
         #region Private Members
         private Model.WorkQueue _item;
@@ -17,6 +18,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private StudyStorageLocation _destStudyStorageLocation;
         private ServerFilesystemInfo _targetFilesystem;
         private string _destStudyInstanceUid;
+        private DicomFile _reconcileImage;
         #endregion
 
         #region Public Properties
@@ -84,6 +86,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
             get { return _destStudyInstanceUid; }
             set { _destStudyInstanceUid = value; }
+        }
+
+        public DicomFile ReconcileImage
+        {
+            get { return _reconcileImage; }
+            set { _reconcileImage = value; }
         }
 
         #endregion

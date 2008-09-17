@@ -45,6 +45,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ReconcileQueueKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ReconcileQueueKey", value); }
         }
+       [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        public System.String SeriesDescription
+        {
+            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<System.String>("SeriesDescription", value); }
+        }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public System.String SeriesInstanceUid
         {

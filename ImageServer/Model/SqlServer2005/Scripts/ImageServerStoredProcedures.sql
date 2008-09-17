@@ -133,6 +133,17 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQu
 DROP PROCEDURE [dbo].[WebQueryRestoreQueue]
 GO
 
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueueReconcileStudy]    Script Date: 09/17/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueReconcileStudy]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertWorkQueueReconcileStudy]
+GO
+
+/****** Object:  StoredProcedure [dbo].[InsertReconcileQueue]    Script Date: 09/17/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertReconcileQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertReconcileQueue]
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
@@ -2985,7 +2996,7 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueReconcileStudy]
 	-- Add the parameters for the stored procedure here
 	@ServerPartitionGUID uniqueidentifier,
 	@StudyStorageGUID uniqueidentifier,
-	@StudyHistoryGUID uniqueidentifier,
+	@StudyHistoryGUID uniqueidentifier=NULL,
 	@SeriesInstanceUid varchar(64),
 	@SopInstanceUid varchar(64),
 	@Data xml,

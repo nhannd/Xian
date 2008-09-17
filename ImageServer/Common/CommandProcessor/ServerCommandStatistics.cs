@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// </summary>
 	public class ServerCommandStatistics:TimeSpanStatistics
 	{
-		public ServerCommandStatistics(ServerCommand cmd)
+		public ServerCommandStatistics(IServerCommand cmd)
 			:base(cmd.Description)
 		{
             

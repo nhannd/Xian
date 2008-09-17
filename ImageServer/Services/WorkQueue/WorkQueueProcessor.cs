@@ -280,7 +280,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 													{
 														try
 														{
-															processor.Process(queueItem);
+														    processor.Process(queueItem);
 														}
 														catch (Exception e)
 														{

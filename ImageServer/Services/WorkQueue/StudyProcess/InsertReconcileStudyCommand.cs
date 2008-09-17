@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             WorkQueueReconcileStudyInsertParameters parameters = new WorkQueueReconcileStudyInsertParameters();
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
-            parameters.StudyHistoryKey = _context.History.GetKey();
+            parameters.StudyHistoryKey = _context.History != null ? _context.History.GetKey() : null;
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 

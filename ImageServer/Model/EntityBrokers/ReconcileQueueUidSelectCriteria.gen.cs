@@ -52,6 +52,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ReconcileQueueKey"];
             } 
         }
+        public ISearchCondition<System.String> SeriesDescription
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("SeriesDescription"))
+              {
+                 SubCriteria["SeriesDescription"] = new SearchCondition<System.String>("SeriesDescription");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["SeriesDescription"];
+            } 
+        }
         public ISearchCondition<System.String> SeriesInstanceUid
         {
             get

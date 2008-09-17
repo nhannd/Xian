@@ -10,40 +10,63 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    public class UpdateDicomFileCommand : ServerCommand
+    /// <summary>
+    /// Commands for updating a Dicom file.
+    /// </summary>
+    /// <remark>
+    /// A dicom file level update command consists of one or more <see cref="IDicomFileUpdateCommandAction"/>
+    /// </remark>
+    public class UpdateDicomFileCommand : ServerCommand, IDisposable
     {
-        private DicomFileUpdateCommandActionList _actionList;
+        #region Private Members
+        private readonly DicomFileUpdateCommandActionList _actionList;
         private string _outputFilePath;
         private string _backupExistingFileName;
         private bool _backup = false;
         bool _saved;
-
         private DicomFile _file;
+        #endregion
 
+        #region Construtors
+        /// <summary>
+        /// Creates an instance of <see cref="UpdateDicomFileCommand"/> with the specified actions.
+        /// </summary>
+        /// <param name="actionList">The actions to be applied to the Dicom file</param>
         public UpdateDicomFileCommand(DicomFileUpdateCommandActionList actionList)
-            : base("UpdateDicomFileCommand", true)
+            : base("Update Dicom File", true)
         {
             _actionList = actionList;
         }
+        #endregion
 
+        #region Public Properties
+        /// <summary>
+        /// Sets or gets the Dicom file to be updated
+        /// </summary>
         public DicomFile DicomFile
         {
             get { return _file; }
             set { _file = value; }
         }
 
+        /// <summary>
+        /// Sets or gets the path where the updated file will be saved. 
+        /// </summary>
+        /// <remarks>
+        /// If this property is not set, the <see cref="DicomFile"/> will be updated but will not be saved.
+        /// </remarks>
         public string OutputFilePath
         {
             get { return _outputFilePath; }
             set { _outputFilePath = value; }
         }
 
+        #endregion
 
-        public override void Dispose()
+        public  void Dispose()
         {
             if (File.Exists(_backupExistingFileName))
                 File.Delete(_backupExistingFileName); 
-            base.Dispose();
         }
 
         protected override void OnExecute()
@@ -94,7 +117,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     }
 
     /// <summary>
-    /// Defines the interface of an Dicom file level update action that can be applied to a <see cref="DicomFile"/>
+    /// Defines the interface of an action at the Dicom file level.
     /// </summary>
     public interface IDicomFileUpdateCommandAction
     {
