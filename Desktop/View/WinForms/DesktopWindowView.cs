@@ -354,6 +354,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         internal void ShowShelfView(ShelfView shelfView)
         {
+			if (!shelfView.Content.Visible)
+				shelfView.Content.BringToFront();
+
             if (shelfView.Content.IsDocked)
             {
                 if (shelfView.Content.IsAutoHidden)   // auto-hide mode
