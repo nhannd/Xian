@@ -136,6 +136,11 @@ tr.highlight {
 	color: #FFFFFF;
 }
 
+tr.mouseover {
+	background-color: #3d98d1;
+	color: #FFFFFF;
+}
+
 div.alert ul {
 	border: 0;
 	color: #FF0000;

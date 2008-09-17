@@ -22,10 +22,9 @@
 				return;
 
 			try
-
 			{
-				var healchareContext = Ris.getHealthcareContext();
-				if (healchareContext == null)
+				var context = Ris.getHealthcareContext();
+				if (context == null)
 				{
 					Field.setValue($("myForm"), "");
 					return;
@@ -36,18 +35,21 @@
 				{
  					GetPatientProfileDetailRequest:
 						{
-							PatientProfileRef: healchareContext.PatientProfileRef,
+							PatientProfileRef: context.PatientProfileRef,
 							IncludeAlerts: true
 						},
 					GetOrderDetailRequest:
 						{
-							OrderRef: healchareContext.OrderRef,
+							OrderRef: context.OrderRef,
 							IncludeAlerts: true,
 							IncludeNotes: true,
 							IncludeProcedures: true
 						},
-					// only request the report detail if there is a report     
-					GetReportDetailRequest: healchareContext.ReportRef == null ? null : { ReportRef: healchareContext.ReportRef }
+					
+					ListReportsRequest:
+						{
+							OrderRef: context.OrderRef
+						}
 				};
 
 				var service = Ris.getPatientDataService();
@@ -113,11 +115,11 @@
 					}
 				}
 
-				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-				if (reportDetail)
-					createReportPreview($("report"), reportDetail);
+				var reports = data.ListReportsResponse ? data.ListReportsResponse.Reports : null;
+				if (reports && reports.length > 0)
+					createReportListTable($("reportsTable"), reports, onLoadReport);
 				else
-					Field.show($("reportSection"), false);
+					Field.show($("reportListSection"), false);
 			}
 			catch(e)
 			{
@@ -125,7 +127,30 @@
 				Field.setValue($("myForm"), message);
 			}
 		}
-</script>
+		
+		function onLoadReport(reportListItem)
+		{
+			var request = 
+			{
+				GetReportDetailRequest: { ReportRef: reportListItem.ReportRef }
+			};
+
+			var service = Ris.getPatientDataService();
+			var data = service.getData(request);
+
+			if (data == null || data.length == 0)
+			{
+				Field.show($("report"), false);
+				return;
+			}
+
+			var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
+			if (reportDetail)
+				createReportPreview($("report"), reportDetail);
+			else
+				Field.show($("report"), false);
+		}		
+	</script>
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 	<form id="myForm">
@@ -219,9 +244,18 @@
 			</div>
 		</div>
 
-		<div id="reportSection">
-			<p id="reportheading" class="sectionheading">Report</p>
-			<div id="report"></div>
+		<div id="reportListSection">
+			<p class="sectionheading">Reports</p>
+			<table id="reportsTable">
+				<tr class="tableheading">
+					<td>Procedure</td>
+					<td>Report Status</td>
+					<td></td>
+				</tr>
+			</table>
+			
+			<!-- the actual report content goes here -->
+			<div id="report"/>
 		</div>
 	</form>
 </body>

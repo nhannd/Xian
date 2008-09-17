@@ -22,6 +22,7 @@ var _IE = document.all;
 					editInPlace (bool) - indicates whether to create an edit-in-place style table, vs a read-only table.
 					flow (bool) - true: the logical columns will be flowed inside of a single TD. false: each logical column given its own TD.
 					checkBoxes (bool) - inidicates whether the first column of the table should be a checkbox column.
+					autoSelectFirstElement (bool)  - indicates whether the first row of the table should automatically be selected.  Only applicable when onRowClick is implemented
 					
 			columns - an array of column objects that maps properties of an item to columns of the table. 
 				For an non edit-in-place table, this may simply be an array of strings. Each string will be treated as a property
@@ -53,6 +54,8 @@ var _IE = document.all;
 		Properties:
 			items - the array of items to which the table is bound. Do not set this property - use bindItems() method instead.
 			rowCycleClassNames - an array of CSS class names that will be applied cyclically to rows as they are added
+			mouseOverClassName - a CSS class name that will be applied when mouse over a clickable row
+			highlightClassName - a CSS class name that will be applied when a clickable row is selected
 			errorProvider - the ErrorProvider object used by the table. You may set this property to your own ErrorProvider instance
 				(e.g. so that the table shares the same ErrorProvider object as the rest of the page)
 				  
@@ -85,7 +88,14 @@ var _IE = document.all;
 															colIndex - the col index of the cell
 															item - the item that this row represents
 															column - the column object to which this cell is mapped
-															
+			onRowClick - fired when a row is clicked
+				To attach an event handler, use the following syntax: table.onRowClick = function(sender, args) {...}
+				The args object contains the properties:   htmlCell - the DOM TD element										
+															rowIndex - the row index of the cell
+															colIndex - the col index of the cell
+															item - the item that this row represents
+															column - the column object to which this cell is mapped
+			
 			validateItem - fired to validate an item in the table.
 				To attach an event handler, use the following syntax: table.validateItem = function(sender, args) {...}
 				The args object contains the properties:   item - the item to be validated
@@ -140,6 +150,12 @@ var Table = {
 			
 			// validate items
 			this.updateValidation();
+			
+			if (this.onRowClick)
+			{
+				if (this._options.autoSelectFirstElement)
+					this._selectRow(this.rows[1]); // skip header row
+			}
 		},
 		
 		getCheckedItems: function()
@@ -167,7 +183,52 @@ var Table = {
 			for(var i=1; i < this.rows.length; i++) // skip header row
 				this._validateRow(i);
 		},
+
+		_indexOfRow: function(r)
+		{
+			for(var i=1; i < this.rows.length; i++)
+			{
+				if(this.rows[i] === r)
+					return i;
+			}
+			
+			return -1;
+		},
 		
+		_resetRowClassName: function(r)
+		{
+			var index = this._indexOfRow(r);
+			if (this.rowCycleClassNames && this.rowCycleClassNames.length > 0)
+				r.className = this.rowCycleClassNames[(index-1)%(this.rowCycleClassNames.length)];
+		},
+
+		_selectRow: function(r)
+		{
+			// reset the row class name of the previously selected row
+			if (this._selectedRow)
+				this._resetRowClassName(this._selectedRow);
+
+			var index = this._indexOfRow(r);
+			var obj = this.items[index-1];
+			this.onRowClick(this, { htmlRow: r, rowIndex: index-1, item: obj }); 
+			this._selectedRow = r;
+			this._selectedRow.className = this.highlightClassName;
+		},
+
+		_mouseOverRow: function(r)
+		{ 
+			r.style.cursor="hand"; 
+			r.className = this.mouseOverClassName;
+		},
+		
+		_mouseOutRow: function(r) 
+		{ 
+			r.style.cursor=''; 
+			this._resetRowClassName(r);
+			if (this._selectedRow && r == this._selectedRow)
+				this._selectedRow.className = this.highlightClassName;
+		},
+
 		_validateRow: function(rowIndex)
 		{
 			// validate each column
@@ -206,6 +267,14 @@ var Table = {
 			if(this.renderRow)
 				this.renderRow(this, { htmlRow: tr, rowIndex: index-1, item: obj });
 			
+			if (this.onRowClick)
+			{
+				var htmlTable = this;
+				tr.onmouseover = function() { htmlTable._mouseOverRow(tr); };
+				tr.onmouseout = function() { htmlTable._mouseOutRow(tr); };
+				tr.onclick = function() { htmlTable._selectRow(tr); };
+			}
+				
 			if(this._options.checkBoxes)
 			{
 				// add checkbox cell at start of row

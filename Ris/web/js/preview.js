@@ -130,9 +130,9 @@ function formatProcedureStartEndTime(startTime, checkOutTime)
 		return "Not started";
 
 	if (checkOutTime)
-		return "Ended " + getDescriptiveTime(checkOutTime);
+		return "Ended " + Ris.formatDateTime(checkOutTime);
 
-	return "Started " + getDescriptiveTime(startTime);
+	return "Started " + Ris.formatDateTime(startTime);
 }
 
 function formatProcedurePerformingStaff(procedure)
@@ -251,7 +251,7 @@ function createProceduresTable(htmlTable, procedures)
 				getValue: function(item) { return formatProcedurePerformingStaff(item); }
 			}
 		 ]);
-
+		
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(procedures);
 }
@@ -323,11 +323,6 @@ function createProtocolProceduresTable(htmlTable, procedures)
 
 function createReportingProceduresTable(htmlTable, procedures)
 {
-	var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "VerificationStep", "PublicationStep"];
-	var activeStatusCode = ["SC", "IP"];
-	var isActiveReportingStep = function(step) { return reportingStepNames.indexOf(step.StepClassName) >= 0 && activeStatusCode.indexOf(step.State.Code) >= 0; };
-	var isCompletedPublicationStep = function(step) { return step.StepClassName == "PublicationStep" && step.State.Code == "CM"; };
-
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
 			{   label: "Procedure",
@@ -352,12 +347,30 @@ function createReportingProceduresTable(htmlTable, procedures)
 			}
 		 ]);
 
+ 
+	function getActiveReportingStep(procedure)
+	{
+		var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "VerificationStep", "PublicationStep"];
+		var activeStatusCode = ["SC", "IP"];
+		var isActiveReportingStep = function(step) { return reportingStepNames.indexOf(step.StepClassName) >= 0 && activeStatusCode.indexOf(step.State.Code) >= 0; };
+
+		return procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
+	}
+	
+	function getLastCompletedPublicationStep(procedure)
+	{
+		var isCompletedPublicationStep = function(step) { return step.StepClassName == "PublicationStep" && step.State.Code == "CM"; };
+		var compreStepEndTime = function(step1, step2) { return Date.compare(step1.EndTime, step2.EndTime); };
+		return procedure.ProcedureSteps.select(isCompletedPublicationStep).sort(compreStepEndTime).reverse().firstElement();
+	}
+		 
 	function formatProcedureReportingStatus(procedure)
 	{
-		var activeReportingStep = procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
-		var completedPublicationStep = procedure.ProcedureSteps.select(isCompletedPublicationStep).firstElement();
-		var lastStep = activeReportingStep ? activeReportingStep : completedPublicationStep;
-		var isAddendum = activeReportingStep && completedPublicationStep;
+		var activeReportingStep = getActiveReportingStep(procedure);
+		var lastCompletedPublicationStep = getLastCompletedPublicationStep(procedure);
+
+		var lastStep = activeReportingStep ? activeReportingStep : lastCompletedPublicationStep;
+		var isAddendum = activeReportingStep && lastCompletedPublicationStep;
 
 		var stepName = lastStep.ProcedureStepName;
 		var addendumPrefix = isAddendum ? "Addendum " : "";
@@ -394,9 +407,10 @@ function createReportingProceduresTable(htmlTable, procedures)
 	
 	function formatProcedureReportingOwner(procedure)
 	{
-		var activeReportingStep = procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
-		var completedPublicationStep = procedure.ProcedureSteps.select(isCompletedPublicationStep).firstElement();
-		var lastStep = activeReportingStep ? activeReportingStep : completedPublicationStep;
+		var activeReportingStep = getActiveReportingStep(procedure);
+		var lastCompletedPublicationStep = getLastCompletedPublicationStep(procedure);
+
+		var lastStep = activeReportingStep ? activeReportingStep : lastCompletedPublicationStep;
 
 		if (!lastStep)
 			return "";
@@ -412,6 +426,31 @@ function createReportingProceduresTable(htmlTable, procedures)
 		 
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(procedures);
+}
+
+function createReportListTable(htmlTable, reportList, onLoadReport)
+{
+	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, autoSelectFirstElement: true },
+		 [
+			{   label: "Procedure",
+				cellType: "text",
+				getValue: function(item) { return formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
+			},
+			{   label: "Status",
+				cellType: "text",
+				getValue: function(item) { return item.ReportStatus.Value; }
+			}
+		 ]);
+	
+	htmlTable.onRowClick = function(sender, args)
+		{
+			onLoadReport(args.item);
+		};
+		 
+	htmlTable.mouseOverClassName = "mouseover";
+	htmlTable.highlightClassName = "highlight";
+	htmlTable.rowCycleClassNames = ["row0", "row1"];
+	htmlTable.bindItems(reportList);
 }
 
 function createOrderNotesTable(htmlTable, notes, categoryFilter)
