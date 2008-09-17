@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Client
 
 			//current location
 			this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnCurrentLocation,
-				delegate(VisitSummary v) { return v.CurrentLocation.Name; },
+				delegate(VisitSummary v) { return v.CurrentLocation != null ? v.CurrentLocation.Name : null; },
 				1.0f));
 
 			//status
