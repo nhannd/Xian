@@ -149,6 +149,18 @@ function formatProcedurePerformingStaff(procedure)
 		return "";
 }
 
+function formatPerformingFacilityList(procedures)
+{
+	var facilities = [];
+	for(var i = 0; i < procedures.length; i++)
+	{
+		if (facilities.indexOf(procedures[i].PerformingFacility.Name) < 0)
+			facilities.add(procedures[i].PerformingFacility.Name);
+	}
+	
+	return String.combine(facilities, "<br>");
+}
+
 function filterProcedureByModality(procedures, modalityIdFilter)
 {
 	var isStepInModality = function (step)
