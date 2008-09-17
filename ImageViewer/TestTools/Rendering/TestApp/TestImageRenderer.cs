@@ -20,6 +20,8 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		private bool _useBufferedGraphics;
 		private bool _bufferedGraphicsNew;
 
+		private Bitmap _customImage;
+
 		private Bitmap _image;
 		private Bitmap _buffer;
 		private BufferedGraphicsContext _context;
@@ -49,6 +51,19 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			foreach (GraphicsSource value in values)
 				sources.Add(value);
 			return sources;
+		}
+
+		public Bitmap CustomImage
+		{
+			get { return _customImage; }
+			set 
+			{ 
+				if (_customImage != null)
+					_customImage.Dispose();
+
+				_customImage = value;
+				DisposeBuffer();
+			}
 		}
 
 		public bool CustomBackBuffer
@@ -183,7 +198,11 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		private void Render(Graphics graphics, Size size)
 		{
 			graphics.Clear(Color.Black);
-			graphics.DrawImage(_image, 0, 0, size.Width, size.Height);
+			if (_customImage != null)
+				graphics.DrawImage(_customImage, 0, 0, size.Width, size.Height);
+			else
+				graphics.DrawImage(_image, 0, 0, size.Width, size.Height);
+
 			_bufferedGraphicsNew = false;
 		}
 

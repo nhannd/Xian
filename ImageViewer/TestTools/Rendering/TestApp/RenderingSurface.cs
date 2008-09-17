@@ -10,6 +10,8 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 	public partial class RenderingSurface : UserControl, INotifyPropertyChanged
 	{
 		private readonly TestImageRenderer _renderer;
+		private int _draws;
+		private TimeSpan _time;
 
 		public RenderingSurface()
 		{
@@ -74,6 +76,35 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			}
 		}
 
+		public Bitmap Bitmap
+		{
+			get { return _renderer.CustomImage; }
+			set 
+			{ 
+				_renderer.CustomImage = value;
+				Invalidate();
+			}
+		}
+
+		public int Draws
+		{
+			get { return _draws; }	
+		}
+
+		public string Time
+		{
+			get { return _time.TotalSeconds.ToString("F2"); }	
+		}
+
+		public void ClearStats()
+		{
+			_draws = 0;
+			_time = TimeSpan.Zero;
+
+			FirePropertyChanged("Draws");
+			FirePropertyChanged("Time");
+		}
+
 		protected override void OnSizeChanged(EventArgs e)
 		{
 			base.OnSizeChanged(e);
@@ -88,7 +119,16 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		{
 			try
 			{
+				DateTime start = DateTime.Now;
 				_renderer.RenderTo(e.Graphics, this.Size);
+				
+				DateTime end = DateTime.Now;
+				TimeSpan duration = end.Subtract(start);
+				_time = _time.Add(duration);
+				++_draws;
+
+				FirePropertyChanged("Draws");
+				FirePropertyChanged("Time");
 			}
 			catch(Exception ex)
 			{
