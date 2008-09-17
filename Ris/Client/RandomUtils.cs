@@ -429,11 +429,11 @@ namespace ClearCanvas.Ris.Client
         /// <returns></returns>
         public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays)
         {
-            return RandomOrder(visit, informationAuthority, diagnosticServiceName, schedulingOffsetDays,"",null);
+            return RandomOrder(visit, informationAuthority, diagnosticServiceName, schedulingOffsetDays,"",null,null);
         }
         public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, int schedulingOffsetDays, String Modality,String FacilityCode)
         {
-            return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays,Modality,FacilityCode);
+            return RandomOrder(visit, informationAuthority, null, schedulingOffsetDays,Modality,FacilityCode,null);
         }
 
         /// <summary>
@@ -445,7 +445,7 @@ namespace ClearCanvas.Ris.Client
         /// <param name="schedulingOffsetDays">A positive or negative number of days from today.</param>
         /// <param name="Modality">A string specifying the name of the modality.</param>
         /// <returns></returns>
-        public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays,string Modality,string FacilityCode)
+        public static OrderSummary RandomOrder(VisitSummary visit, EnumValueInfo informationAuthority, string diagnosticServiceName, int schedulingOffsetDays,string Modality,string FacilityCode,EnumValueInfo Laterality)
         {
             InitReferenceDataCacheOnce();
 
@@ -511,6 +511,8 @@ namespace ClearCanvas.Ris.Client
                            {
                                ProcedureRequisition req = new ProcedureRequisition(rpt, performingFacility);
                                req.ScheduledTime = scheduledTime;
+                               if(Laterality!=null)
+                                    req.Laterality=Laterality;
                                return req;
                            }));
                    
@@ -525,5 +527,6 @@ namespace ClearCanvas.Ris.Client
 
             return orderSummary;
         }
+        
     }
 }
