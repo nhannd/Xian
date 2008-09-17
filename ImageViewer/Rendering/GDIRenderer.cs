@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			Surface.FinalBuffer.Graphics.Clear(Color.Black);
+			Surface.BackBuffer.Graphics.Clear(Color.Black);
 			base.Render();
 
 			clock.Stop();
@@ -148,8 +148,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			if (Surface.FinalBuffer != null)
-				Surface.FinalBuffer.RenderToScreen();
+			Surface.BackBuffer.RenderToScreen();
 
 			clock.Stop();
 			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.Refresh", clock.Seconds);
@@ -160,30 +159,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawImageGraphic(ImageGraphic imageGraphic)
 		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			const int bytesPerPixel = 4;
-
-			Surface.ImageBuffer.Graphics.Clear(Color.Black);
-
-			BitmapData bitmapData = Surface.ImageBuffer.Bitmap.LockBits(
-				new Rectangle(0, 0, Surface.ImageBuffer.Bitmap.Width, Surface.ImageBuffer.Bitmap.Height),
-				ImageLockMode.ReadWrite, PixelFormat.Format32bppRgb);
-
-			try
-			{
-				ImageRenderer.Render(imageGraphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, Surface.ClientRectangle);
-			}
-			finally
-			{
-				Surface.ImageBuffer.Bitmap.UnlockBits(bitmapData);
-			}
-
-			Surface.FinalBuffer.RenderImage(Surface.ImageBuffer);
-
-			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.DrawImageGraphic", clock.Seconds);
+			Surface.BackBuffer.RenderImageGraphic(imageGraphic);
 		}
 
 		/// <summary>
@@ -191,10 +167,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawLinePrimitive(LinePrimitive line)
 		{
-			Surface.FinalBuffer.Graphics.Transform = line.SpatialTransform.CumulativeTransform;
+			Surface.BackBuffer.Graphics.Transform = line.SpatialTransform.CumulativeTransform;
 			line.CoordinateSystem = CoordinateSystem.Source;
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			Surface.BackBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			// Draw drop shadow
 			_pen.Color = Color.Black;
@@ -203,7 +179,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			SetDashStyle(line);
 
 			SizeF dropShadowOffset = GetDropShadowOffset(line);
-			Surface.FinalBuffer.Graphics.DrawLine(
+			Surface.BackBuffer.Graphics.DrawLine(
 				_pen,
 				line.Pt1 + dropShadowOffset,
 				line.Pt2 + dropShadowOffset);
@@ -211,15 +187,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Draw line
 			_pen.Color = line.Color;
 
-			Surface.FinalBuffer.Graphics.DrawLine(
+			Surface.BackBuffer.Graphics.DrawLine(
 				_pen,
 				line.Pt1,
 				line.Pt2);
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.None;
+			Surface.BackBuffer.Graphics.SmoothingMode = SmoothingMode.None;
 
 			line.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+			Surface.BackBuffer.Graphics.ResetTransform();
 		}
 
 		/// <summary>
@@ -259,10 +235,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawArcPrimitive(IArcGraphic arc)
 		{
-			Surface.FinalBuffer.Graphics.Transform = arc.SpatialTransform.CumulativeTransform;
+			Surface.BackBuffer.Graphics.Transform = arc.SpatialTransform.CumulativeTransform;
 			arc.CoordinateSystem = CoordinateSystem.Source;
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			Surface.BackBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			RectangleF rectangle = new RectangleF(arc.TopLeft.X, arc.TopLeft.Y, arc.Width, arc.Height);
 			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
@@ -275,7 +251,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			SetDashStyle(arc);
 
 			
-			Surface.FinalBuffer.Graphics.DrawArc(
+			Surface.BackBuffer.Graphics.DrawArc(
 				_pen,
 				rectangle.Left + dropShadowOffset.Width,
 				rectangle.Top + dropShadowOffset.Height,
@@ -287,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Draw rectangle
 			_pen.Color = arc.Color;
 
-			Surface.FinalBuffer.Graphics.DrawArc(
+			Surface.BackBuffer.Graphics.DrawArc(
 				_pen,
 				rectangle.Left,
 				rectangle.Top,
@@ -297,7 +273,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				arc.SweepAngle);
 
 			arc.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+			Surface.BackBuffer.Graphics.ResetTransform();
 		}
 
 		/// <summary>
@@ -305,12 +281,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawPointPrimitive(PointPrimitive pointPrimitive)
 		{
-			Surface.FinalBuffer.Graphics.Transform = pointPrimitive.SpatialTransform.CumulativeTransform;
+			Surface.BackBuffer.Graphics.Transform = pointPrimitive.SpatialTransform.CumulativeTransform;
 			pointPrimitive.CoordinateSystem = CoordinateSystem.Source;
 
 			_brush.Color = pointPrimitive.Color;
 
-			Surface.FinalBuffer.Graphics.FillRectangle(
+			Surface.BackBuffer.Graphics.FillRectangle(
 				_brush,
 				pointPrimitive.Point.X,
 				pointPrimitive.Point.Y,
@@ -318,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				1);
 
 			pointPrimitive.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+			Surface.BackBuffer.Graphics.ResetTransform();
 		}
 
 		/// <summary>
@@ -335,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Calculate how big the text will be so we can set the bounding box
 			Font tempFont = new Font(textPrimitive.Font, textPrimitive.SizeInPoints);
 
-			textPrimitive.Dimensions = Surface.FinalBuffer.Graphics.MeasureString(textPrimitive.Text, font);
+			textPrimitive.Dimensions = Surface.BackBuffer.Graphics.MeasureString(textPrimitive.Text, font);
 
 			tempFont.Dispose();
 
@@ -345,7 +321,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			SizeF dropShadowOffset = new SizeF(1, 1);
 			PointF boundingBoxTopLeft = new PointF(textPrimitive.BoundingBox.Left, textPrimitive.BoundingBox.Top);
 
-			Surface.FinalBuffer.Graphics.DrawString(
+			Surface.BackBuffer.Graphics.DrawString(
 				textPrimitive.Text,
 				font,
 				_brush,
@@ -354,7 +330,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Draw text
 			_brush.Color = textPrimitive.Color;
 
-			Surface.FinalBuffer.Graphics.DrawString(
+			Surface.BackBuffer.Graphics.DrawString(
 				textPrimitive.Text,
 				font,
 				_brush,
@@ -434,7 +410,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			SizeF layoutArea = new SizeF(clientRectangle.Width, clientRectangle.Height);
-			SizeF size = Surface.FinalBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
+			SizeF size = Surface.BackBuffer.Graphics.MeasureString(annotationText, font, layoutArea, format);
 			if (annotationBox.FitWidth && size.Width > clientRectangle.Width)
 			{
 				fontSize = (int)(Math.Round(fontSize * clientRectangle.Width / (double)size.Width - 0.5));
@@ -458,7 +434,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_brush.Color = Color.Black;
 			clientRectangle.Offset(1, 1);
 
-			Surface.FinalBuffer.Graphics.DrawString(
+			Surface.BackBuffer.Graphics.DrawString(
 				annotationText,
 				font,
 				_brush,
@@ -468,7 +444,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_brush.Color = Color.FromName(annotationBox.Color);
 			clientRectangle.Offset(-1, -1);
 
-			Surface.FinalBuffer.Graphics.DrawString(
+			Surface.BackBuffer.Graphics.DrawString(
 				annotationText,
 				font,
 				_brush,
@@ -492,17 +468,17 @@ namespace ClearCanvas.ImageViewer.Rendering
 			format.FormatFlags = StringFormatFlags.NoClip;
 
 			_brush.Color = Color.WhiteSmoke;
-			Surface.FinalBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
+			Surface.BackBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
 
 			font.Dispose();
 		}
 
 		private void InternalDrawRectanglePrimitive(IBoundableGraphic rect)
 		{
-			Surface.FinalBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
+			Surface.BackBuffer.Graphics.Transform = rect.SpatialTransform.CumulativeTransform;
 			rect.CoordinateSystem = CoordinateSystem.Source;
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			Surface.BackBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			RectangleF rectangle = new RectangleF(rect.TopLeft.X, rect.TopLeft.Y, rect.Width, rect.Height);
 			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
@@ -514,7 +490,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			SetDashStyle(rect);
 
-			Surface.FinalBuffer.Graphics.DrawRectangle(
+			Surface.BackBuffer.Graphics.DrawRectangle(
 				_pen,
 				rectangle.Left + dropShadowOffset.Width,
 				rectangle.Top + dropShadowOffset.Height,
@@ -524,7 +500,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Draw rectangle
 			_pen.Color = rect.Color;
 
-			Surface.FinalBuffer.Graphics.DrawRectangle(
+			Surface.BackBuffer.Graphics.DrawRectangle(
 				_pen,
 				rectangle.Left,
 				rectangle.Top,
@@ -532,15 +508,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 				rectangle.Height);
 
 			rect.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+			Surface.BackBuffer.Graphics.ResetTransform();
 		}
 
 		private void InternalDrawEllipsePrimitive(IBoundableGraphic ellipse)
 		{
-			Surface.FinalBuffer.Graphics.Transform = ellipse.SpatialTransform.CumulativeTransform;
+			Surface.BackBuffer.Graphics.Transform = ellipse.SpatialTransform.CumulativeTransform;
 			ellipse.CoordinateSystem = CoordinateSystem.Source;
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			Surface.BackBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 			RectangleF rectangle = new RectangleF(ellipse.TopLeft.X, ellipse.TopLeft.Y, ellipse.Width, ellipse.Height);
 			rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
@@ -552,7 +528,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			SetDashStyle(ellipse);
 
-			Surface.FinalBuffer.Graphics.DrawEllipse(
+			Surface.BackBuffer.Graphics.DrawEllipse(
 				_pen,
 				rectangle.Left + dropShadowOffset.Width,
 				rectangle.Top + dropShadowOffset.Height,
@@ -562,7 +538,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			// Draw rectangle
 			_pen.Color = ellipse.Color;
 
-			Surface.FinalBuffer.Graphics.DrawEllipse(
+			Surface.BackBuffer.Graphics.DrawEllipse(
 				_pen,
 				rectangle.Left,
 				rectangle.Top,
@@ -570,7 +546,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				rectangle.Height);
 
 			ellipse.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+			Surface.BackBuffer.Graphics.ResetTransform();
 		}
 
 		private void SetDashStyle(IVectorGraphic graphic)

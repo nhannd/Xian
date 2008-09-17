@@ -1,19 +1,16 @@
-//#define USE_BITMAP
-
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-	#region BufferedGraphics Method
-
-	internal sealed class BackBuffer : IDisposable
+	internal abstract class BackBuffer : IDisposable
 	{
 		private IntPtr _contextID;
 		private Rectangle _clientRectangle;
-
-		private BufferedGraphicsContext _graphicsContext;
-		private BufferedGraphics _bufferedGraphics;
 
 		public BackBuffer()
 		{
@@ -34,100 +31,66 @@ namespace ClearCanvas.ImageViewer.Rendering
 					return;
 
 				_clientRectangle = value;
-				DisposeBuffer();
+				OnClientRectangleChanged();
 			}
 		}
 
-		public System.Drawing.Graphics Graphics
-		{
-			get
-			{
-				if (BufferedGraphics != null)
-					return BufferedGraphics.Graphics;
+		public abstract System.Drawing.Graphics Graphics { get; }
 
-				return null;
-			}
-		}
+		protected abstract ImageBuffer ColorBuffer { get; }
 
-		private BufferedGraphics BufferedGraphics
-		{
-			get
-			{
-				if (_bufferedGraphics == null && !IsClientRectangleEmpty && _contextID != IntPtr.Zero)
-				{
-					Context.MaximumBuffer = GetMaximumBufferSize();
-					_bufferedGraphics = Context.Allocate(_contextID, _clientRectangle);
-				}
-
-				return _bufferedGraphics;
-			}
-		}
-
-		private BufferedGraphicsContext Context
-		{
-			get
-			{
-				if (_graphicsContext == null)
-					_graphicsContext = new BufferedGraphicsContext();
-
-				return _graphicsContext;
-			}
-		}
-
-		private bool IsClientRectangleEmpty
+		protected bool IsClientRectangleEmpty
 		{
 			get { return _clientRectangle.Width == 0 || _clientRectangle.Height == 0; }
 		}
 
-		public void RenderImage(ImageBuffer imageBuffer)
+		public virtual void RenderImageGraphic(ImageGraphic graphic)
 		{
-			RenderImage(imageBuffer.Bitmap);
-		}
+			CodeClock clock = new CodeClock();
+			clock.Start();
 
-		public void RenderImage(Image image)
-		{
-			Graphics.DrawImageUnscaled(image, 0, 0);
-		}
+			const int bytesPerPixel = 4;
 
-		public void RenderToScreen()
-		{
-			if (_bufferedGraphics != null && !IsClientRectangleEmpty)
-				_bufferedGraphics.Render(_contextID);
-		}
+			Rectangle rect = new Rectangle(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height);
+			BitmapData bitmapData = ColorBuffer.Bitmap.LockBits(rect, ImageLockMode.ReadWrite, ColorBuffer.Bitmap.PixelFormat);
 
-		private Size GetMaximumBufferSize()
-		{
-			return new Size(_clientRectangle.Width + 1, _clientRectangle.Height + 1);
-		}
-
-		private void DisposeBuffer()
-		{
-			if (_graphicsContext != null)
-				_graphicsContext.Invalidate();
-
-			if (_bufferedGraphics != null)
+			try
 			{
-				_bufferedGraphics.Dispose();
-				_bufferedGraphics = null;
+				ImageRenderer.Render(graphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, rect);
 			}
+			finally
+			{
+				ColorBuffer.Bitmap.UnlockBits(bitmapData);
+			}
+
+			clock.Stop();
+			RenderPerformanceReportBroker.PublishPerformanceReport("BackBuffer.DrawImageGraphic", clock.Seconds);
+		}
+
+		public abstract void RenderToScreen();
+
+		protected virtual void OnClientRectangleChanged()
+		{
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
 		}
 
 		#region IDisposable Members
 
 		public void Dispose()
 		{
-			DisposeBuffer();
-
-			if (_graphicsContext != null)
+			try
 			{
-				_graphicsContext.Dispose();
-				_graphicsContext = null;
+				Dispose(true);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
 		#endregion
 	}
-
-	#endregion
 }
-
