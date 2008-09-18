@@ -1592,6 +1592,9 @@ BEGIN
 	DELETE FROM WorkQueue 
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
+	DELETE FROM StudyHistory
+	WHERE StudyStorageGUID = @StudyStorageGUID
+
 	DELETE FROM StudyStorage
 	WHERE GUID = @StudyStorageGUID
 
@@ -2042,6 +2045,7 @@ BEGIN
 		delete dbo.WorkQueueUid where WorkQueueGUID in (select GUID from dbo.WorkQueue where StudyStorageGUID=@StudyStorageGUID)
 		--PRINT ''Deleting WorkQueue''
 		delete dbo.WorkQueue where StudyStorageGUID=@StudyStorageGUID
+		delete dbo.StudyHistory where StudyStorageGUID=@StudyStorageGUID
 		Fetch NEXT FROM StudyStorageCursor INTO @StudyStorageGUID
 	END
 	CLOSE StudyStorageCursor
