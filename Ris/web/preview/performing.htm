@@ -97,7 +97,7 @@
 					{
 						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
-						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+						Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
 						Field.setValue($("PerformingFacility"), formatPerformingFacilityList(orderDetail.Procedures));
 						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 						if (orderDetail.CancelReason)
@@ -137,21 +137,21 @@
    		            var patientOrderData = data.ListOrdersResponse.Orders;
 		            if (patientOrderData)
 		            {
+						// exclude the current order from the imaging service tables
+						patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
+
 			            var activeProcedures = getActiveProcedures(patientOrderData);
 			            var pastProcedures = getNonActiveProcedures(patientOrderData);
 
-						// add a renderRow handler to highlight the correct row
-						var currentAccession = worklistItem.AccessionNumber;
-						
                         if (activeProcedures.length == 0)
                             Field.show($("activeProceduresSection"), false);
                         else
-                            createImagingServiceTable($("activeImagingServiceTable"), activeProcedures, currentAccession);
+                            createImagingServiceTable($("activeImagingServiceTable"), activeProcedures);
     	                
                         if (pastProcedures.length == 0)
                             Field.show($("pastProceduresSection"), false);
                         else
-                            createImagingServiceTable($("pastImagingServiceTable"), pastProcedures, currentAccession);
+                            createImagingServiceTable($("pastImagingServiceTable"), pastProcedures);
 		            }
 	            }
 	            catch(e)
@@ -277,7 +277,7 @@
 			</div>
 		
 			<div id="activeProceduresSection">
-				<p class="sectionheading">Active Imaging Service</p>
+				<p class="sectionheading">Active Imaging Services</p>
 		        <table width="100%" border="0" id="activeImagingServiceTable">
 		            <tr class="tableheading">
 			            <td>Procedure</td>
@@ -290,7 +290,7 @@
 			</div>
 			
 			<div id="pastProceduresSection">
-				<p class="sectionheading">Past Imaging Service</p>
+				<p class="sectionheading">Past Imaging Services</p>
 		        <table width="100%" border="0" id="pastImagingServiceTable">
 		            <tr class="tableheading">
 			            <td>Procedure</td>

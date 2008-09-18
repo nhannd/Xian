@@ -36,7 +36,7 @@ var _IE = document.all;
 					getVisible: function(item) - a function that returns a boolean indicating whether the cell contents
 						should be visible or not. This function is called whenever an update occurs in the row, allowing for
 						visibility of adjacent cells to be controlled dynamically.
-					cellType: a string indicating the type of cell (e.g. "text", "choice", "checkbox", "lookup", "datetime", "bool" and others...)
+					cellType: a string indicating the type of cell (e.g. "text", "choice", "checkbox", "lookup", "datetime", "bool", "link" and others...)
 						*note: this may also be populated with a custom value (e.g. "myCellType"), in which case you must handle
 						 the renderCell event and do custom rendering.
 					choices: an array of strings - used only by the "choice" cell type. In addition to strings, the array
@@ -44,6 +44,7 @@ var _IE = document.all;
 						a group of choices (HTML optgroup) - 'group' is the name of the group, and 'choices' is an array
 						specifying the choices within that group.  The 'choices' array is processed recursively, allowing
 						for a hierarchical structure of choices of abitrary depth.
+					clickLink: a function that is excute if the cellType is a "link"
 					lookup: function(query) - used only the the "lookup" cell type - returns the result of the query, or null if not found
 					size: the size of the column, in characters
 						 
@@ -342,6 +343,10 @@ var Table = {
 			else if (column.cellType == "readonly")
 			{
 				Field.setPreFormattedValue(td, value);
+			}
+			else if (column.cellType == "link" && column.clickLink)
+			{
+				Field.setLink(td, value, function() { column.clickLink(obj); });
 			}
 			else
 			{
@@ -920,6 +925,15 @@ var Field =
 		element.innerHTML = (value === undefined || value === null) ? "" : (value + "").escapeHTML();
 	},
 
+	setLink: function(element, value, clickLink)
+	{
+		var anchorElement= document.createElement("a");
+		anchorElement.appendChild(document.createTextNode(value));
+		anchorElement.setAttribute("href", "#");
+		anchorElement.onclick = function() { clickLink(); return false; };
+		element.appendChild(anchorElement);
+	},
+	
 	setPreFormattedValue: function(element, value)
 	{
 		element.innerHTML = (value === undefined || value === null) ? "" : (value + "").replaceLineBreak();

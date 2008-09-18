@@ -50,7 +50,7 @@
 					{
 						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
-						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
+						Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
 						Field.setValue($("PerformingFacility"), formatPerformingFacilityList(orderDetail.Procedures));
 						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 						if (orderDetail.CancelReason)

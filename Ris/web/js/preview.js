@@ -181,8 +181,7 @@ function filterProcedureByModality(procedures, modalityIdFilter)
 	return procedures.select(isProcedureInModality);
 }
 
-var gImagingRequestsTablePractitioners = [];	// hack: global array to hold practitioners that appear in the table, so that javascript callback can use the practitioner object
-function createImagingServiceTable(htmlTable, patientOrderData, highlightAccessionNumber)
+function createImagingServiceTable(htmlTable, patientOrderData)
 {
 	htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
 		 [
@@ -203,20 +202,9 @@ function createImagingServiceTable(htmlTable, patientOrderData, highlightAccessi
 				getValue: function(item) { return formatPerformingFacility(item); }
 			},
 			{   label: "Ordering Physician",
-				cellType: "text",
-				getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitioner.Name); }
-			},
-			{
-				label: "Ordering Physician Lookup",
-				cellType: "html",
-				getValue: function(item)
-				{
-					var i = gImagingRequestsTablePractitioners.length;
-					gImagingRequestsTablePractitioners.push(item.OrderingPractitioner);
-					return "<a href=\"javascript:Ris.openPractitionerDetails(gImagingRequestsTablePractitioners["+i+"])\">" 
-						+ "<img src='" + imagePath + "/PractitionerDetail.png' border=\"0\"/>"
-						+ "</a>"; 
-				}
+				cellType: "link",
+				getValue: function(item)  { return Ris.formatPersonName(item.OrderingPractitioner.Name); },
+				clickLink: function(item) { Ris.openPractitionerDetails(item.OrderingPractitioner); }
 			}
 		 ]);
 
@@ -225,15 +213,6 @@ function createImagingServiceTable(htmlTable, patientOrderData, highlightAccessi
 		 return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility.Code : "";
 	}
 	
-	if (highlightAccessionNumber)
-	{
-		htmlTable.renderRow = function(sender, args)
-		{
-			if(args.item.AccessionNumber == highlightAccessionNumber)
-				args.htmlRow.className = "highlight";
-		};
-	}
-		 
 	htmlTable.rowCycleClassNames = ["row0", "row1"];
 	htmlTable.bindItems(patientOrderData);
 }
