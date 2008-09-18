@@ -152,5 +152,122 @@ var BiometryCalculator = {
 		
 		var result = (corrBpdWks + acWks + flWks) / numOfMeasurements;
 		return result.roundTo(this._precision);
-	}
+	},
+	
+	ageEfwStatistics : 
+	{
+		25 : { average: 850, deviation: 100 },
+		26 : { average: 933, deviation: 115 },
+		27 : { average: 1016, deviation: 135 },
+		28 : { average: 1113, deviation: 150 },
+		29 : { average: 1228, deviation: 165 },
+		30 : { average: 1373, deviation: 175 },
+		31 : { average: 1540, deviation: 200 },
+		32 : { average: 1727, deviation: 225 },
+		33 : { average: 1900, deviation: 250 },
+		34 : { average: 2113, deviation: 280 },
+		35 : { average: 2347, deviation: 315 },
+		36 : { average: 2589, deviation: 350 },
+		37 : { average: 2868, deviation: 375 },
+		38 : { average: 3133, deviation: 400 },
+		39 : { average: 3360, deviation: 430 },
+		40 : { average: 3480, deviation: 460 },
+		41 : { average: 3567, deviation: 475 },
+		42 : { average: 3513, deviation: 480 },
+		43 : { average: 3416, deviation: 485 }
+	},
+
+	ageEfwPercentile : function(ageWks, efw)
+	{
+		ageWks = ageWks.roundTo(0);
+		
+		if (!efw)
+			return null;
+	
+		if(ageWks < 25 || ageWks > 43)
+			return null;
+		
+		var average = this.ageEfwStatistics[ageWks].average;
+		var deviation = this.ageEfwStatistics[ageWks].deviation;
+		var percentile = this.normalv(efw, average, deviation)
+		
+		return (100 * percentile).roundTo(0);
+	},
+	
+	// Used courtasy of Dr. Achim Lewandowski
+	// From:  http://www.alewand.de/stattab/tabstete.htm
+	normalv : function(xwert,muewert,sigmawert)
+	{
+		x=eval(xwert);
+        mue=eval(muewert);
+        sigma=eval(sigmawert);
+		
+        if (eval(sigma)<=0) return "Error: Sigma<=0 !";
+
+        if (eval(sigma)>0)
+        {
+			var  LTONE = 8;
+            var  CON = 1.28;
+            var  A1 = 0.398942280444;
+			var  A2 = 0.399903438504;
+		    var  A3 = 5.75885480458;
+		    var  A4 = 29.8213557808;
+		    var  A5 = 2.62433121679;
+		    var  A6 = 48.6959930692;
+		    var  A7 = 5.92885724438;
+	 
+		    var  B1 = 0.398942280385;
+		    var  B2 = 0.8052E-8;
+		    var  B3 = 1.00000615302;
+		    var  B4 = 3.98064794E-4;
+		    var  B5 = 1.98615381364;
+		    var  B6 = 0.151679116635;
+		    var  B7 = 5.29330324926;
+		    var  B8 = 4.8385912808;
+		    var  B9 = 15.1508972451;
+		    var  B10= 0.742380924027;
+		    var  B11= 30.789933034;
+		    var  B12= 3.99019417011;
+ 
+			var  UTZERO;
+	        var  Z;
+	        var  YY;
+	        var  ALNORM;
+	        var  DYN;
+			var  UP;
+
+			UTZERO = Math.pow(-2 * (Math.log(1.E-300)+1),0.5) - 0.3;
+			UP= 0;
+
+			Z = eval((x - mue)/sigma);
+			if (Z < 0)
+            {
+				UP = 1;
+                Z = -Z;
+            }
+			
+			if ((Z > LTONE) && ((UP==1)|| (Z > UTZERO)))
+				ALNORM = 0;
+
+			if ((Z <= LTONE) || ((UP!=1)|| (Z <= UTZERO)))
+		    {	
+				yy = 0.5 * Z * Z;
+				if (Z <=  CON)
+                {
+                    ALNORM = 0.5 - Z * (A1 - A2 * yy/(yy + A3 - A4/(yy + A5 + A6/(yy + A7))));
+				}
+				if (Z>CON)
+                {
+                    ALNORM = Math.exp(-yy) * B1;
+					dummy = (Z + B4 + B5/(Z - B6 + B7/(Z + B8 - B9/(Z + B10 + B11/(Z +B12)))));
+					ALNORM = ALNORM / (Z - B2 + B3/dummy);
+				}
+		    }
+ 
+			if (UP==0) DYN = 1-ALNORM;
+            if (UP!=0) DYN = ALNORM;
+
+			return DYN
+        }
+    }
 }

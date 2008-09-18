@@ -278,7 +278,7 @@ var StructuredReportForm = {
 		html+= 	"					<tr><td class=\"tableheading\">HC</td></tr>";
 		html+= 	"				</table>";
 		html+= 	"				<table id=\"gsTable\">";
-		html+= 	"					<tr><td class=\"tableheading\">GS</td></tr>";
+		html+= 	"					<tr><td class=\"tableheading\">Mean Sac Diameter</td></tr>";
 		html+= 	"				</table>";
 		html+= 	"			</div>";
 		html+= 	"			<div style=\"{float:left;width:28%;}\">";
@@ -1017,6 +1017,7 @@ var BiometryForm = {
 				{ 
 					item.useBpdcHc = value; 
 					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl, item.abdX, item.abdY, item.fl, item.bpd, item.ofd);
+					item.efwCentile = BiometryCalculator.ageEfwPercentile(item.avgWks, item.efw);
 				},
 				getError: function(item) { return null; }
 			},
@@ -1028,19 +1029,13 @@ var BiometryForm = {
 				{ 
 					item.useFl = value; 
 					item.efw = BiometryCalculator.efw(item.useBpdcHc, item.useFl, item.abdX, item.abdY, item.fl, item.bpd, item.ofd);
+					item.efwCentile = BiometryCalculator.ageEfwPercentile(item.avgWks, item.efw);
 				},
 				getError: function(item) { return null; }
 			},
             new NewLineField(),
 			new CalculatedBiometryCell("EFW (gm)", "efw"),
-			{
-				label: "Percentile", 
-				cellType: "text",
-				size: 5,
-				getValue: function(item) { return item.efwCentile; },
-				setValue: function(item, value) { item.efwCentile = parseInt(value) || null; },
-				getError: function(item) { return null; }
-			}
+			new CalculatedBiometryCell("Percentile", "efwCentile")
 		]);
 
 		efwTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
@@ -1089,7 +1084,7 @@ var BiometryForm = {
 		document.getElementById("averageSizeTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
 		document.getElementById("efwTable").style.display = (show && (this._reportType == reportTypes[2])) ? "block" : "none";
 		document.getElementById("hcTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
-		document.getElementById("gsTable").style.display = (show && (this._reportType == reportTypes[1] || this._reportType == reportTypes[2])) ? "block" : "none";
+		document.getElementById("gsTable").style.display = (show) ? "block" : "none";
 		document.getElementById("nuchalTransparencyTable").style.display = (show && this._reportType == reportTypes[1]) ? "block" : "none";
 	}
 }

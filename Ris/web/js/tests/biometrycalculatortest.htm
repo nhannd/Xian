@@ -109,6 +109,49 @@
         assertEquals("EFW", 1960, BiometryCalculator.efw(false, true, acX3, acY3, fl3, bpd3, ofd3));
         assertEquals("EFW", 0, BiometryCalculator.efw(false, false, acX3, acY3, fl3, bpd3, ofd3));
 	}
+	
+    function testPercentileWithValidArgs() {
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(25, 850));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(26, 933));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(27, 1016));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(28, 1113));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(29, 1228));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(30, 1373));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(31, 1540));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(32, 1727));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(33, 1900));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(34, 2113));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(35, 2347));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(36, 2589));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(37, 2868));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(38, 3133));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(39, 3360));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(40, 3480));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(41, 3567));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(42, 3513));
+        assertEquals("Centile", 50, BiometryCalculator.ageEfwPercentile(43, 3416));
+
+        assertEquals("Centile", 93, BiometryCalculator.ageEfwPercentile(25, 1000));
+        assertEquals("Centile", 72, BiometryCalculator.ageEfwPercentile(26, 1000));
+        assertEquals("Centile", 45, BiometryCalculator.ageEfwPercentile(27, 1000));
+        assertEquals("Centile", 23, BiometryCalculator.ageEfwPercentile(28, 1000));
+        assertEquals("Centile", 95, BiometryCalculator.ageEfwPercentile(29, 1500));
+        assertEquals("Centile", 77, BiometryCalculator.ageEfwPercentile(30, 1500));
+        assertEquals("Centile", 42, BiometryCalculator.ageEfwPercentile(31, 1500));
+        assertEquals("Centile", 89, BiometryCalculator.ageEfwPercentile(32, 2000));
+        assertEquals("Centile", 66, BiometryCalculator.ageEfwPercentile(33, 2000));
+        assertEquals("Centile", 34, BiometryCalculator.ageEfwPercentile(34, 2000));
+        assertEquals("Centile", 69, BiometryCalculator.ageEfwPercentile(35, 2500));
+        assertEquals("Centile", 40, BiometryCalculator.ageEfwPercentile(36, 2500));
+        assertEquals("Centile", 16, BiometryCalculator.ageEfwPercentile(37, 2500));
+        assertEquals("Centile", 37, BiometryCalculator.ageEfwPercentile(38, 3000));
+        assertEquals("Centile", 20, BiometryCalculator.ageEfwPercentile(39, 3000));
+        assertEquals("Centile", 15, BiometryCalculator.ageEfwPercentile(40, 3000));
+        assertEquals("Centile", 44, BiometryCalculator.ageEfwPercentile(41, 3500));
+        assertEquals("Centile", 49, BiometryCalculator.ageEfwPercentile(42, 3500));
+        assertEquals("Centile", 57, BiometryCalculator.ageEfwPercentile(43, 3500));
+	}
+
 	</script>
  </body>
 </html>
