@@ -133,11 +133,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Match Field of View.
+        ///   Looks up a localized string similar to Match Scale.
         /// </summary>
-        internal static string CommandMatchFieldOfView {
+        internal static string CommandMatchScale {
             get {
-                return ResourceManager.GetString("CommandMatchFieldOfView", resourceCulture);
+                return ResourceManager.GetString("CommandMatchScale", resourceCulture);
             }
         }
         
@@ -666,11 +666,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Match Field of View.
+        ///   Looks up a localized string similar to Match Scale.
         /// </summary>
-        internal static string MenuMatchFieldOfView {
+        internal static string MenuMatchScale {
             get {
-                return ResourceManager.GetString("MenuMatchFieldOfView", resourceCulture);
+                return ResourceManager.GetString("MenuMatchScale", resourceCulture);
             }
         }
         
@@ -1126,11 +1126,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Match Field of View.
+        ///   Looks up a localized string similar to Match Scale.
         /// </summary>
-        internal static string ToolbarMatchFieldOfView {
+        internal static string ToolbarMatchScale {
             get {
-                return ResourceManager.GetString("ToolbarMatchFieldOfView", resourceCulture);
+                return ResourceManager.GetString("ToolbarMatchScale", resourceCulture);
             }
         }
         

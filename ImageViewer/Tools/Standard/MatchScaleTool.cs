@@ -12,13 +12,13 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMatchFieldOfView", "MatchFieldOfView")]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMatchFieldOfView", "MatchFieldOfView")]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardMatchFieldOfView/Activate", "MatchFieldOfView", KeyStroke = XKeys.F)]
-	[IconSet("activate", IconScheme.Colour, "Icons.MatchFieldOfViewToolSmall.png", "Icons.MatchFieldOfViewToolMedium.png", "Icons.MatchFieldOfViewToolLarge.png")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMatchScale", "Activate")]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMatchScale", "Activate")]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardMatchScaleTool/Activate", "Activate", KeyStroke = XKeys.F)]
+	[IconSet("activate", IconScheme.Colour, "Icons.MatchScaleToolSmall.png", "Icons.MatchScaleToolMedium.png", "Icons.MatchScaleToolLarge.png")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class MatchFieldOfViewTool : ImageViewerTool, IUndoableOperation<IPresentationImage>
+	public class MatchScaleTool : ImageViewerTool, IUndoableOperation<IPresentationImage>
 	{
 		#region Private Fields
 
@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#endregion
 
-		public MatchFieldOfViewTool()
+		public MatchScaleTool()
 		{
 		}
 
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Public Methods
 
-		public void MatchFieldOfView()
+		public void Activate()
 		{
 			if (!AppliesTo(ReferenceImage))
 				return;
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			applicator.ItemMementoSet += RedrawImage;
 
 			UndoableCommand command = new UndoableCommand(applicator);
-			command.Name = SR.CommandMatchFieldOfView;
+			command.Name = SR.CommandMatchScale;
 			command.BeginState = applicator.CreateMemento();
 
 			CalculateReferenceDisplayValues();

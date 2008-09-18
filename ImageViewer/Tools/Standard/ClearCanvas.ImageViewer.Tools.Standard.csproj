@@ -116,7 +116,7 @@
     </Compile>
     <Compile Include="EditHistoryTool.cs" />
     <Compile Include="InvertTool.cs" />
-    <Compile Include="MatchFieldOfViewTool.cs" />
+    <Compile Include="MatchScaleTool.cs" />
     <Compile Include="PresetVoiLuts\Operations\AutoPresetVoiLutOperationComponent.cs" />
     <Compile Include="PresetVoiLuts\Operations\DefaultPresetVoiLutOperationComponent.cs" />
     <Compile Include="PresetVoiLuts\Operations\PresetVoiLutOperationsComponentContainer.cs" />
@@ -291,13 +291,13 @@
     <EmbeddedResource Include="Icons\TextOverlayToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\MatchFieldOfViewToolLarge.png" />
+    <EmbeddedResource Include="Icons\MatchScaleToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\MatchFieldOfViewToolSmall.png" />
+    <EmbeddedResource Include="Icons\MatchScaleToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\MatchFieldOfViewToolMedium.png" />
+    <EmbeddedResource Include="Icons\MatchScaleToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
