@@ -66,7 +66,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #endregion
 
         #region Protected Methods
-        protected IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type)
+		/// <summary>
+		/// Get a list of candidates from the <see cref="FilesystemQueue"/>.
+		/// </summary>
+		/// <param name="item">The ServiceLock item.</param>
+		/// <param name="scheduledTime">The scheduled time to query against</param>
+		/// <param name="type">The type of FilesystemQueue entry.</param>
+		/// <param name="statusCheck">If true, check for specific status value WorkQueue entries already existing, otherwise check for any WorkQueue entry.</param>
+		/// <returns>The list of queue entries.</returns>
+        protected IList<FilesystemQueue> GetFilesystemQueueCandidates(Model.ServiceLock item, DateTime scheduledTime, FilesystemQueueTypeEnum type, bool statusCheck)
         {
             IFilesystemQueueEntityBroker broker = ReadContext.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueueSelectCriteria fsQueueCriteria = new FilesystemQueueSelectCriteria();
@@ -76,7 +84,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             fsQueueCriteria.FilesystemQueueTypeEnum.EqualTo(type);
 
             WorkQueueSelectCriteria workQueueSearchCriteria = new WorkQueueSelectCriteria();
-            workQueueSearchCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
+			if (statusCheck)
+				workQueueSearchCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
             fsQueueCriteria.WorkQueue.NotExists(workQueueSearchCriteria); // no work queue item exists for the same studies
             fsQueueCriteria.ScheduledTime.SortAsc(0);
 

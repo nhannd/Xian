@@ -41,6 +41,9 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompress
 {
+	/// <summary>
+	/// Class for processing FilesystemLosslessCompress <see cref="ServiceLock"/> entries.
+	/// </summary>
 	public class FilesystemLosslessCompressItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
 	{
 		#region Private Members
@@ -132,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 				DateTime deleteTime = Platform.Time;
 				FilesystemQueueTypeEnum type = FilesystemQueueTypeEnum.LosslessCompress;
 
-				IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, deleteTime, type);
+				IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, deleteTime, type, false);
 
 				if (list.Count > 0)
 				{

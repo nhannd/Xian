@@ -390,7 +390,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					 "{1:0.0} MBs needs to be removed from '{0}'. Querying for studies that can be deleted",
 					 fs.Filesystem.Description, _bytesToRemove / (1024 * 1024));
                 IList<FilesystemQueue> list =
-                    GetFilesystemQueueCandidates(item, deleteTime, type);
+                    GetFilesystemQueueCandidates(item, deleteTime, type, true);
 
                 if (list.Count > 0)
                 {
@@ -420,7 +420,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 							 "{1:0.0} MBs needs to be removed from '{0}'. Querying for studies that can be purged",
 							 fs.Filesystem.Description, _bytesToRemove / (1024 * 1024));
 				IList<FilesystemQueue> list =
-					GetFilesystemQueueCandidates(item, deleteTime, type);
+					GetFilesystemQueueCandidates(item, deleteTime, type, false);
 
 				if (list.Count > 0)
 				{
@@ -448,7 +448,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 Platform.Log(LogLevel.Debug,
                              "{1:0.0} MBs needs to be removed from '{0}'. Querying for studies that can be migrated",
                              fs.Filesystem.Description, _bytesToRemove/(1024*1024));
-                IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, Platform.Time, type);
+                IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, Platform.Time, type, false);
                 if (list.Count > 0)
                 {
                     ProcessStudyMigrateCandidates(list);
