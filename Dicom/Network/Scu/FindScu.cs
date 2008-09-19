@@ -63,16 +63,11 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// Results List (of DicomAttributeCollection)
         /// </summary>
         private List<DicomAttributeCollection> _results;
-        #endregion
 
-        #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FindScuBase"/> class.
-        /// </summary>
-        public FindScuBase()
-            :base()
-        {
-        }
+		/// <summary>
+		/// Association isn't closed and is left open for the next find request when set to true.
+		/// </summary>
+    	private bool _reuseAssociation = false;
         #endregion
 
         #region Public Properties
@@ -93,6 +88,14 @@ namespace ClearCanvas.Dicom.Network.Scu
         public abstract SopClass FindSopClass
         { get; }
 
+		/// <summary>
+		/// When set to true, the association will be left open after Find() completes for reuse.
+		/// </summary>
+		public bool ReuseAssociation
+		{
+			get { return _reuseAssociation; }
+			set { _reuseAssociation = value; }
+		}
         #endregion
 
         #region Protected Properties
@@ -104,11 +107,21 @@ namespace ClearCanvas.Dicom.Network.Scu
         {
             get { return _requestAttributeCollection; }
         }
-        #endregion
+
+    	#endregion
 
         #region Public Methods
 
-        /// <summary>
+		/// <summary>
+		/// Close the association, if <see cref="ReuseAssociation"/> is in use.
+		/// </summary>
+		public void CloseAssociation()
+		{
+			if (Status == ScuOperationStatus.Running && ReuseAssociation)
+				_dicomClient.SendReleaseRequest();
+		}
+
+    	/// <summary>
         /// Performs the find request to the specified remote dicom server with the specified attributes.
         /// </summary>
         /// <param name="clientAETitle">The client AE title.</param>
@@ -128,14 +141,25 @@ namespace ClearCanvas.Dicom.Network.Scu
 
             _results = new List<DicomAttributeCollection>();
 
-			ClientAETitle = clientAETitle;
-			RemoteAE = remoteAE;
-			RemoteHost = remoteHost;
-			RemotePort = remotePort;
+			if (ReuseAssociation && Status == ScuOperationStatus.Running)
+			{
+				ProgressEvent.Reset();
 
-        	Connect();
+				SendFindRequest(_dicomClient, _associationParameters);
 
-            return _results;
+				ProgressEvent.WaitOne();
+			}
+			else
+			{
+				ClientAETitle = clientAETitle;
+				RemoteAE = remoteAE;
+				RemoteHost = remoteHost;
+				RemotePort = remotePort;
+
+				Connect();
+			}
+
+        	return _results;
         }
 
         public IList<DicomAttributeCollection> Find(string clientAETitle, string remoteAE, string remoteHost, int remotePort, IodBase iod)
@@ -179,7 +203,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <returns></returns>
         public IAsyncResult BeginFind(string clientAETitle, string remoteAE, string remoteHost, int remotePort, DicomAttributeCollection requestAttributeCollection, AsyncCallback callback, object asyncState)
         {
-            FindDelegate findDelegate = new FindDelegate(this.Find);
+            FindDelegate findDelegate = this.Find;
 
             return findDelegate.BeginInvoke(clientAETitle, remoteAE, remoteHost, remotePort, requestAttributeCollection, callback, asyncState);
         }
@@ -199,7 +223,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         public IAsyncResult BeginFind<T>(string clientAETitle, string remoteAE, string remoteHost, int remotePort, T iod, AsyncCallback callback, object asyncState)
             where T : IodBase, new()
         {
-            GenericFindDelegate<T> findDelegate = new GenericFindDelegate<T>(this.Find<T>);
+            GenericFindDelegate<T> findDelegate = Find<T>;
 
             return findDelegate.BeginInvoke(clientAETitle, remoteAE, remoteHost, remotePort, iod, callback, asyncState);
         }
@@ -250,7 +274,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <param name="association">The association.</param>
         private void SendFindRequest(DicomClient client, ClientAssociationParameters association)
         {
-            byte pcid = association.FindAbstractSyntax(this.FindSopClass);
+            byte pcid = association.FindAbstractSyntax(FindSopClass);
 
             if (pcid > 0)
             {
@@ -280,9 +304,7 @@ namespace ClearCanvas.Dicom.Network.Scu
             if (Canceled)
                 client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
             else
-            {
                 SendFindRequest(client, association);
-            }
         }
 
         /// <summary>
@@ -329,10 +351,16 @@ namespace ClearCanvas.Dicom.Network.Scu
 				{
 					Platform.Log(LogLevel.Info, "Success status received in Find Scu!");
 				}
-
-            	client.SendReleaseRequest();
-				StopRunningOperation();
-			}
+				if (!ReuseAssociation)
+				{
+					client.SendReleaseRequest();
+					StopRunningOperation();
+				}
+				else
+				{
+					ProgressEvent.Set();
+				}
+            }
         }
 
         /// <summary>
@@ -463,7 +491,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			get
 			{
 				if (_requestAttributeCollection != null)
-					return IodBase.ParseEnum<QueryRetrieveLevel>(_requestAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
+					return IodBase.ParseEnum(_requestAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
 				else
 					return QueryRetrieveLevel.None;
 			}
@@ -538,7 +566,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			get
 			{
 				if (_requestAttributeCollection != null)
-					return IodBase.ParseEnum<QueryRetrieveLevel>(_requestAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
+					return IodBase.ParseEnum(_requestAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
 				else
 					return QueryRetrieveLevel.None;
 			}
@@ -592,7 +620,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			get
 			{
 				if (_requestAttributeCollection != null)
-					return IodBase.ParseEnum<QueryRetrieveLevel>(_requestAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
+					return IodBase.ParseEnum(_requestAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
 				else
 					return QueryRetrieveLevel.None;
 			}

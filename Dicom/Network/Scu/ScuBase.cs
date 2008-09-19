@@ -50,8 +50,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 	{
 		#region Private Variables...
 		private string _clientAETitle;
-		private ClientAssociationParameters _associationParameters = null;
-		private DicomClient _dicomClient = null;
+		protected ClientAssociationParameters _associationParameters = null;
+		protected DicomClient _dicomClient = null;
 		private readonly System.Threading.AutoResetEvent _progressEvent = new System.Threading.AutoResetEvent(false);
 		private string _remoteAE;
 		private string _remoteHost;
