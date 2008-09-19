@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 	public class WebQueryRestoreQueueParameters : ProcedureParameters
     {
 		public WebQueryRestoreQueueParameters()
-            : base("WebQueryArchiveQueue")
+            : base("WebQueryRestoreeQueue")
         {
 			//Declare output parameters here
 			SubCriteria["ResultCount"] = new ProcedureParameter<int>("ResultCount");
