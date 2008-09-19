@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public override string GetTitle()
         {
-            return string.Format("Documentation - {0}", PersonNameFormat.Format(_item.PatientName));
+            return string.Format("Documentation - {0} - {1}", PersonNameFormat.Format(_item.PatientName), AccessionFormat.Format(_item.AccessionNumber));
         }
 
         public override IApplicationComponent GetComponent()

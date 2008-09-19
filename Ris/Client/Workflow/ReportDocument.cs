@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public static string GetTitle(ReportingWorklistItem item)
 		{
-			return string.Format("Report - {0}", PersonNameFormat.Format(item.PatientName));
+            return string.Format("Report - {0} - {1}", PersonNameFormat.Format(item.PatientName), AccessionFormat.Format(item.AccessionNumber));
 		}
 	}
 }
