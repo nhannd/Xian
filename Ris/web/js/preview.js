@@ -96,7 +96,7 @@ function formatProcedureName(procedureType, portable, laterality)
 	if (laterality && laterality.Code != "N")
 		procedureDecorator = procedureDecorator ? procedureDecorator + "/" + laterality.Value : laterality.Value;
 
-	procedureDecorator = procedureDecorator ? "(" + procedureDecorator + ")" : "";
+	procedureDecorator = procedureDecorator ? " (" + procedureDecorator + ")" : "";
 	return procedureType.Name + procedureDecorator;
 }
 
