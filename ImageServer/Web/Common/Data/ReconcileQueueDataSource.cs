@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             get { return _studyInstanceUID; }
             set { _studyInstanceUID = value; }
 	    }
+
 		#endregion Public Properties
 	}
 
@@ -153,72 +154,35 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		#endregion
 
-		#region Private Methods
-		private IList<ReconcileQueue> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
-		{
-			resultCount = 0;
-
-			if (maximumRows == 0) return new List<ReconcileQueue>();
-
-			if (SearchKeys != null)
-			{
-				IList<ReconcileQueue> archiveQueueList = new List<ReconcileQueue>();
-				foreach (ServerEntityKey key in SearchKeys)
-					archiveQueueList.Add(ReconcileQueue.Load(key));
-
-				resultCount = archiveQueueList.Count;
-
-				return archiveQueueList;
-			}
-
-			ReconcileQueueSelectCriteria criteria = new ReconcileQueueSelectCriteria();
-
-            // only query for device in this partition
-            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-
-            if (!String.IsNullOrEmpty(Description))
-            {
-                string key = Description + "%";
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.Description.Like(key);
-            }
-
-            if (!String.IsNullOrEmpty(InsertTime))
-            {
-                DateTime insertTime = DateTime.Parse(InsertTime);
-                criteria.InsertTime.Like(insertTime);
-            }
-
-			IList<ReconcileQueue> list = _searchController.GetReconcileQueueItems(criteria);
-
-			return list;
-		}
-		#endregion
-
 		#region Public Methods
 		public IEnumerable<ReconcileQueueSummary> Select(int startRowIndex, int maximumRows)
 		{
-			IList<ReconcileQueue> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+            if (maximumRows == 0 || Partition == null) return new List<ReconcileQueueSummary>();
 
-			_list = new List<ReconcileQueueSummary>();
-			foreach (ReconcileQueue item in list)
-				_list.Add(CreateReconcileQueueSummary(item));
+            ReconcileQueueSelectCriteria criteria = GetReconcileQueueCriteria();
 
-			if (ReconcileQueueFoundSet != null)
-				ReconcileQueueFoundSet(_list);
+            IList<ReconcileQueue> queueList = _searchController.GetRangeReconcileQueueItems(criteria, startRowIndex, maximumRows);
 
-			return _list;
+            _list = new List<ReconcileQueueSummary>();
+
+            foreach (ReconcileQueue item in queueList)
+                _list.Add(CreateReconcileQueueSummary(item));
+
+            if (ReconcileQueueFoundSet != null)
+                ReconcileQueueFoundSet(_list);
+
+            return _list;
 		}
 
 		public int SelectCount()
 		{
-			if (ResultCount != 0) return ResultCount;
+            if (Partition == null) return 0;
 
-			// Ignore the search results
-			InternalSelect(0, 1, out _resultCount);
+            ReconcileQueueSelectCriteria criteria = GetReconcileQueueCriteria();
 
-			return ResultCount;
+            ResultCount = _searchController.GetReconicleQueueItemsCount(criteria);
+
+            return ResultCount;
 		}
 		#endregion
 
@@ -237,8 +201,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			summary.TheReconcileQueueItem = item;
 			summary.ThePartition = Partition;
 
-			// Fetch the patient info:
-
             String patientNames = item.Description.Substring(item.Description.IndexOf("=") + 1);
 		    summary.ExistingPatientName = patientNames.Substring(0, patientNames.IndexOf("\r\n"));
 	    	summary.ConflictingPatientName = patientNames.Substring(patientNames.IndexOf("=") + 1);
@@ -252,11 +214,37 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			if (studyList != null && studyList.Count > 0)
 			{
-				summary.StudyInstanceUID = studyList[0].StudyInstanceUid;
+			    Study study = studyList[0];
+			    summary.StudyInstanceUID = study.StudyInstanceUid;
 			}
 
 			return summary;
 		}
-		#endregion
+
+        private ReconcileQueueSelectCriteria GetReconcileQueueCriteria()
+        {
+            ReconcileQueueSelectCriteria criteria = new ReconcileQueueSelectCriteria();
+
+            // only query for device in this partition
+            criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+
+            if (!String.IsNullOrEmpty(Description))
+            {
+                string key = Description + "%";
+                key = key.Replace("*", "%");
+                key = key.Replace("?", "_");
+                criteria.Description.Like(key);
+            }
+
+            if (!String.IsNullOrEmpty(InsertTime))
+            {
+                DateTime insertTime = DateTime.Parse(InsertTime);
+                criteria.InsertTime.Like(insertTime);
+            }
+
+            return criteria;
+        }
+
+	    #endregion
 	}
 }

@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reconcile Study.
+        /// </summary>
+        internal static string ReconcileStudyDialog {
+            get {
+                return ResourceManager.GetString("ReconcileStudyDialog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restore Queue.
         /// </summary>
         internal static string RestoreQueue {

@@ -29,41 +29,19 @@
 
 #endregion
 
-using System;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
-using ClearCanvas.ImageServer.Web.Application.Pages.Common;
-using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    public partial class Default : BasePage
-    {
-        private ServerPartition _serverPartition = null;
-
-        public ServerPartition ServerPartition
-        {
-            get { return _serverPartition; }
-        }
-        
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
-                                                           {
-                                                               SearchPanel panel =
-                                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               _serverPartition = partition;
-                                                               panel.ID = "SearchPanel_" + partition.AeTitle;
-                                                               return panel;
-                                                           });
-        }
-
-        public void OnReconcileItem(ReconcileDetails details)
-        {
-            ReconcileDialog.ReconcileDetails = details;
-            ReconcileDialog.ReconcileQueueItem = details.ReconcileQueueItem;
-            ReconcileDialog.Show();
-        }
-    }
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class WebQueryReconcileQueue : ProcedureQueryBroker<WebQueryReconcileQueueParameters, ReconcileQueue>, IWebQueryReconcileQueue
+	{
+		public WebQueryReconcileQueue()
+			: base("WebQueryReconcileQueue")
+		{
+		}
+	}
 }

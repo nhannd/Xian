@@ -11,16 +11,15 @@
 				<ccUI:GridView ID="ReconcileQueueGridView" runat="server" SkinID="CustomGlobalGridView"
 					OnSelectedIndexChanged="ReconcileQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="ReconcileQueueGridView_PageIndexChanging"
-					OnRowDataBound="ReconcileQueueGridView_RowDataBound"
-					SelectionMode="Multiple" DataSourceID="ReconcileQueueDataSourceObject">
+					SelectionMode="Single" DataSourceID="ReconcileQueueDataSourceObject">
 					<Columns>
-					    <asp:BoundField DataField="StudyInstanceUID" HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+					    <asp:BoundField DataField="StudyInstanceUID" HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:BoundField DataField="ExistingPatient" HeaderText="Existing Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:BoundField DataField="ExistingPatientName" HeaderText="Existing Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 						</asp:BoundField>
-						<asp:BoundField DataField="ConflictingPatient" HeaderText="Conflicting Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:BoundField DataField="ConflictingPatientName" HeaderText="Conflicting Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" ItemStyle-ForeColor="red">
 						</asp:BoundField>
-						<asp:BoundField DataField="InsertTime" HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+						<asp:BoundField DataField="ReceivedTime" HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 						</asp:BoundField>
 					</Columns>
 					<EmptyDataTemplate>

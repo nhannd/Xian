@@ -79,7 +79,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         public void Clear()
         {
             PatientName.Text = string.Empty;
-            ReasonFilter.SelectedIndex = 0;
         }
 
         public override void DataBind()
@@ -101,46 +100,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
             ClearReceivedDateButton.OnClientClick = "document.getElementById('" + ReceivedDate.ClientID + "').value=''; return false;";
           
-            // setup child controls
-            GridPagerBottom.Target = ReconcileQueueItemList.ReconcileQueueGrid;
-
-            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
-            GridPagerTop.Target = ReconcileQueueItemList.ReconcileQueueGrid;
+            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
+                                             App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
+                                             ReconcileQueueItemList.ReconcileQueueGrid);
             GridPagerTop.GetRecordCountMethod = delegate
                               {
 								  return ReconcileQueueItemList.ResultCount;
                               };
 
-            GridPagerBottom.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
-            GridPagerBottom.Target = ReconcileQueueItemList.ReconcileQueueGrid;
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
+                                                App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
+                                                ReconcileQueueItemList.ReconcileQueueGrid);
             GridPagerBottom.GetRecordCountMethod = delegate
                               {
                                   return ReconcileQueueItemList.ResultCount;
                               };
-
-
-            MessageBox.Confirmed += delegate(object data)
-                            {
-                                if (data is IList<Model.ReconcileQueue>)
-                                {
-                                    IList<Model.ReconcileQueue> items = data as IList<Model.ReconcileQueue>;
-                                    foreach (Model.ReconcileQueue item in items)
-                                    {
-                                        _controller.DeleteReconcileQueueItem(item);
-                                    }
-                                }
-                                else if (data is Model.ReconcileQueue)
-                                {
-                                    Model.ReconcileQueue item = data as Model.ReconcileQueue;
-                                    _controller.DeleteReconcileQueueItem(item);
-                                }
-
-                                DataBind();
-                                UpdatePanel.Update(); // force refresh
-
-                            };
 
 			ReconcileQueueItemList.DataSourceCreated += delegate(ReconcileQueueDataSource source)
 										{
@@ -163,16 +137,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         protected override void OnPreRender(EventArgs e)
         {
+            ReconcileButton.Enabled = (ReconcileQueueItemList.SelectedItems != null) ? true : false;
 
-			UpdateUI();
 			base.OnPreRender(e);
         }
-
-        protected void UpdateUI()
-        {
-            UpdateToolbarButtonState();
-        }
-        
+       
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             ReconcileQueueItemList.ReconcileQueueGrid.ClearSelections();
@@ -182,40 +151,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         protected void ReconcileButton_Click(object sender, EventArgs e)
         {
-            IList<Model.ReconcileQueue> items = ReconcileQueueItemList.SelectedItems;
+            ReconcileDetails details = ReconcileDetailsAssembler.CreateReconcileDetails(ReconcileQueueItemList.SelectedItems[0]);
 
-            if (items != null && items.Count>0)
-            {
-                if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleReconcileQueueDelete);
-                else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleReconcileQueueDelete);
-
-                MessageBox.Message += "<table>";
-                foreach (Model.ReconcileQueue item in items)
-                {
-                    String text = "";
-                    //String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
-                      //              item.PatientsName, item.AccessionNumber, item.StudyDescription);
-                    MessageBox.Message += text;
-                }
-                MessageBox.Message += "</table>";
-
-                MessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-                MessageBox.Data = items;
-                MessageBox.Show();
-            }
-        }
-
-        protected void UpdateToolbarButtonState()
-        {
-            IList<Model.ReconcileQueue> items = ReconcileQueueItemList.SelectedItems;
-            if (items != null)
-            {
-				ReconcileButton.Enabled = true;
-            }
-            else
-            {
-                ReconcileButton.Enabled = false;
-            }
+            ((Default)Page).OnReconcileItem(details);
         }
 
         #endregion Protected Methods

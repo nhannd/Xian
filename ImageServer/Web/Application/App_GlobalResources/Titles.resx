@@ -168,6 +168,9 @@
   <data name="ReconcileQueuePageTitle" xml:space="preserve">
     <value>Reconcile Queue | ClearCanvas ImageServer</value>
   </data>
+  <data name="ReconcileStudyDialog" xml:space="preserve">
+    <value>Reconcile Study</value>
+  </data>
   <data name="RestoreQueue" xml:space="preserve">
     <value>Restore Queue</value>
   </data>

@@ -17,7 +17,6 @@
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
-
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />

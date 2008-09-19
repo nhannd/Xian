@@ -48,24 +48,24 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
-		public string PatientsName
+        public ServerEntityKey StudyStorageKey
+        {
+            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+
+		public string Description
 		{
-			set { SubCriteria["PatientsName"] = new ProcedureParameter<string>("PatientsName", value); }
+			set { SubCriteria["Description"] = new ProcedureParameter<string>("Description", value); }
 		}
 
-        public string PatientId
+        public string StudyData
         {
-			set { SubCriteria["PatientId"] = new ProcedureParameter<string>("PatientId", value); }
+			set { SubCriteria["StudyData"] = new ProcedureParameter<string>("StudyData", value); }
         }
 
-        public string AccessionNumber
+        public DateTime? InsertTime
         {
-			set { SubCriteria["AccessionNumber"] = new ProcedureParameter<string>("AccessionNumber", value); }
-        }
-
-        public DateTime? ScheduledTime
-        {
-            set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime?>("ScheduledTime", value); }
+            set { SubCriteria["InsertTime"] = new ProcedureParameter<DateTime?>("InsertTime", value); }
         }
 
 		public ReconcileReasonEnum ReconcileReasonEnum

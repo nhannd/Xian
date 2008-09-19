@@ -30,9 +30,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -49,11 +53,84 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adaptor.Get(criteria);
         }
 
+        public IList<ReconcileQueue> GetRangeReconcileQueueItems(ReconcileQueueSelectCriteria criteria, int startIndex, int maxRows)
+        {
+            return _adaptor.GetRange(criteria, startIndex, maxRows);
+        }
+
+        public int GetReconicleQueueItemsCount(ReconcileQueueSelectCriteria criteria)
+        {
+            return _adaptor.GetCount(criteria);
+        }
+
         public bool DeleteReconcileQueueItem(ReconcileQueue item)
         {
             return _adaptor.Delete(item.Key);
         }
 
+        private void ReconcileStudy(string command, ServerEntityKey itemKey)
+        {
+            ReconcileQueueAdaptor queueAdaptor = new ReconcileQueueAdaptor();
+            Model.ReconcileQueue item = queueAdaptor.Get(itemKey);
+
+            //Add to Study History
+            StudyHistoryeAdaptor historyAdaptor = new StudyHistoryeAdaptor();
+            StudyHistoryUpdateColumns parameters = new StudyHistoryUpdateColumns();
+
+            XmlDocument changeDescription = new XmlDocument();
+            changeDescription.LoadXml(command);
+
+            parameters.StudyData = item.StudyData;
+            parameters.ChangeDescription = changeDescription;
+            parameters.StudyStorageKey = item.StudyStorageKey;
+
+            StudyHistory history = historyAdaptor.Add(parameters);
+
+            //Create WorkQueue Entry
+            WorkQueueAdaptor workQueueAdaptor = new WorkQueueAdaptor();
+            WorkQueueUpdateColumns row = new WorkQueueUpdateColumns();
+            row.Data = item.QueueData;
+            row.ServerPartitionKey = item.ServerPartitionKey;
+            row.StudyStorageKey = item.StudyStorageKey;
+            row.StudyHistoryKey = history.GetKey();
+            row.WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy;
+            row.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+            row.ScheduledTime = DateTime.Now;
+            row.ExpirationTime = DateTime.Now.AddHours(1);
+            WorkQueue newWorkQueueItem = workQueueAdaptor.Add(row);
+
+            ReconcileQueueUidAdaptor reconcileQueueUidAdaptor = new ReconcileQueueUidAdaptor();
+            ReconcileQueueUidSelectCriteria crit = new ReconcileQueueUidSelectCriteria();
+            crit.ReconcileQueueKey.EqualTo(item.GetKey());
+            IList<ReconcileQueueUid> uidList = reconcileQueueUidAdaptor.Get(crit);
+
+            WorkQueueUidAdaptor workQueueUidAdaptor = new WorkQueueUidAdaptor();
+            WorkQueueUidUpdateColumns update = new WorkQueueUidUpdateColumns();
+            foreach (ReconcileQueueUid uid in uidList)
+            {
+                update.WorkQueueKey = newWorkQueueItem.GetKey();
+                update.SeriesInstanceUid = uid.SeriesInstanceUid;
+                update.SopInstanceUid = uid.SopInstanceUid;
+                workQueueUidAdaptor.Add(update);
+            }
+
+            //DeleteReconcileQueue Item
+            ReconcileQueueUidSelectCriteria criteria = new ReconcileQueueUidSelectCriteria();
+            criteria.ReconcileQueueKey.EqualTo(item.GetKey());
+            reconcileQueueUidAdaptor.Delete(criteria);
+
+            ReconcileQueueAdaptor reconcileQueueAdaptor = new ReconcileQueueAdaptor();
+            reconcileQueueAdaptor.Delete(item.GetKey());   
+        }
         
+        public void CreateNewStudy(ServerEntityKey itemKey)
+        {
+            ReconcileStudy(String.Format("<ImageCommands><UpdateImages><SetTag TagPath=\"0020000D\" Value=\"{0}\"/></UpdateImages></ImageCommands>", DicomUid.GenerateUid().UID), itemKey);
+        }
+
+        public void Discard(ServerEntityKey itemKey)
+        {
+            ReconcileStudy("<ImageCommands><Discard/></ImageCommands>", itemKey);
+        }
 	}
 }

@@ -45,7 +45,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
-            
+        
+        /// <summary>
+        /// PatientName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox PatientName;
+        
         /// <summary>
         /// Label2 control.
         /// </summary>
@@ -56,49 +65,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         protected global::System.Web.UI.WebControls.Label Label2;
         
         /// <summary>
-        /// PatientId control.
+        /// ClearReceivedDateButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox PatientName;
-
+        protected global::System.Web.UI.WebControls.LinkButton ClearReceivedDateButton;
+        
         /// <summary>
-        /// PatientId control.
+        /// ReceivedDate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox ReceivedDate;
-        
-        /// <summary>
-        /// Label5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label5;
-        
-        /// <summary>
-        /// Label4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label4;
-        
-        /// <summary>
-        /// ReasonFilter control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ReasonFilter;
         
         /// <summary>
         /// Panel1 control.
@@ -117,24 +99,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton SearchButton;
-
+        
         /// <summary>
-        /// ScheduleCalendarExtender control.
+        /// ReceivedDateCalendarExtender control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.CalendarExtender ReceivedDateCalendarExtender;
-
-        /// <summary>
-        /// SearchButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton ClearReceivedDateButton;
         
         /// <summary>
         /// ToolBarUpdatePanel control.
@@ -155,7 +128,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
         
         /// <summary>
-        /// DeleteItemButton control.
+        /// ReconcileButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
