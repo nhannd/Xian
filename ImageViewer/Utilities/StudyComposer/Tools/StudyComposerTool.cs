@@ -10,7 +10,8 @@ using ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleComposerAda
 namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Tools
 {
 	[ButtonAction("compose", "clipboard-toolbar/Compose", "Compose")]
-	[ExtensionOf(typeof (ClipboardToolExtensionPoint))]
+	[IconSet("compose", IconScheme.Colour, "Icons.StudyComposerToolSmall.png", "Icons.StudyComposerToolSmall.png", "Icons.StudyComposerToolSmall.png")]
+	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
 	public class StudyComposerTool : Tool<IClipboardToolContext>
 	{
 		private StudyComposerComponent _composer;
