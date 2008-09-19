@@ -160,12 +160,14 @@
     <None Include="ClassDiagrams\MeasurementTools.cd" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DeleteAllToolLarge.png" />
-    <EmbeddedResource Include="Icons\DeleteAllToolMedium.png" />
-    <EmbeddedResource Include="Icons\DeleteAllToolSmall.png" />
-    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
-    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
-    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+    <EmbeddedResource Include="Icons\DeleteAllMeasurementsToolLarge.png" />
+    <EmbeddedResource Include="Icons\DeleteAllMeasurementsToolMedium.png" />
+    <EmbeddedResource Include="Icons\DeleteAllMeasurementsToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteMeasurementToolLarge.png" />
+    <EmbeddedResource Include="Icons\DeleteMeasurementToolMedium.png" />
+    <EmbeddedResource Include="Icons\DeleteMeasurementToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />

@@ -46,12 +46,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[Tooltip("closemenu", "CloseMenu")]
 
 	[MenuAction("delete", "basicgraphic-menu/DeleteGraphic", "Delete")]
-	[IconSet("delete", IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolMedium.png", "DeleteToolLarge.png")]
+	[IconSet("delete", IconScheme.Colour, "DeleteMeasurementToolSmall.png", "DeleteMeasurementToolMedium.png", "DeleteMeasurementToolLarge.png")]
 	[GroupHint("delete", "Tools.Image.Measurement.Delete")]
 	[Tooltip("delete", "DeleteGraphic")]
 
 	[MenuAction("deleteall", "basicgraphic-menu/DeleteAllGraphics", "DeleteAll")]
-	[IconSet("deleteall", IconScheme.Colour, "DeleteAllToolSmall.png", "DeleteAllToolMedium.png", "DeleteAllToolLarge.png")]
+	[IconSet("deleteall", IconScheme.Colour, "DeleteAllMeasurementsToolSmall.png", "DeleteAllMeasurementsToolMedium.png", "DeleteAllMeasurementsToolLarge.png")]
 	[GroupHint("deleteall", "Tools.Image.Measurement.DeleteAll")]
 	[Tooltip("deleteall", "DeleteAllGraphics")]
 
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		/// </summary>
 		[MenuAction("deleteall", "imageviewer-contextmenu/DeleteAllMeasurementGraphics", "DeleteAll")]
 		[VisibleStateObserver("deleteall", "DeleteAllVisible", "DeleteAllVisibleChanged")]
-		[IconSet("deleteall", IconScheme.Colour, "DeleteAllToolSmall.png", "DeleteAllToolMedium.png", "DeleteAllToolLarge.png")]
+		[IconSet("deleteall", IconScheme.Colour, "DeleteAllMeasurementsToolSmall.png", "DeleteAllMeasurementsToolMedium.png", "DeleteAllMeasurementsToolLarge.png")]
 		[GroupHint("deleteall", "Tools.Image.Measurement.DeleteAll")]
 		[Tooltip("deleteall", "DeleteAllMeasurementGraphics")]
 		[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
