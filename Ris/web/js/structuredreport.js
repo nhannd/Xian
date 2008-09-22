@@ -1275,7 +1275,7 @@ var AnatomyForm = {
 		if(!this._data[this._fetus]) return;
 
 		var anatomyProperties = ["headShape", "posteriorHorns", "choroidPlexi", "cavumSepti", "cerebellum", "cisternaMagna", "nuchalFold", "eyes", "mouth", 
-				"profile", "spine", "fourChambers", "greatVessels", "chest", "diaphragm", "stomach", "abdominalWall", "kidneysRt", "kidneysLt", "bladder", "upperRt", "upperLt", 
+				"profile", "spine", "fourChambers", "greatVessels", "chest", "diaphragm", "stomach", "abdominalWall", "kidneysRt", "kidneysLt", "bladder", "bowel", "upperRt", "upperLt", 
 				"lowerRt", "lowerLt", "cordVessels"];
 				
 		for(var i = 0; i < anatomyProperties.length; i++)
