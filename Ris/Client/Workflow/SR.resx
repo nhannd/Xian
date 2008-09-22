@@ -229,7 +229,7 @@
     <value>Pre-Admit Number</value>
   </data>
   <data name="ColumnPriority" xml:space="preserve">
-    <value>Priority</value>
+    <value>!</value>
   </data>
   <data name="ColumnProcedure" xml:space="preserve">
     <value>Procedure</value>

@@ -52,56 +52,67 @@ namespace ClearCanvas.Ris.Client.Workflow
             : base(cellRowCount)
         {
             // Visible Columns
-            TableColumn<ModalityWorklistItem, IconSet> priorityColumn =
-                new TableColumn<ModalityWorklistItem, IconSet>(SR.ColumnPriority,
-                delegate(ModalityWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.3f);
+            TableColumn<ModalityWorklistItem, IconSet> priorityColumn = new TableColumn<ModalityWorklistItem, IconSet>(
+                SR.ColumnPriority,
+                delegate(ModalityWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); },
+                0.2f);
             priorityColumn.Comparison = delegate(ModalityWorklistItem item1, ModalityWorklistItem item2)
                 { return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code); };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
-            TableColumn<ModalityWorklistItem, string> mrnColumn = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnMRN,
-                delegate(ModalityWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f);
+            TableColumn<ModalityWorklistItem, string> mrnColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnMRN,
+                delegate(ModalityWorklistItem item) { return MrnFormat.Format(item.Mrn); },
+                0.9f);
 
-            TableColumn<ModalityWorklistItem, string> nameColumn = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnName,
-                delegate(ModalityWorklistItem item) { return PersonNameFormat.Format(item.PatientName); }, 1.5f);
+            TableColumn<ModalityWorklistItem, string> nameColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnName,
+                delegate(ModalityWorklistItem item) { return PersonNameFormat.Format(item.PatientName); },
+                1.5f);
 
-            TableColumn<ModalityWorklistItem, string> patientClassColumn = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(ModalityWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; }, 0.5f);
+            TableColumn<ModalityWorklistItem, string> scheduledForColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnTime,
+                delegate(ModalityWorklistItem item) { return Format.DateTime(item.Time); },
+                1.1f);
+            scheduledForColumn.Comparison = delegate(ModalityWorklistItem item1, ModalityWorklistItem item2)
+                { return Nullable.Compare(item1.Time, item2.Time); };
 
-            TableColumn<ModalityWorklistItem, string> descriptionRow = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnDescription,
-                delegate(ModalityWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
-                    AccessionFormat.Format(item.AccessionNumber), 
-                    item.DiagnosticServiceName, 
-                    item.ProcedureName, 
-                    Format.DateTime(item.Time)); },
-                1.0f, DescriptionRow);
+            TableColumn<ModalityWorklistItem, string> descriptionRow = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnDescription,
+                delegate(ModalityWorklistItem item)
+                {
+                    return string.Format("{0} {1} - {2}",
+                        AccessionFormat.Format(item.AccessionNumber),
+                        item.DiagnosticServiceName,
+                        item.ProcedureName);
+                },
+                1.0f,
+                DescriptionRow);
 
             // Invisible but sortable columns
-            TableColumn<ModalityWorklistItem, string> accessionNumberColumn = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(ModalityWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); }, 0.75f);
+            TableColumn<ModalityWorklistItem, string> patientClassColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnPatientClass,
+                delegate(ModalityWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
+                0.5f);
+            patientClassColumn.Visible = false;
+
+            TableColumn<ModalityWorklistItem, string> accessionNumberColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnAccessionNumber,
+                delegate(ModalityWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); },
+                0.75f);
             accessionNumberColumn.Visible = false;
 
-            TableColumn<ModalityWorklistItem, string> diagnosticServiceColumn =
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnImagingService,
-                delegate(ModalityWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
+            TableColumn<ModalityWorklistItem, string> diagnosticServiceColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnImagingService,
+                delegate(ModalityWorklistItem item) { return item.DiagnosticServiceName; },
+                1.0f);
             diagnosticServiceColumn.Visible = false;
 
-            TableColumn<ModalityWorklistItem, string> procedureNameColumn =
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnProcedure,
-                delegate(ModalityWorklistItem item) { return item.ProcedureName; }, 1.0f);
+            TableColumn<ModalityWorklistItem, string> procedureNameColumn = new TableColumn<ModalityWorklistItem, string>(
+                SR.ColumnProcedure,
+                delegate(ModalityWorklistItem item) { return item.ProcedureName; },
+                1.0f);
             procedureNameColumn.Visible = false;
-
-            TableColumn<ModalityWorklistItem, string> scheduledForColumn = 
-                new TableColumn<ModalityWorklistItem, string>(SR.ColumnTime,
-                delegate(ModalityWorklistItem item) { return Format.Time(item.Time); }, 0.5f);
-            scheduledForColumn.Visible = false;
-			scheduledForColumn.Comparison = delegate(ModalityWorklistItem item1, ModalityWorklistItem item2)
-				{ return Nullable.Compare(item1.Time, item2.Time); };
 
             // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
@@ -197,5 +208,5 @@ namespace ClearCanvas.Ris.Client.Workflow
                     return null;
             }
         }
-	}
+    }
 }

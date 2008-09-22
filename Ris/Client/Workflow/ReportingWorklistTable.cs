@@ -52,57 +52,68 @@ namespace ClearCanvas.Ris.Client.Workflow
             : base(cellRowCount)
         {
             // Visible Columns
-            TableColumn<ReportingWorklistItem, IconSet> priorityColumn =
-                new TableColumn<ReportingWorklistItem, IconSet>(SR.ColumnPriority,
-                delegate(ReportingWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.3f);
+            TableColumn<ReportingWorklistItem, IconSet> priorityColumn = new TableColumn<ReportingWorklistItem, IconSet>(
+                SR.ColumnPriority,
+                delegate(ReportingWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); },
+                0.2f);
             priorityColumn.Comparison = delegate(ReportingWorklistItem item1, ReportingWorklistItem item2)
                 { return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code); };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
-            TableColumn<ReportingWorklistItem, string> mrnColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnMRN,
-                delegate(ReportingWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f);
+            TableColumn<ReportingWorklistItem, string> mrnColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnMRN,
+                delegate(ReportingWorklistItem item) { return MrnFormat.Format(item.Mrn); },
+                0.9f);
 
-            TableColumn<ReportingWorklistItem, string> nameColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnName,
-                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PatientName); }, 1.5f);
-
-            TableColumn<ReportingWorklistItem, string> patientClassColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnPatientClass,
-				delegate(ReportingWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; }, 0.5f);
-
-            TableColumn<ReportingWorklistItem, string> descriptionRow =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnDescription,
-                delegate(ReportingWorklistItem item) { return string.Format("{0} {1} - {2} {3}", 
-                    AccessionFormat.Format(item.AccessionNumber), 
-                    item.DiagnosticServiceName,
-                    item.ProcedureName, 
-                    Format.DateTime(item.Time)); },
-                1.0f, DescriptionRow);
-
-            // Invisible but sortable columns
-            TableColumn<ReportingWorklistItem, string> accessionNumberColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(ReportingWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); }, 0.75f);
-            accessionNumberColumn.Visible = false;
-
-            TableColumn<ReportingWorklistItem, string> diagnosticServiceColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnImagingService,
-                delegate(ReportingWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
-            diagnosticServiceColumn.Visible = false;
-
-            TableColumn<ReportingWorklistItem, string> procedureNameColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnProcedure,
-                delegate(ReportingWorklistItem item) { return item.ProcedureName; }, 1.0f);
-            procedureNameColumn.Visible = false;
+            TableColumn<ReportingWorklistItem, string> nameColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnName,
+                delegate(ReportingWorklistItem item) { return PersonNameFormat.Format(item.PatientName); },
+                1.5f);
 
             // Currently the creation time of the interpretation step
-            TableColumn<ReportingWorklistItem, string> procedureEndTimeColumn =
-                new TableColumn<ReportingWorklistItem, string>(SR.ColumnTime,
-                delegate(ReportingWorklistItem item) { return Format.Time(item.Time); }, 0.5f);
-            procedureEndTimeColumn.Visible = false;
-			procedureEndTimeColumn.Comparison = delegate(ReportingWorklistItem item1, ReportingWorklistItem item2)
-				{ return Nullable.Compare(item1.Time, item2.Time); };
+            TableColumn<ReportingWorklistItem, string> procedureEndTimeColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnTime,
+                delegate(ReportingWorklistItem item) { return Format.DateTime(item.Time); },
+                1.1f);
+            procedureEndTimeColumn.Comparison = delegate(ReportingWorklistItem item1, ReportingWorklistItem item2)
+                { return Nullable.Compare(item1.Time, item2.Time); };
+
+            TableColumn<ReportingWorklistItem, string> descriptionRow = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnDescription,
+                delegate(ReportingWorklistItem item)
+                {
+                    return string.Format("{0} {1} - {2}",
+                        AccessionFormat.Format(item.AccessionNumber),
+                        item.DiagnosticServiceName,
+                        item.ProcedureName);
+                },
+                1.0f,
+                DescriptionRow);
+
+            // Invisible but sortable columns
+            TableColumn<ReportingWorklistItem, string> patientClassColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnPatientClass,
+                delegate(ReportingWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
+                1.0f);
+            patientClassColumn.Visible = false;
+
+            TableColumn<ReportingWorklistItem, string> accessionNumberColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnAccessionNumber,
+                delegate(ReportingWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); },
+                1.0f);
+            accessionNumberColumn.Visible = false;
+
+            TableColumn<ReportingWorklistItem, string> diagnosticServiceColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnImagingService,
+                delegate(ReportingWorklistItem item) { return item.DiagnosticServiceName; },
+                1.0f);
+            diagnosticServiceColumn.Visible = false;
+
+            TableColumn<ReportingWorklistItem, string> procedureNameColumn = new TableColumn<ReportingWorklistItem, string>(
+                SR.ColumnProcedure,
+                delegate(ReportingWorklistItem item) { return item.ProcedureName; },
+                1.0f);
+            procedureNameColumn.Visible = false;
 
             // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
@@ -150,5 +161,5 @@ namespace ClearCanvas.Ris.Client.Workflow
                     return null;
             }
         }
-	}
+    }
 }

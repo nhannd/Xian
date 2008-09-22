@@ -53,60 +53,66 @@ namespace ClearCanvas.Ris.Client.Workflow
             : base(cellRowCount)
         {
             // Visible Columns
-            TableColumn<RegistrationWorklistItem, IconSet> priorityColumn =
-                new TableColumn<RegistrationWorklistItem, IconSet>(SR.ColumnPriority,
-                delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority); }, 0.5f);
+            TableColumn<RegistrationWorklistItem, IconSet> priorityColumn = new TableColumn<RegistrationWorklistItem, IconSet>(
+                SR.ColumnPriority,
+                delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority); },
+                0.2f);
             priorityColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
                 {
                     return GetOrderPriorityIndex(item1.OrderPriority) - GetOrderPriorityIndex(item2.OrderPriority);
                 };
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
-            TableColumn<RegistrationWorklistItem, string> mrnColumn = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
-                delegate(RegistrationWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 1.0f);
+            TableColumn<RegistrationWorklistItem, string> mrnColumn = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnMRN,
+                delegate(RegistrationWorklistItem item) { return MrnFormat.Format(item.Mrn); },
+                0.9f);
 
-            TableColumn<RegistrationWorklistItem, string> nameColumn = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
-                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.PatientName); }, 1.5f);
+            TableColumn<RegistrationWorklistItem, string> nameColumn = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnName,
+                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.PatientName); },
+                1.5f);
 
-            TableColumn<RegistrationWorklistItem, string> patientClassColumn = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(RegistrationWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; }, 0.5f);
+            TableColumn<RegistrationWorklistItem, string> scheduledForColumn = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnTime,
+                delegate(RegistrationWorklistItem item) { return Format.DateTime(item.Time); },
+                1.1f);
+            scheduledForColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
+                { return Nullable.Compare(item1.Time, item2.Time); };
 
-            TableColumn<RegistrationWorklistItem, string> descriptionRow = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDescription,
+            TableColumn<RegistrationWorklistItem, string> descriptionRow = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnDescription,
                 delegate(RegistrationWorklistItem item)
                 {
                     // if there is no accession number, this item represents a patient only, not an order
                     if (item.AccessionNumber == null) return null;
                     else
                     {
-                        string description = string.Format("{0} {1}", AccessionFormat.Format(item.AccessionNumber), item.DiagnosticServiceName);
-                        if(item.Time.HasValue) description += string.Format(" - {0}", Format.DateTime(item.Time));
-                        return description;
+                        return string.Format("{0} {1}", AccessionFormat.Format(item.AccessionNumber), item.DiagnosticServiceName);
                     }
                 },
-                1.0f, DescriptionRow);
+                1.0f,
+                DescriptionRow);
             descriptionRow.Comparison = null;
 
             // Invisible but sortable columns
-            TableColumn<RegistrationWorklistItem, string> accessionNumberColumn = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnAccessionNumber,
-                delegate(RegistrationWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); }, 1.0f);
+            TableColumn<RegistrationWorklistItem, string> patientClassColumn = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnPatientClass,
+                delegate(RegistrationWorklistItem item) { return item.PatientClass == null ? null : item.PatientClass.Value; },
+                1.0f);
+            patientClassColumn.Visible = false;
+
+            TableColumn<RegistrationWorklistItem, string> accessionNumberColumn = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnAccessionNumber,
+                delegate(RegistrationWorklistItem item) { return AccessionFormat.Format(item.AccessionNumber); },
+                1.0f);
             accessionNumberColumn.Visible = false;
 
-            TableColumn<RegistrationWorklistItem, string> diagnosticServiceColumn =
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnImagingService,
-                delegate(RegistrationWorklistItem item) { return item.DiagnosticServiceName; }, 1.0f);
+            TableColumn<RegistrationWorklistItem, string> diagnosticServiceColumn = new TableColumn<RegistrationWorklistItem, string>(
+                SR.ColumnImagingService,
+                delegate(RegistrationWorklistItem item) { return item.DiagnosticServiceName; },
+                1.0f);
             diagnosticServiceColumn.Visible = false;
-
-            TableColumn<RegistrationWorklistItem, string> scheduledForColumn = 
-                new TableColumn<RegistrationWorklistItem, string>(SR.ColumnTime,
-                delegate(RegistrationWorklistItem item) { return Format.Time(item.Time); }, 1.0f);
-            scheduledForColumn.Visible = false;
-			scheduledForColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
-				{ return Nullable.Compare(item1.Time, item2.Time); };
 
             // The order of the addition determines the order of SortBy dropdown
             this.Columns.Add(priorityColumn);
@@ -149,9 +155,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                     return new IconSet("DoubleExclamation.png");
                 case "A": // Urgent
                     return new IconSet("SingleExclamation.png");
-                default: 
+                default:
                     return null;
             }
         }
-   }
+    }
 }

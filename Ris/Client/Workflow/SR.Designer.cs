@@ -394,7 +394,7 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Priority.
+        ///   Looks up a localized string similar to !.
         /// </summary>
         internal static string ColumnPriority {
             get {
