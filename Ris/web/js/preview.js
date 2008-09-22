@@ -537,7 +537,52 @@ function createReportPreview(element, report)
 	if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 		return "";
 
-	var statusMap = {X: 'Cancelled', D: 'Draft', P: 'Preliminary', F: 'Final'};
+	function parseReportObject(reportJsml)
+	{
+		try
+		{
+			return JSML.parse(reportJsml);
+		}
+		catch(e)
+		{
+			return null;
+		}
+	}
+	
+	function parseReportContent(reportJsml)
+	{
+		var reportObject = parseReportObject(reportJsml);
+		if (!reportObject)
+		{
+			// the Content was not JSML, but just plain text
+			return reportJsml || "None";
+		}
+		
+		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
+		var reportText;
+		if(reportObject.Impression || reportObject.Finding)
+			reportText = "<B>Impression:</B> " + reportObject.Impression + "<br>" + "<B>Finding:</B> " + reportObject.Finding + "<br>";
+		else // or it may simply contain a ReportText section (UHN report editor)
+			reportText = reportObject.ReportText;
+
+		if (!reportText)
+			reportText = "None";
+
+		return reportText.replaceLineBreak();
+	}
+	
+	function formatReportStatus(reportStatus, isAddendum)
+	{
+		var statusMap = {X: 'Cancelled', D: 'Draft', P: 'Preliminary', F: 'Final'};
+		var statusText = statusMap[reportStatus];
+		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
+		
+		if (['D', 'P'].indexOf(reportStatus) > -1)
+			statusText = "<font color='red'>" + statusText + warningText + "</font>";
+
+		return " (" + statusText + ")";
+	}
+	
 	var formattedReport = "";
 
 	if (report.Parts.length > 1)
@@ -545,18 +590,15 @@ function createReportPreview(element, report)
 		for (var i = report.Parts.length-1; i > 0; i--)
 		{
 			var addendumPart = report.Parts[i];
-			var addendumStatus = addendumPart.Status.Code;
 			var addendumContent = addendumPart && addendumPart.ExtendedProperties && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
 			
 			if (addendumContent)
 			{
-				formattedReport += "<b>Addendum " + i + " (" + statusMap[addendumStatus] + "): </b><br>";
-				formattedReport += addendumContent.replaceLineBreak();
+				formattedReport += "<b>Addendum " + i + formatReportStatus(addendumPart.Status.Code, true) + ": </b><br><br>";
+				formattedReport += parseReportContent(addendumContent);
 				formattedReport += formatReportPerformer(addendumPart);
 
-				if (['D', 'P'].indexOf(addendumStatus) > -1)
-					formattedReport = "<font color='red'>" + formattedReport + "</font>";
-
+				// add lines in between the multiple addendums
 				formattedReport += "<br><br>";
 			}
 		}
@@ -565,57 +607,25 @@ function createReportPreview(element, report)
 			formattedReport = "<h3>Addendum:</h3>" + formattedReport;
 	}
 
-	var mainReportText = "";
 	var reportContent = report.Parts[0] && report.Parts[0].ExtendedProperties && report.Parts[0].ExtendedProperties.ReportContent ? report.Parts[0].ExtendedProperties.ReportContent : "";
-	try
-	{
-		var mainReport = JSML.parse(reportContent);
-
-		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
-		if(mainReport.Impression || mainReport.Finding)
-		{
-			mainReportText = "<B>Impression:</B> " + mainReport.Impression + "<br>" + "<B>Finding:</B> " + mainReport.Finding + "<br>";
-		}
-		else
-		{
-			// or it may simply contain a ReportText section (UHN report editor)
-			mainReportText = mainReport.ReportText;
-		}
-	}
-	catch(e)
-	{
-		// the Content was not JSML, but just plain text
-		mainReportText = reportContent;
-		if (mainReportText == null)
-			mainReportText = "None";
-	}
-
 	var statusCode = report.Parts[0].Status.Code;
 
 	formattedReport += "<h3>";
 	formattedReport += "Main Report";
-	formattedReport += " (" + statusMap[statusCode] + ")";
+	formattedReport += formatReportStatus(statusCode);
 	formattedReport += "</h3>";
 	formattedReport += "<div id=\"structuredReport\" style=\"{color:black;margin-bottom:1em;}\"></div>";
 	formattedReport += "<div class=\"sectionheading\" id=\"radiologistsCommentsHeader\" style=\"{"; 
-	formattedReport += (['D', 'P'].indexOf(statusCode) > -1) ? "color:red;border-color:red;" : "";
 	formattedReport += "display:none;margin-bottom:1em;}\">Radiologist's Comments</div>";
-	if(mainReportText)
-	{
-		formattedReport += mainReportText.replaceLineBreak();
-	}
-
+	formattedReport += parseReportContent(reportContent);
 	formattedReport += formatReportPerformer(report.Parts[0]);
-
-	if(['D', 'P'].indexOf(statusCode) > -1)
-		formattedReport = "<font color='red'>" + formattedReport + "</font>";
+	
 	element.innerHTML = formattedReport;
-	 
+	
 	 // UHN report may contain a StructuredReport section
+	var mainReport = parseReportObject(reportContent);
 	if(mainReport && mainReport.StructuredReport)
-	{
 		createStructuredReportPreview(mainReport.StructuredReport.data);
-	}
 }
 
 function createStructuredReportPreview(structuredReport)
@@ -632,7 +642,7 @@ function formatReportPerformer(reportPart)
 	if (reportPart == null)
 		return "";
 
-	var formattedReport = "";
+	var formattedReport = "<br>";
 	
 	if (reportPart.InterpretedBy)
 		formattedReport += "<br> Interpreted By: " + Ris.formatPersonName(reportPart.InterpretedBy.Name);

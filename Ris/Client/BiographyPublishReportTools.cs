@@ -49,7 +49,6 @@ namespace ClearCanvas.Ris.Client
 			if (this.Context.PatientProfileRef == null) return false;
 			if (this.Context.OrderRef == null) return false;
 			if (this.Context.ReportRef == null) return false;
-			if (this.Context.ReportStatus.Code != "F" && this.Context.ReportStatus.Code != "C") return false;
 			return true;
 		}
 

@@ -623,41 +623,35 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 		public bool CanReassignProcedureStep(WorklistItemKey itemKey)
 		{
-			if(itemKey.ProcedureStepRef != null)
-			{
-				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
-				if (step is ProtocolProcedureStep)
-					return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
-				else if (step is ReportingProcedureStep)
-					return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)
-						&& !(step is VerificationStep)
-						&& !(step is PublicationStep);
-				else
-					return false;
-			}
+            if (itemKey.ProcedureStepRef == null)
+                return false;
 
-			return false;
+			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+			if (step is ProtocolProcedureStep)
+				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
+			else if (step is ReportingProcedureStep)
+				return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)
+					&& !(step is VerificationStep)
+					&& !(step is PublicationStep);
+			else
+				return false;
 		}
 
 		public bool CanSendReportToQueue(WorklistItemKey itemKey)
 		{
-			if (itemKey.ProcedureStepRef != null)
-			{
-				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
+            if (itemKey.ProcedureStepRef == null)
+                return false;
 
-				if (step is ReportingProcedureStep == false)
-					return false;
+			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
 
-				ReportPart part = ((ReportingProcedureStep)step).ReportPart;
-				if (part == null)
-					return false;
+			if (step is ReportingProcedureStep == false)
+				return false;
 
-				// Only return true for completed or corrected report
-				if (part.Report.Status == ReportStatus.F || part.Report.Status == ReportStatus.C)
-					return true;
-			}
+			ReportPart part = ((ReportingProcedureStep)step).ReportPart;
+			if (part == null)
+				return false;
 
-			return false;
+			return true;
 		}
 
     	private bool CanExecuteOperation(Operations.ReportingOperation op, WorklistItemKey itemKey)
