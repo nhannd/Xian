@@ -930,7 +930,7 @@ var Field =
 		var anchorElement= document.createElement("a");
 		anchorElement.appendChild(document.createTextNode(value));
 		anchorElement.setAttribute("href", "#");
-		anchorElement.onclick = function() { clickLink(); return false; };
+		anchorElement.onclick = function() { clickLink(); };
 		element.appendChild(anchorElement);
 	},
 	
