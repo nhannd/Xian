@@ -216,7 +216,6 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Creates a clone of the <see cref="GrayscalePresentationImage"/>.
 		/// </summary>
-		/// <returns></returns>
 		public override IPresentationImage CreateFreshCopy()
 		{
 			if (_constructor == 0)
