@@ -161,6 +161,17 @@ function formatPerformingFacilityList(procedures)
 	return String.combine(facilities, "<br>");
 }
 
+function formatVisitCurrentLocation(visit)
+{
+	if (!visit || !visit.CurrentLocation)
+		return null;
+	
+	if (visit.CurrentLocation.Room || visit.CurrentLocation.Bed)
+		return visit.CurrentLocation.Name + ", " + (visit.CurrentLocation.Room || "") + (visit.CurrentLocation.Bed ? "/" + visit.CurrentLocation.Bed : "");
+	else
+		return visit.CurrentLocation.Name;
+}
+
 function filterProcedureByModality(procedures, modalityIdFilter)
 {
 	var isStepInModality = function (step)
