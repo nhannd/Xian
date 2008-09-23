@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
+using System.Text;
 
 namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 {
@@ -100,9 +101,19 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		{
 			_draws = 0;
 			_time = TimeSpan.Zero;
+			_renderer.ResetStats();
 
 			FirePropertyChanged("Draws");
 			FirePropertyChanged("Time");
+		}
+
+		public void ReportStats()
+		{
+			StringBuilder builder = new StringBuilder();
+			builder.AppendFormat("Render: {0:F2}", _renderer.RenderTime.TotalSeconds);
+			builder.AppendLine();
+			builder.AppendFormat("Blit: {0:F2}", _renderer.BlitTime.TotalSeconds);
+			MessageBox.Show(this, builder.ToString());
 		}
 
 		protected override void OnSizeChanged(EventArgs e)
@@ -113,6 +124,12 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 
 		protected override void OnPaintBackground(PaintEventArgs e)
 		{
+		}
+
+		protected override void OnMouseDown(MouseEventArgs e)
+		{
+			base.OnMouseDown(e);
+			Invalidate();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)

@@ -29,6 +29,8 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		private void InitializeComponent()
 		{
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
+			this._renderingSurface = new ClearCanvas.ImageViewer.TestTools.Rendering.TestApp.RenderingSurface();
+			this._draw50 = new System.Windows.Forms.Button();
 			this.label4 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this._draws = new System.Windows.Forms.TextBox();
@@ -42,8 +44,7 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			this._comboFormat = new System.Windows.Forms.ComboBox();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
-			this._renderingSurface = new ClearCanvas.ImageViewer.TestTools.Rendering.TestApp.RenderingSurface();
-			this._draw50 = new System.Windows.Forms.Button();
+			this.button1 = new System.Windows.Forms.Button();
 			this._splitContainer.Panel1.SuspendLayout();
 			this._splitContainer.Panel2.SuspendLayout();
 			this._splitContainer.SuspendLayout();
@@ -63,6 +64,7 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			// 
 			// _splitContainer.Panel2
 			// 
+			this._splitContainer.Panel2.Controls.Add(this.button1);
 			this._splitContainer.Panel2.Controls.Add(this._draw50);
 			this._splitContainer.Panel2.Controls.Add(this.label4);
 			this._splitContainer.Panel2.Controls.Add(this.label3);
@@ -80,6 +82,29 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			this._splitContainer.Size = new System.Drawing.Size(336, 398);
 			this._splitContainer.SplitterDistance = 242;
 			this._splitContainer.TabIndex = 0;
+			// 
+			// _renderingSurface
+			// 
+			this._renderingSurface.Bitmap = null;
+			this._renderingSurface.CustomBackBuffer = true;
+			this._renderingSurface.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._renderingSurface.Format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
+			this._renderingSurface.Location = new System.Drawing.Point(0, 0);
+			this._renderingSurface.Name = "_renderingSurface";
+			this._renderingSurface.Size = new System.Drawing.Size(336, 242);
+			this._renderingSurface.Source = ClearCanvas.ImageViewer.TestTools.Rendering.TestApp.GraphicsSource.Default;
+			this._renderingSurface.TabIndex = 0;
+			this._renderingSurface.UseBufferedGraphics = false;
+			// 
+			// _draw50
+			// 
+			this._draw50.Location = new System.Drawing.Point(251, 116);
+			this._draw50.Name = "_draw50";
+			this._draw50.Size = new System.Drawing.Size(60, 20);
+			this._draw50.TabIndex = 13;
+			this._draw50.Text = "Draw x50";
+			this._draw50.UseVisualStyleBackColor = true;
+			this._draw50.Click += new System.EventHandler(this._draw50_Click);
 			// 
 			// label4
 			// 
@@ -199,28 +224,15 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Format:";
 			// 
-			// _renderingSurface
+			// button1
 			// 
-			this._renderingSurface.Bitmap = null;
-			this._renderingSurface.CustomBackBuffer = true;
-			this._renderingSurface.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._renderingSurface.Format = System.Drawing.Imaging.PixelFormat.Format24bppRgb;
-			this._renderingSurface.Location = new System.Drawing.Point(0, 0);
-			this._renderingSurface.Name = "_renderingSurface";
-			this._renderingSurface.Size = new System.Drawing.Size(336, 242);
-			this._renderingSurface.Source = ClearCanvas.ImageViewer.TestTools.Rendering.TestApp.GraphicsSource.Default;
-			this._renderingSurface.TabIndex = 0;
-			this._renderingSurface.UseBufferedGraphics = false;
-			// 
-			// _draw50
-			// 
-			this._draw50.Location = new System.Drawing.Point(251, 116);
-			this._draw50.Name = "_draw50";
-			this._draw50.Size = new System.Drawing.Size(60, 20);
-			this._draw50.TabIndex = 13;
-			this._draw50.Text = "Draw x50";
-			this._draw50.UseVisualStyleBackColor = true;
-			this._draw50.Click += new System.EventHandler(this._draw50_Click);
+			this.button1.Location = new System.Drawing.Point(251, 90);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(60, 20);
+			this.button1.TabIndex = 14;
+			this.button1.Text = "Show Stats";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
 			// 
 			// RenderingSurfaceContainer
 			// 
@@ -255,6 +267,7 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Label label3;
 		private System.Windows.Forms.Button _draw50;
+		private System.Windows.Forms.Button button1;
 
 	}
 }

@@ -76,5 +76,10 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 				_renderingSurface.Invalidate();
 			}
 		}
+
+		private void button1_Click(object sender, EventArgs e)
+		{
+			_renderingSurface.ReportStats();
+		}
 	}
 }

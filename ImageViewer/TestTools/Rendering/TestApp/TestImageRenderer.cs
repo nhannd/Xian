@@ -27,6 +27,9 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 		private BufferedGraphicsContext _context;
 		private BufferedGraphics _bufferedGraphics;
 
+		private TimeSpan _renderTime;
+		private TimeSpan _blitTime;
+
 		public TestImageRenderer()
 		{
 			_customBackBuffer = true;
@@ -93,7 +96,6 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 			{
 				_pixelFormat = value;
 				DisposeBuffer();
-				GenerateImage();
 			}
 		}
 
@@ -105,6 +107,22 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 				_graphicsSource = value;
 				DisposeBuffer();
 			}
+		}
+
+		public TimeSpan RenderTime
+		{
+			get { return _renderTime; }	
+		}
+
+		public TimeSpan BlitTime
+		{
+			get { return _blitTime; }	
+		}
+
+		public void ResetStats()
+		{
+			_renderTime = TimeSpan.Zero;
+			_blitTime = TimeSpan.Zero;
 		}
 
 		public void RenderTo(Graphics graphics, Size size)
@@ -119,6 +137,7 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 
 			if (_customBackBuffer)
 			{
+				RenderImage(size);
 				AllocateBuffer(target, size);
 				if (_buffer != null)
 				{
@@ -126,17 +145,25 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 					{
 						Render(buffer, size);
 					}
+
+					DateTime start = DateTime.Now;
 					target.DrawImage(_buffer, 0, 0);
+					DateTime end = DateTime.Now;
+					_blitTime = _blitTime.Add(end.Subtract(start));
+					
 				}
 				else
 				{
-					if (_bufferedGraphicsNew)
+					//if (_bufferedGraphicsNew)
 					{
 						_bufferedGraphicsNew = false;
 						Render(_bufferedGraphics.Graphics, size);
 					}
 
+					DateTime start = DateTime.Now;
 					_bufferedGraphics.Render(target);
+					DateTime end = DateTime.Now;
+					_blitTime = _blitTime.Add(end.Subtract(start));
 				}
 			}
 			else
@@ -197,6 +224,8 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 
 		private void Render(Graphics graphics, Size size)
 		{
+			DateTime start = DateTime.Now;
+
 			graphics.Clear(Color.Black);
 			if (_customImage != null)
 				graphics.DrawImage(_customImage, 0, 0, size.Width, size.Height);
@@ -204,26 +233,38 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering.TestApp
 				graphics.DrawImage(_image, 0, 0, size.Width, size.Height);
 
 			_bufferedGraphicsNew = false;
+
+			DateTime end = DateTime.Now;
+			_renderTime = _renderTime.Add(end.Subtract(start));
 		}
 
-		private void GenerateImage()
+		private void RenderImage(Size size)
 		{
-			if (_image != null)
+			if (_image != null && _image.Size != size)
+			{
 				_image.Dispose();
+				_image = null;
+			}
 
-			_image = new Bitmap(200, 200, _pixelFormat);
+			if (_image == null)
+				_image = new Bitmap(size.Width, size.Height, _pixelFormat);
+			else
+				return;
+
+			int rectw = size.Width/3 - 11;
+			int recth = size.Height/3 - 11;
 
 			Graphics graphics = Graphics.FromImage(_image);
 			Pen pen = new Pen(Brushes.Red, 10);
-			graphics.DrawRectangle(pen, 25, 25, 50, 50);
+			graphics.DrawRectangle(pen, 0, 0, rectw, recth);
 			pen.Dispose();
 
 			pen = new Pen(Brushes.Green, 10);
-			graphics.DrawRectangle(pen, 75, 75, 50, 50);
+			graphics.DrawRectangle(pen, rectw, recth, rectw, recth);
 			pen.Dispose();
 
 			pen = new Pen(Brushes.Blue, 10);
-			graphics.DrawRectangle(pen, 125, 125, 50, 50);
+			graphics.DrawRectangle(pen, 2 * rectw, 2 * recth, rectw, recth);
 			pen.Dispose();
 			graphics.Dispose();
 		}

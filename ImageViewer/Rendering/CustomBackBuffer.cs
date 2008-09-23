@@ -32,18 +32,24 @@ namespace ClearCanvas.ImageViewer.Rendering
 			if (IsClientRectangleEmpty)
 				return;
 
-			using (System.Drawing.Graphics g = System.Drawing.Graphics.FromHdc(ContextID))
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			using (System.Drawing.Graphics targetGraphics = System.Drawing.Graphics.FromHdc(ContextID))
 			{
 				if (_indexedBuffer != null)
 				{
 					_indexedBuffer.Render(_buffer);
-					g.DrawImageUnscaled(_indexedBuffer.Bitmap, 0, 0);
+					targetGraphics.DrawImageUnscaled(_indexedBuffer.Bitmap, 0, 0);
 				}
 				else
 				{
-					g.DrawImageUnscaled(_buffer.Bitmap, 0, 0);
+					targetGraphics.DrawImageUnscaled(_buffer.Bitmap, 0, 0);
 				}
 			}
+
+			clock.Stop();
+			RenderPerformanceReportBroker.PublishPerformanceReport("CustomBackBuffer.RenderToScreen", clock.Seconds);
 		}
 
 		protected override void OnClientRectangleChanged()

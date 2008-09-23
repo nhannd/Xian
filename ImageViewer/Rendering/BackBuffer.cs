@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("BackBuffer.DrawImageGraphic", clock.Seconds);
+			RenderPerformanceReportBroker.PublishPerformanceReport("BackBuffer.RenderImageGraphic", clock.Seconds);
 		}
 
 		public abstract void RenderToScreen();

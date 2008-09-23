@@ -66,9 +66,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		public override void RenderImageGraphic(ImageGraphic imageGraphic)
 		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
 			_colorBuffer.Graphics.Clear(Color.Black);
 			base.RenderImageGraphic(imageGraphic);
 			RenderColorBuffer();
+
+			clock.Stop();
+			RenderPerformanceReportBroker.PublishPerformanceReport("ManagedBackBuffer.RenderImageGraphic", clock.Seconds);
 		}
 
 		private void RenderColorBuffer()
@@ -90,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("BackBuffer.RenderImage", clock.Seconds);
+			RenderPerformanceReportBroker.PublishPerformanceReport("ManagedBackBuffer.RenderColorBuffer", clock.Seconds);
 		}
 
 		public override void RenderToScreen()
