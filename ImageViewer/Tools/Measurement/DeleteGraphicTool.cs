@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MenuAction("deleteall", "basicgraphic-menu/DeleteAllGraphics", "DeleteAll")]
 	[IconSet("deleteall", IconScheme.Colour, "DeleteAllMeasurementsToolSmall.png", "DeleteAllMeasurementsToolMedium.png", "DeleteAllMeasurementsToolLarge.png")]
-	[GroupHint("deleteall", "Tools.Image.Measurement.DeleteAll")]
+	[GroupHint("deleteall", "Tools.Image.Measurement.Delete.All")]
 	[Tooltip("deleteall", "DeleteAllGraphics")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
