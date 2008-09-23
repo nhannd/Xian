@@ -571,54 +571,43 @@ function createReportPreview(element, report)
 		return reportText.replaceLineBreak();
 	}
 	
-	function formatReportStatus(reportStatus, isAddendum)
+	function formatReportStatus(report, isAddendum)
 	{
 		var statusMap = {X: 'Cancelled', D: 'Draft', P: 'Preliminary', F: 'Final'};
-		var statusText = statusMap[reportStatus];
+		var timePropertyMap = {X: 'CancelledTime', D: 'CreationTime', P: 'PreliminaryTime', F: 'CompletedTime'};
+		var timeText = Ris.formatDateTime(report[timePropertyMap[report.Status.Code]]);
 		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
-		
-		if (['D', 'P'].indexOf(reportStatus) > -1)
+
+		var statusText = statusMap[report.Status.Code] + " - " + timeText;
+
+		if (['D', 'P'].indexOf(report.Status.Code) > -1)
 			statusText = "<font color='red'>" + statusText + warningText + "</font>";
 
 		return " (" + statusText + ")";
 	}
 	
-	var formattedReport = "";
-
+	var formattedReport = "<br>";
 	if (report.Parts.length > 1)
 	{
 		for (var i = report.Parts.length-1; i > 0; i--)
 		{
 			var addendumPart = report.Parts[i];
 			var addendumContent = addendumPart && addendumPart.ExtendedProperties && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
-			
-			if (addendumContent)
-			{
-				formattedReport += "<b>Addendum " + i + formatReportStatus(addendumPart.Status.Code, true) + ": </b><br><br>";
-				formattedReport += parseReportContent(addendumContent);
-				formattedReport += formatReportPerformer(addendumPart);
-
-				// add lines in between the multiple addendums
-				formattedReport += "<br><br>";
-			}
+			formattedReport += "<b>Addendum " + formatReportStatus(addendumPart, true) + ": </b><br><br>";
+			formattedReport += parseReportContent(addendumContent);
+			formattedReport += formatReportPerformer(addendumPart);
+			formattedReport += "<br><br>";
 		}
-
-		if (formattedReport)
-			formattedReport = "<h3>Addendum:</h3>" + formattedReport;
 	}
 
-	var reportContent = report.Parts[0] && report.Parts[0].ExtendedProperties && report.Parts[0].ExtendedProperties.ReportContent ? report.Parts[0].ExtendedProperties.ReportContent : "";
-	var statusCode = report.Parts[0].Status.Code;
-
-	formattedReport += "<h3>";
-	formattedReport += "Main Report";
-	formattedReport += formatReportStatus(statusCode);
-	formattedReport += "</h3>";
+	var part0 = report.Parts[0];
+	var reportContent = part0 && part0.ExtendedProperties && part0.ExtendedProperties.ReportContent ? part0.ExtendedProperties.ReportContent : "";
+	formattedReport += "<b>Report" + formatReportStatus(part0) + "</b>";
 	formattedReport += "<div id=\"structuredReport\" style=\"{color:black;margin-bottom:1em;}\"></div>";
 	formattedReport += "<div class=\"sectionheading\" id=\"radiologistsCommentsHeader\" style=\"{"; 
 	formattedReport += "display:none;margin-bottom:1em;}\">Radiologist's Comments</div>";
 	formattedReport += parseReportContent(reportContent);
-	formattedReport += formatReportPerformer(report.Parts[0]);
+	formattedReport += formatReportPerformer(part0);
 	
 	element.innerHTML = formattedReport;
 	

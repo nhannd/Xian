@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
@@ -39,6 +40,7 @@ namespace ClearCanvas.Ris.Application.Common
     public class ReportPartDetail : DataContractBase
     {
         public ReportPartDetail(EntityRef reportPartRef, int index, bool isAddendum, EnumValueInfo status,
+            DateTime creationTime, DateTime? preliminaryTime, DateTime? completedTime, DateTime? cancelledTime,
             StaffSummary supervisor, StaffSummary interpretedBy, StaffSummary transcribedBy, StaffSummary verifiedBy,
             Dictionary<string, string> extendedProperties)
         {
@@ -46,6 +48,10 @@ namespace ClearCanvas.Ris.Application.Common
             this.Index = index;
             this.IsAddendum = isAddendum;
             this.Status = status;
+            this.CreationTime = creationTime;
+            this.PreliminaryTime = preliminaryTime;
+            this.CompletedTime = completedTime;
+            this.CancelledTime = cancelledTime;
             this.Supervisor = supervisor;
             this.InterpretedBy = interpretedBy;
             this.TranscribedBy = transcribedBy;
@@ -66,6 +72,18 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public EnumValueInfo Status;
+
+        [DataMember]
+        public DateTime CreationTime;
+
+        [DataMember]
+        public DateTime? PreliminaryTime;
+
+        [DataMember]
+        public DateTime? CompletedTime;
+
+        [DataMember]
+        public DateTime? CancelledTime;
 
         [DataMember]
         public StaffSummary Supervisor;
