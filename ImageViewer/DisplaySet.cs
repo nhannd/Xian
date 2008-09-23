@@ -112,7 +112,6 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public DisplaySet() : this("","")
 		{
-			
 		}
 
 		/// <summary>
