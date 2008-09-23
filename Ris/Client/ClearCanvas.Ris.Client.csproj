@@ -59,6 +59,12 @@
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CoreServiceProvider.cs" />
     <Compile Include="DateTimeEntryComponent.cs" />
+    <Compile Include="DiagnosticServiceLookupSettings.cs" />
+    <Compile Include="DiagnosticServiceLookupSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DiagnosticServiceLookupSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="DowntimeRecovery.cs" />
     <Compile Include="EnumValueAdminInfoTable.cs" />
     <Compile Include="ExternalPractitionerContactPointLookupHandler.cs" />
@@ -309,6 +315,10 @@
       <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="DiagnosticServiceLookupSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DiagnosticServiceLookupSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="FolderExplorerComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FolderExplorerComponentSettings.Designer.cs</LastGenOutput>

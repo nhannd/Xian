@@ -76,13 +76,14 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor
 		/// </summary>
 		/// <param name="minQueryStringLength"></param>
-		/// <param name="defaulSpecificityThreshold"></param>
-		public LookupHandler(int minQueryStringLength, int defaulSpecificityThreshold)
+		/// <param name="defaultSpecificityThreshold"></param>
+		public LookupHandler(int minQueryStringLength, int defaultSpecificityThreshold)
 		{
 			Platform.CheckArgumentRange(minQueryStringLength, 1, int.MaxValue, "minQueryStringLength");
-			Platform.CheckArgumentRange(defaulSpecificityThreshold, 1, int.MaxValue, "defaulSpecificityThreshold");
+			Platform.CheckArgumentRange(defaultSpecificityThreshold, 1, int.MaxValue, "defaulSpecificityThreshold");
 
 			_minQueryStringLength = minQueryStringLength;
+			_defaultSpecificityThreshold = defaultSpecificityThreshold;
 		}
 
 		/// <summary>

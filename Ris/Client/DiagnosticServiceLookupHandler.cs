@@ -44,6 +44,7 @@ namespace ClearCanvas.Ris.Client
         private readonly DesktopWindow _desktopWindow;
 
         public DiagnosticServiceLookupHandler(DesktopWindow desktopWindow)
+			: base(DiagnosticServiceLookupSettings.Default.MinQueryStringLength, DiagnosticServiceLookupSettings.Default.QuerySpecificityThreshold)
         {
             _desktopWindow = desktopWindow;
         }
