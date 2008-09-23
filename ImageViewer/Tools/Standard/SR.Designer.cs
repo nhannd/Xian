@@ -946,6 +946,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show CT Raw Pixel Value.
+        /// </summary>
+        internal static string ShowCTPix {
+            get {
+                return ResourceManager.GetString("ShowCTPix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Non-CT Modality Value.
+        /// </summary>
+        internal static string ShowNonCTMod {
+            get {
+                return ResourceManager.GetString("ShowNonCTMod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show VOI LUT Value.
+        /// </summary>
+        internal static string ShowVoiLut {
+            get {
+                return ResourceManager.GetString("ShowVoiLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Acquisition Time.
         /// </summary>
         internal static string SortByAcquisitionTimeDescription {
@@ -1342,11 +1369,38 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shows the raw pixel value on CT images.
+        /// </summary>
+        internal static string TooltipShowCTPix {
+            get {
+                return ResourceManager.GetString("TooltipShowCTPix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show/Hide Text Overlay.
         /// </summary>
         internal static string TooltipShowHideTextOverlay {
             get {
                 return ResourceManager.GetString("TooltipShowHideTextOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shows the modality pixel value on non-CT images.
+        /// </summary>
+        internal static string TooltipShowNonCTMod {
+            get {
+                return ResourceManager.GetString("TooltipShowNonCTMod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shows the VOI LUT pixel value on images.
+        /// </summary>
+        internal static string TooltipShowVoiLut {
+            get {
+                return ResourceManager.GetString("TooltipShowVoiLut", resourceCulture);
             }
         }
         

@@ -107,8 +107,7 @@
     </Compile>
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
-    <Compile Include="Config\ConfigPageProvider.cs" />
-    <Compile Include="Config\StandardToolsConfigComponent.cs" />
+    <Compile Include="Config\ProbeSettingsTool.cs" />
     <Compile Include="Config\ToolSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

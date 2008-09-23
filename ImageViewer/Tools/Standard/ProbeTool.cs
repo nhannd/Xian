@@ -34,6 +34,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -41,8 +42,11 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
+	[ExtensionPoint]
+	public sealed class ProbeToolDropDownToolExtensionPoint : ExtensionPoint<ITool> {}
+
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuProbe", "Select", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", "Select", Flags = ClickActionFlags.CheckAction)]
+	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardProbe/Activate", "Select", KeyStroke = XKeys.B)]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
@@ -57,6 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private Tile _selectedTile;
 		private ImageGraphic _selectedImageGraphic;
 		private ImageSop _selectedImageSop;
+		private ActionModelNode _actionModel;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -73,6 +78,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			add { base.TooltipChanged += value; }
 			remove { base.TooltipChanged -= value; }
+		}
+
+		public ActionModelNode DropDownMenuModel {
+			get {
+				if (_actionModel == null) {
+					_actionModel = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Tools.Standard", "probetool-dropdown", base.ImageViewer.ExportedActions);
+				}
+
+				return _actionModel;
+			}
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

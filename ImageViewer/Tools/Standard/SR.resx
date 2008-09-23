@@ -561,4 +561,22 @@ Please check the log for more details.</value>
   <data name="StandardTools" xml:space="preserve">
     <value>Standard Tools</value>
   </data>
+  <data name="ShowCTPix" xml:space="preserve">
+    <value>Show CT Raw Pixel Value</value>
+  </data>
+  <data name="ShowNonCTMod" xml:space="preserve">
+    <value>Show Non-CT Modality Value</value>
+  </data>
+  <data name="ShowVoiLut" xml:space="preserve">
+    <value>Show VOI LUT Value</value>
+  </data>
+  <data name="TooltipShowCTPix" xml:space="preserve">
+    <value>Shows the raw pixel value on CT images</value>
+  </data>
+  <data name="TooltipShowNonCTMod" xml:space="preserve">
+    <value>Shows the modality pixel value on non-CT images</value>
+  </data>
+  <data name="TooltipShowVoiLut" xml:space="preserve">
+    <value>Shows the VOI LUT pixel value on images</value>
+  </data>
 </root>
