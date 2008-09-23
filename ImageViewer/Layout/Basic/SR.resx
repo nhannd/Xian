@@ -154,13 +154,13 @@
     <value>Layout Manager</value>
   </data>
   <data name="ToolbarLayoutBoxesChooser" xml:space="preserve">
-    <value>Choose Image Box Layout</value>
+    <value>Image Box Layout</value>
   </data>
   <data name="ToolbarLayoutManager" xml:space="preserve">
     <value>LayoutManager</value>
   </data>
   <data name="ToolbarLayoutTilesChooser" xml:space="preserve">
-    <value>Choose Tile Layout</value>
+    <value>Tile Layout</value>
   </data>
   <data name="ToolbarNextDisplaySet" xml:space="preserve">
     <value>Next Display Set</value>

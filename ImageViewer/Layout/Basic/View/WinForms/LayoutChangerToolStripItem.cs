@@ -31,12 +31,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 
 			_action = action;
 
+			const int borderWidth = 1;
 			_picker = new TableDimensionsPicker(_action.MaxRows, _action.MaxColumns);
 			_picker.Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			_picker.BackColor = Color.Transparent;
 			_picker.CellSpacing = new TableDimensionsCellSpacing(cellWidth/5, cellWidth/5);
-			_picker.CellStyle = new TableDimensionsCellStyle(Color.FromArgb(0, 71, 98), 1);
-			_picker.HotCellStyle = new TableDimensionsCellStyle(CLEARCANVAS_BLUE, 1);
+			_picker.CellStyle = new TableDimensionsCellStyle(Color.FromArgb(0, 71, 98), borderWidth);
+			_picker.HotCellStyle = new TableDimensionsCellStyle(CLEARCANVAS_BLUE, CLEARCANVAS_BLUE, borderWidth);
 			_picker.SelectedCellStyle = new TableDimensionsCellStyle();
 			_picker.Size = new Size(idealPickerWidth, idealPickerHeight);
 			_picker.DimensionsSelected += OnDimensionsSelected;
@@ -104,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			if (_picker.HotDimensions.IsEmpty)
 				_label.Text = _action.Label;
 			else
-				_label.Text = string.Format(SR.FormatRowsColumns, _picker.HotDimensions.Height, _picker.HotDimensions.Width);
+				_label.Text = string.Format(SR.FormatKeyValue, _action.Label, string.Format(SR.FormatRowsColumns, _picker.HotDimensions.Height, _picker.HotDimensions.Width));
 		}
 
 		/// <summary>

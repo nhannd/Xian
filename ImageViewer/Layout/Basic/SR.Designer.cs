@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose Image Box Layout.
+        ///   Looks up a localized string similar to Image Box Layout.
         /// </summary>
         public static string ToolbarLayoutBoxesChooser {
             get {
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose Tile Layout.
+        ///   Looks up a localized string similar to Tile Layout.
         /// </summary>
         public static string ToolbarLayoutTilesChooser {
             get {

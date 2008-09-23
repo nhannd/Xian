@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}: {1}.
+        /// </summary>
+        internal static string FormatKeyValue {
+            get {
+                return ResourceManager.GetString("FormatKeyValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0}x{1}.
         /// </summary>
         internal static string FormatRowsColumns {
