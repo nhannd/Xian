@@ -289,7 +289,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		private static void SetParentAvailability(ToolStripMenuItem parent)
 		{
 			bool parentIsAvailable = false;
-			foreach (ToolStripMenuItem item in parent.DropDownItems)
+			foreach (ToolStripItem item in parent.DropDownItems)
 			{
 				if (item.Available)
 					parentIsAvailable = true;
