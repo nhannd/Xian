@@ -334,22 +334,17 @@ namespace ClearCanvas.Dicom.IO
 
 									int bytesToCheck = _syntax.ExplicitVr ? 6 : 4;
 
-									if (_remain < bytesToCheck)
+									if (_remain >= bytesToCheck)
 									{
-										_vr = null;
-										_stream.Position = pos;
-										return NeedMoreData(bytesToCheck);
+										if (_syntax.ExplicitVr)
+											_reader.ReadUInt16();
+
+										uint l;
+										l = _reader.ReadUInt32();
+										if (l == UndefinedLength)
+											_vr = DicomVr.SQvr;
 									}
-
-									if (_syntax.ExplicitVr)
-										_reader.ReadUInt16();
-
-                                    uint l;
-                                    l = _reader.ReadUInt32();
-                                    if (l == UndefinedLength)
-                                        _vr = DicomVr.SQvr;
-
-									_stream.Position = pos;
+                                	_stream.Position = pos;
                                 }
                             }
                             else if (!_syntax.ExplicitVr || Flags.IsSet(options, DicomReadOptions.UseDictionaryForExplicitUN))
