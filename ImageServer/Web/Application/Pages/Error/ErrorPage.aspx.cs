@@ -31,7 +31,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
             {
             DescriptionLabel.Text = Context.Items["DESCRIPTION"].ToString();
             }
-
         }
     }
 }

@@ -133,8 +133,16 @@
 
 .DialogPanelContent
 {
-    background: #ffffff;
+    background: #ffffff url(../../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;
     border: #618FAD 1px solid;
+}
+
+.DialogMessagePanel
+{
+    margin-bottom: 3px; 
+    border: solid 1px #618FAD; 
+    background: #ffffff; 
+    padding: 4px;
 }
 
 .ConfirmDialogMessage
@@ -202,7 +210,7 @@
 	background: url(../../images/Controls/Dialog/DialogInactiveTabMiddle.png) repeat-x;
 	padding-left: 3px;
 	padding-right: 2px;
-	padding-top:4px;
+	padding-top: 1px;
 	color: #16425D;
 	font-size: 12px;
 }
@@ -246,6 +254,6 @@
 {
 	margin: 0px;
 	padding: 6px;
-	background: #ffffff;
+	background: #ffffff url(../../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;
 	border: #618FAD 1px solid;
 }
