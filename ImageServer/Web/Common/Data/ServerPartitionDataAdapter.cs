@@ -84,6 +84,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.AutoInsertDevice = partition.AutoInsertDevice;
                 parms.AcceptAnyDevice = partition.AcceptAnyDevice;
                 parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
+                parms.MatchPatientsName = partition.MatchPatientsName;
+                parms.MatchPatientId = partition.MatchPatientId;
+                parms.MatchPatientsBirthDate = partition.MatchPatientsBirthDate;
+                parms.MatchAccessionNumber = partition.MatchAccessionNumber;
+                parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
+                parms.MatchPatientsSex = partition.MatchPatientsSex;
                 
                 try
                 {
@@ -115,6 +121,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.AutoInsertDevice = partition.AutoInsertDevice;
             parms.DefaultRemotePort = partition.DefaultRemotePort;
             parms.DuplicateSopPolicyEnum = partition.DuplicateSopPolicyEnum;
+            parms.MatchPatientsName = partition.MatchPatientsName;
+            parms.MatchPatientId = partition.MatchPatientId;
+            parms.MatchPatientsBirthDate = partition.MatchPatientsBirthDate;
+            parms.MatchAccessionNumber = partition.MatchAccessionNumber;
+            parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
+            parms.MatchPatientsSex = partition.MatchPatientsSex;
+
 
             return Update(partition.Key, parms);
         }

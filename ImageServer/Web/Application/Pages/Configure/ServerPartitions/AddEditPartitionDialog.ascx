@@ -172,6 +172,37 @@
                         Remote Devices
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
+                 <aspAjax:TabPanel ID="TabPanel1" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">
+                    <ContentTemplate>
+                        <asp:Panel ID="Panel4" runat="server" CssClass="DialogTabPanelContent" >
+                            <div class="DialogMessagePanel"  style="width: 460px;">Incoming studies will be placed in the Study Integrity Queue if the Study Instance UID matches an existing study and the data differs from any of the selected criteria below.</div>
+                            
+                            <table width="100%">
+                            <tr>
+                                <td><asp:CheckBox ID="MatchPatientName" runat="server" Text="Patient Name" CssClass="DialogCheckBox"/></td>
+                                <td><asp:Image ID="Image1" runat="server" SkinID="Spacer" Width="20px" Height="1px"/></td>                                                        
+                                <td><asp:CheckBox ID="MatchPatientID" runat="server" Text="Patient ID" CssClass="DialogCheckBox" /></td>
+
+                            </tr>
+                            <tr>
+                                <td><asp:CheckBox ID="MatchPatientBirthDate" runat="server" Text="Patient Birth Date" CssClass="DialogCheckBox"/></td>
+                                <td></td>                                                        
+                                <td><asp:CheckBox ID="MatchPatientSex" runat="server" Text="Patient Sex" CssClass="DialogCheckBox"/></td>
+                                                                                        
+                            </tr>
+                            <tr>
+                                <td><asp:CheckBox ID="MatchAccessionNumber" runat="server" Text="Match Accession Number" CssClass="DialogCheckBox"/></td>
+                                <td></td>                                                        
+                                <td><asp:CheckBox ID="MatchIssuer" runat="server" Text="Match Issuer of Patient ID" CssClass="DialogCheckBox"/></td>
+                            </tr>
+                        </table>
+                        </asp:Panel>
+                    
+                    </ContentTemplate>
+                    <HeaderTemplate>
+                        Study Matching
+                    </HeaderTemplate>
+                </aspAjax:TabPanel>
             </aspAjax:TabContainer>
         </asp:Panel>
             <table cellpadding="0" cellspacing="0" width="100%">

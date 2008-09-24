@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(_context.Partition, "_context.Partition");
 
             StudyCompareOptions options = new StudyCompareOptions();
-            options.MatchAccessionNumber = _context.Partition.MatchAccesssionNumber;
+            options.MatchAccessionNumber = _context.Partition.MatchAccessionNumber;
             options.MatchIssuerOfPatientId = _context.Partition.MatchIssuerOfPatientId;
             options.MatchPatientId = _context.Partition.MatchPatientId;
             options.MatchPatientsBirthDate = _context.Partition.MatchPatientsBirthDate;

@@ -77,5 +77,29 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["AutoInsertDevice"] = new ProcedureParameter<bool>("AutoInsertDevice", value); }
         }
+        public bool MatchPatientsName
+        {
+            set { SubCriteria["MatchPatientsName"] = new ProcedureParameter<bool>("MatchPatientsName", value); }
+        }
+        public bool MatchPatientId
+        {
+            set { SubCriteria["MatchPatientId"] = new ProcedureParameter<bool>("MatchPatientId", value); }
+        }
+        public bool MatchAccessionNumber
+        {
+            set { SubCriteria["MatchAccessionNumber"] = new ProcedureParameter<bool>("MatchAccessionNumber", value); }
+        }
+        public bool MatchPatientsBirthDate
+        {
+            set { SubCriteria["MatchPatientsBirthDate"] = new ProcedureParameter<bool>("MatchPatientsBirthDate", value); }
+        }
+        public bool MatchIssuerOfPatientId
+        {
+            set { SubCriteria["MatchIssuerOfPatientId"] = new ProcedureParameter<bool>("MatchIssuerOfPatientId", value); }
+        }
+        public bool MatchPatientsSex
+        {
+            set { SubCriteria["MatchPatientsSex"] = new ProcedureParameter<bool>("MatchPatientsSex", value); }
+        }
     }
 }

@@ -118,15 +118,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
-        public ISearchCondition<System.Boolean> MatchAccesssionNumber
+        public ISearchCondition<System.Boolean> MatchAccessionNumber
         {
             get
             {
-              if (!SubCriteria.ContainsKey("MatchAccesssionNumber"))
+              if (!SubCriteria.ContainsKey("MatchAccessionNumber"))
               {
-                 SubCriteria["MatchAccesssionNumber"] = new SearchCondition<System.Boolean>("MatchAccesssionNumber");
+                 SubCriteria["MatchAccessionNumber"] = new SearchCondition<System.Boolean>("MatchAccessionNumber");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchAccesssionNumber"];
+              return (ISearchCondition<System.Boolean>)SubCriteria["MatchAccessionNumber"];
             } 
         }
         public ISearchCondition<System.Boolean> MatchIssuerOfPatientId

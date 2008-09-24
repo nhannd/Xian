@@ -210,6 +210,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 DefaultRemotePortTextBox.Enabled = true;
 
                 DuplicateSopDropDownList.SelectedIndex = 0;
+
+                MatchPatientName.Checked = true;
+                MatchPatientID.Checked = true;
+                MatchPatientBirthDate.Checked = true;
+                MatchPatientSex.Checked = true;
+                MatchAccessionNumber.Checked = true;
+                MatchIssuer.Checked = true;
             }
             else if (Page.IsValid)
                 // only update the UI with the partition if the data is valid, otherwise, keep them on the screen
@@ -226,6 +233,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 DefaultRemotePortTextBox.Enabled = Partition.AutoInsertDevice;
 
                 DuplicateSopDropDownList.SelectedValue = Partition.DuplicateSopPolicyEnum.Lookup;
+
+                MatchPatientName.Checked = Partition.MatchPatientsName;
+                MatchPatientID.Checked = Partition.MatchPatientId;
+                MatchPatientBirthDate.Checked = Partition.MatchPatientsBirthDate;
+                MatchPatientSex.Checked = Partition.MatchPatientsSex;
+                MatchAccessionNumber.Checked = Partition.MatchAccessionNumber;
+                MatchIssuer.Checked= Partition.MatchIssuerOfPatientId;
 
             }
         }
@@ -257,6 +271,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                 Partition.DefaultRemotePort = port;
 
             Partition.DuplicateSopPolicyEnum = DuplicateSopPolicyEnum.GetAll()[DuplicateSopDropDownList.SelectedIndex];
+
+            Partition.MatchPatientsName = MatchPatientName.Checked;
+            Partition.MatchPatientId = MatchPatientID.Checked;
+            Partition.MatchPatientsBirthDate = MatchPatientBirthDate.Checked;
+            Partition.MatchPatientsSex = MatchPatientSex.Checked;
+            Partition.MatchAccessionNumber = MatchAccessionNumber.Checked;
+            Partition.MatchIssuerOfPatientId = MatchIssuer.Checked;
         }
 
         #endregion Private Methods

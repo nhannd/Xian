@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _description;
         private DuplicateSopPolicyEnum _duplicateSopPolicyEnum;
         private System.Boolean _enabled;
-        private System.Boolean _matchAccesssionNumber;
+        private System.Boolean _matchAccessionNumber;
         private System.Boolean _matchIssuerOfPatientId;
         private System.Boolean _matchPatientId;
         private System.Boolean _matchPatientsBirthDate;
@@ -108,11 +108,11 @@ namespace ClearCanvas.ImageServer.Model
         get { return _enabled; }
         set { _enabled = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccesssionNumber")]
-        public System.Boolean MatchAccesssionNumber
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
+        public System.Boolean MatchAccessionNumber
         {
-        get { return _matchAccesssionNumber; }
-        set { _matchAccesssionNumber = value; }
+        get { return _matchAccessionNumber; }
+        set { _matchAccessionNumber = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
         public System.Boolean MatchIssuerOfPatientId

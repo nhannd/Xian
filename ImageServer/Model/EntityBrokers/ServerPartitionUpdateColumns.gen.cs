@@ -68,9 +68,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
-        public System.Boolean MatchAccesssionNumber
+        public System.Boolean MatchAccessionNumber
         {
-            set { SubParameters["MatchAccesssionNumber"] = new EntityUpdateColumn<System.Boolean>("MatchAccesssionNumber", value); }
+            set { SubParameters["MatchAccessionNumber"] = new EntityUpdateColumn<System.Boolean>("MatchAccessionNumber", value); }
         }
         public System.Boolean MatchIssuerOfPatientId
         {
