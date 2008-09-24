@@ -98,7 +98,14 @@ namespace ClearCanvas.Dicom.DicomDump
 
                 DicomReadOptions readOptions = DicomReadOptions.Default;
 
-                file.Load(readOptions);
+				try
+				{
+					file.Load(readOptions);
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Unexpected exception when loading file: {0}", e.Message);
+				}
 
                 StringBuilder sb = new StringBuilder();
 
