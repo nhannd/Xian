@@ -162,6 +162,12 @@
   <data name="Queues" xml:space="preserve">
     <value>Queues</value>
   </data>
+  <data name="ReconcileQueue" xml:space="preserve">
+    <value>Study Integrity Queue</value>
+  </data>
+  <data name="ReconcileQueuePageTitle" xml:space="preserve">
+    <value>Study Integrity Queue | ClearCanvas ImageServer</value>
+  </data>
   <data name="ReconcileStudyDialog" xml:space="preserve">
     <value>Reconcile Study</value>
   </data>
@@ -203,12 +209,6 @@
   </data>
   <data name="StudyDetails" xml:space="preserve">
     <value>Study Details</value>
-  </data>
-  <data name="StudyIntegrityQueue" xml:space="preserve">
-    <value>Study Integrity Queue</value>
-  </data>
-  <data name="StudyIntegrityQueuePageTitle" xml:space="preserve">
-    <value>Study Integrity Queue | ClearCanvas ImageServer</value>
   </data>
   <data name="StudyStorage" xml:space="preserve">
     <value>Study Storage</value>
