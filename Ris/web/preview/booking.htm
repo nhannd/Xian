@@ -141,7 +141,8 @@
 					if (patientOrderData)
 					{
 						// exclude the current order from the imaging service tables
-						patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
+						if (orderDetail)
+							patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
 
 			            var activeProcedures = getActiveProcedures(patientOrderData);
 			            var pastProcedures = getNonActiveProcedures(patientOrderData);

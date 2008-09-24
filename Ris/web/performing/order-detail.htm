@@ -46,31 +46,37 @@
                         return;
                     }
 
-		            
 	                var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
-					if (orderDetail.Procedures.length)
-						createProceduresTable($("proceduresTable"), orderDetail.Procedures);
-					else
-						Field.show($("proceduresTable"), false);
-
-					// select CT and MRI procedures
-					var filteredProcedures = filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
-					if (filteredProcedures.length)
-						createProtocolProceduresTable($("protocolProceduresTable"), filteredProcedures);
-					else
-						Field.show($("protocolSection"), false);
-
-					if(orderDetail.Notes.length)
+					if (orderDetail)
 					{
-						createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
-						createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-						createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+						if (orderDetail.Procedures.length)
+							createProceduresTable($("proceduresTable"), orderDetail.Procedures);
+						else
+							Field.show($("proceduresTable"), false);
+
+						// select CT and MRI procedures
+						var filteredProcedures = filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+						if (filteredProcedures.length)
+							createProtocolProceduresTable($("protocolProceduresTable"), filteredProcedures);
+						else
+							Field.show($("protocolSection"), false);
+
+						if(orderDetail.Notes.length)
+						{
+							createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
+							createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+							createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+						}
+						else
+						{
+							Field.show($("notesSection"), false);
+						}
 					}
 					else
 					{
-						Field.show($("notesSection"), false);
+						Field.show($("orderDetailsSection"), false);
 					}
-	            }
+				}
 	            catch(e)
 	            {
 	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
@@ -83,56 +89,58 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-			<p class="sectionheading">Procedures</p>
-			<table border="0" id="proceduresTable">
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Status</td>
-					<td>Schedule</td>
-					<td>Start/End Time</td>
-					<td>Performing Staff</td>
-				</tr>
-			</table>
-
-			<div id="protocolSection">
-				<p class="sectionheading">Protocols</p>
-				<table border="0" id="protocolProceduresTable">
+			<div id="orderDetailsSection">
+				<p class="sectionheading">Procedures</p>
+				<table border="0" id="proceduresTable">
 					<tr class="tableheading">
 						<td>Procedure</td>
-						<td>Protocol</td>
-						<td>Code</td>
-						<td>Author</td>
-						<td>WTIS</td>
+						<td>Status</td>
+						<td>Schedule</td>
+						<td>Start/End Time</td>
+						<td>Performing Staff</td>
 					</tr>
 				</table>
-			</div>
 
-			<div id="notesSection">
-				<p class="sectionheading">Order Notes</p>
-				<table id="generaNotesTable">
-					<tr><td class="sectionheading" colspan="3">General</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-				<table id="protocolNotesTable">
-					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-				<table id="prelimNotesTable">
-					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
+				<div id="protocolSection">
+					<p class="sectionheading">Protocols</p>
+					<table border="0" id="protocolProceduresTable">
+						<tr class="tableheading">
+							<td>Procedure</td>
+							<td>Protocol</td>
+							<td>Code</td>
+							<td>Author</td>
+							<td>WTIS</td>
+						</tr>
+					</table>
+				</div>
+
+				<div id="notesSection">
+					<p class="sectionheading">Order Notes</p>
+					<table id="generaNotesTable">
+						<tr><td class="sectionheading" colspan="3">General</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+					<table id="protocolNotesTable">
+						<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+					<table id="prelimNotesTable">
+						<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</form>
 	</body>

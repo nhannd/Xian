@@ -75,6 +75,10 @@
 
 						initProcedureTable(orderDetail.Procedures);
 					}
+					else
+					{
+						Field.show($("orderDetailsSection"), false);
+					}
 				}
 				catch(e)
 				{
@@ -116,103 +120,105 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-			<p class="sectionheading">Imaging Service</p>
-			<table width="100%" border="0">
-				<tr>
-					<td width="120" class="propertyname">Accession Number</td>
-					<td width="200"><div id="AccessionNumber"/></td>
-					<td width="120" class="propertyname">Priority</td>
-					<td width="200"><div id="OrderPriority"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Ordering Physician</td>
-					<td width="200"><div id="OrderingPhysician"/></td>
-					<td width="120" class="propertyname">Performing Facility</td>
-					<td width="200"><div id="PerformingFacility"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Patient Class</td>
-					<td width="200"><div id="PatientClass"/></td>
-					<td width="120" class="propertyname">Location, Room/Bed</td>
-					<td width="200"><div id="LocationRoomBed"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Scheduling Request Time</td>
-					<td width="200"><div id="SchedulingRequestDateTime"/></td>
-					<td width="120" class="propertyname">Entered Time</td>
-					<td width="200"><div id="EnteredDateTime"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Indication</td>
-					<td colspan="3"><div id="ReasonForStudy"/></td>
-				</tr>
-				<tr id="CancelReasonSection">
-					<td width="120" class="propertyname">Cancel Reason</td>
-					<td width="200" colspan="4"><div id="CancelReason"/></td>
-				</tr>
-			</table>
-			<br>
+			<div id="orderDetailsSection">
+				<p class="sectionheading">Imaging Service</p>
+				<table width="100%" border="0">
+					<tr>
+						<td width="120" class="propertyname">Accession Number</td>
+						<td width="200"><div id="AccessionNumber"/></td>
+						<td width="120" class="propertyname">Priority</td>
+						<td width="200"><div id="OrderPriority"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Ordering Physician</td>
+						<td width="200"><div id="OrderingPhysician"/></td>
+						<td width="120" class="propertyname">Performing Facility</td>
+						<td width="200"><div id="PerformingFacility"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Patient Class</td>
+						<td width="200"><div id="PatientClass"/></td>
+						<td width="120" class="propertyname">Location, Room/Bed</td>
+						<td width="200"><div id="LocationRoomBed"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Scheduling Request Time</td>
+						<td width="200"><div id="SchedulingRequestDateTime"/></td>
+						<td width="120" class="propertyname">Entered Time</td>
+						<td width="200"><div id="EnteredDateTime"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">Indication</td>
+						<td colspan="3"><div id="ReasonForStudy"/></td>
+					</tr>
+					<tr id="CancelReasonSection">
+						<td width="120" class="propertyname">Cancel Reason</td>
+						<td width="200" colspan="4"><div id="CancelReason"/></td>
+					</tr>
+				</table>
+				<br>
 
-			<p class="sectionheading">Ordered Procedures</p>
-			<table id="proceduresTable">
-			</table>
+				<p class="sectionheading">Ordered Procedures</p>
+				<table id="proceduresTable">
+				</table>
 
-			<div id="notesSection">
-				<p class="sectionheading">Order Notes</p>
-				<table id="generaNotesTable">
-					<tr><td class="sectionheading" colspan="3">General</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
+				<div id="notesSection">
+					<p class="sectionheading">Order Notes</p>
+					<table id="generaNotesTable">
+						<tr><td class="sectionheading" colspan="3">General</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+					<table id="protocolNotesTable">
+						<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+					<table id="prelimNotesTable">
+						<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
+						<tr class="tableheading">
+							<td>Comment</td>
+							<td>Time</td>
+							<td>Author</td>
+						</tr>
+					</table>
+				</div>
+				
+				<div id="procedureTableTemplate" style="display:none">
+					<table>
+					<tr>
+						<td class="sectionheading" colspan="4"><div id="ProcedureTypeName"/></td>
 					</tr>
-				</table>
-				<table id="protocolNotesTable">
-					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
+					<tr>
+						<td width="120" class="propertyname">Status</td>
+						<td width="200"><div id="ProcedureStatus"/></td>
+						<td width="120" class="propertyname">Performing Facility</td>
+						<td width="200"><div id="ProcedurePerformingFacility"/></td>
 					</tr>
-				</table>
-				<table id="prelimNotesTable">
-					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
+					<tr>
+						<td width="120" class="propertyname">Scheduled Start Time</td>
+						<td width="200"><div id="ProcedureScheduledStartTime"/></td>
 					</tr>
-				</table>
-			</div>
-			
-			<div id="procedureTableTemplate" style="display:none">
-				<table>
-				<tr>
-					<td class="sectionheading" colspan="4"><div id="ProcedureTypeName"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Status</td>
-					<td width="200"><div id="ProcedureStatus"/></td>
-					<td width="120" class="propertyname">Performing Facility</td>
-					<td width="200"><div id="ProcedurePerformingFacility"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Scheduled Start Time</td>
-					<td width="200"><div id="ProcedureScheduledStartTime"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Start Time</td>
-					<td width="200"><div id="ProcedureStartTime"/></td>
-					<td width="120" class="propertyname">Check-In Time</td>
-					<td width="200"><div id="ProcedureCheckInTime"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">End Time</td>
-					<td width="200"><div id="ProcedureEndTime"/></td>
-					<td width="120" class="propertyname">Check-Out Time</td>
-					<td width="200"><div id="ProcedureCheckOutTime"/></td>
-				</tr>
-				</table>
+					<tr>
+						<td width="120" class="propertyname">Start Time</td>
+						<td width="200"><div id="ProcedureStartTime"/></td>
+						<td width="120" class="propertyname">Check-In Time</td>
+						<td width="200"><div id="ProcedureCheckInTime"/></td>
+					</tr>
+					<tr>
+						<td width="120" class="propertyname">End Time</td>
+						<td width="200"><div id="ProcedureEndTime"/></td>
+						<td width="120" class="propertyname">Check-Out Time</td>
+						<td width="200"><div id="ProcedureCheckOutTime"/></td>
+					</tr>
+					</table>
+				</div>
 			</div>
 		</form>
 	</body>

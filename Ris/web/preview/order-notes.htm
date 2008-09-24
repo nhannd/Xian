@@ -117,6 +117,10 @@
 						Field.show($("notesSection"), false);
 					}
 				}
+				else
+				{
+					Field.show($("orderDetailsSection"), false);
+				}
 
 				var reports = data.ListReportsResponse ? data.ListReportsResponse.Reports : null;
 				if (reports && reports.length > 0)
