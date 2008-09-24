@@ -771,5 +771,14 @@ namespace ClearCanvas.ImageViewer.Shreds {
                 return ResourceManager.GetString("MessageWaitingForFilesToBecomeAvailable", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Root Query.
+        /// </summary>
+        internal static string StudyRootQuery {
+            get {
+                return ResourceManager.GetString("StudyRootQuery", resourceCulture);
+            }
+        }
     }
 }

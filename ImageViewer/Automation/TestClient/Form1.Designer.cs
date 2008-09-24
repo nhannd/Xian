@@ -1,4 +1,4 @@
-namespace TestAutomationClient
+namespace ClearCanvas.ImageViewer.Automation.TestClient
 {
 	partial class Form1
 	{
@@ -37,7 +37,7 @@ namespace TestAutomationClient
 			this._activateIfOpen = new System.Windows.Forms.CheckBox();
 			this._openSessions = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this._refreshAll = new System.Windows.Forms.Button();
+			this._refreshAllSessions = new System.Windows.Forms.Button();
 			this._getSelectedInfo = new System.Windows.Forms.Button();
 			this.patientIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.patientsNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -45,6 +45,7 @@ namespace TestAutomationClient
 			this.hasSessionsDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.studyInstanceUidDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this._studyItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this._requery = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this._studyGrid)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._studyItemBindingSource)).BeginInit();
 			this.SuspendLayout();
@@ -91,7 +92,7 @@ namespace TestAutomationClient
 			this._startViewer.TabIndex = 3;
 			this._startViewer.Text = "Start Viewer";
 			this._startViewer.UseVisualStyleBackColor = true;
-			this._startViewer.Click += new System.EventHandler(this.StartViewer);
+			this._startViewer.Click += new System.EventHandler(this.OnStartViewer);
 			// 
 			// _studyGrid
 			// 
@@ -114,6 +115,7 @@ namespace TestAutomationClient
 			this._studyGrid.Location = new System.Drawing.Point(12, 12);
 			this._studyGrid.Name = "_studyGrid";
 			this._studyGrid.ReadOnly = true;
+			this._studyGrid.RowTemplate.Selected = false;
 			this._studyGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this._studyGrid.Size = new System.Drawing.Size(768, 292);
 			this._studyGrid.TabIndex = 5;
@@ -151,16 +153,16 @@ namespace TestAutomationClient
 			this.label1.TabIndex = 8;
 			this.label1.Text = "Open Sessions";
 			// 
-			// _refreshAll
+			// _refreshAllSessions
 			// 
-			this._refreshAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._refreshAll.Location = new System.Drawing.Point(601, 311);
-			this._refreshAll.Name = "_refreshAll";
-			this._refreshAll.Size = new System.Drawing.Size(179, 23);
-			this._refreshAll.TabIndex = 9;
-			this._refreshAll.Text = "Refresh All";
-			this._refreshAll.UseVisualStyleBackColor = true;
-			this._refreshAll.Click += new System.EventHandler(this.OnRefreshAll);
+			this._refreshAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._refreshAllSessions.Location = new System.Drawing.Point(601, 311);
+			this._refreshAllSessions.Name = "_refreshAllSessions";
+			this._refreshAllSessions.Size = new System.Drawing.Size(179, 23);
+			this._refreshAllSessions.TabIndex = 9;
+			this._refreshAllSessions.Text = "Refresh Sessions";
+			this._refreshAllSessions.UseVisualStyleBackColor = true;
+			this._refreshAllSessions.Click += new System.EventHandler(this.OnRefreshAllSessions);
 			// 
 			// _getSelectedInfo
 			// 
@@ -171,7 +173,7 @@ namespace TestAutomationClient
 			this._getSelectedInfo.TabIndex = 10;
 			this._getSelectedInfo.Text = "Get Additional Info";
 			this._getSelectedInfo.UseVisualStyleBackColor = true;
-			this._getSelectedInfo.Click += new System.EventHandler(this.GetSelectedInfo);
+			this._getSelectedInfo.Click += new System.EventHandler(this.OnGetSelectedInfo);
 			// 
 			// patientIdDataGridViewTextBoxColumn
 			// 
@@ -219,15 +221,27 @@ namespace TestAutomationClient
 			// 
 			// _studyItemBindingSource
 			// 
-			this._studyItemBindingSource.DataSource = typeof(TestAutomationClient.StudyItem);
+			this._studyItemBindingSource.DataSource = typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyItem);
+			// 
+			// _requery
+			// 
+			this._requery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._requery.Location = new System.Drawing.Point(12, 311);
+			this._requery.Name = "_requery";
+			this._requery.Size = new System.Drawing.Size(179, 23);
+			this._requery.TabIndex = 11;
+			this._requery.Text = "Requery";
+			this._requery.UseVisualStyleBackColor = true;
+			this._requery.Click += new System.EventHandler(this.OnRequery);
 			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(992, 341);
+			this.Controls.Add(this._requery);
 			this.Controls.Add(this._getSelectedInfo);
-			this.Controls.Add(this._refreshAll);
+			this.Controls.Add(this._refreshAllSessions);
 			this.Controls.Add(this._openSessions);
 			this.Controls.Add(this._activateIfOpen);
 			this.Controls.Add(this._studyGrid);
@@ -239,7 +253,7 @@ namespace TestAutomationClient
 			this.Name = "Form1";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "Form1";
-			this.Load += new System.EventHandler(this.FormLoad);
+			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this._studyGrid)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._studyItemBindingSource)).EndInit();
 			this.ResumeLayout(false);
@@ -257,7 +271,7 @@ namespace TestAutomationClient
 		private System.Windows.Forms.CheckBox _activateIfOpen;
 		private System.Windows.Forms.ListBox _openSessions;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button _refreshAll;
+		private System.Windows.Forms.Button _refreshAllSessions;
 		private System.Windows.Forms.Button _getSelectedInfo;
 		private System.Windows.Forms.BindingSource _studyItemBindingSource;
 		private System.Windows.Forms.DataGridViewTextBoxColumn patientIdDataGridViewTextBoxColumn;
@@ -265,6 +279,7 @@ namespace TestAutomationClient
 		private System.Windows.Forms.DataGridViewTextBoxColumn studyDescriptionDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewCheckBoxColumn hasSessionsDataGridViewCheckBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn studyInstanceUidDataGridViewTextBoxColumn;
+		private System.Windows.Forms.Button _requery;
 	}
 }
 

@@ -33,25 +33,26 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class LocalDataStoreServiceExtension : WcfShred
 	{
-		private bool _localDataStoreWCFInitialized;
-		private readonly string _localDataStoreEndpointName;
+		private static readonly string _localDataStoreEndpointName = "LocalDataStore";
+		private static readonly string _localDataStoreActivityMonitorEndpointName = "LocalDataStoreActivityMonitor";
+		private static readonly string _studyRootQueryEndpointName = "StudyRootQuery";
 
+		private bool _studyRootQueryWCFInitialized;
+		private bool _localDataStoreWCFInitialized;
 		private bool _localDataStoreActivityMonitorWCFInitialized;
-		private readonly string _localDataStoreActivityMonitorEndpointName;
 
 		public LocalDataStoreServiceExtension()
 		{
+			_studyRootQueryWCFInitialized = false;
 			_localDataStoreWCFInitialized = false;
 			_localDataStoreActivityMonitorWCFInitialized = false;
-
-			_localDataStoreEndpointName = "LocalDataStore";
-			_localDataStoreActivityMonitorEndpointName = "LocalDataStoreActivityMonitor";
 		}
 
 		public override void Start()
@@ -98,10 +99,40 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				Platform.Log(LogLevel.Error, e);
 				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.LocalDataStoreActivityMonitor));
 			}
+
+			try
+			{
+				ServiceEndpointDescription sed = StartBasicHttpHost<StudyRootQueryService, IStudyRootQuery>(_studyRootQueryEndpointName, SR.StudyRootQuery);
+				sed.Binding.Namespace = ClearCanvas.Dicom.ServiceModel.Query.QueryNamespace.Value;
+				
+				_studyRootQueryWCFInitialized = true;
+
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.StudyRootQuery);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.StudyRootQuery));
+			}
 		}
 
 		public override void Stop()
 		{
+			if (_studyRootQueryWCFInitialized)
+			{
+				try
+				{
+					StopHost(_studyRootQueryEndpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.StudyRootQuery));
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+
 			if (_localDataStoreWCFInitialized)
 			{
 				try

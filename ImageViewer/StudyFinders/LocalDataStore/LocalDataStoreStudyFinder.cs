@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             StudyItemList studyItemList = new StudyItemList();
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
-				foreach (DicomAttributeCollection result in reader.PerformStudyRootQuery(collection))
+				foreach (DicomAttributeCollection result in reader.Query(collection))
 				{
 					StudyItem item = new StudyItem();
 					item.SpecificCharacterSet = result.SpecificCharacterSet;

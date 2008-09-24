@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 					{
-						IEnumerable<DicomAttributeCollection> results = reader.PerformStudyRootQuery(message.DataSet);
+						IEnumerable<DicomAttributeCollection> results = reader.Query(message.DataSet);
 						foreach (DicomAttributeCollection result in results)
 						{
 							DicomMessage response = new DicomMessage();

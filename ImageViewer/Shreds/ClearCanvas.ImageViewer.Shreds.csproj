@@ -68,10 +68,13 @@
     <Compile Include="LocalDataStore\LocalDataStoreServiceExtension.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceSettings.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceType.cs" />
+    <Compile Include="LocalDataStore\PatientRootQueryService.cs" />
     <Compile Include="LocalDataStore\PublishManager.cs" />
+    <Compile Include="LocalDataStore\QueryHelper.cs" />
     <Compile Include="LocalDataStore\ReceivedFileProcessor.cs" />
     <Compile Include="LocalDataStore\ReindexProcessor.cs" />
     <Compile Include="LocalDataStore\SentFileProcessor.cs" />
+    <Compile Include="LocalDataStore\StudyRootQueryService.cs" />
     <Compile Include="LocalDataStore\SubscriptionManager.cs" />
     <Compile Include="StudyInformationFieldExchanger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

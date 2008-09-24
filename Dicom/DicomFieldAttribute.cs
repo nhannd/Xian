@@ -76,6 +76,7 @@ namespace ClearCanvas.Dicom
         private DicomFieldDefault _default;
         private bool _defltOnZL;
         private bool _createEmpty;
+		private bool _setNullValueIfEmpty;
 
         public DicomFieldAttribute(uint tag)
         {
@@ -110,6 +111,12 @@ namespace ClearCanvas.Dicom
             get { return _createEmpty; }
             set { _createEmpty = value; }
         }
+		
+    	public bool SetNullValueIfEmpty
+    	{
+			get { return _setNullValueIfEmpty; }
+			set { _setNullValueIfEmpty = value; }
+    	}
     }
 
     [AttributeUsage(AttributeTargets.Class)]

@@ -88,7 +88,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 			}
 
-			public IEnumerable<DicomAttributeCollection> PerformStudyRootQuery(DicomAttributeCollection queryCriteria)
+			public IEnumerable<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
 			{
 				Platform.CheckForNullReference(queryCriteria, "queryCriteria");
 

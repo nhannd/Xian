@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace TestAutomationClient
+namespace ClearCanvas.ImageViewer.Automation.TestClient
 {
 	static class Program
 	{

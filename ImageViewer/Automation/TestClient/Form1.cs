@@ -4,18 +4,15 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using TestAutomationClient.ViewerAutomation;
-using ClearCanvas.Dicom.DataStore;
 using System.ServiceModel;
 using System.Text;
+using ClearCanvas.ImageViewer.Automation.TestClient.ViewerAutomation;
+using ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery;
 
-namespace TestAutomationClient
+namespace ClearCanvas.ImageViewer.Automation.TestClient
 {
 	public partial class Form1 : Form
 	{
-		private static readonly string _viewerProcessWorkingDirectory = @"..\..\..\..\..\Desktop\Executable\bin\Debug";
-		private static readonly string _viewerProcessExecutable = "ClearCanvas.Desktop.Executable";
-
 		public Form1()
 		{
 			InitializeComponent();
@@ -37,24 +34,27 @@ namespace TestAutomationClient
 			}
 		}
 
-		private void StartViewer(object sender, EventArgs e)
+		private void OnStartViewer(object sender, EventArgs e)
 		{
-			string workingDirectory = Directory.GetCurrentDirectory();
-
-			Process[] viewerProcesses = Process.GetProcessesByName(_viewerProcessExecutable);
+			Process[] viewerProcesses = Process.GetProcessesByName(Settings.Default.ViewerProcessExecutable);
 			if (viewerProcesses == null || viewerProcesses.Length == 0)
 			{
-				string viewerProcessPath = String.Format("{0}\\{1}\\{2}.exe", workingDirectory, _viewerProcessWorkingDirectory, _viewerProcessExecutable);
+				string viewerProcessPath = Settings.Default.ViewerWorkingDirectory;
+				if (!Path.IsPathRooted(viewerProcessPath))
+					viewerProcessPath = Path.Combine(Directory.GetCurrentDirectory(), viewerProcessPath);
 
-				ProcessStartInfo startInfo = new ProcessStartInfo(viewerProcessPath, "");
-				startInfo.WorkingDirectory = _viewerProcessWorkingDirectory;
+				string executable = Path.Combine(viewerProcessPath, Settings.Default.ViewerProcessExecutable);
+				executable += ".exe";
+
+				ProcessStartInfo startInfo = new ProcessStartInfo(executable, "");
+				startInfo.WorkingDirectory = viewerProcessPath;
 				Process viewerProcess = Process.Start(startInfo);
 				if (viewerProcess == null)
 					MessageBox.Show("Failed to start the viewer process.");
 			}
 		}
 
-		private void GetSelectedInfo(object sender, EventArgs e)
+		private void OnGetSelectedInfo(object sender, EventArgs e)
 		{
 			StudyItem study = GetSelectedStudy();
 			if (study == null)
@@ -100,38 +100,19 @@ namespace TestAutomationClient
 			}
 		}
 
-		private void OnRefreshAll(object sender, EventArgs e)
+		private void OnFormLoad(object sender, EventArgs e)
 		{
-			ViewerAutomationClient client = new ViewerAutomationClient();
-			try
-			{
-				client.Open();
-				GetActiveViewerSessionsResult result = client.GetActiveViewerSessions();
+			RefreshStudyList();
+		}
 
-				ClearAllSessions();
-				
-				foreach (ViewerSession session in result.ActiveViewerSessions)
-				{
-					StudyItem study = GetStudy(session.PrimaryStudyInstanceUid);
-					if (study != null)
-						study.AddSession(session.SessionId);
-				}
+		private void OnRequery(object sender, EventArgs e)
+		{
+			RefreshStudyList();
+		}
 
-		
-				client.Close();
-			}
-			catch (FaultException<NoActiveViewerSessionsFault> ex)
-			{
-				ClearAllSessions();
-				client.Abort();
-				MessageBox.Show(ex.Message);
-			}
-			catch (Exception ex)
-			{
-				ClearAllSessions();
-				client.Abort();
-				MessageBox.Show(ex.Message);
-			}
+		private void OnRefreshAllSessions(object sender, EventArgs e)
+		{
+			RefreshSessions();
 		}
 
 		private void OnOpenStudy(object sender, EventArgs e)
@@ -144,12 +125,12 @@ namespace TestAutomationClient
 			try
 			{
 				client.Open();
-				
+
 				OpenStudiesRequest request = new OpenStudiesRequest();
 				List<string> uids = new List<string>(GetSelectedStudyInstanceUids());
 				request.StudyInstanceUids = new BindingList<string>(uids);
 				request.ActivateIfAlreadyOpen = _activateIfOpen.Checked;
-				
+
 				OpenStudiesResult result = client.OpenStudies(request);
 				if (result.ViewerSession != null)
 				{
@@ -157,19 +138,19 @@ namespace TestAutomationClient
 					bool exists = study.HasSession(result.ViewerSession.SessionId);
 					if (shouldExist && !exists)
 						study.ClearSessions();
-				
+
 					if (!exists)
 						study.AddSession(result.ViewerSession.SessionId);
 				}
 
 				client.Close();
 			}
-			catch(FaultException<OpenStudiesFault> ex)
+			catch (FaultException<OpenStudiesFault> ex)
 			{
 				client.Abort();
 				MessageBox.Show(ex.Message);
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				client.Abort();
 				MessageBox.Show(ex.Message);
@@ -258,6 +239,61 @@ namespace TestAutomationClient
 			}
 		}
 
+		private void RefreshStudyList()
+		{
+			_studyItemBindingSource.Clear();
+
+			StudyRootQueryClient client = new StudyRootQueryClient();
+
+			try
+			{
+				StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
+				BindingList<StudyRootStudyIdentifier> results = client.StudyQuery(identifier);
+				client.Close();
+
+				foreach (StudyRootStudyIdentifier study in results)
+					_studyItemBindingSource.Add(new StudyItem(study));
+			}
+			catch (Exception ex)
+			{
+				client.Abort();
+				MessageBox.Show(this, ex.Message);
+			}
+		}
+
+		private void RefreshSessions()
+		{
+			ViewerAutomationClient client = new ViewerAutomationClient();
+			try
+			{
+				client.Open();
+				GetActiveViewerSessionsResult result = client.GetActiveViewerSessions();
+
+				ClearAllSessions();
+
+				foreach (ViewerSession session in result.ActiveViewerSessions)
+				{
+					StudyItem study = GetStudy(session.PrimaryStudyInstanceUid);
+					if (study != null)
+						study.AddSession(session.SessionId);
+				}
+
+				client.Close();
+			}
+			catch (FaultException<NoActiveViewerSessionsFault> ex)
+			{
+				ClearAllSessions();
+				client.Abort();
+				MessageBox.Show(ex.Message);
+			}
+			catch (Exception ex)
+			{
+				ClearAllSessions();
+				client.Abort();
+				MessageBox.Show(ex.Message);
+			}
+		}
+
 		private StudyItem GetStudy(string studyInstanceUid)
 		{
 			foreach (DataGridViewRow row in _studyGrid.Rows)
@@ -278,13 +314,10 @@ namespace TestAutomationClient
 			return null;
 		}
 
-		private List<string> GetSelectedStudyInstanceUids()
+		private IEnumerable<string> GetSelectedStudyInstanceUids()
 		{
-			List<string> studyUids = new List<string>();
 			foreach (StudyItem study in GetSelectedStudies())
-				studyUids.Add(study.StudyInstanceUid);
-			
-			return studyUids;
+				yield return study.StudyInstanceUid;
 		}
 
 		private List<StudyItem> GetSelectedStudies()
@@ -314,25 +347,16 @@ namespace TestAutomationClient
 				item.ClearSessions();
 			}
 		}
-
-		private void FormLoad(object sender, EventArgs e)
-		{
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				foreach (IStudy study in reader.GetStudies())
-					_studyItemBindingSource.Add(new StudyItem(study));
-			}
-		}
 	}
 
 	#region StudyItem class
 
 	public class StudyItem : INotifyPropertyChanged
 	{
-		private readonly IStudy _study;
+		private readonly StudyIdentifier _study;
 		private readonly BindingList<Guid> _activeSessions;
 
-		public StudyItem(IStudy study)
+		public StudyItem(StudyIdentifier study)
 		{
 			_study = study;
 			_activeSessions = new BindingList<Guid>();
@@ -345,7 +369,7 @@ namespace TestAutomationClient
 
 		public string PatientsName
 		{
-			get { return _study.PatientsName.ToString(); }
+			get { return _study.PatientsName; }
 		}
 
 		public string StudyDescription

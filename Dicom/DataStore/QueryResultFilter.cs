@@ -41,7 +41,7 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					string criteria = _queryCriteria[property.Path];
 
-					bool includeResult = criteria != null || property.IsRequired || property.IsUnique || property.IsHigherLevelUnique;
+					bool includeResult = property.IsUnique || property.IsHigherLevelUnique || criteria != null;
 					if (!includeResult)
 						continue;
 

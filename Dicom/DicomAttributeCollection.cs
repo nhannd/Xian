@@ -934,7 +934,7 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        private void SaveDicomFieldValue(DicomTag tag, object value, bool createEmpty)
+        private void SaveDicomFieldValue(DicomTag tag, object value, bool createEmpty, bool setNullIfEmpty)
         {
             if (value != null && value != DBNull.Value)
             {
@@ -999,14 +999,16 @@ namespace ClearCanvas.Dicom
             }
             else
             {
-                if (Contains(tag))
-                {
-                    this[tag].Values = null;
-                }
-                else if (createEmpty)
+				if (createEmpty)
                 {
                     // force the element creation
                     DicomAttribute attr = this[tag];
+					if (setNullIfEmpty)
+						attr.SetNullValue();
+                }
+                else if (Contains(tag))
+                {
+                    this[tag].Values = null;
                 }
             }
         }
@@ -1027,7 +1029,7 @@ namespace ClearCanvas.Dicom
                 {
                     DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
                     object value = field.GetValue(obj);
-                    SaveDicomFieldValue(dfa.Tag, value, dfa.CreateEmptyElement);
+                    SaveDicomFieldValue(dfa.Tag, value, dfa.CreateEmptyElement, dfa.SetNullValueIfEmpty);
                 }
             }
 
@@ -1038,7 +1040,7 @@ namespace ClearCanvas.Dicom
                 {
                     DicomFieldAttribute dfa = (DicomFieldAttribute)property.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
                     object value = property.GetValue(obj, null);
-                    SaveDicomFieldValue(dfa.Tag, value, dfa.CreateEmptyElement);
+					SaveDicomFieldValue(dfa.Tag, value, dfa.CreateEmptyElement, dfa.SetNullValueIfEmpty);
                 }
             }
         }

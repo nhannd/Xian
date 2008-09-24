@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -178,7 +177,7 @@ namespace ClearCanvas.Server.ShredHost
 				}
 			}
             else
-            {
+            {	
                 string configurationName = String.Format("{0}_{1}", typeof(BasicHttpBinding).Name, serviceConfigurationName);
                 try
                 {
@@ -187,7 +186,7 @@ namespace ClearCanvas.Server.ShredHost
                 catch
                 {
                     Platform.Log(LogLevel.Info, "unable to load binding configuration {0}; using default binding configuration", configurationName);
-                    binding = new WSHttpBinding();
+					binding = new BasicHttpBinding();
                 }
             }
 

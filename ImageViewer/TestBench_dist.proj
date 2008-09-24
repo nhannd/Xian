@@ -6,7 +6,7 @@
     <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
   </ItemGroup>
 
-	<Target Name="Copy Files">
+	<Target Name="Copy Files" Condition="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable' Or '$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
     <!-- Run the image viewer build file -->
     <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
 

@@ -38,6 +38,6 @@ namespace ClearCanvas.Dicom.DataStore
     {
 		IStudy GetStudy(string studyInstanceUid);
         IEnumerable<IStudy> GetStudies();
-		IEnumerable<DicomAttributeCollection> PerformStudyRootQuery(DicomAttributeCollection queryCriteria);
+		IEnumerable<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria);
     }
 }

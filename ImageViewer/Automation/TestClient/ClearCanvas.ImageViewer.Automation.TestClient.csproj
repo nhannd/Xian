@@ -7,8 +7,8 @@
     <ProjectGuid>{2E7D2857-B9BE-496D-A9DD-78C4C56124CE}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TestAutomationClient</RootNamespace>
-    <AssemblyName>TestAutomationClient</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Automation.TestClient</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Automation.TestClient</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,26 +67,29 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Service References\StudyRootQuery.map" />
     <None Include="Service References\ViewerAutomation.map" />
     <None Include="PostBuild_dist.proj" />
+    <None Include="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Service References\StudyRootQuery.cs">
+      <DependentUpon>StudyRootQuery.map</DependentUpon>
+    </Compile>
     <Compile Include="Service References\ViewerAutomation.cs">
       <DependentUpon>ViewerAutomation.map</DependentUpon>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
-      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
-      <Name>ClearCanvas.Dicom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
-      <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
-      <Name>ClearCanvas.Dicom.DataStore</Name>
-    </ProjectReference>
+    <Compile Include="Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
