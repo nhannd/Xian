@@ -212,7 +212,8 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _userDetail.ValidFrom; }
             set
             {
-                 _userDetail.ValidFrom = value;
+                // set valid from to the start of the day
+                _userDetail.ValidFrom = value == null ? value : value.Value.Date;
                 this.Modified = true;
             }
         }
@@ -222,8 +223,9 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _userDetail.ValidUntil; }
             set
             {
-                 _userDetail.ValidUntil = value;
-                 this.Modified = true;
+                // set valid unitl to the end of the day
+                _userDetail.ValidUntil = value == null ? value : value.Value.Date.AddDays(1).AddTicks(-1);
+                this.Modified = true;
              }
         }
 
