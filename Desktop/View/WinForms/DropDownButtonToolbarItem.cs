@@ -160,6 +160,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			Platform.CheckForInvalidCast(dropAction, "action", "dropAction");
 
 			_fakeButton = new FakeToolstripButton(this);
+			base.DropDownButtonWidth = 15;
 
 			_action = action;
 
