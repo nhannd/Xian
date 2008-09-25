@@ -779,8 +779,8 @@ INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[De
 GO
 
 
--- ReconcileReasonEnum inserts
-INSERT INTO [ImageServer].[dbo].[ReconcileReasonEnum]
+-- StudyIntegrityReasonEnum inserts
+INSERT INTO [ImageServer].[dbo].[StudyIntegrityReasonEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'InconsistentData','Inconsistent Data Reconciliation','Images must be reconciled because of inconsistent data.')

@@ -138,9 +138,9 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Inser
 DROP PROCEDURE [dbo].[InsertWorkQueueReconcileStudy]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertReconcileQueue]    Script Date: 09/17/2008 17:35:56 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertReconcileQueue]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[InsertReconcileQueue]
+/****** Object:  StoredProcedure [dbo].[InsertStudyIntegrityQueue]    Script Date: 09/17/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertStudyIntegrityQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 GO
 
 
@@ -2921,20 +2921,20 @@ GO
 
 
 
-/****** Object:  StoredProcedure [dbo].[InsertReconcileQueue]    Script Date: 09/05/2008 15:21:03 ******/
+/****** Object:  StoredProcedure [dbo].[InsertStudyIntegrityQueue]    Script Date: 09/05/2008 15:21:03 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertReconcileQueue]') AND type in (N'P', N'PC'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertStudyIntegrityQueue]') AND type in (N'P', N'PC'))
 BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Thanh Huynh
 -- Create date: September 05, 2008
--- Description:	Insert or update Reconcile Queue based on supplied data
+-- Description:	Insert or update StudyIntegrity Queue based on supplied data
 --				
 -- =============================================
-CREATE PROCEDURE [dbo].[InsertReconcileQueue] 
+CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue] 
 	-- Add the parameters for the stored procedure here
 	@Description nvarchar(1024),
 	@ServerPartitionGUID uniqueidentifier,
@@ -2944,7 +2944,7 @@ CREATE PROCEDURE [dbo].[InsertReconcileQueue]
 	@SopInstanceUid varchar(64),
 	@StudyData xml,
 	@QueueData xml=NULL,
-	@ReconcileReasonEnum smallint
+	@StudyIntegrityReasonEnum smallint
 AS
 BEGIN
 	
@@ -2952,9 +2952,9 @@ BEGIN
 	
 	BEGIN TRANSACTION
 
-	-- Look for existing ReconcileQueue entry
+	-- Look for existing StudyIntegrityQueue entry
 	SELECT TOP 1 @Guid=GUID 
-	FROM	[dbo].[ReconcileQueue]
+	FROM	[dbo].[StudyIntegrityQueue]
 	WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
 			AND  [StudyStorageGUID]=@StudyStorageGUID
 			AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
@@ -2964,17 +2964,17 @@ BEGIN
 		-- PRINT ''Not found''
 		SET @Guid=newid()
 
-		INSERT INTO [dbo].[ReconcileQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[QueueData],[ReconcileReasonEnum])
-		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@ReconcileReasonEnum)
+		INSERT INTO [dbo].[StudyIntegrityQueue]([GUID],[ServerPartitionGUID],[InsertTime],[StudyStorageGUID],[Description],[StudyData],[QueueData],[StudyIntegrityReasonEnum])
+		VALUES (@Guid,@ServerPartitionGUID,getdate(),@StudyStorageGUID,@Description,@StudyData,@QueueData,@StudyIntegrityReasonEnum)
 	END
 
 
-	INSERT INTO [dbo].[ReconcileQueueUid]([GUID],[ReconcileQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
+	INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
 	VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
 	
 	COMMIT TRANSACTION
 	
-	SELECT * FROM [dbo].[ReconcileQueue] WHERE GUID=@Guid
+	SELECT * FROM [dbo].[StudyIntegrityQueue] WHERE GUID=@Guid
 
 END
 '
@@ -3017,11 +3017,11 @@ BEGIN
 
 	declare @PendingStatusEnum as int
 	declare @IdleStatusEnum as int
-	declare @ReconcileStudyTypeEnum as int
+	declare @StudyIntegrityTypeEnum as int
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
-	select @ReconcileStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
+	select @StudyIntegrityTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
 
 	BEGIN TRANSACTION
 
@@ -3029,13 +3029,13 @@ BEGIN
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
 		AND StudyHistoryGUID = @StudyHistoryGUID
-		AND WorkQueueTypeEnum = @ReconcileStudyTypeEnum
+		AND WorkQueueTypeEnum = @StudyIntegrityTypeEnum
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
 		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyHistoryGUID, @Data, @ReconcileStudyTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyHistoryGUID, @Data, @StudyIntegrityTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
 	END
 	ELSE
 	BEGIN

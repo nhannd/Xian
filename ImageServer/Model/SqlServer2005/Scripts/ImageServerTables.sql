@@ -1153,22 +1153,22 @@ CREATE TABLE [dbo].[Alert](
 END
 GO
 
-/****** Object:  Table [dbo].[ReconcileReasonEnum]    Script Date: 09/05/2008 11:48:30 ******/
+/****** Object:  Table [dbo].[StudyIntegrityReasonEnum]    Script Date: 09/05/2008 11:48:30 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_PADDING ON
 GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ReconcileReasonEnum]') AND type in (N'U'))
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[StudyIntegrityReasonEnum]') AND type in (N'U'))
 BEGIN
-CREATE TABLE [dbo].[ReconcileReasonEnum](
-	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ReconcileReasonEnum_GUID]  DEFAULT (newid()),
+CREATE TABLE [dbo].[StudyIntegrityReasonEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyIntegrityReasonEnum_GUID]  DEFAULT (newid()),
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
 	[LongDescription] [nvarchar](128) NOT NULL,
- CONSTRAINT [PK_ReconcileStatusEnum] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_StudyIntegrityStatusEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
@@ -1178,21 +1178,21 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[ReconcileQueue]    Script Date: 09/08/2008 10:46:53 ******/
+/****** Object:  Table [dbo].[StudyIntegrityQueue]    Script Date: 09/08/2008 10:46:53 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE TABLE [dbo].[ReconcileQueue](
-	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_ReconcileQueue_GUID]  DEFAULT (newid()),
+CREATE TABLE [dbo].[StudyIntegrityQueue](
+	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyIntegrityQueue_GUID]  DEFAULT (newid()),
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
-	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_ReconcileQueue_InsertTime]  DEFAULT (getdate()),
+	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_StudyIntegrityQueue_InsertTime]  DEFAULT (getdate()),
 	[Description] [nvarchar](1024),
 	[StudyData] [xml] NOT NULL,
 	[QueueData] [xml] NOT NULL,
-	[ReconcileReasonEnum] [smallint] NOT NULL,
- CONSTRAINT [PK_ReconcileQueue] PRIMARY KEY CLUSTERED 
+	[StudyIntegrityReasonEnum] [smallint] NOT NULL,
+ CONSTRAINT [PK_StudyIntegrityQueue] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -1200,20 +1200,20 @@ CREATE TABLE [dbo].[ReconcileQueue](
 
 GO
 
-/****** Object:  Table [dbo].[ReconcileQueueUid]    Script Date: 09/05/2008 11:43:57 ******/
+/****** Object:  Table [dbo].[StudyIntegrityQueueUid]    Script Date: 09/05/2008 11:43:57 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_PADDING ON
 GO
-CREATE TABLE [dbo].[ReconcileQueueUid](
-	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_ReconcileQueueUid_GUID]  DEFAULT (newid()),
-	[ReconcileQueueGUID] [uniqueidentifier] NOT NULL,
+CREATE TABLE [dbo].[StudyIntegrityQueueUid](
+	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyIntegrityQueueUid_GUID]  DEFAULT (newid()),
+	[StudyIntegrityQueueGUID] [uniqueidentifier] NOT NULL,
 	[SeriesDescription] [nvarchar](64),
 	[SeriesInstanceUid] [varchar](64)  NOT NULL,
 	[SopInstanceUid] [varchar](64)  NOT NULL,
- CONSTRAINT [PK_ReconcileQueueUid] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_StudyIntegrityQueueUid] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
@@ -1614,29 +1614,29 @@ REFERENCES [dbo].[AlertLevelEnum] ([Enum])
 GO
 
 
-/****** Object:  ForeignKey [FK_ReconcileQueue_ServerPartition]    Script Date: 09/05/2008 11:50:28 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ReconcileQueue_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[ReconcileQueue]'))
-ALTER TABLE [dbo].[ReconcileQueue]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueue_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
+/****** Object:  ForeignKey [FK_StudyIntegrityQueue_ServerPartition]    Script Date: 09/05/2008 11:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyIntegrityQueue_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyIntegrityQueue]'))
+ALTER TABLE [dbo].[StudyIntegrityQueue]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueue_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
 REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 
 
-/****** Object:  ForeignKey [FK_ReconcileQueue_ReconcileReasonEnum]    Script Date: 09/05/2008 11:50:28 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ReconcileQueue_ReconcileReasonEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ReconcileQueue]'))
-ALTER TABLE [dbo].[ReconcileQueue]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueue_ReconcileReasonEnum] FOREIGN KEY([ReconcileReasonEnum])
-REFERENCES [dbo].[ReconcileReasonEnum] ([Enum])
+/****** Object:  ForeignKey [FK_StudyIntegrityQueue_StudyIntegrityReasonEnum]    Script Date: 09/05/2008 11:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyIntegrityQueue_StudyIntegrityReasonEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyIntegrityQueue]'))
+ALTER TABLE [dbo].[StudyIntegrityQueue]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueue_StudyIntegrityReasonEnum] FOREIGN KEY([StudyIntegrityReasonEnum])
+REFERENCES [dbo].[StudyIntegrityReasonEnum] ([Enum])
 GO
 
-/****** Object:  ForeignKey [FK_ReconcileQueue_StudyStorage]    Script Date: 09/08/2008 11:50:28 ******/
-ALTER TABLE [dbo].[ReconcileQueue]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueue_StudyStorage] FOREIGN KEY([StudyStorageGUID])
+/****** Object:  ForeignKey [FK_StudyIntegrityQueue_StudyStorage]    Script Date: 09/08/2008 11:50:28 ******/
+ALTER TABLE [dbo].[StudyIntegrityQueue]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueue_StudyStorage] FOREIGN KEY([StudyStorageGUID])
 REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
 
 
-/****** Object:  ForeignKey [FK_ReconcileQueueUid_ReconcileQueue]    Script Date: 09/05/2008 11:50:28 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ReconcileQueueUid_ReconcileQueue]') AND parent_object_id = OBJECT_ID(N'[dbo].[ReconcileQueueUid]'))
-ALTER TABLE [dbo].[ReconcileQueueUid]  WITH CHECK ADD  CONSTRAINT [FK_ReconcileQueueUid_ReconcileQueue] FOREIGN KEY([ReconcileQueueGUID])
-REFERENCES [dbo].[ReconcileQueue] ([GUID])
+/****** Object:  ForeignKey [FK_StudyIntegrityQueueUid_StudyIntegrityQueue]    Script Date: 09/05/2008 11:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyIntegrityQueueUid_StudyIntegrityQueue]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyIntegrityQueueUid]'))
+ALTER TABLE [dbo].[StudyIntegrityQueueUid]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueueUid_StudyIntegrityQueue] FOREIGN KEY([StudyIntegrityQueueGUID])
+REFERENCES [dbo].[StudyIntegrityQueue] ([GUID])
 GO
 
 /****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/05/2008 11:50:28 ******/
