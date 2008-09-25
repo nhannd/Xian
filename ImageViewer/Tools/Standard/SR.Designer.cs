@@ -468,7 +468,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}%.
+        ///   Looks up a localized string similar to {0}x.
         /// </summary>
         internal static string FormatLabelZoomFixed {
             get {

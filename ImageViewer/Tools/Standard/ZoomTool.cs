@@ -96,9 +96,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void AddFixedZoomAction(SimpleActionModel actionModel, int scale)
 		{
-			int zoom = scale*100;
-			string label = String.Format(SR.FormatLabelZoomFixed, zoom);
-			actionModel.AddAction("fixedzoom" + zoom, label, null, label, delegate { SetScale(scale); });
+			string label = String.Format(SR.FormatLabelZoomFixed, scale);
+			actionModel.AddAction("fixedzoom" + label, label, null, label, delegate { SetScale(scale); });
 		}
 
 		private void CaptureBeginState()

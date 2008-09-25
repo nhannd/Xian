@@ -544,7 +544,7 @@ Please ensure that the name/keystroke combination is unique.</value>
 Please check the log for more details.</value>
   </data>
   <data name="FormatLabelZoomFixed" xml:space="preserve">
-    <value>{0}%</value>
+    <value>{0}x</value>
   </data>
   <data name="LabelZoomFit" xml:space="preserve">
     <value>Fit to Tile</value>
