@@ -196,24 +196,6 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Study Integrity Queue.
-        /// </summary>
-        internal static string ReconcileQueue {
-            get {
-                return ResourceManager.GetString("ReconcileQueue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Study Integrity Queue | ClearCanvas ImageServer.
-        /// </summary>
-        internal static string ReconcileQueuePageTitle {
-            get {
-                return ResourceManager.GetString("ReconcileQueuePageTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Reconcile Study.
         /// </summary>
         internal static string ReconcileStudyDialog {
@@ -336,6 +318,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string StudyDetails {
             get {
                 return ResourceManager.GetString("StudyDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Integrity Queue.
+        /// </summary>
+        internal static string StudyIntegrityQueue {
+            get {
+                return ResourceManager.GetString("StudyIntegrityQueue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Study Integrity Queue | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string StudyIntegrityQueuePageTitle {
+            get {
+                return ResourceManager.GetString("StudyIntegrityQueuePageTitle", resourceCulture);
             }
         }
         

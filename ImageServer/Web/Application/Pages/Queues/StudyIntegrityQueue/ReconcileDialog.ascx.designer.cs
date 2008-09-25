@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue {
     
     
     /// <summary>
@@ -72,6 +72,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.GridView ConflictingPatientSeriesGridView;
+        
+        /// <summary>
+        /// MergeButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton MergeButton;
         
         /// <summary>
         /// CancelButton control.

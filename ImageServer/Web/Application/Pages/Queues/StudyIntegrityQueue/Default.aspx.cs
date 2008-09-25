@@ -30,62 +30,40 @@
 #endregion
 
 using System;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-	public class WebQueryReconcileQueueParameters : ProcedureParameters
+    public partial class Default : BasePage
     {
-		public WebQueryReconcileQueueParameters()
-            : base("WebQueryReconcileQueue")
+        private ServerPartition _serverPartition = null;
+
+        public ServerPartition ServerPartition
         {
-			//Declare output parameters here
-			SubCriteria["ResultCount"] = new ProcedureParameter<int>("ResultCount");
+            get { return _serverPartition; }
+        }
+        
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
+                                                           {
+                                                               SearchPanel panel =
+                                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
+                                                               _serverPartition = partition;
+                                                               panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                               return panel;
+                                                           });
         }
 
-        public ServerEntityKey ServerPartitionKey
+        public void OnReconcileItem(ReconcileDetails details)
         {
-            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+            ReconcileDialog.ReconcileDetails = details;
+            ReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
+            ReconcileDialog.Show();
         }
-
-        public ServerEntityKey StudyStorageKey
-        {
-            set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
-        }
-
-		public string Description
-		{
-			set { SubCriteria["Description"] = new ProcedureParameter<string>("Description", value); }
-		}
-
-        public string StudyData
-        {
-			set { SubCriteria["StudyData"] = new ProcedureParameter<string>("StudyData", value); }
-        }
-
-        public DateTime? InsertTime
-        {
-            set { SubCriteria["InsertTime"] = new ProcedureParameter<DateTime?>("InsertTime", value); }
-        }
-
-		public ReconcileReasonEnum ReconcileReasonEnum
-        {
-			set { SubCriteria["ReconcileReasonEnum"] = new ProcedureParameter<ServerEnum>("ReconcilReasonEnum", value); }
-        }
-
-		public int StartIndex
-        {
-			set { SubCriteria["StartIndex"] = new ProcedureParameter<int>("StartIndex", value); }
-	    }
-
-		public int MaxRowCount
-		{
-			set { SubCriteria["MaxRowCount"] = new ProcedureParameter<int>("MaxRowCount", value); }
-		}
-
-		public int ResultCount
-		{
-			get { return (SubCriteria["ResultCount"] as ProcedureParameter<int>).Value; }
-		}
-	}
+    }
 }

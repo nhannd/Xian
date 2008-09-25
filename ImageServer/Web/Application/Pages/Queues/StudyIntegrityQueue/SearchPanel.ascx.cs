@@ -40,16 +40,16 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
-[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.js", "application/x-javascript")]
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js", "application/x-javascript")]
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-    [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.js")]
+    [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js")]
     public partial class SearchPanel : AJAXScriptControl
     {
         #region Private members
 
-        private ReconcileQueueController _controller = new ReconcileQueueController();
+        private StudyIntegrityQueueController _controller = new StudyIntegrityQueueController();
 
     	#endregion Private members
 
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         [ClientPropertyName("ItemListClientID")]
         public string ItemListClientID
         {
-            get { return ReconcileQueueItemList.ReconcileQueueGrid.ClientID; }
+            get { return StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.ClientID; }
         }
 
         #endregion Public Properties  
@@ -83,9 +83,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         public override void DataBind()
         {
-            ReconcileQueueItemList.Partition = ((Default)Page).ServerPartition;
+            StudyIntegrityQueueItemList.Partition = ((Default)Page).ServerPartition;
             base.DataBind();
-            ReconcileQueueItemList.DataBind();
+            StudyIntegrityQueueItemList.DataBind();
         }
 
         #endregion Public Methods
@@ -102,21 +102,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
           
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
                                              App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
-                                             ReconcileQueueItemList.ReconcileQueueGrid);
+                                             StudyIntegrityQueueItemList.StudyIntegrityQueueGrid);
             GridPagerTop.GetRecordCountMethod = delegate
                               {
-								  return ReconcileQueueItemList.ResultCount;
+								  return StudyIntegrityQueueItemList.ResultCount;
                               };
 
             GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
                                                 App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
-                                                ReconcileQueueItemList.ReconcileQueueGrid);
+                                                StudyIntegrityQueueItemList.StudyIntegrityQueueGrid);
             GridPagerBottom.GetRecordCountMethod = delegate
                               {
-                                  return ReconcileQueueItemList.ResultCount;
+                                  return StudyIntegrityQueueItemList.ResultCount;
                               };
 
-			ReconcileQueueItemList.DataSourceCreated += delegate(ReconcileQueueDataSource source)
+			StudyIntegrityQueueItemList.DataSourceCreated += delegate(StudyIntegrityQueueDataSource source)
 										{
 											source.Partition = ((Default)Page).ServerPartition;
 
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-			if (ReconcileQueueItemList.IsPostBack)
+			if (StudyIntegrityQueueItemList.IsPostBack)
 			{
 				DataBind();
 			} 
@@ -137,21 +137,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         protected override void OnPreRender(EventArgs e)
         {
-            ReconcileButton.Enabled = (ReconcileQueueItemList.SelectedItems != null) ? true : false;
+            ReconcileButton.Enabled = (StudyIntegrityQueueItemList.SelectedItems != null) ? true : false;
 
 			base.OnPreRender(e);
         }
        
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            ReconcileQueueItemList.ReconcileQueueGrid.ClearSelections();
-        	ReconcileQueueItemList.ReconcileQueueGrid.PageIndex = 0;
+            StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.ClearSelections();
+        	StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.PageIndex = 0;
 			DataBind();
         }
 
         protected void ReconcileButton_Click(object sender, EventArgs e)
         {
-            ReconcileDetails details = ReconcileDetailsAssembler.CreateReconcileDetails(ReconcileQueueItemList.SelectedItems[0]);
+            ReconcileDetails details = ReconcileDetailsAssembler.CreateReconcileDetails(StudyIntegrityQueueItemList.SelectedItems[0]);
 
             ((Default)Page).OnReconcileItem(details);
         }

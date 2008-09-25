@@ -36,17 +36,17 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
     static public class ReconcileDetailsAssembler
     {
         private static int ArraySize = 100;
 
-        static public ReconcileDetails CreateReconcileDetails(Model.ReconcileQueue item)
+        static public ReconcileDetails CreateReconcileDetails(Model.StudyIntegrityQueue item)
         {
             ReconcileDetails details = new ReconcileDetails();
 
-            details.ReconcileQueueItem = item;
+            details.StudyIntegrityQueueItem = item;
 
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
@@ -86,11 +86,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
             details.ExistingPatient.Name = GetExistingName(item.Description);
             details.ConflictingPatient.Name = GetConflictingName(item.Description);
 
-            ReconcileQueueUidAdaptor uidAdaptor = new ReconcileQueueUidAdaptor();
-            ReconcileQueueUidSelectCriteria uidCriteria = new ReconcileQueueUidSelectCriteria();
-            uidCriteria.ReconcileQueueKey.EqualTo(item.GetKey());
+            StudyIntegrityQueueUidAdaptor uidAdaptor = new StudyIntegrityQueueUidAdaptor();
+            StudyIntegrityQueueUidSelectCriteria uidCriteria = new StudyIntegrityQueueUidSelectCriteria();
+            uidCriteria.StudyIntegrityQueueKey.EqualTo(item.GetKey());
 
-            IList<ReconcileQueueUid> uidItems = uidAdaptor.Get(uidCriteria);
+            IList<StudyIntegrityQueueUid> uidItems = uidAdaptor.Get(uidCriteria);
 
             //
             // Get the Series information from the ReconcileQueueUid. For each
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
             int[] seriesCount = new int[ArraySize];
             string[] seriesDescription = new string[ArraySize];
 
-            foreach (ReconcileQueueUid uidItem in uidItems)
+            foreach (StudyIntegrityQueueUid uidItem in uidItems)
             {
                 if(seriesInstanceUid.Contains(uidItem.SeriesInstanceUid))
                 {

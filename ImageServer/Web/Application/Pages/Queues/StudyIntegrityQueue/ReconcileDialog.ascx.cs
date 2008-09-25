@@ -38,7 +38,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
     //
     // Dialog for adding a new device or editting an existing device.
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         // This list will be determined by the user level permission.
         private IList<ServerPartition> _partitions = new List<ServerPartition>();
 
-        private Model.ReconcileQueue _item = null;
+        private Model.StudyIntegrityQueue _item = null;
         private ReconcileDetails _details = null;
 
         #endregion
@@ -69,15 +69,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         }
 
         /// <summary>
-        /// Sets or gets the Reconcile Item Value
+        /// Sets or gets the StudyIntegrity Item Value
         /// </summary>
-        public Model.ReconcileQueue ReconcileQueueItem
+        public Model.StudyIntegrityQueue StudyIntegrityQueueItem
         {
             get { return _item; }
             set
             {
                 _item = value;
-                ViewState[ClientID + "_ReconcileQueueItem"] = _item.GetKey();
+                ViewState[ClientID + "_StudyIntegrityQueueItem"] = _item.GetKey();
             }
         }
 
@@ -97,17 +97,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         #endregion // public members
 
         #region Events
-
-        /// <summary>
-        /// Defines the event handler for <seealso cref="OKClicked"/>.
-        /// </summary>
-        /// <param name="device">The device being added.</param>
-        public delegate void OnOKClickedEventHandler(Device device);
-
-        /// <summary>
-        /// Occurs when users click on "OK".
-        /// </summary>
-        public event OnOKClickedEventHandler OKClicked;
 
         #endregion Events
 
@@ -130,8 +119,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         protected void NewStudyButton_Click(object sender, EventArgs e)
         {
             ServerEntityKey itemKey = ViewState[ClientID + "_ReconcileQueueItem"] as ServerEntityKey;
-            ReconcileQueueController controller = new ReconcileQueueController();
+            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
             controller.CreateNewStudy(itemKey);
+
+            Close();
+        }
+
+        /// <summary>
+        /// Handles event when user clicks on "Cancel" button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void MergeStudyButton_Click(object sender, EventArgs e)
+        {
+            ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
+            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
+            //controller.MergeStudy(itemKey);
 
             Close();
         }
@@ -143,8 +146,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// <param name="e"></param>
         protected void DiscardButton_Click(object sender, EventArgs e)
         {
-            ServerEntityKey itemKey = ViewState[ClientID + "_ReconcileQueueItem"] as ServerEntityKey;
-            ReconcileQueueController controller = new ReconcileQueueController();
+            ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
+            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
             controller.Discard(itemKey);
             
             Close();

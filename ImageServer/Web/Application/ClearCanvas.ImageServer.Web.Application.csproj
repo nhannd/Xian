@@ -427,34 +427,34 @@
     <Compile Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx.designer.cs">
       <DependentUpon>ArchiveQueueItemList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\Default.aspx.cs">
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\Default.aspx.designer.cs">
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDetails.cs" />
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDetailsAssembler.cs" />
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx.cs">
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDetails.cs" />
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDetailsAssembler.cs" />
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDialog.ascx.cs">
       <DependentUpon>ReconcileDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx.designer.cs">
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDialog.ascx.designer.cs">
       <DependentUpon>ReconcileDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx.cs">
-      <DependentUpon>ReconcileQueueItemList.ascx</DependentUpon>
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\StudyIntegrityQueueItemList.ascx.cs">
+      <DependentUpon>StudyIntegrityQueueItemList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx.designer.cs">
-      <DependentUpon>ReconcileQueueItemList.ascx</DependentUpon>
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\StudyIntegrityQueueItemList.ascx.designer.cs">
+      <DependentUpon>StudyIntegrityQueueItemList.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx.cs">
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx.designer.cs">
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx.cs">
@@ -945,11 +945,11 @@
     <Content Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx" />
     <EmbeddedResource Include="Pages\Queues\ArchiveQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\ArchiveQueue\ArchiveQueueItemList.ascx" />
-    <Content Include="Pages\Queues\ReconcileQueue\Default.aspx" />
-    <Content Include="Pages\Queues\ReconcileQueue\ReconcileDialog.ascx" />
-    <Content Include="Pages\Queues\ReconcileQueue\ReconcileQueueItemList.ascx" />
-    <Content Include="Pages\Queues\ReconcileQueue\SearchPanel.ascx" />
-    <EmbeddedResource Include="Pages\Queues\ReconcileQueue\SearchPanel.js" />
+    <Content Include="Pages\Queues\StudyIntegrityQueue\Default.aspx" />
+    <Content Include="Pages\Queues\StudyIntegrityQueue\ReconcileDialog.ascx" />
+    <Content Include="Pages\Queues\StudyIntegrityQueue\StudyIntegrityQueueItemList.ascx" />
+    <Content Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx" />
+    <EmbeddedResource Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\RestoreQueueItemList.ascx" />
     <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />

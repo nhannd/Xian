@@ -6,7 +6,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertReconcileQueue : IProcedureQueryBroker<InsertReconcileQueueParameters, ReconcileQueue>
+    public interface IInsertStudyIntegrityQueue : IProcedureQueryBroker<InsertStudyIntegrityQueueParameters, StudyIntegrityQueue>
     {
     }
 }

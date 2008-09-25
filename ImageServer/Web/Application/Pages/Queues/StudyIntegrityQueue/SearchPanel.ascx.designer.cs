@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue {
     
     
     /// <summary>
@@ -155,13 +155,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerTop;
         
         /// <summary>
-        /// ReconcileQueueItemList control.
+        /// StudyIntegrityQueueItemList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.ReconcileQueueItemList ReconcileQueueItemList;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.StudyIntegrityQueueItemList StudyIntegrityQueueItemList;
         
         /// <summary>
         /// GridPagerBottom control.

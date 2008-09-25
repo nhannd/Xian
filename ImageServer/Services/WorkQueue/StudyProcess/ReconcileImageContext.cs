@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private Study _existingStudy;
         private StudyStorageLocation _existStudyLocation;
         private ServerPartition _partition;
-        private ReconcileQueue _reconcileQueue;
+        private StudyIntegrityQueue _studyIntegrityQueue;
         private StudyHistory _history;
 
         private string _storagePath;
@@ -61,10 +61,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// The reconcile queue entry created as a result of the reconciliation
         /// </summary>
-        public ReconcileQueue ReconcileQueue
+        public StudyIntegrityQueue ReconcileQueue
         {
-            get { return _reconcileQueue; }
-            set { _reconcileQueue = value; }
+            get { return _studyIntegrityQueue; }
+            set { _studyIntegrityQueue = value; }
         }
 
         /// <summary>

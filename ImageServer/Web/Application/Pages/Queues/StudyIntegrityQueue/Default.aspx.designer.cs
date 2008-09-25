@@ -8,42 +8,51 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue {
     
     
     /// <summary>
-    /// ReconcileQueueItemList class.
+    /// Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class ReconcileQueueItemList {
+    public partial class Default {
         
         /// <summary>
-        /// ContainerTable control.
+        /// PageContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table ContainerTable;
+        protected global::System.Web.UI.WebControls.Panel PageContent;
         
         /// <summary>
-        /// ReconcileQueueDataSourceObject control.
+        /// UpdatePanel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource ReconcileQueueDataSourceObject;
+        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// ReconcileQueueGridView control.
+        /// ServerPartitionTabs control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView ReconcileQueueGridView;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs ServerPartitionTabs;
+        
+        /// <summary>
+        /// ReconcileDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.ReconcileDialog ReconcileDialog;
     }
 }

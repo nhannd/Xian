@@ -12,9 +12,9 @@
 // is instantiated.
 //
 
-if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel']==null)
+if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel']==null)
 {
-        Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue');
+        Type.registerNamespace('ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue');
         
         
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -22,8 +22,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
     // Constructor
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel = function(element) { 
-        ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.initializeBase(this, [element]);
+    ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel = function(element) { 
+        ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.initializeBase(this, [element]);
     }
    
 
@@ -32,10 +32,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
     // Create the prototype for the control.
     //
     /////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.prototype = 
+    ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.prototype = 
     {
         initialize : function() {
-            ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.callBaseMethod(this, 'initialize');        
+            ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.callBaseMethod(this, 'initialize');        
             
             this._OnItemListRowClickedHandler = Function.createDelegate(this,this._OnItemListRowClicked);
             this._OnItemListRowDblClickedHandler = Function.createDelegate(this,this._OnItemListRowDblClicked);
@@ -47,7 +47,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
                 dispose : function() {
             $clearHandlers(this.get_element());
 
-            ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.callBaseMethod(this, 'dispose');
+            ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.callBaseMethod(this, 'dispose');
             
             Sys.Application.remove_load(this._OnLoadHandler);
         },
@@ -140,7 +140,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
    
    // Register the class as a type that inherits from Sys.UI.Control.
 
-   ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel', Sys.UI.Control);
+   ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.registerClass('ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel', Sys.UI.Control);
 
    if (typeof(Sys) !== 'undefined') Sys.Application.notifyScriptLoaded();
 

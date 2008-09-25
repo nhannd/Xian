@@ -162,10 +162,10 @@
   <data name="Queues" xml:space="preserve">
     <value>Queues</value>
   </data>
-  <data name="ReconcileQueue" xml:space="preserve">
+  <data name="StudyIntegrityQueue" xml:space="preserve">
     <value>Study Integrity Queue</value>
   </data>
-  <data name="ReconcileQueuePageTitle" xml:space="preserve">
+  <data name="StudyIntegrityQueuePageTitle" xml:space="preserve">
     <value>Study Integrity Queue | ClearCanvas ImageServer</value>
   </data>
   <data name="ReconcileStudyDialog" xml:space="preserve">

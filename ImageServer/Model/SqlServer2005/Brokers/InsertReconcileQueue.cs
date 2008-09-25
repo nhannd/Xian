@@ -9,7 +9,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class InsertReconcileQueue : ProcedureQueryBroker<InsertReconcileQueueParameters, ReconcileQueue>, IInsertReconcileQueue
+    public class InsertReconcileQueue : ProcedureQueryBroker<InsertStudyIntegrityQueueParameters, StudyIntegrityQueue>, IInsertStudyIntegrityQueue
     {
         public InsertReconcileQueue()
             : base("InsertReconcileQueue")

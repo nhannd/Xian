@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
     public class ReconcileDetails
     {
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         private string _studyInstanceUID;
         private ExistingPatientInfo _existingPatient = new ExistingPatientInfo();
         private ConflictingPatientInfo _conflictingPatient = new ConflictingPatientInfo();
-        private Model.ReconcileQueue _item = new Model.ReconcileQueue();
+        private Model.StudyIntegrityQueue _item = new Model.StudyIntegrityQueue();
 
         public string StudyInstanceUID
         {
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
             set { _conflictingPatient = value; }
         }
 
-        public Model.ReconcileQueue ReconcileQueueItem
+        public Model.StudyIntegrityQueue StudyIntegrityQueueItem
         {
             get { return _item; }
             set { _item = value; }

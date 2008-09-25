@@ -29,12 +29,12 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-	public interface IWebQueryStudyIntegrityQueue : IProcedureQueryBroker<WebQueryStudyIntegrityQueueParameters, StudyIntegrityQueue>
+    public class StudyIntegrityQueueUidAdaptor : BaseAdaptor<StudyIntegrityQueueUid, IStudyIntegrityQueueUidEntityBroker, StudyIntegrityQueueUidSelectCriteria, StudyIntegrityQueueUidUpdateColumns>
     {
     }
 }

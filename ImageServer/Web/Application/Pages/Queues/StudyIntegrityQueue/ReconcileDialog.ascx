@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.ReconcileDialog"
+<%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.ReconcileDialog"
     Codebehind="ReconcileDialog.ascx.cs" %>
 
 <ccAsp:ModalDialog ID="ReconcileItemModalDialog" runat="server" Width="800px">
@@ -40,7 +40,7 @@
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow style="text-align: center; padding: 4px; background: #CCCCCC;"> 
-                                <asp:TableCell style="border-left: solid 2px #205F87;"><asp:LinkButton runat="server" OnClick="NewStudyButton_Click" style="color: Red;">Create New Study</asp:LinkButton> | <asp:LinkButton runat="server" OnClick="DiscardButton_Click" style="color: Red">Discard</asp:LinkButton></asp:TableCell>
+                                <asp:TableCell style="border-left: solid 2px #205F87;"><asp:LinkButton ID="MergeButton" runat="server" OnClick="MergeStudyButton_Click" style="color: Red;" /><asp:LinkButton runat="server" OnClick="NewStudyButton_Click" style="color: Red;">Create New Study</asp:LinkButton> | <asp:LinkButton runat="server" OnClick="DiscardButton_Click" style="color: Red">Discard</asp:LinkButton></asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>                                    
                     </asp:TableCell>

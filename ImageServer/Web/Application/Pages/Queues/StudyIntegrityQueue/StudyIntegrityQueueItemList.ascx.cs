@@ -37,24 +37,24 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
     //
     //  Used to display the list of Restore Queue Items.
     //
-    public partial class ReconcileQueueItemList : System.Web.UI.UserControl
+    public partial class StudyIntegrityQueueItemList : System.Web.UI.UserControl
     {
 		#region Delegates
-		public delegate void ReconcileQueueDataSourceCreated(ReconcileQueueDataSource theSource);
-		public event ReconcileQueueDataSourceCreated DataSourceCreated;
+		public delegate void StudyIntegrityQueueDataSourceCreated(StudyIntegrityQueueDataSource theSource);
+		public event StudyIntegrityQueueDataSourceCreated DataSourceCreated;
 		#endregion
 
         #region Private members
         // list of studies to display
-        private IList<ReconcileQueueSummary> _queueItems;
+        private IList<StudyIntegrityQueueSummary> _queueItems;
         private ServerPartition _partition;
         private Unit _height;
-    	private ReconcileQueueDataSource _dataSource;
+    	private StudyIntegrityQueueDataSource _dataSource;
         #endregion Private members
 
         #region Public properties
@@ -65,9 +65,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 			{
 				if (_dataSource == null)
 				{
-					_dataSource = new ReconcileQueueDataSource();
+					_dataSource = new StudyIntegrityQueueDataSource();
 
-					_dataSource.ReconcileQueueFoundSet += delegate(IList<ReconcileQueueSummary> newlist)
+                    _dataSource.StudyIntegrityQueueFoundSet += delegate(IList<StudyIntegrityQueueSummary> newlist)
 											{
 												Items = newlist;
 											};
@@ -89,9 +89,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
         /// </summary>
-        public Web.Common.WebControls.UI.GridView ReconcileQueueGrid
+        public Web.Common.WebControls.UI.GridView StudyIntegrityQueueGrid
         {
-            get { return ReconcileQueueGridView; }
+            get { return StudyIntegrityQueueGridView; }
         }
 
 
@@ -104,21 +104,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// <summary>
         /// Gets/Sets the current selected device.
         /// </summary>
-        public IList<Model.ReconcileQueue> SelectedItems
+        public IList<Model.StudyIntegrityQueue> SelectedItems
         {
             get
             {
                 if (Items==null || Items.Count == 0)
                     return null;
 
-                int[] rows = ReconcileQueueGridView.SelectedIndices;
+                int[] rows = StudyIntegrityQueueGridView.SelectedIndices;
                 if (rows == null || rows.Length == 0)
                     return null;
 
-				IList<Model.ReconcileQueue> queueItems = new List<Model.ReconcileQueue>();
+				IList<Model.StudyIntegrityQueue> queueItems = new List<Model.StudyIntegrityQueue>();
                 for(int i=0; i<rows.Length; i++)
                 {
-                    queueItems.Add(Items[rows[i]].TheReconcileQueueItem);
+                    queueItems.Add(Items[rows[i]].TheStudyIntegrityQueueItem);
                 }
 
                 return queueItems;
@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// <summary>
         /// Gets/Sets the list of devices rendered on the screen.
         /// </summary>
-        public IList<ReconcileQueueSummary> Items
+        public IList<StudyIntegrityQueueSummary> Items
         {
             get
             {
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedItems"></param>
-        public delegate void QueueItemSelectedEventHandler(object sender, IList<Model.ReconcileQueue> selectedItems);
+        public delegate void QueueItemSelectedEventHandler(object sender, IList<Model.StudyIntegrityQueue> selectedItems);
 
         /// <summary>
         /// Occurs when the selected device in the list is changed.
@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
         protected void Page_Load(object sender, EventArgs e)
         {
-			ReconcileQueueGridView.DataBind();
+            StudyIntegrityQueueGridView.DataBind();
         }
         
         protected override void OnInit(EventArgs e)
@@ -197,40 +197,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            ReconcileQueueGridView.SelectedIndexChanged += ReconcileQueueGridView_SelectedIndexChanged;
+            StudyIntegrityQueueGridView.SelectedIndexChanged += StudyIntegrityQueueGridView_SelectedIndexChanged;
         }
 
-        protected void ReconcileQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
+        protected void StudyIntegrityQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            IList<Model.ReconcileQueue> queueItems = SelectedItems;
+            IList<Model.StudyIntegrityQueue> queueItems = SelectedItems;
             if (queueItems != null)
                 if (OnQueueItemSelectionChanged != null)
                     OnQueueItemSelectionChanged(this, queueItems);            
         }
 
-        protected void ReconcileQueueGridView_PageIndexChanged(object sender, EventArgs e)
+        protected void StudyIntegrityQueueGridView_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
         }
 
-        protected void ReconcileQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
+        protected void StudyIntegrityQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            ReconcileQueueGridView.PageIndex = e.NewPageIndex;
+            StudyIntegrityQueueGridView.PageIndex = e.NewPageIndex;
             DataBind();
         }
 
-		protected void DisposeReconcileQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
+		protected void DisposeStudyIntegrityQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
 		{
 			e.Cancel = true;
 		}
 
-		protected void GetReconcileQueueDataSource(object sender, ObjectDataSourceEventArgs e)
+		protected void GetStudyIntegrityQueueDataSource(object sender, ObjectDataSourceEventArgs e)
 		{
 			if (_dataSource == null)
 			{
-				_dataSource = new ReconcileQueueDataSource();
+                _dataSource = new StudyIntegrityQueueDataSource();
 
-				_dataSource.ReconcileQueueFoundSet += delegate(IList<ReconcileQueueSummary> newlist)
+                _dataSource.StudyIntegrityQueueFoundSet += delegate(IList<StudyIntegrityQueueSummary> newlist)
 										{
 											Items = newlist;
 										};
@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue
         /// </remarks>
         public override void DataBind()
         {
-            ReconcileQueueGridView.DataBind();
+            StudyIntegrityQueueGridView.DataBind();
         }
 
         #endregion // public methods

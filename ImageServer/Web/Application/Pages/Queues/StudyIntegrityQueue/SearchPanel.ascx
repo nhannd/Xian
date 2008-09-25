@@ -1,7 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.SearchPanel" %>
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel" %>
 
-<%@ Register Src="ReconcileQueueItemList.ascx" TagName="ReconcileQueueItemList" TagPrefix="localAsp" %>
+<%@ Register Src="StudyIntegrityQueueItemList.ascx" TagName="StudyIntegrityQueueItemList" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
@@ -59,7 +59,7 @@
                          <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                 <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
-                                <tr><td style="background-color: white;"><localAsp:ReconcileQueueItemList id="ReconcileQueueItemList" runat="server" Height="500px"></localAsp:ReconcileQueueItemList></td></tr>
+                                <tr><td style="background-color: white;"><localAsp:StudyIntegrityQueueItemList id="StudyIntegrityQueueItemList" runat="server" Height="500px"></localAsp:StudyIntegrityQueueItemList></td></tr>
                                 <tr><td style="border-top: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>                    
                             </table>                        
                         </asp:Panel>

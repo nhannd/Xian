@@ -6,10 +6,10 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class InsertReconcileQueueParameters: ProcedureParameters
+    public class InsertStudyIntegrityQueueParameters: ProcedureParameters
     {
-        public InsertReconcileQueueParameters()
-            : base("InsertReconcileQueue")
+        public InsertStudyIntegrityQueueParameters()
+            : base("InsertStudyIntegrityQueue")
         {
 
         }
@@ -54,9 +54,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         }
 
 
-        public ServerEnum ReconcileReasonEnum
+        public ServerEnum StudyIntegrityReasonEnum
         {
-            set { SubCriteria["ReconcileReasonEnum"] = new ProcedureParameter<ServerEnum>("ReconcileReasonEnum", value); }
+            set { SubCriteria["StudyIntegrityReasonEnum"] = new ProcedureParameter<ServerEnum>("StudyIntegrityReasonEnum", value); }
         }
         
     }

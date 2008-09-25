@@ -38,7 +38,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-	public class ReconcileQueueSummary
+    public class StudyIntegrityQueueSummary
 	{
 		#region Private members
 
@@ -46,16 +46,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         private string _conflictingPatientName;
 	    private string _studyInstanceUID;
 	    private DateTime _receivedTime;
-	    private ReconcileQueue _reconcileQueueItem;
+        private StudyIntegrityQueue _studyIntegrityQueueItem;
 	    private ServerPartition _partition;
 		#endregion Private members
 
 		#region Public Properties
 
-        public ReconcileQueue TheReconcileQueueItem
+        public StudyIntegrityQueue TheStudyIntegrityQueueItem
         {
-            get { return _reconcileQueueItem; }
-            set { _reconcileQueueItem = value; }
+            get { return _studyIntegrityQueueItem; }
+            set { _studyIntegrityQueueItem = value; }
         }
 
 	    public ServerPartition ThePartition
@@ -90,23 +90,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion Public Properties
 	}
 
-	public class ReconcileQueueDataSource
+    public class StudyIntegrityQueueDataSource
 	{
 		#region Public Delegates
-		public delegate void ReconcileQueueFoundSetDelegate(IList<ReconcileQueueSummary> list);
-		public ReconcileQueueFoundSetDelegate ReconcileQueueFoundSet;
+		public delegate void StudyIntegrityQueueFoundSetDelegate(IList<StudyIntegrityQueueSummary> list);
+		public StudyIntegrityQueueFoundSetDelegate StudyIntegrityQueueFoundSet;
 		#endregion
 
 		#region Private Members
-		private ReconcileQueueController _searchController = new ReconcileQueueController();
+		private StudyIntegrityQueueController _searchController = new StudyIntegrityQueueController();
 		private string _description;
 		private string _insertTime;
 		private int _resultCount;
 		private ServerPartition _partition;
-		private ReconcileReasonEnum _reasonEnum;
+		private StudyIntegrityReasonEnum _reasonEnum;
 
 		private string _dateFormats;
-		private IList<ReconcileQueueSummary> _list = new List<ReconcileQueueSummary>();
+		private IList<StudyIntegrityQueueSummary> _list = new List<StudyIntegrityQueueSummary>();
 		private IList<ServerEntityKey> _searchKeys;
 		#endregion
 
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _partition; }
 			set { _partition = value; }
 		}
-		public ReconcileReasonEnum ReasonEnum
+		public StudyIntegrityReasonEnum ReasonEnum
 		{
 			get { return _reasonEnum; }
 			set { _reasonEnum = value; }
@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _dateFormats; }
 			set { _dateFormats = value; }
 		}
-		public IList<ReconcileQueueSummary> List
+		public IList<StudyIntegrityQueueSummary> List
 		{
 			get { return _list; }
 		}
@@ -155,21 +155,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		#region Public Methods
-		public IEnumerable<ReconcileQueueSummary> Select(int startRowIndex, int maximumRows)
+		public IEnumerable<StudyIntegrityQueueSummary> Select(int startRowIndex, int maximumRows)
 		{
-            if (maximumRows == 0 || Partition == null) return new List<ReconcileQueueSummary>();
+            if (maximumRows == 0 || Partition == null) return new List<StudyIntegrityQueueSummary>();
 
-            ReconcileQueueSelectCriteria criteria = GetReconcileQueueCriteria();
+            StudyIntegrityQueueSelectCriteria criteria = GetStudyIntegrityQueueCriteria();
 
-            IList<ReconcileQueue> queueList = _searchController.GetRangeReconcileQueueItems(criteria, startRowIndex, maximumRows);
+            IList<StudyIntegrityQueue> queueList = _searchController.GetRangeStudyIntegrityQueueItems(criteria, startRowIndex, maximumRows);
 
-            _list = new List<ReconcileQueueSummary>();
+            _list = new List<StudyIntegrityQueueSummary>();
 
-            foreach (ReconcileQueue item in queueList)
-                _list.Add(CreateReconcileQueueSummary(item));
+            foreach (StudyIntegrityQueue item in queueList)
+                _list.Add(CreateStudyIntegrityQueueSummary(item));
 
-            if (ReconcileQueueFoundSet != null)
-                ReconcileQueueFoundSet(_list);
+            if (StudyIntegrityQueueFoundSet != null)
+                StudyIntegrityQueueFoundSet(_list);
 
             return _list;
 		}
@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		{
             if (Partition == null) return 0;
 
-            ReconcileQueueSelectCriteria criteria = GetReconcileQueueCriteria();
+            StudyIntegrityQueueSelectCriteria criteria = GetStudyIntegrityQueueCriteria();
 
             ResultCount = _searchController.GetReconicleQueueItemsCount(criteria);
 
@@ -195,10 +195,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// <remark>
 		/// 
 		/// </remark>
-		private ReconcileQueueSummary CreateReconcileQueueSummary(ReconcileQueue item)
+		private StudyIntegrityQueueSummary CreateStudyIntegrityQueueSummary(StudyIntegrityQueue item)
 		{
-			ReconcileQueueSummary summary = new ReconcileQueueSummary();
-			summary.TheReconcileQueueItem = item;
+			StudyIntegrityQueueSummary summary = new StudyIntegrityQueueSummary();
+			summary.TheStudyIntegrityQueueItem = item;
 			summary.ThePartition = Partition;
 
             String patientNames = item.Description.Substring(item.Description.IndexOf("=") + 1);
@@ -221,9 +221,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			return summary;
 		}
 
-        private ReconcileQueueSelectCriteria GetReconcileQueueCriteria()
+        private StudyIntegrityQueueSelectCriteria GetStudyIntegrityQueueCriteria()
         {
-            ReconcileQueueSelectCriteria criteria = new ReconcileQueueSelectCriteria();
+            StudyIntegrityQueueSelectCriteria criteria = new StudyIntegrityQueueSelectCriteria();
 
             // only query for device in this partition
             criteria.ServerPartitionKey.EqualTo(Partition.GetKey());

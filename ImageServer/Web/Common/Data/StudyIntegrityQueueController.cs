@@ -44,34 +44,34 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
-	public class ReconcileQueueController
+	public class StudyIntegrityQueueController
 	{
-        private readonly ReconcileQueueAdaptor _adaptor = new ReconcileQueueAdaptor();
+        private readonly StudyIntegrityQueueAdaptor _adaptor = new StudyIntegrityQueueAdaptor();
 
-        public IList<ReconcileQueue> GetReconcileQueueItems(ReconcileQueueSelectCriteria criteria)
+        public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyIntegrityQueueSelectCriteria criteria)
         {
             return _adaptor.Get(criteria);
         }
 
-        public IList<ReconcileQueue> GetRangeReconcileQueueItems(ReconcileQueueSelectCriteria criteria, int startIndex, int maxRows)
+        public IList<StudyIntegrityQueue> GetRangeStudyIntegrityQueueItems(StudyIntegrityQueueSelectCriteria criteria, int startIndex, int maxRows)
         {
             return _adaptor.GetRange(criteria, startIndex, maxRows);
         }
 
-        public int GetReconicleQueueItemsCount(ReconcileQueueSelectCriteria criteria)
+        public int GetReconicleQueueItemsCount(StudyIntegrityQueueSelectCriteria criteria)
         {
             return _adaptor.GetCount(criteria);
         }
 
-        public bool DeleteReconcileQueueItem(ReconcileQueue item)
+        public bool DeleteStudyIntegrityQueueItem(StudyIntegrityQueue item)
         {
             return _adaptor.Delete(item.Key);
         }
 
         private void ReconcileStudy(string command, ServerEntityKey itemKey)
         {
-            ReconcileQueueAdaptor queueAdaptor = new ReconcileQueueAdaptor();
-            Model.ReconcileQueue item = queueAdaptor.Get(itemKey);
+            StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
+            Model.StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
 
             //Add to Study History
             StudyHistoryeAdaptor historyAdaptor = new StudyHistoryeAdaptor();
@@ -99,14 +99,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             row.ExpirationTime = DateTime.Now.AddHours(1);
             WorkQueue newWorkQueueItem = workQueueAdaptor.Add(row);
 
-            ReconcileQueueUidAdaptor reconcileQueueUidAdaptor = new ReconcileQueueUidAdaptor();
-            ReconcileQueueUidSelectCriteria crit = new ReconcileQueueUidSelectCriteria();
-            crit.ReconcileQueueKey.EqualTo(item.GetKey());
-            IList<ReconcileQueueUid> uidList = reconcileQueueUidAdaptor.Get(crit);
+            StudyIntegrityQueueUidAdaptor studyIntegrityQueueUidAdaptor = new StudyIntegrityQueueUidAdaptor();
+            StudyIntegrityQueueUidSelectCriteria crit = new StudyIntegrityQueueUidSelectCriteria();
+            crit.StudyIntegrityQueueKey.EqualTo(item.GetKey());
+            IList<StudyIntegrityQueueUid> uidList = studyIntegrityQueueUidAdaptor.Get(crit);
 
             WorkQueueUidAdaptor workQueueUidAdaptor = new WorkQueueUidAdaptor();
             WorkQueueUidUpdateColumns update = new WorkQueueUidUpdateColumns();
-            foreach (ReconcileQueueUid uid in uidList)
+            foreach (StudyIntegrityQueueUid uid in uidList)
             {
                 update.WorkQueueKey = newWorkQueueItem.GetKey();
                 update.SeriesInstanceUid = uid.SeriesInstanceUid;
@@ -114,13 +114,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 workQueueUidAdaptor.Add(update);
             }
 
-            //DeleteReconcileQueue Item
-            ReconcileQueueUidSelectCriteria criteria = new ReconcileQueueUidSelectCriteria();
-            criteria.ReconcileQueueKey.EqualTo(item.GetKey());
-            reconcileQueueUidAdaptor.Delete(criteria);
+            //DeleteStudyIntegrityQueue Item
+            StudyIntegrityQueueUidSelectCriteria criteria = new StudyIntegrityQueueUidSelectCriteria();
+            criteria.StudyIntegrityQueueKey.EqualTo(item.GetKey());
+            studyIntegrityQueueUidAdaptor.Delete(criteria);
 
-            ReconcileQueueAdaptor reconcileQueueAdaptor = new ReconcileQueueAdaptor();
-            reconcileQueueAdaptor.Delete(item.GetKey());   
+            StudyIntegrityQueueAdaptor studyIntegrityQueueAdaptor = new StudyIntegrityQueueAdaptor();
+            studyIntegrityQueueAdaptor.Delete(item.GetKey());   
         }
         
         public void CreateNewStudy(ServerEntityKey itemKey)

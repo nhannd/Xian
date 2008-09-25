@@ -1,17 +1,17 @@
-<%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ReconcileQueue.ReconcileQueueItemList"
-	Codebehind="ReconcileQueueItemList.ascx.cs" %>
+<%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.StudyIntegrityQueueItemList"
+	Codebehind="StudyIntegrityQueueItemList.ascx.cs" %>
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
-			<asp:ObjectDataSource ID="ReconcileQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.ReconcileQueueDataSource"
-				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.ReconcileQueueSummary" EnablePaging="true"
-				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetReconcileQueueDataSource"
-				OnObjectDisposing="DisposeReconcileQueueDataSource"/>
-				<ccUI:GridView ID="ReconcileQueueGridView" runat="server" SkinID="CustomGlobalGridView"
-					OnSelectedIndexChanged="ReconcileQueueGridView_SelectedIndexChanged"
-					OnPageIndexChanging="ReconcileQueueGridView_PageIndexChanging"
-					SelectionMode="Single" DataSourceID="ReconcileQueueDataSourceObject">
+			<asp:ObjectDataSource ID="StudyIntegrityQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.StudyIntegrityQueueDataSource"
+				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.StudyIntegrityQueueSummary" EnablePaging="true"
+				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyIntegrityQueueDataSource"
+				OnObjectDisposing="DisposeStudyIntegrityQueueDataSource"/>
+				<ccUI:GridView ID="StudyIntegrityQueueGridView" runat="server" SkinID="CustomGlobalGridView"
+					OnSelectedIndexChanged="StudyIntegrityQueueGridView_SelectedIndexChanged"
+					OnPageIndexChanging="StudyIntegrityQueueGridView_PageIndexChanging"
+					SelectionMode="Single" DataSourceID="StudyIntegrityQueueDataSourceObject">
 					<Columns>
 					    <asp:BoundField DataField="StudyInstanceUID" HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
 						</asp:BoundField>

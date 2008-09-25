@@ -29,12 +29,19 @@
 
 #endregion
 
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Brokers
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-	public interface IWebQueryStudyIntegrityQueue : IProcedureQueryBroker<WebQueryStudyIntegrityQueueParameters, StudyIntegrityQueue>
-    {
-    }
+	[ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class WebQueryStudyIntegrityQueue : ProcedureQueryBroker<WebQueryStudyIntegrityQueueParameters, StudyIntegrityQueue>, IWebQueryStudyIntegrityQueue
+	{
+		public WebQueryStudyIntegrityQueue()
+			: base("WebQueryStudyIntegrityQueue")
+		{
+		}
+	}
 }

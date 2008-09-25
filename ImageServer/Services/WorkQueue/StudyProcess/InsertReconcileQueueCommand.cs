@@ -39,13 +39,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             descXml.AppendChild(descXml.ImportNode(XmlUtils.Serialize(desc), true));
             
 
-            IInsertReconcileQueue broker = updateContext.GetBroker<IInsertReconcileQueue>();
-            InsertReconcileQueueParameters parameters = new InsertReconcileQueueParameters();
+            IInsertStudyIntegrityQueue broker = updateContext.GetBroker<IInsertStudyIntegrityQueue>();
+            InsertStudyIntegrityQueueParameters parameters = new InsertStudyIntegrityQueueParameters();
             parameters.Description = GetImageSearchableDescription();
 
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
-            parameters.ReconcileReasonEnum = ReconcileReasonEnum.InconsistentData;
+            parameters.StudyIntegrityReasonEnum = StudyIntegrityReasonEnum.InconsistentData;
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parameters.SeriesDescription = _context.File.DataSet[DicomTags.SeriesDescription].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             xmlQueueData.AppendChild(xmlQueueData.ImportNode(XmlUtils.Serialize(data), true));
             parameters.QueueData = xmlQueueData;
 
-            ReconcileQueue item = broker.FindOne(parameters);
+            StudyIntegrityQueue item = broker.FindOne(parameters);
             if (item==null)
             {
                 throw new ApplicationException("Unable to update reconcile queue");
