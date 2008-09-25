@@ -44,7 +44,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
             
         if (compareCtrl!=null && compareCtrl.value!='' &&  !isNaN(compareCtrl.value))
         {
-            compareValue = parseInt(compareCtrl.value);
+            compareValue = parseFloat(compareCtrl.value);
             result.OK = controlValue >= @@MIN_VALUE@@ && controlValue<= @@MAX_VALUE@@ && controlValue @@COMPARISON_OP@@ compareValue;
         }
         else
