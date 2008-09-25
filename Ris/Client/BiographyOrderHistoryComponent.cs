@@ -108,7 +108,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-			_rightHandComponentContainerHost.StopComponent();
+            if (_rightHandComponentContainerHost != null)
+            {
+                _rightHandComponentContainerHost.StopComponent();
+                _rightHandComponentContainerHost = null;
+            }
 
 			base.Stop();
 		}

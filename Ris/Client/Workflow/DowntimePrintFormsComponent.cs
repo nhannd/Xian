@@ -124,7 +124,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Stop()
 		{
-			_formPreviewComponentHost.StopComponent();
+            if (_formPreviewComponentHost != null)
+            {
+                _formPreviewComponentHost.StopComponent();
+                _formPreviewComponentHost = null;    
+            }
+
 			base.Stop();
 		}
 

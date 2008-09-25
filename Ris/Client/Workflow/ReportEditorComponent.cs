@@ -151,6 +151,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Start();
 		}
 
+        public override void Stop()
+        {
+            _reportEditorContext.WorklistItemChanged -= WorklistItemChangedEventHandler;
+
+            if (_editingHost != null)
+            {
+                _editingHost.StopComponent();
+                _editingHost = null;
+            }
+
+            if (_previewHost != null)
+            {
+                _previewHost.StopComponent();
+                _previewHost = null;
+            }
+
+            base.Stop();
+        }
+
 		#region IReportEditor Members
 
 		IApplicationComponent IReportEditor.GetComponent()

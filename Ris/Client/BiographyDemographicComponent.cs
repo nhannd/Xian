@@ -130,6 +130,16 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
+        public override void Stop()
+        {
+            if (_profileViewComponentHost != null)
+            {
+                _profileViewComponentHost.StopComponent();
+                _profileViewComponentHost = null;
+            }
+
+            base.Stop();
+        }
 
 		public string FormatPatientProfile(object item)
 		{

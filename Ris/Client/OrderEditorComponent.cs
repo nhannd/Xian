@@ -415,6 +415,29 @@ namespace ClearCanvas.Ris.Client
             base.Start();
         }
 
+        public override void Stop()
+        {
+            if (_bannerComponentHost != null)
+            {
+                _bannerComponentHost.StopComponent();
+                _bannerComponentHost = null;
+            }
+
+            if (_orderNoteSummaryComponentHost != null)
+            {
+                _orderNoteSummaryComponentHost.StopComponent();
+                _orderNoteSummaryComponentHost = null;
+            }
+
+            if (_rightHandComponentContainerHost != null)
+            {
+                _rightHandComponentContainerHost.StopComponent();
+                _rightHandComponentContainerHost = null;
+            }
+
+            base.Stop();
+        }
+
         #region Presentation Model
 
         public ApplicationComponentHost RightHandComponentContainerHost

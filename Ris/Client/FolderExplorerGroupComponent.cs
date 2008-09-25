@@ -232,8 +232,12 @@ namespace ClearCanvas.Ris.Client
 				_toolSet = null;
 			}
 
-			_stackTabComponent.CurrentPageChanged -= OnCurrentPageChanged;
-			_stackTabComponentContainerHost.StopComponent();
+            if (_stackTabComponentContainerHost != null)
+            {
+                _stackTabComponent.CurrentPageChanged -= OnCurrentPageChanged;
+                _stackTabComponentContainerHost.StopComponent();
+                _stackTabComponentContainerHost = null;
+            }
 
 			CollectionUtils.ForEach(_folderExplorerComponents.Keys,
 				delegate(IFolderSystem folderSystem)

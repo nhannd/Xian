@@ -118,6 +118,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_loader.Dispose();
 
+            if (_reportViewComponentHost != null)
+            {
+                _reportViewComponentHost.StopComponent();
+                _reportViewComponentHost = null;
+            }
+
 			base.Stop();
 		}
 

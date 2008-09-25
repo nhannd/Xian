@@ -434,7 +434,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Stop()
 		{
-			if (_reportEditor != null)
+            if (_bannerHost != null)
+            {
+                _bannerHost.StopComponent();
+                _bannerHost = null;
+            }
+
+            if (_rightHandComponentContainerHost != null)
+            {
+                _rightHandComponentContainerHost.StopComponent();
+                _rightHandComponentContainerHost = null;
+            }
+
+            if (_reportEditorHost != null)
 			{
 				_reportEditorHost.StopComponent();
 

@@ -225,6 +225,17 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
+        public override void Stop()
+        {
+            if (_publishReportPreviewComponentHost != null)
+            {
+                _publishReportPreviewComponentHost.StopComponent();
+                _publishReportPreviewComponentHost = null;
+            }
+
+            base.Stop();
+        }
+
 		#endregion
 
 		protected EntityRef ReportRef

@@ -96,7 +96,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-			_visitDetailComponentHost.StopComponent();
+            if (_visitDetailComponentHost != null)
+            {
+                _visitDetailComponentHost.StopComponent();
+                _visitDetailComponentHost = null;
+            }
 
 			base.Stop();
 		}

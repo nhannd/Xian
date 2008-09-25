@@ -111,7 +111,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public override void Stop()
         {
-            _diffComponentHost.StopComponent();
+            if (_diffComponentHost != null)
+            {
+                _diffComponentHost.StopComponent();
+                _diffComponentHost = null;    
+            }
+
             base.Stop();
         }
 

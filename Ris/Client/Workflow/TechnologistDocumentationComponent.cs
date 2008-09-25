@@ -207,6 +207,23 @@ namespace ClearCanvas.Ris.Client.Workflow
             base.Start();
         }
 
+        public override void Stop()
+        {
+            if (_bannerComponentHost != null)
+            {
+                _bannerComponentHost.StopComponent();
+                _bannerComponentHost = null;
+            }
+
+            if (_documentationHost != null)
+            {
+                _documentationHost.StopComponent();
+                _documentationHost = null;
+            }
+
+            base.Stop();
+        }
+
         public override bool HasValidationErrors
         {
             get

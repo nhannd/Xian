@@ -280,6 +280,17 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
+        public override void Stop()
+        {
+            if (_reportPreviewComponentHost != null)
+            {
+                _reportPreviewComponentHost.StopComponent();
+                _reportPreviewComponentHost = null;
+            }
+
+            base.Stop();
+        }
+
 		#endregion
 
 		#region Presentation model

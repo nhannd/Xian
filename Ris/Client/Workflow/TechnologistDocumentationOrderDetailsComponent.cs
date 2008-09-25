@@ -73,6 +73,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Start();
 		}
 
+        public override void Stop()
+        {
+            if (_orderNotesComponentHost != null)
+            {
+                _orderNotesComponentHost.StopComponent();
+                _orderNotesComponentHost = null;
+            }
+
+            if (_protocolSummaryComponentHost != null)
+            {
+                _protocolSummaryComponentHost.StopComponent();
+                _protocolSummaryComponentHost = null;
+            }
+
+            if (_additionalInfoComponentHost != null)
+            {
+                _additionalInfoComponentHost.StopComponent();
+                _additionalInfoComponentHost = null;
+            }
+
+            base.Stop();
+        }
+
 		public ApplicationComponentHost AdditionalInfoHost
 		{
 			get { return _additionalInfoComponentHost; }

@@ -177,6 +177,18 @@ namespace ClearCanvas.Ris.Client
 
         public override void Stop()
         {
+            if (_contentComponentHost != null)
+            {
+                _contentComponentHost.StopComponent();
+                _contentComponentHost = null;
+            }
+
+            if (_bannerComponentHost != null)
+            {
+                _bannerComponentHost.StopComponent();
+                _bannerComponentHost = null;
+            }
+
             _toolSet.Dispose();
             base.Stop();
         }

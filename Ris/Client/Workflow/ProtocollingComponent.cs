@@ -138,6 +138,41 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Start();
 		}
 
+        public override void Stop()
+        {
+            if (_bannerComponentHost != null)
+            {
+                _bannerComponentHost.StopComponent();
+                _bannerComponentHost = null;
+            }
+
+            if (_orderNotesComponentHost != null)
+            {
+                _orderNotesComponentHost.StopComponent();
+                _orderNotesComponentHost = null;
+            }
+
+            if (_protocolEditorComponentHost != null)
+            {
+                _protocolEditorComponentHost.StopComponent();
+                _protocolEditorComponentHost = null;
+            }
+
+            if (_priorReportsComponentHost != null)
+            {
+                _priorReportsComponentHost.StopComponent();
+                _priorReportsComponentHost = null;
+            }
+
+            if (_orderDetailViewComponentHost != null)
+            {
+                _orderDetailViewComponentHost.StopComponent();
+                _orderDetailViewComponentHost = null;
+            }
+
+            base.Stop();
+        }
+
 		#endregion
 
 		#region Public members
