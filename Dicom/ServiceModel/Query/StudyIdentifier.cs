@@ -5,12 +5,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public class StudyIdentifier : Identifier
 	{
+		#region Private Fields
+
 		private string _studyInstanceUid;
-		private string _patientId;
-		private string _patientsName;
-		private string _patientsBirthDate;
-		private string _patientsBirthTime;
-		private string _patientsSex;
 		private string[] _modalitiesInStudy;
 		private string _studyDescription;
 		private string _studyId;
@@ -19,6 +16,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		private string _accessionNumber;
 		private int? _numberOfStudyRelatedSeries;
 		private int? _numberOfStudyRelatedInstances;
+
+		#endregion
+
+		#region Public Constructors
 
 		public StudyIdentifier()
 		{
@@ -29,12 +30,14 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 		}
 
+		#endregion
+
+		#region Public Properties
+
 		public override string QueryRetrieveLevel
 		{
 			get { return "STUDY"; }
 		}
-
-		#region Public Properties
 
 		[DicomField(DicomTags.StudyInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
@@ -42,46 +45,6 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		{
 			get { return _studyInstanceUid; }
 			set { _studyInstanceUid = value; }
-		}
-
-		[DicomField(DicomTags.PatientId, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string PatientId
-		{
-			get { return _patientId; }
-			set { _patientId = value; }
-		}
-
-		[DicomField(DicomTags.PatientsName, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string PatientsName
-		{
-			get { return _patientsName; }
-			set { _patientsName = value; }
-		}
-
-		[DicomField(DicomTags.PatientsBirthDate, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string PatientsBirthDate
-		{
-			get { return _patientsBirthDate; }
-			set { _patientsBirthDate = value; }
-		}
-
-		[DicomField(DicomTags.PatientsBirthTime, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string PatientsBirthTime
-		{
-			get { return _patientsBirthTime; }
-			set { _patientsBirthTime = value; }
-		}
-
-		[DicomField(DicomTags.PatientsSex, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string PatientsSex
-		{
-			get { return _patientsSex; }
-			set { _patientsSex = value; }
 		}
 
 		[DicomField(DicomTags.ModalitiesInStudy, CreateEmptyElement = true, SetNullValueIfEmpty = true)]

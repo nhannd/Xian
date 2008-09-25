@@ -4,7 +4,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 {
 	public class QueryNamespace
 	{
-		public const string Value = "http://www.clearcanvas.ca/dicom/contracts/query";
+		public const string Value = "http://www.clearcanvas.ca/dicom/query";
 	}
 
 	[DataContract(Namespace = QueryNamespace.Value)]

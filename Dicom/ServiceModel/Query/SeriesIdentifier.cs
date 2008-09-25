@@ -5,14 +5,18 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public class SeriesIdentifier : Identifier
 	{
+		#region Private Fields
+
 		private string _studyInstanceUid;
 		private string _seriesInstanceUid;
 		private string _modality;
 		private string _seriesDescription;
 		private string _seriesNumber;
 		private int? _numberOfSeriesRelatedInstances;
-		private string _seriesDate;
-		private string _seriesTime;
+
+		#endregion
+
+		#region Public Constructors
 
 		public SeriesIdentifier()
 		{
@@ -22,6 +26,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			: base(attributes)
 		{
 		}
+
+		#endregion
+
+		#region Public Properties
 
 		public override string QueryRetrieveLevel
 		{
@@ -68,22 +76,6 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _seriesNumber = value; }
 		}
 
-		[DicomField(DicomTags.SeriesDate, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string SeriesDate
-		{
-			get { return _seriesDate; }
-			set { _seriesDate = value; }
-		}
-
-		[DicomField(DicomTags.SeriesTime, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
-		[DataMember(IsRequired = false)]
-		public string SeriesTime
-		{
-			get { return _seriesTime; }
-			set { _seriesTime = value; }
-		}
-
 		[DicomField(DicomTags.NumberOfSeriesRelatedInstances, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public int? NumberOfSeriesRelatedInstances
@@ -91,5 +83,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			get { return _numberOfSeriesRelatedInstances; }
 			set { _numberOfSeriesRelatedInstances = value; }
 		}
+
+		#endregion
 	}
 }

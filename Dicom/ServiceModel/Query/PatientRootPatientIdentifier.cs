@@ -5,6 +5,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public class PatientRootPatientIdentifier : Identifier
 	{
+		#region Private Fields
+
 		private string _patientId;
 		private string _patientsName;
 		private string _patientsBirthDate;
@@ -14,6 +16,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		private int? _numberOfPatientRelatedSeries;
 		private int? _numberOfPatientRelatedInstances;
 
+		#endregion
+
+		#region Public Constructors
+
 		public PatientRootPatientIdentifier()
 		{
 		}
@@ -22,6 +28,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			: base(attributes)
 		{
 		}
+
+		#endregion
+
+		#region Public Properties
 
 		public override string QueryRetrieveLevel
 		{
@@ -91,5 +101,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			get { return _numberOfPatientRelatedInstances; }
 			set { _numberOfPatientRelatedInstances = value; }
 		}
+
+		#endregion
 	}
 }

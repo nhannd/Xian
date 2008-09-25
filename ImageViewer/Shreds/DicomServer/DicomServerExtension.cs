@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.Server.ShredHost;
 
@@ -39,13 +40,16 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class DicomServerExtension : WcfShred
     {
-		private bool _wcfInitialized;
-		private readonly string _endpointName;
+		private readonly string _dicomServerEndpointName = "DicomServer";
+		private static readonly string _studyRootQueryEndpointName = "StudyRootQuery";
+
+		private bool _studyRootQueryWCFInitialized;
+		private bool _dicomServerWcfInitialized;
 
         public DicomServerExtension()
         {
-        	_wcfInitialized = false;
-            _endpointName = "DicomServer";
+			_studyRootQueryWCFInitialized = false;
+			_dicomServerWcfInitialized = false;
         }
 
         public override void Start()
@@ -70,8 +74,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			try
 			{
-				StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_endpointName, SR.DicomServer);
-				_wcfInitialized = true;
+				StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, SR.DicomServer);
+				_dicomServerWcfInitialized = true;
 				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomServer);
 				Platform.Log(LogLevel.Info, message);
 				Console.WriteLine(message);
@@ -81,15 +85,45 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Platform.Log(LogLevel.Error, e);
 				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.DicomServer));
 			}
+
+			try
+			{
+				ServiceEndpointDescription sed = StartBasicHttpHost<StudyRootQueryService, IStudyRootQuery>(_studyRootQueryEndpointName, SR.StudyRootQuery);
+				sed.Binding.Namespace = ClearCanvas.Dicom.ServiceModel.Query.QueryNamespace.Value;
+
+				_studyRootQueryWCFInitialized = true;
+
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.StudyRootQuery);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.StudyRootQuery));
+			}
         }
 
         public override void Stop()
         {
-        	if (_wcfInitialized)
+			if (_studyRootQueryWCFInitialized)
+			{
+				try
+				{
+					StopHost(_studyRootQueryEndpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.StudyRootQuery));
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+			
+			if (_dicomServerWcfInitialized)
         	{
         		try
         		{
-        			StopHost(_endpointName);
+        			StopHost(_dicomServerEndpointName);
 					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.DicomServer));
         		}
         		catch (Exception e)

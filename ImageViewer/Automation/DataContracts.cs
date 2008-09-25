@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Automation
 {
 	internal static class AutomationNamespace
 	{
-		public const string Value = "http://www.clearcanvas.ca/imageViewer/automation/contracts";
+		public const string Value = "http://www.clearcanvas.ca/imageViewer/automation";
 	}
 
 	#region Faults

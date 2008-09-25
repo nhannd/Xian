@@ -775,47 +775,84 @@ namespace ClearCanvas.Dicom
                     {
                         return GetDefaultValue(vtype, deflt);
                     }
-                    if (vtype == typeof(string))
+					if (vtype == typeof(string))
                     {
                         return elem.ToString();
                     }
-                    else if (vtype == typeof(ushort))
-                    {
-                        ushort value;
-                        elem.TryGetUInt16(0, out value);
-                        return value;
-                    }
-                    else if (vtype == typeof(short))
-                    {
-                        short value;
-                        elem.TryGetInt16(0, out value);
-                        return value;
-                    }
-                    else if (vtype == typeof(uint))
-                    {
-                        uint value;
-                        elem.TryGetUInt32(0, out value);
-                        return value;
-                    }
-                    else if (vtype == typeof(int))
-                    {
-                        int value;
-                        elem.TryGetInt32(0, out value);
-                        return value;
-                    }
-                    else if (vtype == typeof(float))
-                    {
-                        float value;
-                        elem.TryGetFloat32(0, out value);
-                        return value;
-                    }
-                    else if (vtype == typeof(double))
-                    {
-                        double value;
-                        elem.TryGetFloat64(0, out value);
-                        return value;
-                    }
-                    if (vtype != elem.GetValueType())
+
+					Type nullableType;
+					if (null != (nullableType = Nullable.GetUnderlyingType(vtype)) || vtype.IsValueType)
+					{
+						bool isNullable = nullableType != null;
+						Type valueType = nullableType ?? vtype;
+
+						if (valueType == typeof (ushort))
+						{
+							ushort value;
+							if (!elem.TryGetUInt16(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof (short))
+						{
+							short value;
+							if (!elem.TryGetInt16(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof (uint))
+						{
+							uint value;
+							if (!elem.TryGetUInt32(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof (int))
+						{
+							int value;
+							if (!elem.TryGetInt32(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof(UInt64))
+						{
+							UInt64 value;
+							if (!elem.TryGetUInt64(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof(Int64))
+						{
+							Int64 value;
+							if (!elem.TryGetInt64(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof(float))
+						{
+							float value;
+							if (!elem.TryGetFloat32(0, out value) && isNullable)
+								return null;
+
+							return value;
+						}
+						else if (valueType == typeof (double))
+						{
+							double value;
+							if (!elem.TryGetFloat64(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+						else if (valueType == typeof(DateTime))
+						{
+							DateTime value;
+							if (!elem.TryGetDateTime(0, out value) && isNullable)
+								return null;
+							return value;
+						}
+					}
+                	
+					if (vtype != elem.GetValueType())
                     {
                         if (vtype == typeof(DicomUid) && elem.Tag.VR == DicomVr.UIvr)
                         {
@@ -826,12 +863,6 @@ namespace ClearCanvas.Dicom
                         else if (vtype == typeof(TransferSyntax) && elem.Tag.VR == DicomVr.UIvr)
                         {
                             return TransferSyntax.GetTransferSyntax(elem.ToString());
-                        }
-                        else if (vtype == typeof(DateTime))
-                        {
-                            DateTime dt;
-                            elem.TryGetDateTime(0, out dt);
-                            return dt;
                         }
                         //else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AttributeMultiValueText)))
                         //{
@@ -958,7 +989,7 @@ namespace ClearCanvas.Dicom
                     }
                     else
                     {
-                        if (elem.Tag.VR == DicomVr.UIvr && vtype == typeof(DicomUid))
+                    	if (elem.Tag.VR == DicomVr.UIvr && vtype == typeof(DicomUid))
                         {
                             DicomUid ui = (DicomUid)value;
                             elem.SetStringValue(ui.UID);
@@ -975,20 +1006,41 @@ namespace ClearCanvas.Dicom
                       //  }
                         else if (vtype != elem.GetValueType())
                         {
-                            if (vtype == typeof(string))
-                            {
-                                elem.SetStringValue((string)value);
-                            }
-                            else if (vtype == typeof(UInt16))
-                                elem.SetUInt16(0, (UInt16) value);
-                            else if (vtype == typeof(Int16))
-                                elem.SetInt16(0, (Int16)value);
-                            else if (vtype == typeof(UInt32))
-                                elem.SetUInt32(0, (UInt32)value);
-                            else if (vtype == typeof(Int32))
-                                elem.SetInt32(0, (Int32)value);
-                            else
-                                throw new DicomDataException("Invalid binding type for Element VR!");
+							if (vtype == typeof(string))
+							{
+								elem.SetStringValue((string)value);
+							}
+							else
+							{
+								Type nullableType;
+								if (null != (nullableType = Nullable.GetUnderlyingType(vtype)) || vtype.IsValueType)
+								{
+									Type valueType = nullableType ?? vtype;
+
+									if (valueType == typeof (UInt16))
+										elem.SetUInt16(0, (UInt16) value);
+									else if (valueType == typeof(Int16))
+										elem.SetInt16(0, (Int16) value);
+									else if (valueType == typeof(UInt32))
+										elem.SetUInt32(0, (UInt32) value);
+									else if (valueType == typeof(Int32))
+										elem.SetInt32(0, (Int32) value);
+									else if (valueType == typeof(Int64))
+										elem.SetInt64(0, (Int64)value);
+									else if (valueType == typeof(UInt64))
+										elem.SetUInt64(0, (UInt64)value);
+									else if (valueType == typeof(float))
+										elem.SetFloat32(0, (float)value);
+									else if (valueType == typeof(double))
+										elem.SetFloat64(0, (double)value);
+									else if (valueType == typeof(DateTime))
+										elem.SetDateTime(0, (DateTime)value);
+									else
+										throw new DicomDataException("Invalid binding type for Element VR!");
+								}
+								else
+									throw new DicomDataException("Invalid binding type for Element VR!");
+							}
                         }
                         else
                         {

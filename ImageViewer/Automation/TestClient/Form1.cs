@@ -353,10 +353,10 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient
 
 	public class StudyItem : INotifyPropertyChanged
 	{
-		private readonly StudyIdentifier _study;
+		private readonly StudyRootStudyIdentifier _study;
 		private readonly BindingList<Guid> _activeSessions;
 
-		public StudyItem(StudyIdentifier study)
+		public StudyItem(StudyRootStudyIdentifier study)
 		{
 			_study = study;
 			_activeSessions = new BindingList<Guid>();

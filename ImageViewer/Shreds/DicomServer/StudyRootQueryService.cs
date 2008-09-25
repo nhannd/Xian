@@ -1,17 +1,41 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
-namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
+namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-	internal static class QueryHelper
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, Namespace = ClearCanvas.Dicom.ServiceModel.Query.QueryNamespace.Value)]
+	public class StudyRootQueryService : IStudyRootQuery
 	{
-		public static IList<T> Query<T>(T identifier) where T : Identifier, new()
+		public StudyRootQueryService()
+		{
+		}
+
+		#region IStudyRootQuery Members
+
+		IList<StudyRootStudyIdentifier> IStudyRootQuery.StudyQuery(StudyRootStudyIdentifier queryQriteria)
+		{
+			return Query(queryQriteria);
+		}
+
+		IList<SeriesIdentifier> IStudyRootQuery.SeriesQuery(SeriesIdentifier queryQriteria)
+		{
+			return Query(queryQriteria);
+		}
+
+		IList<ImageIdentifier> IStudyRootQuery.ImageQuery(ImageIdentifier queryQriteria)
+		{
+			return Query(queryQriteria);
+		}
+
+		#endregion
+
+		private static IList<T> Query<T>(T identifier) where T : Identifier, new()
 		{
 			if (identifier == null)
 			{
@@ -24,6 +48,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			try
 			{
 				queryCriteria = identifier.ToDicomAttributeCollection();
+
+				Console.WriteLine("Request:");
+				Console.WriteLine(queryCriteria.DumpString);
+				Console.WriteLine();
 			}
 			catch (DicomException e)
 			{
@@ -42,13 +70,27 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			try
 			{
+				DicomServerConfiguration serverConfiguration = DicomServerManager.Instance.GetServerConfiguration();
+
 				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 				{
 					IEnumerable<DicomAttributeCollection> results = reader.Query(queryCriteria);
 
 					List<T> queryResults = new List<T>();
 					foreach (DicomAttributeCollection result in results)
-						queryResults.Add(Identifier.FromDicomAttributeCollection<T>(result));
+					{
+						if (queryResults.Count == 0)
+						{
+							Console.WriteLine("Reply (first):");
+							Console.WriteLine(result.DumpString);
+							Console.WriteLine();
+						}
+
+						T queryResult = Identifier.FromDicomAttributeCollection<T>(result);
+						queryResult.InstanceAvailability = "ONLINE";
+						queryResult.RetrieveAeTitle = serverConfiguration.AETitle;
+						queryResults.Add(queryResult);
+					}
 
 					return queryResults;
 				}

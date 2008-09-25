@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.SeriesIdentifier))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.ImageIdentifier))]
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     public partial class SeriesIdentifier : ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.Identifier
     {
@@ -101,18 +101,12 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
         private System.Nullable<int> NumberOfSeriesRelatedInstancesField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SeriesDateField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SeriesDescriptionField;
         
         private string SeriesInstanceUidField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string SeriesNumberField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string SeriesTimeField;
         
         private string StudyInstanceUidField;
         
@@ -139,19 +133,6 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
             set
             {
                 this.NumberOfSeriesRelatedInstancesField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SeriesDate
-        {
-            get
-            {
-                return this.SeriesDateField;
-            }
-            set
-            {
-                this.SeriesDateField = value;
             }
         }
         
@@ -194,19 +175,6 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
             }
         }
         
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string SeriesTime
-        {
-            get
-            {
-                return this.SeriesTimeField;
-            }
-            set
-            {
-                this.SeriesTimeField = value;
-            }
-        }
-        
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
         public string StudyInstanceUid
         {
@@ -222,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     public partial class ImageIdentifier : ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.Identifier
     {
@@ -230,6 +198,8 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
         private System.Nullable<int> InstanceNumberField;
         
         private string SeriesInstanceUidField;
+        
+        private string SopClassUidField;
         
         private string SopInstanceUidField;
         
@@ -262,6 +232,19 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string SopClassUid
+        {
+            get
+            {
+                return this.SopClassUidField;
+            }
+            set
+            {
+                this.SopClassUidField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
         public string SopInstanceUid
         {
             get
@@ -289,7 +272,7 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.StudyRootStudyIdentifier))]
     public partial class StudyIdentifier : ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.Identifier
@@ -306,21 +289,6 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private System.Nullable<int> NumberOfStudyRelatedSeriesField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PatientIdField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PatientsBirthDateField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PatientsBirthTimeField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PatientsNameField;
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PatientsSexField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string StudyDateField;
@@ -385,71 +353,6 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
             set
             {
                 this.NumberOfStudyRelatedSeriesField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PatientId
-        {
-            get
-            {
-                return this.PatientIdField;
-            }
-            set
-            {
-                this.PatientIdField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PatientsBirthDate
-        {
-            get
-            {
-                return this.PatientsBirthDateField;
-            }
-            set
-            {
-                this.PatientsBirthDateField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PatientsBirthTime
-        {
-            get
-            {
-                return this.PatientsBirthTimeField;
-            }
-            set
-            {
-                this.PatientsBirthTimeField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PatientsName
-        {
-            get
-            {
-                return this.PatientsNameField;
-            }
-            set
-            {
-                this.PatientsNameField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PatientsSex
-        {
-            get
-            {
-                return this.PatientsSexField;
-            }
-            set
-            {
-                this.PatientsSexField = value;
             }
         }
         
@@ -520,14 +423,94 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     public partial class StudyRootStudyIdentifier : ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.StudyIdentifier
     {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PatientIdField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PatientsBirthDateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PatientsBirthTimeField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PatientsNameField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PatientsSexField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PatientId
+        {
+            get
+            {
+                return this.PatientIdField;
+            }
+            set
+            {
+                this.PatientIdField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PatientsBirthDate
+        {
+            get
+            {
+                return this.PatientsBirthDateField;
+            }
+            set
+            {
+                this.PatientsBirthDateField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PatientsBirthTime
+        {
+            get
+            {
+                return this.PatientsBirthTimeField;
+            }
+            set
+            {
+                this.PatientsBirthTimeField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PatientsName
+        {
+            get
+            {
+                return this.PatientsNameField;
+            }
+            set
+            {
+                this.PatientsNameField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PatientsSex
+        {
+            get
+            {
+                return this.PatientsSexField;
+            }
+            set
+            {
+                this.PatientsSexField = value;
+            }
+        }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     public partial class DataValidationFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
@@ -565,7 +548,7 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
     public partial class QueryFailedFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
@@ -602,32 +585,29 @@ namespace ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
-    [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/contracts/query", ConfigurationName="ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.IStudyRootQuery", SessionMode=System.ServiceModel.SessionMode.NotAllowed)]
+    [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query", ConfigurationName="ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.IStudyRootQuery", SessionMode=System.ServiceModel.SessionMode.NotAllowed)]
     public interface IStudyRootQuery
     {
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/StudyQuery", ReplyAction="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/StudyQueryRespons" +
-            "e")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/StudyQueryDataVal" +
-            "idationFaultFault", Name="DataValidationFault")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/StudyQueryQueryFa" +
-            "iledFaultFault", Name="QueryFailedFault")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryDataValidationFau" +
+            "ltFault", Name="DataValidationFault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryQueryFailedFaultF" +
+            "ault", Name="QueryFailedFault")]
         System.ComponentModel.BindingList<ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.StudyRootStudyIdentifier> StudyQuery(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.StudyRootStudyIdentifier queryQriteria);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/SeriesQuery", ReplyAction="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/SeriesQueryRespon" +
-            "se")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/SeriesQueryQueryF" +
-            "ailedFaultFault", Name="QueryFailedFault")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/SeriesQueryDataVa" +
-            "lidationFaultFault", Name="DataValidationFault")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryDataValidationFa" +
+            "ultFault", Name="DataValidationFault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryQueryFailedFault" +
+            "Fault", Name="QueryFailedFault")]
         System.ComponentModel.BindingList<ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.SeriesIdentifier> SeriesQuery(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.SeriesIdentifier queryQriteria);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/ImageQuery", ReplyAction="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/ImageQueryRespons" +
-            "e")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/ImageQueryDataVal" +
-            "idationFaultFault", Name="DataValidationFault")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/contracts/query/IStudyRootQuery/ImageQueryQueryFa" +
-            "iledFaultFault", Name="QueryFailedFault")]
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryQueryFailedFaultF" +
+            "ault", Name="QueryFailedFault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryDataValidationFau" +
+            "ltFault", Name="DataValidationFault")]
         System.ComponentModel.BindingList<ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.ImageIdentifier> ImageQuery(ClearCanvas.ImageViewer.Automation.TestClient.StudyRootQuery.ImageIdentifier queryQriteria);
     }
     

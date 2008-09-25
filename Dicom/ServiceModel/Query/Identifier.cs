@@ -5,24 +5,37 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public abstract class Identifier
 	{
+		#region Private Fields
+
 		private string _specificCharacterSet = "";
 		private string _retrieveAeTitle = "";
 		private string _instanceAvailability = "";
+
+		#endregion
+
+		#region Internal Constructors
 
 		internal Identifier()
 		{
 		}
 
-		protected Identifier(DicomAttributeCollection attributes)
+		internal Identifier(DicomAttributeCollection attributes)
 		{
 			Initialize(attributes);
+		}
+
+		#endregion
+
+		internal void Initialize(DicomAttributeCollection attributes)
+		{
+			attributes.LoadDicomFields(this);
 		}
 
 		#region Public Properties
 
 		public abstract string QueryRetrieveLevel { get; }
 
-		[DicomField(DicomTags.SpecificCharacterSet, CreateEmptyElement = true)]
+		[DicomField(DicomTags.SpecificCharacterSet)] //only include in rq when set explicitly.
 		[DataMember(IsRequired = false)]
 		public string SpecificCharacterSet
 		{
@@ -30,7 +43,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _specificCharacterSet = value; }
 		}
 
-		[DicomField(DicomTags.RetrieveAeTitle, CreateEmptyElement = true)]
+		[DicomField(DicomTags.RetrieveAeTitle)]
 		[DataMember(IsRequired = false)]
 		public string RetrieveAeTitle
 		{
@@ -38,7 +51,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _retrieveAeTitle = value; }
 		}
 
-		[DicomField(DicomTags.InstanceAvailability, CreateEmptyElement = true)]
+		[DicomField(DicomTags.InstanceAvailability)]
 		[DataMember(IsRequired = false)]
 		public string InstanceAvailability
 		{
@@ -47,6 +60,8 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		}
 
 		#endregion
+
+		#region Public Methods
 
 		public DicomAttributeCollection ToDicomAttributeCollection()
 		{
@@ -69,9 +84,6 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return identifier;
 		}
 
-		internal void Initialize(DicomAttributeCollection attributes)
-		{
-			attributes.LoadDicomFields(this);
-		}
+		#endregion
 	}
 }
