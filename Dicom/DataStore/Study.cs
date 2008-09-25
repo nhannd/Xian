@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -61,7 +62,7 @@ namespace ClearCanvas.Dicom.DataStore
     	private DateTime? _studyDate;
 		private string _studyDateRaw;
     	private string _studyTimeRaw;
-		private string _modalitiesInStudy;
+		private ReadOnlyCollection<string> _modalitiesInStudy;
 		private int _numberOfStudyRelatedInstances;
 		private int _numberOfStudyRelatedSeries;
 		private string _specificCharacterSet;
@@ -93,6 +94,12 @@ namespace ClearCanvas.Dicom.DataStore
         {
             get { return _studyOid; }
 			set { _studyOid = value; }
+		}
+
+		public virtual string SpecificCharacterSet
+		{
+			get { return _specificCharacterSet; }
+			set { SetClassMember(ref _specificCharacterSet, value); }
 		}
 
 		[QueryableProperty(DicomTags.StudyInstanceUid, IsUnique = true)]
@@ -180,8 +187,15 @@ namespace ClearCanvas.Dicom.DataStore
 		[QueryableProperty(DicomTags.ModalitiesInStudy)]
 		public virtual string ModalitiesInStudy
 		{
-			get { return _modalitiesInStudy; }
-			set { SetClassMember(ref _modalitiesInStudy, value); }
+			get { return DicomStringHelper.GetDicomStringArray((this as IStudy).ModalitiesInStudy); }
+			set
+			{
+				if (ModalitiesInStudy != value)
+				{
+					_modalitiesInStudy = new ReadOnlyCollection<string>(DicomStringHelper.GetStringArray(value ?? ""));
+					OnChanged();
+				}
+			}
 		}
 
 		[QueryableProperty(DicomTags.NumberOfStudyRelatedSeries)]
@@ -211,17 +225,6 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _procedureCodeSequenceCodingSchemeDesignator; }
 			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
 		}
-
-		//TODO: not actually supposed to query on this tag, but it should be used to convert
-		//the values in the query response.  It also tells us what encoding should be used for the request values.
-
-		//Note: not actually a required tag, but we want it to be returned.
-		[QueryableProperty(DicomTags.SpecificCharacterSet, IsRequired = true)]
-		public virtual string SpecificCharacterSet
-    	{
-    		get { return _specificCharacterSet; }
-			set { SetClassMember(ref _specificCharacterSet, value); }
-    	}
 
 		public virtual DateTime? StoreTime
         {
@@ -314,10 +317,15 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _studyTimeRaw; }
 		}
 
-		string[] IStudy.ModalitiesInStudy
+		ReadOnlyCollection<string> IStudy.ModalitiesInStudy
 		{
-			//TODO: see if you can make the member field an array and return a dicom string array from the NHibernate property.
-			get { return DicomStringHelper.GetStringArray(_modalitiesInStudy ?? ""); }	
+			get
+			{
+				if (_modalitiesInStudy == null)
+					_modalitiesInStudy = new ReadOnlyCollection<string>(new string[]{});
+
+				return _modalitiesInStudy;
+			}	
 		}
 
 		public DateTime? GetStoreTime()
@@ -404,7 +412,7 @@ namespace ClearCanvas.Dicom.DataStore
 					ProcedureCodeSequenceCodeValue = sequence[DicomTags.CodeValue].ToString();
 					ProcedureCodeSequenceCodingSchemeDesignator = sequence[DicomTags.CodingSchemeDesignator].ToString();
 				}
-			}
+			}	
 
 			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
 			SpecificCharacterSet = attribute.ToString();

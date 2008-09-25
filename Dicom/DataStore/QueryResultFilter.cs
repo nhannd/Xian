@@ -7,15 +7,19 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public partial class DataAccessLayer
 	{
+		internal delegate string GetSpecificCharacterSetDelegate<T>(T item);
+
 		internal class QueryResultFilter<T>
 		{
 			private readonly QueryCriteria _queryCriteria;
 			private readonly IEnumerable<T> _resultCandidates;
+			private readonly GetSpecificCharacterSetDelegate<T> _getSpecificCharacterSetDelegate;
 
-			public QueryResultFilter(QueryCriteria queryCriteria, IEnumerable<T> resultCandidates)
+			public QueryResultFilter(QueryCriteria queryCriteria, IEnumerable<T> resultCandidates, GetSpecificCharacterSetDelegate<T> getSpecificCharacterSetDelegate)
 			{
 				_queryCriteria = queryCriteria;
 				_resultCandidates = resultCandidates;
+				_getSpecificCharacterSetDelegate = getSpecificCharacterSetDelegate;
 			}
 
 			public List<DicomAttributeCollection> GetResults()
@@ -34,6 +38,13 @@ namespace ClearCanvas.Dicom.DataStore
 			private DicomAttributeCollection GetResult(T candidate)
 			{
 				DicomAttributeCollection result = new DicomAttributeCollection();
+
+				string specificCharacterSet = _getSpecificCharacterSetDelegate(candidate);
+				if (!String.IsNullOrEmpty(specificCharacterSet))
+				{
+					result.SpecificCharacterSet = specificCharacterSet;
+					result[DicomTags.SpecificCharacterSet].SetStringValue(specificCharacterSet);
+				}
 				result.ValidateVrLengths = false;
 				result.ValidateVrValues = false;
 
@@ -46,19 +57,7 @@ namespace ClearCanvas.Dicom.DataStore
 						continue;
 
 					object propertyValue = property.ReturnProperty.GetValue(candidate, null);
-					string[] testValues = new string[]{};
-					//TODO: this is incorrect, it's only the criteria value that should be conditionally converted to
-					//an array.  The actual property value should always be converted.
-					if (property.AllowListMatching)
-					{
-						testValues = Convert.ToStringArray(propertyValue, property.ReturnPropertyConverter);
-					}
-					else
-					{
-						string testValue = Convert.ToDicomStringArray(propertyValue, property.ReturnPropertyConverter);
-						if (testValue != null)
-							testValues = new string[] { testValue };
-					}
+					string[] testValues = Convert.ToStringArray(propertyValue, property.ReturnPropertyConverter);
 
 					if (criteria == null)
 						criteria = "";
@@ -141,9 +140,8 @@ namespace ClearCanvas.Dicom.DataStore
 						else
 						{
 							//Note: single value matching is supposed to be case-sensitive (except for PN) according to Dicom.
-							//TODO: make it always case-insensitive, to be consistent with wildcard.
 							testsPerformed = true;
-							if (criteria.Equals(test)) //single value matching.
+							if (string.Compare(criteria, test, true) == 0) //single value matching.
 								return true;
 						}
 					}

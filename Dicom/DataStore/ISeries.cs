@@ -38,6 +38,8 @@ namespace ClearCanvas.Dicom.DataStore
 		IStudy GetParentStudy();
 		IEnumerable<ISopInstance> GetSopInstances();
 
+		string SpecificCharacterSet { get; }
+
 		string SeriesInstanceUid { get; }
 
 		string Modality { get; }

@@ -91,6 +91,11 @@ namespace ClearCanvas.Dicom.DataStore
 			return _parentStudy;
 		}
 
+		public string SpecificCharacterSet
+		{
+			get { return GetFirstSopInstanceXml().Collection[DicomTags.SpecificCharacterSet].ToString(); }
+		}
+
 		[QueryableProperty(DicomTags.StudyInstanceUid, IsHigherLevelUnique = true)]
 		public string StudyInstanceUid
 		{

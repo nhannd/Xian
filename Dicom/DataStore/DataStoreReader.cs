@@ -118,7 +118,8 @@ namespace ClearCanvas.Dicom.DataStore
 					SessionManager.BeginReadTransaction();
 					IList studiesFound = Session.CreateQuery(hqlQuery).List();
 
-					QueryResultFilter<Study> filter = new QueryResultFilter<Study>(queryCriteria, Convert.Cast<Study>(studiesFound));
+					QueryResultFilter<Study> filter =
+						new QueryResultFilter<Study>(queryCriteria, Convert.Cast<Study>(studiesFound), GetSpecificCharacterSet);
 					return filter.GetResults();
 				}
 				catch (Exception e)
@@ -137,7 +138,8 @@ namespace ClearCanvas.Dicom.DataStore
 				if (study == null)
 					throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyUid));
 
-				QueryResultFilter<Series> filter = new QueryResultFilter<Series>(queryCriteria, Convert.Cast<Series>(study.GetSeries()));
+				QueryResultFilter<Series> filter = 
+					new QueryResultFilter<Series>(queryCriteria, Convert.Cast<Series>(study.GetSeries()), GetSpecificCharacterSet);
 				return filter.GetResults();
 			}
 
@@ -162,10 +164,26 @@ namespace ClearCanvas.Dicom.DataStore
 					throw new ArgumentException(message);
 				}
 
-				QueryResultFilter<SopInstance> filter = new QueryResultFilter<SopInstance>(queryCriteria, Convert.Cast<SopInstance>(series.GetSopInstances()));
+				QueryResultFilter<SopInstance> filter =
+					new QueryResultFilter<SopInstance>(queryCriteria, Convert.Cast<SopInstance>(series.GetSopInstances()), GetSpecificCharacterSet);
 				return filter.GetResults();
 			}
 
+			private static string GetSpecificCharacterSet(Study study)
+			{
+				return study.SpecificCharacterSet;
+			}
+
+			private static string GetSpecificCharacterSet(Series series)
+			{
+				return series.SpecificCharacterSet;
+			}
+
+			private static string GetSpecificCharacterSet(SopInstance sop)
+			{
+				return sop.SpecificCharacterSet;
+			}
+			
 			protected override void Dispose(bool disposing)
 			{
 				SessionManager.Commit();

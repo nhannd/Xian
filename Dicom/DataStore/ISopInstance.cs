@@ -36,6 +36,8 @@ namespace ClearCanvas.Dicom.DataStore
 		ISeries GetParentSeries();
 		DicomUri GetLocationUri();
 
+		string SpecificCharacterSet { get; }
+
 		string SopInstanceUid { get; }
 		string SopClassUid { get; }
 		int InstanceNumber { get; }
