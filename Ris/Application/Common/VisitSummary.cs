@@ -30,9 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -48,10 +46,10 @@ namespace ClearCanvas.Ris.Application.Common
             EntityRef visitRef,
             EntityRef patientRef,
             CompositeIdentifierDetail visitNumber,
-            string patientClass,
-            string patientType,
-            string admissionType,
-            string status,
+            EnumValueInfo patientClass,
+            EnumValueInfo patientType,
+            EnumValueInfo admissionType,
+            EnumValueInfo status,
             DateTime? admitTime,
             DateTime? dischargeTime,
 			FacilitySummary facility, 
@@ -80,16 +78,16 @@ namespace ClearCanvas.Ris.Application.Common
         public CompositeIdentifierDetail VisitNumber;
 
         [DataMember]
-        public string PatientClass;
+        public EnumValueInfo PatientClass;
 
         [DataMember]
-        public string PatientType;
+        public EnumValueInfo PatientType;
 
         [DataMember]
-        public string AdmissionType;
+        public EnumValueInfo AdmissionType;
 
         [DataMember]
-        public string Status;
+        public EnumValueInfo Status;
 
         [DataMember]
         public DateTime? AdmitTime;

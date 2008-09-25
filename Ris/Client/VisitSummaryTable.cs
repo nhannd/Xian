@@ -55,15 +55,15 @@ namespace ClearCanvas.Ris.Client
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append(v.PatientClass);
-                    if (!string.IsNullOrEmpty(v.PatientType))
+                    if (v.PatientType != null)
                     {
                         sb.Append(" - ");
-                        sb.Append(v.PatientType);
+                        sb.Append(v.PatientType.Value);
                     }
-                    if (!string.IsNullOrEmpty(v.AdmissionType))
+                    if (v.AdmissionType != null)
                     {
                         sb.Append(" - ");
-                        sb.Append(v.AdmissionType);
+                        sb.Append(v.AdmissionType.Value);
                     }
                     return sb.ToString();
                 },
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client
 
 			//status
             this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnStatus,
-                delegate(VisitSummary v) { return v.Status; },
+                delegate(VisitSummary v) { return v.Status.Value; },
                 1.0f));
 
             //admit date/time

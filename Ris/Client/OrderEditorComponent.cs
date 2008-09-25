@@ -513,11 +513,11 @@ namespace ClearCanvas.Ris.Client
 			}
 
             StringBuilder visitType = new StringBuilder();
-            visitType.Append(v.PatientClass);
-            if (!string.IsNullOrEmpty(v.Status))
+            visitType.Append(v.PatientClass.Value);
+            if (v.Status != null)
             {
                 visitType.Append(" - ");
-                visitType.Append(v.Status);
+                visitType.Append(v.Status.Value);
             }
 
             return string.Format("{0} {1} {2}",

@@ -49,10 +49,10 @@ namespace ClearCanvas.Ris.Application.Services
 
             summary.VisitNumber = CreateVisitNumberDetail(visit.VisitNumber);
 
-            summary.AdmissionType = visit.AdmissionType.Value;
-            summary.PatientClass = visit.PatientClass.Value;
-            summary.PatientType = visit.PatientType.Value;
-            summary.Status = EnumUtils.GetValue(visit.Status, context);
+            summary.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
+            summary.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
+            summary.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
+            summary.Status = EnumUtils.GetEnumValueInfo(visit.Status, context);
 
             summary.AdmitTime = visit.AdmitTime;
             summary.DischargeTime = visit.DischargeTime;
