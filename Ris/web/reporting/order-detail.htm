@@ -58,9 +58,9 @@
 						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 						Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
-						Field.setValue($("PerformingFacility"), formatPerformingFacilityList(orderDetail.Procedures));
+						Field.setValue($("PerformingFacility"), Preview.formatPerformingFacilityList(orderDetail.Procedures));
 						Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
-						Field.setValue($("LocationRoomBed"), formatVisitCurrentLocation(orderDetail.Visit));
+						Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
 						if (orderDetail.CancelReason)
 							Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
@@ -68,22 +68,22 @@
 							Field.show($("CancelReasonSection"), false);
 
 						if (orderDetail.Procedures.length)
-							createReportingProceduresTable($("reportingProceduresTable"), orderDetail.Procedures);
+							Preview.ReportingProceduresTable.create($("reportingProceduresTable"), orderDetail.Procedures);
 						else
 							Field.show($("reportingProceduresTable"), false);
 
 						// select CT and MRI procedures
-						var filteredProcedures = filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
 						if (filteredProcedures.length)
-							createProtocolProceduresTable($("protocolProceduresTable"), filteredProcedures);
+							Preview.ProtocolProceduresTable.create($("protocolProceduresTable"), filteredProcedures);
 						else
 							Field.show($("protocolSection"), false);
 							
 						if(orderDetail.Notes.length)
 						{
-							createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
-							createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-							createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+							Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
+							Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+							Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
 						}
 						else
 						{
@@ -103,18 +103,18 @@
 						if (orderDetail)
 							patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
 
-						var activeProcedures = getActiveProcedures(patientOrderData);
-						var pastProcedures = getNonActiveProcedures(patientOrderData);
+						var activeProcedures = Preview.getActiveProcedures(patientOrderData);
+						var pastProcedures = Preview.getNonActiveProcedures(patientOrderData);
 						
 						if (activeProcedures.length == 0)
 							Field.show($("activeProceduresSection"), false);
 						else
-							createImagingServiceTable($("activeImagingServiceTable"), activeProcedures);
+							Preview.ImagingServiceTable.create($("activeImagingServiceTable"), activeProcedures);
 						
 						if (pastProcedures.length == 0)
 							Field.show($("pastProceduresSection"), false);
 						else
-							createImagingServiceTable($("pastImagingServiceTable"), pastProcedures);
+							Preview.ImagingServiceTable.create($("pastImagingServiceTable"), pastProcedures);
 					}
 				}
 				catch(e)

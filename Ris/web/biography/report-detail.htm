@@ -52,7 +52,7 @@
 
 					var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 					if (reportDetail)
-						createReportPreview($("report"), reportDetail);
+						Preview.ReportPreview.create($("report"), reportDetail);
 					else
 						Field.show($("reportSection"), false);
 				}

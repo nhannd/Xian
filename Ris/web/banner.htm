@@ -62,7 +62,7 @@
 						Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 						Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 						Field.setValue($("agesex"), 
-							getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath) +
+							Preview.getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath) +
 							" / " + patientProfile.Sex.Value); 
 					}
 
@@ -89,7 +89,7 @@
 					if (alertNotifications)
 					{
 						var alertHtml = "";
-						alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+						alertNotifications.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
 						$("alerts").innerHTML = alertHtml;
 					}
 				}

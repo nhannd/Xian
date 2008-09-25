@@ -52,7 +52,7 @@
 						{
 							Field.setValue($("name"), patientName);
 							Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
-							Field.setValue($("age"), getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
+							Field.setValue($("age"), Preview.getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
 							Field.setValue($("sex"), patientProfile.Sex.Value);	
 							Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 							Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
@@ -68,7 +68,7 @@
 						// update alerts
 						var alertNotifications = data.GetPatientProfileDetailResponse.PatientAlerts;
 						var alertHtml = "";
-						alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+						alertNotifications.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
 						$("alerts").innerHTML = alertHtml;
 						
 						initAddressTable($("addressTable"), data.GetPatientProfileDetailResponse.PatientProfile.Addresses); 

@@ -58,7 +58,7 @@
 						var patientProfile = serviceData.GetPatientProfileDetailResponse.PatientProfile;
 						if (patientProfile)
 						{
-							_creatinineAge = getPatientAgeInYears(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath);
+							_creatinineAge = Preview.getPatientAgeInYears(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath);
 							_creatinineSex = patientProfile.Sex.Value; 
 						}
 						

@@ -53,9 +53,9 @@
 						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
 						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
 						Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
-						Field.setValue($("PerformingFacility"), formatPerformingFacilityList(orderDetail.Procedures));
+						Field.setValue($("PerformingFacility"), Preview.formatPerformingFacilityList(orderDetail.Procedures));
 						Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
-						Field.setValue($("LocationRoomBed"), formatVisitCurrentLocation(orderDetail.Visit));
+						Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
 						Field.setValue($("SchedulingRequestDateTime"), Ris.formatDateTime(orderDetail.SchedulingRequestTime));
 						Field.setValue($("EnteredDateTime"), Ris.formatDateTime(orderDetail.EnteredTime));
 						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
@@ -66,9 +66,9 @@
 
 						if(orderDetail.Notes.length)
 						{
-							createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
-							createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-							createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+							Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
+							Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+							Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
 						}
 						else
 							Field.show($("notesSection"), false);
@@ -98,7 +98,7 @@
 							getValue: function(item) 
 							{
 								// Write values to the hidden procedure template table
-								Field.setValue($("ProcedureTypeName"), formatProcedureName(item.Type, item.Portable, item.Laterality));
+								Field.setValue($("ProcedureTypeName"), Preview.formatProcedureName(item.Type, item.Portable, item.Laterality));
 								Field.setValue($("ProcedurePerformingFacility"), item.PerformingFacility.Name);
 								Field.setValue($("ProcedureStatus"), item.Status.Value);
 								Field.setValue($("ProcedureScheduledStartTime"), Ris.formatDateTime(item.ScheduledStartTime));

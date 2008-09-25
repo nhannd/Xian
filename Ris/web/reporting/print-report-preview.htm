@@ -91,7 +91,7 @@
 				{
 					var procedure = reportDetail.Procedures[0];
 					createReportLetterhead(procedure.PerformingFacility ? procedure.PerformingFacility.Code : null);
-					createReportPreview($("preview"), reportDetail);
+					Preview.ReportPreview.create($("preview"), reportDetail);
 				}
 				
 				var procedures = reportDetail ? reportDetail.Procedures : orderDetail.Procedures;

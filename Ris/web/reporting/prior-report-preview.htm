@@ -46,14 +46,14 @@
 					var data = service.getData(request);
 
 					var report = data.GetReportDetailResponse.Report;
-					createReportPreview($("preview"), report);
+					Preview.ReportPreview.create($("preview"), report);
 
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					if(orderDetail.Notes.length)
 					{
-						createOrderNotesTable($("generaNotesTable"), orderDetail.Notes, "General");
-						createOrderNotesTable($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-						createOrderNotesTable($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+						Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
+						Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+						Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
 					}
 					else
 						Field.show($("notesSection"), false);
