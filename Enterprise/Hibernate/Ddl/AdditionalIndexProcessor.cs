@@ -27,6 +27,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             Dictionary<string, Table> tables = GetTables(store);
 
             // create a resource resolver that will scan all plugins
+			// TODO: we should only scan plugins that are tied to the specified PersistentStore, but there is currently no way to know this
             IResourceResolver resolver = new ResourceResolver(
                 CollectionUtils.Map<PluginInfo, Assembly>(Platform.PluginManager.Plugins,
                     delegate(PluginInfo pi) { return pi.Assembly; }).ToArray());

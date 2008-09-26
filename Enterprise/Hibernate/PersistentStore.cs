@@ -66,7 +66,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 
             // add each assembly to the hibernate configuration
             // this tells NHibernate to look for .hbm.xml embedded resources in these assemblies
-            AssembliesHbmOrderer orderer = new AssembliesHbmOrderer(Platform.PluginManager.Plugins);
+			// TODO: we should only scan plugins that are tied to this PersistentStore, but there is currently no way to know this
+			AssembliesHbmOrderer orderer = new AssembliesHbmOrderer(Platform.PluginManager.Plugins);
             orderer.AddToConfiguration(_cfg);
  
             // if a second-level cache has been specified
