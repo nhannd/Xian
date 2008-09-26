@@ -52,8 +52,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// <param name="scu">The Storage SCU component doing an autoroute.</param>
         protected virtual void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
-            LoadStorageLocation(item);
-            string studyPath = StorageLocation.GetStudyPath();
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing AutoRoute WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
+
+			string studyPath = StorageLocation.GetStudyPath();
 
             StudyXml studyXml = LoadStudyXml(StorageLocation);
 

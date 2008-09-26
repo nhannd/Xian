@@ -35,6 +35,7 @@ using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -93,7 +94,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.Data, "item.Data");
 
-            LoadStorageLocation(item);
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing WebEditStudy WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
 
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
@@ -137,7 +143,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                             ctx.Patient = Patient;
                             ctx.Partition = Partition;
                             ctx.StorageLocation = StorageLocation;
-                            ctx.OriginalStorageLocation = LoadStorageLocation(item)[0];// copy
+
+                        	StudyStorageLocation originalLocation;
+                        	FilesystemMonitor.Instance.GetStudyStorageLocation(item.StudyStorageKey,
+																			   out originalLocation);
+							ctx.OriginalStorageLocation = originalLocation; // copy
 							ctx.NewStudyXml = new ClearCanvas.Dicom.Utilities.Xml.StudyXml();
 
                             // output folder = temp\ImageServer\EditStudy\.....

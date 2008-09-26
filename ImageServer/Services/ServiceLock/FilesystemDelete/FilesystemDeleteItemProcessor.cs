@@ -208,11 +208,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     return;
 
                 // First, get the StudyStorage locations for the study, and calculate the disk usage.
-                IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
-                studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-                StudyStorageLocation location = studyStorageQuery.FindOne(studyStorageParms);
-                
+                StudyStorageLocation location;
+				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+					continue;
+
                 // Get the disk usage
                 float studySize = CalculateFolderSize(location.GetStudyPath());
 
@@ -260,10 +259,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					break;
 				
 				// First, get the StudyStorage locations for the study, and calculate the disk usage.
-				IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
-				StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
-				studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-				StudyStorageLocation location  = studyStorageQuery.FindOne(studyStorageParms);
+				StudyStorageLocation location;
+				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+					continue;
 
 				// Get the disk usage
 				float studySize = CalculateFolderSize(location.GetStudyPath());
@@ -320,10 +318,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         		}
 
         		// First, get the StudyStorage locations for the study, and calculate the disk usage.
-        		IQueryStudyStorageLocation studyStorageQuery = ReadContext.GetBroker<IQueryStudyStorageLocation>();
-        		StudyStorageLocationQueryParameters studyStorageParms = new StudyStorageLocationQueryParameters();
-        		studyStorageParms.StudyStorageKey = queueItem.StudyStorageKey;
-				StudyStorageLocation location = studyStorageQuery.FindOne(studyStorageParms);
+				StudyStorageLocation location;
+				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+					continue;
 
         		// Get the disk usage
         		float studySize = CalculateFolderSize(location.GetStudyPath());

@@ -195,35 +195,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		}
 
         /// <summary>
-        /// Retrieves the storage location fromthe database for the specified study.
-        /// </summary>
-        /// <param name="studyInstanceUid">The Study to check for.</param>
-        /// <param name="location">The returned storage location.</param>
-        /// <returns>true if a location was found, false otherwise.</returns>
-        public bool GetStudyStorageLocation( string studyInstanceUid, out StudyStorageLocation location)
-        {
-            using (IReadContext read = _store.OpenReadContext())
-            {
-                IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-                parms.ServerPartitionKey = Partition.GetKey();
-                parms.StudyInstanceUid = studyInstanceUid;
-                IList<StudyStorageLocation> locationList = procedure.Find(parms);
-
-                foreach (StudyStorageLocation studyLocation in locationList)
-                {
-					if (FilesystemMonitor.Instance.CheckFilesystemReadable(studyLocation.FilesystemKey))
-                    {
-                        location = studyLocation;
-                        return true;
-                    }
-                }
-                location = null;
-                return false;
-            }
-        }
-
-        /// <summary>
         /// Checks for a storage location for the study in the database, and creates a new location
         /// in the database if it doesn't exist.
         /// </summary>

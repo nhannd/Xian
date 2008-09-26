@@ -213,8 +213,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.StudyStorageKey, "item.StudyStorageKey");
-            
-            LoadStorageLocation(item);
+
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing ReprocessStudy WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
 
 			try
 			{

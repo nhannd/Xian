@@ -42,7 +42,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 {
 
-	public class PurgeStudyItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
+	public class PurgeStudyItemProcessor : BaseItemProcessor
 	{
 		#region Private Members
 
@@ -53,25 +53,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 		#region Private Methods
 		private void RemoveFilesystem()
 		{
-			foreach (StudyStorageLocation location in StorageLocationList)
+			string path = StorageLocation.GetStudyPath();
+			try
 			{
-				string path = location.GetStudyPath();
-				try
+				if (Directory.Exists(path))
 				{
-					if (Directory.Exists(path))
-					{
-						Directory.Delete(path, true);
+					Directory.Delete(path, true);
 
-						DirectoryInfo info = Directory.GetParent(path);
-						DirectoryInfo[] subdirs = info.GetDirectories();
-						if (subdirs.Length == 0)
-							Directory.Delete(info.FullName);
-					}
+					DirectoryInfo info = Directory.GetParent(path);
+					DirectoryInfo[] subdirs = info.GetDirectories();
+					if (subdirs.Length == 0)
+						Directory.Delete(info.FullName);
 				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error, e, "Unexpected exception when trying to delete directory: {0}", path);
-				}
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when trying to delete directory: {0}", path);
 			}
 		}
 
@@ -105,7 +102,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
             //Load the storage location.
-            LoadStorageLocation(item);
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing PurgeStudy WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
 
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);

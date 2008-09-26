@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
@@ -63,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private TimeSpanStatistics _studyXmlLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _processTime = new TimeSpanStatistics();
         private Model.WorkQueue _workQueueItem;
-        private IList<StudyStorageLocation> _storageLocationList;
+        private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
 
         #region Protected Properties
@@ -75,7 +74,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         protected StudyStorageLocation StorageLocation
         {
-            get { return _storageLocationList[0]; }
+            get { return _storageLocation; }
+			set { _storageLocation = value; }
         }
 
         protected IList<WorkQueueUid> WorkQueueUidList
@@ -119,13 +119,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             set { _name = value; }
         }
 
-        protected IList<StudyStorageLocation> StorageLocationList
-        {
-            get { 
-                return _storageLocationList; 
-            }
-        }
-
         protected Model.WorkQueue WorkQueueItem
         {
             get { return _workQueueItem; }
@@ -148,33 +141,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// Load the storage location for the WorkQueue item.
         /// </summary>
         /// <param name="item">The item to load the location for.</param>
-        protected IList<StudyStorageLocation> LoadStorageLocation(Model.WorkQueue item)
+        protected bool LoadStorageLocation(Model.WorkQueue item)
         {
-            IList<StudyStorageLocation> list = null;
+        	bool found = false;
             StorageLocationLoadTime.Add(
                 delegate
                     {
-                        IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
-
-                        StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-                        parms.StudyStorageKey = item.StudyStorageKey;
-
-                        list = select.Find(parms);
-
-                        if (list.Count == 0)
-                        {
-                            Platform.Log(LogLevel.Error, "Unable to find storage location for WorkQueue item: {0}",
-                                         item.GetKey().ToString());
-                            throw new ApplicationException("Unable to find storage location for WorkQueue item.");
-                        }
+                    	found = FilesystemMonitor.Instance.GetStudyStorageLocation(item.StudyStorageKey, out _storageLocation);
                     }
                 );
 
-            
-            Debug.Assert(list != null && list.Count> 0);
-
-            _storageLocationList = list;
-            return list;
+        	return found;
         }
 
         /// <summary>

@@ -109,7 +109,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             Platform.CheckForNullReference(item, "item");
 
             //Load the storage location.
-            LoadStorageLocation(item);
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing TierMigrate WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
                 
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
@@ -136,7 +141,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             {
                 try
                 {
-                    DoMigrateStudies(StorageLocationList);
+                    DoMigrateStudy(StorageLocation);
                     PostProcessing(item, false, true);
                 }
                 catch (Exception e)
@@ -147,17 +152,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             
             
         }
-
-        private void DoMigrateStudies(IList<StudyStorageLocation> storages)
-        {
-            foreach(StudyStorageLocation storage in storages)
-            {
-                DoMigrateStudy(storage);
-            }
-            
-            
-        }
-
 
         private void DoMigrateStudy(StudyStorageLocation storage)
         {

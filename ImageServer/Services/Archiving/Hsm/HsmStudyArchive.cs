@@ -39,8 +39,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
@@ -60,7 +58,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		}
 		private StudyXml _studyXml;
 		private StudyStorageLocation _storageLocation;
-		private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
 		private readonly HsmArchive _hsmArchive;
 		private XmlDocument _archiveXml;
 		private ServerRulesEngine _rulesEngine;
@@ -70,16 +67,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// </summary>
 		/// <param name="queueItem">The queueItem.</param>
 		/// <returns>true if a location was found, false otherwise.</returns>
-		public void GetStudyStorageLocation(ArchiveQueue queueItem)
+		public bool GetStudyStorageLocation(ArchiveQueue queueItem)
 		{
-			using (IReadContext read = _store.OpenReadContext())
-			{
-				IQueryStudyStorageLocation procedure = read.GetBroker<IQueryStudyStorageLocation>();
-				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-				parms.StudyStorageKey = queueItem.StudyStorageKey;
-				_storageLocation = procedure.FindOne(parms);
-				return;
-			}
+			return FilesystemMonitor.Instance.GetStudyStorageLocation(queueItem.StudyStorageKey, out _storageLocation);
 		}
 
 		/// <summary>
@@ -113,7 +103,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				_rulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, _hsmArchive.ServerPartition.GetKey());
 				_rulesEngine.Load();
 
-				GetStudyStorageLocation(queueItem);
+				if (!GetStudyStorageLocation(queueItem))
+				{
+					Platform.Log(LogLevel.Error,
+					             "Unable to find reading study storage location for archival queue request {0}.  Delaying request.",
+					             queueItem.Key);
+					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
+					return;
+				}
 
 				string studyFolder = _storageLocation.GetStudyPath();
 

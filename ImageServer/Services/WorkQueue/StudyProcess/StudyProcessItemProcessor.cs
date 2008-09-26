@@ -783,7 +783,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
             
                                 //Load the storage location.
-                                LoadStorageLocation(item);
+								if (!LoadStorageLocation(item))
+								{
+									Platform.Log(LogLevel.Warn, "Unable to find readable location when processing StudyProcess WorkQueue item, rescheduling");
+									PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+									return;
+								}
 
                                 _context.StorageLocation = StorageLocation;
                                 

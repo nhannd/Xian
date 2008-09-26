@@ -30,14 +30,11 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.ServiceModel;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
-using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
@@ -78,50 +75,44 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 
             HeaderLoader loader = null;
 
-            try
-            {
-                Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
-                Platform.CheckForNullReference(parameters, "parameters");
-                Platform.CheckForEmptyString(parameters.ReferenceID, "parameters.ReferenceID");
-                Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
-                Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
+			try
+			{
+				Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
+				Platform.CheckForNullReference(parameters, "parameters");
+				Platform.CheckForEmptyString(parameters.ReferenceID, "parameters.ReferenceID");
+				Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
+				Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
 
-                Platform.Log(LogLevel.Debug, "Received request from {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
+				Platform.Log(LogLevel.Debug, "Received request from {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
 
-                HeaderStreamingContext context = new HeaderStreamingContext();
-                context.ServiceInstanceID = ID;
-                context.CallerAE = callingAETitle;
-                context.Parameters = parameters;
+				HeaderStreamingContext context = new HeaderStreamingContext();
+				context.ServiceInstanceID = ID;
+				context.CallerAE = callingAETitle;
+				context.Parameters = parameters;
 
-                // TODO: perform permission check on callingAETitle
+				// TODO: perform permission check on callingAETitle
 
-                loader = new HeaderLoader(context);
-                if (loader.StudyExists)
-                {
-                    Stream stream = loader.Load();
-                    Debug.Assert(stream != null);
+				loader = new HeaderLoader(context);
+				Stream stream = loader.Load();
+				if (stream == null)
+					throw new FaultException(
+						String.Format("Study {0} does not exist on partition {1}", parameters.StudyInstanceUID, parameters.ServerAETitle));
 
-                    //Random r = new Random();
-                    //Thread.Sleep(r.Next(2000));
-                    return stream;
-                }
-                else
-                {
-                    throw new FaultException(
-                        String.Format("Study {0} does not exist on partition {1}", parameters.StudyInstanceUID, parameters.ServerAETitle));
-                }
-            }
-            catch (ArgumentException e)
-            {
-                throw new FaultException(e.Message);
-            }
-            catch (Exception e)
-            {
-                if (! (e is FaultException))
-                    Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
+				//Random r = new Random();
+				//Thread.Sleep(r.Next(2000));
+				return stream;
+			}
+			catch (ArgumentException e)
+			{
+				throw new FaultException(e.Message);
+			}
+			catch (Exception e)
+			{
+				if (!(e is FaultException))
+					Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
 
-                throw new FaultException(e.Message);
-            }
+				throw new FaultException(e.Message);
+			}
             finally
             {
                 stats.ProcessTime.End();
@@ -136,16 +127,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             }
         }
 
-        void Channel_Opened(object sender, EventArgs e)
-        {
-            Console.WriteLine("****************** CHANNEL OPENING ******************");
-        }
-
-        void Channel_Closing(object sender, EventArgs e)
-        {
-            Console.WriteLine("****************** CHANNEL CLOSEING ******************");
-        }
-
-        #endregion
+    	#endregion
     }
 }

@@ -54,9 +54,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 throw new WADOException(HttpStatusCode.NotFound, String.Format("Server {0} does not exist", serverAE));
 
             if (!partition.Enabled)
-            {
                 throw new WADOException(HttpStatusCode.Forbidden, String.Format("Server {0} has been disabled", serverAE));
-            }
             
             ImageStreamingContext context = new ImageStreamingContext();
             context.ServerAE = serverAE;
@@ -65,24 +63,18 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             context.StudyInstanceUid = httpContext.Request.QueryString["studyuid"];
             context.SeriesInstanceUid = httpContext.Request.QueryString["seriesuid"];
             context.ObjectUid = httpContext.Request.QueryString["objectuid"];
-            context.StorageLocation = StudyStorageUtility.GetStudyStorageLocation(context.ServerAE, httpContext.Request);
+
+			StudyStorageLocation location;
+			if (!FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key,context.StudyInstanceUid,out location))
+				throw new WADOException(HttpStatusCode.NotFound, "The requested object does not have a readable location on the specified server");
+
+        	context.StorageLocation = location;
 
             if (!File.Exists(context.ImagePath))
-            {
                 throw new WADOException(HttpStatusCode.NotFound, "The requested object does not exist on the specified server");
-            }
-
-			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(context.StorageLocation.FilesystemKey);
-            if (!fs.Readable)
-            {
-                throw new WADOException(HttpStatusCode.Forbidden, "The requested object is not located on readable filesystem");
-            }
 
             if (context.StorageLocation.Lock)
-            {
                 throw new WADOException(HttpStatusCode.Forbidden, "The requested object is being used by another process. Please try again later.");
-            }
-                        
             
             // convert the dicom image into the appropriate mime type
             WADOResponse response = new WADOResponse();
@@ -94,7 +86,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             response.IsLast = output.IsLast;
             
             return response;
-
         }
 
 
@@ -133,7 +124,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 }
             }
 
-            
             ImageMimeTypeProcessorExtensionPoint xp = new ImageMimeTypeProcessorExtensionPoint();
             object[] plugins = xp.CreateExtensions();
 
@@ -148,7 +138,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                     if (ClientAcceptable(context, mimeTypeConverter.OutputMimeType))
                         return mimeTypeConverter;
                 }
-
             }
 
             if (found)
@@ -162,6 +151,5 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                                     String.Format("The specified contentType '{0}' is not supported", responseContentType));
             }
         }
-
     }
 }

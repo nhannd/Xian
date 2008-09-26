@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -42,7 +41,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 {
-    public class DeleteStudyItemProcessor : BaseItemProcessor, IWorkQueueItemProcessor
+    public class DeleteStudyItemProcessor : BaseItemProcessor
     {
         #region Private Members
 
@@ -56,31 +55,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         #endregion
 
         #region Private Methods
-        private void RemoveFilesystem()
-        {
-            foreach (StudyStorageLocation location in StorageLocationList )
-            {
-                string path = location.GetStudyPath();
-                try
-                {
-                    if (Directory.Exists(path))
-                    {
-                        Directory.Delete(path, true);
+		private void RemoveFilesystem()
+		{
+			string path = StorageLocation.GetStudyPath();
+			try
+			{
+				if (Directory.Exists(path))
+				{
+					Directory.Delete(path, true);
 
-                        DirectoryInfo info = Directory.GetParent(path);
-                        DirectoryInfo[] subdirs = info.GetDirectories();
-                        if (subdirs.Length == 0)
-                            Directory.Delete(info.FullName);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when trying to delete directory: {0}", path);
-                }
-            }
-        }
+					DirectoryInfo info = Directory.GetParent(path);
+					DirectoryInfo[] subdirs = info.GetDirectories();
+					if (subdirs.Length == 0)
+						Directory.Delete(info.FullName);
+				}
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when trying to delete directory: {0}", path);
+			}
+		}
 
-        private void RemoveDatabase(Model.WorkQueue item)
+    	private void RemoveDatabase(Model.WorkQueue item)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -109,8 +105,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
         protected override void ProcessItem(Model.WorkQueue item)
         {
             //Load the storage location.
-            LoadStorageLocation(item);
-            
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing DeleteStudy WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
+
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
             workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[]

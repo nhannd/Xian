@@ -163,7 +163,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				//CompressionRulesEngine.Execute(context, true);
 				IDicomCodec codec = theCodecFactory.GetDicomCodec();
 				IImageServerXmlCodecParameters codecParmFactory = theCodecFactory as IImageServerXmlCodecParameters;
-
+				if (codecParmFactory == null)
+				{
+					Platform.Log(LogLevel.Error, "Incorrect Codec for ImageServer, unable to access IImageSeverXmlCodecParameters interface for codec {0}!", theCodecFactory.GetType().ToString());
+					throw new ApplicationException("Incorect codec type for ImageServer: " + theCodecFactory.GetType());
+				}
 				DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
 
 				DicomCompressCommand compressCommand =
@@ -231,7 +235,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
-            LoadStorageLocation(item);
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing CompressStudy WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
 
 			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
 			workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);

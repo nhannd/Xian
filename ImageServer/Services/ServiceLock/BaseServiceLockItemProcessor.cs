@@ -36,6 +36,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -97,17 +98,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         /// <summary>
         /// Load the storage location for a Study and partition.
         /// </summary>
-        protected StudyStorageLocation LoadStorageLocation(ServerEntityKey serverPartitionKey, String studyInstanceUid)
+        protected static StudyStorageLocation LoadStorageLocation(ServerEntityKey serverPartitionKey, String studyInstanceUid)
         {
-            IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
-
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-            parms.StudyInstanceUid = studyInstanceUid;
-            parms.ServerPartitionKey = serverPartitionKey;
-
-            StudyStorageLocation storageLocation = select.FindOne(parms);
-
-            if (storageLocation == null)
+            StudyStorageLocation storageLocation;
+        	if (!FilesystemMonitor.Instance.GetStudyStorageLocation(serverPartitionKey, studyInstanceUid, out storageLocation))
             {
                 string error = String.Format("Unable to find storage location for study {0} on partition {1}",studyInstanceUid, serverPartitionKey);
                 Platform.Log(LogLevel.Error, error);
@@ -149,7 +143,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 		/// <param name="studyXml">The <see cref="StudyXml"/> file to load from</param>
 		/// <param name="context"></param>
 		/// <param name="workQueueKey"></param>
-		protected void InsertWorkQueueUidFromStudyXml(StudyXml studyXml, IUpdateContext context, ServerEntityKey workQueueKey)
+		protected static void InsertWorkQueueUidFromStudyXml(StudyXml studyXml, IUpdateContext context, ServerEntityKey workQueueKey)
 		{
 			foreach (SeriesXml seriesXml in studyXml)
 			{

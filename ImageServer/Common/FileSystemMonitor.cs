@@ -31,11 +31,14 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 using Timer=System.Threading.Timer;
 
 namespace ClearCanvas.ImageServer.Common
@@ -342,6 +345,78 @@ namespace ClearCanvas.ImageServer.Common
 			}
 
 			return null;
+		}
+
+		public bool GetStudyStorageLocation(IReadContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		{
+					IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+				parms.ServerPartitionKey = partitionKey;
+				parms.StudyInstanceUid = studyInstanceUid;
+				IList<StudyStorageLocation> locationList = procedure.Find(parms);
+
+				foreach (StudyStorageLocation studyLocation in locationList)
+				{
+					if (CheckFilesystemReadable(studyLocation.FilesystemKey))
+					{
+						location = studyLocation;
+						return true;
+					}
+				}
+
+				Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
+				location = null;
+				return false;
+			
+		}
+		/// <summary>
+		/// Retrieves the storage location from the database for the specified study.  Checks if the filesystem is online.
+		/// </summary>
+		/// <param name="studyInstanceUid">The Study to check for.</param>
+		/// <param name="location">The returned storage location.</param>
+		/// <param name="partitionKey">The key for the server partition.</param>
+		/// <returns>true if a location was found, false otherwise.</returns>
+		public bool GetStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		{
+			using (IReadContext read = _store.OpenReadContext())
+			{
+				return GetStudyStorageLocation(read, partitionKey, studyInstanceUid, out location);
+			}
+		}
+
+		public bool GetStudyStorageLocation(IReadContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+		{
+			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
+			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+			parms.StudyStorageKey = studyStorageKey;
+			IList<StudyStorageLocation> locationList = procedure.Find(parms);
+
+			foreach (StudyStorageLocation studyLocation in locationList)
+			{
+				if (CheckFilesystemReadable(studyLocation.FilesystemKey))
+				{
+					location = studyLocation;
+					return true;
+				}
+			}
+
+			Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
+			location = null;
+			return false;
+		}
+
+		/// <summary>
+		/// Retrieves the storage location from the database for the specified study storage key.  Checks if the filesystem is online.
+		/// </summary>
+		/// <param name="studyStorageKey">The study storage key to get a location for.</param>
+		/// <param name="location">The returned storage location.</param>
+		/// <returns>true if a location was found, false otherwise.</returns>
+		public bool GetStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+		{
+			using (IReadContext read = _store.OpenReadContext())
+			{
+				return GetStudyStorageLocation(read, studyStorageKey, out location);
+			}
 		}
 		#endregion
 

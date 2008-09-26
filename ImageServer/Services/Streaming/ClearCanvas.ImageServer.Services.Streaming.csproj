@@ -64,7 +64,6 @@
     <Compile Include="ImageStreaming\Handlers\ImageStreamingHandler.cs" />
     <Compile Include="ImageStreaming\Handlers\MimeTypeProcessorOutput.cs" />
     <Compile Include="ImageStreaming\IObjectStreamingHandler.cs" />
-    <Compile Include="ImageStreaming\StudyStorageUtility.cs" />
     <Compile Include="ImageStreaming\WADORequestTypeExtensionPoint.cs" />
     <Compile Include="ImageStreaming\WADORequestProcessorStatistics.cs" />
     <Compile Include="ImageStreaming\WADORequestTypeHandlerManager.cs" />

@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                         String studyInstanceUid = studyDir.Name;
 
                         StudyStorageLocation location;
-                        if (false == GetStudyStorageLocation(partition, studyInstanceUid, out location))
+                        if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
                         {
                         	StudyStorage storage;
 							if (GetStudyStorage(partition, studyInstanceUid, out storage))
@@ -194,26 +194,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
 			return false;
 		}
-
-    	private bool GetStudyStorageLocation(ServerPartition partition, string studyInstanceUid, out StudyStorageLocation location)
-        {
-            IQueryStudyStorageLocation procedure = ReadContext.GetBroker<IQueryStudyStorageLocation>();
-            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-            parms.ServerPartitionKey = partition.GetKey();
-            parms.StudyInstanceUid = studyInstanceUid;
-            IList<StudyStorageLocation> locationList = procedure.Find(parms);
-
-            foreach (StudyStorageLocation studyLocation in locationList)
-            {
-				if (FilesystemMonitor.Instance.CheckFilesystemReadable(studyLocation.FilesystemKey))
-                {
-                    location = studyLocation;
-                    return true;
-                }
-            }
-            location = null;
-            return false;
-        }
 
         #endregion
 

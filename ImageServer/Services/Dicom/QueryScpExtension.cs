@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -52,9 +53,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     [ExtensionOf(typeof (DicomScpExtensionPoint<DicomScpContext>))]
     public class QueryScpExtension : BaseScp, IDicomScp<DicomScpContext>
     {
-        private const int ALERT_DICOM_QUERY_NOTALLOWED = 100;
-        private const string COMPONENT_NAME = "Query SCP";
-
         #region Private members
 
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
@@ -851,7 +849,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             string seriesInstanceUid = data[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
 
             StudyStorageLocation location;
-            if (false == GetStudyStorageLocation(studyInstanceUid, out location))
+			if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
             {
                 Platform.Log(LogLevel.Error, "Unable to load storage location for study: {0}", studyInstanceUid);
                 DicomMessage failureResponse = new DicomMessage();

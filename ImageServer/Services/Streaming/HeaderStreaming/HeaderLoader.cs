@@ -30,17 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
@@ -49,45 +44,27 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
     /// </summary>
     internal class HeaderLoader
     {
-        private readonly HeaderStreamingContext _context;
         private readonly HeaderLoaderStatistics _statistics = new HeaderLoaderStatistics();
-        private Stream _compressedHeaderStream = null;
-        private string _partitionAE;
-        private string _studyInstanceUid;
+        private readonly string _partitionAE;
+        private readonly string _studyInstanceUid;
         private StudyStorageLocation _studyLocation;
 
         #region Constructor
 
         public HeaderLoader(HeaderStreamingContext context)
         {
-            _context = context;
-
             _studyInstanceUid = context.Parameters.StudyInstanceUID;
             _partitionAE = context.Parameters.ServerAETitle;
-            StudyLocation = GetStudyStorageLocation(StudyInstanceUid, PartitionAE);
+			_statistics.FindStudyFolder.Start();
+			StudyLocation = GetStudyStorageLocation(_studyInstanceUid, _partitionAE);
+			_statistics.FindStudyFolder.End();
         }
 
         #endregion
 
-        #region Protected Properties
-
-        protected string PartitionAE
-        {
-            get { return _partitionAE; }
-            set { _partitionAE = value; }
-        }
-
-        protected string StudyInstanceUid
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
-
-        #endregion Protected Properties
-
         #region Private methods
 
-        public static StudyStorageLocation GetStudyStorageLocation(String studyInstanceUid, String partitionAE)
+        private static StudyStorageLocation GetStudyStorageLocation(String studyInstanceUid, String partitionAE)
         {
             StudyStorageLocation location = null;
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
@@ -96,23 +73,17 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                 IServerPartitionEntityBroker partitionBroker = ctx.GetBroker<IServerPartitionEntityBroker>();
                 ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
                 partitionCriteria.AeTitle.EqualTo(partitionAE);
-                IList<ServerPartition> partitions = partitionBroker.Find(partitionCriteria);
+                ServerPartition partition = partitionBroker.FindOne(partitionCriteria);
 
-                if (partitions != null && partitions.Count > 0)
+                if (partition != null)
                 {
-                    ServerPartition partition = partitions[0];
-
-                    IQueryStudyStorageLocation locQuery = ctx.GetBroker<IQueryStudyStorageLocation>();
-                    StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-                    locParms.StudyInstanceUid = studyInstanceUid;
-                    locParms.ServerPartitionKey = partition.GetKey();
-                    location = locQuery.FindOne(locParms);
+					if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ctx, partition.Key, studyInstanceUid, out location))
+						location = null;
                 }
             }
 
             return location;
         }
-
        
         #endregion
 
@@ -121,11 +92,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
         public HeaderLoaderStatistics Statistics
         {
             get { return _statistics; }
-        }
-
-        public Stream CompressedHeaderStream
-        {
-            get { return _compressedHeaderStream; }
         }
 
         public bool StudyExists
@@ -137,76 +103,45 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
         {
             get { return _studyLocation; }
             set { _studyLocation = value; }
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region Private Methods
+		#region Public Methods
+		/// <summary>
+		/// Loads the compressed header stream for the study with the specified study instance uid
+		/// </summary>
+		/// <returns>
+		/// The compressed study header stream or null if the study doesn't exist.
+		/// </returns>
+		/// <remarks>
+		/// </remarks>
+		public Stream Load()
+		{
+			if (!StudyExists)
+				return null;
 
-        private void OpenCompressedHeader()
-        {
-            Platform.CheckForNullReference(StudyLocation, "StudyLocation");
+			_statistics.LoadHeaderStream.Start();
+			String studyPath = StudyLocation.GetStudyPath();
+			if (!Directory.Exists(studyPath))
+			{
+				// the study exist in the database but not on the filesystem.
 
-            if (!IsFileSystemReadable(StudyLocation.FilesystemKey))
-            {
-                Platform.Log(LogLevel.Warn, "Study {0} on partition {1} resided on a non-readable filesystem",
-                             StudyInstanceUid, PartitionAE);
-            }
+				// TODO: If the study is migrated to another tier and the study folder is removed, 
+				// we may want to do something here instead of throwing exception.
+				_statistics.LoadHeaderStream.End();
+				throw new ApplicationException(String.Format("Study Folder {0} doesn't exist", studyPath));
+			}
 
-            String studyPath = StudyLocation.GetStudyPath();
-            if (!Directory.Exists(studyPath))
-            {
-                // the study exist in the database but not on the filesystem.
+			String compressedHeaderFile = Path.Combine(studyPath, _studyInstanceUid + ".xml.gz");
 
-                // TODO: If the study is migrated to another tier and the study folder is removed, 
-                // we may want to do something here instead of throwing exception.
-                throw new ApplicationException(String.Format("Study Folder {0} doesn't exist", studyPath));
-            }
+			Platform.Log(LogLevel.Debug, "Study Header Path={0}", compressedHeaderFile);
+			Stream theStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
+			_statistics.LoadHeaderStream.End();
+			return theStream;
+			//Thread.Sleep(100000);
+		}
 
-            String compressedHeaderFile = Path.Combine(studyPath, StudyInstanceUid + ".xml.gz");
-
-            Platform.Log(LogLevel.Debug, "Study Header Path={0}", compressedHeaderFile);
-            _compressedHeaderStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
-
-            //Thread.Sleep(100000);
-        }
-
-        #endregion
-
-        #region Private Static Methods
-        private static bool IsFileSystemReadable(ServerEntityKey fskey)
-        {
-            ServerFilesystemInfo fsInfo = FilesystemMonitor.Instance.GetFilesystemInfo(fskey);
-            return fsInfo.Readable;
-        }
-        #endregion
-
-        #region Public Methods
-
-        /// <summary>
-        /// Loads the compressed header stream for the study with the specified study instance uid
-        /// </summary>
-        /// <returns>
-        /// The compressed study header stream or null if the study doesn't exist.
-        /// </returns>
-        /// <remarks>
-        /// </remarks>
-        public Stream Load()
-        {
-            PartitionAE = _context.Parameters.ServerAETitle;
-            StudyInstanceUid = _context.Parameters.StudyInstanceUID;
-
-            if (StudyExists)
-            {
-                OpenCompressedHeader();
-                return CompressedHeaderStream;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        #endregion Public Methods
+    	#endregion Public Methods
     }
 }

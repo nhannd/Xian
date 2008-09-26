@@ -73,9 +73,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 
         protected override void ProcessItem(Model.WorkQueue item)
         {
-            LoadUids(item);
-            LoadStorageLocation(item);
+			if (!LoadStorageLocation(item))
+			{
+				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing CleanupStudy WorkQueue item, rescheduling");
+				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				return;
+			}
 
+            LoadUids(item);
+            
             if (WorkQueueUidList.Count == 0)
             {
                 // No UIDs associated with the WorkQueue item.  Set the status back to idle

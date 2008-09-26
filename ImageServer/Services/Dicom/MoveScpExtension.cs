@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -123,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.PatientId.EqualTo(patientId);
-			criteria.ServerPartitionKey.EqualTo(this.Partition.Key);
+			criteria.ServerPartitionKey.EqualTo(Partition.Key);
 
             IList<Study> studyList = select.Find(criteria);
 
@@ -132,7 +133,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 StudyStorageLocation location;
                 
-                if (false == GetStudyStorageLocation(study.StudyInstanceUid, out location))
+                if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(Partition.Key, study.StudyInstanceUid, out location))
                     return false;
 
                 StudyXml theStream = LoadStudyXml(location);
@@ -159,7 +160,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 StudyStorageLocation location;
 
-				if (false == GetStudyStorageLocation(studyInstanceUid, out location))
+				if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
 				{
 					StudyStorage studyStorage;
 					if (!GetStudyStatus(studyInstanceUid, out studyStorage))
@@ -207,7 +208,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-            if (false == GetStudyStorageLocation(studyInstanceUid, out location))
+			if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
             {
 				StudyStorage studyStorage;
 				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
@@ -255,7 +256,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             // Now get the storage location
             StudyStorageLocation location;
 
-			if (false == GetStudyStorageLocation(studyInstanceUid, out location))
+			if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(Partition.Key, studyInstanceUid, out location))
 			{
 				StudyStorage studyStorage;
 				if (!GetStudyStatus(studyInstanceUid, out studyStorage))
