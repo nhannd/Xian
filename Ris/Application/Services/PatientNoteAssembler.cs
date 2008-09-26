@@ -40,13 +40,13 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientNoteAssembler
     {
-		public void Synchronize(Patient patient, ICollection<PatientNoteDetail> sourceList, Staff currentUserStaff, IPersistenceContext context)
+		public void Synchronize(Patient patient, ICollection<PatientNoteDetail> sourceList, Staff newNoteAuthor, IPersistenceContext context)
         {
 			foreach (PatientNoteDetail noteDetail in sourceList)
 			{
 				if(noteDetail.PatientNoteRef == null)
 				{
-					patient.AddNote(CreateNote(noteDetail, currentUserStaff, context));
+					patient.AddNote(CreateNote(noteDetail, newNoteAuthor, context));
 				}
 				else
 				{

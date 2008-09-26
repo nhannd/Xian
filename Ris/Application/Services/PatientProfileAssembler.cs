@@ -211,10 +211,5 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
         }
-
-        public void UpdatePatient(Patient patient, PatientProfileDetail detail, Staff currentUserStaff, IPersistenceContext context)
-        {
-            
-        }
     }
 }

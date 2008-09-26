@@ -203,7 +203,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class AcceptProtocolOperation : ProtocollingOperation
 		{
-			public void Execute(Order order, Staff currentUserStaff)
+			public void Execute(Order order, Staff acceptedBy)
 			{
 				foreach (Procedure rp in order.Procedures)
 				{
@@ -215,7 +215,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 						if(assignmentStep.State == ActivityStatus.IP)
 							assignmentStep.Complete();
 						else
-							assignmentStep.Complete(currentUserStaff);
+							assignmentStep.Complete(acceptedBy);
 						assignmentStep.Protocol.Accept();
 					}
 				}
@@ -249,7 +249,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class RejectProtocolOperation : ProtocollingOperation
 		{
-			public void Execute(Order order, Staff currentUserStaff, ProtocolRejectReasonEnum reason)
+			public void Execute(Order order, Staff rejectedBy, ProtocolRejectReasonEnum reason)
 			{
 				foreach (Procedure rp in order.Procedures)
 				{
@@ -260,7 +260,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 					{
 						if (assignmentStep.State == ActivityStatus.SC)
 						{
-							assignmentStep.Start(currentUserStaff);
+							assignmentStep.Start(rejectedBy);
 						}
 						assignmentStep.Discontinue();
 						assignmentStep.Protocol.Reject(reason);
@@ -380,7 +380,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class ReviseSubmittedProtocolOperation : ProtocollingOperation
 		{
-			public ProtocolAssignmentStep Execute(Order order, Staff currentUserStaff)
+			public ProtocolAssignmentStep Execute(Order order, Staff author)
 			{
 				ProtocolAssignmentStep oneStep = null;
 
@@ -397,8 +397,8 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 						// Replace with new step scheduled step
 						ProtocolAssignmentStep replacementStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
 						rp.AddProcedureStep(replacementStep);
-						replacementStep.Assign(currentUserStaff);
-						replacementStep.Start(currentUserStaff);
+						replacementStep.Assign(author);
+						replacementStep.Start(author);
 
 						if (oneStep == null)
 							oneStep = replacementStep;
