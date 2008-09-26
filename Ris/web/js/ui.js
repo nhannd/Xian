@@ -129,10 +129,16 @@ var Table = {
 			var tr = htmlTable.insertRow(0);
 			tr.className = "tableheading";
 		
+			var checkboxCellOffset = options.checkBoxes ? 1 : 0;
+			if(options.checkBoxes)
+			{
+				cell = tr.insertCell(0);
+			}
+			
 			var cell = null;
 			for(var i=0; i < columns.length; i++)
 			{
-				cell = tr.insertCell(i + this._getBaseColumnIndex);
+				cell = tr.insertCell(i + checkboxCellOffset);
 				cell.innerHTML = columns[i].label;
 			}
 		}

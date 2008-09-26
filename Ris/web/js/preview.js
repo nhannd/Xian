@@ -459,9 +459,32 @@ Preview.ImagingServiceTable = function () {
  */
 Preview.ProceduresTable = function () {
 	return {
-		create: function(htmlTable, procedures)
+		create: function(parentElement, procedures, addSectionHeading)
 		{
-			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+			if(procedures.length == 0)
+			{
+				parentElement.style.display = 'none';
+				return;
+			}
+			else
+			{
+				parentElement.style.display = 'block';
+			}
+			
+			if(!!addSectionHeading)
+			{
+				var heading = document.createElement("P");
+				heading.className = 'sectionheading';
+				heading.innerText = 'Procedures';
+				parentElement.appendChild(heading);
+			}
+
+			var htmlTable = document.createElement("TABLE");
+			parentElement.appendChild(htmlTable);
+			var body = document.createElement("TBODY");
+			htmlTable.appendChild(body);
+
+			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
 						cellType: "text",

@@ -108,10 +108,7 @@
 						else
 							Field.show($("CancelReasonSection"), false);
 					
-						if (orderDetail.Procedures.length)
-							Preview.ProceduresTable.create($("proceduresTable"), orderDetail.Procedures);
-						else
-							Field.show($("proceduresTable"), false);
+						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 
 						// select CT and MRI procedures
 						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
@@ -224,15 +221,8 @@
 						<td width="200" colspan="4"><div id="CancelReason"/></td>
 					</tr>
 				</table>
-				<table border="0" id="proceduresTable">
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Status</td>
-						<td>Schedule</td>
-						<td>Start/End Time</td>
-						<td>Performing Staff</td>
-					</tr>
-				</table>
+
+				<div id="proceduresSection"></div>
 
 				<div id="protocolSection">
 					<p class="sectionheading">Protocols</p>

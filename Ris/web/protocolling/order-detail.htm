@@ -61,11 +61,8 @@
 						else
 							Field.show($("CancelReasonSection"), false);
 
-						if (orderDetail.Procedures.length)
-							Preview.ProceduresTable.create($("proceduresTable"), orderDetail.Procedures);
-						else
-							Field.show($("proceduresTable"), false);
-							
+						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
+
 						if(orderDetail.Notes.length)
 						{
 							Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
@@ -123,16 +120,9 @@
 						<td width="200" colspan="4"><div id="CancelReason"/></td>
 					</tr>
 				</table>
-				<table border="0" id="proceduresTable">
-					<tr class="tableheading">
-						<td>Procedure</td>
-						<td>Status</td>
-						<td>Schedule</td>
-						<td>Start/End Time</td>
-						<td>Performing Staff</td>
-					</tr>
-				</table>
-				
+
+				<div id="proceduresSection"></div>
+
 				<div id="notesSection">
 					<p class="sectionheading">Order Notes</p>
 					<table id="generaNotesTable">
