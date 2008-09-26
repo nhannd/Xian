@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
             Exception theException;
 
             for (theException = ctx.Server.GetLastError();
-                 theException.InnerException != null;
+                 theException != null && theException.InnerException != null;
                  theException = theException.InnerException)
             {
             }

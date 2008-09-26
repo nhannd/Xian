@@ -20,17 +20,21 @@ namespace ClearCanvas.ImageServer.Web.Application
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            Exception baseException = Server.GetLastError().GetBaseException();
-            Server.ClearError();
+            Exception baseException = Server.GetLastError();
+			if (baseException != null)
+			{
+				baseException = baseException.GetBaseException();
 
-            string message = baseException.Message;
-            string source = baseException.Source;
-            string stackTrace = baseException.StackTrace;
+				Server.ClearError();
 
-            string logMessage = string.Format("Message: {0}\nSource:{1}\nStack Trace:{2}", message, source, stackTrace);
-            Platform.Log(LogLevel.Error, logMessage);           
+				string message = baseException.Message;
+				string source = baseException.Source;
+				string stackTrace = baseException.StackTrace;
 
-            Context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, logMessage);
+				string logMessage = string.Format("Message: {0}\nSource:{1}\nStack Trace:{2}", message, source, stackTrace);
+				Platform.Log(LogLevel.Error, logMessage);
+				Context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, logMessage);
+			}
             Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);
         }
 
