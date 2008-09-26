@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Common
                 settings.IncludePrivateValues = Settings.Default.StudyHeaderIncludePrivateTags;
                 settings.IncludeUnknownTags = Settings.Default.StudyHeaderIncludeUNTags;
                 settings.MaxTagLength = Settings.Default.StudyHeaderMaxValueLength;
+            	settings.IncludeSourceFileName = false;
                 return settings;
             }
         }

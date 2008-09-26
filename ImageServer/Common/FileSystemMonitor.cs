@@ -347,28 +347,36 @@ namespace ClearCanvas.ImageServer.Common
 			return null;
 		}
 
+		/// <summary>
+		/// Gets the first filesystem in lower tier for storage purpose.
+		/// </summary>
+		/// <param name="context">A database read context to use for search</param>
+		/// <param name="location">The output storage location</param>
+		/// <param name="partitionKey">The primark key of the ServerPartition table.</param>
+		/// <param name="studyInstanceUid">The Study Instance UID of th estudy</param>
+		/// <returns></returns>
 		public bool GetStudyStorageLocation(IReadContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
 		{
-					IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
-				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-				parms.ServerPartitionKey = partitionKey;
-				parms.StudyInstanceUid = studyInstanceUid;
-				IList<StudyStorageLocation> locationList = procedure.Find(parms);
+			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
+			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+			parms.ServerPartitionKey = partitionKey;
+			parms.StudyInstanceUid = studyInstanceUid;
+			IList<StudyStorageLocation> locationList = procedure.Find(parms);
 
-				foreach (StudyStorageLocation studyLocation in locationList)
+			foreach (StudyStorageLocation studyLocation in locationList)
+			{
+				if (CheckFilesystemReadable(studyLocation.FilesystemKey))
 				{
-					if (CheckFilesystemReadable(studyLocation.FilesystemKey))
-					{
-						location = studyLocation;
-						return true;
-					}
+					location = studyLocation;
+					return true;
 				}
+			}
 
-				Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
-				location = null;
-				return false;
-			
+			//Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
+			location = null;
+			return false;
 		}
+
 		/// <summary>
 		/// Retrieves the storage location from the database for the specified study.  Checks if the filesystem is online.
 		/// </summary>
@@ -400,7 +408,7 @@ namespace ClearCanvas.ImageServer.Common
 				}
 			}
 
-			Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
+			//Platform.Log(LogLevel.Error, "Unable to find readable StudyStorageLocation for study.");
 			location = null;
 			return false;
 		}

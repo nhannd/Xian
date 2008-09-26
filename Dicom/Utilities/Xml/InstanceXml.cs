@@ -388,7 +388,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                     instance.Attributes.Append(transferSyntaxAttribute);
                 }
 
-				if (_sourceFileName != null)
+				if (_sourceFileName != null && settings.IncludeSourceFileName)
 				{
 					XmlAttribute sourceFileNameAttribute = theDocument.CreateAttribute("SourceFileName");
 					string fileName = SecurityElement.Escape(_sourceFileName);

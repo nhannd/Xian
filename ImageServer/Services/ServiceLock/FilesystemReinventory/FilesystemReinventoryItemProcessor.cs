@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -54,6 +55,20 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #endregion
 
         #region Private Methods
+		private bool GetStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		{
+			using (IReadContext context = _store.OpenReadContext())
+			{
+				IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
+				StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+				parms.ServerPartitionKey = partitionKey;
+				parms.StudyInstanceUid = studyInstanceUid;
+				location =  procedure.FindOne(parms);
+
+				return location != null;
+			}
+		}
+
         private void ReinventoryFilesystem(Filesystem filesystem, WorkQueuePriorityEnum priority)
         {
             ServerPartition partition;
@@ -72,7 +87,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                         String studyInstanceUid = studyDir.Name;
 
                         StudyStorageLocation location;
-                        if (false == FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+                        if (false == GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
                         {
                         	StudyStorage storage;
 							if (GetStudyStorage(partition, studyInstanceUid, out storage))
