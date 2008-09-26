@@ -43,22 +43,6 @@ var Preview = function () {
 		}
 	};
 	
-	var _isProcedureStatusActive = function(procedureStatus)
-	{
-		return procedureStatus.Code == "SC" || 
-				procedureStatus.Code == "IP";
-	}
-
-	var _orderRequestScheduledDateComparison = function(data1, data2)
-	{
-		return Date.compareMoreRecent(data1.SchedulingRequestTime, data2.SchedulingRequestTime);
-	}
-
-	var _procedureScheduledDateComparison = function(data1, data2)
-	{
-		return Date.compareMoreRecent(data1.ProcedureScheduledStartTime, data2.ProcedureScheduledStartTime);
-	}
-
 	return {
 		getAlertHtml: function(alertItem, patientName)
 		{
@@ -141,69 +125,6 @@ var Preview = function () {
 				age--;
 
 			return age;
-		},
-
-		getActiveProcedures: function(patientOrderData)
-		{
-			var today = Date.today();
-
-			var presentScheduledProcedures = patientOrderData.select(
-				function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime &&
-							Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
-							_isProcedureStatusActive(item.ProcedureStatus);
-				}).sort(_procedureScheduledDateComparison);
-
-			var presentNotScheduledProceduress = patientOrderData.select(
-				function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime == null &&
-							item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
-							_isProcedureStatusActive(item.ProcedureStatus);
-				}).sort(_orderRequestScheduledDateComparison);
-				
-			return presentScheduledProcedures .concat(presentNotScheduledProceduress);
-		},
-
-		getNonActiveProcedures: function(patientOrderData)
-		{
-
-			var today = Date.today();
-
-			// List only the non-Active present procedures
-			var presentScheduledProcedures = patientOrderData.select(
-				function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
-							_isProcedureStatusActive(item.ProcedureStatus) == false;
-				}).sort(_procedureScheduledDateComparison);
-
-			// List only the non-Active present not-scheduled procedures
-			var presentNotScheduledProceduress = patientOrderData.select(
-				function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime == null &&
-							item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
-							_isProcedureStatusActive(item.ProcedureStatus) == false;
-				}).sort(_orderRequestScheduledDateComparison);
-
-			var pastScheduledProcedures = patientOrderData.select(
-				function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
-				}).sort(_procedureScheduledDateComparison);
-
-			var pastNotScheduledProceduress = patientOrderData.select(
-				function(item) 
-				{ 
-					return item.ProcedureScheduledStartTime == null
-					&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
-				}).sort(_orderRequestScheduledDateComparison);
-
-			return presentScheduledProcedures.concat(
-					presentNotScheduledProceduress.concat(
-					pastScheduledProcedures.concat(pastNotScheduledProceduress)));
 		},
 
 		formatPerformingFacilityList: function(procedures)
@@ -376,51 +297,152 @@ Preview.ProceduresTableHelper = function () {
  */
 Preview.ImagingServiceTable = function () {
 
+	var _isProcedureStatusActive = function(procedureStatus)
+	{
+		return procedureStatus.Code == "SC" || 
+				procedureStatus.Code == "IP";
+	};
+
+	var _orderRequestScheduledDateComparison = function(data1, data2)
+	{
+		return Date.compareMoreRecent(data1.SchedulingRequestTime, data2.SchedulingRequestTime);
+	};
+
+	var _procedureScheduledDateComparison = function(data1, data2)
+	{
+		return Date.compareMoreRecent(data1.ProcedureScheduledStartTime, data2.ProcedureScheduledStartTime);
+	};
+
+	var _getActiveProcedures = function(patientOrderData)
+	{
+		var today = Date.today();
+
+		var presentScheduledProcedures = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime &&
+						Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus);
+			}).sort(_procedureScheduledDateComparison);
+
+		var presentNotScheduledProceduress = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime == null &&
+						item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus);
+			}).sort(_orderRequestScheduledDateComparison);
+			
+		return presentScheduledProcedures .concat(presentNotScheduledProceduress);
+	};
+
+	var _getNonActiveProcedures = function(patientOrderData)
+	{
+
+		var today = Date.today();
+
+		// List only the non-Active present procedures
+		var presentScheduledProcedures = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus) == false;
+			}).sort(_procedureScheduledDateComparison);
+
+		// List only the non-Active present not-scheduled procedures
+		var presentNotScheduledProceduress = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime == null &&
+						item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) >= 0 &&
+						_isProcedureStatusActive(item.ProcedureStatus) == false;
+			}).sort(_orderRequestScheduledDateComparison);
+
+		var pastScheduledProcedures = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime && Date.compare(item.ProcedureScheduledStartTime, today) < 0;
+			}).sort(_procedureScheduledDateComparison);
+
+		var pastNotScheduledProceduress = patientOrderData.select(
+			function(item) 
+			{ 
+				return item.ProcedureScheduledStartTime == null
+				&& item.SchedulingRequestTime && Date.compare(item.SchedulingRequestTime, today) < 0;
+			}).sort(_orderRequestScheduledDateComparison);
+
+		return presentScheduledProcedures.concat(
+				presentNotScheduledProceduress.concat(
+				pastScheduledProcedures.concat(pastNotScheduledProceduress)));
+	};
+
 	var _formatPerformingFacility = function(item)
 	{
 		 return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility.Code : "";
-	}
-			
-	return {
-		createActive: function()
+	};
+	
+	var _createHelper = function(parentElement, ordersList, sectionHeading)
+	{
+		if(ordersList.length == 0)
 		{
-			// TODO
-		},
-		
-		createPast: function()
+			parentElement.style.display = 'none';
+			return;
+		}
+		else
 		{
-			// TODO
-		},
-		
-		create: function(htmlTable, patientOrderData)
-		{
-			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
-				 [
-					{   label: "Procedure",
-						cellType: "text",
-						getValue: function(item) { return Preview.formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
-					},
-					{   label: "Schedule",
-						cellType: "text",
-						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime); }
-					},
-					{   label: "Status",
-						cellType: "text",
-						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureStatus(item.ProcedureStatus, item.ProcedureScheduledStartTime, item.ProcedureStartTime, item.ProcedureCheckInTime, item.ProcedureCheckOutTime); }
-					},
-					{   label: "Performing Facility",
-						cellType: "text",
-						getValue: function(item) { return _formatPerformingFacility(item); }
-					},
-					{   label: "Ordering Physician",
-						cellType: "link",
-						getValue: function(item)  { return Ris.formatPersonName(item.OrderingPractitioner.Name); },
-						clickLink: function(item) { Ris.openPractitionerDetails(item.OrderingPractitioner); }
-					}
-				 ]);
+			parentElement.style.display = 'block';
+		}
 
-			htmlTable.rowCycleClassNames = ["row0", "row1"];
-			htmlTable.bindItems(patientOrderData);
+		var heading = document.createElement("P");
+		heading.className = 'sectionheading';
+		heading.innerText = sectionHeading;
+		parentElement.appendChild(heading);
+		
+		var htmlTable = document.createElement("TABLE");
+		parentElement.appendChild(htmlTable);
+		var body = document.createElement("TBODY");
+		htmlTable.appendChild(body);
+	
+		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+			 [
+				{   label: "Procedure",
+					cellType: "text",
+					getValue: function(item) { return Preview.formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
+				},
+				{   label: "Schedule",
+					cellType: "text",
+					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime); }
+				},
+				{   label: "Status",
+					cellType: "text",
+					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureStatus(item.ProcedureStatus, item.ProcedureScheduledStartTime, item.ProcedureStartTime, item.ProcedureCheckInTime, item.ProcedureCheckOutTime); }
+				},
+				{   label: "Performing Facility",
+					cellType: "text",
+					getValue: function(item) { return _formatPerformingFacility(item); }
+				},
+				{   label: "Ordering Physician",
+					cellType: "link",
+					getValue: function(item)  { return Ris.formatPersonName(item.OrderingPractitioner.Name); },
+					clickLink: function(item) { Ris.openPractitionerDetails(item.OrderingPractitioner); }
+				}
+			 ]);
+
+		htmlTable.rowCycleClassNames = ["row0", "row1"];
+		htmlTable.bindItems(ordersList);
+	};
+
+	return {
+		createActive: function(parentElement, ordersList)
+		{
+            var activeProcedures = _getActiveProcedures(ordersList);
+			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
+		},
+		
+		createPast: function(parentElement, ordersList)
+		{
+            var pastProcedures = _getNonActiveProcedures(ordersList);
+			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
 		}
 	};
 }();

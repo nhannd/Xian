@@ -141,18 +141,8 @@
 					if (orderDetail)
 						patientOrderData = patientOrderData.select(function(data) { return data.AccessionNumber != orderDetail.AccessionNumber; });
 
-					var activeProcedures = Preview.getActiveProcedures(patientOrderData);
-					var pastProcedures = Preview.getNonActiveProcedures(patientOrderData);
-
-					if (activeProcedures.length == 0)
-						Field.show($("activeProceduresSection"), false);
-					else
-						Preview.ImagingServiceTable.create($("activeImagingServiceTable"), activeProcedures);
-
-					if (pastProcedures.length == 0)
-						Field.show($("pastProceduresSection"), false);
-					else
-						Preview.ImagingServiceTable.create($("pastImagingServiceTable"), pastProcedures);
+					Preview.ImagingServiceTable.createActive($("activeProceduresSection"), patientOrderData);
+					Preview.ImagingServiceTable.createPast($("pastProceduresSection"), patientOrderData);
 				}
 			}
 			catch(e)
@@ -299,32 +289,8 @@
 			<div id="report"></div>
 		</div>
 
-		<div id="activeProceduresSection">
-			<p class="sectionheading">Active Imaging Services</p>
-			<table width="100%" border="0" id="activeImagingServiceTable">
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Schedule</td>
-					<td>Status</td>
-					<td>Performing Facility</td>
-					<td>Ordering Physician</td>
-				</tr>
-			</table>
-		</div>
-		
-		<div id="pastProceduresSection">
-			<p class="sectionheading">Past Imaging Services</p>
-			<table width="100%" border="0" id="pastImagingServiceTable">
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Schedule</td>
-					<td>Status</td>
-					<td>Performing Facility</td>
-					<td>Ordering Physician</td>
-				</tr>
-			</table>
-		</div>
-		
+		<div id="activeProceduresSection"></div>
+		<div id="pastProceduresSection"></div>
 	</form>
 </body>
 </html>

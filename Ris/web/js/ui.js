@@ -124,13 +124,26 @@ var Table = {
 				htmlTable[prop] = this._editableTableMixIn[prop];
 		}
 		
+		if(options.addColumnHeadings && !options.flow)
+		{
+			var tr = htmlTable.insertRow(0);
+			tr.className = "tableheading";
+		
+			var cell = null;
+			for(var i=0; i < columns.length; i++)
+			{
+				cell = tr.insertCell(i + this._getBaseColumnIndex);
+				cell.innerHTML = columns[i].label;
+			}
+		}
+		
 		// do initial binding if supplied   
 		if(items)
 			htmlTable.bindItems(items);
 			
 		return htmlTable;
 	},
-	
+
 	// defines the methods that will mix-in to the DOM table object
 	_tableMixIn : {
 		
