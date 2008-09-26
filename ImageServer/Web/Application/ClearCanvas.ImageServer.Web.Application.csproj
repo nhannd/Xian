@@ -808,6 +808,8 @@
     <Content Include="App_Themes\Default\images\Controls\Calendar\calendar-arrow-left.gif" />
     <Content Include="App_Themes\Default\images\Controls\Calendar\calendar-arrow-right.gif" />
     <Content Include="App_Themes\Default\images\Controls\Calendar\TitleBackground.gif" />
+    <Content Include="App_Themes\Default\images\Controls\Dialog\DialogBodyBackground.png" />
+    <Content Include="App_Themes\Default\images\Controls\Dialog\HeadingBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\LinkButtonBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogActiveTabLeft.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogActiveTabMiddle.png" />
@@ -819,6 +821,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogInactiveTabMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogInactiveTabRight.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTabContentBottom.png" />
+    <Content Include="App_Themes\Default\images\Controls\Dialog\SubHeadingBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewHeaderBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTopBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewSelectedBackground.png" />
@@ -843,6 +846,7 @@
     <Content Include="App_Themes\Default\images\Indicators\RetrieveFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\StoreFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\usage.png" />
+    <Content Include="App_Themes\Default\images\MainContent\Loading.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottom.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottomLeftCorner.png" />
@@ -860,6 +864,7 @@
     <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />
+    <Content Include="App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Error.css" />
     <Content Include="App_Themes\Default\StyleSheets\Global.css" />
     <Content Include="App_Themes\Default\StyleSheets\Header.css" />
