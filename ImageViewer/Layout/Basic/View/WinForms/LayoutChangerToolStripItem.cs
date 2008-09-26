@@ -13,9 +13,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		private readonly Color CLEARCANVAS_BLUE = Color.FromArgb(0, 164, 228);
 		private readonly TableDimensionsPicker _picker;
 		private readonly LayoutChangerAction _action;
-		private readonly Label _label;
+		private readonly PseudoLabel _label;
 		private readonly Panel _panel;
-		private readonly Panel _content;
+		private readonly Panel _spacerL;
+		private readonly Panel _spacerR;
 		private readonly Size _defaultSize;
 		private ToolStrip _owner;
 
@@ -26,14 +27,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		public LayoutChangerToolStripItem(LayoutChangerAction action) : base(new Panel())
 		{
 			const int cellWidth = 25;
-			int idealPickerWidth = (action.MaxColumns - 1) * cellWidth * 6 / 5 + cellWidth;
-			int idealPickerHeight = (action.MaxRows - 1) * cellWidth * 6 / 5 + cellWidth;
+			int idealPickerWidth = (action.MaxColumns - 1)*cellWidth*6/5 + cellWidth;
+			int idealPickerHeight = (action.MaxRows - 1)*cellWidth*6/5 + cellWidth;
 
 			_action = action;
 
 			const int borderWidth = 1;
 			_picker = new TableDimensionsPicker(_action.MaxRows, _action.MaxColumns);
-			_picker.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+			_picker.Dock = DockStyle.Left;
 			_picker.BackColor = Color.Transparent;
 			_picker.CellSpacing = new TableDimensionsCellSpacing(cellWidth/5, cellWidth/5);
 			_picker.CellStyle = new TableDimensionsCellStyle(Color.FromArgb(0, 71, 98), borderWidth);
@@ -42,23 +43,28 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			_picker.Size = new Size(idealPickerWidth, idealPickerHeight);
 			_picker.DimensionsSelected += OnDimensionsSelected;
 			_picker.HotDimensionsChanged += OnHotTrackingDimensionsChanged;
-			_label = new Label();
+			_label = new PseudoLabel();
 			_label.AutoSize = false;
 			_label.BackColor = Color.Transparent;
 			_label.Click += OnCancel;
 			_label.Dock = DockStyle.Top;
 			_label.Size = new Size(idealPickerWidth, 21);
 			_label.Text = _action.Label;
-			_label.TextAlign = ContentAlignment.MiddleCenter;
-			_content = new Panel();
-			_content.Dock = DockStyle.Fill;
-			_content.Size = new Size(idealPickerWidth, idealPickerHeight);
-			_content.Resize += OnContentPanelResize;
-			_content.Controls.Add(_picker);
+			_spacerL = new Panel();
+			_spacerL.BackColor = Color.Transparent;
+			_spacerL.Dock = DockStyle.Left;
+			_spacerL.Size = new Size(0, idealPickerHeight);
+			_spacerR = new Panel();
+			_spacerR.BackColor = Color.Transparent;
+			_spacerR.Dock = DockStyle.Fill;
+			_spacerR.Size = new Size(0, idealPickerHeight);
 			_panel = (Panel) base.Control;
 			_panel.Size = _defaultSize = new Size(Math.Max(base.Width, idealPickerWidth), idealPickerHeight + _label.Height);
-			_panel.Controls.Add(_content);
+			_panel.Controls.Add(_spacerR);
+			_panel.Controls.Add(_picker);
+			_panel.Controls.Add(_spacerL);
 			_panel.Controls.Add(_label);
+			_panel.Resize += OnContentPanelResize;
 
 			base.AutoSize = false;
 			base.BackColor = Color.Transparent;
@@ -92,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 
 		private void OnContentPanelResize(object sender, EventArgs e)
 		{
-			_picker.Location = new Point((_content.Width - _picker.Width)/2, 0);
+			_spacerL.Size = new Size((_panel.Width - _picker.Width)/2, _spacerL.Height);
 		}
 
 		/// <summary>
@@ -144,10 +150,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		/// Yes, this is an incredibly convoluted way to determine max width of toolstripitems in the same menu at runtime
 		/// However, it is the only one that seems to work.
 		/// </remarks>
-		private ToolStrip MyOwner {
+		private ToolStrip MyOwner
+		{
 			get { return _owner; }
-			set {
-				if (_owner != value) {
+			set
+			{
+				if (_owner != value)
+				{
 					if (_owner != null)
 						_owner.Resize -= OnOwnerResize;
 
@@ -159,17 +168,55 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			}
 		}
 
-		protected override void OnOwnerChanged(EventArgs e) {
+		protected override void OnOwnerChanged(EventArgs e)
+		{
 			this.MyOwner = base.Owner;
 			base.OnOwnerChanged(e);
 		}
 
-		private void OnOwnerResize(object sender, EventArgs e) {
+		private void OnOwnerResize(object sender, EventArgs e)
+		{
 			int maxWidth = _panel.Width;
-			foreach (ToolStripItem item in this.MyOwner.Items) {
+			foreach (ToolStripItem item in this.MyOwner.Items)
+			{
 				maxWidth = Math.Max(item.Width, maxWidth);
 			}
 			_panel.Size = new Size(maxWidth, _panel.Height);
+		}
+
+		/// <summary>
+		/// Draw our own label because for some reason the regular Label control identifies a smaller region to double buffer the draw
+		/// and as a result, part of the label will flicker (double buffer region width seems to be linked with the actual size of the picker control)
+		/// </summary>
+		private class PseudoLabel : Control
+		{
+			public PseudoLabel()
+			{
+				base.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+			}
+
+			protected override void OnTextChanged(EventArgs e)
+			{
+				base.OnTextChanged(e);
+				base.Invalidate();
+			}
+
+			protected override bool DoubleBuffered
+			{
+				get { return true; }
+				set { }
+			}
+
+			protected override void OnPaint(PaintEventArgs e)
+			{
+				base.OnPaint(e);
+				using (StringFormat sf = new StringFormat())
+				{
+					sf.Alignment = StringAlignment.Center;
+					sf.LineAlignment = StringAlignment.Center;
+					e.Graphics.DrawString(base.Text, base.Font, Brushes.Black, base.ClientRectangle, sf);
+				}
+			}
 		}
 	}
 }
