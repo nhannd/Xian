@@ -17,7 +17,7 @@
       <many-to-one name="Staff" class="Staff" column="PerformingStaffOID_" not-null="false"/>
     </component>
     
-    <map name="ExtendedProperties" lazy="true" table="PerformedProcedureStepExtendedProperties_">
+    <map name="ExtendedProperties" lazy="true" table="PerformedProcedureStepExtendedProperty_">
       <key column="PerformedProcedureStepOID_"/>
       <index column="Name_" type="String"/>
       <element column="Value_" type="StringClob" length="65000"/>

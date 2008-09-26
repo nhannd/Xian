@@ -22,7 +22,7 @@
 
     <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join" access="nosetter.camelcase-underscore"/>
 
-    <map name="ExtendedProperties" lazy="true" table="ReportPartExtendedProperties_">
+    <map name="ExtendedProperties" lazy="true" table="ReportPartExtendedProperty_">
       <key column="ReportPartOID_"/>
       <index column="Name_" type="String"/>
       <element column="Value_" type="StringClob" length="65000"/>

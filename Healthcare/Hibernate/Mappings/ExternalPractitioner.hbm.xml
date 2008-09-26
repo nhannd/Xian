@@ -22,7 +22,7 @@
       <one-to-many class="ExternalPractitionerContactPoint"/>
     </set>
     
-    <map name="ExtendedProperties" lazy="true" table="ExternalPractitionerExtendedProperties_">
+    <map name="ExtendedProperties" lazy="true" table="ExternalPractitionerExtendedProperty_">
       <key column="ExternalPractitionerOID_"/>
       <index column="Name_" type="String"/>
       <element column="Value_" type="StringClob" length="65000"/>

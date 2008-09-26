@@ -87,7 +87,7 @@
 		</set>
 
 
-		<map name="ExtendedProperties" lazy="true" table="OrderExtendedProperties_">
+		<map name="ExtendedProperties" lazy="true" table="OrderExtendedProperty_">
 			<key column="OrderOID_"/>
 			<index column="Name_" type="String"/>
 			<element column="Value_" type="StringClob" length="65000"/>

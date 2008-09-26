@@ -16,7 +16,7 @@
     <property name="FailureCount" column="FailureCount_" type="int" not-null="true"/>
     <property name="FailureDescription" column="FailureDescription_" type="String" length="1024" not-null="false"/>
 
-    <map name="ExtendedProperties" lazy="true" table="WorkQueueExtendedProperties_">
+    <map name="ExtendedProperties" lazy="true" table="WorkQueueExtendedProperty_">
       <key column="WorkQueueOID_"/>
       <index column="Name_" type="String"/>
       <element column="Value_" type="StringClob" length="65000"/>

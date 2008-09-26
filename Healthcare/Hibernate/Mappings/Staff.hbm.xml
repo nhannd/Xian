@@ -77,7 +77,7 @@
       </composite-element>
     </idbag>
 
-    <map name="ExtendedProperties" lazy="true" table="StaffExtendedProperties_">
+    <map name="ExtendedProperties" lazy="true" table="StaffExtendedProperty_">
       <key column="StaffOID_"/>
       <index column="Name_" type="String"/>
       <element column="Value_" type="StringClob" length="65000"/>
