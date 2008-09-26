@@ -54,6 +54,7 @@ namespace ClearCanvas.Ris.Client
         private PatientProfileDetail _profile;
         private List<EnumValueInfo> _sexChoices;
 
+        private string _dateOfBirth;
         private List<EnumValueInfo> _mrnAuthorityChoices;
         private List<EnumValueInfo> _healthcardAuthorityChoices;
 
@@ -71,7 +72,11 @@ namespace ClearCanvas.Ris.Client
         public PatientProfileDetail Subject
         {
             get { return _profile; }
-            set { _profile = value; }
+            set
+            {
+                _profile = value;
+                _dateOfBirth = _profile.DateOfBirth == null ? null : _profile.DateOfBirth.Value.ToString(this.DateOfBirthFormat);
+            }
         }
 
         public override void Start()
@@ -148,13 +153,28 @@ namespace ClearCanvas.Ris.Client
             get { return EnumValueUtils.GetDisplayValues(_sexChoices); }
         }
 
-        public DateTime? DateOfBirth
+        public string DateOfBirthMask
         {
-            get { return _profile.DateOfBirth; }
+            get { return "0000-00-00"; }
+        }
+
+        public string DateOfBirthFormat
+        {
+            get { return "yyyyMMdd"; }
+        }
+
+        public string DateOfBirth
+        {
+            get { return _dateOfBirth; }
             set
-            { 
-                _profile.DateOfBirth = value;
+            {
+                _dateOfBirth = value;
                 this.Modified = true;
+
+                if (string.IsNullOrEmpty(_dateOfBirth) || _dateOfBirth == this.DateOfBirthMask)
+                    _profile.DateOfBirth = null;
+                else
+                    _profile.DateOfBirth = DateTime.ParseExact(_dateOfBirth, this.DateOfBirthFormat, null);
             }
         }
 

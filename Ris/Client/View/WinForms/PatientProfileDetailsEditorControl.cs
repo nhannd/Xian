@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void PatientEditorControl_Load(object sender, EventArgs e)
         {
+            _dateOfBirth.Mask = _component.DateOfBirthMask;
             _healthcard.Mask = _component.HealthcardMask;
             _healthcardVersionCode.Mask = _component.HealthcardVersionCodeMask;
         }
