@@ -50,6 +50,12 @@
     <Compile Include="Alerts\AlertBase.cs" />
     <Compile Include="Alerts\AlertHelper.cs" />
     <Compile Include="Alerts\AlertNotification.cs" />
+    <Compile Include="Alerts\AlertsSettings.cs" />
+    <Compile Include="Alerts\AlertsSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AlertsSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Alerts\IncompleteDemographicDataAlert.cs" />
     <Compile Include="Alerts\InvalidVisitAlert.cs" />
     <Compile Include="Alerts\OrderAlertBase.cs">
@@ -299,6 +305,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Alerts\AlertsSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AlertsSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="app.config" />
     <None Include="Workflow\Reporting\ReportingWorkflowSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

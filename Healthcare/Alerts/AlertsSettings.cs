@@ -29,29 +29,28 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
+using System;
+using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Healthcare.Alerts
 {
-    [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
-    class LanguageAlert : PatientProfileAlertBase
+
+    // TODO add a description of the purpose of the settings group here
+    [SettingsGroupDescription("")]
+    [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+    internal sealed partial class AlertsSettings
     {
-        public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
+        /// <summary>
+        /// Public constructor.
+        /// </summary>
+        /// <remarks>
+        /// Server-side settings classes should be instantiated via constructor rather
+        /// than using the <see cref="AlertsSettings.Default"/> property to avoid creating a static instance.
+        /// </remarks>
+        public AlertsSettings()
         {
-			AlertsSettings settings = new AlertsSettings();
-            List<string> defaultLanguages = string.IsNullOrEmpty(settings.DefaultLanguages)
-                ? new List<string>()
-                : new List<string>(settings.DefaultLanguages.Replace(" ", "").Split(','));
-
-            if (profile.PrimaryLanguage != null && !defaultLanguages.Contains(profile.PrimaryLanguage.Code))
-            {
-                return new AlertNotification(this.GetType(), new string[] { profile.PrimaryLanguage.Value });
-            }
-
-            return null;
+            // Note: server-side settings classes do not register in the ApplicationSettingsRegistry
         }
     }
 }
