@@ -602,9 +602,6 @@
     <Compile Include="QueryWorklistRequest.cs" />
     <Compile Include="QueryWorklistResponse.cs" />
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceTreeItem.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\GetDiagnosticServiceSubTreeResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientRequest.cs" />

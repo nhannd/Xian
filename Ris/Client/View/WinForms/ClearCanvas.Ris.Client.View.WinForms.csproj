@@ -131,6 +131,20 @@
       <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DateTimeEntryComponentView.cs" />
+    <Compile Include="DiagnosticServiceEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiagnosticServiceEditorComponentControl.Designer.cs">
+      <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiagnosticServiceEditorComponentView.cs" />
+    <Compile Include="DiagnosticServiceSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiagnosticServiceSummaryComponentControl.Designer.cs">
+      <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiagnosticServiceSummaryComponentView.cs" />
     <Compile Include="ExternalPractitionerContactPointDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -166,13 +180,6 @@
       <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderExplorerComponentView.cs" />
-    <Compile Include="DiagnosticServiceTreeComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DiagnosticServiceTreeComponentControl.Designer.cs">
-      <DependentUpon>DiagnosticServiceTreeComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DiagnosticServiceTreeComponentView.cs" />
     <Compile Include="ExternalPractitionerSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -461,10 +468,6 @@
       <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DiagnosticServiceTreeComponentControl.resx">
-      <DependentUpon>DiagnosticServiceTreeComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ExternalPractitionerSummaryComponentControl.resx">
       <DependentUpon>ExternalPractitionerSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -588,6 +591,14 @@
     <EmbeddedResource Include="DateTimeEntryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DateTimeEntryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiagnosticServiceEditorComponentControl.resx">
+      <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiagnosticServiceSummaryComponentControl.resx">
+      <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Splash.png" />
     <EmbeddedResource Include="SR.resx">

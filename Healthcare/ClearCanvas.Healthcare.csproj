@@ -87,7 +87,6 @@
     <Compile Include="Imex\FacilityImex.cs" />
     <Compile Include="Imex\ModalityImex.cs" />
     <Compile Include="Imex\DiagnosticServiceImex.cs" />
-    <Compile Include="Imex\DiagnosticServiceTreeImex.cs" />
     <Compile Include="Imex\ProcedureTypeGroupImex.cs" />
     <Compile Include="Imex\ProcedureTypeImex.cs" />
     <Compile Include="Imex\ProtocolGroupImex.cs" />
@@ -170,7 +169,6 @@
     <Compile Include="Laterality.cs" />
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
-    <Compile Include="DiagnosticServiceTreeNode.cs" />
     <Compile Include="PatientNoteCategory.cs" />
     <Compile Include="NoteSeverity.cs" />
     <Compile Include="OrderStatus.cs" />

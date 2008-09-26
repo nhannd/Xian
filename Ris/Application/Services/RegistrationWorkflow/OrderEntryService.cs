@@ -140,48 +140,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request)
-        {
-            IList<DiagnosticServiceTreeNode> children = null;
-            if (request.NodeRef == null)
-            {
-                try
-                {
-                    DiagnosticServiceTreeNodeSearchCriteria rootNodeDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
-                    rootNodeDiagnosticServiceTreeCriteria.Parent.IsNull();
-                    DiagnosticServiceTreeNode rootNode = PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().FindOne(rootNodeDiagnosticServiceTreeCriteria);
-                    children = rootNode.Children;
-                }
-                catch (Exception)
-                {
-                    // no diagnostic service tree - just create an empty list
-                    children = new List<DiagnosticServiceTreeNode>();
-                }
-
-            }
-            else
-            {
-                DiagnosticServiceTreeNode node =
-                    PersistenceContext.Load<DiagnosticServiceTreeNode>(request.NodeRef, EntityLoadFlags.Proxy);
-                children = node.Children;
-
-            }
-
-            // exclude nodes that point to de-activated diagnostic services
-            children = CollectionUtils.Select(children,
-                delegate(DiagnosticServiceTreeNode n) { return n.DiagnosticService == null || !n.DiagnosticService.Deactivated; });
-
-            OrderEntryAssembler assembler = new OrderEntryAssembler();
-            return new GetDiagnosticServiceSubTreeResponse(
-                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem>(
-                    children,
-                    delegate(DiagnosticServiceTreeNode n)
-                    {
-                        return assembler.CreateDiagnosticServiceTreeItem(n);
-                    }));
-        }
-
-        [ReadOperation]
         public ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request)
         {
             // TODO: we need to build a list of orderable procedure types, based on what has already been ordered

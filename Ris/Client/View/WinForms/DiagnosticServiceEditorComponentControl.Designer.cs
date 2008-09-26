@@ -29,36 +29,36 @@
 
 #endregion
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class DiagnosticServiceEditorComponentControl
-    {
-        /// <summary> 
-        /// Required designer variable.
-        /// </summary>
-        private System.ComponentModel.IContainer components = null;
+	partial class DiagnosticServiceEditorComponentControl
+	{
+		/// <summary> 
+		/// Required designer variable.
+		/// </summary>
+		private System.ComponentModel.IContainer components = null;
 
-        /// <summary> 
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		/// <summary> 
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && (components != null))
+			{
+				components.Dispose();
+			}
+			base.Dispose(disposing);
+		}
 
-        #region Component Designer generated code
+		#region Component Designer generated code
 
-        /// <summary> 
-        /// Required method for Designer support - do not modify 
-        /// the contents of this method with the code editor.
-        /// </summary>
-        private void InitializeComponent()
-        {
+		/// <summary> 
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
 			this._itemSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
 			this._idBox = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._nameBox = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -136,14 +136,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.Size = new System.Drawing.Size(556, 561);
 			this.ResumeLayout(false);
 
-        }
+		}
 
-        #endregion
+		#endregion
 
 		private ClearCanvas.Desktop.View.WinForms.ListItemSelector _itemSelector;
 		private ClearCanvas.Desktop.View.WinForms.TextField _idBox;
 		private ClearCanvas.Desktop.View.WinForms.TextField _nameBox;
 		private System.Windows.Forms.Button _acceptButton;
 		private System.Windows.Forms.Button _cancelButton;
-    }
+	}
 }

@@ -86,14 +86,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
 
         /// <summary>
-        /// Obtains one level of the diagnostic services tree.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request);
-
-        /// <summary>
         /// List procedure types that can be ordered based on the procedure types that have already been added to
         /// an order.
         /// </summary>

@@ -12,8 +12,9 @@ using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Admin;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/Admin/Imaging Services", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.DiagnosticService)]
@@ -51,12 +52,12 @@ namespace ClearCanvas.Ris.Client.Admin
 	}
 
 	/// <summary>
-    /// Extension point for views onto <see cref="DiagnosticServiceSummaryComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class DiagnosticServiceSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// Extension point for views onto <see cref="DiagnosticServiceSummaryComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class DiagnosticServiceSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
 	public class DiagnosticServiceSummaryTable : Table<DiagnosticServiceSummary>
 	{
@@ -65,12 +66,12 @@ namespace ClearCanvas.Ris.Client.Admin
 		public DiagnosticServiceSummaryTable()
 		{
 			this.Columns.Add(new TableColumn<DiagnosticServiceSummary, string>("ID",
-				delegate(DiagnosticServiceSummary rpt) { return rpt.Id; },
-				0.2f));
+			                                                                   delegate(DiagnosticServiceSummary rpt) { return rpt.Id; },
+			                                                                   0.2f));
 
 			this.Columns.Add(new TableColumn<DiagnosticServiceSummary, string>("Name",
-				delegate(DiagnosticServiceSummary rpt) { return rpt.Name; },
-				1.0f));
+			                                                                   delegate(DiagnosticServiceSummary rpt) { return rpt.Name; },
+			                                                                   1.0f));
 
 			this.Sort(new TableSortParams(this.Columns[columnSortIndex], true));
 		}
@@ -84,6 +85,16 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		private string _id;
 		private string _name;
+
+		public DiagnosticServiceSummaryComponent()
+		{
+
+		}
+
+		public DiagnosticServiceSummaryComponent(bool dialogMode)
+			: base(dialogMode)
+		{
+		}
 
 		#region Presentation Model
 

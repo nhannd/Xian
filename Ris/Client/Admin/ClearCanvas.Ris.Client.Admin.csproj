@@ -46,8 +46,6 @@
     <Compile Include="AuthorityGroupEditorComponent.cs" />
     <Compile Include="AuthorityGroupSummaryComponent.cs" />
     <Compile Include="AuthorityGroupTable.cs" />
-    <Compile Include="DiagnosticServiceEditorComponent.cs" />
-    <Compile Include="DiagnosticServiceSummaryComponent.cs" />
     <Compile Include="EnumerationEditorComponent.cs" />
     <Compile Include="EnumerationSummaryComponent.cs" />
     <Compile Include="HL7QueueItemSummaryTable.cs" />

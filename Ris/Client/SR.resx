@@ -399,6 +399,9 @@
   <data name="ExceptionSaveCannedText" xml:space="preserve">
     <value>Unable to save Canned Text</value>
   </data>
+  <data name="ExceptionSaveDiagnosticService" xml:space="preserve">
+    <value>Unable to save Imaging Service</value>
+  </data>
   <data name="ExceptionSaveExternalPractitioner" xml:space="preserve">
     <value>Unable to save practitioner</value>
   </data>
@@ -564,6 +567,9 @@
   <data name="TitleAddContactPoint" xml:space="preserve">
     <value>Add Contact Point</value>
   </data>
+  <data name="TitleAddDiagnosticService" xml:space="preserve">
+    <value>Add Imaging Service</value>
+  </data>
   <data name="TitleAddEmailAddress" xml:space="preserve">
     <value>Add Email Address...</value>
   </data>
@@ -689,6 +695,9 @@
   </data>
   <data name="TitleUpdateContactPoint" xml:space="preserve">
     <value>Update Contact Point '{0}'</value>
+  </data>
+  <data name="TitleUpdateDiagnosticService" xml:space="preserve">
+    <value>Update Imaging Service</value>
   </data>
   <data name="TitleUpdateEmailAddress" xml:space="preserve">
     <value>Update Email Address...</value>

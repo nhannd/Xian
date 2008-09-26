@@ -184,15 +184,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
         }
 
-        public DiagnosticServiceTreeItem CreateDiagnosticServiceTreeItem(DiagnosticServiceTreeNode node)
-        {
-            DiagnosticServiceAssembler dsAssembler = new DiagnosticServiceAssembler();
-            return new DiagnosticServiceTreeItem(
-                node.GetRef(),
-                node.Description,
-                node.DiagnosticService == null ? null : dsAssembler.CreateSummary(node.DiagnosticService));
-        }
-
         // arguably this is a business logic decision that shouldn't go here, but there is really no
         // better place to put it right now
         // note that the notion of "modifiable" here is specific to the idea of a "requisition"

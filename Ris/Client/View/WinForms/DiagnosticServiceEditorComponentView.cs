@@ -30,22 +30,50 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Admin;
+
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    [DataContract]
-    public class GetDiagnosticServiceSubTreeResponse : DataContractBase
-    {
-        public GetDiagnosticServiceSubTreeResponse(List<DiagnosticServiceTreeItem> diagnosticServiceSubTree)
-        {
-            this.DiagnosticServiceSubTree = diagnosticServiceSubTree;
-        }
+	/// <summary>
+	/// Provides a Windows Forms view onto <see cref="DiagnosticServiceEditorComponent"/>.
+	/// </summary>
+	[ExtensionOf(typeof(DiagnosticServiceEditorComponentViewExtensionPoint))]
+	public class DiagnosticServiceEditorComponentView : WinFormsView, IApplicationComponentView
+	{
+		private DiagnosticServiceEditorComponent _component;
+		private DiagnosticServiceEditorComponentControl _control;
 
-        [DataMember]
-        public List<DiagnosticServiceTreeItem> DiagnosticServiceSubTree;
-    }
+		#region IApplicationComponentView Members
+
+		/// <summary>
+		/// Called by the host to assign this view to a component.
+		/// </summary>
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = (DiagnosticServiceEditorComponent)component;
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Gets the underlying GUI component for this view.
+		/// </summary>
+		public override object GuiElement
+		{
+			get
+			{
+				if (_control == null)
+				{
+					_control = new DiagnosticServiceEditorComponentControl(_component);
+				}
+				return _control;
+			}
+		}
+	}
 }

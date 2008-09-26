@@ -39,6 +39,16 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	public interface IDiagnosticServiceInteractiveLookupProvider
+	{
+		DiagnosticServiceSummary ResolveDiagnosticService(string query, IDesktopWindow desktopWindow);
+	}
+
+	[ExtensionPoint]
+	public class DiagnosticServiceInteractiveLookupProviderExtensionPoint: ExtensionPoint<IDiagnosticServiceInteractiveLookupProvider>
+	{
+	}
+
     public class DiagnosticServiceLookupHandler : LookupHandler<TextQueryRequest, DiagnosticServiceSummary>
     {
         private readonly DesktopWindow _desktopWindow;
@@ -62,30 +72,36 @@ namespace ClearCanvas.Ris.Client
 
         public override bool ResolveNameInteractive(string query, out DiagnosticServiceSummary diagnosticService)
         {
-            DiagnosticServiceDetail detail;
-            bool success = ResolveNameInteractive(query, out detail);
-            diagnosticService = success ? detail.GetSummary() : null;
-            return success;
-        }
+			diagnosticService = null;
 
-        public bool ResolveNameInteractive(string query, out DiagnosticServiceDetail diagnosticService)
-        {
-            diagnosticService = null;
+			try
+			{
+				IDiagnosticServiceInteractiveLookupProvider provider = (IDiagnosticServiceInteractiveLookupProvider)
+					new DiagnosticServiceInteractiveLookupProviderExtensionPoint().CreateExtension();
+				diagnosticService = provider.ResolveDiagnosticService(query, _desktopWindow);
 
-            // cannot make use of the query string in any meaningful way, since we don't download the entire tree
-            // to the client
+			}
+			catch (NotSupportedException)
+			{
+				// default
+				DiagnosticServiceSummaryComponent summaryComponent = new DiagnosticServiceSummaryComponent(true);
+				if (!string.IsNullOrEmpty(query))
+				{
+					summaryComponent.Name = query;
+				}
 
-            DiagnosticServiceTreeComponent component = new DiagnosticServiceTreeComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                _desktopWindow, component, SR.TitleImagingServices);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+					_desktopWindow, summaryComponent, "Imaging Services");
 
-            if (exitCode == ApplicationComponentExitCode.Accepted)
-            {
-                diagnosticService = component.SelectedDiagnosticServiceDetail;
-            }
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					diagnosticService = (DiagnosticServiceSummary)summaryComponent.SummarySelection.Item;
+				}
+			}
 
-            return (diagnosticService != null);
-        }
+			return (diagnosticService != null);
+		}
+
 
         public override string FormatItem(DiagnosticServiceSummary item)
         {

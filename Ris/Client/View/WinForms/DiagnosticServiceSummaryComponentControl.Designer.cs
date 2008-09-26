@@ -1,4 +1,4 @@
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
 	partial class DiagnosticServiceSummaryComponentControl
 	{
@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// flowLayoutPanel1
 			// 
 			this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			                                                                     | System.Windows.Forms.AnchorStyles.Right)));
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._okButton);
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._clearButton.BackColor = System.Drawing.Color.Transparent;
 			this._clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._clearButton.FlatAppearance.BorderSize = 0;
-			this._clearButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.ClearFilterSmall;
+			this._clearButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.ClearFilterSmall;
 			this._clearButton.Location = new System.Drawing.Point(332, 19);
 			this._clearButton.Margin = new System.Windows.Forms.Padding(0);
 			this._clearButton.Name = "_clearButton";
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._searchButton.BackColor = System.Drawing.Color.Transparent;
 			this._searchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._searchButton.FlatAppearance.BorderSize = 0;
-			this._searchButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.SearchToolSmall;
+			this._searchButton.Image = global::ClearCanvas.Ris.Client.View.WinForms.SR.SearchToolSmall;
 			this._searchButton.Location = new System.Drawing.Point(301, 19);
 			this._searchButton.Margin = new System.Windows.Forms.Padding(0);
 			this._searchButton.Name = "_searchButton";

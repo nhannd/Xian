@@ -907,6 +907,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save Imaging Service.
+        /// </summary>
+        internal static string ExceptionSaveDiagnosticService {
+            get {
+                return ResourceManager.GetString("ExceptionSaveDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to save practitioner.
         /// </summary>
         internal static string ExceptionSaveExternalPractitioner {
@@ -1402,6 +1411,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Imaging Service.
+        /// </summary>
+        internal static string TitleAddDiagnosticService {
+            get {
+                return ResourceManager.GetString("TitleAddDiagnosticService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Email Address....
         /// </summary>
         internal static string TitleAddEmailAddress {
@@ -1776,6 +1794,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateContactPoint {
             get {
                 return ResourceManager.GetString("TitleUpdateContactPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Imaging Service.
+        /// </summary>
+        internal static string TitleUpdateDiagnosticService {
+            get {
+                return ResourceManager.GetString("TitleUpdateDiagnosticService", resourceCulture);
             }
         }
         

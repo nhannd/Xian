@@ -51,20 +51,6 @@
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AuthorityGroupEditorComponentView.cs" />
-    <Compile Include="DiagnosticServiceEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DiagnosticServiceEditorComponentControl.Designer.cs">
-      <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DiagnosticServiceEditorComponentView.cs" />
-    <Compile Include="DiagnosticServiceSummaryComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DiagnosticServiceSummaryComponentControl.Designer.cs">
-      <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DiagnosticServiceSummaryComponentView.cs" />
     <Compile Include="EnumerationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -300,14 +286,6 @@
     <EmbeddedResource Include="AuthorityGroupEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DiagnosticServiceEditorComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DiagnosticServiceEditorComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DiagnosticServiceSummaryComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="EnumerationEditorComponentControl.resx">
       <SubType>Designer</SubType>

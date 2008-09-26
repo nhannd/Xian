@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -37,42 +37,37 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="DiagnosticServiceEditorComponent"/>.
-    /// </summary>
-    [ExtensionOf(typeof(DiagnosticServiceEditorComponentViewExtensionPoint))]
-    public class DiagnosticServiceEditorComponentView : WinFormsView, IApplicationComponentView
-    {
-        private DiagnosticServiceEditorComponent _component;
-        private DiagnosticServiceEditorComponentControl _control;
+	/// <summary>
+	/// Provides a Windows Forms view onto <see cref="StaffStaffGroupEditorComponent"/>
+	/// </summary>
+	[ExtensionOf(typeof(DiagnosticServiceSummaryComponentViewExtensionPoint))]
+	public class DiagnosticServiceSummaryComponentView : WinFormsView, IApplicationComponentView
+	{
+		private DiagnosticServiceSummaryComponent _component;
+		private DiagnosticServiceSummaryComponentControl _control;
 
-        #region IApplicationComponentView Members
 
-        /// <summary>
-        /// Called by the host to assign this view to a component.
-        /// </summary>
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (DiagnosticServiceEditorComponent)component;
-        }
+		#region IApplicationComponentView Members
 
-        #endregion
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = (DiagnosticServiceSummaryComponent)component;
+		}
 
-        /// <summary>
-        /// Gets the underlying GUI component for this view.
-        /// </summary>
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new DiagnosticServiceEditorComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+		#endregion
+
+		public override object GuiElement
+		{
+			get
+			{
+				if (_control == null)
+				{
+					_control = new DiagnosticServiceSummaryComponentControl(_component);
+				}
+				return _control;
+			}
+		}
+	}
 }

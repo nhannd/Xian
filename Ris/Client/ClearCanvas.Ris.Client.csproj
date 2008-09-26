@@ -59,12 +59,14 @@
     <Compile Include="CannedTextTable.cs" />
     <Compile Include="CoreServiceProvider.cs" />
     <Compile Include="DateTimeEntryComponent.cs" />
+    <Compile Include="DiagnosticServiceEditorComponent.cs" />
     <Compile Include="DiagnosticServiceLookupSettings.cs" />
     <Compile Include="DiagnosticServiceLookupSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DiagnosticServiceLookupSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="DiagnosticServiceSummaryComponent.cs" />
     <Compile Include="DowntimeRecovery.cs" />
     <Compile Include="EnumValueAdminInfoTable.cs" />
     <Compile Include="ExternalPractitionerContactPointLookupHandler.cs" />
@@ -135,6 +137,7 @@
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="FolderRefreshTool.cs" />
+    <Compile Include="ProcedureTypeSummaryTable.cs" />
     <Compile Include="PublishReportComponent.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
@@ -177,7 +180,6 @@
     <Compile Include="BiographyOrderHistoryComponent.cs" />
     <Compile Include="BiographyOverviewComponent.cs" />
     <Compile Include="DiagnosticServiceLookupHandler.cs" />
-    <Compile Include="DiagnosticServiceTreeComponent.cs" />
     <Compile Include="ExternalPractitionerDetailsEditorComponent.cs" />
     <Compile Include="ExternalPractitionerEditorComponent.cs" />
     <Compile Include="ExternalPractitionerLookupHandler.cs" />

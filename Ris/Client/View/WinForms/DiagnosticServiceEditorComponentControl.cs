@@ -30,49 +30,58 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
+using System.Windows.Forms;
 
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Admin;
 
-namespace ClearCanvas.Healthcare {
-
-
-    /// <summary>
-    /// DiagnosticServiceTreeNode entity
-    /// </summary>
-	public partial class DiagnosticServiceTreeNode : ClearCanvas.Enterprise.Core.Entity
+namespace ClearCanvas.Ris.Client.View.WinForms
+{
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="DiagnosticServiceEditorComponent"/>.
+	/// </summary>
+	public partial class DiagnosticServiceEditorComponentControl : ApplicationComponentUserControl
 	{
+		private DiagnosticServiceEditorComponent _component;
 
-        public DiagnosticServiceTreeNode(DiagnosticServiceTreeNode parent)
-        {
-            if (parent != null)
-            {
-                parent.AddChild(this);
-            }
-
-            _children = new List<DiagnosticServiceTreeNode>();
-
-            CustomInitialize();
-        }
-	
 		/// <summary>
-		/// This method is called from the constructor.  Use this method to implement any custom
-		/// object initialization.
+		/// Constructor.
 		/// </summary>
-		private void CustomInitialize()
+		public DiagnosticServiceEditorComponentControl(DiagnosticServiceEditorComponent component)
+			:base(component)
 		{
+			_component = component;
+			InitializeComponent();
+
+			_idBox.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_nameBox.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_itemSelector.AvailableItemsTable = _component.AvailableDiagnosticServices;
+			_itemSelector.SelectedItemsTable = _component.SelectedDiagnosticServices;
+
+			_itemSelector.ItemAdded += OnItemsAddedOrRemoved;
+			_itemSelector.ItemRemoved += OnItemsAddedOrRemoved;
 		}
 
-        public virtual void AddChild(DiagnosticServiceTreeNode child)
-        {
-            if (child.Parent != null)
-            {
-                child.Parent.Children.Remove(child);
-            }
-            child.Parent = this;
-            this.Children.Add(child);
-        }
+		private void _acceptButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void OnItemsAddedOrRemoved(object sender, EventArgs e)
+		{
+			_component.ItemsAddedOrRemoved();
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
 	}
 }

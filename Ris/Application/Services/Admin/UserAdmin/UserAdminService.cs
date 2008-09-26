@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
     		User affectedUser = null;
 			if (request.UserDetail.StaffRef != null)
 			{
-				Staff staff = PersistenceContext.Load<Staff>(request.UserDetail.StaffRef);
+				Staff staff = PersistenceContext.Load<Staff>(request.UserDetail.StaffRef, EntityLoadFlags.Proxy);
 				affectedUser = CreateStaffUserAssociation(staff, user);
 			}
 
@@ -192,7 +192,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
         	User affectedUser = null;
             if (request.UserDetail.StaffRef != null)
             {
-                Staff staff = PersistenceContext.Load<Staff>(request.UserDetail.StaffRef);
+				Staff staff = PersistenceContext.Load<Staff>(request.UserDetail.StaffRef, EntityLoadFlags.Proxy);
             	affectedUser = CreateStaffUserAssociation(staff, user);
             }
 

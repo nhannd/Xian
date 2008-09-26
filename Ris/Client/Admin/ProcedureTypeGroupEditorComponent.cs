@@ -42,24 +42,6 @@ using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    internal class ProcedureTypeSummaryTable : Table<ProcedureTypeSummary>
-    {
-        private readonly int columnSortIndex = 0;
-
-        internal ProcedureTypeSummaryTable()
-        {
-            this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>("ID",
-				delegate(ProcedureTypeSummary rpt) { return rpt.Id; },
-				0.5f));
-
-            this.Columns.Add(new TableColumn<ProcedureTypeSummary, string>("Name",
-                delegate(ProcedureTypeSummary rpt) { return rpt.Name; },
-                0.5f));
-
-            this.Sort(new TableSortParams(this.Columns[columnSortIndex], true));
-        }
-    }
-
     /// <summary>
     /// Extension point for views onto <see cref="ProcedureTypeGroupEditorComponent"/>
     /// </summary>
