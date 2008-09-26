@@ -51,24 +51,21 @@
 					{
 						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures, true);
 
-					// select CT and MRI procedures
-					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
-					if (filteredProcedures.length)
-						Preview.ProtocolProceduresTable.create($("protocolProceduresTable"), filteredProcedures);
-					else
-						Field.show($("protocolSection"), false);
+						// select CT and MRI procedures
+						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
+						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures);
 
-					if(orderDetail.Notes.length)
-					{
-						Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
-						Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-						Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
-					}
-					else
-					{
-						Field.show($("notesSection"), false);
-					}
-	            }
+						if(orderDetail.Notes.length)
+						{
+							Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
+							Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
+							Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
+						}
+						else
+						{
+							Field.show($("notesSection"), false);
+						}
+		            }
 					else
 					{
 						Field.show($("orderDetailsSection"), false);
@@ -88,19 +85,7 @@
 		<form id="myForm">
 			<div id="orderDetailsSection">
 				<div id="proceduresSection"></div>
-
-				<div id="protocolSection">
-					<p class="sectionheading">Protocols</p>
-					<table border="0" id="protocolProceduresTable">
-						<tr class="tableheading">
-							<td>Procedure</td>
-							<td>Protocol</td>
-							<td>Code</td>
-							<td>Author</td>
-							<td>WTIS</td>
-						</tr>
-					</table>
-				</div>
+				<div id="protocolProceduresSection"></div>
 
 				<div id="notesSection">
 					<p class="sectionheading">Order Notes</p>

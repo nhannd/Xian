@@ -565,9 +565,29 @@ Preview.ProtocolProceduresTable = function () {
 	
 		// TODO: WTIS -> urgency and override in UHN-specific script.
 		
-		create: function(htmlTable, procedures)
+		create: function(parentElement, procedures)
 		{
-			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+			if(procedures.length == 0)
+			{
+				parentElement.style.display = 'none';
+				return;
+			}
+			else
+			{
+				parentElement.style.display = 'block';
+			}
+			
+			var heading = document.createElement("P");
+			heading.className = 'sectionheading';
+			heading.innerText = 'Protocols';
+			parentElement.appendChild(heading);
+
+			var htmlTable = document.createElement("TABLE");
+			parentElement.appendChild(htmlTable);
+			var body = document.createElement("TBODY");
+			htmlTable.appendChild(body);
+
+			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
 						cellType: "text",
@@ -594,7 +614,6 @@ Preview.ProtocolProceduresTable = function () {
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
 			htmlTable.bindItems(procedures);
 		}
-
 	};
 }();
 
@@ -686,9 +705,24 @@ Preview.ReportingProceduresTable = function () {
 	}
 		 
 	return {
-		create: function(htmlTable, procedures)
+		create: function(parentElement, procedures)
 		{
-			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+			if(procedures.length == 0)
+			{
+				parentElement.style.display = 'none';
+				return;
+			}
+			else
+			{
+				parentElement.style.display = 'block';
+			}
+			
+			var htmlTable = document.createElement("TABLE");
+			parentElement.appendChild(htmlTable);
+			var body = document.createElement("TBODY");
+			htmlTable.appendChild(body);
+
+			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
 						cellType: "text",

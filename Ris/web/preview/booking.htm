@@ -112,10 +112,8 @@
 
 						// select CT and MRI procedures
 						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
-						if (filteredProcedures.length)
-							Preview.ProtocolProceduresTable.create($("protocolProceduresTable"), filteredProcedures);
-						else
-							Field.show($("protocolSection"), false);
+						Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures);
+
 
 						if(orderDetail.Notes.length)
 						{
@@ -220,21 +218,10 @@
 						<td width="200" colspan="4"><div id="CancelReason"/></td>
 					</tr>
 				</table>
-				<div id="proceduresSection"></div>
 
-				<div id="protocolSection">
-					<p class="sectionheading">Protocols</p>
-					<table border="0" id="protocolProceduresTable">
-						<tr class="tableheading">
-							<td>Procedure</td>
-							<td>Protocol</td>
-							<td>Code</td>
-							<td>Author</td>
-							<td>WTIS</td>
-						</tr>
-					</table>
-				</div>
-				
+				<div id="proceduresSection"></div>
+				<div id="protocolProceduresSection"></div>
+
 				<div id="notesSection">
 					<p class="sectionheading">Order Notes</p>
 					<table id="generaNotesTable">
