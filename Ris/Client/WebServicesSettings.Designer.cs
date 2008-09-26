@@ -66,18 +66,18 @@ namespace ClearCanvas.Ris.Client {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PeerOrChainTrust")]
-        public string CertificateValidationMode {
+        public global::System.ServiceModel.Security.X509CertificateValidationMode CertificateValidationMode {
             get {
-                return ((string)(this["CertificateValidationMode"]));
+                return ((global::System.ServiceModel.Security.X509CertificateValidationMode)(this["CertificateValidationMode"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("NoCheck")]
-        public string RevocationMode {
+        public global::System.Security.Cryptography.X509Certificates.X509RevocationMode RevocationMode {
             get {
-                return ((string)(this["RevocationMode"]));
+                return ((global::System.Security.Cryptography.X509Certificates.X509RevocationMode)(this["RevocationMode"]));
             }
         }
     }

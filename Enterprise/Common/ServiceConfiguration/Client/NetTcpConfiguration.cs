@@ -29,7 +29,7 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 
             ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(args.ChannelFactoryClass, binding,
                 new EndpointAddress(args.ServiceUri));
-            channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = (System.ServiceModel.Security.X509CertificateValidationMode)Enum.Parse(typeof(System.ServiceModel.Security.X509CertificateValidationMode), args.CertificateValidationMode);
+            channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = args.CertificateValidationMode;
 
             return channelFactory;
         }

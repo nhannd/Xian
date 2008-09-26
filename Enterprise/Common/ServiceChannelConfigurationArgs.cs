@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel.Security;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -14,8 +14,8 @@ namespace ClearCanvas.Enterprise.Common
             Uri serviceUri,
             bool authenticationRequired,
             int maxReceivedMessageSize,
-            string certificateValidationMode,
-            string revocationMode)
+            X509CertificateValidationMode certificateValidationMode,
+            X509RevocationMode revocationMode)
         {
             this.ChannelFactoryClass = channelFactoryClass;
             this.ServiceUri = serviceUri;
@@ -48,11 +48,11 @@ namespace ClearCanvas.Enterprise.Common
         /// <summary>
         /// Specifies the mode used for X509 certificate validation.
         /// </summary>
-	    public string CertificateValidationMode;
+        public X509CertificateValidationMode CertificateValidationMode;
 
         /// <summary>
         /// Specifies the mode used to check for X509 certificate revocation.
         /// </summary>
-        public string RevocationMode;
+        public X509RevocationMode RevocationMode;
     }
 }
