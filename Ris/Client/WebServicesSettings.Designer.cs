@@ -62,5 +62,23 @@ namespace ClearCanvas.Ris.Client {
                 return ((int)(this["MaxReceivedMessageSize"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PeerOrChainTrust")]
+        public string CertificateValidationMode {
+            get {
+                return ((string)(this["CertificateValidationMode"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("NoCheck")]
+        public string RevocationMode {
+            get {
+                return ((string)(this["RevocationMode"]));
+            }
+        }
     }
 }

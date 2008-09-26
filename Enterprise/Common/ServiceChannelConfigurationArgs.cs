@@ -13,12 +13,16 @@ namespace ClearCanvas.Enterprise.Common
             Type channelFactoryClass,
             Uri serviceUri,
             bool authenticationRequired,
-            int maxReceivedMessageSize)
+            int maxReceivedMessageSize,
+            string certificateValidationMode,
+            string revocationMode)
         {
             this.ChannelFactoryClass = channelFactoryClass;
             this.ServiceUri = serviceUri;
             this.AuthenticationRequired = authenticationRequired;
             this.MaxReceivedMessageSize = maxReceivedMessageSize;
+            this.CertificateValidationMode = certificateValidationMode;
+            this.RevocationMode = revocationMode;
         }
 
 		/// <summary>
@@ -40,5 +44,15 @@ namespace ClearCanvas.Enterprise.Common
 		/// The maximum size of received messages to allow, in bytes.
 		/// </summary>
         public int MaxReceivedMessageSize;
+
+        /// <summary>
+        /// Specifies the mode used for X509 certificate validation.
+        /// </summary>
+	    public string CertificateValidationMode;
+
+        /// <summary>
+        /// Specifies the mode used to check for X509 certificate revocation.
+        /// </summary>
+        public string RevocationMode;
     }
 }

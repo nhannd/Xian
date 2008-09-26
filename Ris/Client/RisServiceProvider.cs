@@ -69,7 +69,10 @@ namespace ClearCanvas.Ris.Client
         protected override ChannelFactory ConfigureChannelFactory(Type channelFactoryClass, Uri serviceUri, bool authenticationRequired)
         {
             ChannelFactory channelFactory = ChannelConfiguration.ConfigureChannelFactory(
-                new ServiceChannelConfigurationArgs(channelFactoryClass, serviceUri, authenticationRequired, WebServicesSettings.Default.MaxReceivedMessageSize));
+                new ServiceChannelConfigurationArgs(channelFactoryClass, serviceUri, authenticationRequired,
+                    WebServicesSettings.Default.MaxReceivedMessageSize,
+                    WebServicesSettings.Default.CertificateValidationMode,
+                    WebServicesSettings.Default.RevocationMode));
 
             if (authenticationRequired)
             {

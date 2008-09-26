@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ServiceModel.Channels;
 using System.ServiceModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 {
@@ -35,9 +33,9 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
 
             ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(args.ChannelFactoryClass, binding,
                 new EndpointAddress(args.ServiceUri));
-            channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
-			channelFactory.Credentials.ServiceCertificate.Authentication.RevocationMode = System.Security.Cryptography.X509Certificates.X509RevocationMode.NoCheck;
-            
+            channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = (System.ServiceModel.Security.X509CertificateValidationMode)Enum.Parse(typeof(System.ServiceModel.Security.X509CertificateValidationMode), args.CertificateValidationMode);
+            channelFactory.Credentials.ServiceCertificate.Authentication.RevocationMode = (System.Security.Cryptography.X509Certificates.X509RevocationMode)Enum.Parse(typeof(System.Security.Cryptography.X509Certificates.X509RevocationMode), args.RevocationMode);
+
             return channelFactory;
         }
 

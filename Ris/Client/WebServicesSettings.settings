@@ -11,5 +11,11 @@
     <Setting Name="MaxReceivedMessageSize" Description="Specifies the maximum size of received messages in bytes." Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">2000000</Value>
     </Setting>
+    <Setting Name="CertificateValidationMode" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">PeerOrChainTrust</Value>
+    </Setting>
+    <Setting Name="RevocationMode" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">NoCheck</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
