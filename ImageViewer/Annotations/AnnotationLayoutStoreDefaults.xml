@@ -151,7 +151,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.ImageLaterality" >
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.Composite.LateralityViewPosition" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -262,7 +262,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.ImageLaterality">
+            <annotation-box normalized-rectangle="0.500000\0.150000\1.000000\0.175000" annotation-item-id="Dicom.GeneralImage.Composite.LateralityViewPosition" >
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
