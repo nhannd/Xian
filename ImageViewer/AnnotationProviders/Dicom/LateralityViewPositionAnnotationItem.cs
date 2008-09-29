@@ -61,51 +61,33 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			string laterality = null;
 			if (_showLaterality)
 			{
-				laterality = provider.ImageSop[DicomTags.ImageLaterality].GetString(0, null);
-				if(string.IsNullOrEmpty(laterality))
-					laterality = provider.ImageSop[DicomTags.FrameLaterality].GetString(0, null);
+				laterality = provider.ImageSop.ImageLaterality;
 				if (string.IsNullOrEmpty(laterality))
-					laterality = provider.ImageSop[DicomTags.Laterality].GetString(0, null);
-				if (string.IsNullOrEmpty(laterality))
-					laterality = "?";
+					laterality = provider.ImageSop.Laterality;
 			}
 
-			string viewposn = null;
-			if (_showViewPosition) 
+			string viewPosition = null;
+			if (_showViewPosition)
 			{
-				viewposn = provider.ImageSop[DicomTags.ViewPosition].GetString(0, null);
-				if (string.IsNullOrEmpty(viewposn))
+				viewPosition = provider.ImageSop.ViewPosition;
+				if (string.IsNullOrEmpty(viewPosition))
 				{
-					DicomMessageBase dmb = provider.ImageSop.NativeDicomObject;
-					DicomAttributeSQ codeSeq = dmb.DataSet[DicomTags.ViewCodeSequence] as DicomAttributeSQ;
-
-					if (codeSeq != null && codeSeq.Count > 0)
-					{
-						string code = codeSeq[0][DicomTags.CodeValue].GetString(0, null);
-						string schm = codeSeq[0][DicomTags.CodingSchemeDesignator].GetString(0, null);
-						string mean = codeSeq[0][DicomTags.CodeMeaning].GetString(0, null);
-
-						if(code != null && schm != null)
-						{
-							// TODO: use a proper code sequence decoding dictionary
-							viewposn = string.Format("{1}:{0}", code, schm);
-							if (mean != null)
-								viewposn = string.Format("{0} ({1})", viewposn, mean);
-						}
-					}
+					//TODO: later, we could translate to ACR MCQM equivalent, at least for mammo.
+					DicomAttributeSQ codeSequence = provider.ImageSop[DicomTags.ViewCodeSequence] as DicomAttributeSQ;
+					if (codeSequence != null && codeSequence.Count > 0)
+						viewPosition = codeSequence[0][DicomTags.CodeMeaning].GetString(0, null);
 				}
-				if (string.IsNullOrEmpty(viewposn))
-					viewposn = "?";
 			}
 
-			string str = string.Empty;
-			if (_showLaterality && _showViewPosition) {
-				str = string.Format(SR.Dicom_GeneralImage_Composite_LateralityViewPosition_Format, laterality, viewposn);
-			} else if (_showLaterality)
+			string str = "";
+			if (_showLaterality && _showViewPosition && (!String.IsNullOrEmpty(laterality) || !String.IsNullOrEmpty(viewPosition)))
+				str = String.Format(SR.FormatLateralityViewPosition, laterality ?? "", viewPosition ?? "");
+			else if (_showLaterality)
 				str = laterality;
 			else if (_showViewPosition)
-				str = viewposn;
-			return str;
-        }
+				str = viewPosition;
+
+			return str ?? "";
+		}
 	}
 }

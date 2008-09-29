@@ -264,9 +264,6 @@
   <data name="Dicom_GeneralImage_Composite_LateralityViewPosition_DisplayName" xml:space="preserve">
     <value>Image Laterality and View Position</value>
   </data>
-  <data name="Dicom_GeneralImage_Composite_LateralityViewPosition_Format" xml:space="preserve">
-    <value>{0}/{1}</value>
-  </data>
   <data name="Dicom_GeneralImage_Composite_LateralityViewPosition_Label" xml:space="preserve">
     <value>Lat/Pos</value>
   </data>
@@ -578,6 +575,9 @@
   </data>
   <data name="FormatkV" xml:space="preserve">
     <value>{0} kV</value>
+  </data>
+  <data name="FormatLateralityViewPosition" xml:space="preserve">
+    <value>{0}/{1}</value>
   </data>
   <data name="FormatmA" xml:space="preserve">
     <value>{0} mA</value>

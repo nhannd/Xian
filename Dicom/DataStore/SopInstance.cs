@@ -108,18 +108,7 @@ namespace ClearCanvas.Dicom.DataStore
 
     	public DicomAttribute this[DicomTag tag]
     	{
-			get
-			{
-				if (tag == null)
-					return null;
-
-				bool isBinary = tag.VR == DicomVr.OBvr || tag.VR == DicomVr.OWvr || tag.VR == DicomVr.OFvr;
-				//we don't store these in the xml, so we return null.
-				if (isBinary || tag.IsPrivate || tag.VR == DicomVr.UNvr)
-					return null;
-
-				return _xml[tag];
-			}
+			get { return _xml[tag]; }
     	}
 
 		public DicomAttribute this[uint tag]

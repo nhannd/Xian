@@ -502,15 +502,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0}/{1}.
-        /// </summary>
-        internal static string Dicom_GeneralImage_Composite_LateralityViewPosition_Format {
-            get {
-                return ResourceManager.GetString("Dicom_GeneralImage_Composite_LateralityViewPosition_Format", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Lat/Pos.
         /// </summary>
         internal static string Dicom_GeneralImage_Composite_LateralityViewPosition_Label {
@@ -1443,6 +1434,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         internal static string FormatkV {
             get {
                 return ResourceManager.GetString("FormatkV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}/{1}.
+        /// </summary>
+        internal static string FormatLateralityViewPosition {
+            get {
+                return ResourceManager.GetString("FormatLateralityViewPosition", resourceCulture);
             }
         }
         

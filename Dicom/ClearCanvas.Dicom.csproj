@@ -219,6 +219,7 @@
     <Compile Include="Iod\Sequences\RequestAttributesSequenceIod.cs" />
     <Compile Include="Iod\Sequences\ScheduledProcedureStepSequenceIod.cs" />
     <Compile Include="Iod\Sequences\ScheduledStepAttributesSequenceIod.cs" />
+    <Compile Include="Iod\Sequences\ViewCodeSequenceIod.cs" />
     <Compile Include="Network\Scp\DicomScp.cs" />
     <Compile Include="Network\Scp\DicomScpExtensionPoint.cs" />
     <Compile Include="Network\Scp\DicomScpHandler.cs" />

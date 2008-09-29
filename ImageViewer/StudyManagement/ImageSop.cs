@@ -86,6 +86,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		//TODO: re-evaluate whether or not all of these should be deprecated, since some of them
+		//have nothing to do with Frames and always apply to the ImageSop.
+
 		#region General Image Module
 
 		/// <summary>
@@ -429,6 +432,44 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				GetTag(DicomTags.NumberOfFrames, out numberOfFrames, out tagExists);
 
 				return Math.Max(numberOfFrames, 1);
+			}
+		}
+
+		#endregion
+
+		//TODO: see above comment RE: deprecation of all ImageSop properties.  These have nothing to do with Frames.
+
+		#region Mammography Image Module / DX Anatomy Imaged Module / Intra-Oral Image Module / Ocular Region Imaged Module
+
+		/// <summary>
+		/// Gets the Image Laterality.
+		/// </summary>
+		public virtual string ImageLaterality
+		{
+			get
+			{
+				bool tagExists;
+				string imageLaterality;
+				GetTag(DicomTags.ImageLaterality, out imageLaterality, out tagExists);
+				return imageLaterality ?? "";
+			}
+		}
+
+		#endregion
+
+		#region CR Series Module / DX Positioning Module
+
+		/// <summary>
+		/// Gets the View Position.
+		/// </summary>
+		public virtual string ViewPosition
+		{
+			get
+			{
+				bool tagExists;
+				string viewPosition;
+				GetTag(DicomTags.ViewPosition, out viewPosition, out tagExists);
+				return viewPosition ?? "";
 			}
 		}
 
