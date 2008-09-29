@@ -29,19 +29,18 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 {
     [DataContract]
     public class AuthorityGroupDetail : DataContractBase
     {
-        public AuthorityGroupDetail(string name, List<AuthorityTokenSummary> authorityTokens)
+        public AuthorityGroupDetail(EntityRef authorityGroupRef, string name, List<AuthorityTokenSummary> authorityTokens)
         {
+            AuthorityGroupRef = authorityGroupRef;
             Name = name;
             AuthorityTokens = authorityTokens;
         }
@@ -52,14 +51,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
         }
 
         [DataMember]
+        public EntityRef AuthorityGroupRef;
+
+        [DataMember]
         public string Name;
 
         [DataMember]
         public List<AuthorityTokenSummary> AuthorityTokens;
-
-		public AuthorityGroupSummary GetSummary()
-		{
-			return new AuthorityGroupSummary(this.Name);
-		}
     }
 }

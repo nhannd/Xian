@@ -32,14 +32,12 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
-using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -141,7 +139,7 @@ namespace ClearCanvas.Ris.Client.Admin
 									CollectionUtils.Map<AuthorityGroupDefinition, AuthorityGroupDetail>(groups,
 										delegate(AuthorityGroupDefinition g)
 										{
-											return new AuthorityGroupDetail(g.Name,
+											return new AuthorityGroupDetail(null, g.Name,
 												CollectionUtils.Map<string, AuthorityTokenSummary>(g.Tokens,
 													delegate(string t) { return new AuthorityTokenSummary(t, null); }));
 										})));
@@ -163,7 +161,7 @@ namespace ClearCanvas.Ris.Client.Admin
 				AuthorityGroupSummary item = CollectionUtils.FirstElement(this.SelectedItems);
 				if(item == null) return;
 
-				AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item.Name, true);
+				AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item, true);
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 					this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
 				if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -233,7 +231,7 @@ namespace ClearCanvas.Ris.Client.Admin
 			editedItems = new List<AuthorityGroupSummary>();
 			AuthorityGroupSummary item = CollectionUtils.FirstElement(items);
 
-			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item.Name, false);
+			AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(item, false);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
 				this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup + " - " + item.Name);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -263,7 +261,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					Platform.GetService<IUserAdminService>(
 						delegate(IUserAdminService service)
 						{
-							service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.Name));
+							service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.AuthorityGroupRef));
 						});
 
 					deletedItems.Add(item);
@@ -285,7 +283,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <returns></returns>
 		protected override bool IsSameItem(AuthorityGroupSummary x, AuthorityGroupSummary y)
 		{
-			return x.Name.Equals(y.Name);
+            return x.AuthorityGroupRef.Equals(y.AuthorityGroupRef, true);
 		}
 	}
 }

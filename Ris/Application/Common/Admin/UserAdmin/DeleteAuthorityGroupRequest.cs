@@ -6,12 +6,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
 	[DataContract]
 	public class DeleteAuthorityGroupRequest : DataContractBase
 	{
-		public DeleteAuthorityGroupRequest(string authorityGroupName)
+        public DeleteAuthorityGroupRequest(EntityRef authorityGroupRef)
 		{
-			this.AuthorityGroupName = authorityGroupName;
+            this.AuthorityGroupRef = authorityGroupRef;
 		}
 
 		[DataMember]
-		public string AuthorityGroupName;
+		public EntityRef AuthorityGroupRef;
 	}
 }

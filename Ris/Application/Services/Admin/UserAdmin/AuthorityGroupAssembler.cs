@@ -29,25 +29,23 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication.Brokers;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 {
     internal class AuthorityGroupAssembler
     {
-        internal AuthorityGroupSummary GetAuthorityGroupSummary(AuthorityGroup authorityGroup)
+        internal AuthorityGroupSummary CreateAuthorityGroupSummary(AuthorityGroup authorityGroup)
         {
-            return new AuthorityGroupSummary(authorityGroup.Name);
+            return new AuthorityGroupSummary(authorityGroup.GetRef(), authorityGroup.Name);
         }
 
-        internal AuthorityGroupDetail GetAuthorityGroupDetail(AuthorityGroup authorityGroup)
+        internal AuthorityGroupDetail CreateAuthorityGroupDetail(AuthorityGroup authorityGroup)
         {
             List<AuthorityTokenSummary> tokens = new List<AuthorityTokenSummary>();
 
@@ -58,9 +56,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             }
 
             return new AuthorityGroupDetail(
+                authorityGroup.GetRef(),
                 authorityGroup.Name,
-                tokens
-                );
+                tokens);
         }
 
         internal void UpdateAuthorityGroup(AuthorityGroup authorityGroup, AuthorityGroupDetail detail, IPersistenceContext persistenceContext)

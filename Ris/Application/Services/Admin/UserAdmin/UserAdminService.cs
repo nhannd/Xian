@@ -29,25 +29,22 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
+using ClearCanvas.Enterprise.Authentication.Imex;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
-using System.ServiceModel;
-using System.Security.Permissions;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using ClearCanvas.Common.Authorization;
-using ClearCanvas.Enterprise.Authentication.Imex;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 {
@@ -115,7 +112,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
                 PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, request.Page),
                 delegate(AuthorityGroup authorityGroup)
                 {
-                    return assembler.GetAuthorityGroupSummary(authorityGroup);
+                    return assembler.CreateAuthorityGroupSummary(authorityGroup);
                 });
             return new ListAuthorityGroupsResponse(authorityGroups);
         }
@@ -124,9 +121,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
 		public LoadAuthorityGroupForEditResponse LoadAuthorityGroupForEdit(LoadAuthorityGroupForEditRequest request)
         {
-            AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupName);
+            AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
-            return new LoadAuthorityGroupForEditResponse(authorityGroup.GetRef(), assembler.GetAuthorityGroupDetail(authorityGroup));
+            return new LoadAuthorityGroupForEditResponse(assembler.CreateAuthorityGroupDetail(authorityGroup));
         }
 
         [ReadOperation]
@@ -260,20 +257,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             PersistenceContext.Lock(authorityGroup, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new AddAuthorityGroupResponse(assembler.GetAuthorityGroupSummary(authorityGroup));
+            return new AddAuthorityGroupResponse(assembler.CreateAuthorityGroupSummary(authorityGroup));
         }
 
         [UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Security.AuthorityGroup)]
 		public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
         {
-            AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupDetail.Name);
+            AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupDetail.AuthorityGroupRef);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             assembler.UpdateAuthorityGroup(authorityGroup, request.AuthorityGroupDetail, PersistenceContext);
 
             PersistenceContext.Lock(authorityGroup, DirtyState.Dirty);
 
-            return new UpdateAuthorityGroupResponse(assembler.GetAuthorityGroupSummary(authorityGroup));
+            return new UpdateAuthorityGroupResponse(assembler.CreateAuthorityGroupSummary(authorityGroup));
         }
 
 		[UpdateOperation]
@@ -283,12 +280,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 			try
 			{
 				IAuthorityGroupBroker broker = PersistenceContext.GetBroker<IAuthorityGroupBroker>();
-				AuthorityGroup authorityGroup = FindAuthorityGroupByName(request.AuthorityGroupName);
+                AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef, EntityLoadFlags.Proxy);
 
 				// order to delete an authority group, first need to remove all tokens and users
 				authorityGroup.AuthorityTokens.Clear();
 				authorityGroup.RemoveAllUsers();
-
 
 				broker.Delete(authorityGroup);
 				PersistenceContext.SynchState();
@@ -346,21 +342,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
 		}
 
     	#endregion
-
-        private AuthorityGroup FindAuthorityGroupByName(string name)
-        {
-            try
-            {
-                AuthorityGroupSearchCriteria where = new AuthorityGroupSearchCriteria();
-                where.Name.EqualTo(name);
-
-                return PersistenceContext.GetBroker<IAuthorityGroupBroker>().FindOne(where);
-            }
-            catch (EntityNotFoundException)
-            {
-                throw new RequestValidationException(string.Format("{0} is not a valid authority group.", name));
-            }
-        }
 
         private User FindUserByName(string name)
         {

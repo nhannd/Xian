@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
@@ -39,12 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.UserAdmin
     [DataContract]
     public class LoadAuthorityGroupForEditRequest : DataContractBase
     {
-        public LoadAuthorityGroupForEditRequest(string name)
+        public LoadAuthorityGroupForEditRequest(EntityRef authorityGroupRef)
         {
-            this.AuthorityGroupName = name;
+            this.AuthorityGroupRef = authorityGroupRef;
         }
 
         [DataMember]
-        public string AuthorityGroupName;
+        public EntityRef AuthorityGroupRef;
     }
 }

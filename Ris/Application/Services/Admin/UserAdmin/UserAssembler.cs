@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.UserAdmin
             List<AuthorityGroupSummary> groups = new List<AuthorityGroupSummary>();
             foreach (AuthorityGroup authorityGroup in user.AuthorityGroups)
             {
-                groups.Add(assembler.GetAuthorityGroupSummary(authorityGroup));
+                groups.Add(assembler.CreateAuthorityGroupSummary(authorityGroup));
             }
 
             UserDetail userDetail = new UserDetail(user.UserName, user.DisplayName, user.CreationTime, user.ValidFrom, user.ValidUntil,

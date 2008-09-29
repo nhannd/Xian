@@ -84,8 +84,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component = component;
 
             _authorityGroupName.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
-			_authorityGroupName.DataBindings.Add("ReadOnly", _component, "IsNameReadOnly", true, DataSourceUpdateMode.OnPropertyChanged);
-
 
 			// build the authority token tree
 

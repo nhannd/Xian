@@ -31,15 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -125,9 +123,9 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(AuthorityGroupEditorComponentViewExtensionPoint))]
     public class AuthorityGroupEditorComponent : ApplicationComponent
     {
-        private bool _isNew;
-    	private bool _duplicate;
-        private string _authorityGroupName;
+        private readonly bool _isNew;
+    	private readonly bool _duplicate;
+        private AuthorityGroupSummary _authorityGroupSummary;
         private AuthorityGroupDetail _authorityGroupDetail;
 		private List<AuthorityTokenTableEntry> _authorityTokens;
 
@@ -143,20 +141,20 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// <summary>
 		/// Constructor for editing or duplicating an authority group.
 		/// </summary>
-		/// <param name="authorityGroupName"></param>
+        /// <param name="authorityGroup"></param>
 		/// <param name="duplicate"></param>
-        public AuthorityGroupEditorComponent(string authorityGroupName, bool duplicate)
+        public AuthorityGroupEditorComponent(AuthorityGroupSummary authorityGroup, bool duplicate)
         {
-            Platform.CheckForNullReference(authorityGroupName, "authorityGroupName");
+            Platform.CheckForNullReference(authorityGroup, "authorityGroup");
 
         	_duplicate = duplicate;
             _isNew = _duplicate;
-            _authorityGroupName = authorityGroupName;
+            _authorityGroupSummary = authorityGroup;
         }
 
     	public AuthorityGroupSummary AuthorityGroupSummary
     	{
-			get { return _authorityGroupDetail == null ? null : _authorityGroupDetail.GetSummary(); }
+            get { return _authorityGroupSummary; }
     	}
 
         public override void Start()
@@ -183,12 +181,15 @@ namespace ClearCanvas.Ris.Client.Admin
                     }
                     else
                     {
-                        LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupName));
+                        LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupSummary.AuthorityGroupRef));
                         _authorityGroupDetail = response.AuthorityGroupDetail;
 
 						// if duplicating, append something to the name
 						if (_duplicate)
-							_authorityGroupDetail.Name = _authorityGroupDetail.Name + " Copy";
+						{
+						    _authorityGroupDetail.AuthorityGroupRef = null;
+                            _authorityGroupDetail.Name = _authorityGroupDetail.Name + " Copy";
+						}
                     }
 
                     InitialiseTable();
@@ -215,11 +216,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-    	public bool IsNameReadOnly
-    	{
-			get { return !_isNew; }
-    	}
-
         public List<AuthorityTokenTableEntry> AuthorityTokens
         {
             get { return _authorityTokens; }
@@ -241,10 +237,12 @@ namespace ClearCanvas.Ris.Client.Admin
                         if (_isNew)
                         {
                             AddAuthorityGroupResponse response = service.AddAuthorityGroup(new AddAuthorityGroupRequest(_authorityGroupDetail));
+                            _authorityGroupSummary = response.AuthorityGroupSummary;
                         }
                         else
                         {
                             UpdateAuthorityGroupResponse response = service.UpdateAuthorityGroup(new UpdateAuthorityGroupRequest(_authorityGroupDetail));
+                            _authorityGroupSummary = response.AuthorityGroupSummary;
                         }
                     });
 
@@ -253,7 +251,7 @@ namespace ClearCanvas.Ris.Client.Admin
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, SR.ExceptionSaveAuthorityGroup, this.Host.DesktopWindow,
-                    delegate()
+                    delegate
                     {
                         this.ExitCode = ApplicationComponentExitCode.Error;
                         this.Host.Exit();
