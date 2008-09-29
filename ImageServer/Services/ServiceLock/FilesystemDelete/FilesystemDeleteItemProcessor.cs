@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
@@ -41,8 +40,8 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 {
@@ -85,7 +84,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
     public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
     {
         #region Private Members
-        static private DateTime? _scheduledMigrateTime = null;
+		private DateTime _scheduledTime = Platform.Time;
         private float _bytesToRemove;
         private int _studiesDeleted = 0;
         private int _studiesMigrated = 0;
@@ -94,41 +93,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
         #region Private Methods
 
-
-        /// <summary>
-        /// Initializes the scheduled time based on the last entry in the queue.
-        /// </summary>
-        private void InitializeScheduleTime()
-        {
-            if (_scheduledMigrateTime == null)
-            {
-                IWorkQueueEntityBroker workQueueBroker = ReadContext.GetBroker<IWorkQueueEntityBroker>();
-                WorkQueueSelectCriteria workQueueSearchCriteria = new WorkQueueSelectCriteria();
-                workQueueSearchCriteria.WorkQueueTypeEnum.EqualTo(WorkQueueTypeEnum.MigrateStudy);
-                workQueueSearchCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.InProgress });
-                workQueueSearchCriteria.ScheduledTime.SortDesc(0);
-
-                IList<WorkQueue> migrateItems = workQueueBroker.Find(workQueueSearchCriteria, 0, 1);
-
-                if (migrateItems != null && migrateItems.Count > 0)
-                {
-                    _scheduledMigrateTime = migrateItems[0].ScheduledTime;
-                    Platform.Log(LogLevel.Info, "Last migration entry was scheduled for {0}. New migration will be scheduled after that time.", _scheduledMigrateTime.Value);
-                }
-                else
-                    _scheduledMigrateTime = Platform.Time;
-            }
-
-            if (_scheduledMigrateTime < Platform.Time)
-                _scheduledMigrateTime = Platform.Time;
-        }
-
         /// <summary>
         /// Updates the 'State' of the filesystem associated with the 'FilesystemDelete' <see cref="ServiceLock"/> item
         /// </summary>
         /// <param name="item"></param>
         /// <param name="fs"></param>
-        private void UpdateState(Model.ServiceLock item, ServerFilesystemInfo fs)
+        private static void UpdateState(Model.ServiceLock item, ServerFilesystemInfo fs)
         {
             FilesystemState state = null;
             if (item.State != null && item.State.DocumentElement!=null)
@@ -222,9 +192,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
                     insertParms.StudyStorageKey = location.GetKey();
                     insertParms.ServerPartitionKey = location.ServerPartitionKey;
-                    DateTime expirationTime = Platform.Time.AddSeconds(10);
-                    insertParms.ScheduledTime = expirationTime;
-                    insertParms.ExpirationTime = expirationTime;
+					insertParms.ScheduledTime = _scheduledTime;
+					insertParms.ExpirationTime = _scheduledTime;
                     insertParms.DeleteFilesystemQueue = true;
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
@@ -239,6 +208,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                         update.Commit();
                         _bytesToRemove -= studySize;
                         _studiesDeleted++;
+                    	_scheduledTime = _scheduledTime.AddSeconds(2);
                     }
                 }
             }
@@ -275,9 +245,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
 					insertParms.StudyStorageKey = location.GetKey();
 					insertParms.ServerPartitionKey = location.ServerPartitionKey;
-					DateTime expirationTime = Platform.Time.AddSeconds(10);
-					insertParms.ScheduledTime = expirationTime;
-					insertParms.ExpirationTime = expirationTime;
+					insertParms.ScheduledTime = _scheduledTime;
+					insertParms.ExpirationTime = _scheduledTime;
 					insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
@@ -293,6 +262,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 						update.Commit();
 						_bytesToRemove -= studySize;
 						_studiesPurged++;
+						_scheduledTime = _scheduledTime.AddSeconds(2);
 					}
 				}
 			}
@@ -334,14 +304,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
         			insertParms.StudyStorageKey = location.GetKey();
         			insertParms.ServerPartitionKey = location.ServerPartitionKey;
-        			insertParms.ScheduledTime = _scheduledMigrateTime.Value;
-        			insertParms.ExpirationTime = _scheduledMigrateTime.Value.AddMinutes(1);
+        			insertParms.ScheduledTime = _scheduledTime;
+        			insertParms.ExpirationTime = _scheduledTime.AddMinutes(1);
         			insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.MigrateStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
-        			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledMigrateTime);
+        			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledTime);
         			WorkQueue insertItem = broker.FindOne(insertParms);
 					if (insertItem == null)
         			{
@@ -360,12 +330,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         				// The assumed migration speed is arbitarily chosen.
         				double migrationSpeed = ServiceLockSettings.Default.TierMigrationSpeed*1024*1024; // MB / sec
         				TimeSpan estMigrateTime = TimeSpan.FromSeconds(studySize/migrationSpeed);
-        				_scheduledMigrateTime = _scheduledMigrateTime.Value.Add(estMigrateTime);
-        				if (_studiesMigrated%10 == 0)
-        				{
-        					_scheduledMigrateTime.Value.AddSeconds(15);
-        					Thread.Sleep(200); // The list may be long, let other processes have a chance to talk to the database
-        				}
+        				_scheduledTime = _scheduledTime.Add(estMigrateTime);
         			}
         		}
         	}
@@ -559,8 +524,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 			ServiceLockSettings settings = ServiceLockSettings.Default;		    
 			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
             
-            InitializeScheduleTime();
-
             UpdateState(item, fs);
 
 			_bytesToRemove = FilesystemMonitor.Instance.CheckFilesystemBytesToRemove(item.FilesystemKey);

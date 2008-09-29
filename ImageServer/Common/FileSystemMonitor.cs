@@ -484,15 +484,19 @@ namespace ClearCanvas.ImageServer.Common
 
 					foreach (Filesystem filesystem in filesystemList)
 					{
-						if (_filesystemList.ContainsKey(filesystem.GetKey()))
+						if (_filesystemList.ContainsKey(filesystem.Key))
 						{
-							_filesystemList[filesystem.GetKey()].Filesystem = filesystem;
-							_tierMap[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.GetKey()]);
+							if ((filesystem.HighWatermark != _filesystemList[filesystem.Key].Filesystem.HighWatermark)
+								|| (filesystem.LowWatermark != _filesystemList[filesystem.Key].Filesystem.LowWatermark))
+								Platform.Log(LogLevel.Info, "Watermarks have changed for filesystem {0}, Low: {1}, High: {2}",
+								             filesystem.Description, filesystem.LowWatermark, filesystem.HighWatermark);
+							_filesystemList[filesystem.Key].Filesystem = filesystem;
+							_tierMap[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.Key]);
 						}
 						else
 						{
 							ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-							_filesystemList.Add(filesystem.GetKey(), info);
+							_filesystemList.Add(filesystem.Key, info);
 							_tierMap[filesystem.FilesystemTierEnum].Add(info);
 							info.LoadFreeSpace();
 							changed = true;
