@@ -27,12 +27,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public class ExistingPatientInfo
         {
             private string _name;
+            private string _accessionNumber;
+            private string _sex;
+            private string _birthDate;
+            private string _patientID;
+            private string _issuerOfPatientID;
             private SeriesDetails[] _series;
 
             public string Name
             {
                 get { return _name; }
                 set { _name = value; }
+            }
+
+            public string AccessionNumber
+            {
+                get { return _accessionNumber; }
+                set { _accessionNumber = value; }
+            }
+
+            public string Sex
+            {
+                get { return _sex; }
+                set { _sex = value; }
+            }
+
+            public string BirthDate
+            {
+                get { return _birthDate; }
+                set { _birthDate = value; }
+            }
+
+            public string PatientID
+            {
+                get { return _patientID; }
+                set { _patientID = value; }
+            }
+
+            public string IssuerOfPatientID
+            {
+                get { return _issuerOfPatientID; }
+                set { _issuerOfPatientID = value; }
             }
 
             public SeriesDetails[] Series
@@ -45,12 +80,47 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public class ConflictingPatientInfo
         {
             private string _name;
+            private string _accessionNumber;
+            private string _sex;
+            private string _birthDate;
+            private string _patientID;
+            private string _issuerOfPatientID;
             private SeriesDetails[] _series;
 
             public string Name
             {
                 get { return _name; }
                 set { _name = value; }
+            }
+
+            public string AccessionNumber
+            {
+                get { return _accessionNumber; }
+                set { _accessionNumber = value;  }
+            }
+
+            public string Sex
+            {
+                get { return _sex; }
+                set { _sex = value; }
+            }
+
+            public string BirthDate
+            {
+                get { return _birthDate; }
+                set { _birthDate = value; }
+            }
+
+            public string PatientID
+            {
+                get { return _patientID; }
+                set { _patientID = value; }
+            }
+
+            public string IssuerOfPatientID
+            {
+                get { return _issuerOfPatientID; }
+                set { _issuerOfPatientID = value; }
             }
 
             public SeriesDetails[] Series

@@ -35,6 +35,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 
@@ -134,13 +135,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
-            //controller.MergeStudy(itemKey);
+
+            if(ExistingStudyButton.Checked)
+            {
+                controller.MergeStudy(itemKey, true);
+            }
+            else
+            {
+                controller.MergeStudy(itemKey, false);
+            }
 
             Close();
         }
 
         /// <summary>
-        /// Handles event when user clicks on "Cancel" button.
+        /// Handles event when user clicks on "Discard" button.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -166,8 +175,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         private void DisplayReconcileSummary()
         {
             StudyInstanceUIDLabel.Text = ReconcileDetails.StudyInstanceUID;
+            
             ExistingNameLabel.Text = ReconcileDetails.ExistingPatient.Name;
+            ExistingPatientID.Text = ReconcileDetails.ExistingPatient.PatientID;
+            ExistingPatientBirthDate.Text = ReconcileDetails.ExistingPatient.BirthDate;
+            ExistingPatientSex.Text = ReconcileDetails.ExistingPatient.Sex;
+            ExistingPatientIssuerOfPatientID.Text = ReconcileDetails.ExistingPatient.IssuerOfPatientID;
+            ExistingAccessionNumber.Text = ReconcileDetails.ExistingPatient.AccessionNumber;
+
             ConflictingNameLabel.Text = ReconcileDetails.ConflictingPatient.Name;
+            ConflictingPatientID.Text = ReconcileDetails.ConflictingPatient.PatientID;
+            ConflictingPatientBirthDate.Text = ReconcileDetails.ConflictingPatient.BirthDate;
+            ConflictingPatientSex.Text = ReconcileDetails.ConflictingPatient.Sex;
+            ConflictingPatientIssuerOfPatientID.Text = ReconcileDetails.ConflictingPatient.IssuerOfPatientID;
+            ConflictingAccessionNumber.Text = ReconcileDetails.ConflictingPatient.AccessionNumber;
+
+            if (!ExistingNameLabel.Text.Equals(ConflictingNameLabel.Text))
+                ConflictingNameLabel.CssClass = "ConflictingValueLabel";
+
+            if (!ExistingPatientID.Text.Equals(ConflictingPatientID.Text))
+                ConflictingPatientID.CssClass = "ConflictingValueLabel";
+
+            if (!ExistingPatientBirthDate.Text.Equals(ConflictingPatientBirthDate.Text))
+                ConflictingPatientBirthDate.CssClass = "ConflictingValueLabel";
+
+            if (!ExistingPatientSex.Text.Equals(ConflictingPatientSex.Text))
+                ConflictingPatientSex.CssClass = "ConflictingValueLabel";
+
+            if (!ExistingPatientIssuerOfPatientID.Text.Equals(ConflictingPatientIssuerOfPatientID.Text))
+                ConflictingPatientIssuerOfPatientID.CssClass = "ConflictingValueLabel";
+
+            if (!ExistingAccessionNumber.Text.Equals(ConflictingAccessionNumber.Text))
+                ConflictingAccessionNumber.CssClass = "ConflictingValueLabel";
 
             ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingPatient.Series;
             ExistingPatientSeriesGridView.DataBind();

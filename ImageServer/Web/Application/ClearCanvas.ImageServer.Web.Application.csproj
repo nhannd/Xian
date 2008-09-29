@@ -821,6 +821,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogInactiveTabMiddle.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogInactiveTabRight.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTabContentBottom.png" />
+    <Content Include="App_Themes\Default\images\Controls\Dialog\ReconcileButtonBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\SubHeadingBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewHeaderBackground.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTopBackground.png" />

@@ -272,6 +272,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.GridView ConflictingPatientSeriesGridView;
         
         /// <summary>
+        /// ExistingStudyButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton ExistingStudyButton;
+        
+        /// <summary>
+        /// ConflictingStudyButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton ConflictingStudyButton;
+        
+        /// <summary>
         /// MergeButton control.
         /// </summary>
         /// <remarks>

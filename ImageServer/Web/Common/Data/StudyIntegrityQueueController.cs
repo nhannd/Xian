@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -83,6 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parameters.StudyData = item.StudyData;
             parameters.ChangeDescription = changeDescription;
             parameters.StudyStorageKey = item.StudyStorageKey;
+            parameters.StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled;
 
             StudyHistory history = historyAdaptor.Add(parameters);
 
@@ -125,12 +127,114 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         
         public void CreateNewStudy(ServerEntityKey itemKey)
         {
-            ReconcileStudy(String.Format("<ImageCommands><UpdateImages><SetTag TagPath=\"0020000D\" Value=\"{0}\"/></UpdateImages></ImageCommands>", DicomUid.GenerateUid().UID), itemKey);
+            ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"0020000D\" Value=\"{0}\" /></CreateStudy>", DicomUid.GenerateUid().UID), itemKey);
+        }
+
+        public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
+        {
+            StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
+            Model.StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
+
+            string PatientName = string.Empty;
+            string PatientID = string.Empty;;
+            string IssuerOfPatientID = string.Empty;
+            string Birthdate = string.Empty; 
+            string AccessionNumber = string.Empty;
+            string PatientSex = string.Empty;
+
+            if(useExistingStudy)
+            {
+                StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
+                StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
+                StudyAdaptor studyAdaptor = new StudyAdaptor();
+                StudySelectCriteria studycriteria = new StudySelectCriteria();
+                studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
+                IList<Study> studyList = studyAdaptor.Get(studycriteria);
+
+                if (studyList != null && studyList.Count > 0)
+                {
+                    Study study = studyList[0];
+
+                    //Set the demographic details using the Existing Patient
+                    PatientName = string.Format("<SetTag TagPath=\"00100010\" Value=\"{0}\"/>", study.PatientsName);
+                    PatientID = string.Format("<SetTag TagPath=\"00100020\" Value=\"{0}\"/>", study.PatientId);
+                    AccessionNumber = string.Format("<SetTag TagPath=\"00080050\" Value=\"{0}\"/>", study.AccessionNumber);
+                    PatientSex = string.Format("<SetTag TagPath=\"00100040\" Value=\"{0}\"/>", study.PatientsSex);
+                    IssuerOfPatientID = string.Format("<SetTag TagPath=\"00100021\" Value=\"{0}\"/>", study.IssuerOfPatientId);
+                    Birthdate = string.Format("<SetTag TagPath=\"00100030\" Value=\"{0}\"/>", study.PatientsBirthDate); 
+                }               
+            }
+            else
+            {
+                StringWriter sw = new StringWriter();
+                XmlTextWriter xw = new XmlTextWriter(sw);
+                item.StudyData.WriteTo(xw);
+
+                string studyData = sw.ToString();
+
+                //Set the demographic details using the Conflicting Patient
+                PatientName = string.Format("<SetTag TagPath=\"00100010\" Value=\"{0}\"/>", GetConflictingName(studyData));
+                PatientID = string.Format("<SetTag TagPath=\"00100020\" Value=\"{0}\"/>", GetConflictingPatientID(studyData));
+                AccessionNumber = string.Format("<SetTag TagPath=\"00080050\" Value=\"{0}\"/>", GetConflictingPatientAccessionNumber(studyData));
+                PatientSex = string.Format("<SetTag TagPath=\"00100040\" Value=\"{0}\"/>", GetConflictingPatientSex(studyData));
+                IssuerOfPatientID = string.Format("<SetTag TagPath=\"00100021\" Value=\"{0}\"/>", GetConflictingIssuerOfPatientID(studyData));
+                Birthdate = string.Format("<SetTag TagPath=\"00100030\" Value=\"{0}\"/>", GetConflictingPatientBirthDate(studyData));                 
+            }
+            
+            ReconcileStudy(String.Format("<MergeStudy>{0}{1}{2}{3}{4}{5}</MergeStudy>", PatientName, PatientID, AccessionNumber, PatientSex, IssuerOfPatientID, Birthdate), itemKey);
         }
 
         public void Discard(ServerEntityKey itemKey)
         {
             ReconcileStudy("<ImageCommands><Discard/></ImageCommands>", itemKey);
+        }
+
+        private static string GetConflictingName(string studyData)
+        {
+            string patientNameTag = "00100010";
+            return parseXmlString(studyData, patientNameTag);
+        }
+
+        private static string GetConflictingPatientID(string studyData)
+        {
+            string patientIDTag = "00100020";
+            return parseXmlString(studyData, patientIDTag);
+        }
+
+        private static string GetConflictingPatientSex(string studyData)
+        {
+            string sexTag = "00100040";
+            return parseXmlString(studyData, sexTag);
+        }
+
+        private static string GetConflictingPatientBirthDate(string studyData)
+        {
+            string patientBirthDateTag = "00100030";
+            return parseXmlString(studyData, patientBirthDateTag);
+
+        }
+
+        private static string GetConflictingIssuerOfPatientID(string studyData)
+        {
+            string issuerOfPatientIDTag = "00100021";
+            return parseXmlString(studyData, issuerOfPatientIDTag);
+        }
+
+        private static string GetConflictingPatientAccessionNumber(string studyData)
+        {
+            string accessionTag = "00080050";
+            return parseXmlString(studyData, accessionTag);
+        }
+
+        private static string parseXmlString(string xmlString, string tag)
+        {
+            string VALUE = "Value=";
+
+            string str = xmlString.Substring(xmlString.IndexOf(tag));
+            str = str.Substring(str.IndexOf(VALUE) + VALUE.Length + 1);
+            str = str.Substring(0, str.IndexOf("\""));
+
+            return str;
         }
 	}
 }

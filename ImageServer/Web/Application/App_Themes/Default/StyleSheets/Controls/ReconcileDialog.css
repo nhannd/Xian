@@ -11,17 +11,16 @@
     margin-left: 10px;
     margin-right: 10px;
     background: #ffffcc url(../../images/Error/ErrorMessageBackground.png) repeat-x; 
-    color: #618FAD;
-    border: solid 1px #618FAD; 
+    color: red;
+    border: solid 1px red; 
     font-family: Sans-Serif; 
-    font-size: 14px; 
-    font-weight: bold; 
+    font-size: 12px; 
+    font-weight: bold;
 }
 
 .ReconcileHeaderRow
 {
-    background: #dddddd; 
-    padding: 4px; 
+    padding: 8px 4px 8px 4px; 
     color: #205F87;
     text-align: center; 
     font-weight:bold;
@@ -50,8 +49,8 @@
 
 .Separator
 {  
-    border-left: dashed 2px #aaaaaa;
-    border-right: dashed 2px #aaaaaa;
+    border-left: dashed 2px #618FAD;
+    border-right: dashed 2px #618FAD;
     padding: 0px;
 }
 
@@ -85,17 +84,25 @@
 .ReconcileSeriesGridViewRow
 {
     font-size: 12px;
-    border-bottom: solid 2px #cccccc;
+ }
+
+.ReconcileSeriesGridViewRow td
+{
+    border-bottom: solid 1px #cccccc;
     padding: 2px;
 }
 
 .ReconcileSeriesGridViewHeader
 {
     font-size: 12px;
-    color: #205F87;
-    background: #EEEEEE;
-    padding: 10px;
-    border-bottom: solid 1px black;
+    color: #16425D;
+    background: #dfdfdf;
+}
+
+.ReconcileSeriesGridViewHeader td
+{
+    border-bottom: solid 1px #black;
+    padding: 2px;
 }
 
 .ReconcileSeriesGridView
@@ -117,7 +124,7 @@
 {
     font-size: 12px;
     text-align: center;
-   background: #B8D8EE;
+    background: #B8D8EE;
     padding: 2px 4px 4px 4px;
 }
 
@@ -130,14 +137,15 @@
 
 .MergeStudyButton
 {
-    background: #B8D8EE;
+    background: #B8D8EE url(../../images/Controls/Dialog/ReconcileButtonBackground.png) repeat-x bottom;
 }
 
 .CreateNewStudyButton
 {
-    background: #E1EFF8;
+    background: #E1EFF8 ;
     border-left: solid 1px #618FAD;
     border-top: solid 1px #618FAD;
+    border-right: solid 1px #618FAD;
 }
 
 .DiscardButton
@@ -151,4 +159,15 @@
     color: red;
     font-size: 12px;
     font-weight: bold;
+}
+
+.ReconcileDemographicsLabel
+{
+    padding-left: 8px;
+}
+
+.ConflictingValueLabel
+{
+    padding-left: 8px;
+    color:Red;
 }

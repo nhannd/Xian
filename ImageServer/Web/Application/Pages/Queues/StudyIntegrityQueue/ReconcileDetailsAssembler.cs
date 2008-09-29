@@ -32,17 +32,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-    static public class ReconcileDetailsAssembler
+    public static class ReconcileDetailsAssembler
     {
         private static int ArraySize = 100;
 
-        static public ReconcileDetails CreateReconcileDetails(Model.StudyIntegrityQueue item)
+        public static ReconcileDetails CreateReconcileDetails(Model.StudyIntegrityQueue item)
         {
             ReconcileDetails details = new ReconcileDetails();
 
@@ -59,6 +61,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 Study study = studyList[0];
                 details.StudyInstanceUID = study.StudyInstanceUid;
+
+                //Set the demographic details of the Existing Patient
+                details.ExistingPatient.PatientID = study.PatientId;
+                details.ExistingPatient.AccessionNumber = study.AccessionNumber;
+                details.ExistingPatient.Sex = study.PatientsSex;
+                details.ExistingPatient.IssuerOfPatientID = study.IssuerOfPatientId;
+                details.ExistingPatient.BirthDate = study.PatientsBirthDate;
 
                 SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
                 SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
@@ -86,6 +95,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             details.ExistingPatient.Name = GetExistingName(item.Description);
             details.ConflictingPatient.Name = GetConflictingName(item.Description);
 
+            StringWriter sw = new StringWriter();
+            XmlTextWriter xw = new XmlTextWriter(sw);
+            item.StudyData.WriteTo(xw);
+
+            string studyData = sw.ToString();
+
+            details.ConflictingPatient.PatientID = GetConflictingPatientID(studyData);
+            details.ConflictingPatient.AccessionNumber = GetConflictingPatientAccessionNumber(studyData);
+            details.ConflictingPatient.Sex = GetConflictingPatientSex(studyData);
+            details.ConflictingPatient.IssuerOfPatientID = GetConflictingIssuerOfPatientID(studyData);
+            details.ConflictingPatient.BirthDate = GetConflictingPatientBirthDate(studyData);
+
             StudyIntegrityQueueUidAdaptor uidAdaptor = new StudyIntegrityQueueUidAdaptor();
             StudyIntegrityQueueUidSelectCriteria uidCriteria = new StudyIntegrityQueueUidSelectCriteria();
             uidCriteria.StudyIntegrityQueueKey.EqualTo(item.GetKey());
@@ -97,24 +118,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             // Uid matching the current queue item, count the total number of
             // images for each series description.
             //
-            
-            ArrayList seriesInstanceUid= new ArrayList();
+
+            ArrayList seriesInstanceUid = new ArrayList();
             int[] seriesCount = new int[ArraySize];
             string[] seriesDescription = new string[ArraySize];
 
             foreach (StudyIntegrityQueueUid uidItem in uidItems)
             {
-                if(seriesInstanceUid.Contains(uidItem.SeriesInstanceUid))
+                if (seriesInstanceUid.Contains(uidItem.SeriesInstanceUid))
                 {
                     int index = seriesInstanceUid.IndexOf(uidItem.SeriesInstanceUid);
                     seriesCount[index] = seriesCount[index] + 1;
-                } 
+                }
                 else
                 {
                     int index = seriesInstanceUid.Add(uidItem.SeriesInstanceUid);
 
                     //Grow the array by ArraySize if there are more unique series.
-                    if(index > seriesCount.Length)
+                    if (index > seriesCount.Length)
                     {
                         int[] tempSeriesCount = new int[seriesCount.Length + ArraySize];
                         seriesCount.CopyTo(tempSeriesCount, 0);
@@ -134,11 +155,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             foreach (string uid in seriesInstanceUid)
             {
                 int index = seriesInstanceUid.IndexOf(uid);
-                
+
                 ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
                 seriesDetails.Description = seriesDescription[index];
                 seriesDetails.NumberOfInstances = seriesCount[index];
-                seriesList.Add(seriesDetails);   
+                seriesList.Add(seriesDetails);
             }
 
             details.ConflictingPatient.Series = seriesList.ToArray();
@@ -147,17 +168,59 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         //Extract the Existing Patient name from the description column
-        static private string GetExistingName(string description)
+        private static string GetExistingName(string description)
         {
             String patientNames = description.Substring(description.IndexOf("=") + 1);
             return patientNames.Substring(0, patientNames.IndexOf("\r\n"));
         }
 
         //Extract the conflicting patient name from the description column
-        static private string GetConflictingName(string description)
+        private static string GetConflictingName(string description)
         {
             String patientNames = description.Substring(description.IndexOf("=") + 1);
             return patientNames.Substring(patientNames.IndexOf("=") + 1);
+        }
+
+        private static string GetConflictingPatientID(string studyData)
+        {
+            string patientIDTag = "00100020";
+            return parseXmlString(studyData, patientIDTag);
+        }
+
+        private static string GetConflictingPatientSex(string studyData)
+        {
+            string sexTag = "00100040";
+            return parseXmlString(studyData, sexTag);
+        }
+
+        private static string GetConflictingPatientBirthDate(string studyData)
+        {
+            string patientBirthDateTag = "00100030";
+            return parseXmlString(studyData, patientBirthDateTag);
+
+        }
+
+        private static string GetConflictingIssuerOfPatientID(string studyData)
+        {
+            string issuerOfPatientIDTag = "00100021";
+            return parseXmlString(studyData, issuerOfPatientIDTag);
+        }
+
+        private static string GetConflictingPatientAccessionNumber(string studyData)
+        {
+            string accessionTag = "00080050";
+            return parseXmlString(studyData, accessionTag);
+        }
+
+        private static string parseXmlString(string xmlString, string tag)
+        {
+            string VALUE = "Value=";
+
+            string str = xmlString.Substring(xmlString.IndexOf(tag));
+            str = str.Substring(str.IndexOf(VALUE) + VALUE.Length + 1);
+            str = str.Substring(0, str.IndexOf("\""));
+
+            return str;
         }
     }
 }
