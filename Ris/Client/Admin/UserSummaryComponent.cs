@@ -38,6 +38,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -262,6 +263,13 @@ namespace ClearCanvas.Ris.Client.Admin
 		{
 			failureMessage = null;
 			deletedItems = new List<UserSummary>();
+
+		    string currentUserName = Thread.CurrentPrincipal.Identity.Name;
+            if (CollectionUtils.Contains(items, delegate(UserSummary u) { return u.UserName == currentUserName; }))
+            {
+                if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageWarnDeleteOwnUser, MessageBoxActions.YesNo))
+                    return false;
+            }
 
 			foreach (UserSummary item in items)
 			{
