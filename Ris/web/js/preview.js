@@ -760,25 +760,75 @@ Preview.ReportingProceduresTable = function () {
  *	Exposes one method: create(...)
  */
 Preview.ReportListTable = function () {
-	return {
-		create: function(htmlTable, reportList, onLoadReport)
+	var _onReportListSelectionChanged = function(reportListItem)
+	{
+		if(!Ris) return;
+	
+		var request = 
 		{
-			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, autoSelectFirstElement: true },
-				 [
-					{   label: "Procedure",
-						cellType: "text",
-						getValue: function(item) { return Preview.formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
-					},
-					{   label: "Status",
-						cellType: "text",
-						getValue: function(item) { return item.ReportStatus.Value; }
-					}
-				 ]);
+			GetReportDetailRequest: { ReportRef: reportListItem.ReportRef }
+		};
+
+		var service = Ris.getPatientDataService();
+		var data = service.getData(request);
+
+		if (data == null || data.length == 0)
+		{
+			Field.show($("reportContent"), false);
+			return;
+		}
+
+		var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
+		if (reportDetail)
+			Preview.ReportPreview.create($("reportContent"), reportDetail);
+		else
+			Field.show($("reportContent"), false);
+	};	
+		
+
+	return {
+		create: function(parentElement, reportList)
+		{
+			if(reportList.length == 0)
+			{
+				parentElement.style.display = 'none';
+				return;
+			}
+			else
+			{
+				parentElement.style.display = 'block';
+			}
+			
+			var heading = document.createElement("P");
+			heading.className = 'sectionheading';
+			heading.innerText = 'Reports';
+			parentElement.appendChild(heading);
+
+			var htmlTable = document.createElement("TABLE");
+			parentElement.appendChild(htmlTable);
+			var body = document.createElement("TBODY");
+			htmlTable.appendChild(body);
+			
+			var reportContent = document.createElement("DIV");
+			reportContent.id = 'reportContent';
+			parentElement.appendChild(reportContent);
+
+			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, autoSelectFirstElement: true, addColumnHeadings:true },
+			[
+				{   label: "Procedure",
+					cellType: "text",
+					getValue: function(item) { return Preview.formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
+				},
+				{   label: "Status",
+					cellType: "text",
+					getValue: function(item) { return item.ReportStatus.Value; }
+				}
+			]);
 
 			htmlTable.onRowClick = function(sender, args)
-				{
-					onLoadReport(args.item);
-				};
+			{
+				_onReportListSelectionChanged(args.item);
+			};
 
 			htmlTable.mouseOverClassName = "mouseover";
 			htmlTable.highlightClassName = "highlight";
@@ -789,53 +839,101 @@ Preview.ReportListTable = function () {
 }();
 
 /*
- *	Create a table of notes with the following columns:
+ *	Create one or more tables of notes with the following columns:
  *		- Comment
  *		- Time
  *		- Author
- *	The table can be filtered by a specific note category.
+ *	The notes can be split into tables for specific note categories if desired.
  * 	
- *	Exposes one method: create(...)
+ *	Exposes one method: create(parentElement, notes, subsections)
+ * 		parentElement - parent node for table(s)
+ *		notes - the list of note objects
+ *		subsections - optional - a list of objects of form { category: "SomeNoteCategory", subsectionHeading: "SomeHeading" }.  
+ *			If no subsections are specified, all notes are shown in a single table.
+ *  Also exposes defaultSubsections array which can be used as the subsections parameter in create(...)
  */
 Preview.OrderNotesTable = function () {
-	return {
-		create: function(htmlTable, notes, categoryFilter)
+	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading)
+	{
+		var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
+
+		if (filteredNotes.length == 0)
+			return;
+
+		if(subsectionHeading)
 		{
-			var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
-
-			if (filteredNotes.length == 0)
-			{
-				Field.show(htmlTable, false);
-			}
-			
-			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
-				 [
-					{   label: "Comment",
-						cellType: "readonly",
-						getValue: function(item) { return item.NoteBody; }
-					},
-					{   label: "Time",
-						cellType: "text",
-						getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
-					},
-					{   label: "Author",
-						cellType: "text",
-						getValue: function(item) 
-						{ 
-							var from = Ris.formatStaffNameAndRole(item.Author);
-							
-							if(item.OnBehalfOfGroup != null)
-								from = from + " on behalf of " + item.OnBehalfOfGroup.Name;
-							
-							return from;
-						}
-					}
-				 ]);
-
-			htmlTable.rowCycleClassNames = ["row1", "row0"];
-			htmlTable.bindItems(filteredNotes);
+			var heading = document.createElement("P");
+			heading.className = 'subsectionheading';
+			heading.innerText = subsectionHeading;
+			parentElement.appendChild(heading);
 		}
 
+		var htmlTable = document.createElement("TABLE");
+		parentElement.appendChild(htmlTable);
+		var body = document.createElement("TBODY");
+		htmlTable.appendChild(body);
+
+		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+		[
+			{   label: "Comment",
+				cellType: "readonly",
+				getValue: function(item) { return item.NoteBody; }
+			},
+			{   label: "Time",
+				cellType: "text",
+				getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
+			},
+			{   label: "Author",
+				cellType: "text",
+				getValue: function(item) 
+				{ 
+					var from = Ris.formatStaffNameAndRole(item.Author);
+					
+					if(item.OnBehalfOfGroup != null)
+						from = from + " on behalf of " + item.OnBehalfOfGroup.Name;
+					
+					return from;
+				}
+			}
+		]);
+
+		htmlTable.rowCycleClassNames = ["row1", "row0"];
+		htmlTable.bindItems(filteredNotes);
+	};
+
+	return {
+		create: function(parentElement, notes, subsections)
+		{
+			if(notes.length == 0)
+				return;
+
+			var heading = document.createElement("P");
+			heading.className = 'sectionheading';
+			heading.innerText = 'Order Notes';
+			parentElement.appendChild(heading);
+			
+			if(subsections)
+			{
+				for(var i = 0; i < subsections.length; i++)
+				{
+					if(subsections[i])
+					{
+						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading);
+					}
+				}
+			}
+			else
+			{
+				_createSubsection(parentElement, notes);
+			}
+		},
+		
+		defaultSubsections:
+		[
+			{category:"General", subsectionHeading:"General"}, 
+			{category:"Protocol", subsectionHeading:"Protocol"}, 
+			{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"}
+		]
 	};
 }();
 

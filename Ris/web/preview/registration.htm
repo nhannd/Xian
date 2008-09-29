@@ -121,17 +121,7 @@
 						}
 
 						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-							
-						if (orderDetail && orderDetail.Notes.length)
-						{
-							Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
-							Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-							Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
-						}
-						else
-						{
-							Field.show($("notesSection"), false);
-						}
+						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 					}
 					else
 					{
@@ -230,54 +220,28 @@
 				<div id="proceduresSection"></div>
 
 				<div id="visitSection">
-				<p class="sectionheading">Insurance</p>
-				<table>	
-					<tr>
-						<td width="120" class="propertyname">Plan Id</td>
-						<td><div id="InsurancePlanId"/></td>
-						<td width="120" class="propertyname">Name of Insured</td>
-						<td><div id="NameOfInsured"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Company Id</td>
-						<td><div id="InsuranceCompanyId"/></td>
-						<td width="120" class="propertyname">Relationship to patient</td>
-						<td><div id="InsuredsRelationshipToPatient"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Policy Number</td>
-						<td colspan="3"><div id="PolicyNumber"/></td>
-					</tr>
-				</table>
-			</div>
-			
-			<div id="notesSection">
-				<p class="sectionheading">Order Notes</p>
-				<table id="generaNotesTable">
-					<tr><td class="sectionheading" colspan="3">General</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-				<table id="protocolNotesTable">
-					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-				<table id="prelimNotesTable">
-					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-			</div>
+					<p class="sectionheading">Insurance</p>
+					<table>	
+						<tr>
+							<td width="120" class="propertyname">Plan Id</td>
+							<td><div id="InsurancePlanId"/></td>
+							<td width="120" class="propertyname">Name of Insured</td>
+							<td><div id="NameOfInsured"/></td>
+						</tr>
+						<tr>
+							<td width="120" class="propertyname">Company Id</td>
+							<td><div id="InsuranceCompanyId"/></td>
+							<td width="120" class="propertyname">Relationship to patient</td>
+							<td><div id="InsuredsRelationshipToPatient"/></td>
+						</tr>
+						<tr>
+							<td width="120" class="propertyname">Policy Number</td>
+							<td colspan="3"><div id="PolicyNumber"/></td>
+						</tr>
+					</table>
+				</div>
+
+				<div id="notesSection"></div>
 			</div>
 
 			<div id="activeProceduresSection"></div>

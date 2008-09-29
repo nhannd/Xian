@@ -117,17 +117,7 @@
 					var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
 					Preview.ProtocolProceduresTable.create($("protocolProceduresSection"), filteredProcedures);
 
-						
-					if(orderDetail.Notes.length)
-					{
-						Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
-						Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-						Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
-					}
-					else
-					{
-						Field.show($("notesSection"), false);
-					}
+					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 				}
 				else
 				{
@@ -222,34 +212,7 @@
 
 				<div id="reportingProceduresSection"></div>
 				<div id="protocolProceduresSection"></div>
-
-				<div id="notesSection">
-					<p class="sectionheading">Order Notes</p>
-					<table id="generaNotesTable">
-						<tr><td class="sectionheading" colspan="3">General</td></tr>
-						<tr class="tableheading">
-							<td>Comment</td>
-							<td>Time</td>
-							<td>Author</td>
-						</tr>
-					</table>
-					<table id="protocolNotesTable">
-						<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-						<tr class="tableheading">
-							<td>Comment</td>
-							<td>Time</td>
-							<td>Author</td>
-						</tr>
-					</table>
-					<table id="prelimNotesTable">
-						<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-						<tr class="tableheading">
-							<td>Comment</td>
-							<td>Time</td>
-							<td>Author</td>
-						</tr>
-					</table>
-				</div>
+				<div id="notesSection"></div>
 			</div>
 
 			<div id="reportSection">

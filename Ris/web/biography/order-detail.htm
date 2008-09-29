@@ -64,15 +64,7 @@
 						else
 							Field.show($("CancelReasonSection"), false);
 
-						if(orderDetail.Notes.length)
-						{
-							Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
-							Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-							Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
-						}
-						else
-							Field.show($("notesSection"), false);
-
+						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 						initProcedureTable(orderDetail.Procedures);
 					}
 					else
@@ -162,34 +154,8 @@
 				<table id="proceduresTable">
 				</table>
 
-				<div id="notesSection">
-					<p class="sectionheading">Order Notes</p>
-					<table id="generaNotesTable">
-						<tr><td class="sectionheading" colspan="3">General</td></tr>
-						<tr class="tableheading">
-							<td>Comment</td>
-							<td>Time</td>
-							<td>Author</td>
-						</tr>
-					</table>
-					<table id="protocolNotesTable">
-						<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-						<tr class="tableheading">
-							<td>Comment</td>
-							<td>Time</td>
-							<td>Author</td>
-						</tr>
-					</table>
-					<table id="prelimNotesTable">
-						<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-						<tr class="tableheading">
-							<td>Comment</td>
-							<td>Time</td>
-							<td>Author</td>
-						</tr>
-					</table>
-				</div>
-				
+				<div id="notesSection"></div>
+
 				<div id="procedureTableTemplate" style="display:none">
 					<table>
 					<tr>

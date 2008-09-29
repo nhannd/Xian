@@ -103,16 +103,7 @@
 				
 					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 
-					if(orderDetail.Notes.length)
-					{
-						Preview.OrderNotesTable.create($("generaNotesTable"), orderDetail.Notes, "General");
-						Preview.OrderNotesTable.create($("protocolNotesTable"), orderDetail.Notes, "Protocol");
-						Preview.OrderNotesTable.create($("prelimNotesTable"), orderDetail.Notes, "PrelimDiagnosis");
-					}
-					else
-					{
-						Field.show($("notesSection"), false);
-					}
+					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 				}
 				else
 				{
@@ -120,10 +111,7 @@
 				}
 
 				var reports = data.ListReportsResponse ? data.ListReportsResponse.Reports : null;
-				if (reports && reports.length > 0)
-					Preview.ReportListTable.create($("reportsTable"), reports, onLoadReport);
-				else
-					Field.show($("reportListSection"), false);
+				Preview.ReportListTable.create($("reportListSection"), reports);
 			}
 			catch(e)
 			{
@@ -131,29 +119,6 @@
 				Field.setValue($("myForm"), message);
 			}
 		}
-		
-		function onLoadReport(reportListItem)
-		{
-			var request = 
-			{
-				GetReportDetailRequest: { ReportRef: reportListItem.ReportRef }
-			};
-
-			var service = Ris.getPatientDataService();
-			var data = service.getData(request);
-
-			if (data == null || data.length == 0)
-			{
-				Field.show($("report"), false);
-				return;
-			}
-
-			var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
-			if (reportDetail)
-				Preview.ReportPreview.create($("report"), reportDetail);
-			else
-				Field.show($("report"), false);
-		}		
 	</script>
 </head>
 <body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
@@ -217,49 +182,10 @@
 			</table>
 
 			<div id="proceduresSection"></div>
-
-			<div id="notesSection">
-				<p class="sectionheading">Order Notes</p>
-				<table id="generaNotesTable">
-					<tr><td class="sectionheading" colspan="3">General</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-				<table id="protocolNotesTable">
-					<tr><td class="sectionheading" colspan="3">Protocol</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-				<table id="prelimNotesTable">
-					<tr><td class="sectionheading" colspan="3">Preliminary Diagnosis</td></tr>
-					<tr class="tableheading">
-						<td>Comment</td>
-						<td>Time</td>
-						<td>Author</td>
-					</tr>
-				</table>
-			</div>
+			<div id="notesSection"></div>
 		</div>
 
-		<div id="reportListSection">
-			<p class="sectionheading">Reports</p>
-			<table id="reportsTable">
-				<tr class="tableheading">
-					<td>Procedure</td>
-					<td>Report Status</td>
-					<td></td>
-				</tr>
-			</table>
-			
-			<!-- the actual report content goes here -->
-			<div id="report"/>
-		</div>
+		<div id="reportListSection"></div>
 	</form>
 </body>
 </html>
