@@ -785,3 +785,12 @@ INSERT INTO [ImageServer].[dbo].[StudyIntegrityReasonEnum]
      VALUES
            (newid(),100,'InconsistentData','Inconsistent Data Reconciliation','Images must be reconciled because of inconsistent data.')
 GO
+
+
+
+-- StudyHistoryTypeEnum inserts
+INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),100,'StudyReconciled','Study was reconciled','Demographics in the orginal images were modified to match against another study on the server.')
+GO

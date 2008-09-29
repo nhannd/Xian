@@ -68,7 +68,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[DefaultRemotePort] [int] NOT NULL CONSTRAINT [DF_ServerPartition_DefaultRemotePort]  DEFAULT ((104)),
 	[StudyCount] [int] NOT NULL CONSTRAINT [DF_ServerPartition_StudyCount]  DEFAULT ((0)),
 	[DuplicateSopPolicyEnum] [smallint] NOT NULL,
-	[MatchAccesssionNumber] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchAccesssionNumber]  DEFAULT ((1)),
+	[MatchAccessionNumber] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchAccessionNumber]  DEFAULT ((1)),
 	[MatchIssuerOfPatientId] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchIssuerOfPatientId]  DEFAULT ((1)),
 	[MatchPatientId] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientId]  DEFAULT ((1)),
 	[MatchPatientsBirthDate] bit NOT NULL CONSTRAINT [DF_ServerPartition_MatchPatientsBirthDate]  DEFAULT ((1)),
@@ -1221,7 +1221,8 @@ CREATE TABLE [dbo].[StudyIntegrityQueueUid](
 
 GO
 
-/****** Object:  Table [dbo].[StudyHistory]    Script Date: 09/05/2008 11:51:33 ******/
+
+/****** Object:  Table [dbo].[StudyHistory]    Script Date: 09/26/2008 16:50:35 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1230,6 +1231,8 @@ CREATE TABLE [dbo].[StudyHistory](
 	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyHistory_GUID]  DEFAULT (newid()),
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_StudyHistory_InsertTime]  DEFAULT (getdate()),
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
+	[DestStudyStorageGUID] [uniqueidentifier] NULL,
+	[StudyHistoryTypeEnum] [smallint] NOT NULL,
 	[StudyData] [xml] NOT NULL,
 	[ChangeDescription] [xml] NULL,
  CONSTRAINT [PK_StudyHistory] PRIMARY KEY CLUSTERED 
@@ -1238,9 +1241,31 @@ CREATE TABLE [dbo].[StudyHistory](
 )WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 
+
+/****** Object:  Table [dbo].[StudyHistoryTypeEnum]    Script Date: 09/26/2008 23:49:11 ******/
+SET ANSI_NULLS ON
 GO
-
-
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[StudyHistoryTypeEnum]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[StudyHistoryTypeEnum](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyHistoryTypeEnum_GUID]  DEFAULT (newid()),
+	[Enum] [smallint] NOT NULL,
+	[Lookup] [varchar](32) NOT NULL,
+	[Description] [nvarchar](32) NOT NULL,
+	[LongDescription] [nvarchar](128) NOT NULL,
+ CONSTRAINT [PK_StudyHistoryTypeEnum] PRIMARY KEY CLUSTERED 
+(
+	[Enum] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [STATIC]
+) ON [STATIC]
+END
+GO
+SET ANSI_PADDING OFF
+GO
 
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
@@ -1646,5 +1671,20 @@ REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
 
 
+/****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_DestStudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
+ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_DestStudyStorage] FOREIGN KEY([DestStudyStorageGUID])
+REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
 
+/****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistory]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
+ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyHistory] FOREIGN KEY([GUID])
+REFERENCES [dbo].[StudyHistory] ([GUID])
+GO
 
+/****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistoryTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
+ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyHistoryTypeEnum] FOREIGN KEY([StudyHistoryTypeEnum])
+REFERENCES [dbo].[StudyHistoryTypeEnum] ([Enum])
+GO

@@ -127,6 +127,7 @@
     <Compile Include="EntityBrokers\IFilesystemStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyHistoryEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IStudyHistoryTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyIntegrityQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyIntegrityQueueUidEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IStudyIntegrityReasonEnumBroker.gen.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="ServiceLock.gen.cs" />
     <Compile Include="ServiceLockTypeEnum.gen.cs" />
     <Compile Include="FilesystemStudyStorage.gen.cs" />
+    <Compile Include="Study.cs" />
     <Compile Include="Study.gen.cs" />
     <Compile Include="Brokers\IInsertInstance.cs" />
     <Compile Include="Brokers\IInsertRequestAttributes.cs" />
@@ -250,6 +252,7 @@
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
     <Compile Include="StudyHistory.gen.cs" />
+    <Compile Include="StudyHistoryTypeEnum.gen.cs" />
     <Compile Include="StudyIntegrityQueue.gen.cs" />
     <Compile Include="StudyIntegrityQueueUid.gen.cs" />
     <Compile Include="StudyIntegrityReasonEnum.gen.cs" />

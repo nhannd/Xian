@@ -98,6 +98,7 @@
     <Compile Include="EntityBrokers\FilesystemStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistoryEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\StudyHistoryTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyIntegrityQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyIntegrityQueueUidEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyIntegrityReasonEnumBroker.gen.cs" />

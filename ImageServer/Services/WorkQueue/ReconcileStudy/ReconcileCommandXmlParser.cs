@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Commands;
+using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
+using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
+using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -11,8 +14,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// Parses reconciliation commands in Xml format.
     /// </summary>
     /// <remarks>
-    /// The reconciliation commands should be specified in the 'ImageCommands' xml node. Currently only
-    /// "Discard" command (<see cref="ReconcileDiscardImageCommand"/>) and "UpdateImages" (<see cref="ReconcileUpdateDicomFileCommand"/>)
+    /// The reconciliation commands should be specified in the 'Reconcile' xml node. Currently only
+    /// "MergeStudy", "CreateStudy" or "Discard" commands
     /// are supported.
     /// 
     /// <example>
@@ -34,59 +37,46 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// </remarks>
     class ReconcileCommandXmlParser
     {
-        #region Private Static Methods
-        private static IReconcileCommandFactory GetCommandFactory(String command)
-        {
-            // TODO: Consider using plugin mechanism
-            if (command == "Discard")
-            {
-                return new ReconcileDiscardImageCommandFactory();
-            }
-            else if (command == "UpdateImages")
-            {
-                return new ReconcileUpdateImageCommandFactory();
-            }
-            else
-            {
-                throw new ApplicationException(String.Format("Unknown command: {0}", command));
-            }
-        }
-        #endregion
 
         #region Public Methods
         /// <summary>
         /// Extract a list of <see cref="IReconcileServerCommand"/> in the specified Xml.
         /// </summary>
-        /// <param name="specifications"></param>
+        /// <param name="doc"></param>
         /// <returns></returns>
         /// <remarks>
         /// The reconciliation commands should be specified in <ImageCommands> node.
         /// </remarks>
-        public List<IReconcileServerCommand> Parse(XmlDocument specifications)
+        public IReconcileProcessor Parse(XmlDocument doc)
         {
             //TODO: Validate the xml
+            Platform.CheckForNullReference(doc, "doc");
 
-            List<IReconcileServerCommand> commandList = new List<IReconcileServerCommand>();
-            XmlNode imageCommandsNode = specifications.SelectSingleNode("//ImageCommands");
-            if (imageCommandsNode!=null)
+            if (doc.DocumentElement!=null)
             {
-                XmlNodeList nodeList = imageCommandsNode.ChildNodes;
-                foreach (XmlNode node in nodeList)
+                //TODO: use plugin?
+                if (doc.DocumentElement.Name == "MergeStudy")
                 {
-                    IReconcileCommandFactory factory = GetCommandFactory(node.Name);
-                    if (factory!=null)
-                    {
-                        List<IReconcileServerCommand> commands = factory.Parse(node);
-                        CollectionUtils.ForEach(commands, delegate(IReconcileServerCommand cmd)
-                                                           {
-                                                               commandList.Add(cmd);
-                                                           });
-                    }
-
+                    return new MergeStudyCommandProcessor();
                 }
+                else if (doc.DocumentElement.Name == "CreateStudy")
+                {
+                    return new ReconcileCreateStudyProcessor();
+                }
+                else if (doc.DocumentElement.Name == "Discard")
+                {
+                    return new DiscardImageCommandProcessor();
+                }
+                else
+                {
+                    throw new NotSupportedException(doc.DocumentElement.Name);
+                }
+                
             }
-            return commandList;
+            
+            return null;
         }
         #endregion
+
     }
 }

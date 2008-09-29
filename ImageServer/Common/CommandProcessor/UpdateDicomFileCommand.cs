@@ -25,6 +25,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private bool _backup = false;
         bool _saved;
         private DicomFile _file;
+        private List<DicomAttribute> _affectedAttributes;
         #endregion
 
         #region Construtors
@@ -61,21 +62,29 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             set { _outputFilePath = value; }
         }
 
+        public IEnumerable<DicomAttribute> AffectedAttributes
+        {
+            get { return _affectedAttributes; }
+        }
+
         #endregion
 
         public  void Dispose()
         {
             if (File.Exists(_backupExistingFileName))
                 File.Delete(_backupExistingFileName); 
+
+            
         }
 
         protected override void OnExecute()
         {
             Platform.CheckForNullReference(DicomFile, "DicomFile");
 
+            _affectedAttributes = new List<DicomAttribute>();
             foreach(IDicomFileUpdateCommandAction action in _actionList)
             {
-                action.Apply(DicomFile);
+                _affectedAttributes.AddRange(action.Apply(DicomFile));
             }
 
             if (!String.IsNullOrEmpty(OutputFilePath))
@@ -121,7 +130,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     /// </summary>
     public interface IDicomFileUpdateCommandAction
     {
-        void Apply(DicomFile file);
+        IEnumerable<DicomAttribute> Apply(DicomFile file);
     }
 
     /// <summary>

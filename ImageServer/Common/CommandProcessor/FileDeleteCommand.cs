@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
@@ -38,9 +39,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// should be accomplished by other means.  IE, do a rename of the file, then delete when everything
 	/// else is done.
 	/// </summary>
-	public class FileDeleteCommand : ServerCommand
+	public class FileDeleteCommand : ServerCommand, IDisposable
 	{
-		private readonly string _path;
+        static string _tempRootDir = Path.GetPathRoot(Path.GetTempPath());
+        private string _backupFile = Path.Combine(Path.Combine(_tempRootDir, "temp"), Path.GetRandomFileName());
+        private bool _backedUp = false;
+        private readonly string _path;
 
 		public FileDeleteCommand(string path, bool requiresRollback) : base("Delete File", requiresRollback)
 		{
@@ -49,12 +53,37 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 		protected override void OnExecute()
 		{
+            if (RequiresRollback)
+            {
+                File.Copy(_path, _backupFile);
+                _backedUp = true;
+            }
 			File.Delete(_path);
 		}
 
 		protected override void OnUndo()
 		{
-			
+			if (_backedUp)
+			{
+                File.Copy(_backupFile, _path);
+			}
 		}
-	}
+
+        public override string ToString()
+        {
+            return String.Format("Delete file {0}", _path);
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (File.Exists(_backupFile))
+            {
+                File.Delete(_backupFile);
+            }
+        }
+
+        #endregion
+    }
 }

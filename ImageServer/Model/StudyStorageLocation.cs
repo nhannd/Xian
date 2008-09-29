@@ -30,8 +30,12 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -45,6 +49,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
+        static private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _filesystemKey;
     	private ServerEntityKey _serverTransferSyntaxKey;
@@ -156,5 +161,22 @@ namespace ClearCanvas.ImageServer.Model
             return path;
         }
         #endregion
+
+        /// <summary>
+        /// Find all <see cref="StudyStorageLocation"/> associcated with the specified <see cref="StudyStorage"/>
+        /// </summary>
+        /// <param name="storage"></param>
+        /// <returns></returns>
+        static public IList<StudyStorageLocation> FindStorageLocations(StudyStorage storage)
+        {
+            IReadContext readContext = _store.OpenReadContext();
+            IQueryStudyStorageLocation locQuery = readContext.GetBroker<IQueryStudyStorageLocation>();
+            StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
+            locParms.StudyInstanceUid = storage.StudyInstanceUid;
+            locParms.ServerPartitionKey = storage.ServerPartitionKey;
+            IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
+            return studyLocationList;
+        }
+        
     }
 }

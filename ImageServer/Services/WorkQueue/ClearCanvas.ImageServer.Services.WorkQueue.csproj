@@ -49,18 +49,22 @@
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
-    <Compile Include="ReconcileStudy\Commands\ReconcileDiscardImageCommandFactory.cs" />
-    <Compile Include="ReconcileStudy\Commands\ReconcileUpdateImageCommandFactory.cs" />
-    <Compile Include="ReconcileStudy\IReconcileCommandFactory.cs" />
+    <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
+    <Compile Include="ReconcileStudy\UpdateStudyCommand.cs" />
+    <Compile Include="ReconcileStudy\StudyAbstract.cs" />
+    <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandProcessor.cs" />
     <Compile Include="ReconcileStudy\IReconcileServerCommand.cs" />
+    <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommand.cs" />
+    <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommandProcessor.cs" />
+    <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommandXmlParser.cs" />
     <Compile Include="ReconcileStudy\ReconcileCommandXmlParser.cs" />
-    <Compile Include="ReconcileStudy\Commands\ReconcileRelocateFileCommand.cs" />
-    <Compile Include="ReconcileStudy\Commands\ReconcileDiscardImageCommand.cs" />
+    <Compile Include="ReconcileStudy\Discard\DiscardImagesCommand.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyFactoryExtension.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyItemProcessor.cs" />
     <Compile Include="ReconcileStudy\ReconcileStudyProcessorContext.cs" />
-    <Compile Include="ReconcileStudy\Commands\ReconcileUpdateImageCommand.cs" />
-    <Compile Include="ReconcileStudy\SetTagAction.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyFactoryExtension.cs" />
     <Compile Include="ReprocessStudy\ReprocessStudyItemProcessor.cs" />
     <Compile Include="Shreds\WorkQueueServerExtension.cs" />
@@ -138,6 +142,10 @@
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Enterprise</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise\SqlServer2005\ClearCanvas.ImageServer.Enterprise.SqlServer2005.csproj">
+      <Project>{221FC797-CCE8-406B-94AB-0EB290A387A6}</Project>
+      <Name>ClearCanvas.ImageServer.Enterprise.SqlServer2005</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Model\ClearCanvas.ImageServer.Model.csproj">
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>

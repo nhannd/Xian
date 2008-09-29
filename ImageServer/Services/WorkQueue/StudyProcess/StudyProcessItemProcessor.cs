@@ -40,6 +40,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
@@ -497,6 +498,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file"></param>
         private void ScheduleReconcile(DicomFile file)
         {
+            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
+            String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
+            String studyDescription = file.DataSet[DicomTags.StudyDescription].GetString(0, String.Empty);
+            
             ReconcileImageContext reconcileContext = new ReconcileImageContext();
             reconcileContext.Partition = _context.Partition;
             reconcileContext.CurrentStudyLocation = StorageLocation;
@@ -508,12 +513,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (reconcileContext.History == null)
             {
                 ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation");
-                
                 InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
                 MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
                 processor.AddCommand(updateQueueCommand);
                 processor.AddCommand(moveFileCommand);
-
+                Platform.Log(LogLevel.Info, "Scheduling manual reconciliation. Image contents: Patient={0}, Study={1} ({2})", patientsName, studyDescription, modality);
                 if (processor.Execute() == false)
                 {
                     throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));
@@ -523,20 +527,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 
                 // Insert 'ReconcileStudy' in the work queue
-                ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request");
+                ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request based on histrory");
                 InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(reconcileContext);
                 MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
                 
                 processor.AddCommand(insertCommand);
                 processor.AddCommand(moveFileCommand);
-
+                StudyStorage destStorage = StudyStorage.Load(reconcileContext.History.DestStudyStorageKey);
+                Study destStudy = Study.Find(destStorage.StudyInstanceUid, _context.Partition); // note: assuming destination partition is the same as the current one
+                Platform.Log(LogLevel.Info, "Scheduling auto reconciliation. Image contents: Patient={0}, Study={1} ({2}) ==> Existing Study={3} [A#={4}]",
+                        patientsName, studyDescription, modality, destStudy.StudyDescription, destStudy.AccessionNumber);
                 if (processor.Execute() == false)
                 {
                     throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
                 }
             }
 
-            
         }
 
 

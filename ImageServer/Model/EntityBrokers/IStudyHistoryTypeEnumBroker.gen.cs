@@ -35,34 +35,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
     using ClearCanvas.ImageServer.Enterprise;
 
-   public class StudyHistoryUpdateColumns : EntityUpdateColumns
-   {
-       public StudyHistoryUpdateColumns()
-       : base("StudyHistory")
-       {}
-        public System.Xml.XmlDocument ChangeDescription
-        {
-            set { SubParameters["ChangeDescription"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ChangeDescription", value); }
-        }
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DestStudyStorageKey
-        {
-            set { SubParameters["DestStudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DestStudyStorageKey", value); }
-        }
-        public System.DateTime InsertTime
-        {
-            set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
-        }
-        public System.Xml.XmlDocument StudyData
-        {
-            set { SubParameters["StudyData"] = new EntityUpdateColumn<System.Xml.XmlDocument>("StudyData", value); }
-        }
-        public StudyHistoryTypeEnum StudyHistoryTypeEnum
-        {
-            set { SubParameters["StudyHistoryTypeEnum"] = new EntityUpdateColumn<StudyHistoryTypeEnum>("StudyHistoryTypeEnum", value); }
-        }
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
-        {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
-        }
-    }
+    public interface IStudyHistoryTypeEnumBroker: IEnumBroker<StudyHistoryTypeEnum>
+    { }
 }

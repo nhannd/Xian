@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -14,10 +15,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private ReconcileStudyWorkQueueData _data;
         private ServerPartition _partition;
         private StudyHistory _history;
-        private StudyStorageLocation _existingStudyStorageLocation;
         private StudyStorageLocation _destStudyStorageLocation;
         private ServerFilesystemInfo _targetFilesystem;
         private string _destStudyInstanceUid;
+        private IList<WorkQueueUid> _workQueueUidList;
         private DicomFile _reconcileImage;
         #endregion
 
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         /// <summary>
         /// The "decoded" queue data associated with <see cref="WorkQueueItem"/>
         /// </summary>
-        public ReconcileStudyWorkQueueData Data
+        public ReconcileStudyWorkQueueData ReconcileWorkQueueData
         {
             get { return _data; }
             set { _data = value; }
@@ -56,15 +57,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
             get { return _history; }
             set { _history = value; }
-        }
-
-        /// <summary>
-        /// The <see cref="StudyStorageLocation"/> of the study that has the same Study Instance Uid.
-        /// </summary>
-        public StudyStorageLocation ExistingStudyStorageLocation
-        {
-            get { return _existingStudyStorageLocation; }
-            set { _existingStudyStorageLocation = value; }
         }
 
         /// <summary>
@@ -86,6 +78,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
             get { return _destStudyInstanceUid; }
             set { _destStudyInstanceUid = value; }
+        }
+
+        public IList<WorkQueueUid> WorkQueueUidList
+        {
+            get { return _workQueueUidList; }
+            set { _workQueueUidList = value; }
         }
 
         public DicomFile ReconcileImage

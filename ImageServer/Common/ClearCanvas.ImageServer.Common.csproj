@@ -39,8 +39,11 @@
     <Compile Include="Alert.cs" />
     <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
+    <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
+    <Compile Include="CommandProcessor\IImageLevelUpdateCommand.cs" />
+    <Compile Include="CommandProcessor\ImageUpdateCommandBuilder.cs" />
     <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\UpdateDicomFileCommand.cs" />

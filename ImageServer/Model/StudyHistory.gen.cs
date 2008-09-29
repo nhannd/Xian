@@ -48,8 +48,10 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private System.Xml.XmlDocument _changeDescription;
+        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _destStudyStorageKey;
         private System.DateTime _insertTime;
         private System.Xml.XmlDocument _studyData;
+        private StudyHistoryTypeEnum _studyHistoryTypeEnum;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
         #endregion
 
@@ -59,6 +61,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _changeDescription; }
         set { _changeDescription = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
+        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DestStudyStorageKey
+        {
+        get { return _destStudyStorageKey; }
+        set { _destStudyStorageKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
         public System.DateTime InsertTime
@@ -71,6 +79,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _studyData; }
         set { _studyData = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
+        public StudyHistoryTypeEnum StudyHistoryTypeEnum
+        {
+        get { return _studyHistoryTypeEnum; }
+        set { _studyHistoryTypeEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey

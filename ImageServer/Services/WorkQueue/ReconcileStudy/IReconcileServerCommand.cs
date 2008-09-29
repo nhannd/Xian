@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -7,9 +9,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// </summary>
     public interface IReconcileServerCommand : IServerCommand
     {
-        /// <summary>
-        /// Gets or sets the context of the reconciliation.
-        /// </summary>
-        ReconcileStudyProcessorContext Context { get; set; }
+        void SetContext(ReconcileStudyProcessorContext context);
     }
 }

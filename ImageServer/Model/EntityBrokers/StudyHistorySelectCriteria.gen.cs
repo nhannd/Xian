@@ -52,6 +52,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ChangeDescription"];
             } 
         }
+        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> DestStudyStorageKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("DestStudyStorageKey"))
+              {
+                 SubCriteria["DestStudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DestStudyStorageKey");
+              }
+              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["DestStudyStorageKey"];
+            } 
+        }
         public ISearchCondition<System.DateTime> InsertTime
         {
             get
@@ -72,6 +83,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyData"] = new SearchCondition<System.Xml.XmlDocument>("StudyData");
               }
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["StudyData"];
+            } 
+        }
+        public ISearchCondition<StudyHistoryTypeEnum> StudyHistoryTypeEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyHistoryTypeEnum"))
+              {
+                 SubCriteria["StudyHistoryTypeEnum"] = new SearchCondition<StudyHistoryTypeEnum>("StudyHistoryTypeEnum");
+              }
+              return (ISearchCondition<StudyHistoryTypeEnum>)SubCriteria["StudyHistoryTypeEnum"];
             } 
         }
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
