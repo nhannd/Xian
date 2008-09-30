@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     _userDetail.StaffRef = staffSummary.StaffRef;
                     _userDetail.StaffName = staffSummary.Name;
                     _userDetail.DisplayName =
-                        string.Format("{0} {1}", _userDetail.StaffName.FamilyName, _userDetail.StaffName.GivenName);
+                        string.Format("{0}, {1}", _userDetail.StaffName.FamilyName, _userDetail.StaffName.GivenName);
 
                     this.NotifyPropertyChanged("StaffName");
                     this.NotifyPropertyChanged("ClearStaffEnabled");
