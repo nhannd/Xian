@@ -236,8 +236,11 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                         for (int i = 0; i < rows.Length; i++)
                         {
                             int rowIndex = rows[i];
-                            Rows[rowIndex].RowState = DataControlRowState.Normal;
-                            Rows[rowIndex].Attributes["selected"] = "false";
+							if (rowIndex < Rows.Count)
+							{
+								Rows[rowIndex].RowState = DataControlRowState.Normal;
+								Rows[rowIndex].Attributes["selected"] = "false";
+							}
                         }
                     }
             }
