@@ -35,15 +35,28 @@ using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Common.Actions
 {
-    internal class ActionSet<T> : IActionSet<T>
+	/// <summary>
+	/// A class used to manage and execute a set of <see cref="Action{T}"/> instances.
+	/// </summary>
+	/// <typeparam name="T">A context used by the <see cref="Action{T}"/> instances.</typeparam>
+    public class ActionSet<T> : IActionSet<T>
     {
         private readonly IList<IActionItem<T>> _actionList;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="list">The list of actions in the set.</param>
         public ActionSet(IList<IActionItem<T>> list)
         {
             _actionList = list;
         }
 
+		/// <summary>
+		/// Execute the actions associated with the set.
+		/// </summary>
+		/// <param name="context">The context used by the <see cref="Action{T}"/> instances in the set.</param>
+		/// <returns>A <see cref="TestResult"/> instance telling the result of executing the actions.</returns>
         public TestResult Execute(T context)
         {
             List<TestResultReason> resultList = new List<TestResultReason>();

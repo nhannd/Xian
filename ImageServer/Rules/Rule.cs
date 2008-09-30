@@ -31,6 +31,7 @@
 
 using System;
 using System.Xml;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
@@ -89,14 +90,23 @@ namespace ClearCanvas.ImageServer.Rules
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
                                                      delegate(XmlNode child) { return child.Name.Equals("condition"); });
 
-            _conditions = specCompiler.Compile(conditionNode as XmlElement, true);
+			if (conditionNode != null)
+				_conditions = specCompiler.Compile(conditionNode as XmlElement, true);
+			else if (!IsDefault)
+				throw new ApplicationException("No condition element defined for the rule.");
+			else
+				_conditions = new AndSpecification();
 
             XmlNode actionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
                                                      delegate(XmlNode child) { return child.Name.Equals("action"); });
 
-
-            _actions = actionCompiler.Compile(actionNode as XmlElement, true);
+			if (actionNode != null)
+				_actions = actionCompiler.Compile(actionNode as XmlElement, true);
+			else if (!IsExempt)
+				throw new ApplicationException("No action element defined for the rule.");
+			else
+				_actions = new ActionSet<ServerActionContext>(new List<IActionItem<ServerActionContext>>());
         }
 
         /// <summary>
