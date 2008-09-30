@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <param name="e"></param>
         protected void NewStudyButton_Click(object sender, EventArgs e)
         {
-            ServerEntityKey itemKey = ViewState[ClientID + "_ReconcileQueueItem"] as ServerEntityKey;
+            ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
             controller.CreateNewStudy(itemKey);
 
