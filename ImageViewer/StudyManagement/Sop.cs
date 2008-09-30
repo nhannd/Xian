@@ -930,12 +930,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				Load();
 
-				DicomAttribute dicomAttribute = _dicomMessage.DataSet[tag];
-
-				if (dicomAttribute.IsEmpty && _dicomMessage.MetaInfo.Contains(tag))
+				if (tag >= _dicomMessage.MetaInfo.StartTagValue && tag <= _dicomMessage.MetaInfo.EndTagValue)
 					return _dicomMessage.MetaInfo[tag];
 
-				return dicomAttribute;
+				return _dicomMessage.DataSet[tag];
 			}
 		}
 

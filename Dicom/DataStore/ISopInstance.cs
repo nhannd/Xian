@@ -44,6 +44,9 @@ namespace ClearCanvas.Dicom.DataStore
 
 		string TransferSyntaxUid { get; }
 
+    	bool IsStoredTag(uint tag);
+		bool IsStoredTag(DicomTag tag);
+
 		DicomAttribute this[DicomTag tag] { get; }
 		DicomAttribute this[uint tag] { get; }
     }

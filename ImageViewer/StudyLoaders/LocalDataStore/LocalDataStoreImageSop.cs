@@ -77,9 +77,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				//the _sop indexer is not thread-safe.
 				lock (_syncLock)
 				{
-					DicomAttribute attribute = _sop[tag];
-					if (attribute != null && !attribute.IsEmpty)
-						return attribute;
+					if (_sop.IsStoredTag(tag))
+						return _sop[tag];
 				}
 
 				return base[tag];

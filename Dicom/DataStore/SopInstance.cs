@@ -106,6 +106,21 @@ namespace ClearCanvas.Dicom.DataStore
 			return new DicomUri(uriBuilder.Uri);
 		}
 
+		public bool IsStoredTag(uint tag)
+		{
+			return IsStoredTag(DicomTagDictionary.GetDicomTag(tag));
+		}
+
+		public bool IsStoredTag(DicomTag tag)
+		{
+			bool isBinary = tag.VR == DicomVr.OBvr || tag.VR == DicomVr.OWvr || tag.VR == DicomVr.OFvr;
+			//these tags are not stored in the xml.
+			if (isBinary || tag.IsPrivate || tag.VR == DicomVr.UNvr)
+				return false;
+
+    		return true;
+		}
+
     	public DicomAttribute this[DicomTag tag]
     	{
 			get { return _xml[tag]; }
