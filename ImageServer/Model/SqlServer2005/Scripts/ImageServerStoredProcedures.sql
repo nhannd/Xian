@@ -260,10 +260,13 @@ BEGIN
 
 	EXEC(@stmt)
 
+	SET @count = ''SELECT @recordCount = count(*) FROM WorkQueue ''
 	if (@where<>'''')
-		SET @count = ''SELECT @recordCount = count(*) FROM WorkQueue WHERE '' + @where
-	else
-		SET @count = ''SELECT @recordCount = count(*) FROM WorkQueue''
+	BEGIN
+		SET @count = @count + ''LEFT JOIN StudyStorage on StudyStorage.GUID = WorkQueue.StudyStorageGUID ''
+		SET @count = @count + ''LEFT JOIN Study on Study.ServerPartitionGUID=StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid=StudyStorage.StudyInstanceUid ''	
+		SET @count = @count + ''WHERE '' + @where
+	END
 
 	DECLARE @recCount int
 	
@@ -2791,10 +2794,13 @@ BEGIN
 
 	EXEC(@stmt)
 
+	SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue JOIN PartitionArchive on PartitionArchive.GUID = ArchiveQueue.PartitionArchiveGUID ''
 	if (@where<>'''')
-		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue JOIN PartitionArchive on PartitionArchive.GUID = ArchiveQueue.PartitionArchiveGUID WHERE '' + @where
-	else
-		SET @count = ''SELECT @recordCount = count(*) FROM ArchiveQueue JOIN PartitionArchive on PartitionArchive.GUID = ArchiveQueue.PartitionArchiveGUID ''
+	BEGIN
+		SET @count = @count + ''LEFT JOIN StudyStorage on StudyStorage.GUID = ArchiveQueue.StudyStorageGUID ''
+		SET @count = @count + ''LEFT JOIN Study on Study.ServerPartitionGUID = StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid = StudyStorage.StudyInstanceUid ''
+		SET @count = @count + ''WHERE '' + @where
+	END
 
 	DECLARE @recCount int
 	
@@ -2903,10 +2909,13 @@ BEGIN
 
 	EXEC(@stmt)
 
+	SET @count = ''SELECT @recordCount = count(*) FROM RestoreQueue JOIN ArchiveStudyStorage on ArchiveStudyStorage.GUID = RestoreQueue.ArchiveStudyStorageGUID JOIN PartitionArchive on PartitionArchive.GUID = ArchiveStudyStorage.PartitionArchiveGUID ''
 	if (@where<>'''')
-		SET @count = ''SELECT @recordCount = count(*) FROM RestoreQueue JOIN ArchiveStudyStorage on ArchiveStudyStorage.GUID = RestoreQueue.ArchiveStudyStorageGUID JOIN PartitionArchive on PartitionArchive.GUID = ArchiveStudyStorage.PartitionArchiveGUID WHERE '' + @where
-	else
-		SET @count = ''SELECT @recordCount = count(*) FROM RestoreQueue JOIN ArchiveStudyStorage on ArchiveStudyStorage.GUID = RestoreQueue.ArchiveStudyStorageGUID JOIN PartitionArchive on PartitionArchive.GUID = ArchiveStudyStorage.PartitionArchiveGUID ''
+	BEGIN
+		SET @count = @count + ''JOIN StudyStorage on StudyStorage.GUID = RestoreQueue.StudyStorageGUID ''
+		SET @count = @count + ''LEFT JOIN Study on Study.ServerPartitionGUID = StudyStorage.ServerPartitionGUID and Study.StudyInstanceUid = StudyStorage.StudyInstanceUid ''
+		SET @count = @count + ''WHERE '' + @where
+	END
 
 	DECLARE @recCount int
 	
