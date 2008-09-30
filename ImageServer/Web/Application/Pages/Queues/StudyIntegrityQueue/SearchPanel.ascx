@@ -23,9 +23,9 @@
                                                 <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label2" runat="server" Text="Date Received " CssClass="SearchTextBoxLabel" 
+                                                <asp:Label ID="Label2" runat="server" Text="Time Received " CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
-                                                <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" /><br />
+                                                <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />
                                                 <asp:TextBox ID="ReceivedDate" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                             <td valign="bottom">

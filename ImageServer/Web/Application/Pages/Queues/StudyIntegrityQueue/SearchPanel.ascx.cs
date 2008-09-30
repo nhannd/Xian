@@ -121,9 +121,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 											source.Partition = ((Default)Page).ServerPartition;
 
 											if (!String.IsNullOrEmpty(PatientName.Text))
-												source.Description = PatientName.Text;
+                                                //Apply wild card characters to ensure that a result
+                                                //is returned if the name is anywhere within the Description
+												source.Description = "*" + PatientName.Text + "*";
                                             if (!String.IsNullOrEmpty(ReceivedDate.Text))
-                                                source.InsertTime = ReceivedDate.Text;
+                                                source.InsertTime =ReceivedDate.Text;
 										};
         }
 

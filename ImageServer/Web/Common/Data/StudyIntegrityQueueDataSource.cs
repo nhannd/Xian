@@ -204,6 +204,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             String patientNames = item.Description.Substring(item.Description.IndexOf("=") + 1);
 		    summary.ExistingPatientName = patientNames.Substring(0, patientNames.IndexOf("\r\n"));
 	    	summary.ConflictingPatientName = patientNames.Substring(patientNames.IndexOf("=") + 1);
+		    summary.ReceivedTime = item.InsertTime;
 
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);           
@@ -239,7 +240,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             if (!String.IsNullOrEmpty(InsertTime))
             {
                 DateTime insertTime = DateTime.Parse(InsertTime);
-                criteria.InsertTime.Like(insertTime);
+                criteria.InsertTime.Between(insertTime, insertTime.AddHours(24));
             }
 
             return criteria;
