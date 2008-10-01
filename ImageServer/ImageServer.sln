@@ -247,6 +247,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.XmlGenera
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp.StreamingClientConsole", "TestApp\StreamingClientConsole\ClearCanvas.ImageServer.TestApp.StreamingClientConsole.csproj", "{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -641,6 +647,16 @@ Global
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Release|Win32.ActiveCfg = Release|Any CPU
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Release|Win32.Build.0 = Release|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
