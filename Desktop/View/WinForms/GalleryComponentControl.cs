@@ -196,7 +196,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			lvi.Text = item.Name;
 
 			int keyIndex = _listView.LargeImageList.Images.IndexOfKey(lvi.ImageKey);
-			_listView.LargeImageList.Images[keyIndex] = item.Image;
+			if (item.Image != null)
+				_listView.LargeImageList.Images[keyIndex] = item.Image;
+			else
+				_listView.LargeImageList.Images.RemoveAt(keyIndex);
+
 			_listView.RedrawItems(index, index, true);
 		}
 
