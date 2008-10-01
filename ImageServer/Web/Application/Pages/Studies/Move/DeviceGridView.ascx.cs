@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             Image img = new Image();
             if (Convert.ToBoolean(DataBinder.Eval(e.Row.DataItem, "AllowAutoRoute")))
             {
-                img.ImageUrl = ImageServerConstants.ImageURLs.StoreFeature;
+                img.ImageUrl = ImageServerConstants.ImageURLs.AutoRouteFeature;
                 img.AlternateText = "Auto Route";
             }
             else
