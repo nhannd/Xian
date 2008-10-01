@@ -89,8 +89,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
 		{19134434-DCC7-4B42-83ED-7B7F9D3A7C08} = {19134434-DCC7-4B42-83ED-7B7F9D3A7C08}
 		{0D64751F-987E-415E-8CE7-069EA2763EC0} = {0D64751F-987E-415E-8CE7-069EA2763EC0}
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A} = {AD5F2F64-C37C-48D6-82F9-D2199873C24A}
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1} = {8F7353AF-1790-41E8-A906-AE0E4AADA3D1}
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E} = {7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}
 	EndProjectSection
 EndProject
@@ -375,18 +373,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Cod
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.StudyLoaders.Streaming", "StudyLoaders\Streaming\ClearCanvas.ImageViewer.StudyLoaders.Streaming.csproj", "{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyComposer", "Utilities\StudyComposer\ClearCanvas.ImageViewer.Utilities.StudyComposer.csproj", "{AD5F2F64-C37C-48D6-82F9-D2199873C24A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms", "Utilities\StudyComposer\View\WinForms\ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms.csproj", "{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -782,22 +768,6 @@ Global
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release Mono|Any CPU.Build.0 = Release|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Debug Mono|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Debug Mono|Any CPU.Build.0 = Debug|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Release Mono|Any CPU.ActiveCfg = Release|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Release Mono|Any CPU.Build.0 = Release|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Debug Mono|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Debug Mono|Any CPU.Build.0 = Debug|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Release Mono|Any CPU.ActiveCfg = Release|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Release Mono|Any CPU.Build.0 = Release|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9144D03E-C4A2-4B34-B3B2-89A8834B3F02}.Debug Mono|Any CPU.ActiveCfg = Debug Mono|Any CPU
 		{9144D03E-C4A2-4B34-B3B2-89A8834B3F02}.Debug Mono|Any CPU.Build.0 = Debug Mono|Any CPU
 		{9144D03E-C4A2-4B34-B3B2-89A8834B3F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

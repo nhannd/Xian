@@ -134,8 +134,6 @@
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Clipboard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Thumbnails\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Utilities\StudyComposer\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyComposer.dll" />
-    <PluginFiles Include="$(SolutionDir)\..\ImageViewer\Utilities\StudyComposer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.dll" />
     <PluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
     <PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll" />
