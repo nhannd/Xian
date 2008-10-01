@@ -170,6 +170,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyDate, dicomStudyDate));
             }
 
+
+            if (StudyTimeAmPm.SelectedValue.Equals("PM") || (StudyTimeAmPm.SelectedValue.Equals("AM") && StudyTimeHours.Text.Equals("12"))) StudyTimeHours.Text = (Int16.Parse(StudyTimeHours.Text) + 12).ToString();
             string dicomStudyTime = StudyTimeHours.Text.PadLeft(2, '0') + StudyTimeMinutes.Text.PadLeft(2, '0') + StudyTimeSeconds.Text.PadLeft(2, '0');
             if(!study.StudyTime.Equals(dicomStudyTime))
             {
@@ -312,11 +314,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeHours.Text = study.StudyTime.Substring(0, 2);
                 StudyTimeMinutes.Text = study.StudyTime.Substring(2, 2);
                 StudyTimeSeconds.Text = study.StudyTime.Substring(4, 2);
-                StudyTimeAmPm.SelectedIndex = int.Parse(StudyTimeHours.Text) > 11 ? 1 : 0;
+
+                int hours = int.Parse(StudyTimeHours.Text);
+
+                if(hours > 12)
+                {
+                    hours -= 12;
+                    StudyTimeAmPm.SelectedIndex = hours == 12 ? 0 : 1;
+                    StudyTimeHours.Text = hours.ToString();
+                } else if(hours == 12)
+                {
+                    StudyTimeAmPm.SelectedIndex = 1;
+                } else
+                {
+                    StudyTimeAmPm.SelectedIndex = 0;
+                }
             }
             else
             {
-                StudyTimeHours.Text = "00";
+                StudyTimeHours.Text = "12";
                 StudyTimeMinutes.Text = "00";
                 StudyTimeSeconds.Text = "00";
                 StudyTimeAmPm.SelectedIndex = 0;
