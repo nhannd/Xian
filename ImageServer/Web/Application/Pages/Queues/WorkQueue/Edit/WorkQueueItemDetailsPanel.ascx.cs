@@ -233,6 +233,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     _detailsView = LoadControl("WebMoveStudyWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
                     WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
                 }
+                else if (WorkQueue.WorkQueueTypeEnum == WorkQueueTypeEnum.WebEditStudy)
+                {
+                    _detailsView = LoadControl("WebEditStudyWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;
+                    WorkQueueDetailsViewPlaceHolder.Controls.Add(_detailsView);
+                }
                 else
                 {
                     _detailsView = LoadControl("GeneralWorkQueueDetailsView.ascx") as WorkQueueDetailsViewBase;

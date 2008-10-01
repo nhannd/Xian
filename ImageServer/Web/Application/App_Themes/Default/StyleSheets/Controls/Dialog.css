@@ -68,7 +68,7 @@
 
 .ConfirmationContent
 {
-    background: #ffffff url(../../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;; 
+    background: #ffffff url(../../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom; 
     padding: 10px 10px 10px 10px; 
     border: solid 1px #618FAD; 
 }

@@ -478,6 +478,20 @@
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WebEditStudyWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>WebEditStudyWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WebEditStudyWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>WebEditStudyWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -661,13 +675,6 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx.designer.cs">
       <DependentUpon>DeleteWorkQueueDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.cs">
-      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx.designer.cs">
-      <DependentUpon>GeneralWorkQueueDetailsView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx.cs">
       <DependentUpon>ResetWorkQueueDialog.ascx</DependentUpon>
@@ -960,6 +967,8 @@
     <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />
     <Content Include="Pages\Queues\RestoreQueue\SearchPanel.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\WebEditStudyWorkQueueDetailsView.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Studies\Default.aspx" />
     <Content Include="Pages\Studies\Move\Default.aspx" />
     <Content Include="Pages\Studies\Move\DeviceGridView.ascx" />
@@ -990,7 +999,6 @@
     <Content Include="Pages\Studies\StudyListGridView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\AutoRouteWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\DeleteWorkQueueDialog.ascx" />
-    <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\ResetWorkQueueDialog.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\ScheduleWorkQueueDialog.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\Default.aspx" />

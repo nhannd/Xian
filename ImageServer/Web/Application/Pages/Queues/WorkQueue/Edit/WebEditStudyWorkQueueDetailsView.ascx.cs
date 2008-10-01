@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     /// <summary>
     /// The defails view control for the <see cref="WorkQueue"/> inside the <see cref="WorkQueueItemDetailsPanel"/>
     /// </summary>
-    public partial class WebEditStudyWorkQueueDetailsView : WorkQueueDetailsViewBase
+    public partial class GeneralWorkQueueDetailsView : WorkQueueDetailsViewBase
     {
         #region Private members
 
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             set
             {
                 base.Width = value;
-                WebEditStudyDetailsView.Width = value;
+                GeneralInfoDetailsView.Width = value;
                 
             }
         }
@@ -79,19 +79,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 List<WorkQueueDetails> detailsList = new List<WorkQueueDetails>();
                 detailsList.Add(WorkQueueDetailsAssembler.CreateWorkQueueDetail(WorkQueue));
-                WebEditStudyDetailsView.DataSource = detailsList;
+                GeneralInfoDetailsView.DataSource = detailsList;
             }
             else
-                WebEditStudyDetailsView.DataSource = null;
+                GeneralInfoDetailsView.DataSource = null;
 
 
             base.DataBind();
         }
 
 
-        protected void WebEditStudyDetailsView_DataBound(object sender, EventArgs e)
+        protected void GeneralInfoDetailsView_DataBound(object sender, EventArgs e)
         {
-            WorkQueueDetails item = WebEditStudyDetailsView.DataItem as WorkQueueDetails;
+            WorkQueueDetails item = GeneralInfoDetailsView.DataItem as WorkQueueDetails;
             if (item!=null)
             {
                 
