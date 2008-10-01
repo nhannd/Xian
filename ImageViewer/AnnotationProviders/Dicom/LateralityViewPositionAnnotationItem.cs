@@ -40,8 +40,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
 	internal class LateralityViewPositionAnnotationItem : AnnotationItem
 	{
-		private const string NULL_STRING = "-";
-
 		private readonly bool _showLaterality;
 		private readonly bool _showViewPosition;
 
@@ -56,9 +54,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
+			const string NULL_STRING = "-";
+
 			IImageSopProvider provider = presentationImage as IImageSopProvider;
 			if (provider == null)
-				return NULL_STRING;
+				return "";
 
 			string laterality = null;
 			if (_showLaterality)
@@ -66,8 +66,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 				laterality = provider.ImageSop.ImageLaterality;
 				if (string.IsNullOrEmpty(laterality))
 					laterality = provider.ImageSop.Laterality;
-				if (string.IsNullOrEmpty(laterality))
-					laterality = NULL_STRING;
 			}
 
 			string viewPosition = null;
@@ -81,17 +79,29 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 					if (codeSequence != null && codeSequence.Count > 0)
 						viewPosition = codeSequence[0][DicomTags.CodeMeaning].GetString(0, null);
 				}
-				if (string.IsNullOrEmpty(viewPosition))
-					viewPosition = NULL_STRING;
 			}
 
-			string str = NULL_STRING;
+			string str = "";
 			if (_showLaterality && _showViewPosition)
-				str = String.Format(SR.FormatLateralityViewPosition, laterality, viewPosition);
+			{
+				if (string.IsNullOrEmpty(laterality))
+					laterality = NULL_STRING;
+				if (string.IsNullOrEmpty(viewPosition))
+					viewPosition = NULL_STRING;
+
+				if (laterality == NULL_STRING && viewPosition == NULL_STRING)
+					str = ""; // if both parts are null then just show one hyphen (rather than -/-)
+				else
+					str = String.Format(SR.FormatLateralityViewPosition, laterality, viewPosition);
+			}
 			else if (_showLaterality)
+			{
 				str = laterality;
+			}
 			else if (_showViewPosition)
+			{
 				str = viewPosition;
+			}
 
 			return str;
 		}
