@@ -692,10 +692,17 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
     	public override string ToString()
     	{
     		StringBuilder aeDescText = new StringBuilder();
+			aeDescText.AppendFormat(SR.FormatServerDetails, this.Name, this.AETitle, this.Host, this.Port);
+			if (!string.IsNullOrEmpty(this.Location))
+			{
+				aeDescText.AppendLine();
+				aeDescText.AppendFormat(SR.Location, this.Location);
+			}
 			if(this.IsStreaming)
-				aeDescText.AppendFormat(SR.FormatStreamingServerDetails, this.Name, this.AETitle, this.Host, this.Port, this.Location, this.HeaderServicePort, this.WadoServicePort);
-			else
-				aeDescText.AppendFormat(SR.FormatServerDetails, this.Name, this.AETitle, this.Host, this.Port, this.Location);
+			{
+				aeDescText.AppendLine();
+				aeDescText.AppendFormat(SR.FormatStreamingDetails, this.HeaderServicePort, this.WadoServicePort);
+			}
     		return aeDescText.ToString();
     	}
     }

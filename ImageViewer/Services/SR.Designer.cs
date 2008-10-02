@@ -104,8 +104,7 @@ namespace ClearCanvas.ImageViewer.Services {
         ///   Looks up a localized string similar to Server Name: {0}
         ///AE Title: {1}
         ///Host: {2}
-        ///Listening Port: {3}
-        ///Location: {4}.
+        ///Listening Port: {3}.
         /// </summary>
         internal static string FormatServerDetails {
             get {
@@ -114,17 +113,12 @@ namespace ClearCanvas.ImageViewer.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Server Name: {0}
-        ///AE Title: {1}
-        ///Host: {2}
-        ///Listening Port: {3}
-        ///Location: {4}
-        ///Streaming Header Port: {5}
-        ///Streaming Image Port: {6}.
+        ///   Looks up a localized string similar to Streaming Header Port: {0}
+        ///Streaming Image Port: {1}.
         /// </summary>
-        internal static string FormatStreamingServerDetails {
+        internal static string FormatStreamingDetails {
             get {
-                return ResourceManager.GetString("FormatStreamingServerDetails", resourceCulture);
+                return ResourceManager.GetString("FormatStreamingDetails", resourceCulture);
             }
         }
         
@@ -135,6 +129,15 @@ namespace ClearCanvas.ImageViewer.Services {
         internal static string LocalDataStoreConfigurationUnavailable {
             get {
                 return ResourceManager.GetString("LocalDataStoreConfigurationUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location: {0}.
+        /// </summary>
+        internal static string Location {
+            get {
+                return ResourceManager.GetString("Location", resourceCulture);
             }
         }
         
