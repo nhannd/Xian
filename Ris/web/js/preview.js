@@ -277,6 +277,23 @@ Preview.ProceduresTableHelper = function () {
 				return Ris.formatPersonName(firstMps.ScheduledPerformer.Name);
 			else
 				return "";
+		},
+		
+		addHeading: function(parentElement, text, className)
+		{
+			var heading = document.createElement("P");
+			heading.className = className || 'sectionheading';
+			heading.innerText = text;
+			parentElement.appendChild(heading);
+		},
+		
+		addTable: function(parentElement)
+		{
+			var htmlTable = document.createElement("TABLE");
+			parentElement.appendChild(htmlTable);
+			var body = document.createElement("TBODY");
+			htmlTable.appendChild(body);
+			return htmlTable;
 		}
 	};
 }();
@@ -393,16 +410,9 @@ Preview.ImagingServiceTable = function () {
 			parentElement.style.display = 'block';
 		}
 
-		var heading = document.createElement("P");
-		heading.className = 'sectionheading';
-		heading.innerText = sectionHeading;
-		parentElement.appendChild(heading);
-		
-		var htmlTable = document.createElement("TABLE");
-		parentElement.appendChild(htmlTable);
-		var body = document.createElement("TBODY");
-		htmlTable.appendChild(body);
-	
+		Preview.ProceduresTableHelper.addHeading(parentElement, sectionHeading);
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 			 [
 				{   label: "Procedure",
@@ -473,17 +483,10 @@ Preview.ProceduresTable = function () {
 			
 			if(!!addSectionHeading)
 			{
-				var heading = document.createElement("P");
-				heading.className = 'sectionheading';
-				heading.innerText = 'Procedures';
-				parentElement.appendChild(heading);
+				Preview.ProceduresTableHelper.addHeading(parentElement, 'Procedures');
 			}
 
-			var htmlTable = document.createElement("TABLE");
-			parentElement.appendChild(htmlTable);
-			var body = document.createElement("TBODY");
-			htmlTable.appendChild(body);
-
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -577,16 +580,9 @@ Preview.ProtocolProceduresTable = function () {
 				parentElement.style.display = 'block';
 			}
 			
-			var heading = document.createElement("P");
-			heading.className = 'sectionheading';
-			heading.innerText = 'Protocols';
-			parentElement.appendChild(heading);
+			Preview.ProceduresTableHelper.addHeading(parentElement, 'Protocols');
 
-			var htmlTable = document.createElement("TABLE");
-			parentElement.appendChild(htmlTable);
-			var body = document.createElement("TBODY");
-			htmlTable.appendChild(body);
-
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -716,12 +712,8 @@ Preview.ReportingProceduresTable = function () {
 			{
 				parentElement.style.display = 'block';
 			}
-			
-			var htmlTable = document.createElement("TABLE");
-			parentElement.appendChild(htmlTable);
-			var body = document.createElement("TBODY");
-			htmlTable.appendChild(body);
 
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
 					{   label: "Procedure",
@@ -799,20 +791,9 @@ Preview.ReportListTable = function () {
 				parentElement.style.display = 'block';
 			}
 			
-			var heading = document.createElement("P");
-			heading.className = 'sectionheading';
-			heading.innerText = 'Reports';
-			parentElement.appendChild(heading);
+			Preview.ProceduresTableHelper.addHeading(parentElement, 'Reports');
 
-			var htmlTable = document.createElement("TABLE");
-			parentElement.appendChild(htmlTable);
-			var body = document.createElement("TBODY");
-			htmlTable.appendChild(body);
-			
-			var reportContent = document.createElement("DIV");
-			reportContent.id = 'reportContent';
-			parentElement.appendChild(reportContent);
-
+			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, autoSelectFirstElement: true, addColumnHeadings:true },
 			[
 				{   label: "Procedure",
@@ -862,17 +843,10 @@ Preview.OrderNotesTable = function () {
 
 		if(subsectionHeading)
 		{
-			var heading = document.createElement("P");
-			heading.className = 'subsectionheading';
-			heading.innerText = subsectionHeading;
-			parentElement.appendChild(heading);
+			Preview.ProceduresTableHelper.addHeading(parentElement, subsectionHeading, 'subsectionheading');
 		}
 
-		var htmlTable = document.createElement("TABLE");
-		parentElement.appendChild(htmlTable);
-		var body = document.createElement("TBODY");
-		htmlTable.appendChild(body);
-
+		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 		[
 			{   label: "Comment",
@@ -907,11 +881,8 @@ Preview.OrderNotesTable = function () {
 			if(notes.length == 0)
 				return;
 
-			var heading = document.createElement("P");
-			heading.className = 'sectionheading';
-			heading.innerText = 'Order Notes';
-			parentElement.appendChild(heading);
-			
+			Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
+
 			if(subsections)
 			{
 				for(var i = 0; i < subsections.length; i++)
