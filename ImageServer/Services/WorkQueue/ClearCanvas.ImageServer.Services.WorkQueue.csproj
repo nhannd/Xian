@@ -52,9 +52,12 @@
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommand.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandXmlParser.cs" />
     <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
-    <Compile Include="ReconcileStudy\UpdateStudyCommand.cs" />
-    <Compile Include="ReconcileStudy\StudyAbstract.cs" />
+    <Compile Include="StudyProcess\ImageReconciler.cs" />
+    <Compile Include="WebEditStudy\StudyUpdater.cs" />
+    <Compile Include="WebEditStudy\UpdateStudyCommand.cs" />
+    <Compile Include="ReconcileStudy\Mapping.cs" />
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandProcessor.cs" />
     <Compile Include="ReconcileStudy\IReconcileServerCommand.cs" />
     <Compile Include="ReconcileStudy\MergeStudy\MergeStudyCommand.cs" />
@@ -87,15 +90,9 @@
     <Compile Include="TierMigrate\TierMigrateMoveStudyCommand.cs" />
     <Compile Include="TierMigrate\TierMigrationStatistics.cs" />
     <Compile Include="UpdateStudyXmlCommand.cs" />
-    <Compile Include="WebEditStudy\StudyFolderUpdateCommand.cs" />
-    <Compile Include="WebEditStudy\EditStudyActionCommandBase.cs" />
-    <Compile Include="WebEditStudy\EditStudyCommand.cs" />
-    <Compile Include="WebEditStudy\EditStudyContext.cs" />
-    <Compile Include="WebEditStudy\ActionPlugins\SetValueActionItem.cs" />
-    <Compile Include="WebEditStudy\ActionPlugins\SetValueOperator.cs" />
-    <Compile Include="WebEditStudy\DatabaseUpdateCommand.cs" />
-    <Compile Include="WebEditStudy\WebEditStudyFactoryExtension.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyCommandXmlParser.cs" />
     <Compile Include="WebEditStudy\WebEditStudyItemProcessor.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyFactoryExtension.cs" />
     <Compile Include="StudyProcess\InstanceStatistics.cs" />
     <Compile Include="StudyProcess\StudyProcessStatistics.cs" />
     <Compile Include="WebDeleteStudy\WebDeleteStudyItemProcessor.cs" />

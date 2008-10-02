@@ -1267,6 +1267,23 @@ GO
 SET ANSI_PADDING OFF
 GO
 
+/****** Object:  Table [dbo].[WorkQueueTypeQueueStudyState]    Script Date: 10/01/2008 23:19:08 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[WorkQueueTypeQueueStudyState](
+	[GUID] [uniqueidentifier] NOT NULL,
+	[WorkQueueTypeEnum] [smallint] NOT NULL,
+	[QueueStudyStateEnum] [smallint] NOT NULL,
+ CONSTRAINT [PK_WorkQueueTypeQueueStudyState] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
@@ -1687,4 +1704,14 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistoryTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
 ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyHistoryTypeEnum] FOREIGN KEY([StudyHistoryTypeEnum])
 REFERENCES [dbo].[StudyHistoryTypeEnum] ([Enum])
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeQueueStudyState_QueueStudyStateEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeQueueStudyState]'))
+ALTER TABLE [dbo].[WorkQueueTypeQueueStudyState]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeQueueStudyState_QueueStudyStateEnum] FOREIGN KEY([QueueStudyStateEnum])
+REFERENCES [dbo].[QueueStudyStateEnum] ([Enum])
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeQueueStudyState_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeQueueStudyState]'))
+ALTER TABLE [dbo].[WorkQueueTypeQueueStudyState]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeQueueStudyState_WorkQueueTypeEnum] FOREIGN KEY([WorkQueueTypeEnum])
+REFERENCES [dbo].[WorkQueueTypeEnum] ([Enum])
 GO

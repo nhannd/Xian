@@ -33,6 +33,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\UpdateQueueStudyState.cs" />
     <Compile Include="Brokers\WebQueryStudyIntegrityQueue.cs" />
     <Compile Include="Brokers\InsertReconcileQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueReconcileStudy.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="EntityBrokers\WorkQueuePriorityEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueTypeEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueTypeQueueStudyStateEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidEntityBroker.gen.cs" />
     <Compile Include="Brokers\QueryModalitiesInStudy.cs" />
     <Compile Include="Brokers\QueryPartitionSopClasses.cs" />

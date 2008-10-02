@@ -46,6 +46,7 @@
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
+    <Compile Include="Brokers\IUpdateQueueStudyState.cs" />
     <Compile Include="Brokers\IWebQueryReconcileQueue.cs" />
     <Compile Include="Brokers\IInserReconcileQueue.cs" />
     <Compile Include="Brokers\IInsertWorkQueueReconcileStudy.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="EntityBrokers\IWorkQueuePriorityEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueTypeEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IWorkQueueTypeQueueStudyStateEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IWorkQueueUidEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\PartitionArchiveSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\PartitionArchiveUpdateColumns.gen.cs" />
@@ -177,6 +179,8 @@
     <Compile Include="EntityBrokers\StudyUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\WorkQueueSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueTypeQueueStudyStateSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueTypeQueueStudyStateUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUpdateColumns.gen.cs" />
@@ -186,6 +190,7 @@
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\ReconcileStudyWorkQueueData.cs" />
+    <Compile Include="Parameters\UpdateQueueStudyStateParameters.cs" />
     <Compile Include="Parameters\WebQueryStudyIntegrityQueueParameters.cs" />
     <Compile Include="Parameters\InsertStudyIntegrityQueueParameters.cs" />
     <Compile Include="Parameters\WebQueryRestoreQueueParameters.cs" />
@@ -251,6 +256,7 @@
     <Compile Include="Parameters\UpdateWorkQueueParameters.cs" />
     <Compile Include="Parameters\PartitionSopClassQueryParameters.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
+    <Compile Include="StudyHistory.cs" />
     <Compile Include="StudyHistory.gen.cs" />
     <Compile Include="StudyHistoryTypeEnum.gen.cs" />
     <Compile Include="StudyIntegrityQueue.gen.cs" />
@@ -268,6 +274,7 @@
     <Compile Include="Parameters\WorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\WorkQueueStudyProcessInsertParameters.cs" />
     <Compile Include="WorkQueueTypeEnum.gen.cs" />
+    <Compile Include="WorkQueueTypeQueueStudyState.gen.cs" />
     <Compile Include="WorkQueueUid.gen.cs" />
   </ItemGroup>
   <ItemGroup>

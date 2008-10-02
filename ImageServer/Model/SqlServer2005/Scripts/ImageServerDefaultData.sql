@@ -777,6 +777,12 @@ GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),105,'PurgeScheduled','Purge Scheduled','The study has been scheduled for purging')
 GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),106,'ReconcileScheduled','Reconcile Scheduled','The study has been scheduled for reconciliation')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),107,'ReconcileRequired','Reconcile Required','The study needs to be reconciled')
+GO
 
 
 -- StudyIntegrityReasonEnum inserts
@@ -794,3 +800,42 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
      VALUES
            (newid(),100,'StudyReconciled','Study was reconciled','Demographics in the orginal images were modified to match against another study on the server.')
 GO
+
+-- WorkQueueTypeQueueStudyState inserts
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='StudyProcess' and QueueStudyStateEnum.Lookup='ProcessingScheduled'
+
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='DeleteStudy' and QueueStudyStateEnum.Lookup='DeleteScheduled'
+
+
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='WebDeleteStudy' and QueueStudyStateEnum.Lookup='DeleteScheduled'
+
+
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='WebEditStudy' and QueueStudyStateEnum.Lookup='EditScheduled'
+
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='PurgeStudy' and QueueStudyStateEnum.Lookup='PurgeScheduled'
+
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='ReprocessStudy' and QueueStudyStateEnum.Lookup='ProcessingScheduled'
+
+INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
+SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
+FROM WorkQueueTypeEnum, QueueStudyStateEnum
+WHERE WorkQueueTypeEnum.Lookup='ReconcileStudy' and QueueStudyStateEnum.Lookup='ReconcileScheduled'
+

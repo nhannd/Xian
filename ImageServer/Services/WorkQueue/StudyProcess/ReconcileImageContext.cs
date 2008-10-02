@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ServerPartition _partition;
         private StudyIntegrityQueue _studyIntegrityQueue;
         private StudyHistory _history;
+        private StudyStorageLocation _destinationStudyLocation;
 
         private string _storagePath;
         #endregion
@@ -83,6 +84,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             get { return _storagePath; }
             set { _storagePath = value; }
+        }
+
+        public StudyStorageLocation DestinationStudyLocation
+        {
+            get { return _destinationStudyLocation; }
+            set { _destinationStudyLocation = value; }
         }
 
         #endregion

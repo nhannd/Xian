@@ -35,6 +35,7 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
@@ -365,7 +366,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						parms.StudyStorageKey = item.StudyStorageKey;
 						parms.ProcessorID = item.ProcessorID;
 						if (complete)
-							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+						{
+						    QueueStudyStateEnum state = GetQueryStudyState(WorkQueueStatusEnum.Completed);
+                            if (state != null)
+                                parms.QueueStudyStateEnum = state;
+						}
+                            
 
 						WorkQueueSettings settings = WorkQueueSettings.Instance;
 
@@ -429,6 +435,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				}
 				);
 		}
+
+        /// <summary>
+        /// Gets the <see cref="QueueStudyStateEnum"/> value to be used for the specified work queue item status
+        /// </summary>
+        /// <param name="workQueueStatus"></param>
+        /// <returns></returns>
+        protected virtual QueueStudyStateEnum GetQueryStudyState(WorkQueueStatusEnum workQueueStatus)
+        {
+            if (workQueueStatus == WorkQueueStatusEnum.Completed)
+                return QueueStudyStateEnum.Idle;
+            else
+                return null;
+        }
 
     	/// <summary>
 		/// Set a status of <see cref="WorkQueue"/> item after batch processing has been completed.
@@ -672,11 +691,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            return theXml;
         }
 
-        protected void PostponeItem(Model.WorkQueue item, DateTime when, DateTime expire)
+        protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime)
         {
             DBUpdateTime.Add(
                delegate
                {
+                   Platform.Log(LogLevel.Info, "Postpone {0} entry until {1}. [GUID={2}]", item.WorkQueueTypeEnum, newScheduledTime, item.GetKey());
+                
                    using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                    {
                        IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
@@ -685,8 +706,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                        parms.StudyStorageKey = item.StudyStorageKey;
                        parms.ProcessorID = ServiceTools.ProcessorId;
                        parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                       parms.ScheduledTime = when;
-                       parms.ExpirationTime = expire;
+                       parms.ScheduledTime = newScheduledTime;
+                       parms.ExpirationTime = expireTime;
                        parms.FailureCount = item.FailureCount;
                        
                        if (false == update.Execute(parms))
@@ -694,7 +715,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                            Platform.Log(LogLevel.Error, "Unable to reschedule {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum, item.GetKey().ToString());
                        }
                        else
+                       {
                            updateContext.Commit();
+                       }
                    }
                }
                );
@@ -704,13 +727,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         protected List<Model.WorkQueue> FindRelatedWorkQueueItems(Model.WorkQueue item, WorkQueueSelectCriteria criteria)
         {
             IWorkQueueEntityBroker broker = ReadContext.GetBroker<IWorkQueueEntityBroker>();
-            List<Model.WorkQueue> list = ListUtils.Convert(broker.Find(criteria));
+            List<Model.WorkQueue> list = CollectionUtils.Cast<Model.WorkQueue>(broker.Find(criteria));
             return list.FindAll(delegate(Model.WorkQueue testItem)
                                     {
                                         return !testItem.GetKey().Equals(item.GetKey());
                                     });
         }
 
+        /// <summary>
+        /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 
+        /// if the item should be postponed to later time.
+        /// </summary>
+        /// <returns>True if the work queue item should be postponed. False otherwise.</returns>
+        /// <remarks>
+        /// </remarks>
+        protected abstract bool CannotStart();
 
         /// <summary>
         /// Called before the <see cref="WorkQueue"/> item is processed
@@ -754,20 +785,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             _workQueueItem = item;
 
-            OnProcessItemBegin(item);
-                        
-            ProcessTime.Add(
-                delegate
+            if (CannotStart())
+            {
+                WorkQueueSettings settings = WorkQueueSettings.Instance;
+                DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
+                DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds));
+                PostponeItem(item, newScheduledTime, expireTime);
+            }
+            else
+            {
+                OnProcessItemBegin(item);
+
+                ProcessTime.Add(
+                    delegate
                     {
                         ProcessItem(item);
                     }
-                );
-            OnProcessItemEnd(item);
+                    );
+                OnProcessItemEnd(item);
+            }
+            
         }
 
 
         #endregion IWorkQueueItemProcessor members
 
         #endregion
+
+        
     }
 }

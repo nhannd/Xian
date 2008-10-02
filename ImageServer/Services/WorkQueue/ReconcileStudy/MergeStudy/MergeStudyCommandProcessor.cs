@@ -8,6 +8,9 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 {
+    /// <summary>
+    /// A processor implementing <see cref="IReconcileProcessor"/> to handle "MergeStudy" operation
+    /// </summary>
     class MergeStudyCommandProcessor : ServerCommandProcessor, IReconcileProcessor
     {
         private ReconcileStudyProcessorContext _context;

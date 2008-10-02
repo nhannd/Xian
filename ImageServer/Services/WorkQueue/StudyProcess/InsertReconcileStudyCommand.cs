@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -8,7 +6,6 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -36,13 +33,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(updateContext, "updateContext");
             Platform.CheckForNullReference(_context, "_context");
-
-
+            
             WorkQueueSettings settings = WorkQueueSettings.Instance;
             IInsertWorkQueueReconcileStudy broker = updateContext.GetBroker<IInsertWorkQueueReconcileStudy>();
             WorkQueueReconcileStudyInsertParameters parameters = new WorkQueueReconcileStudyInsertParameters();
+            parameters.StudyInstanceUid = _context.DestinationStudyLocation != null ? _context.DestinationStudyLocation.StudyInstanceUid : _context.CurrentStudyLocation.StudyInstanceUid;
             parameters.ServerPartitionKey = _context.Partition.GetKey();
-            parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
+            parameters.StudyStorageKey = _context.DestinationStudyLocation!=null? _context.DestinationStudyLocation.GetKey():_context.CurrentStudyLocation.GetKey();
             parameters.StudyHistoryKey = _context.History != null ? _context.History.GetKey() : null;
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);

@@ -109,27 +109,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 				return;
 			}
 
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending});
-
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item , workQueueCriteria);
-            if (relatedItems != null && relatedItems.Count > 0)
-            {
-                // can't do it now. Reschedule it for future
-                relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
-                                      {
-                                          return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
-                                      });
-
-                DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
-                if (newScheduledTime < Platform.Time.AddMinutes(1))
-                    newScheduledTime = Platform.Time.AddMinutes(1);
-
-                PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
-                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
-            }
+            
             else
             {
                 _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
@@ -146,5 +126,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 		}
 
 		#endregion
-	}
+
+        protected override bool CannotStart()
+        {
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
+            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
+
+            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+            return (relatedItems != null && relatedItems.Count > 0);
+        }
+    }
 }

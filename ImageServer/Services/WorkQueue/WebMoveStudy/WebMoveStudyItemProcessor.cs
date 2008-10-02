@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
             workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending});
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);

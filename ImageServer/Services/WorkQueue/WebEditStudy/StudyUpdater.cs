@@ -8,79 +8,165 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
+namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
-    class UpdateStudyCommand :ServerDatabaseCommand
+    /// <summary>
+    /// Argument for events fired before a SOP is updated by the <see cref="StudyUpdater"/>
+    /// </summary>
+    internal class SopUpdatingEventArgs:EventArgs
     {
-        readonly StudyUpdater _updater;
-        
-        public UpdateStudyCommand(ServerPartition partition, 
-                                  StudyStorageLocation studyLcation,
-                                  IList<IImageLevelUpdateCommand> _imageLevelCommands) 
-            : base("Update existing study", true)
+        #region Private Members
+        private string _path;
+        private string _uid;
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Path of the Sop being updated
+        /// </summary>
+        public string Path
         {
-            _updater = new StudyUpdater(partition, studyLcation, _imageLevelCommands);
+            get { return _path; }
+            set { _path = value; }
         }
 
-        public String NewStudyPath
+        /// <summary>
+        /// SOP Instance Uid of the SOP being updated.
+        /// </summary>
+        public string Uid
         {
-            get
-            {
-                return _updater.NewStudyPath;
-            }
+            get { return _uid; }
+            set { _uid = value; }
         }
 
-        public String NewStudyInstanceUid
-        {
-            get
-            {
-                return _updater.NewStudyInstanceUid;
-            }
-        }
+        #endregion
 
-        public String NewStudyFolder
-        {
-            get
-            {
-                return _updater.NewStudyFolder;
-            }
-        }
-
-        protected override void OnExecute(IUpdateContext updateContext)
-        {
-            _updater.Update(updateContext);
-        }
-
-        protected override void OnUndo()
-        {
-            _updater.Rollback();
-        }
     }
 
+    /// <summary>
+    /// Argument for events fired after a SOP has been updated by the <see cref="StudyUpdater"/>
+    /// </summary>
+    internal class SopUpdatedEventArgs : EventArgs
+    {
+        #region Private Members
+        private string _path;
+        private string _uid;
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Path of the Sop that has been updated
+        /// </summary>
+        public string Path
+        {
+            get { return _path; }
+            set { _path = value; }
+        }
+
+        /// <summary>
+        /// SOP Instance Uid of the SOP being updated.
+        /// </summary>
+        public string Uid
+        {
+            get { return _uid; }
+            set { _uid = value; }
+        }
+
+        #endregion
+
+    }
+
+    /// <summary>
+    /// Argument for events fired after a SOP has been updated by the <see cref="StudyUpdater"/>
+    /// </summary>
+    internal class StudyUpdatedEventArgs : EventArgs
+    {
+        #region Private Members
+        private string _newStudyInstanceUid;
+        private string _oldStudyInstanceUid;
+        private string _path;
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// The new study Instance Uid of the study.
+        /// </summary>
+        public string StudyInstanceUid
+        {
+            get { return _newStudyInstanceUid; }
+            set { _newStudyInstanceUid = value; }
+        }
+
+        /// <summary>
+        /// Storage location of the study
+        /// </summary>
+        public string Path
+        {
+            get { return _path; }
+            set { _path = value; }
+        }
+
+        /// <summary>
+        /// The study instance uid of the study before it was updated.
+        /// </summary>
+        public string OldStudyInstanceUid
+        {
+            get { return _oldStudyInstanceUid; }
+            set { _oldStudyInstanceUid = value; }
+        }
+
+        #endregion
+
+    }
+
+    /// <summary>
+    /// Provides study update functionality.
+    /// </summary>
+    /// <remarks>
+    /// This class updates both the filesystems and the datbase but does not provide rollback operation if error occurs.
+    /// It should be accomplished with different mean.
+    /// </remarks>
     class StudyUpdater
     {
+        #region Private Members
         private readonly StudyStorageLocation _studyStorage;
-        private readonly string _workingDir = Path.Combine(Path.GetPathRoot(Path.GetTempPath()), Path.GetRandomFileName());
-        private readonly string _backupDir = Path.Combine(Path.GetPathRoot(Path.GetTempPath()), Path.GetRandomFileName());
-
+        private readonly string _workingDir = ServerPlatform.GetTempPath();
         private readonly ServerPartition _partition;
+        private readonly string _oldStudyInstanceUid;
+        private readonly string _newStudyPath;
+        private readonly IList<IImageLevelUpdateCommand> _commands;
+        private readonly string _oldStudyFolder;
+        private readonly string _oldStudyPath;
+        
         private Study _study;
         private Patient _patient;
         private StudyStorage _storage;
         private string _newStudyFolder;
-        private readonly string _oldStudyFolder;
-        private readonly string _oldStudyPath;
         private string _newStudyInstanceUid;
-        private readonly string _oldStudyInstanceUid;
-        private readonly string _newStudyPath;
-        private readonly IList<IImageLevelUpdateCommand> _commands;
+        private EventHandler<SopUpdatingEventArgs> _sopUpdating;
+        private EventHandler<SopUpdatedEventArgs> _sopUpdated;
+        private EventHandler<StudyUpdatedEventArgs> _studyUpdated;
 
+
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="StudyUpdater"/> to update a study.
+        /// </summary>
+        /// <param name="partition">The server partition where the study is stored</param>
+        /// <param name="studyStorage"><see cref="StudyStorageLocation"/> record of the study</param>
+        /// <param name="commands">Image level commands</param>
         public StudyUpdater(ServerPartition partition,
                             StudyStorageLocation studyStorage,
                             IList<IImageLevelUpdateCommand> commands)
@@ -96,18 +182,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             foreach (IImageLevelUpdateCommand command in commands)
             {
-                ImageLevelUpdateEntry imageLevelUpdate = command.UpdateEntry;
-                if (imageLevelUpdate != null)
+                if (command is IUpdateImageTagCommand)
                 {
-                    if (imageLevelUpdate.Tag.TagValue == DicomTags.StudyDate)
+                    ImageLevelUpdateEntry imageLevelUpdate = (command as IUpdateImageTagCommand).UpdateEntry;
+                    if (imageLevelUpdate != null)
                     {
-                        _newStudyFolder = imageLevelUpdate.GetStringValue();
-                    }
-                    else if (imageLevelUpdate.Tag.TagValue == DicomTags.StudyInstanceUid)
-                    {
-                        _newStudyInstanceUid = imageLevelUpdate.GetStringValue();
+                        if (imageLevelUpdate.Tag.TagValue == DicomTags.StudyDate)
+                        {
+                            _newStudyFolder = imageLevelUpdate.GetStringValue();
+                        }
+                        else if (imageLevelUpdate.Tag.TagValue == DicomTags.StudyInstanceUid)
+                        {
+                            _newStudyInstanceUid = imageLevelUpdate.GetStringValue();
+                        }
                     }
                 }
+                
             }
 
             Platform.CheckForNullReference(_newStudyInstanceUid, "_newStudyInstanceUid");
@@ -117,30 +207,71 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             _newStudyPath = Path.Combine(NewStudyPath, _newStudyInstanceUid);
         }
 
+        #endregion
+
+        #region Public Properties
+        /// <summary>
+        /// Gets the study folder name of the study after it is updated.
+        /// </summary>
         public string NewStudyFolder
         {
             get { return _newStudyFolder; }
         }
 
+        /// <summary>
+        /// Gets the study instance uid of the study after it is updated.
+        /// </summary>
         public string NewStudyInstanceUid
         {
             get { return _newStudyInstanceUid; }
         }
 
+        /// <summary>
+        /// Gets the study path of the study after it is updated.
+        /// </summary>
         public string NewStudyPath
         {
             get { return _newStudyPath; }
         }
 
+        #endregion
 
-        string GetNewStudyPath()
+        #region Events
+
+        /// <summary>
+        /// Event fired when a SOP is about to be updated.
+        /// </summary>
+        public event EventHandler<SopUpdatingEventArgs> SopUpdating
         {
-            string path = Path.Combine(_studyStorage.FilesystemPath, _partition.PartitionFolder);
-            path = Path.Combine(path, NewStudyFolder);
-            path = Path.Combine(path, NewStudyInstanceUid);
-            return path;
+            add { _sopUpdating+=value; }
+            remove { _sopUpdating -= value; }
         }
 
+        /// <summary>
+        /// Event fired after a SOP has been updated.
+        /// </summary>
+        public event EventHandler<SopUpdatedEventArgs> SopUpdated
+        {
+            add { _sopUpdated += value; }
+            remove { _sopUpdated -= value; }
+        }
+
+        /// <summary>
+        /// Event fired after the study has been updated.
+        /// </summary>
+        public event EventHandler<StudyUpdatedEventArgs> StudyUpdated
+        {
+            add { _studyUpdated += value; }
+            remove { _studyUpdated -= value; }
+        }
+
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+        /// Updates the study using the specified <see cref="IUpdateContext"/> for database transaction.
+        /// </summary>
+        /// <param name="updateContext"></param>
         public void Update(IUpdateContext updateContext)
         {
             if (_commands == null || _commands.Count == 0)
@@ -150,34 +281,53 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             }
             else
             {
-                BackupFilesystem();
 
                 PrintUpdateCommands();
 
                 StageWorkingFolder();
 
-
-                FileProcessor.Process(_workingDir, "*.dcm",
-                                      delegate(string path)
-                                          {
-                                              DicomFile file = new DicomFile(path);
-                                              file.Load();
-
-                                              foreach (IImageLevelUpdateCommand command in _commands)
-                                              {
-                                                  command.Apply(file);
-                                              }
-                                              file.Save();
-                                          }, true);
-
-
-                UpdateDatabase(updateContext);
                 UpdateFilesystem();
+                UpdateDatabase(updateContext);
+
+                OnStudyUpdated(_oldStudyInstanceUid, NewStudyInstanceUid, NewStudyPath);
             }
 
 
 
         }
+        
+        #endregion
+
+
+        #region Virtual Protected Methods
+        protected virtual void OnStudyUpdated(string oldStudyInstanceUid, string studyInstanceUid, string path)
+        {
+            StudyUpdatedEventArgs arg = new StudyUpdatedEventArgs();
+            arg.StudyInstanceUid = studyInstanceUid;
+            arg.OldStudyInstanceUid = oldStudyInstanceUid;
+            arg.Path = path;
+            EventsHelper.Fire(_studyUpdated, this, arg);
+        }
+
+        protected virtual void OnUpdatingSop(string uid, string path)
+        {
+            SopUpdatingEventArgs arg = new SopUpdatingEventArgs();
+            arg.Path = path;
+            arg.Uid = uid;
+            EventsHelper.Fire(_sopUpdating, this, arg);
+        }
+
+        protected virtual void OnSopUpdated(string uid, string path)
+        {
+            SopUpdatedEventArgs arg = new SopUpdatedEventArgs();
+            arg.Path = path;
+            arg.Uid = uid;
+            EventsHelper.Fire(_sopUpdated, this, arg);
+        }
+
+        #endregion
+
+        #region Private Members
 
         private void PrintUpdateCommands()
         {
@@ -192,21 +342,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             Platform.Log(LogLevel.Info, log);
         }
 
-        public void Rollback()
-        {
-            if (NewStudyFolder != _oldStudyFolder)
-            {
-                DirectoryUtility.Copy(_backupDir, _oldStudyFolder);
-            }
-            else
-            {
-                DirectoryUtility.DeleteIfExists(GetNewStudyPath());
-            }
-
-        }
-
         private void UpdateFilesystem()
         {
+            Platform.Log(LogLevel.Debug, "Updating study filesystem...");
+            
             StudyXml studyXml = new StudyXml(_newStudyInstanceUid);
             FileProcessor.Process(_workingDir, "*.dcm",
                                   delegate(string path)
@@ -215,12 +354,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                                           DicomFile file = new DicomFile(path);
                                           file.Load(DicomReadOptions.StorePixelDataReferences);
 
+                                          OnUpdatingSop(file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty), path);
                                           SaveFile(file);
-
                                           studyXml.AddFile(file);
 
                                       }, true);
 
+            Platform.Log(LogLevel.Debug, "Generating study header...");
             string studyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml");
             string gzipStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml.gz");
             using (FileStream xmlStream = new FileStream(studyXmlPath, FileMode.Create),
@@ -229,7 +369,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 StudyXmlIo.WriteXmlAndGzip(studyXml.GetMemento(new StudyXmlOutputSettings()), xmlStream, gzipStream);
             }
 
-            if (NewStudyFolder != _oldStudyFolder)
+            if (NewStudyPath != _oldStudyPath)
             {
                 Platform.Log(LogLevel.Info, "Removing existing folder... {0}", _oldStudyPath);
 
@@ -277,8 +417,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             {
                 throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, filesystemUpdateProcessor.FailureReason));
             }
-        }
 
+            OnSopUpdated(sopInstanceUid, destPath);
+        }
 
         private void UpdateDatabase(IUpdateContext updateContext)
         {
@@ -318,49 +459,43 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             foreach (IImageLevelUpdateCommand command in _commands)
             {
-                ImageLevelUpdateEntry entry = command.UpdateEntry;
-                if (entityMap.ContainsKey(entry.Tag))
+                if (command is IUpdateImageTagCommand)
                 {
-                    entityMap[entry.Tag].SetValue(entity, entry.GetStringValue(), null);
+                    ImageLevelUpdateEntry entry = (command as IUpdateImageTagCommand).UpdateEntry;
+                    if (entityMap.ContainsKey(entry.Tag))
+                    {
+                        entityMap[entry.Tag].SetValue(entity, entry.GetStringValue(), null);
+                    }
                 }
+                
             }
 
         }
 
-
-        void LoadEntities()
+        private void LoadEntities()
         {
             _storage = StudyStorage.Load(_studyStorage.GetKey());
-            _study = FindStudy(_storage.StudyInstanceUid, _partition);
+            _study = Study.Find(_storage.StudyInstanceUid, _partition);
             _patient = Patient.Load(_study.PatientKey);
-        }
-
-        protected Study FindStudy(string studyInstanceUid, ServerPartition partition)
-        {
-            IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IStudyEntityBroker broker = ctx.GetBroker<IStudyEntityBroker>();
-            StudySelectCriteria criteria = new StudySelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(partition.GetKey());
-            criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-            _study = broker.FindOne(criteria);
-
-            return _study;
         }
 
 
         private void StageWorkingFolder()
         {
+            Platform.Log(LogLevel.Debug, "Setting up working folder {0}...", _workingDir);
             string studyPath = _studyStorage.GetStudyPath();
             Directory.CreateDirectory(_workingDir);
-
             StudyXml studyXml = new StudyXml();
             XmlDocument doc = new XmlDocument();
             string studyXmlPath = Path.Combine(studyPath, _studyStorage.StudyInstanceUid + ".xml");
 
-            FileStream stream = File.OpenRead(studyXmlPath);
-            StudyXmlIo.Read(doc, stream);
-            studyXml.SetMemento(doc);
-
+            using(FileStream stream = File.OpenRead(studyXmlPath))
+            {
+                StudyXmlIo.Read(doc, stream);
+                studyXml.SetMemento(doc);    
+            }
+            
+            Platform.Log(LogLevel.Debug, "Copying files into working folder...");
             foreach (SeriesXml seriesXml in studyXml)
             {
                 foreach (InstanceXml instanceXml in seriesXml)
@@ -373,12 +508,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
                 }
             }
+
+
+            Platform.Log(LogLevel.Debug, "Updating files in working folder..."); 
+            FileProcessor.Process(_workingDir, "*.dcm",
+                                  delegate(string path)
+                                      {
+                                          DicomFile file = new DicomFile(path);
+                                          file.Load();
+                                          foreach (IImageLevelUpdateCommand command in _commands)
+                                          {
+                                              command.Apply(file);
+                                          }
+                                          file.Save();
+                                      }, true);
         }
 
-        private void BackupFilesystem()
-        {
-            DirectoryUtility.Copy(_oldStudyPath, _backupDir);
-        }
+        #endregion
 
         #region IDisposable Members
 
@@ -388,8 +534,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             {
                 DirectoryUtility.DeleteIfExists(_workingDir);
             }
-            if (_backupDir != null)
-                DirectoryUtility.DeleteIfExists(_backupDir);
         }
 
         #endregion

@@ -366,6 +366,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
+
+        public bool UpdateStudyState(StudyStorage studyStorage)
+        {
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            using(IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IUpdateQueueStudyState updateBroker = ctx.GetBroker<IUpdateQueueStudyState>();
+                UpdateQueueStudyStateParameters parameters = new UpdateQueueStudyStateParameters();
+                parameters.StudyStorageKey = studyStorage.GetKey();
+
+                if (updateBroker.Execute(parameters))
+                {
+                    ctx.Commit();
+                    return true;
+                }
+            }
+
+            return false;
+        }
         #endregion
     }
 }

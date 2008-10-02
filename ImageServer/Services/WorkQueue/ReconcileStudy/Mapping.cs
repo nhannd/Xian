@@ -2,15 +2,21 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
-    class StudyInfo
+    /// <summary>
+    /// Mapping for study information used for study reconciliation
+    /// </summary>
+    class StudyInfoMapping
     {
+        #region Private Members
         private string _studyId;
         private string _studyInstanceUid;
         private string _studyDescription;
         private string _studyDate;
         private string _studyTime;
         private string _accessionNumber;
+        #endregion
 
+        #region Public Properties
         [DicomField(DicomTags.StudyId)]
         public string StudyId
         {
@@ -52,16 +58,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             get { return _accessionNumber; }
             set { _accessionNumber = value; }
         }
+
+        #endregion
+
     }
 
+    /// <summary>
+    /// Mapping for patient information used for study reconciliation
+    /// </summary>
     class DemographicInfo
     {
+        #region Private Members
         private string _patientsName;
         private string _patientId;
         private string _IssuerOfPatientId;
         private string _patientsBirthdate;
         private string _patientsSex;
+        #endregion
 
+        #region Public Properties
         [DicomField(DicomTags.PatientsName)]
         public string PatientsName
         {
@@ -96,23 +111,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             get { return _patientsSex; }
             set { _patientsSex = value; }
         }
-    }
 
-    class StudyAbstract
-    {
-        private DemographicInfo _demographics = new DemographicInfo();
-        private StudyInfo _studyInfo = new StudyInfo();
+        #endregion
 
-        public DemographicInfo Demographics
-        {
-            get { return _demographics; }
-            set { _demographics = value; }
-        }
-
-        public StudyInfo StudyInfo
-        {
-            get { return _studyInfo; }
-            set { _studyInfo = value; }
-        }
     }
 }

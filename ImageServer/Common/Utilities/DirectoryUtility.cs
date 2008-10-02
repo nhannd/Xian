@@ -95,13 +95,13 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             }
         }
 
-        public static void DeleteIfExists(string dir, bool deleteParent)
+        public static void DeleteIfExists(string dir, bool deleteParentIfEmpty)
         {
             DirectoryInfo parent = Directory.GetParent(dir);
             if (Directory.Exists(dir))
                 Directory.Delete(dir, true);
 
-            if (deleteParent)
+            if (deleteParentIfEmpty)
             {
                 // delete the parent too
                 DeleteIfEmpty(parent.FullName);

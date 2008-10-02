@@ -13,14 +13,9 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-    public class UpdateTagCommand : IImageLevelUpdateCommand
+    public class UpdateTagCommand : IUpdateImageTagCommand
     {
         private ImageLevelUpdateEntry _updateEntry;
-
-        public UpdateTagCommand()
-        {
-            
-        }
 
         #region IImageLevelCommand Members
 
@@ -144,24 +139,65 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         }
     }
     
-
+    /// <summary>
+    /// Provides mechanism to build <see cref="IImageLevelUpdateCommand"/> for a study.
+    /// </summary
     public class ImageUpdateCommandBuilder
     {
-
-        public IList<IImageLevelUpdateCommand> BuildCommands<TObject>(StudyStorage storage)
+        /// <summary>
+        /// Builds a list of <see cref="IImageLevelUpdateCommand"/> for the specified study using the specified mapping template.
+        /// </summary>
+        /// <typeparam name="TMappingObject"></typeparam>
+        /// <param name="storage"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// This method generates a list of <see cref="IImageLevelUpdateCommand"/> based on the mapping in <see cref="TMappingObject"/>.
+        /// <see cref="TMappingObject"/> specifies which Dicom fields the application is interested in, using <see cref="DicomFieldAttribute"/>.
+        /// For example, if the application needs to update the study instance uid and study date in an image with what's in the database, 
+        /// it will define the mapping class as:
+        /// <code>
+        /// class StudyInfoMapping 
+        /// {
+        ///     [DicomField(DicomTags.StudyInstanceUid)]
+        ///     public String StudyInstanceUid{
+        ///         get{ ... }
+        ///         set{ ... }
+        ///     }
+        /// 
+        ///     [DicomField(DicomTags.StudyDate)]
+        ///     public String StudyDate{
+        ///         get{ ... }
+        ///         set{ ... }
+        ///     }
+        /// }
+        /// 
+        /// ImageUpdateCommandBuilder builder = new ImageUpdateCommandBuilder();
+        /// IList<IImageLevelUpdateCommand> commandList = builder.BuildCommands<StudyInfoMapping>(studystorage);
+        /// 
+        /// DicomFile file = new DicomFile("file.dcm");
+        /// foreach(IImageLevelUpdateCommand command in commandList)
+        /// {
+        ///     command.Apply(file);
+        /// }
+        /// 
+        /// 
+        /// </code>
+        /// 
+        /// </remarks>
+        public IList<IImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorage storage)
         {
             IList<StudyStorageLocation> storageLocationList = StudyStorageLocation.FindStorageLocations(storage);
             Debug.Assert(storageLocationList != null && storageLocationList.Count > 0);
             StudyStorageLocation storageLocation = storageLocationList[0];
-            return BuildCommands<TObject>(storageLocation);
+            return BuildCommands<TMappingObject>(storageLocation);
         }
 
-        public IList<IImageLevelUpdateCommand> BuildCommands<TObject>(StudyStorageLocation storageLocation)
+        public IList<IImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorageLocation storageLocation)
         {
             StudyXml studyXml = GetStudyXml(storageLocation);
 
             List<IImageLevelUpdateCommand> commandList = new List<IImageLevelUpdateCommand>();
-            commandList.AddRange(BuildCommands(typeof(TObject), studyXml));
+            commandList.AddRange(BuildCommands(typeof(TMappingObject), studyXml));
 
             return commandList;
         }

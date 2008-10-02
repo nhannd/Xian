@@ -79,8 +79,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         private XmlNode createChildNode(XmlNode setNode, string tagName, string value)
         {
             XmlNode clone = setNode.CloneNode(true);
-            clone.Attributes.GetNamedItem("tag").InnerXml = tagName;
-            clone.Attributes.GetNamedItem("value").InnerXml = value;
+            clone.Attributes.GetNamedItem("TagPath").InnerXml = tagName;
+            clone.Attributes.GetNamedItem("Value").InnerXml = value;
             return clone;
         }
 
@@ -89,9 +89,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             XmlDocument changes = new XmlDocument();
 
             XmlElement rootNode = changes.CreateElement("editstudy");
-            XmlElement setNode = changes.CreateElement("set");
-            setNode.SetAttribute("tag", "");
-            setNode.SetAttribute("value","");
+            XmlElement setNode = changes.CreateElement("SetTag");
+            setNode.SetAttribute("TagPath", "");
+            setNode.SetAttribute("Value","");
 
             string dicomName = PatientLastName.Text + ImageServerConstants.DicomSeparator +
                                PatientGivenName.Text + ImageServerConstants.DicomSeparator +

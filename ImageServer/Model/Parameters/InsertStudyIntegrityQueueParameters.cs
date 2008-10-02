@@ -14,6 +14,12 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         }
 
+        public String StudyInstanceUid
+        {
+            set { SubCriteria["StudyInstanceUid"] = new ProcedureParameter<String>("StudyInstanceUid", value); }
+        }
+
+
         public String Description
         {
             set { SubCriteria["Description"] = new ProcedureParameter<String>("Description", value); }

@@ -241,31 +241,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
 				return;
 			}
-
-			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-			workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
-			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] {WorkQueueTypeEnum.StudyProcess});
-
-			// don't compress until the study has been completely processed.
-			workQueueCriteria.WorkQueueStatusEnum.In(
-				new WorkQueueStatusEnum[]
-					{WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed});
-			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
-			if (relatedItems != null && relatedItems.Count > 0)
-			{
-				// can't do it now. Reschedule it for future
-				relatedItems.Sort(delegate(Model.WorkQueue item1, Model.WorkQueue item2)
-				                  	{
-				                  		return item1.ScheduledTime.CompareTo(item2.ScheduledTime);
-				                  	});
-
-				DateTime newScheduledTime = relatedItems[0].ScheduledTime.AddMinutes(1);
-				if (newScheduledTime < Platform.Time.AddMinutes(1))
-					newScheduledTime = Platform.Time.AddMinutes(1);
-
-				PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
-				Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
-			}
 			else
 			{
 				LoadUids(item);
@@ -339,5 +314,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			_studyStats = new CompressStudyStatistics();
 			_studyStats.Description = String.Format("{0}", item.WorkQueueTypeEnum);
 		}
-	}
+
+        protected override bool CannotStart()
+        {
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
+
+            // don't compress until the study has been completely processed.
+            workQueueCriteria.WorkQueueStatusEnum.In(
+                new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed });
+            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+            return relatedItems != null && relatedItems.Count > 0;
+        }
+    }
 }

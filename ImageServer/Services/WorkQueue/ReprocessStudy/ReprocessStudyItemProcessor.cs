@@ -341,5 +341,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 		}
 
     	#endregion
+
+        protected override bool CannotStart()
+        {
+            return false;// can start anytime
+        }
     }
 }

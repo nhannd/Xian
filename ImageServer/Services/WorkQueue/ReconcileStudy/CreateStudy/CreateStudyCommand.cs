@@ -19,37 +19,12 @@ using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 {
-    
-    class CreateStudyCommandXmlParser
-    {
-        public IList<IImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
-        {
-            List<IImageLevelUpdateCommand> _commands = new List<IImageLevelUpdateCommand>();
-
-            foreach (XmlNode subNode in createStudyNode.ChildNodes)
-            {
-                if (!(subNode is XmlComment))
-                {
-                    if (subNode.Name == "SetTag")
-                    {
-                        UpdateTagCommandParser parser = new UpdateTagCommandParser();
-                        _commands.Add(parser.Parse(subNode));
-                    }
-                    else
-                    {
-                        throw new NotSupportedException(subNode.Name);
-                    }
-                }
-            }
-
-            return _commands;
-        }
-    }
-
-    
-
+    /// <summary>
+    /// Command for reconciling images by creating a new study or merge into an existing study.
+    /// </summary>
     class CreateStudyCommand : ServerCommand, IDisposable
     {
+        #region Private Members
         private ReconcileStudyProcessorContext _context;
         private ServerCommandProcessor _processor;
         private readonly List<WorkQueueUid> _processedUidList = new List<WorkQueueUid>();
@@ -62,13 +37,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         private readonly List<IImageLevelUpdateCommand> _imageLevelCommands = new List<IImageLevelUpdateCommand>();
         private StudyStorageLocation _destStudyStorage = null;
-        
+
+        #endregion
+
+        #region Constructors
+
+        /// <summary>
+        /// Create an instance of <see cref="CreateStudyCommand"/>
+        /// </summary>
         public CreateStudyCommand()
             : base("Create Study", true)
         {
-            
-        }
 
+        }
+        #endregion
+
+        #region Public Properties
+        /// <summary>
+        /// Gets a list of <see cref="IImageLevelUpdateCommand"/> used by the command to update the images.
+        /// </summary>
         public List<IImageLevelUpdateCommand> ImageLevelCommands
         {
             get
@@ -77,6 +64,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             }
         }
 
+        #endregion
+
+        #region Overriden Protected Methods
         protected override void OnExecute()
         {
             Platform.CheckForNullReference(_context, "_context");
@@ -98,9 +88,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     throw new ApplicationException("Some of the sops can be processed.");
                 }
             }
-
-           
         }
+
+        protected override void OnUndo()
+        {
+            if (_processor != null)
+            {
+                _processor.Rollback();
+                _processor = null;
+            }
+        }
+
+
+        #endregion
+        #region Private Methods
 
         private void LogResult()
         {
@@ -176,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             
         }
 
-        public StudyStorageLocation GetStudyStorageLocation(DicomFile file)
+        private StudyStorageLocation GetStudyStorageLocation(DicomFile file)
         {
             String studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = file.DataSet[DicomTags.StudyDate].GetString(0, ImageServerCommonConfiguration.DefaultStudyRootFolder);
@@ -343,7 +344,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             
         }
 
-        void FailDuplicate(WorkQueueUid sop)
+        private void FailDuplicate(WorkQueueUid sop)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -395,8 +396,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             }
         }
 
-        
-        string GetUidPath(WorkQueueUid sop)
+
+        private string GetUidPath(WorkQueueUid sop)
         {
             string imagePath = Path.Combine(_context.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
             return imagePath;
@@ -435,16 +436,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                                       }, true);
         }
 
+        #endregion
 
-        protected override void OnUndo()
-        {
-            if (_processor!=null)
-            {
-                _processor.Rollback();
-                _processor = null;
-            }
-        }
-
+        
         #region IReconcileServerCommand Members
 
         public ReconcileStudyProcessorContext Context
@@ -487,13 +481,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         #endregion
 
-        #region IReconcileServerCommand Members
-
         public void SetContext(ReconcileStudyProcessorContext context)
         {
             _context = context;
         }
-
-        #endregion
     }
 }

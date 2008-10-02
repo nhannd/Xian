@@ -12,6 +12,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             : base("InsertWorkQueueReconcileStudy")
         { }
 
+        public string StudyInstanceUid
+        {
+            set { this.SubCriteria["StudyInstanceUid"] = new ProcedureParameter<string>("StudyInstanceUid", value); }
+        }
+
         public ServerEntityKey ServerPartitionKey
         {
             set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }

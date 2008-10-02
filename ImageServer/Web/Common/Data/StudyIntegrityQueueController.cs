@@ -122,10 +122,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             studyIntegrityQueueUidAdaptor.Delete(criteria);
 
             StudyIntegrityQueueAdaptor studyIntegrityQueueAdaptor = new StudyIntegrityQueueAdaptor();
-            studyIntegrityQueueAdaptor.Delete(item.GetKey());   
+            studyIntegrityQueueAdaptor.Delete(item.GetKey());
+
+            UpdateStudyState(item.StudyStorageKey);
         }
-        
-        public void CreateNewStudy(ServerEntityKey itemKey)
+
+	    private void UpdateStudyState(ServerEntityKey key)
+	    {
+	        StudyController studyController = new StudyController();
+            if (!studyController.UpdateStudyState(StudyStorage.Load(key)))
+                throw new ApplicationException("An error occurred while updating the study state");
+	    }
+
+
+	    public void CreateNewStudy(ServerEntityKey itemKey)
         {
             ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"0020000D\" Value=\"{0}\" /></CreateStudy>", DicomUid.GenerateUid().UID), itemKey);
         }
@@ -186,7 +196,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public void Discard(ServerEntityKey itemKey)
         {
-            ReconcileStudy("<ImageCommands><Discard/></ImageCommands>", itemKey);
+            ReconcileStudy("<Discard/>", itemKey);
         }
 
         private static string GetConflictingName(string studyData)

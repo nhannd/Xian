@@ -3,7 +3,9 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard
 {
-
+    /// <summary>
+    /// A processor implementing <see cref="IReconcileProcessor"/> to handle "Discard" operation
+    /// </summary>
     class DiscardImageCommandProcessor : ServerCommandProcessor, IReconcileProcessor
     {
         private ReconcileStudyProcessorContext _context;

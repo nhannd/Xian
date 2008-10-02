@@ -9,15 +9,26 @@ using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 {
+    /// <summary>
+    /// A processor implementing <see cref="IReconcileProcessor"/> to handle "CreateStudy" operation
+    /// </summary>
     class ReconcileCreateStudyProcessor : ServerCommandProcessor, IReconcileProcessor
     {
+        #region Private Members
         private ReconcileStudyProcessorContext _context;
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Create an instance of <see cref="ReconcileCreateStudyProcessor"/>
+        /// </summary>
         public ReconcileCreateStudyProcessor()
             : base("Create Study")
         {
 
         }
+
+        #endregion
 
         #region IReconcileProcessor Members
 
@@ -26,10 +37,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         {
             get { return "Create Study Processor"; }
         }
-
-        #endregion
-
-        #region IReconcileProcessor Members
 
         public void Initialize(ReconcileStudyProcessorContext context)
         {

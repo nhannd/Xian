@@ -31,20 +31,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -442,55 +437,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             }
         }
-
-        /// <summary>
-        /// Finds the <see cref="StudyHistory"/> record that matches the information of the specified <see cref="DicomFile"/>
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        private StudyHistory FindHistory(DicomFile file)
-        {
-            IStudyHistoryEntityBroker broker = _context.ReadContext.GetBroker<IStudyHistoryEntityBroker>();
-            StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
-            criteria.StudyStorageKey.EqualTo(StorageLocation.GetKey());
-            IList<StudyHistory> histories = broker.Find(criteria);
-
-            ImageSetDescriptor fileDesc = ImageSetDescriptor.Parse(file);
-            XmlNode node = XmlUtils.Serialize(fileDesc);
-
-            ImageSetDescriptor d2 = XmlUtils.Deserialize<ImageSetDescriptor>(node);
-            Debug.Assert(d2.Equals(fileDesc));
-
-            if (histories == null || histories.Count == 0)
-                return null;
-
-            // Find the one with matching demographics
-            List<StudyHistory> historyList = ListUtils.Convert(histories);
-            return  historyList.Find(delegate(StudyHistory history)
-                                 {
-                                     XmlDocument studyDescriptor = history.StudyData;
-                                     Debug.Assert(studyDescriptor != null);
-
-                                     ImageSetDescriptor desc = ImageSetDescriptor.Parse(studyDescriptor.DocumentElement);
-
-                                     if (desc.Equals(fileDesc))
-                                         return true;
-                                     else
-                                         return false;
-                                 });
-        }
-
-        /// <summary>
-        /// Returns the path to a directory that can be used for storing images that need to be reconciled
-        /// </summary>
-        /// <returns></returns>
-        private string GetSuggestedTemporaryReconcileFolderPath()
-        {
-            string path = Path.Combine(_context.StorageLocation.FilesystemPath, _context.StorageLocation.PartitionFolder);
-            path = Path.Combine(path, "Reconcile");
-            path = Path.Combine(path, Guid.NewGuid().ToString());
-            return path;
-        }
         
         /// <summary>
         /// Schedules a reconciliation for the specified <see cref="DicomFile"/>
@@ -498,51 +444,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file"></param>
         private void ScheduleReconcile(DicomFile file)
         {
-            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-            String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
-            String studyDescription = file.DataSet[DicomTags.StudyDescription].GetString(0, String.Empty);
-            
-            ReconcileImageContext reconcileContext = new ReconcileImageContext();
-            reconcileContext.Partition = _context.Partition;
-            reconcileContext.CurrentStudyLocation = StorageLocation;
-            reconcileContext.File = file;
-            reconcileContext.TempStoragePath = GetSuggestedTemporaryReconcileFolderPath();
-            reconcileContext.CurrentStudy = _context.Study;
-
-            reconcileContext.History = FindHistory(file);
-            if (reconcileContext.History == null)
-            {
-                ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation");
-                InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
-                MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
-                processor.AddCommand(updateQueueCommand);
-                processor.AddCommand(moveFileCommand);
-                Platform.Log(LogLevel.Info, "Scheduling manual reconciliation. Image contents: Patient={0}, Study={1} ({2})", patientsName, studyDescription, modality);
-                if (processor.Execute() == false)
-                {
-                    throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));
-                }
-            }
-            else
-            {
-                
-                // Insert 'ReconcileStudy' in the work queue
-                ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request based on histrory");
-                InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(reconcileContext);
-                MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
-                
-                processor.AddCommand(insertCommand);
-                processor.AddCommand(moveFileCommand);
-                StudyStorage destStorage = StudyStorage.Load(reconcileContext.History.DestStudyStorageKey);
-                Study destStudy = Study.Find(destStorage.StudyInstanceUid, _context.Partition); // note: assuming destination partition is the same as the current one
-                Platform.Log(LogLevel.Info, "Scheduling auto reconciliation. Image contents: Patient={0}, Study={1} ({2}) ==> Existing Study={3} [A#={4}]",
-                        patientsName, studyDescription, modality, destStudy.StudyDescription, destStudy.AccessionNumber);
-                if (processor.Execute() == false)
-                {
-                    throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
-                }
-            }
-
+            ImageReconciler reconciler = new ImageReconciler();
+            reconciler.ExistingStudy = _context.Study;
+            reconciler.ExistingStudyLocation = StorageLocation;
+            reconciler.Partition = _context.Partition;
+            reconciler.ReconcileImage(file);
         }
 
 
@@ -835,8 +741,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				
         }
 
-
+        protected override bool CannotStart()
+        {
+            return false; // can start anytime
+        }
         #endregion
+
+        
     }
 
 

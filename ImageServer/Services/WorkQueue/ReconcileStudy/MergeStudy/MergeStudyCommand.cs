@@ -16,12 +16,18 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.Dicom;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 {
-    
+    /// <summary>
+    /// Command for reconciling images by merging new images into an existing study.
+    /// </summary>
+    /// <remark>
+    /// </remark>
     class MergeStudyCommand : ServerCommand, IReconcileServerCommand, IDisposable
     {
+        #region Private Members
         private ReconcileStudyProcessorContext _reconcileContext;
         private bool _updateDestination;
 
@@ -32,49 +38,62 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
         private Study _study;
         private readonly List<IImageLevelUpdateCommand> _imageLevelCommands = new List<IImageLevelUpdateCommand>();
-        
         private readonly List<WorkQueueUid> _processedUidList = new List<WorkQueueUid>();
         private readonly List<WorkQueueUid> _failedUidList = new List<WorkQueueUid>();
-        private readonly List<WorkQueueUid> _duplicateList = new List<WorkQueueUid>(); 
+        private readonly List<WorkQueueUid> _duplicateList = new List<WorkQueueUid>();
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="MergeStudyCommand"/>
+        /// </summary>
         public MergeStudyCommand()
             : base("Merge Study", true)
         {
 
         }
+        #endregion
 
-        #region IReconcileServerCommand Members
-
-
+        #region Public Properties
+        /// <summary>
+        /// Gets or sets the destination of the merged study
+        /// </summary>
         public StudyStorageLocation DestStudyStorage
         {
             get { return _destStudyStorage; }
             set { _destStudyStorage = value; }
         }
 
+        /// <summary>
+        /// Sets or gets the value that indicates whether the current data in the merged study should be updated
+        /// using the commands in <see cref="ImageLevelCommands"/>
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
         public bool UpdateDestination
         {
             get { return _updateDestination; }
             set { _updateDestination = value; }
         }
 
+        /// <summary>
+        /// Gets the list of <see cref="IImageLevelUpdateCommand"/> for updating new images.
+        /// </summary>
         public List<IImageLevelUpdateCommand> ImageLevelCommands
         {
             get { return _imageLevelCommands; }
         }
 
         #endregion
+
         protected override void OnExecute()
         {
             Platform.CheckForNullReference(_reconcileContext, "_reconcileContext");
-
-            PrintUpdateInfo();
-
+            Platform.CheckForNullReference(DestStudyStorage, "DestStudyStorage");
+            
             if (_updateDestination)
                 UpdateExistingStudy();
-
-            Debug.Assert(_destStudyStorage != null);
-
+            
             LoadMergedStudyEntities();
 
             PrepareWorkingFolder();
@@ -87,6 +106,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
         }
 
+        protected override void OnUndo()
+        {
+            if (_processor != null)
+            {
+                _processor.Rollback();
+                _processor = null;
+            }
+        }
+
+        #region Private Members
         private void LogResult()
         {
             StringBuilder log = new StringBuilder();
@@ -110,22 +139,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             Platform.Log(LogLevel.Info, log);
         }
 
-        private void PrintUpdateInfo()
-        {
-            if (_imageLevelCommands!=null && _imageLevelCommands.Count>0)
-            {
-                StringBuilder log = new StringBuilder();
-                log.AppendFormat("Updates on  images:");
-                foreach (IImageLevelUpdateCommand command in _imageLevelCommands)
-                {
-                    log.AppendFormat("{0}", command);
-                    log.AppendLine();
-                }
-                Platform.Log(LogLevel.Info, log);
-            }
-            
-        }
-
         private void UpdateHistory()
         {
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
@@ -144,13 +157,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         {
 
             Platform.Log(LogLevel.Info, "Updating existing study...");
-            ServerCommandProcessor updateProcessor = new ServerCommandProcessor("Update Study");
-            UpdateStudyCommand studyUpdateCommand =
-                new UpdateStudyCommand(_reconcileContext.Partition,
-                                        _destStudyStorage,
-                                        _imageLevelCommands);
-            updateProcessor.AddCommand(studyUpdateCommand);
-            updateProcessor.Execute();
+            using(ServerCommandProcessor updateProcessor = new ServerCommandProcessor("Update Study"))
+            {
+                UpdateStudyCommand studyUpdateCommand =
+                    new UpdateStudyCommand(_reconcileContext.Partition,
+                                            _destStudyStorage,
+                                            _imageLevelCommands);
+                updateProcessor.AddCommand(studyUpdateCommand);
+                updateProcessor.Execute();    
+            }
+            
         }
 
         private void UpdateFilesystem()
@@ -168,7 +184,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
         }
 
-        void LoadMergedStudyEntities()
+        private void LoadMergedStudyEntities()
         {
             StudyStorage storage = StudyStorage.Load(_destStudyStorage.GetKey());
             _study = Study.Find(storage.StudyInstanceUid, _reconcileContext.Partition);
@@ -180,8 +196,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         {
             DirectoryUtility.DeleteIfExists(_workingDir);
         }
-
-       
 
         private void SaveFile(DicomFile file)
         {
@@ -268,8 +282,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             }
         }
 
-        
-        string GetUidPath(WorkQueueUid sop)
+
+        private string GetUidPath(WorkQueueUid sop)
         {
             string imagePath = Path.Combine(_reconcileContext.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
             return imagePath;
@@ -316,7 +330,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         {
             StringBuilder log = new StringBuilder();
             log.AppendLine();
-            log.AppendFormat("Update actions:");
+            log.AppendFormat("Update on merged images:");
+            log.AppendLine();
             foreach (IImageLevelUpdateCommand cmd in updateCommandList)
             {
                 log.AppendFormat("{0}", cmd);
@@ -332,22 +347,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             
             ImageUpdateCommandBuilder builder = new ImageUpdateCommandBuilder();
             updateCommandList.AddRange(builder.BuildCommands<DemographicInfo>(_destStudyStorage));
-            updateCommandList.AddRange(builder.BuildCommands<StudyInfo>(_destStudyStorage));
+            updateCommandList.AddRange(builder.BuildCommands<StudyInfoMapping>(_destStudyStorage));
 
             
             return updateCommandList;
         }
 
+        #endregion
 
-        protected override void OnUndo()
-        {
-            if (_processor != null)
-            {
-                _processor.Rollback();
-                _processor = null;
-            }
-        }
-
+       
         #region IDisposable Members
 
         public void Dispose()

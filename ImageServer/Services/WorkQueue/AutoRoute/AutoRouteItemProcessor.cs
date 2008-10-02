@@ -195,5 +195,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 				PostProcessing(item, true, true); // no failures, complete
         }
         #endregion
+
+        protected override bool CannotStart()
+        {
+            return false; // can start anytime
+        }
     }
 }

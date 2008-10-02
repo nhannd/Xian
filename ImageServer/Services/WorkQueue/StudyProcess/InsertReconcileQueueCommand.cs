@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             IInsertStudyIntegrityQueue broker = updateContext.GetBroker<IInsertStudyIntegrityQueue>();
             InsertStudyIntegrityQueueParameters parameters = new InsertStudyIntegrityQueueParameters();
             parameters.Description = GetImageSearchableDescription();
-
+            parameters.StudyInstanceUid = _context.CurrentStudyLocation.StudyInstanceUid;
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
             parameters.StudyIntegrityReasonEnum = StudyIntegrityReasonEnum.InconsistentData;

@@ -48,6 +48,8 @@ public partial class QueueStudyStateEnum : ServerEnum
       private static readonly QueueStudyStateEnum _EditScheduled = GetEnum("EditScheduled");
       private static readonly QueueStudyStateEnum _ProcessingScheduled = GetEnum("ProcessingScheduled");
       private static readonly QueueStudyStateEnum _PurgeScheduled = GetEnum("PurgeScheduled");
+      private static readonly QueueStudyStateEnum _ReconcileScheduled = GetEnum("ReconcileScheduled");
+      private static readonly QueueStudyStateEnum _ReconcileRequired = GetEnum("ReconcileRequired");
       #endregion
 
       #region Public Static Properties
@@ -85,6 +87,20 @@ public partial class QueueStudyStateEnum : ServerEnum
       public static QueueStudyStateEnum PurgeScheduled
       {
           get { return _PurgeScheduled; }
+      }
+      /// <summary>
+      /// The study has been scheduled for reconciliation
+      /// </summary>
+      public static QueueStudyStateEnum ReconcileScheduled
+      {
+          get { return _ReconcileScheduled; }
+      }
+      /// <summary>
+      /// The study needs to be reconciled
+      /// </summary>
+      public static QueueStudyStateEnum ReconcileRequired
+      {
+          get { return _ReconcileRequired; }
       }
 
       #endregion

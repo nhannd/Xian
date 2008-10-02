@@ -129,5 +129,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
             PostProcessing(item, true, false);
 
         }
+
+        protected override bool CannotStart()
+        {
+            return false; // can start anytime
+        }
     }
 }

@@ -32,15 +32,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -53,7 +48,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         #region Private Members
         private ReconcileStudyProcessorContext _context;
         private ReconcileStudyWorkQueueData _reconcileQueueData;
-        //List<IReconcileServerCommand> _commandList = null;
         private IReconcileProcessor _processor;
         #endregion
 
@@ -66,9 +60,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             if (CannotStart())
             {
                 WorkQueueSettings settings = WorkQueueSettings.Instance;
-                Platform.Log(LogLevel.Info, "Postpone ReconcileStudy entry. [GUID={0}]", item.GetKey());
-                PostponeItem(item, Platform.Time.Add(TimeSpan.FromMilliseconds(settings.WorkQueueQueryDelay)),
-                                  Platform.Time.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds)));
+                DateTime newScheduledTime = Platform.Time.Add(TimeSpan.FromMilliseconds(settings.WorkQueueQueryDelay));
+                Platform.Log(LogLevel.Info, "Postpone ReconcileStudy entry until {0}. [GUID={1}]", newScheduledTime, item.GetKey());
+                PostponeItem(item, newScheduledTime, newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds)));
             }
             else
             {
@@ -83,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 }
                 else
                 {
-                    Platform.Log(LogLevel.Info, "Reconcililation started. GUID={0}.", WorkQueueItem.GetKey());
+                    Platform.Log(LogLevel.Info, "Reconcililation started. GUID={0}. StudyStorage={1}", WorkQueueItem.GetKey(), WorkQueueItem.StudyStorageKey);
 
 					if (!LoadStorageLocation(item))
 					{
@@ -129,24 +123,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             
         }
 
-        #endregion
-
-
-        #region Private Methods
-
-
-        private bool CannotStart()
+        
+        protected override bool CannotStart()
         {
             // cannot start if the existing study is scheduled for update
             WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
             criteria.ServerPartitionKey.EqualTo(WorkQueueItem.ServerPartitionKey);
             criteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            criteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.WebEditStudy });
+            criteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[]
+                                              {
+                                                  WorkQueueTypeEnum.ReprocessStudy
+                                              });
 
             List<Model.WorkQueue> items = FindRelatedWorkQueueItems(WorkQueueItem, criteria);
             return items.Count > 0;
         }
 
+
+
+        #endregion
+
+        #region Private Mehods
 
         private void Complete()
         {
@@ -175,18 +172,50 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             _context.History = WorkQueueItem.StudyHistoryKey != null
                                    ? StudyHistory.Load(WorkQueueItem.StudyHistoryKey)
                                    : null;
-            
+
+
+            if (_context.History != null)
+            {
+                // if the destination in the history has been set, 
+                // the work queue should refer to the same study so that the correct study will be locked
+                Debug.Assert(_context.History.DestStudyStorageKey == null ||
+                             _context.History.DestStudyStorageKey.Equals(WorkQueueItem.StudyStorageKey));
+            }
         }
+
         #endregion
+
 
     }
 
+    /// <summary>
+    /// Defines the interface of processors that processes different types of 'ReconcileStudy' entries
+    /// </summary>
     interface IReconcileProcessor : IDisposable
     {
-        void Initialize(ReconcileStudyProcessorContext context);
-        bool Execute();
-        String FailureReason { get;}
+        /// <summary>
+        /// Gets the name of the processor
+        /// </summary>
         String Name { get; }
+
+        /// <summary>
+        /// Gets the reason why <see cref="Execute"/> failed.
+        /// </summary>
+        String FailureReason { get;}
+
+        /// <summary>
+        /// Initializes the processor with the specified context
+        /// </summary>
+        /// <param name="context"></param>
+        void Initialize(ReconcileStudyProcessorContext context);
+
+        /// <summary>
+        /// Executes the processor
+        /// </summary>
+        /// <returns></returns>
+        bool Execute();
+
+        
     }
 
     

@@ -14,24 +14,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// Parses reconciliation commands in Xml format.
     /// </summary>
     /// <remarks>
-    /// The reconciliation commands should be specified in the 'Reconcile' xml node. Currently only
-    /// "MergeStudy", "CreateStudy" or "Discard" commands
-    /// are supported.
+    /// Currently only "MergeStudy", "CreateStudy" or "Discard" commands are supported.
     /// 
     /// <example>
-    /// The following examples illustrate how discard and update image commands are specified in the xml format.
+    /// The following examples shows the xml of the "Discard" and "CreateStudy" commands
     /// <code>
-    /// <ImageCommands>
-    ///     <Discard></Discard>
-    /// </ImageCommands>
+    /// <Discard></Discard>
     /// </code>
     /// 
     /// <code>
-    /// <ImageCommands>
-    ///     <UpdateImages>
-    ///         <Set TagPath="00100010" Value="John^Smith"/>
-    ///     </UpdateImages>
-    /// </ImageCommands>
+    /// <CreateStudy>
+    ///     <Set TagPath="00100010" Value="John^Smith"/>
+    /// </CreateStudy>
     /// </code>
     /// </example>
     /// </remarks>
@@ -69,7 +63,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 }
                 else
                 {
-                    throw new NotSupportedException(doc.DocumentElement.Name);
+                    throw new NotSupportedException(String.Format("Unsupported reconcile operator: {0}", doc.DocumentElement.Name));
                 }
                 
             }
