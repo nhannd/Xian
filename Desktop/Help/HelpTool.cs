@@ -80,7 +80,7 @@ namespace ClearCanvas.Desktop.Help
 			Execute("EULA.rtf", SR.HelpNotFound);
 		}
 
-		private void Execute(string filename, string errorMesage) {
+		private void Execute(string filename, string errorMessage) {
 			ProcessStartInfo nfo = new ProcessStartInfo();
 			nfo.WorkingDirectory = Platform.InstallDirectory;
 			nfo.FileName = filename;
@@ -91,7 +91,7 @@ namespace ClearCanvas.Desktop.Help
 			}
 			catch
 			{
-				this.Context.DesktopWindow.ShowMessageBox(errorMesage, MessageBoxActions.Ok);
+				this.Context.DesktopWindow.ShowMessageBox(errorMessage, MessageBoxActions.Ok);
 			}
 		}
 	}
