@@ -1058,3 +1058,184 @@ Preview.ReportPreview = function () {
 		}
 	};
 }();
+
+
+// TODO: is this uhn specific?
+Preview.InsuranceSection = function () {
+
+	var _html = 
+		'<p class="sectionheading">Insurance</p>'+
+		'<table>'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Plan Id</td>'+
+		'		<td><div id="InsurancePlanId"/></td>'+
+		'		<td width="120" class="propertyname">Name of Insured</td>'+
+		'		<td><div id="NameOfInsured"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Company Id</td>'+
+		'		<td><div id="InsuranceCompanyId"/></td>'+
+		'		<td width="120" class="propertyname">Relationship to patient</td>'+
+		'		<td><div id="InsuredsRelationshipToPatient"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Policy Number</td>'+
+		'		<td colspan="3"><div id="PolicyNumber"/></td>'+
+		'	</tr>'+
+		'</table>';
+			
+	return 	{
+		create: function(element, visitDetail) {
+
+			if(visitDetail == null || visitDetail.ExtendedProperties == null)
+				return;
+			// TODO: Code to return if no 
+			
+			element.innerHTML = _html;
+
+			Field.setValue($("InsurancePlanId"), visitDetail.ExtendedProperties.InsurancePlanId);
+			Field.setValue($("NameOfInsured"), visitDetail.ExtendedProperties.NameOfInsured);
+			Field.setValue($("InsuranceCompanyId"), visitDetail.ExtendedProperties.InsuranceCompanyId);
+			Field.setValue($("InsuredsRelationshipToPatient"), visitDetail.ExtendedProperties.InsuredsRelationshipToPatient);
+			Field.setValue($("PolicyNumber"), visitDetail.ExtendedProperties.PolicyNumber);
+		}
+	};
+}();
+
+Preview.ImagingServiceSection = function () {
+	var _html = 
+		'<p class="sectionheading">Imaging Service</p>'+
+		'<table width="100%" border="0">'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Accession Number</td>'+
+		'		<td width="200"><div id="AccessionNumber"/></td>'+
+		'		<td width="120" class="propertyname">Priority</td>'+
+		'		<td width="200"><div id="OrderPriority"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Ordering Physician</td>'+
+		'		<td width="200"><div id="OrderingPhysician"/></td>'+
+		'		<td width="120" class="propertyname">Performing Facility</td>'+
+		'		<td width="200"><div id="PerformingFacility"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Patient Class</td>'+
+		'		<td width="200"><div id="PatientClass"/></td>'+
+		'		<td width="120" class="propertyname">Location, Room/Bed</td>'+
+		'		<td width="200"><div id="LocationRoomBed"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Indication</td>'+
+		'		<td colspan="4"><div id="ReasonForStudy"/></td>'+
+		'	</tr>'+
+		'	<tr id="CancelReasonSection">'+
+		'		<td width="120" class="propertyname">Cancel Reason</td>'+
+		'		<td width="200" colspan="4"><div id="CancelReason"/></td>'+
+		'	</tr>'+
+		'</table>';
+		
+	return {
+		create: function (element, orderDetail)
+		{
+			if(orderDetail == null)
+				return;
+				
+			element.innerHTML = _html;
+		
+			Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
+			Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
+			Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
+			Field.setValue($("PerformingFacility"), Preview.formatPerformingFacilityList(orderDetail.Procedures));
+			Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
+			Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
+			Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
+			if (orderDetail.CancelReason)
+				Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
+			else
+				Field.show($("CancelReasonSection"), false);
+		}
+	};
+
+}();
+
+Preview.PatientDemographicsSection = function () {
+	var _html = 
+		'<table width="100%" border="0">'+
+		'	<tr>'+
+		'		<td width="120" class="propertyname">Date of Birth</td>'+
+		'		<td width="200"><div id="dateOfBirth"/></td>'+
+		'		<td width="63" class="propertyname">Age</td>'+
+		'		<td width="229"><div id="age"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="propertyname">Healthcard # </td>'+
+		'		<td><div id="healthcard"/></td>'+
+		'		<td width="63" class="propertyname">Sex</td>'+
+		'		<td width="229"><div id="sex"/></td>'+
+		'	</tr>'+
+		'	<tr id="HomePhoneRow">'+
+		'		<td class="propertyname">Home Phone</td>'+
+		'		<td colspan="4"><div id="currentHomePhone"/></td>'+
+		'	</tr>'+
+		'	<tr id="HomeAddressRow">'+
+		'		<td class="propertyname">Home Address</td>'+
+		'		<td colspan="4"><div id="currentHomeAddress"/></td>'+
+		'	</tr>'+
+		'</table>';
+
+	return {
+		create: function(element, patientProfile)
+		{
+			if(patientProfile == null)
+				return;
+
+			element.innerHTML = _html;
+
+			Field.setValue($("age"), Preview.getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
+            Field.setValue($("sex"), patientProfile.Sex.Value);
+            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+			if (patientProfile.CurrentHomePhone)
+				Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
+			else
+				Field.show($("HomePhoneRow"), false);
+
+			if (patientProfile.CurrentHomeAddress)
+				Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
+			else
+				Field.show($("HomeAddressRow"), false);
+		}
+	};
+}();
+
+Preview.PatientBannerSection = function() {
+	var _html =
+		'<table width="100%" border="0">'+
+		'	<tr>'+
+		'		<td class="patientnameheading"><div id="name" /></td>'+
+		'		<td rowspan="2" align="right"><div id="alerts"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="patientmrnheading"><div id="mrn"/></td>'+
+		'	</tr>'+
+		'</table>';
+
+	return {
+		create: function(element, patientProfile, alerts)
+		{
+			if(patientProfile == null)
+				return;
+
+			element.innerHTML = _html;
+
+			var patientName = Ris.formatPersonName(patientProfile.Name);
+			
+			Field.setValue($("name"), patientName);
+			Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+
+			var alertHtml = "";
+			alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+			$("alerts").innerHTML = alertHtml;
+		}
+	};
+}();

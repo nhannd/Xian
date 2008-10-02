@@ -28,11 +28,11 @@
 					// construct request object
 					var request = {
 						GetOrderDetailRequest: context.OrderRef == null ? null : 
-                            { 
+							{ 
 								OrderRef: context.OrderRef,
 								IncludeProcedures: true,
 								IncludeVisit: true,
-                                IncludeNotes: true,
+								IncludeNotes: true,
 								NoteCategoriesFilter: ["General"]
 							}
 					};
@@ -49,20 +49,8 @@
 					var orderDetail = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.Order : null;
 					if(orderDetail)
 					{
-						Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(orderDetail.AccessionNumber));
-						Field.setValue($("OrderPriority"), orderDetail.OrderPriority.Value);
-						Field.setLink($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name), function() { Ris.openPractitionerDetails(orderDetail.OrderingPractitioner); });
-						Field.setValue($("PerformingFacility"), Preview.formatPerformingFacilityList(orderDetail.Procedures));
-						Field.setValue($("PatientClass"), orderDetail.Visit.PatientClass.Value);
-						Field.setValue($("LocationRoomBed"), Preview.formatVisitCurrentLocation(orderDetail.Visit));
-						Field.setValue($("ReasonForStudy"), orderDetail.ReasonForStudy);
-						if (orderDetail.CancelReason)
-							Field.setValue($("CancelReason"), orderDetail.CancelReason.Value);
-						else
-							Field.show($("CancelReasonSection"), false);
-
+						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
 						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-
 						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 					}
 					else
@@ -79,39 +67,10 @@
 			}
 		</script>
 	</head>
-	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
+	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<div id="orderDetailsSection">
-				<p class="sectionheading">Imaging Service</p>
-				<table width="100%" border="0">
-					<tr>
-						<td width="120" class="propertyname">Accession Number</td>
-						<td width="200"><div id="AccessionNumber"/></td>
-						<td width="120" class="propertyname">Priority</td>
-						<td width="200"><div id="OrderPriority"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Ordering Physician</td>
-						<td width="200"><div id="OrderingPhysician"/></td>
-						<td width="120" class="propertyname">Performing Facility</td>
-						<td width="200"><div id="PerformingFacility"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Patient Class</td>
-						<td width="200"><div id="PatientClass"/></td>
-						<td width="120" class="propertyname">Location, Room/Bed</td>
-						<td width="200"><div id="LocationRoomBed"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Indication</td>
-						<td colspan="3"><div id="ReasonForStudy"/></td>
-					</tr>
-					<tr id="CancelReasonSection">
-						<td width="120" class="propertyname">Cancel Reason</td>
-						<td width="200" colspan="4"><div id="CancelReason"/></td>
-					</tr>
-				</table>
-
+				<div id="imagingServiceSection"></div>
 				<div id="proceduresSection"></div>
 				<div id="notesSection"></div>
 			</div>

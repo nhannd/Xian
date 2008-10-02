@@ -68,11 +68,7 @@
 							Field.setValue($("ConsultingPhysician"), visitDetail.ExtendedProperties.ConsultingPhysician);
 							Field.setValue($("AdmittingPhysician"), visitDetail.ExtendedProperties.AdmittingPhysician);
 
-							Field.setValue($("InsurancePlanId"), visitDetail.ExtendedProperties.InsurancePlanId);
-							Field.setValue($("NameOfInsured"), visitDetail.ExtendedProperties.NameOfInsured);
-							Field.setValue($("InsuranceCompanyId"), visitDetail.ExtendedProperties.InsuranceCompanyId);
-							Field.setValue($("InsuredsRelationshipToPatient"), visitDetail.ExtendedProperties.InsuredsRelationshipToPatient);
-							Field.setValue($("PolicyNumber"), visitDetail.ExtendedProperties.PolicyNumber);
+							Preview.InsuranceSection.create($("insuranceSection"), visitDetail);
 						}
 					}
 				}
@@ -148,25 +144,7 @@
 				</tr>
 			</table>
 		
-			<div class="sectionheading">Insurance</div>
-			<table>	
-				<tr>
-					<td width="120" class="propertyname">Plan Id</td>
-					<td><div id="InsurancePlanId"/></td>
-					<td width="120" class="propertyname">Name of Insured</td>
-					<td><div id="NameOfInsured"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Company Id</td>
-					<td><div id="InsuranceCompanyId"/></td>
-					<td width="120" class="propertyname">Relationship to patient</td>
-					<td><div id="InsuredsRelationshipToPatient"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Policy Number</td>
-					<td colspan="3"><div id="PolicyNumber"/></td>
-				</tr>
-			</table>
+			<div id="insuranceSection"></div>
 		</form>
 	</body>
 </html>
