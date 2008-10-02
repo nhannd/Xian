@@ -140,6 +140,15 @@ Host: {2}
 Listening Port: {3}
 Location: {4}</value>
   </data>
+  <data name="FormatStreamingServerDetails" xml:space="preserve">
+    <value>Server Name: {0}
+AE Title: {1}
+Host: {2}
+Listening Port: {3}
+Location: {4}
+Streaming Header Port: {5}
+Streaming Image Port: {6}</value>
+  </data>
   <data name="LocalDataStoreConfigurationUnavailable" xml:space="preserve">
     <value>The configuration is currently unavailable.
 Please ensure all required services are running.</value>

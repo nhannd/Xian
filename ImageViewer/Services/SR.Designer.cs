@@ -114,6 +114,21 @@ namespace ClearCanvas.ImageViewer.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server Name: {0}
+        ///AE Title: {1}
+        ///Host: {2}
+        ///Listening Port: {3}
+        ///Location: {4}
+        ///Streaming Header Port: {5}
+        ///Streaming Image Port: {6}.
+        /// </summary>
+        internal static string FormatStreamingServerDetails {
+            get {
+                return ResourceManager.GetString("FormatStreamingServerDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The configuration is currently unavailable.
         ///Please ensure all required services are running..
         /// </summary>
