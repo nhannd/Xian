@@ -49,18 +49,9 @@
 						return;
 					}
 
-                    // update alerts
-		            if(data.GetOrderDetailResponse && data.GetOrderDetailResponse.OrderAlerts)
-		            {
-                        var alertHtml = "";
-	                    data.GetOrderDetailResponse.OrderAlerts.each(function(item) { alertHtml += getAlertHtml(item, ""); });
-                        $("alerts").innerHTML = alertHtml;
-		            }
-					else
-					{
-						Field.show($("alertsSection"), false);
-					}
-					
+					var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
+					Preview.BannerSection.create($("alertsSection"), "", "", "", orderAlerts);
+
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					if (orderDetail)
 					{
@@ -115,13 +106,7 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
-			<div id="alertsSection">
-			    <table width="100%" border="0">
-				    <tr>
-					    <td align="right"><div id="alerts"/></td>
-				    </tr>
-			    </table>
-			</div>
+			<div id="alertsSection"></div>
 			
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>

@@ -217,7 +217,7 @@ Preview.ProceduresTableHelper = function () {
 		}
 		else if (Date.compare(dateTime, today) >= 0 && Date.compare(dateTime, tomorrow) < 0)
 		{
-			return "Today " + Ris.formatTime(dateTime);                
+			return "Today " + Ris.formatTime(dateTime);				
 		}
 		else if (Date.compare(dateTime, tomorrow) >= 0 && Date.compare(dateTime, afterTomorrow) < 0)
 		{
@@ -225,7 +225,7 @@ Preview.ProceduresTableHelper = function () {
 		}
 		else
 		{
-			return Ris.formatDateTime(dateTime);                
+			return Ris.formatDateTime(dateTime);				
 		}
 	}
 
@@ -435,13 +435,13 @@ Preview.ImagingServiceTable = function () {
 	return {
 		createActive: function(parentElement, ordersList)
 		{
-            var activeProcedures = _getActiveProcedures(ordersList);
+			var activeProcedures = _getActiveProcedures(ordersList);
 			_createHelper(parentElement, activeProcedures, "Active Imaging Services");
 		},
 		
 		createPast: function(parentElement, ordersList)
 		{
-            var pastProcedures = _getNonActiveProcedures(ordersList);
+			var pastProcedures = _getNonActiveProcedures(ordersList);
 			_createHelper(parentElement, pastProcedures, "Past Imaging Services");
 		}
 	};
@@ -1061,6 +1061,9 @@ Preview.ReportPreview = function () {
 
 
 // TODO: is this uhn specific?
+/*
+ *	Create a summary of the insurance details of a single visit.
+ */ 
 Preview.InsuranceSection = function () {
 
 	var _html = 
@@ -1102,6 +1105,9 @@ Preview.InsuranceSection = function () {
 	};
 }();
 
+/*
+ *	Create a summary of a single imaging service.
+ */
 Preview.ImagingServiceSection = function () {
 	var _html = 
 		'<p class="sectionheading">Imaging Service</p>'+
@@ -1158,6 +1164,9 @@ Preview.ImagingServiceSection = function () {
 
 }();
 
+/*
+ *	Create a summary of demographic information of a single patient profile.
+ */
 Preview.PatientDemographicsSection = function () {
 	var _html = 
 		'<table width="100%" border="0">'+
@@ -1192,9 +1201,9 @@ Preview.PatientDemographicsSection = function () {
 			element.innerHTML = _html;
 
 			Field.setValue($("age"), Preview.getPatientAge(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath));
-            Field.setValue($("sex"), patientProfile.Sex.Value);
-            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
-            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+			Field.setValue($("sex"), patientProfile.Sex.Value);
+			Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+			Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
 			if (patientProfile.CurrentHomePhone)
 				Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
 			else
@@ -1208,30 +1217,52 @@ Preview.PatientDemographicsSection = function () {
 	};
 }();
 
+/*
+ *	Create a banner showing a patient name, MRN and any provided alerts.
+ */
 Preview.PatientBannerSection = function() {
-	var _html =
-		'<table width="100%" border="0">'+
-		'	<tr>'+
-		'		<td class="patientnameheading"><div id="name" /></td>'+
-		'		<td rowspan="2" align="right"><div id="alerts"/></td>'+
-		'	</tr>'+
-		'	<tr>'+
-		'		<td class="patientmrnheading"><div id="mrn"/></td>'+
-		'	</tr>'+
-		'</table>';
-
 	return {
 		create: function(element, patientProfile, alerts)
 		{
 			if(patientProfile == null)
 				return;
 
+			var patientName = Ris.formatPersonName(patientProfile.Name);
+			var patientMRN = Ris.formatMrn(patientProfile.Mrn);
+			Preview.BannerSection.create(element, patientName, patientMRN, patientName, alerts);
+		}
+	};
+}();
+
+/*
+ *	Create a two line banner section with alerts
+ *	Exposes:
+ *		create(element, line1, line2, patientName, alerts)
+ *			element - parent node for the banner
+ *			line1 - first line text
+ *			line2 - second line text
+ *			patientName - patient name, used in alert hover text
+ *			alerts - a list of alerts (from Ris.getPatientDataService) to display
+ */
+Preview.BannerSection = function() {
+	var _html =
+		'<table width="100%" border="0">'+
+		'	<tr>'+
+		'		<td class="patientnameheading"><div id="line1" /></td>'+
+		'		<td rowspan="2" align="right"><div id="alerts"/></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td class="patientmrnheading"><div id="line2"/></td>'+
+		'	</tr>'+
+		'</table>';
+
+	return {
+		create: function(element, line1, line2, patientName, alerts)
+		{
 			element.innerHTML = _html;
 
-			var patientName = Ris.formatPersonName(patientProfile.Name);
-			
-			Field.setValue($("name"), patientName);
-			Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+			Field.setValue($("line1"), line1);
+			Field.setValue($("line2"), line2);
 
 			var alertHtml = "";
 			alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
