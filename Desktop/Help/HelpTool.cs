@@ -65,49 +65,33 @@ namespace ClearCanvas.Desktop.Help
 
 		public void ShowWebsite()
 		{
-			try
-			{
-				Process.Start("http://www.clearcanvas.ca");
-			}
-			catch
-			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.URLNotFound, MessageBoxActions.Ok);
-			}
+			Execute("http://www.clearcanvas.ca", SR.URLNotFound);
 		}
 
 		public void ShowUsersGuide()
 		{
-			string helpPath = String.Format(
-				"{0}{1}{2}",
-				Platform.InstallDirectory,
-				System.IO.Path.DirectorySeparatorChar,
-				"CCWorkstationUsersGuide.chm");
-
-			try
-			{
-				Process.Start(helpPath);
-			}
-			catch
-			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.URLNotFound, MessageBoxActions.Ok);
-			} 
+			string guideFile = HelpSettings.Default.UserGuidePath;
+			if (!string.IsNullOrEmpty(guideFile))
+				Execute(guideFile, SR.HelpNotFound);
 		}
 
 		public void ShowLicense()
 		{
-			string licensePath = String.Format(
-				"{0}{1}{2}",
-				Platform.InstallDirectory,
-				System.IO.Path.DirectorySeparatorChar,
-				"EULA.rtf");
+			Execute("EULA.rtf", SR.HelpNotFound);
+		}
 
-			try
+		private void Execute(string filename, string errorMesage) {
+			ProcessStartInfo nfo = new ProcessStartInfo();
+			nfo.WorkingDirectory = Platform.InstallDirectory;
+			nfo.FileName = filename;
+
+			try 
 			{
-				Process.Start(licensePath);
+				Process.Start(nfo);
 			}
 			catch
 			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.HelpNotFound, MessageBoxActions.Ok);
+				this.Context.DesktopWindow.ShowMessageBox(errorMesage, MessageBoxActions.Ok);
 			}
 		}
 	}
