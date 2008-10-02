@@ -718,20 +718,20 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error: You cannot delete your own user account: {0}.
+        /// </summary>
+        internal static string MessageErrorDeleteOwnUser {
+            get {
+                return ResourceManager.GetString("MessageErrorDeleteOwnUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Staff {0} has changed its association from user {1} to {2}.
         /// </summary>
         internal static string MessageStaffChangeAssociation {
             get {
                 return ResourceManager.GetString("MessageStaffChangeAssociation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You are about to delete your own user account.  Are you sure you want to continue?.
-        /// </summary>
-        internal static string MessageWarnDeleteOwnUser {
-            get {
-                return ResourceManager.GetString("MessageWarnDeleteOwnUser", resourceCulture);
             }
         }
         

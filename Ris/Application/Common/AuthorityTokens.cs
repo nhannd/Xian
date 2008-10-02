@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of Protocol Groups and Codes.")]
 				public const string ProtocolGroups = "Admin/Data/Protocol Groups";
 
-				[AuthorityToken(Description = "Allow administration of Staffs.")]
+				[AuthorityToken(Description = "Allow administration of Staff.")]
 				public const string Staff = "Admin/Data/Staff";
 
 				[AuthorityToken(Description = "Allow administration of Staff Groups.")]

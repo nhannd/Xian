@@ -336,11 +336,11 @@
   <data name="MessageEnumConfirmDelete" xml:space="preserve">
     <value>Warning: Attempting to delete this value will fail if the value has been referenced by another entity.  Delete?</value>
   </data>
+  <data name="MessageErrorDeleteOwnUser" xml:space="preserve">
+    <value>Error: You cannot delete your own user account: {0}</value>
+  </data>
   <data name="MessageStaffChangeAssociation" xml:space="preserve">
     <value>Staff {0} has changed its association from user {1} to {2}</value>
-  </data>
-  <data name="MessageWarnDeleteOwnUser" xml:space="preserve">
-    <value>You are about to delete your own user account.  Are you sure you want to continue?</value>
   </data>
   <data name="MessageWorklistMustHaveName" xml:space="preserve">
     <value>Worklist must have a name</value>

@@ -267,8 +267,8 @@ namespace ClearCanvas.Ris.Client.Admin
 		    string currentUserName = Thread.CurrentPrincipal.Identity.Name;
             if (CollectionUtils.Contains(items, delegate(UserSummary u) { return u.UserName == currentUserName; }))
             {
-                if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageWarnDeleteOwnUser, MessageBoxActions.YesNo))
-                    return false;
+                this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageErrorDeleteOwnUser, currentUserName), MessageBoxActions.Ok);
+                return false;
             }
 
 			foreach (UserSummary item in items)
