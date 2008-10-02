@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow administration of Protocol Groups and Codes.")]
 				public const string ProtocolGroups = "Admin/Data/Protocol Groups";
 
-				[AuthorityToken(Description = "Allow administration of Staff.")]
+				[AuthorityToken(Description = "Allow administration of Staffs.")]
 				public const string Staff = "Admin/Data/Staff";
 
 				[AuthorityToken(Description = "Allow administration of Staff Groups.")]
@@ -145,10 +145,10 @@ namespace ClearCanvas.Ris.Application.Common
 
 			public static class CannedText
 			{
-				[AuthorityToken(Description = "Allow creation of personal Canned Texts.")]
+                [AuthorityToken(Description = "Allow creation, modification and deletion of personal Canned Texts.")]
 				public const string Personal = "Workflow/Canned Text/Personal";
 
-				[AuthorityToken(Description = "Allow creation of group Canned Texts.")]
+				[AuthorityToken(Description = "Allow creation, modification and deletion of group Canned Texts.")]
 				public const string Group = "Workflow/Canned Text/Group";
 			}
 
