@@ -11,11 +11,11 @@ using namespace ClearCanvas::Common;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly:AssemblyTitleAttribute("ClearCanvas.Dicom.Codec.Jpeg")];
+[assembly:AssemblyTitleAttribute("ClearCanvas.Dicom.Codec.Jpeg2000")];
 [assembly:AssemblyDescriptionAttribute("")];
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("ClearCanvas Inc.")];
-[assembly:AssemblyProductAttribute("ClearCanvas.Dicom.Codec.Jpeg")];
+[assembly:AssemblyProductAttribute("ClearCanvas.Dicom.Codec.Jpeg2000")];
 [assembly:AssemblyCopyrightAttribute("Copyright (c)  2008")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
@@ -38,3 +38,4 @@ using namespace ClearCanvas::Common;
 //[assembly:CLSCompliantAttribute(true)];
 
 //[assembly:SecurityPermission(SecurityAction::RequestMinimum, UnmanagedCode = true)];
+

@@ -48,6 +48,9 @@ public:
 	virtual void DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelData, DicomUncompressedPixelData^ newPixelData, DicomCodecParameters^ parameters);
 
 	virtual IJpegCodec^ GetCodec(int bits, DicomJpegParameters^ jparams) = 0;
+	unsigned char DicomJpegCodec::GetJpegBitDepth(const unsigned char *data, const unsigned int fragmentLength);
+	unsigned short DicomJpegCodec::readUint16(const unsigned char *data);
+
 };
 
 

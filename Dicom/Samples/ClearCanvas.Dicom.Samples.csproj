@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compression.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="SamplesForm.cs">
       <SubType>Form</SubType>
@@ -81,6 +82,10 @@
     <ProjectReference Include="..\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Codec\Plugin\ClearCanvas.Dicom.Codec.Plugin.csproj">
+      <Project>{A5061667-48D0-4847-B72E-DCB2AB907F8E}</Project>
+      <Name>ClearCanvas.Dicom.Codec.Plugin</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

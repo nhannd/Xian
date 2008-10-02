@@ -30,13 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
 using System.IO;
+using System.Windows.Forms;
+using ClearCanvas.Dicom.Codec;
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -61,11 +57,18 @@ namespace ClearCanvas.Dicom.Samples
             {
                 Properties.Settings.Default.ScpStorageFolder = Path.Combine(Path.GetTempPath(), "DicomImages");
             }
+
+			_destinationSyntaxCombo.Items.Clear();
+			_destinationSyntaxCombo.Items.Add(TransferSyntax.ExplicitVrLittleEndian);
+			foreach (TransferSyntax syntax in DicomCodecRegistry.GetCodecTransferSyntaxes())
+				_destinationSyntaxCombo.Items.Add(syntax);
         }
 
         #region Button Click Handlers
         private void buttonStorageScuSelectFiles_Click(object sender, EventArgs e)
-        {            
+        {
+			openFileDialogStorageScu.Multiselect = true;
+			
             this.openFileDialogStorageScu.ShowDialog();
 
             foreach (String file in this.openFileDialogStorageScu.FileNames)
@@ -188,5 +191,40 @@ namespace ClearCanvas.Dicom.Samples
         {
             _verificationScu.Cancel();
         }
+
+    	private Compression _compression;
+
+		private void _openFileButton_Click(object sender, EventArgs e)
+		{
+			openFileDialogStorageScu.Multiselect = false;
+            openFileDialogStorageScu.ShowDialog();
+
+
+			_sourcePathTextBox.Text = openFileDialogStorageScu.FileName;
+			_compression = new Compression(openFileDialogStorageScu.FileName);
+
+			_compression.Load();
+			_sourceTransferSyntaxCombo.Items.Clear();
+			_sourceTransferSyntaxCombo.Items.Add(_compression.DicomFile.TransferSyntax);
+			_sourceTransferSyntaxCombo.SelectedItem = _compression.DicomFile.TransferSyntax;
+				
+		}
+
+		private void _saveFileButton_Click(object sender, EventArgs e)
+		{
+			TransferSyntax destinationSyntax = _destinationSyntaxCombo.SelectedItem as TransferSyntax;
+
+			string dump = _compression.DicomFile.Dump();
+			Logger.LogInfo(dump);
+
+			_compression.ChangeSyntax(destinationSyntax);
+
+			dump = _compression.DicomFile.Dump();
+			Logger.LogInfo(dump);
+
+			saveFileDialog.ShowDialog();
+			_destinationPathTextBox.Text = saveFileDialog.FileName;
+			_compression.Save(saveFileDialog.FileName);
+		}
     }
 }

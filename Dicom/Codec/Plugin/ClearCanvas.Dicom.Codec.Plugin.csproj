@@ -1,0 +1,74 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A5061667-48D0-4847-B72E-DCB2AB907F8E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.Dicom.Codec.Plugin</RootNamespace>
+    <AssemblyName>ClearCanvas.Dicom.Codec.Plugin</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Jpeg2000LosslessFactory.cs" />
+    <Compile Include="Jpeg2000LossyFactory.cs" />
+    <Compile Include="JpegBaselineFactory.cs" />
+    <Compile Include="JpegExtendedProcess24Factory.cs" />
+    <Compile Include="JpegLosslessNonHierarchicalProcess14SV1Factory.cs" />
+    <Compile Include="RleFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
+      <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jpeg2000\Dicom.Jpeg2000.vcproj">
+      <Project>{B389F627-F243-4B7E-8A04-90E1071B2754}</Project>
+      <Name>ClearCanvas.Dicom.Codec.Jpeg2000</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Jpeg\Jpeg.vcproj">
+      <Project>{FC264853-24DF-4E17-BC69-871BAF421A6D}</Project>
+      <Name>ClearCanvas.Dicom.Codec.Jpeg</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Rle\ClearCanvas.Dicom.Codec.Rle.csproj">
+      <Project>{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}</Project>
+      <Name>ClearCanvas.Dicom.Codec.Rle</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
