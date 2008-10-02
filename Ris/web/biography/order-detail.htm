@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="../js/preview.js"></script>
 		<script type="text/javascript" src="../js/layout.js"></script>
 		<script type="text/javascript" >
+			var imagePath = "../images";
 			var errorProvider = new ErrorProvider();
 			
 			function onBodyLoad()
@@ -32,6 +33,7 @@
 						GetOrderDetailRequest:
 							 { 
 								OrderRef: context.OrderRef,
+								IncludeAlerts: true, 
 								IncludeProcedures: true,
 								IncludeVisit: true,
 								IncludeNotes: true
@@ -47,6 +49,18 @@
 						return;
 					}
 
+                    // update alerts
+		            if(data.GetOrderDetailResponse && data.GetOrderDetailResponse.OrderAlerts)
+		            {
+                        var alertHtml = "";
+	                    data.GetOrderDetailResponse.OrderAlerts.each(function(item) { alertHtml += getAlertHtml(item, ""); });
+                        $("alerts").innerHTML = alertHtml;
+		            }
+					else
+					{
+						Field.show($("alertsSection"), false);
+					}
+					
 					var orderDetail = data.GetOrderDetailResponse.Order;
 					if (orderDetail)
 					{
@@ -112,6 +126,14 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" onresize="javascript: scaleWidth()">
 		<form id="myForm">
+			<div id="alertsSection">
+			    <table width="100%" border="0">
+				    <tr>
+					    <td align="right"><div id="alerts"/></td>
+				    </tr>
+			    </table>
+			</div>
+			
 			<div id="orderDetailsSection">
 				<p class="sectionheading">Imaging Service</p>
 				<table width="100%" border="0">

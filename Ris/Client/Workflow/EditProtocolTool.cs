@@ -38,6 +38,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (this.Context.SelectedItems.Count != 1)
 					return false;
 
+                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+                if (item.OrderRef == null)
+                    return false;
+
 				return true;
 			}
 		}

@@ -311,7 +311,7 @@
 			var checkedItems = $("repeatsTable").getCheckedItems();
 			if(checkedItems.length > 0)
 			{
-				if(confirm("Delete selected oral contrast documentation?"))
+				if(confirm("Delete selected repeats reason documentation?"))
 				{
 					checkedItems.each(function(item) { data.acquisition.repeats.remove(item); });
 					$("repeatCheckAllNone").checked = false;
@@ -323,7 +323,7 @@
 			}
 		}
 
-		function onOralCheckAllNone()
+		function onRepeatCheckAllNone()
 		{
 			data.acquisition.repeats.each(function(item) { $("repeatsTable").setItemCheckState(item, $("repeatCheckAllNone").checked); });
 		}

@@ -1,22 +1,24 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
+using System.Management;
 using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Login;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
     public class LoginServiceRecorder : ServiceOperationRecorderBase
     {
+        private static string _cpuId;
+
         /// <summary>
         /// Default constructor required.
         /// </summary>
         public LoginServiceRecorder()
         {
-
+            if (string.IsNullOrEmpty(_cpuId))
+                _cpuId = GetCPUId();
         }
 
         protected override string Category
@@ -51,10 +53,39 @@ namespace ClearCanvas.Ris.Application.Services.Login
             writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
             writer.WriteAttributeString("user", request.UserName);
             writer.WriteAttributeString("clientIP", StringUtilities.EmptyIfNull(request.ClientIP));
+            writer.WriteAttributeString("cpuID", StringUtilities.EmptyIfNull(_cpuId));
             writer.WriteEndElement();
             writer.WriteEndDocument();
 
             return true;
+        }
+
+        /// <summary>
+        /// Return processorId from first CPU in machine
+        /// </summary>
+        private static string GetCPUId()
+        {
+            try
+            {
+                string cpuInfo = null;
+                ManagementClass mc = new ManagementClass("Win32_Processor");
+                ManagementObjectCollection moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
+                {
+                    cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
+
+                    // only return cpuInfo from first CPU
+                    if (!string.IsNullOrEmpty(cpuInfo))
+                        break;
+                }
+
+                return cpuInfo;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e);
+                return null;
+            }
         }
     }
 }
