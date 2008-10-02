@@ -28,16 +28,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
             if (!filter.Filter(alert))
             {
                 AlertCache.Instance.Add(alert);
-
-                try
-                {
-                    WriteToDB(alert);
-                }
-                catch(Exception)
-                {
-                    WriteToLog(alert);
-                }
-               
+                WriteToLog(alert);
             }
 
         }
@@ -109,80 +100,6 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
                 }
             }
 
-        }
-
-        private void WriteToDB(ImageServer.Common.Alert alert)
-        {
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-
-            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IAlertEntityBroker broker = ctx.GetBroker<IAlertEntityBroker>();
-                AlertUpdateColumns columns = new AlertUpdateColumns();
-                columns.InsertTime = Platform.Time;
-
-                switch (alert.Level)
-                {
-                    case AlertLevel.Informational: columns.AlertLevelEnum = AlertLevelEnum.Informational; break;
-                    case AlertLevel.Warning: columns.AlertLevelEnum = AlertLevelEnum.Warning; break;
-                    case AlertLevel.Error: columns.AlertLevelEnum = AlertLevelEnum.Error; break;
-                    case AlertLevel.Critical: columns.AlertLevelEnum = AlertLevelEnum.Critical; break;
-                    default:
-                        columns.AlertLevelEnum = AlertLevelEnum.Informational; break;
-                }
-
-                switch (alert.Category)
-                {
-                    case AlertCategory.System: columns.AlertCategoryEnum = AlertCategoryEnum.System; break;
-                    case AlertCategory.Application: columns.AlertCategoryEnum = AlertCategoryEnum.Application; break;
-                    case AlertCategory.Security: columns.AlertCategoryEnum = AlertCategoryEnum.Security; break;
-                    case AlertCategory.User: columns.AlertCategoryEnum = AlertCategoryEnum.User; break;
-                    default:
-                        columns.AlertCategoryEnum = AlertCategoryEnum.User; break;
-                }
-
-                columns.TypeCode = alert.Code;
-                columns.Source = alert.Source.Host;
-                columns.Component = alert.Source.Name;
-
-                XmlDocument doc = new XmlDocument();
-
-                if (alert.Data is string)
-                {
-                    XmlNode content = doc.CreateElement("Message");
-                    XmlNode msg = doc.CreateTextNode(alert.Data.ToString());
-                    content.AppendChild(msg);
-                    doc.AppendChild(content);
-
-                }
-                else
-                {
-                    MemoryStream ms = new MemoryStream();
-                    XmlSerializer serializer = new XmlSerializer(alert.Data.GetType());
-                    try
-                    {
-                        serializer.Serialize(ms, alert.Data);
-                        ms.Seek(0, SeekOrigin.Begin);
-                        doc.Load(ms);
-                    }
-                    catch (Exception)
-                    {
-                        // cannot be serialized as xml. Resort to string instead.
-                        XmlNode content = doc.CreateElement("Message");
-                        XmlNode msg = doc.CreateTextNode(alert.Data.ToString());
-                        content.AppendChild(msg);
-                        doc.AppendChild(content);
-                    }
-
-                }
-
-                columns.Content = doc;
-
-                broker.Insert(columns);
-
-                ctx.Commit();
-
-            }
         }
 
         #endregion
