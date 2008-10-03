@@ -339,8 +339,8 @@ namespace ClearCanvas.Dicom.Utilities
 			if (dicomAttributeCollection == null)
 				throw new ArgumentNullException("dicomAttributeCollection");
 
-			DicomAttribute dateTimeAttribute = dicomAttributeCollection.Contains(dicomDateTimeTag) ? dicomAttributeCollection[dicomDateTimeTag] : null;
-			if (dateTimeAttribute != null)
+			DicomAttribute dateTimeAttribute;
+			if (dicomAttributeCollection.TryGetAttribute(dicomDateTimeTag, out dateTimeAttribute))
 			{
 				SetDateTimeAttributeValues(value, dateTimeAttribute, null, null);
 			}

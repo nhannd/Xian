@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace ClearCanvas.Dicom.Tests
 {
     public abstract class AbstractTest
@@ -45,7 +47,61 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.ImplementationVersionName].SetStringValue("CC DICOM 1.0");
         }
 
+		public IList<DicomAttributeCollection> SetupMRSeries(int seriesCount, int instancesPerSeries, string studyInstanceUid)
+		{
+			List<DicomAttributeCollection> instanceList = new List<DicomAttributeCollection>();
 
+			DicomAttributeCollection baseCollection = new DicomAttributeCollection();
+
+			SetupMR(baseCollection);
+
+			baseCollection[DicomTags.StudyInstanceUid].SetStringValue(studyInstanceUid);
+			
+			int acquisitionNumber = 1;
+			int instanceNumber = 100;
+
+			float positionX = -61.7564f;
+			float positionY = -212.04848f;
+			float positionZ = -99.6208f;
+
+			float orientation1 = 0.861f;
+			float orientation2 = 0.492f;
+			float orientation3 = 0.126f;
+			float orientation4 = -0.2965f;
+
+
+			for (int i = 0; i < seriesCount; i++)
+			{
+				string seriesInstanceUid = DicomUid.GenerateUid().UID;
+
+				for (int j = 0; j < instancesPerSeries; j++)
+				{
+					string sopInstanceUid = DicomUid.GenerateUid().UID;
+					DicomAttributeCollection instanceCollection = baseCollection.Copy();
+					instanceCollection[DicomTags.SopInstanceUid].SetStringValue(sopInstanceUid);
+					instanceCollection[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
+
+					instanceCollection[DicomTags.SeriesNumber].SetStringValue((i + 1).ToString());
+					instanceCollection[DicomTags.AcquisitionNumber].SetStringValue(acquisitionNumber++.ToString());
+					instanceCollection[DicomTags.InstanceNumber].SetStringValue(instanceNumber++.ToString());
+
+					instanceCollection[DicomTags.ImagePositionPatient].SetFloat32(0, positionX);
+					instanceCollection[DicomTags.ImagePositionPatient].SetFloat32(1, positionY);
+					instanceCollection[DicomTags.ImagePositionPatient].SetFloat32(2, positionZ);
+					positionY += 0.1f;
+
+					instanceCollection[DicomTags.ImageOrientationPatient].SetFloat32(0, orientation1);
+					instanceCollection[DicomTags.ImageOrientationPatient].SetFloat32(1, orientation2);
+					instanceCollection[DicomTags.ImageOrientationPatient].SetFloat32(2, orientation3);
+					instanceCollection[DicomTags.ImageOrientationPatient].SetFloat32(2, orientation4);
+					orientation2 += 0.01f;
+
+					instanceList.Add(instanceCollection);
+				}
+			}
+
+			return instanceList;
+		}
         public void SetupMR(DicomAttributeCollection theSet)
         {
             theSet[DicomTags.SpecificCharacterSet].SetStringValue("ISO_IR 100");
@@ -53,7 +109,7 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.InstanceCreationDate].SetStringValue("20070618");
             theSet[DicomTags.InstanceCreationTime].SetStringValue("133600");
             theSet[DicomTags.SopClassUid].SetStringValue(SopClass.MrImageStorageUid);
-            theSet[DicomTags.SopInstanceUid].SetStringValue("1.1.1.1.1");
+            theSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
             theSet[DicomTags.StudyDate].SetStringValue("20070618");
             theSet[DicomTags.StudyTime].SetStringValue("133600");
             theSet[DicomTags.SeriesDate].SetStringValue("20070618");
@@ -101,15 +157,15 @@ namespace ClearCanvas.Dicom.Tests
             theSet[DicomTags.InPlanePhaseEncodingDirection].SetStringValue("COL");
             theSet[DicomTags.FlipAngle].SetStringValue("50.000000");
             theSet[DicomTags.PatientPosition].SetStringValue("HFS");
-            theSet[DicomTags.StudyInstanceUid].SetStringValue("1.1.1.1.1.2");
-            theSet[DicomTags.SeriesInstanceUid].SetStringValue("1.1.1.1.1.3");
+			theSet[DicomTags.StudyInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+			theSet[DicomTags.SeriesInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
             theSet[DicomTags.StudyId].SetStringValue("1933");
             theSet[DicomTags.SeriesNumber].SetStringValue("1");
             theSet[DicomTags.AcquisitionNumber].SetStringValue("7");
             theSet[DicomTags.InstanceNumber].SetStringValue("1");
             theSet[DicomTags.ImagePositionPatient].SetStringValue("-61.7564\\-212.04848\\-99.6208");
             theSet[DicomTags.ImageOrientationPatient].SetStringValue("0.861\\0.492\\0.126\\-0.2965");
-            theSet[DicomTags.FrameOfReferenceUid].SetStringValue("1.1.1.1.1.4");
+            theSet[DicomTags.FrameOfReferenceUid].SetStringValue(DicomUid.GenerateUid().UID);
             theSet[DicomTags.PositionReferenceIndicator].SetStringValue(null);
             theSet[DicomTags.ImageComments].SetStringValue("Test MR Image");
             theSet[DicomTags.SamplesPerPixel].SetStringValue("1");

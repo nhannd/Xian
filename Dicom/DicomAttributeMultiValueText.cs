@@ -252,10 +252,23 @@ namespace ClearCanvas.Dicom
             DicomAttributeMultiValueText a = (DicomAttributeMultiValueText)obj;
 
             // check if both values are null
-            if (this.Count == 1 && this.StreamLength == 0 && a.Count == 1 && a.StreamLength == 0)
+            if (IsNull && a.IsNull)
                 return true;
 
-            return ToString().Equals(a.ToString());
+			if (_values.Length != a._values.Length)
+				return false;
+
+			for (int i = 0; i < _values.Length; i++)
+			{
+				if ((_values[i] == null && a._values[i] == null))
+					continue;
+				if ((_values[i] == null || a._values[i] == null))
+					return false;
+				if (!_values[i].Equals(a._values[i]))
+					return false;
+			}
+
+        	return true;
         }
 
         public override int GetHashCode()
@@ -339,7 +352,7 @@ namespace ClearCanvas.Dicom
         {
             if (_values == null || _values.Length <= i)
             {
-                value = "";
+                value = String.Empty;
                 return false;
             }
 
@@ -931,7 +944,7 @@ namespace ClearCanvas.Dicom
             }
             else
             {
-                _values[index] = value.ToString("R");
+                _values[index] = value.ToString("G12");
                 StreamLength = (uint)ToString().Length;
             }
         }
@@ -955,7 +968,9 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 
-            _values[Count] = value.ToString("R"); // Use R for round-trip precision : //MSDN: The round-trip specifier guarantees that a numeric value converted to a string will be parsed back into the same numeric value
+			// Originallly had R here, but ran into problems with the attribute value being too large
+			// for a DS tag (16 bytes)
+			_values[Count] = value.ToString("G12"); 
             StreamLength = (uint)ToString().Length;
             Count++;
         }
@@ -977,7 +992,9 @@ namespace ClearCanvas.Dicom
 
             _values = temp;
 
-            _values[Count] = value.ToString("R"); // Use R for round-trip precision : //MSDN: The round-trip specifier guarantees that a numeric value converted to a string will be parsed back into the same numeric value
+			// Originallly had R here, but ran into problems with the attribute value being too large
+			// for a DS tag (16 bytes)
+            _values[Count] = value.ToString("G12"); 
             StreamLength = (uint)ToString().Length;
             Count++;
         }

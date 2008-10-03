@@ -57,7 +57,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private BaseInstanceXml _baseInstance = null;
 		private XmlElement _cachedElement = null;
 
-		private readonly DicomAttributeCollection _collection = null;
+		private DicomAttributeCollection _collection = null;
 
 		private IEnumerator<DicomAttribute> _baseCollectionEnumerator = null;
 		private IEnumerator _instanceXmlEnumerator = null;
@@ -198,6 +198,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             if (_baseInstance != null)
             {
                 _cachedElement = GetMementoForCollection(theDocument, _baseInstance.Collection, Collection, settings);
+
+				// Only keep around the cached xml data, free the collection to reduce memory usage
+            	SwitchToCachedXml();
+
                 return _cachedElement;
             }
 
@@ -357,6 +361,26 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         #region Private Methods
 		
+		private void SwitchToCachedXml()
+		{
+			// Give to the garbage collector the memory associated with the collection
+			_collection = new DicomAttributeCollection();
+
+			if (_baseInstance != null)
+			{
+				_baseCollectionEnumerator = _baseInstance.Collection.GetEnumerator();
+				if (!_baseCollectionEnumerator.MoveNext())
+					_baseCollectionEnumerator = null;
+			}
+
+			if (!_cachedElement.HasChildNodes)
+				return;
+
+			_instanceXmlEnumerator = _cachedElement.ChildNodes.GetEnumerator();
+			if (!_instanceXmlEnumerator.MoveNext())
+				_instanceXmlEnumerator = null;
+		}
+
         private XmlElement GetMementoForCollection(XmlDocument theDocument, DicomAttributeCollection baseCollection,
                                                    DicomAttributeCollection collection, StudyXmlOutputSettings settings)
         {
@@ -403,23 +427,20 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				bool isInBase = false;
                 if (baseCollection != null)
                 {
-                    if (baseCollection.Contains(attribute.Tag))
-                    {
-                        DicomAttribute attribBase = baseCollection[attribute.Tag];
-                        if (attribBase != null)
-                        {
-							isInBase = attribBase.IsEmpty;
+                	DicomAttribute attribBase;
+                	if (baseCollection.TryGetAttribute(attribute.Tag, out attribBase))
+                	{
+                		isInBase = true;
 
-                            if (!(attribute is DicomAttributeOB)
-                                && !(attribute is DicomAttributeOW)
-                                && !(attribute is DicomAttributeOF)
-                                && !(attribute is DicomFragmentSequence))
-                            {
-                                if (attribute.Equals(attribBase))
-                                    continue; // Skip the attribute, its the same as in the base!
-                            }
-                        }
-                    }
+                		if (!(attribute is DicomAttributeOB)
+                		    && !(attribute is DicomAttributeOW)
+                		    && !(attribute is DicomAttributeOF)
+                		    && !(attribute is DicomFragmentSequence))
+                		{
+                			if (attribute.Equals(attribBase))
+                				continue; // Skip the attribute, its the same as in the base!
+                		}
+                	}
                 }
 
 				if (!isInBase && attribute.IsEmpty) //special case - attributes not in base that are empty in instance.

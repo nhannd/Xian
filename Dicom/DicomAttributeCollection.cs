@@ -227,11 +227,9 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public bool Contains(uint tag)
         {
-            if (!_attributeList.ContainsKey(tag))
-                return false;
-
-            return !this[tag].IsEmpty;
-        }
+			DicomAttribute attrib;
+			return TryGetAttribute(tag, out attrib);
+		}
 
         /// <summary>
         /// Check if a tag is contained in an DicomAttributeCollection and has a value.
@@ -240,11 +238,41 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public bool Contains(DicomTag tag)
         {
-            if (!_attributeList.ContainsKey(tag.TagValue))
-                return false;
-
-            return !this[tag].IsEmpty;
+        	DicomAttribute attrib;
+        	return TryGetAttribute(tag, out attrib);
         }
+
+		/// <summary>
+		/// Combines the functionality of the <see cref="Contains(uint)"/> method with the indexer.  Returns the attribute if it exists within the collection.
+		/// </summary>
+		/// <param name="tag">The tag to get.</param>
+		/// <param name="attrib">The output attribute.  Null if the attribute doesn't exist in the collection.  Will be set if the attribute exists, but is empty.</param>
+		/// <returns>true if the attribute exists and is not empty.</returns>
+		public bool TryGetAttribute(uint tag, out DicomAttribute attrib)
+		{
+			if (!_attributeList.TryGetValue(tag, out attrib))
+			{
+				return false;
+			}
+
+			return !attrib.IsEmpty;
+		}
+
+		/// <summary>
+		/// Combines the functionality of the <see cref="Contains(uint)"/> method with the indexer.  Returns the attribute if it exists within the collection.
+		/// </summary>
+		/// <param name="tag">The tag to get.</param>
+		/// <param name="attrib">The output attribute.  Null if the attribute doesn't exist in the collection.  Will be set if the attribute exists, but is empty.</param>
+		/// <returns>true if the attribute exists and is not empty.</returns>
+		public bool TryGetAttribute(DicomTag tag, out DicomAttribute attrib)
+		{
+			if (!_attributeList.TryGetValue(tag.TagValue, out attrib))
+			{
+				return false;
+			}
+
+			return !attrib.IsEmpty;
+		}
 
         /// <summary>
         /// Get a <see cref="DicomAttribute"/> for a specific DICOM tag.
@@ -261,9 +289,8 @@ namespace ClearCanvas.Dicom
         public DicomAttribute GetAttribute(uint tag)
         {
             DicomAttribute attr;
-
-            if (!_attributeList.ContainsKey(tag))
-            {
+			if (!_attributeList.TryGetValue(tag, out attr))
+			{
                 if ((tag < _startTag) || (tag > _endTag))
                     throw new DicomException("Tag is out of range for collection: " + tag.ToString("X8"));
 
@@ -274,10 +301,8 @@ namespace ClearCanvas.Dicom
                     throw new DicomException("Invalid tag: " + tag.ToString("X8"));
                 }
 
-                attr = dicomTag.CreateDicomAttribute();
+				attr = dicomTag.CreateDicomAttribute();
             }
-            else
-                attr = _attributeList[tag];
 
             return attr;
         }
@@ -301,21 +326,18 @@ namespace ClearCanvas.Dicom
             if (tag == null)
                 throw new NullReferenceException("Null DicomTa parameter");
 
-            if (!_attributeList.ContainsKey(tag.TagValue))
-            {
-                if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
-                    throw new DicomException("Tag is out of range for collection: " + tag);
+			if (!_attributeList.TryGetValue(tag.TagValue, out attr))
+			{
+				if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
+					throw new DicomException("Tag is out of range for collection: " + tag);
 
-                attr = tag.CreateDicomAttribute();
-                if (attr == null)
-                {
-                    throw new DicomException("Invalid tag: " + tag.HexString);
-                }
-            }
-            else
-                attr = _attributeList[tag.TagValue];
+				attr = tag.CreateDicomAttribute();
 
-            return attr;
+				if (attr == null)
+					throw new DicomException("Invalid tag: " + tag.HexString);
+			}
+
+        	return attr;
         }
 
         /// <summary>
@@ -334,35 +356,31 @@ namespace ClearCanvas.Dicom
             {
                 DicomAttribute attr;
 
-                if (!_attributeList.ContainsKey(tag))
-                {
-                    if ((tag < _startTag) || (tag > _endTag))
-                        throw new DicomException("Tag is out of range for collection: " + tag);
+				if (!_attributeList.TryGetValue(tag, out attr))
+				{
+					if ((tag < _startTag) || (tag > _endTag))
+						throw new DicomException("Tag is out of range for collection: " + tag);
 
-                    DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
+					DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 
-                    if (dicomTag == null)
-                    {
-                        throw new DicomException("Invalid tag: " + tag.ToString("X8"));
-                    }
+					if (dicomTag == null)
+					{
+						throw new DicomException("Invalid tag: " + tag.ToString("X8"));
+					}
+					attr = dicomTag.CreateDicomAttribute();
+					attr.ParentCollection = this;
+					_attributeList[tag] = attr;
+				}
 
-                    attr = dicomTag.CreateDicomAttribute();
-                    attr.ParentCollection = this;
-                    _attributeList[tag] = attr;
-                }
-                else 
-                    attr = _attributeList[tag];
-
-
-                return attr; 
+            	return attr; 
             }
             set 
             {
                 if (value == null)
                 {
-                    if (_attributeList.ContainsKey(tag))
+                	DicomAttribute attr;
+                    if (_attributeList.TryGetValue(tag, out attr))
                     {
-                        DicomAttribute attr = _attributeList[tag];
                         attr.ParentCollection = null;
                         _attributeList.Remove(tag);
                     }
@@ -397,23 +415,22 @@ namespace ClearCanvas.Dicom
             {
                 DicomAttribute attr;
 
-                if (!_attributeList.ContainsKey(tag.TagValue))
-                {
-                    if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
-                        throw new DicomException("Tag is out of range for collection: " + tag);
+				if (!_attributeList.TryGetValue(tag.TagValue, out attr))
+				{
+					if ((tag.TagValue < _startTag) || (tag.TagValue > _endTag))
+						throw new DicomException("Tag is out of range for collection: " + tag);
 
-                    attr = tag.CreateDicomAttribute();
-                    if (attr == null)
-                    {
-                        throw new DicomException("Invalid tag: " + tag.HexString);
-                    }
-                    attr.ParentCollection = this;
-                    _attributeList[tag.TagValue] = attr;
-                }
-                else
-                    attr = _attributeList[tag.TagValue];
+					attr = tag.CreateDicomAttribute();
 
-                return attr;
+					if (attr == null)
+					{
+						throw new DicomException("Invalid tag: " + tag.HexString);
+					}
+					attr.ParentCollection = this;
+					_attributeList[tag.TagValue] = attr;
+				}
+
+            	return attr;
             }
             set
             {

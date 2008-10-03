@@ -70,6 +70,8 @@ namespace ClearCanvas.Dicom.XmlGenerator
             folderBrowserDialog.ShowDialog();
 
             String directory = folderBrowserDialog.SelectedPath;
+			if (directory.Equals(String.Empty))
+				return;
 
             DirectoryInfo dir = new DirectoryInfo(directory);
 
@@ -126,9 +128,9 @@ namespace ClearCanvas.Dicom.XmlGenerator
             saveFileDialog.DefaultExt = "xml";
             saveFileDialog.ShowDialog();
 
-            String file = saveFileDialog.FileName;
-
-            XmlDocument doc = _theStream.GetMemento(StudyXmlOutputSettings.None);
+			StudyXmlOutputSettings settings = new StudyXmlOutputSettings();
+        	settings.IncludeSourceFileName = false;
+            XmlDocument doc = _theStream.GetMemento(settings);
 
             Stream fileStream = saveFileDialog.OpenFile();
 

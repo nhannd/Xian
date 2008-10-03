@@ -596,13 +596,14 @@ namespace ClearCanvas.Dicom
                 try
                 {
                     DicomTag dicomTag2 = DicomTagDictionary.GetDicomTag(dicomTag);
+                	DicomAttribute attrib;
                     if (tags[dicomTag] != null)
                     {
                         dicomSequenceItem[dicomTag].Values = tags[dicomTag];
                     }
-                    else if (dataSet.Contains(dicomTag))
+                    else if (dataSet.TryGetAttribute(dicomTag, out attrib))
                     {
-                        dicomSequenceItem[dicomTag].Values = dataSet[dicomTag].Values;
+                        dicomSequenceItem[dicomTag].Values = attrib.Values;
                     }
                     else
                     {
