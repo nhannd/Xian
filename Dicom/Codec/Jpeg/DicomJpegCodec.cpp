@@ -162,9 +162,18 @@ void DicomJpegCodec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPixelDa
 
 	DicomJpegParameters^ jparams = (DicomJpegParameters^)parameters;
 
-	IJpegCodec^ codec = GetCodec(oldPixelData->BitsStored, jparams);
+	array<unsigned char>^ jpegData = oldPixelData->GetFrameFragmentData(frame);
+	pin_ptr<unsigned char> jpegPin = &jpegData[0];
+	unsigned char* jpegPtr = jpegPin;
+	size_t jpegSize = jpegData->Length;
 
-	codec->Decode(oldPixelData, newPixelData, jparams, frame);
+	unsigned char bitsStored = GetJpegBitDepth(jpegPtr,jpegData->Length);
+	if (bitsStored != oldPixelData->BitsStored)
+		Platform::Log(LogLevel::Warn,"Bit depth in jpeg data ({0}) doesn't match DICOM header bit depth ({1}).",
+						bitsStored, oldPixelData->BitsStored);
+
+	IJpegCodec^ codec = GetCodec(bitsStored, jparams);
+	codec->Decode(oldPixelData, newPixelData, jparams, frame);	
 
 	if (oldPixelData->PhotometricInterpretation->StartsWith("YBR_")) {
 		if (jparams->ConvertColorspaceToRGB && codec->Mode != JpegMode::Lossless) {
