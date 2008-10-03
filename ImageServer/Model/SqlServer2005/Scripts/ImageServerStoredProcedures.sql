@@ -162,6 +162,8 @@ EXEC dbo.sp_executesql @statement = N'
 -- Author:		Thanh Huynh
 -- Create date: Oct 1, 2008
 -- Description:	Update study state base on the work queue and study integrity queue
+--
+-- Oct 03, 2008:  Used SELECT WITH(NOLOCK) to avoid deadlock with QueryWorkQueue
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateQueueStudyState]
 	@StudyStorageGUID uniqueidentifier
@@ -184,7 +186,7 @@ BEGIN
 	FROM StudyStorage WHERE GUID=@StudyStorageGUID
 	
     SELECT TOP 1 @StudyState=WorkQueueTypeQueueStudyState.QueueStudyStateEnum
-	FROM WorkQueue
+	FROM WorkQueue WITH (NOLOCK)
 	JOIN  WorkQueueTypeQueueStudyState ON WorkQueue.WorkQueueTypeEnum=WorkQueueTypeQueueStudyState.WorkQueueTypeEnum
 	JOIN	QueueStudyStateEnum  ON WorkQueueTypeQueueStudyState.QueueStudyStateEnum=QueueStudyStateEnum.Enum
 	WHERE WorkQueue.StudyStorageGUID=@StudyStorageGUID
@@ -806,10 +808,9 @@ BEGIN
 	END
 
 
-	EXEC UpdateQueueStudyState @StudyStorageGUID
-
-
 	COMMIT TRANSACTION
+
+	EXEC UpdateQueueStudyState @StudyStorageGUID
 
 END
 ' 
@@ -953,9 +954,11 @@ BEGIN
 			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
 	END
 
-	EXEC UpdateQueueStudyState @StudyStorageGUID
 
 	COMMIT TRANSACTION
+
+	EXEC UpdateQueueStudyState @StudyStorageGUID
+
 END
 ' 
 END
@@ -3074,10 +3077,11 @@ BEGIN
 	INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
 	VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
 	
-	EXEC UpdateQueueStudyState @StudyStorageGUID
 
 	COMMIT TRANSACTION
 	
+	EXEC UpdateQueueStudyState @StudyStorageGUID
+
 	SELECT * FROM [dbo].[StudyIntegrityQueue] WHERE GUID=@Guid
 
 END
