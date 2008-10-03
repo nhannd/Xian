@@ -12,6 +12,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Samples",
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{8BAE0115-0959-4AF8-82AD-7F599D5850AC} = {8BAE0115-0959-4AF8-82AD-7F599D5850AC}
+		{B389F627-F243-4B7E-8A04-90E1071B2754} = {B389F627-F243-4B7E-8A04-90E1071B2754}
+		{FC264853-24DF-4E17-BC69-871BAF421A6D} = {FC264853-24DF-4E17-BC69-871BAF421A6D}
+		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0} = {AB89527E-B1B6-49A4-B3A0-D07948FC23E0}
+		{9779F796-68BA-4F46-8B6D-BF1F77819C8E} = {9779F796-68BA-4F46-8B6D-BF1F77819C8E}
+		{A0385D99-56DF-45BB-9DB2-1E170B219F5E} = {A0385D99-56DF-45BB-9DB2-1E170B219F5E}
+		{497CEAC5-C575-47A7-9230-610D6A3B6A2A} = {497CEAC5-C575-47A7-9230-610D6A3B6A2A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.DataDictionaryGenerator", "DataDictionaryGenerator\ClearCanvas.Dicom.DataDictionaryGenerator.csproj", "{BFB50CA0-87D7-4228-999B-9E2E5CEB38B1}"
 	ProjectSection(WebsiteProperties) = preProject
@@ -287,7 +296,9 @@ Global
 		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x64.ActiveCfg = Release|Any CPU
+		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x64.Build.0 = Release|Any CPU
 		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x86.ActiveCfg = Release|Any CPU
+		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
