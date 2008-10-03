@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _okButton
 			// 
+			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._okButton.Location = new System.Drawing.Point(381, 411);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
@@ -50,6 +51,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _cancelButton
 			// 
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._cancelButton.Location = new System.Drawing.Point(462, 411);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -60,6 +62,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _propertiesTableView
 			// 
+			this._propertiesTableView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._propertiesTableView.Location = new System.Drawing.Point(16, 12);
 			this._propertiesTableView.MultiSelect = false;
 			this._propertiesTableView.Name = "_propertiesTableView";
@@ -69,6 +73,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _testButton
 			// 
+			this._testButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._testButton.Location = new System.Drawing.Point(300, 411);
 			this._testButton.Name = "_testButton";
 			this._testButton.Size = new System.Drawing.Size(75, 23);
@@ -79,6 +84,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _macroButton
 			// 
+			this._macroButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._macroButton.Location = new System.Drawing.Point(501, 195);
 			this._macroButton.Name = "_macroButton";
 			this._macroButton.Size = new System.Drawing.Size(36, 23);
@@ -95,6 +101,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _editorPanel
 			// 
+			this._editorPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._editorPanel.Location = new System.Drawing.Point(16, 195);
 			this._editorPanel.Name = "_editorPanel";
 			this._editorPanel.Size = new System.Drawing.Size(479, 210);
