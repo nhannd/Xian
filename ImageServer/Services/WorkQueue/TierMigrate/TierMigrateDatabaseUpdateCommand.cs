@@ -37,6 +37,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             // update FilesystemStudyStorage
             if (Context != null)
             {
+                Platform.Log(LogLevel.Debug, "Updating database...");
                 IFilesystemStudyStorageEntityBroker broker = updateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
 
                 FilesystemStudyStorageSelectCriteria searchCriteria = new FilesystemStudyStorageSelectCriteria();

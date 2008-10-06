@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Remoting.Contexts;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
@@ -137,7 +139,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             stat.StudyInstanceUid = storage.StudyInstanceUid;
             stat.ProcessSpeed.Start();
 
-            long size = (long) DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
+            long studySize = (long) DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
 
             Platform.Log(LogLevel.Info, "Migrating study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
 			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(storage.FilesystemKey);
@@ -155,54 +157,60 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 throw new ApplicationException(msg);
             }
 
-            ServerCommandProcessor _processor;
             TimeSpanStatistics dbUpdateTime;
             TimeSpanStatistics fileCopyTime;
-
-            using (_processor = new ServerCommandProcessor("Migrate Study"))
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
             {
                 TierMigrationContext context = new TierMigrationContext();
                 context.OriginalStudyLocation = storage;
                 context.Destination = newFilesystem;
 
-                TierMigrateMoveStudyFolderCommand moveStudyFolderCommand = new TierMigrateMoveStudyFolderCommand(context);
+                string origFolder = context.OriginalStudyLocation.GetStudyPath();
+                string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
+                processor.AddCommand(new CreateDirectoryCommand(newPath));
+
+                newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyFolder);
+                processor.AddCommand(new CreateDirectoryCommand(newPath));
+
+                newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(newPath));
+
+                MoveDirectoryCommand moveCommand = new MoveDirectoryCommand(origFolder, newPath);
+                processor.AddCommand(moveCommand);
+                
                 TierMigrateDatabaseUpdateCommand updateDBCommand = new TierMigrateDatabaseUpdateCommand(context);
+                processor.AddCommand(updateDBCommand);
 
-
-                // TODO: Add some kind of progress indication.
-
-                _processor.AddCommand(moveStudyFolderCommand);
-                _processor.AddCommand(updateDBCommand);
-
-                if (!_processor.Execute())
+                if (!processor.Execute())
                 {
-                    throw new ApplicationException(_processor.FailureReason);
+                    throw new ApplicationException(processor.FailureReason);
                 }
-                fileCopyTime = moveStudyFolderCommand.Statistics;
                 dbUpdateTime = updateDBCommand.Statistics;
+                fileCopyTime = moveCommand.Statistics;
             }
 
-            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2}",
-                            storage.StudyInstanceUid, storage.FilesystemTierEnum, newFilesystem.Filesystem.FilesystemTierEnum);
 
-            stat.ProcessSpeed.SetData(size);
+            stat.ProcessSpeed.SetData(studySize);
             stat.ProcessSpeed.End();
            
             _averageStatisics.AverageProcessSpeed.AddSample(stat.ProcessSpeed);
             _averageStatisics.AverageDBUpdateTime.AddSample(dbUpdateTime);
             _averageStatisics.AverageFileMoveTime.AddSample(fileCopyTime);
-            _averageStatisics.AverageStudySize.AddSample(size);
+            _averageStatisics.AverageStudySize.AddSample(studySize);
             _statistics.AddSubStats(stat);
 
             _sessionStudiesMigrate++;
+
+
+            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} [ {3} @ {4}]",
+                            storage.StudyInstanceUid, storage.FilesystemTierEnum, newFilesystem.Filesystem.FilesystemTierEnum, ByteCountFormatter.Format((ulong)studySize), stat.ProcessSpeed.FormattedValue);
+
 
             if (_sessionStudiesMigrate%5==0)
             {
                 StatisticsLogger.Log(LogLevel.Info, _averageStatisics);
                 _averageStatisics = new TierMigrationAverageStatistics();
             }
-            
-                
         }
 
 

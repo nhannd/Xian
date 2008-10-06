@@ -18,8 +18,8 @@ namespace ClearCanvas.ImageServer.Common
         public const int Stopping = 10;
         public const int Stopped = 11;
         public const int UnableToStop = 12;
-        
 
+        public const int NoPermission = 13;
 
         public const int InvalidConfiguration = 20;
 

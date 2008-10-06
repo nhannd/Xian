@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -61,7 +62,17 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				return;
 			}
 
-			Directory.CreateDirectory(_directory);
+			try
+			{
+			    Directory.CreateDirectory(_directory);
+			}
+            catch(UnauthorizedAccessException)
+            {
+                //alert the system admin
+                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", AlertTypeCodes.NoPermission,
+                                     "Unauthorized access to {0} from {1}", _directory, ServiceTools.HostId);
+                throw;
+            }
 
 			_created = true;
 		}

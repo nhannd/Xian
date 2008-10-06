@@ -43,10 +43,15 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             return folderSize;
         }
 
-        public static void Move(string sourceDirectory, string targetDirectory)
+        /// <summary>
+        /// Moves a study from one location to another.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        public static void Move(string source, string destination)
         {
-            Copy(sourceDirectory, targetDirectory);
-            DeleteIfExists(sourceDirectory);
+            Copy(source, destination);
+            DeleteIfExists(source);
         }
 
         public static void Copy(string sourceDirectory, string targetDirectory)
@@ -54,10 +59,10 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
             DirectoryInfo diTarget = new DirectoryInfo(targetDirectory);
 
-            CopyAll(diSource, diTarget);
+            InternalCopy(diSource, diTarget);
         }
 
-        public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
+        private static void InternalCopy(DirectoryInfo source, DirectoryInfo target)
         {
             // Check if the target directory exists, if not, create it.
             if (Directory.Exists(target.FullName) == false)
@@ -76,7 +81,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
             {
                 DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-                CopyAll(diSourceSubDir, nextTargetSubDir);
+                InternalCopy(diSourceSubDir, nextTargetSubDir);
 
             }
         }

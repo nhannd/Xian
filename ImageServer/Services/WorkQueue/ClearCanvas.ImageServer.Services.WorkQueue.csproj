@@ -87,7 +87,6 @@
     <Compile Include="TierMigrate\TierMigrateDatabaseUpdateCommand.cs" />
     <Compile Include="TierMigrate\TierMigrateItemProcessor.cs" />
     <Compile Include="TierMigrate\TierMigrationContext.cs" />
-    <Compile Include="TierMigrate\TierMigrateMoveStudyCommand.cs" />
     <Compile Include="TierMigrate\TierMigrationStatistics.cs" />
     <Compile Include="UpdateStudyXmlCommand.cs" />
     <Compile Include="WebEditStudy\WebEditStudyCommandXmlParser.cs" />

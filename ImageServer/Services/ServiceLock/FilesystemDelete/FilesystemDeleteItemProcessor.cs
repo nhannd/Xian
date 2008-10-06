@@ -526,52 +526,60 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             
             UpdateState(item, fs);
 
-			_bytesToRemove = FilesystemMonitor.Instance.CheckFilesystemBytesToRemove(item.FilesystemKey);
+            DateTime scheduledTime;
+            if (!fs.Readable)
+            {
+                Platform.Log(LogLevel.Info, "Filesystem {0} is not readable. Watermark is not checked at this point.", fs.Filesystem.Description);
+                scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
+            }
+            else
+            {
+                _bytesToRemove = FilesystemMonitor.Instance.CheckFilesystemBytesToRemove(item.FilesystemKey);
 
-			DateTime scheduledTime;
-		    if (fs.AboveHighWatermark)
-			{
-				int count = CheckWorkQueueCount(item);
-				if (count > 0)
-				{
-                    // delay to avoid overshoot
-
-					Platform.Log(LogLevel.Info,
-								 "Delaying Filesystem ServiceLock check, {0} StudyDelete, StudyPurge or MigrateStudy items still in the WorkQueue for Filesystem: {1} (Current: {2}, High Watermark: {3})",
-								 count, fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
-
-					scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
-				}
-				else
-				{
-					Platform.Log(LogLevel.Info, "Filesystem above high watermark: {0} (Current: {1}, High Watermark: {2}",
-								 fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
-
-					MigrateStudies(item, fs);
-
-					if (_bytesToRemove > 0)
-						DeleteStudies(item, fs);
-
-					if (_bytesToRemove > 0)
-						PurgeStudies(item, fs);
-
-
-                    if (_studiesDeleted + _studiesMigrated + _studiesPurged ==0)
+                if (fs.AboveHighWatermark)
+                {
+                    int count = CheckWorkQueueCount(item);
+                    if (count > 0)
                     {
-                        Platform.Log(LogLevel.Warn, "Fileystem '{0}' is above high watermark but no studies can be deleted, migrated or purged at this point", fs.Filesystem.Description);
+                        // delay to avoid overshoot
+
+                        Platform.Log(LogLevel.Info,
+                                     "Delaying Filesystem ServiceLock check, {0} StudyDelete, StudyPurge or MigrateStudy items still in the WorkQueue for Filesystem: {1} (Current: {2}, High Watermark: {3})",
+                                     count, fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
+
+                        scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Info, "Filesystem above high watermark: {0} (Current: {1}, High Watermark: {2}",
+                                     fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
+
+                        MigrateStudies(item, fs);
+
+                        if (_bytesToRemove > 0)
+                            DeleteStudies(item, fs);
+
+                        if (_bytesToRemove > 0)
+                            PurgeStudies(item, fs);
+
+
+                        if (_studiesDeleted + _studiesMigrated + _studiesPurged == 0)
+                        {
+                            Platform.Log(LogLevel.Warn, "Fileystem '{0}' is above high watermark but no studies can be deleted, migrated or purged at this point", fs.Filesystem.Description);
+                        }
+
+                        scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
                     }
 
-					scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
-				}
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
+                                 fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
+                    scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval);
 
-			}
-			else
-			{
-				Platform.Log(LogLevel.Info, "Filesystem below watermarks: {0} (Current: {1}, High Watermark: {2}",
-				             fs.Filesystem.Description, fs.UsedSpacePercentage, fs.Filesystem.HighWatermark);
-				scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteCheckInterval);
-
-			}
+                }
+            }
 
 			UnlockServiceLock(item, true, scheduledTime);            
         }

@@ -29,6 +29,9 @@
 
 #endregion
 
+using System;
+using System.IO;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 
@@ -37,11 +40,17 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// <summary>
 	/// A ServerCommand derived class for creating a directory.
 	/// </summary>
+	/// <remark>
+    /// If <see cref="ServerCommand.RequiresRollback"/> is set to <b>true</b>, the <see cref="CopyDirectoryCommand"/>
+    /// will perform necessary backup so that the original source and destination directories can be restored when <see cref="OnUndo"/> is called.
+    /// </remark>
 	public class CopyDirectoryCommand : ServerCommand
 	{
 		#region Private Members
 		private readonly string _src;
 		private readonly string _dest;
+	    private bool _destBackedup= true;
+        private readonly string _backupDir = ServerPlatform.GetTempPath();
 		#endregion
 
 		public CopyDirectoryCommand(string src, string dest)
@@ -56,12 +65,35 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 		protected override void OnExecute()
 		{
+            if (RequiresRollback)
+            {
+                Backup();
+            }
 			DirectoryUtility.Copy(_src, _dest);
 		}
 
-		protected override void OnUndo()
+	    private void Backup()
+	    {
+            if (Directory.Exists(_dest))
+            {
+                Platform.Log(LogLevel.Debug, "Backing up original folder {0}", _dest);
+                DirectoryUtility.Copy(_dest, _backupDir);
+                _destBackedup = true;
+                Platform.Log(LogLevel.Info, "Original folder {0} is backed up to {1}", _dest, _backupDir);
+            }
+
+	        
+	    }
+
+	    protected override void OnUndo()
 		{
 			DirectoryUtility.DeleteIfExists(_dest, true);
+            if (_destBackedup)
+            {
+                Platform.Log(LogLevel.Info, "Restoring original folder {0}", _dest);
+                DirectoryUtility.Copy(_backupDir, _dest);
+            }
 		}
 	}
+
 }
