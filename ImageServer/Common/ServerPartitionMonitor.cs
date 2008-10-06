@@ -196,7 +196,17 @@ namespace ClearCanvas.ImageServer.Common
                     return true;
                 }
 
-                //p1.DuplicateSopPolicyEnum != p2.DuplicateSopPolicyEnum ||
+                if (!p1.DuplicateSopPolicyEnum.Equals(p2.DuplicateSopPolicyEnum))
+            		return true;
+
+				if (p1.MatchAccessionNumber != p2.MatchAccessionNumber
+					|| p1.MatchIssuerOfPatientId != p2.MatchIssuerOfPatientId
+					|| p1.MatchPatientId != p2.MatchPatientId
+					|| p1.MatchPatientsBirthDate != p2.MatchPatientsBirthDate
+					|| p1.MatchPatientsName != p2.MatchPatientsName
+					|| p1.MatchPatientsSex != p2.MatchPatientsSex)
+					return true;
+
                 if (p1.Enabled != p2.Enabled)
                 {
                     return true;

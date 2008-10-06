@@ -55,8 +55,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     {
         #region Protected Members
         protected IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-        private ServerPartition _partition;
-        private FilesystemSelector _selector;
+    	private DicomScpContext _context;
         private Device _device;
         #endregion
 
@@ -66,12 +65,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// </summary>
         protected ServerPartition Partition
         {
-            get { return _partition; }
+            get { return _context.Partition; }
         }
 
         protected FilesystemSelector Selector
         {
-            get { return _selector; }
+            get { return _context.FilesystemSelector; }
         }
 
         protected Device Device
@@ -103,7 +102,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             bool isNew;
 
-            Device = DeviceManager.LookupDevice(_partition, association, out isNew);
+            Device = DeviceManager.LookupDevice(Partition, association, out isNew);
 
             // Let the subclass perform the verification
             DicomPresContextResult result = OnVerifyAssociation(association, pcid);
@@ -269,7 +268,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					if (!FilesystemMonitor.Instance.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
                     {
                         Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}",
-                                     studyInstanceUid, _partition.Description);
+                                     studyInstanceUid, Partition.Description);
                         return null;
                     }
                 }
@@ -285,9 +284,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         public void SetContext(DicomScpContext parms)
         {
-            _partition = parms.Partition;
-            _selector = parms.FilesystemSelector;
-            
+        	_context = parms;
         }
         
         public virtual bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
