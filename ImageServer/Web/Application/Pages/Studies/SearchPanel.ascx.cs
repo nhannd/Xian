@@ -316,7 +316,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 MoveStudyButton.Enabled = true;
                 foreach (Study study in studies)
                 {
-					if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+					if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline) || 
+                        study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileRequired))
 					{
 						DeleteStudyButton.Enabled = false;
 						MoveStudyButton.Enabled = false;

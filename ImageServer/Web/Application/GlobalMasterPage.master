@@ -5,6 +5,7 @@
 <head runat="server">
     <title>ClearCanvas ImageServer</title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
+
 </head>
 <body id="MasterBody" class="GlobalBody">
 

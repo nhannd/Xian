@@ -421,20 +421,20 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete these items?.
-        /// </summary>
-        internal static string MultipleStudy_IntegrityQueueDelete {
-            get {
-                return ResourceManager.GetString("MultipleStudy IntegrityQueueDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
         /// </summary>
         internal static string MultipleStudyDelete {
             get {
                 return ResourceManager.GetString("MultipleStudyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete these items?.
+        /// </summary>
+        internal static string MultipleStudyIntegrityQueueDelete {
+            get {
+                return ResourceManager.GetString("MultipleStudyIntegrityQueueDelete", resourceCulture);
             }
         }
         
@@ -529,20 +529,20 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete this Item?.
-        /// </summary>
-        internal static string SingleStudy_IntegrityQueueDelete {
-            get {
-                return ResourceManager.GetString("SingleStudy IntegrityQueueDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this study?.
         /// </summary>
         internal static string SingleStudyDelete {
             get {
                 return ResourceManager.GetString("SingleStudyDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this Item?.
+        /// </summary>
+        internal static string SingleStudyIntegrityQueueDelete {
+            get {
+                return ResourceManager.GetString("SingleStudyIntegrityQueueDelete", resourceCulture);
             }
         }
         
@@ -570,6 +570,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string StudyScheduledForEdit {
             get {
                 return ResourceManager.GetString("StudyScheduledForEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This study has been scheduled for reconciliation..
+        /// </summary>
+        internal static string StudyScheduledForReconcile {
+            get {
+                return ResourceManager.GetString("StudyScheduledForReconcile", resourceCulture);
             }
         }
         

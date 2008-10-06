@@ -225,6 +225,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 							row.Attributes.Add("deleted", "true");
 						if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
 							row.Attributes.Add("nearline", "true");
+                        if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled))
+                            row.Attributes.Add("reconcileScheduled", "true");
 					}
                 }
             }

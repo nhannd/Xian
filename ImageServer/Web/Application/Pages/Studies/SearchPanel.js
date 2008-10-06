@@ -138,6 +138,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             return row.getAttribute('nearline')=='true';
         },
         
+        _studyIsReconcileScheduled : function(row)
+        {
+            //"nearline" is a custom attribute injected by the study list control
+            return row.getAttribute('reconcileScheduled')=='true';
+        },
+        
         _openSelectedStudies : function()
         {
             var studylist = $find(this._StudyListClientID);
@@ -215,7 +221,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
 
                     for(i=0; i<rows.length; i++)
                     {
-                        if (this._studyIsDeleted(rows[i]) || this._studyIsNearline(rows[i])) 
+                        if (this._studyIsDeleted(rows[i]) || this._studyIsNearline(rows[i]) || this._studyIsReconcileScheduled(rows[i]))
                         {
                             this._enableDeleteButton(false);
                             this._enableSendStudyButton(false);

@@ -234,7 +234,7 @@
   <data name="MultipleArchiveQueueDelete" xml:space="preserve">
     <value>Are you sure you want to delete these Archive Queue items?</value>
   </data>
-  <data name="MultipleStudy IntegrityQueueDelete" xml:space="preserve">
+  <data name="MultipleStudyIntegrityQueueDelete" xml:space="preserve">
     <value>Are you sure you want to delete these items?</value>
   </data>
   <data name="MultipleRestoreQueueDelete" xml:space="preserve">
@@ -270,7 +270,7 @@
   <data name="SingleArchiveQueueDelete" xml:space="preserve">
     <value>Are you sure you want to delete this Archive Queue item?</value>
   </data>
-  <data name="SingleStudy IntegrityQueueDelete" xml:space="preserve">
+  <data name="SingleStudyIntegrityQueueDelete" xml:space="preserve">
     <value>Are you sure you want to delete this Item?</value>
   </data>
   <data name="SingleRestoreQueueDelete" xml:space="preserve">
@@ -341,5 +341,8 @@
   </data>
   <data name="WorkQueueResetFailed" xml:space="preserve">
     <value>Unable to reset this work queue item. Please contact server administrator.</value>
+  </data>
+  <data name="StudyScheduledForReconcile" xml:space="preserve">
+    <value>This study has been scheduled for reconciliation.</value>
   </data>
 </root>

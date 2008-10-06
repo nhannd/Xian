@@ -109,17 +109,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyController controller = new StudyController();
                 bool scheduledForDelete = controller.IsScheduledForDelete(Study);
                 bool scheduledForEdit = controller.IsScheduledForEdit(Study);
+                bool scheduledForReconcile = Study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled);
 
                 DeleteStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit);
                 EditStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit);
 
                 if (scheduledForDelete)
                 {
-                    ShowScheduledForDeleteAlert();
+                    ShowAlert(App_GlobalResources.SR.StudyScheduledForDeletion);
                 }
                 else if (scheduledForEdit)
                 {
-                    ShowScheduledForEditAlert();
+                    ShowAlert(App_GlobalResources.SR.StudyScheduledForEdit);
+                }
+                else if(scheduledForReconcile)
+                {
+                    ShowAlert(App_GlobalResources.SR.StudyScheduledForReconcile);
                 }
                 else
                 {
@@ -157,7 +162,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 DeleteStudyButton.Enabled = false;
                 EditStudyButton.Enabled = false;
 
-                ShowScheduledForDeleteAlert();
+                ShowAlert(App_GlobalResources.SR.StudyScheduledForDeletion);
                 
             }
             else
@@ -167,17 +172,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             } 
         }
 
-        private void ShowScheduledForDeleteAlert()
+        private void ShowAlert(string message)
         {
             MessagePanel.Visible = true;
-            ConfirmationMessage.Text = App_GlobalResources.SR.StudyScheduledForDeletion;               
-            UpdatePanel1.Update();
-        }
-
-        private void ShowScheduledForEditAlert()
-        {
-            MessagePanel.Visible = true;
-            ConfirmationMessage.Text = App_GlobalResources.SR.StudyScheduledForEdit;
+            ConfirmationMessage.Text = message;
             UpdatePanel1.Update();
         }
         
