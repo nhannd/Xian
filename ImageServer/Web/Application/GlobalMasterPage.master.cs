@@ -49,6 +49,13 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         if (IsPostBack)
             return;
 
+        if (ConfigurationManager.AppSettings.GetValues("CachePages")[0].Equals("false"))
+        {
+            Response.CacheControl = "no-cache";
+            Response.AddHeader("Pragma", "no-cache");
+            Response.Expires = -1;
+        }
+
         AddIE6PngBugFixCSS(); 
     }
 
