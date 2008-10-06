@@ -1117,6 +1117,9 @@ BEGIN
 
 	SET NOCOUNT ON;
 
+	-- Added READPAST locking hint to this procedure.  This should cause the query
+    -- to just skip rows that are locked, going forward to any other row that 
+    -- satisfies the query.  This mode is specifically recommended for work queue type tables.
 
 	declare @StudyStorageGUID uniqueidentifier
 	declare @WorkQueueGUID uniqueidentifier
@@ -1132,7 +1135,7 @@ BEGIN
 	BEGIN
 		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 			@WorkQueueGUID = WorkQueue.GUID 
-		FROM WorkQueue
+		FROM WorkQueue WITH (READPAST)
 		JOIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
@@ -1169,7 +1172,7 @@ BEGIN
 
 		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 				@WorkQueueGUID = WorkQueue.GUID 
-		FROM WorkQueue
+		FROM WorkQueue WITH (READPAST)
 		JOIN
 			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 		WHERE
@@ -1399,13 +1402,16 @@ BEGIN
 		RETURN 50000
 	end
 
-    -- Insert statements for procedure here
+   	-- Added READPAST locking hint to this procedure.  This should cause the query
+    -- to just skip rows that are locked, going forward to any other row that 
+    -- satisfies the query.  This mode is specifically recommended for work queue type tables.
+
 	declare @ServiceLockGUID uniqueidentifier
 	
     IF @ServiceLockTypeEnum = 0
 	BEGIN
 		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
-		FROM ServiceLock
+		FROM ServiceLock WITH (READPAST)
 		WHERE
 			Enabled = 1
 			AND ScheduledTime < getdate() 
@@ -1415,7 +1421,7 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
-		FROM ServiceLock
+		FROM ServiceLock WITH (READPAST)
 		WHERE
 			Enabled = 1
 			AND ScheduledTime < getdate() 
@@ -1737,9 +1743,12 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    -- Insert statements for procedure here
+   	-- Added READPAST locking hint to this procedure.  This should cause the query
+    -- to just skip rows that are locked, going forward to any other row that 
+    -- satisfies the query.  This mode is specifically recommended for work queue type tables.
+
 	SELECT TOP (@Results) * 
-	FROM FilesystemQueue
+	FROM FilesystemQueue WITH (READPAST)
 	WHERE
 		FilesystemGUID = @FilesystemGUID
 		AND FilesystemQueueTypeEnum = @FilesystemQueueTypeEnum
@@ -2448,6 +2457,10 @@ BEGIN
 		RETURN 50000
 	end
 
+	-- Added READPAST locking hint to this procedure.  This should cause the query
+    -- to just skip rows that are locked, going forward to any other row that 
+    -- satisfies the query.  This mode is specifically recommended for work queue type tables.
+
 	declare @StudyStorageGUID uniqueidentifier
 	declare @ArchiveQueueGUID uniqueidentifier
 	declare @PendingStatusEnum as int
@@ -2458,7 +2471,7 @@ BEGIN
 	
 	SELECT TOP (1) @StudyStorageGUID = ArchiveQueue.StudyStorageGUID,
 		@ArchiveQueueGUID = ArchiveQueue.GUID 
-	FROM ArchiveQueue
+	FROM ArchiveQueue WITH (READPAST)
 	JOIN
 		StudyStorage ON StudyStorage.GUID = ArchiveQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 	WHERE
@@ -2529,6 +2542,10 @@ BEGIN
 		RETURN 50000
 	end
 
+	-- Added READPAST locking hint to this procedure.  This should cause the query
+    -- to just skip rows that are locked, going forward to any other row that 
+    -- satisfies the query.  This mode is specifically recommended for work queue type tables.
+
 	declare @StudyStorageGUID uniqueidentifier
 	declare @RestoreQueueGUID uniqueidentifier
 	declare @PendingStatusEnum as int
@@ -2539,7 +2556,7 @@ BEGIN
 	
 	SELECT TOP (1) @StudyStorageGUID = RestoreQueue.StudyStorageGUID,
 		@RestoreQueueGUID = RestoreQueue.GUID 
-	FROM RestoreQueue
+	FROM RestoreQueue WITH (READPAST)
 	JOIN
 		StudyStorage ON StudyStorage.GUID = RestoreQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 	JOIN
