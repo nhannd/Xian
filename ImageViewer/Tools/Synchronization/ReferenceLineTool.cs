@@ -239,6 +239,11 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private static ReferenceLine GetReferenceLine(DicomImagePlane referenceImagePlane, DicomImagePlane targetImagePlane)
 		{
+			// if planes are parallel within tolerance, then they do not intersect and thus no reference lines should be shown
+			const float parallelTolerance = 5.0f;
+			if (referenceImagePlane.IsParallelTo(targetImagePlane, parallelTolerance))
+				return null;
+
 			Vector3D intersectionPatient1, intersectionPatient2;
 			if (!referenceImagePlane.GetIntersectionPoints(targetImagePlane, out intersectionPatient1, out intersectionPatient2))
 				return null;
