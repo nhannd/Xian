@@ -4,6 +4,12 @@
 	<ItemGroup>
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.dll" />
     <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\TestTools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.TestTools.View.WinForms.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\Ide\bin\$(Configuration)\ClearCanvas.Oto.Ide.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Oto\bin\$(Configuration)\ClearCanvas.ImageViewer.Oto.dll" />
   </ItemGroup>
 
 	<Target Name="Copy Files" Condition="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable' Or '$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
