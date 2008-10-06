@@ -930,10 +930,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				Load();
 
-				if (tag >= _dicomMessage.MetaInfo.StartTagValue && tag <= _dicomMessage.MetaInfo.EndTagValue)
+				bool isInMetaInfoRange = (tag >= _dicomMessage.MetaInfo.StartTagValue && tag <= _dicomMessage.MetaInfo.EndTagValue);
+				bool isInDataSetRange = (tag >= _dicomMessage.DataSet.StartTagValue && tag <= _dicomMessage.DataSet.EndTagValue);
+
+				if (isInDataSetRange)
+				{
+					DicomAttribute attribute = _dicomMessage.DataSet[tag];
+					if (!attribute.IsEmpty || !isInMetaInfoRange)
+						return attribute;
+				}
+
+				if (isInMetaInfoRange)
 					return _dicomMessage.MetaInfo[tag];
 
-				return _dicomMessage.DataSet[tag];
+				throw new ArgumentOutOfRangeException("The tag is not within the valid range for either the meta info or dataset.");
 			}
 		}
 
