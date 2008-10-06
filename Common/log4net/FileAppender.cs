@@ -392,8 +392,18 @@ namespace ClearCanvas.Common.log4net
 
                             try
                             {
-                                if (m_realStream.CanSeek)
-                                    m_realStream.Seek(0, SeekOrigin.End);
+								if (m_realStream.Position > m_realStream.Length) 
+								{
+									// if the file is rolled in another thread, our stream sees the updated stream length but the position IS NOT CHANGED
+									// any further attempts to set the position causes an exception because the current position is beyond the end of the
+									// file, so we must reopen the stream (which will put the cursor at the end of the file anyway)
+									this.Reopen();
+								}
+								else 
+								{
+									if (m_realStream.CanSeek)
+										m_realStream.Seek(0, SeekOrigin.End);
+								}
                             }
                             catch (Exception e)
                             {
