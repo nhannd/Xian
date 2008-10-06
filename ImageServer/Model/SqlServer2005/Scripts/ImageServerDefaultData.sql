@@ -249,13 +249,13 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'FilesystemDelete','Filesystem Delete','Purge Data from a Filesystem')
+           (newid(),100,'Check watermark and schedule studies for tier migration, deletion, or purging if necessary')																		 
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),101,'FilesystemReinventory','Filesystem Reinventory','Re-inventory Data within a Filesystem')
+           (newid(),101,'FilesystemReinventory','Filesystem Reinventory','Re-inventory data within a Filesystem')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
