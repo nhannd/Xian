@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 counter++;
                 columns.StudyStorageKey = storage.Key;
-                columns.ScheduledTime = DateTime.Now.AddSeconds(60 + (counter)*15); // spread by 15 seconds
+                columns.ScheduledTime = DateTime.Now.AddSeconds(counter*15); // spread by 15 seconds
                 columns.ExpirationTime = DateTime.Now.AddDays(1);
                 columns.FailureCount = 0;
 
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
             columns.StudyStorageKey = storage.Key;
-            DateTime time = Platform.Time.AddSeconds(60);
+            DateTime time = Platform.Time;
             columns.ScheduledTime = time;
             columns.ExpirationTime = time;
             columns.FailureCount = 0;
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
 
             columns.StudyStorageKey = storage.Key;
-            DateTime time = Platform.Time.AddSeconds(60);
+            DateTime time = Platform.Time;
             columns.ScheduledTime = time;
             columns.ExpirationTime = time;
             columns.FailureCount = 0;
