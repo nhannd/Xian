@@ -657,51 +657,61 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _realImageSop.GetNormalizedPixelData();
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out ushort val, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out ushort val, uint position, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, position, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out int val, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out int val, uint position, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, position, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out double val, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out double val, uint position, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, position, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out string val, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out string val, uint position, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out val, position, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetMultiValuedTagRaw(uint tag, out string val, out bool tagExists)
 		{
 			_realImageSop.GetMultiValuedTagRaw(tag, out val, out tagExists);
 		}
 
+		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public override void GetTag(uint tag, out byte[] value, out bool tagExists)
 		{
 			_realImageSop.GetTag(tag, out value, out tagExists);

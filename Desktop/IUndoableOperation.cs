@@ -15,6 +15,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Gets the object whose state will be captured and or restored before and/or after
 		/// the operation is applied (via <see cref="Apply"/>).
+		/// </summary>
 		IMemorable GetOriginator(T item);
 
 		/// <summary>

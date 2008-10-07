@@ -56,7 +56,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
 			_component = component;
 
-			_importTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			_importTable.Table = _component.ImportTable;
 
 			_importTable.ToolbarModel = _component.ToolbarModel;

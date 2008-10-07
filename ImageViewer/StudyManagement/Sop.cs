@@ -157,9 +157,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string transferSyntaxInstanceUID;
-				GetTag(DicomTags.TransferSyntaxUid, out transferSyntaxInstanceUID, out tagExists);
+				transferSyntaxInstanceUID = this[DicomTags.TransferSyntaxUid].GetString(0, null);
 				return transferSyntaxInstanceUID ?? "";
 			}
 		}
@@ -175,9 +174,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string sopInstanceUID;
-				GetTag(DicomTags.SopInstanceUid, out sopInstanceUID, out tagExists);
+				sopInstanceUID = this[DicomTags.SopInstanceUid].GetString(0, null);
 				return sopInstanceUID ?? "";
 			}
 		}
@@ -189,9 +187,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string sopClassUID;
-				GetTag(DicomTags.SopClassUid, out sopClassUID, out tagExists);
+				sopClassUID = this[DicomTags.SopClassUid].GetString(0, null);
 				return sopClassUID ?? "";
 			}
 		}
@@ -203,11 +200,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string specificCharacterSet;
-				GetMultiValuedTagRaw(DicomTags.SpecificCharacterSet, out specificCharacterSet, out tagExists);
+				specificCharacterSet = this[DicomTags.SpecificCharacterSet].ToString();
 
-				if (tagExists)
+				if (!string.IsNullOrEmpty(specificCharacterSet))
 				{
 					string[] values;
 					values = DicomStringHelper.GetStringArray(specificCharacterSet);
@@ -227,9 +223,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				int instanceNumber;
-				GetTag(DicomTags.InstanceNumber, out instanceNumber, out tagExists);
+				instanceNumber = this[DicomTags.InstanceNumber].GetInt32(0, 0);
 				return instanceNumber;
 			}
 		}
@@ -245,9 +240,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string patientsName;
-				GetTag(DicomTags.PatientsName, out patientsName, out tagExists);
+				patientsName = this[DicomTags.PatientsName].GetString(0, null);
 				return new PersonName(patientsName ?? "");
 			}
 		}
@@ -259,9 +253,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string patientId;
-				GetTag(DicomTags.PatientId, out patientId, out tagExists);
+				patientId = this[DicomTags.PatientId].GetString(0, null);
 				return patientId ?? "";
 			}
 		}
@@ -273,9 +266,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string patientsBirthDate;
-				GetTag(DicomTags.PatientsBirthDate, out patientsBirthDate, out tagExists);
+				patientsBirthDate = this[DicomTags.PatientsBirthDate].GetString(0, null);
 				return patientsBirthDate ?? "";
 			}
 		}
@@ -287,9 +279,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string patientsSex;
-				GetTag(DicomTags.PatientsSex, out patientsSex, out tagExists);
+				patientsSex = this[DicomTags.PatientsSex].GetString(0, null);
 				return patientsSex ?? "";
 			}
 		}
@@ -305,9 +296,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string studyInstanceUID;
-				GetTag(DicomTags.StudyInstanceUid, out studyInstanceUID, out tagExists);
+				studyInstanceUID = this[DicomTags.StudyInstanceUid].GetString(0, null);
 				return studyInstanceUID ?? "";
 			}
 		}
@@ -319,9 +309,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string studyDate;
-				GetTag(DicomTags.StudyDate, out studyDate, out tagExists);
+				studyDate = this[DicomTags.StudyDate].GetString(0, null);
 				return studyDate ?? "";
 			}
 		}
@@ -333,9 +322,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string studyTime;
-				GetTag(DicomTags.StudyTime, out studyTime, out tagExists);
+				studyTime = this[DicomTags.StudyTime].GetString(0, null);
 				return studyTime ?? "";
 			}
 		}
@@ -347,9 +335,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string referringPhysiciansName;
-				GetTag(DicomTags.ReferringPhysiciansName, out referringPhysiciansName, out tagExists);
+				referringPhysiciansName = this[DicomTags.ReferringPhysiciansName].GetString(0, null);
 				return new PersonName(referringPhysiciansName ?? "");
 			}
 		}
@@ -361,9 +348,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string accessionNumber;
-				GetTag(DicomTags.AccessionNumber, out accessionNumber, out tagExists);
+				accessionNumber = this[DicomTags.AccessionNumber].GetString(0, null);
 				return accessionNumber ?? "";
 			}
 		}
@@ -375,9 +361,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string studyDescription;
-				GetTag(DicomTags.StudyDescription, out studyDescription, out tagExists);
+				studyDescription = this[DicomTags.StudyDescription].GetString(0, null);
 				return studyDescription ?? "";
 			}
 		}
@@ -389,9 +374,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string nameOfPhysiciansReadingStudy;
-				GetMultiValuedTagRaw(DicomTags.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
+				nameOfPhysiciansReadingStudy = this[DicomTags.NameOfPhysiciansReadingStudy].ToString();
 				return DicomStringHelper.GetPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 		}
@@ -407,9 +391,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string admittingDiagnosesDescription;
-				GetMultiValuedTagRaw(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
+				admittingDiagnosesDescription = this[DicomTags.AdmittingDiagnosesDescription].ToString();
 				return DicomStringHelper.GetStringArray(admittingDiagnosesDescription);
 			}
 		}
@@ -421,9 +404,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string patientsAge;
-				GetTag(DicomTags.PatientsAge, out patientsAge, out tagExists);
+				patientsAge = this[DicomTags.PatientsAge].GetString(0, null);
 				return patientsAge ?? "";
 			}
 		}
@@ -435,9 +417,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string additionalPatientsHistory;
-				GetTag(DicomTags.AdditionalPatientHistory, out additionalPatientsHistory, out tagExists);
+				additionalPatientsHistory = this[DicomTags.AdditionalPatientHistory].GetString(0, null);
 				return additionalPatientsHistory ?? "";
 			}
 		}
@@ -453,9 +434,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
-				string manufacturer;
-				GetTag(DicomTags.Manufacturer, out manufacturer, out tagExists);
+				string manufacturer; 
+				manufacturer = this[DicomTags.Manufacturer].GetString(0, null);
 				return manufacturer ?? "";
 			}
 		}
@@ -467,9 +447,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string institutionName;
-				GetTag(DicomTags.InstitutionName, out institutionName, out tagExists);
+				institutionName = this[DicomTags.InstitutionName].GetString(0, null);
 				return institutionName ?? "";
 			}
 		}
@@ -481,9 +460,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string stationName;
-				GetTag(DicomTags.StationName, out stationName, out tagExists);
+				stationName = this[DicomTags.StationName].GetString(0, null);
 				return stationName ?? "";
 			}
 		}
@@ -495,9 +473,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string institutionalDepartmentName;
-				GetTag(DicomTags.InstitutionalDepartmentName, out institutionalDepartmentName, out tagExists);
+				institutionalDepartmentName = this[DicomTags.InstitutionalDepartmentName].GetString(0, null);
 				return institutionalDepartmentName ?? "";
 			}
 		}
@@ -509,9 +486,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string manufacturersModelName;
-				GetTag(DicomTags.ManufacturersModelName, out manufacturersModelName, out tagExists);
+				manufacturersModelName = this[DicomTags.ManufacturersModelName].GetString(0, null);
 				return manufacturersModelName ?? "";
 			}
 		}
@@ -527,9 +503,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string modality;
-				GetTag(DicomTags.Modality, out modality, out tagExists);
+				modality = this[DicomTags.Modality].GetString(0, null);
 				return modality ?? "";
 			}
 		}
@@ -541,9 +516,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string seriesInstanceUID;
-				GetTag(DicomTags.SeriesInstanceUid, out seriesInstanceUID, out tagExists);
+				seriesInstanceUID = this[DicomTags.SeriesInstanceUid].GetString(0, null);
 				return seriesInstanceUID ?? "";
 			}
 		}
@@ -555,9 +529,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				int seriesNumber;
-				GetTag(DicomTags.SeriesNumber, out seriesNumber, out tagExists);
+				seriesNumber = this[DicomTags.SeriesNumber].GetInt32(0, 0);
 				return seriesNumber;
 			}
 		}
@@ -569,9 +542,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string laterality;
-				GetTag(DicomTags.Laterality, out laterality, out tagExists);
+				laterality = this[DicomTags.Laterality].GetString(0, null);
 				return laterality ?? "";
 			}
 		}
@@ -583,9 +555,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string seriesDate;
-				GetTag(DicomTags.SeriesDate, out seriesDate, out tagExists);
+				seriesDate = this[DicomTags.SeriesDate].GetString(0, null);
 				return seriesDate ?? "";
 			}
 		}
@@ -597,9 +568,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string seriesTime;
-				GetTag(DicomTags.SeriesTime, out seriesTime, out tagExists);
+				seriesTime = this[DicomTags.SeriesTime].GetString(0, null);
 				return seriesTime ?? "";
 			}
 		}
@@ -611,9 +581,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string performingPhysiciansNames;
-				GetMultiValuedTagRaw(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
+				performingPhysiciansNames = this[DicomTags.PerformingPhysiciansName].ToString();
 				return DicomStringHelper.GetPersonNameArray(performingPhysiciansNames);
 			}
 		}
@@ -625,9 +594,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string protocolName;
-				GetTag(DicomTags.ProtocolName, out protocolName, out tagExists);
+				protocolName = this[DicomTags.ProtocolName].GetString(0, null);
 				return protocolName ?? "";
 			}
 		}
@@ -639,9 +607,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string seriesDescription;
-				GetTag(DicomTags.SeriesDescription, out seriesDescription, out tagExists);
+				seriesDescription = this[DicomTags.SeriesDescription].GetString(0, null);
 				return seriesDescription ?? "";
 			}
 		}
@@ -653,9 +620,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string operatorsNames;
-				GetMultiValuedTagRaw(DicomTags.OperatorsName, out operatorsNames, out tagExists);
+				operatorsNames = this[DicomTags.OperatorsName].ToString();
 				return DicomStringHelper.GetPersonNameArray(operatorsNames);
 			}
 		}
@@ -667,9 +633,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string bodyPartExamined;
-				GetTag(DicomTags.BodyPartExamined, out bodyPartExamined, out tagExists);
+				bodyPartExamined = this[DicomTags.BodyPartExamined].GetString(0, null);
 				return bodyPartExamined ?? "";
 			}
 		}
@@ -681,10 +646,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
-				string bodyPartExamined;
-				GetTag(DicomTags.BodyPartExamined, out bodyPartExamined, out tagExists);
-				return bodyPartExamined ?? "";
+				string patientPosition;
+				patientPosition = this[DicomTags.PatientPosition].GetString(0, null);
+				return patientPosition ?? "";
 			}
 		}
 

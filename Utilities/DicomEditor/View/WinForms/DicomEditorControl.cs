@@ -48,7 +48,6 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 			ClearCanvasStyle.SetTitleBarStyle(_dicomEditorTitleBar);
             _dicomEditorComponent = component;
 
-            _dicomTagTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
             _dicomTagTable.Table = _dicomEditorComponent.DicomTagData;
             _dicomTagTable.ToolbarModel = _dicomEditorComponent.ToolbarModel;
             _dicomTagTable.MenuModel = _dicomEditorComponent.ContextMenuModel;

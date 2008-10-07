@@ -97,7 +97,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			this._imageSetTree.ShowToolbar = false;
 			this._imageSetTree.Size = new System.Drawing.Size(345, 166);
 			this._imageSetTree.TabIndex = 2;
-			this._imageSetTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			this._imageSetTree.TreeBackColor = System.Drawing.SystemColors.Window;
 			this._imageSetTree.TreeForeColor = System.Drawing.SystemColors.WindowText;
 			this._imageSetTree.TreeLineColor = System.Drawing.Color.Black;

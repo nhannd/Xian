@@ -72,7 +72,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._importTable.ReadOnly = false;
 			this._importTable.Size = new System.Drawing.Size(776, 228);
 			this._importTable.TabIndex = 0;
-			this._importTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _importProgressControl
 			// 

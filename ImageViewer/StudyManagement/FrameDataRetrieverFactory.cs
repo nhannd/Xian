@@ -68,9 +68,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return delegate(Frame frame)
 				{
-					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetTag(dicomTag, out value, position, out tagExists);
+					value = frame.ParentImageSop[dicomTag].GetString((int)position, null);
 					return value ?? "";
 				};
 		}
@@ -83,9 +82,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return delegate(Frame frame)
 				{
-					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetMultiValuedTagRaw(dicomTag, out value, out tagExists);
+					value = frame.ParentImageSop[dicomTag].ToString();
 					return DicomStringHelper.GetStringArray(value ?? "");
 				};
 		}
@@ -107,9 +105,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return delegate(Frame frame)
 				{
-					bool tagExists;
 					int value;
-					frame.ParentImageSop.GetTag(dicomTag, out value, position, out tagExists);
+					value = frame.ParentImageSop[dicomTag].GetInt32((int)position, 0);
 					return value;
 				};
 		}
@@ -122,9 +119,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return delegate(Frame frame)
 				{
-					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetMultiValuedTagRaw(dicomTag, out value, out tagExists);
+					value = frame.ParentImageSop[dicomTag].ToString();
 					
 					int[] values;
 					if (!DicomStringHelper.TryGetIntArray(value ?? "", out values))
@@ -151,9 +147,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return delegate(Frame frame)
 				{
-					bool tagExists;
 					double value;
-					frame.ParentImageSop.GetTag(dicomTag, out value, position, out tagExists);
+					value = frame.ParentImageSop[dicomTag].GetFloat64((int)position, 0);
 					return value;
 				};
 		}
@@ -166,9 +161,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return delegate(Frame frame)
 				{
-					bool tagExists;
 					string value;
-					frame.ParentImageSop.GetMultiValuedTagRaw(dicomTag, out value, out tagExists);
+					value = frame.ParentImageSop[dicomTag].ToString();
 					double[] values;
 					if (!DicomStringHelper.TryGetDoubleArray(value ?? "", out values))
 						values = new double[] { };

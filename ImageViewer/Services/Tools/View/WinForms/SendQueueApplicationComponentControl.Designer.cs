@@ -76,7 +76,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._sendTable.TabIndex = 1;
 			this._sendTable.Table = null;
 			this._sendTable.ToolbarModel = null;
-			this._sendTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _titleBar
 			// 

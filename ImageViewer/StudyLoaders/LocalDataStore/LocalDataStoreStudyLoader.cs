@@ -42,7 +42,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
     public class LocalDataStoreStudyLoader : IStudyLoader
     {
 		private IEnumerator<ISopInstance> _sops;
-		private IPrefetchingStrategy _prefetchingStrategy;
 
         public LocalDataStoreStudyLoader()
         {

@@ -89,7 +89,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._studyTableView.TabIndex = 0;
 			this._studyTableView.Table = null;
 			this._studyTableView.ToolbarModel = null;
-			this._studyTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// StudyBrowserControl
 			// 

@@ -60,8 +60,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							double value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.EchoTime, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.EchoTime].TryGetFloat64(0, out value);
 							if (tagExists)
 								return String.Format(SR.Formatms, value);
 
@@ -80,8 +79,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							double value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.MagneticFieldStrength, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.MagneticFieldStrength].TryGetFloat64(0, out value);
 							if (tagExists)
 								return String.Format(SR.FormatTeslas, value);
 
@@ -99,15 +97,18 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 						{
-							ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
-							frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
-							frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseRows, 2, out tagExists);
-							frame.ParentImageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
+							DicomAttribute acqAttrib = frame.ParentImageSop[DicomTags.AcquisitionMatrix];
+							if (!acqAttrib.IsEmpty && acqAttrib.Count > 3)
+							{
+								ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
 
-							if (tagExists)
+								frequencyRows = acqAttrib.GetUInt16(0, 0);
+								frequencyColumns = acqAttrib.GetUInt16(1, 0);
+								phaseRows = acqAttrib.GetUInt16(2, 0);
+								phaseColumns = acqAttrib.GetUInt16(3, 0);
+
 								return String.Format("{0} x {1}", frequencyColumns, phaseRows);
+							}
 
 							return "";
 						},
@@ -124,8 +125,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							string value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.ReceiveCoilName, out value, out tagExists);
+							value = frame.ParentImageSop[DicomTags.ReceiveCoilName].GetString(0, null);
 							return value;
 						},
 						DicomDataFormatHelper.RawStringFormat
@@ -141,8 +141,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							double value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.RepetitionTime, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.RepetitionTime].TryGetFloat64(0, out value);
 							if (tagExists)
 								return String.Format(SR.Formatms, value);
 
@@ -161,8 +160,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							int value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.EchoTrainLength, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.EchoTrainLength].TryGetInt32(0, out value);
 							if (tagExists)
 								return String.Format("{0}", value);
 

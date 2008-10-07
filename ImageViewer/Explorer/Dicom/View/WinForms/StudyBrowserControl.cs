@@ -53,7 +53,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_studyBrowserComponent = component;
 			_studyBrowserComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 
-			_studyTableView.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			_studyTableView.Table = _studyBrowserComponent.StudyList;
 			_studyTableView.ToolbarModel = _studyBrowserComponent.ToolbarModel;
 			_studyTableView.MenuModel = _studyBrowserComponent.ContextMenuModel;

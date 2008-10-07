@@ -185,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			try
 			{
-				OpenStudyHelper.OpenStudies("DICOM_LOCAL", GetStudyInstanceUids(), ViewerLaunchSettings.WindowBehaviour);
+				OpenStudyHelper.OpenStudies(new OpenStudyArgs(GetStudyInstanceUids(), null, "DICOM_LOCAL", ViewerLaunchSettings.WindowBehaviour));
 			}
 			catch (Exception e)
 			{

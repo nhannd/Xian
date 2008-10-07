@@ -58,7 +58,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 
-			_sendTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			_sendTable.Table = _component.SendTable;
 
 			_sendTable.ToolbarModel = _component.ToolbarModel;

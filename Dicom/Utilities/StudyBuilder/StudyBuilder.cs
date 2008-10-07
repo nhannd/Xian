@@ -31,7 +31,6 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		private readonly RootNode _rootNode;
 		private bool _anonymize = true;
 		private float _progress = 0f;
-		private string _status = "";
 
 		/// <summary>
 		/// Constructs a new instance of the <see cref="StudyBuilder"/> using the default options.

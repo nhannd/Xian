@@ -117,10 +117,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string patientOrientation;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
-				if (tagExists)
+				patientOrientation = _parentImageSop[DicomTags.PatientOrientation].ToString();
+				if (!string.IsNullOrEmpty(patientOrientation))
 				{
 					string[] values = DicomStringHelper.GetStringArray(patientOrientation);
 					if (values.Length == 2)
@@ -138,9 +137,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string imageType;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImageType, out imageType, out tagExists);
+				imageType = _parentImageSop[DicomTags.ImageType].ToString();
 				return imageType ?? "";
 			}
 		}
@@ -152,9 +150,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				int acquisitionNumber;
-				_parentImageSop.GetTag(DicomTags.AcquisitionNumber, out acquisitionNumber, out tagExists);
+				acquisitionNumber = _parentImageSop[DicomTags.AcquisitionNumber].GetInt32(0, 0);
 				return acquisitionNumber;
 			}
 		}
@@ -166,9 +163,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string acquisitionDate;
-				_parentImageSop.GetTag(DicomTags.AcquisitionDate, out acquisitionDate, out tagExists);
+				acquisitionDate = _parentImageSop[DicomTags.AcquisitionDate].GetString(0, null);
 				return acquisitionDate ?? "";
 			}
 		}
@@ -180,9 +176,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string acquisitionTime;
-				_parentImageSop.GetTag(DicomTags.AcquisitionTime, out acquisitionTime, out tagExists);
+				acquisitionTime = _parentImageSop[DicomTags.AcquisitionTime].GetString(0, null);
 				return acquisitionTime ?? "";
 			}
 		}
@@ -194,9 +189,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string acquisitionDateTime;
-				_parentImageSop.GetTag(DicomTags.AcquisitionDatetime, out acquisitionDateTime, out tagExists);
+				acquisitionDateTime = _parentImageSop[DicomTags.AcquisitionDatetime].GetString(0, null);
 				return acquisitionDateTime ?? "";
 			}
 		}
@@ -208,9 +202,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				int imagesInAcquisition;
-				_parentImageSop.GetTag(DicomTags.ImagesInAcquisition, out imagesInAcquisition, out tagExists);
+				imagesInAcquisition = _parentImageSop[DicomTags.ImagesInAcquisition].GetInt32(0, 0);
 				return imagesInAcquisition;
 			}
 		}
@@ -222,9 +215,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string imageComments;
-				_parentImageSop.GetTag(DicomTags.ImageComments, out imageComments, out tagExists);
+				imageComments = _parentImageSop[DicomTags.ImageComments].GetString(0, null);
 				return imageComments ?? "";
 			}
 		}
@@ -236,9 +228,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string lossyImageCompression;
-				_parentImageSop.GetTag(DicomTags.LossyImageCompression, out lossyImageCompression, out tagExists);
+				lossyImageCompression = _parentImageSop[DicomTags.LossyImageCompression].GetString(0, null);
 				return lossyImageCompression ?? "";
 			}
 		}
@@ -253,9 +244,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string lossyImageCompressionRatios;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
+				lossyImageCompressionRatios = _parentImageSop[DicomTags.LossyImageCompressionRatio].ToString();
 
 				double[] values;
 				DicomStringHelper.TryGetDoubleArray(lossyImageCompressionRatios, out values);
@@ -278,10 +268,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string pixelSpacing;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
-				if (tagExists)
+				pixelSpacing = _parentImageSop[DicomTags.PixelSpacing].ToString();
+				if (!string.IsNullOrEmpty(pixelSpacing))
 				{
 					double[] values;
 					if (DicomStringHelper.TryGetDoubleArray(pixelSpacing, out values) && values.Length == 2)
@@ -302,10 +291,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string imageOrientationPatient;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
-				if (tagExists)
+				imageOrientationPatient = _parentImageSop[DicomTags.ImageOrientationPatient].ToString();
+				if (!string.IsNullOrEmpty(imageOrientationPatient))
 				{
 					double[] values;
 					if (DicomStringHelper.TryGetDoubleArray(imageOrientationPatient, out values) && values.Length == 6)
@@ -326,10 +314,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string imagePositionPatient;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
-				if (tagExists)
+				imagePositionPatient = _parentImageSop[DicomTags.ImagePositionPatient].ToString();
+				if (!string.IsNullOrEmpty(imagePositionPatient))
 				{
 					double[] values;
 					if (DicomStringHelper.TryGetDoubleArray(imagePositionPatient, out values) && values.Length == 3)
@@ -347,9 +334,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				double sliceThickness;
-				_parentImageSop.GetTag(DicomTags.SliceThickness, out sliceThickness, out tagExists);
+				sliceThickness = _parentImageSop[DicomTags.SliceThickness].GetFloat64(0, 0);
 				return sliceThickness;
 			}
 		}
@@ -361,9 +347,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				double sliceLocation;
-				_parentImageSop.GetTag(DicomTags.SliceLocation, out sliceLocation, out tagExists);
+				sliceLocation = _parentImageSop[DicomTags.SliceLocation].GetFloat64(0, 0);
 				return sliceLocation;
 			}
 		}
@@ -383,10 +368,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string imagerPixelSpacing;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.ImagerPixelSpacing, out imagerPixelSpacing, out tagExists);
-				if (tagExists)
+				imagerPixelSpacing = _parentImageSop[DicomTags.ImagerPixelSpacing].ToString();
+				if (!string.IsNullOrEmpty(imagerPixelSpacing))
 				{
 					double[] values;
 					if (DicomStringHelper.TryGetDoubleArray(imagerPixelSpacing, out values) && values.Length == 2)
@@ -410,9 +394,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort samplesPerPixel;
-				_parentImageSop.GetTag(DicomTags.SamplesPerPixel, out samplesPerPixel, out tagExists);
+				samplesPerPixel = _parentImageSop[DicomTags.SamplesPerPixel].GetUInt16(0, 0);
 				return (int)samplesPerPixel;
 			}
 		}
@@ -424,9 +407,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string photometricInterpretation;
-				_parentImageSop.GetTag(DicomTags.PhotometricInterpretation, out photometricInterpretation, out tagExists);
+				photometricInterpretation = _parentImageSop[DicomTags.PhotometricInterpretation].GetString(0, null);
 				return PhotometricInterpretationHelper.FromString(photometricInterpretation);
 			}
 		}
@@ -438,9 +420,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort rows;
-				_parentImageSop.GetTag(DicomTags.Rows, out rows, out tagExists);
+				rows = _parentImageSop[DicomTags.Rows].GetUInt16(0, 0);
 				return (int)rows;
 			}
 		}
@@ -452,9 +433,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort columns;
-				_parentImageSop.GetTag(DicomTags.Columns, out columns, out tagExists);
+				columns = _parentImageSop[DicomTags.Columns].GetUInt16(0, 0);
 				return (int)columns;
 			}
 		}
@@ -466,9 +446,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort bitsAllocated;
-				_parentImageSop.GetTag(DicomTags.BitsAllocated, out bitsAllocated, out tagExists);
+				bitsAllocated = _parentImageSop[DicomTags.BitsAllocated].GetUInt16(0, 0);
 				return (int)bitsAllocated;
 			}
 		}
@@ -480,9 +459,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort bitsStored;
-				_parentImageSop.GetTag(DicomTags.BitsStored, out bitsStored, out tagExists);
+				bitsStored = _parentImageSop[DicomTags.BitsStored].GetUInt16(0, 0);
 				return (int)bitsStored;
 			}
 		}
@@ -494,9 +472,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort highBit;
-				_parentImageSop.GetTag(DicomTags.HighBit, out highBit, out tagExists);
+				highBit = _parentImageSop[DicomTags.HighBit].GetUInt16(0, 0);
 				return (int)highBit;
 			}
 		}
@@ -508,9 +485,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort pixelRepresentation;
-				_parentImageSop.GetTag(DicomTags.PixelRepresentation, out pixelRepresentation, out tagExists);
+				pixelRepresentation = _parentImageSop[DicomTags.PixelRepresentation].GetUInt16(0, 0);
 				return (int)pixelRepresentation;
 			}
 		}
@@ -525,9 +501,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				ushort planarConfiguration;
-				_parentImageSop.GetTag(DicomTags.PlanarConfiguration, out planarConfiguration, out tagExists);
+				planarConfiguration = _parentImageSop[DicomTags.PlanarConfiguration].GetUInt16(0, 0);
 				return (int)planarConfiguration;
 			}
 		}
@@ -542,10 +517,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string pixelAspectRatio;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
-				if (tagExists)
+				pixelAspectRatio = _parentImageSop[DicomTags.PixelAspectRatio].ToString();
+				if (!string.IsNullOrEmpty(pixelAspectRatio))
 				{
 					double[] values;
 					if (DicomStringHelper.TryGetDoubleArray(pixelAspectRatio, out values) && values.Length == 2)
@@ -568,9 +542,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				double rescaleIntercept;
-				_parentImageSop.GetTag(DicomTags.RescaleIntercept, out rescaleIntercept, out tagExists);
+				rescaleIntercept = _parentImageSop[DicomTags.RescaleIntercept].GetFloat64(0, 0);
 				return rescaleIntercept;
 			}
 		}
@@ -585,9 +558,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				double rescaleSlope;
-				_parentImageSop.GetTag(DicomTags.RescaleSlope, out rescaleSlope, out tagExists);
+				rescaleSlope = _parentImageSop[DicomTags.RescaleSlope].GetFloat64(0, 0);
 				if (rescaleSlope == 0.0)
 					return 1.0;
 
@@ -602,9 +574,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string rescaleType;
-				_parentImageSop.GetTag(DicomTags.RescaleType, out rescaleType, out tagExists);
+				rescaleType = _parentImageSop[DicomTags.RescaleType].GetString(0, null);
 				return rescaleType ?? "";
 			}
 		}
@@ -623,14 +594,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string windowCenterValues;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.WindowCenter, out windowCenterValues, out tagExists);
-				if (tagExists)
+				windowCenterValues = _parentImageSop[DicomTags.WindowCenter].ToString();
+				if (!string.IsNullOrEmpty(windowCenterValues))
 				{
 					string windowWidthValues;
-					_parentImageSop.GetMultiValuedTagRaw(DicomTags.WindowWidth, out windowWidthValues, out tagExists);
-					if (tagExists)
+					windowWidthValues = _parentImageSop[DicomTags.WindowWidth].ToString();
+					if (!string.IsNullOrEmpty(windowWidthValues))
 					{
 						if (!String.IsNullOrEmpty(windowCenterValues) && !String.IsNullOrEmpty(windowWidthValues))
 						{
@@ -663,9 +633,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string windowCenterAndWidthExplanations;
-				_parentImageSop.GetMultiValuedTagRaw(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
+				windowCenterAndWidthExplanations = _parentImageSop[DicomTags.WindowCenterWidthExplanation].ToString();
 				return DicomStringHelper.GetStringArray(windowCenterAndWidthExplanations);
 			}
 		}
@@ -681,9 +650,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string frameOfReferenceUid;
-				_parentImageSop.GetTag(DicomTags.FrameOfReferenceUid, out frameOfReferenceUid, out tagExists);
+				frameOfReferenceUid = _parentImageSop[DicomTags.FrameOfReferenceUid].GetString(0, null);
 				return frameOfReferenceUid ?? "";
 			}
 		}
@@ -699,9 +667,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				double spacingBetweenSlices;
-				_parentImageSop.GetTag(DicomTags.SpacingBetweenSlices, out spacingBetweenSlices, out tagExists);
+				spacingBetweenSlices = _parentImageSop[DicomTags.SpacingBetweenSlices].GetFloat64(0, 0);
 				return spacingBetweenSlices;
 			}
 		}
@@ -960,36 +927,38 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			bool tagExists;
 			int lutSize, firstMappedPixel, bitsPerLutEntry;
 
-			_parentImageSop.GetTag(DicomTags.RedPaletteColorLookupTableDescriptor, out lutSize, 0, out tagExists);
+			DicomAttribute attribDescriptor = _parentImageSop[DicomTags.RedPaletteColorLookupTableDescriptor];
+
+			tagExists = attribDescriptor.TryGetInt32(0, out lutSize);
 
 			if (!tagExists)
 				throw new Exception("LUT Size missing.");
 
-			_parentImageSop.GetTag(DicomTags.RedPaletteColorLookupTableDescriptor, out firstMappedPixel, 1, out tagExists);
+			tagExists = attribDescriptor.TryGetInt32(1, out firstMappedPixel);
 
 			if (!tagExists)
 				throw new Exception("First Mapped Pixel missing.");
 
-			_parentImageSop.GetTag(DicomTags.RedPaletteColorLookupTableDescriptor, out bitsPerLutEntry, 2, out tagExists);
+			tagExists = attribDescriptor.TryGetInt32(2, out bitsPerLutEntry);
 
 			if (!tagExists)
 				throw new Exception("Bits Per Entry missing.");
 
 			byte[] redLut, greenLut, blueLut;
 
-			_parentImageSop.GetTag(DicomTags.RedPaletteColorLookupTableData, out redLut, out tagExists);
+			redLut = _parentImageSop[DicomTags.RedPaletteColorLookupTableData].Values as byte[];
 
-			if (!tagExists)
+			if (redLut == null)
 				throw new Exception("Red Palette Color LUT missing.");
 
-			_parentImageSop.GetTag(DicomTags.GreenPaletteColorLookupTableData, out greenLut, out tagExists);
+			greenLut = _parentImageSop[DicomTags.GreenPaletteColorLookupTableData].Values as byte[];
 
-			if (!tagExists)
+			if (greenLut == null)
 				throw new Exception("Green Palette Color LUT missing.");
 
-			_parentImageSop.GetTag(DicomTags.BluePaletteColorLookupTableData, out blueLut, out tagExists);
+			blueLut = _parentImageSop[DicomTags.BluePaletteColorLookupTableData].Values as byte[];
 
-			if (!tagExists)
+			if (blueLut == null)
 				throw new Exception("Blue Palette Color LUT missing.");
 
 			// The DICOM standard says that if the LUT size is 0, it means that it's 65536 in size.

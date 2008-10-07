@@ -427,9 +427,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				int numberOfFrames;
-				GetTag(DicomTags.NumberOfFrames, out numberOfFrames, out tagExists);
+				numberOfFrames = this[DicomTags.NumberOfFrames].GetInt32(0, 0);
 
 				return Math.Max(numberOfFrames, 1);
 			}
@@ -448,9 +447,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string imageLaterality;
-				GetTag(DicomTags.ImageLaterality, out imageLaterality, out tagExists);
+				imageLaterality = this[DicomTags.ImageLaterality].GetString(0, null);
 				return imageLaterality ?? "";
 			}
 		}
@@ -466,9 +464,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				bool tagExists;
 				string viewPosition;
-				GetTag(DicomTags.ViewPosition, out viewPosition, out tagExists);
+				viewPosition = this[DicomTags.ViewPosition].GetString(0, null);
 				return viewPosition ?? "";
 			}
 		}

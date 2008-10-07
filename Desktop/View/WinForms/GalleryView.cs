@@ -40,7 +40,14 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	[Obsolete("This control has been deprecated and will be removed in the future. Use GalleryComponent-derived components instead.")]
+	/// <summary>
+	/// This control may be deprecated and removed in a future release. Use <see cref="GalleryComponent"/> instead.
+	/// </summary>
+	/// <remarks>
+	/// It is strongly recommended that <see cref="GalleryComponent"/>-derived components be used instead of directly using this control.
+	/// The <see cref="GalleryComponent"/> model and view duplicates and improves upon the functionality available using this control.
+	/// As a result, this control may be deprecated and removed in a future release.
+	/// </remarks>
 	public partial class GalleryView : UserControl
 	{
 		private IBindingList _gallery;

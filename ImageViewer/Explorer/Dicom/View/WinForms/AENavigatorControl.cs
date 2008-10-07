@@ -100,7 +100,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 				ToolStripBuilder.Clear(_serverTools.Items);
 				if (_toolbarModel != null)
 				{
-					ToolStripBuilder.BuildToolbar(_serverTools.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
+					ToolStripBuilder.ToolStripBuilderStyle style = new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, ToolStripItemAlignment.Left, TextImageRelation.ImageBeforeText);
+					ToolStripBuilder.BuildToolbar(_serverTools.Items, _toolbarModel.ChildNodes, style);
 
 					foreach (ToolStripItem item in _serverTools.Items)
 						item.DisplayStyle = _toolStripItemDisplayStyle;

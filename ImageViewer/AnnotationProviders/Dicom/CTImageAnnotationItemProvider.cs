@@ -60,8 +60,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							double value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.Kvp, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.Kvp].TryGetFloat64(0, out value);
 							if (tagExists)
 								return String.Format(SR.FormatkV, value);
 
@@ -80,8 +79,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							int value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.XRayTubeCurrent, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.XRayTubeCurrent].TryGetInt32(0, out value);
 							if (tagExists)
 								return String.Format(SR.FormatmA, value);
 
@@ -100,8 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							double value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.GantryDetectorTilt, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.GantryDetectorTilt].TryGetFloat64(0, out value);
 							if (tagExists)
 								return String.Format(SR.FormatDegrees, value);
 
@@ -120,8 +117,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							int value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.ExposureTime, out value, out tagExists);
+							bool tagExists = frame.ParentImageSop[DicomTags.ExposureTime].TryGetInt32(0, out value);
 							if (tagExists)
 								return String.Format(SR.Formatms, value);
 
@@ -140,8 +136,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						delegate(Frame frame)
 						{
 							string value;
-							bool tagExists;
-							frame.ParentImageSop.GetTag(DicomTags.ConvolutionKernel, out value, out tagExists);
+							value = frame.ParentImageSop[DicomTags.ConvolutionKernel].GetString(0, null);
 							return value;
 						},
 						DicomDataFormatHelper.RawStringFormat

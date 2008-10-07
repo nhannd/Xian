@@ -101,13 +101,13 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// </summary>
 		/// <param name="attrib"></param>
 		/// <param name="value"></param>
-		[Obsolete]
 		public static void SetDate(DicomAttribute attrib, DateTime? value)
 		{
-		if(value.HasValue)
-			attrib.SetString(0, DateParser.ToDicomString(value.Value));
-		else
-			attrib.SetNullValue();
+			//TODO - replace this with DicomAttribute.SetDateTime(0, value) when it is fixed (ticket #1411)
+			if(value.HasValue)
+				attrib.SetString(0, DateParser.ToDicomString(value.Value));
+			else
+				attrib.SetNullValue();
 		}
 
 		/// <summary>
@@ -115,8 +115,8 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// </summary>
 		/// <param name="attrib"></param>
 		/// <param name="value"></param>
-		[Obsolete]
 		public static void SetTime(DicomAttribute attrib, DateTime? value) {
+			//TODO - replace this with DicomAttribute.SetDateTime(0, value) when it is fixed (ticket #1411)
 			if (value.HasValue)
 				attrib.SetString(0, string.Format(TimeParser.DicomFullTimeFormat, value.Value));
 			else
@@ -128,9 +128,9 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// </summary>
 		/// <param name="attrib"></param>
 		/// <param name="value"></param>
-		[Obsolete]
 		public static void SetInt32(DicomAttribute attrib, int value)
 		{
+			//TODO - replace this with DicomAttribute.SetInt32(0, value) when it is fixed (ticket #1411)
 			attrib.SetString(0, value.ToString());
 		}
 	}

@@ -77,7 +77,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._presetVoiLuts.ReadOnly = false;
 			this._presetVoiLuts.Size = new System.Drawing.Size(335, 190);
 			this._presetVoiLuts.TabIndex = 0;
-			this._presetVoiLuts.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
 			// 
 			// _comboModality
 			// 

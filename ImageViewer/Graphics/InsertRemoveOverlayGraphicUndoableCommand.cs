@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <see cref="InvalidCastException"/> will be thrown.
 		/// </para>
 		/// <para>
-		/// The input <paramref name="graphics"/> must not exist in the <see cref="IPresentationImage"/>'s overlay graphics or
+		/// The input <paramref name="graphics"/> must not exist in the <param name="presentationImage"/>'s overlay graphics or
 		/// an <see cref="InvalidOperationException"/> will be thrown.
 		/// </para>
 		/// <para>
