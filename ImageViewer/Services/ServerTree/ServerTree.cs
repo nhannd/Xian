@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
                 _rootNode.ServerGroupNode = new ServerGroup(MyServersTitle);
 				_rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup));
                 _rootNode.ServerGroupNode.ChildServers.Add(
-					new Server(SR.ExampleServer,"", "localhost", "SAMPLE", 104, false, 0, 0));
+					new Server(SR.ExampleServer, "", "localhost", "SAMPLE", 104, false, 50221, 1000));
             	Save();
             }
 
