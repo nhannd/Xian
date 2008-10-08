@@ -33,6 +33,7 @@ using System;
 using System.Windows.Forms;
 using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Help.UpdateInformationService;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
@@ -49,6 +50,9 @@ namespace ClearCanvas.Desktop.Help
 
 	[MenuAction("showLicense", "global-menus/MenuHelp/MenuLicense", "ShowLicense")]
 	[GroupHint("showLicense", "Application.Help.License")]
+
+	[MenuAction("checkForUpdates", "global-menus/MenuHelp/MenuCheckForUpdates", "CheckForUpdates")]
+	[GroupHint("checkForUpdates", "Application.Help.Updates")]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class HelpTool : Tool<IDesktopToolContext>
@@ -78,6 +82,54 @@ namespace ClearCanvas.Desktop.Help
 		public void ShowLicense()
 		{
 			Execute("EULA.rtf", SR.HelpNotFound);
+		}
+
+		public void CheckForUpdates()
+		{
+			using (UpdateInformationService.UpdateInformationService service = new UpdateInformationService.UpdateInformationService())
+			{
+				service.Url = HelpSettings.Default.UpdateServiceUrl;
+
+				Product installedProduct = new Product();
+				installedProduct.Name = Application.Name;
+				installedProduct.Version = Application.Version.ToString();
+
+				try
+				{
+					UpdateInformationRequest request = new UpdateInformationRequest();
+					request.InstalledProduct = installedProduct;
+					UpdateInformationResult result = service.GetUpdateInformation(request);
+					if (result == null)
+						throw new Exception("Bad data received from service.");
+
+					if (!IsValidProduct(result.InstalledProduct) || IsSameProduct(result.InstalledProduct, installedProduct))
+					{
+						base.Context.DesktopWindow.ShowMessageBox(SR.MessageNoUpdate, MessageBoxActions.Ok);
+					}
+					else
+					{
+						string message = String.Format(SR.MessageUpdateAvailable,
+							result.InstalledProduct.Name, result.InstalledProduct.Version);
+
+						UpdateAvailableForm.Show(message, result.DownloadUrl);
+					}
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Warn, e, "The request for update information failed.");
+					base.Context.DesktopWindow.ShowMessageBox(SR.MessageUpdateRequestFailed, MessageBoxActions.Ok);
+				}
+			}
+		}
+
+		private static bool IsValidProduct(Product product)
+		{
+			return product != null && !String.IsNullOrEmpty(product.Version);
+		}
+
+		private static bool IsSameProduct(Product product1, Product product2)
+		{
+			return product1.Name == product2.Name && product1.Version == product2.Version;
 		}
 
 		private void Execute(string filename, string errorMessage) {

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,38 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FormatVersion" xml:space="preserve">
-    <value>Version {0}</value>
-  </data>
-  <data name="HelpNotFound" xml:space="preserve">
-    <value>Could not find help file.</value>
-  </data>
-  <data name="LicenseNotFound" xml:space="preserve">
-    <value>Could not find license file.</value>
-  </data>
-  <data name="MenuCheckForUpdates" xml:space="preserve">
-    <value>Check For Updates</value>
-  </data>
-  <data name="MenuLicense" xml:space="preserve">
-    <value>Show License</value>
-  </data>
-  <data name="MenuUsersGuide" xml:space="preserve">
-    <value>User's Guide</value>
-  </data>
-  <data name="MenuWebsite" xml:space="preserve">
-    <value>ClearCanvas.ca</value>
-  </data>
-  <data name="MessageNoUpdate" xml:space="preserve">
-    <value>No update is available at this time.</value>
-  </data>
-  <data name="MessageUpdateAvailable" xml:space="preserve">
-    <value>{0} {1} is now available!</value>
-  </data>
-  <data name="MessageUpdateRequestFailed" xml:space="preserve">
-    <value>The request for update information failed.
-Please see the logs for more details.</value>
-  </data>
-  <data name="URLNotFound" xml:space="preserve">
-    <value>Could not reach URL</value>
-  </data>
 </root>

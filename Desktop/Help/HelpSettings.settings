@@ -5,5 +5,8 @@
     <Setting Name="UserGuidePath" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="UpdateServiceUrl" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:4472/UpdateInformationService.asmx</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
