@@ -116,8 +116,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         private void SetupChildControls()
         {
-            StudyDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
-
             ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid);

@@ -34,9 +34,9 @@
                                         </tr>
                                     </table>
                                 </asp:Panel>
-                                    <aspAjax:CalendarExtender ID="ReceivedDateCalendarExtender" runat="server" TargetControlID="ReceivedDate"
+                                    <ccUI:CalendarExtender ID="ReceivedDateCalendarExtender" runat="server" TargetControlID="ReceivedDate"
                                         CssClass="Calendar">
-                                    </aspAjax:CalendarExtender>
+                                    </ccUI:CalendarExtender>
                                 </td>
                             </tr>
                         </table>

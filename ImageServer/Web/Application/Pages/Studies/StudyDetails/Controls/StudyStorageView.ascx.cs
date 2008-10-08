@@ -77,6 +77,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         public override void DataBind()
         {
+            if(_study == null) throw new Exception("The study was null");
+
+            
             StudyStorageViewControl.DataSource = null;
             if(_study.StudyStatusEnum != StudyStatusEnum.Nearline)
             {

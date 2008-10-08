@@ -1100,7 +1100,6 @@
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Content Include="Web.sitemap" />
-    <Content Include="Logging.config" />
     <Content Include="Services\webservice.htc" />
   </ItemGroup>
   <ItemGroup>

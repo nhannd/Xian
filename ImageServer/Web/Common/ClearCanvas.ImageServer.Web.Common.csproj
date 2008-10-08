@@ -96,6 +96,7 @@
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="WebControls\UI\CalendarExtender.cs" />
     <Compile Include="WebControls\UI\PersonNameLabel.cs" />
     <Compile Include="Utilities\DateTimeFormatter.cs" />
     <Compile Include="WebControls\UI\TextBox.cs" />

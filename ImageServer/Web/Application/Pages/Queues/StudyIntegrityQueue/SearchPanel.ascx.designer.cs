@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender ReceivedDateCalendarExtender;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender ReceivedDateCalendarExtender;
         
         /// <summary>
         /// ToolBarUpdatePanel control.

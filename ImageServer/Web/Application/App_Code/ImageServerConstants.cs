@@ -22,7 +22,6 @@ public class ImageServerConstants
     public const string Last = "last";
     public const string Next = "next";
     public const string Prev = "prev";
-    public const string MMDDYYY = "MM/dd/yyyy";
     public const string DicomDate = "yyyyMMdd";
     public const string DicomDateTime = "YYYYMMDDHHMMSS.FFFFFF";
     public const string DicomSeparator = "^";

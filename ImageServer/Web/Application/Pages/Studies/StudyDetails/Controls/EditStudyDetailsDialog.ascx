@@ -132,9 +132,9 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 </td>
                             </tr>
                         </table>
-                        <aspAjax:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" OnClientDateSelectionChanged="changeAge" 
+                        <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" OnClientDateSelectionChanged="changeAge" 
                             CssClass="Calendar">
-                        </aspAjax:CalendarExtender>
+                        </ccUI:CalendarExtender>
                     </ContentTemplate>
                     <HeaderTemplate>
                         Patient Information
@@ -274,9 +274,9 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 </td>
                                 </tr>
                              </table>
-                             <aspAjax:CalendarExtender ID="StudyDateCalendarExtender" runat="server" TargetControlID="StudyDate"
+                             <ccUI:CalendarExtender ID="StudyDateCalendarExtender" runat="server" TargetControlID="StudyDate"
                                 CssClass="Calendar">
-                            </aspAjax:CalendarExtender>
+                            </ccUI:CalendarExtender>
                     </ContentTemplate>
                     <HeaderTemplate>
                         Study Information

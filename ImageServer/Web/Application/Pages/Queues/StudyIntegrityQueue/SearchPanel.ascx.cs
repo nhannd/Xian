@@ -96,8 +96,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             base.OnInit(e);
 
-            ReceivedDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
-
             ClearReceivedDateButton.OnClientClick = "document.getElementById('" + ReceivedDate.ClientID + "').value=''; return false;";
           
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 

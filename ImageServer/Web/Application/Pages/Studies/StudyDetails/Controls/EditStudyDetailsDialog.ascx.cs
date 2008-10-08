@@ -5,6 +5,8 @@ using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -244,7 +246,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 DateTime birthDate = DateTime.ParseExact(study.PatientsBirthDate, ImageServerConstants.DicomDate, null);
 
-                PatientBirthDate.Text = birthDate.ToString(ImageServerConstants.MMDDYYY);
+                PatientBirthDate.Text = birthDate.ToString(DateTimeFormatter.DefaultDateFormat);
 
                 TimeSpan age = DateTime.Now - birthDate;
                 if (age > TimeSpan.FromDays(365))
@@ -303,7 +305,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (!string.IsNullOrEmpty(study.StudyDate))
             {
                 DateTime studyDate = DateTime.ParseExact(study.StudyDate, ImageServerConstants.DicomDate, null);
-                StudyDate.Text = studyDate.ToString(ImageServerConstants.MMDDYYY);
+                StudyDate.Text = studyDate.ToString(DateTimeFormatter.DefaultDateFormat);
             } else
             {
                 StudyDate.Text = string.Empty;

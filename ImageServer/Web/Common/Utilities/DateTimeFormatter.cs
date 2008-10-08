@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             DateTimeFormatInfo fmt = culture.DateTimeFormat;
             
             DefaultDateFormat = null;
-            if (String.IsNullOrEmpty(UISettings.Default.DateFormat))
+            if (String.IsNullOrEmpty(UISettings.Default.DefaultDateFormat))
             {
                 if (fmt != null)
                 {
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             else
             {
                 // use the defined format
-                DefaultDateFormat = UISettings.Default.DateFormat;
+                DefaultDateFormat = UISettings.Default.DefaultDateFormat;
             }
 
             DefaultTimeFormat = null;

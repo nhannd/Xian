@@ -10,8 +10,8 @@
             <td>
                 <asp:Label ID="Label1" runat="server" Text="Schedule: " CssClass="DialogTextBoxLabel"></asp:Label>
                 <asp:TextBox ID="NewScheduleDate" runat="server" Width="80px" CssClass="DialogTextBox"></asp:TextBox>
-                <aspAjax:CalendarExtender ID="CalendarExtender" runat="server" TargetControlID="NewScheduleDate" CssClass="Calendar">
-                </aspAjax:CalendarExtender>
+                <ccUI:CalendarExtender ID="CalendarExtender" runat="server" TargetControlID="NewScheduleDate" CssClass="Calendar">
+                </ccUI:CalendarExtender>
                 <asp:DropDownList ID="NewScheduleTimeDropDownList" runat="server" CssClass="DialogDropDownList" />
             </td>            
         </tr>

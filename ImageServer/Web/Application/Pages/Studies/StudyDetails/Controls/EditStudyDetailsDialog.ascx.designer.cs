@@ -377,7 +377,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender PatientBirthDateCalendarExtender;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender PatientBirthDateCalendarExtender;
         
         /// <summary>
         /// TabPanel2 control.
@@ -800,7 +800,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::AjaxControlToolkit.CalendarExtender StudyDateCalendarExtender;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender StudyDateCalendarExtender;
         
         /// <summary>
         /// Panel1 control.

@@ -99,8 +99,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         {
             base.OnInit(e);
 
-            ScheduleDateCalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
-
             ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
             
             // setup child controls
