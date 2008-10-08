@@ -43,11 +43,10 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
-	[MenuAction("activate", "imageviewer-contextmenu/Rotate Volume", Flags = ClickActionFlags.CheckAction)]
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ButtonAction("activate", "global-toolbars/ToolbarsVolume/RotateVolume", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/Rotate Volume", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarsVolume/RotateVolume", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
-    [ClickHandler("activate", "Select")]
     [Tooltip("activate", "Rotate Volume")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolLarge.png", "Icons.CreateVolumeToolLarge.png")]
 	[GroupHint("activate", "Tools.VolumeImage.Manipulation.Rotate")]

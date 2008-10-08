@@ -41,13 +41,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Applets.WebBrowser
 {
-	[ButtonAction("activate1", "webbrowser-toolbar/ClearCanvas")]
-	[ClickHandler("activate1", "LaunchClearCanvas")]
+	[ButtonAction("activate1", "webbrowser-toolbar/ClearCanvas", "LaunchClearCanvas")]
 	[Tooltip("activate1", "Launch ClearCanvas")]
 	[IconSet("activate1", IconScheme.Colour, "Icons.ClearCanvasToolSmall.png", "Icons.ClearCanvasToolSmall.png", "Icons.ClearCanvasToolSmall.png")]
 
-	[ButtonAction("activate2", "webbrowser-toolbar/Discussion Forum")]
-	[ClickHandler("activate2", "LaunchDiscussionForum")]
+	[ButtonAction("activate2", "webbrowser-toolbar/Discussion Forum", "LaunchDiscussionForum")]
 	[Tooltip("activate2", "Launch ClearCanvas Discussion Forum")]
 	[IconSet("activate2", IconScheme.Colour, "Icons.ClearCanvasToolSmall.png", "Icons.ClearCanvasToolSmall.png", "Icons.ClearCanvasToolSmall.png")]
 
@@ -67,7 +65,7 @@ namespace ClearCanvas.Desktop.Applets.WebBrowser
 
 		private void LaunchDiscussionForum()
 		{
-			this.Context.Url = "http://www.clearcanvas.ca/forum/index.php";
+			this.Context.Url = "http://www.clearcanvas.ca/dnn/Community/Forums/tabid/69/Default.aspx";
 			this.Context.Go();
 		}
 	}

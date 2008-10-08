@@ -115,12 +115,12 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 
 		public double RescaleSlope
 		{
-			get { return GetImageSop().RescaleSlope; }
+			get { return GetFirstFrame().RescaleSlope; }
 		}
 
 		public double RescaleIntercept
 		{
-			get { return GetImageSop().RescaleIntercept; }
+			get { return GetFirstFrame().RescaleIntercept; }
 		}
 
 		#endregion
@@ -150,16 +150,21 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 			return (GetDicomPresentationImage() as IImageGraphicProvider).ImageGraphic;
 		}
 
+		private Frame GetFirstFrame()
+		{
+			return GetImageSop().Frames[1];
+		}
+
 		private bool IsDataUnsigned()
 		{
-			return (GetImageSop().PixelRepresentation == 0);
+			return (GetFirstFrame().PixelRepresentation == 0);
 		}
 
 		private vtkImageData CreateVolumeImageData()
 		{
 			vtkImageData imageData = new vtkImageData();
 			imageData.SetDimensions(this.Width, this.Height, this.Depth);
-			imageData.SetSpacing(GetImageSop().PixelSpacing.Column, GetImageSop().PixelSpacing.Row, GetSliceSpacing());
+			imageData.SetSpacing(GetFirstFrame().PixelSpacing.Column, GetFirstFrame().PixelSpacing.Row, GetSliceSpacing());
 			imageData.AllocateScalars();
 			imageData.SetScalarTypeToUnsignedShort();
 			imageData.GetPointData().SetScalars(BuildVolumeImageData());
@@ -264,8 +269,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 		{
 			if (_displaySet.PresentationImages.Count > 1)
 			{
-				ImageSop slice1 = (GetDicomPresentationImage(0) as IImageSopProvider).ImageSop;
-				ImageSop slice2 = (GetDicomPresentationImage(1) as IImageSopProvider).ImageSop;
+				Frame slice1 = (GetDicomPresentationImage(0) as IImageSopProvider).ImageSop.Frames[1];
+				Frame slice2 = (GetDicomPresentationImage(1) as IImageSopProvider).ImageSop.Frames[1];
 				double sliceSpacing = Math.Abs(slice2.ImagePositionPatient.Z - slice1.ImagePositionPatient.Z);
 
 				return sliceSpacing;

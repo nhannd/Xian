@@ -44,16 +44,16 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 {
-	[ButtonAction("show", "global-toolbars/ToolbarsVolume/CreateVolumeTool")]
+	[ButtonAction("show", "global-toolbars/ToolbarsVolume/CreateVolumeTool", "Show")]
 	[Tooltip("show", "Create Volume")]
 	[IconSet("show", IconScheme.Colour, "Icons.CreateVolumeToolSmall.png", "Icons.CreateVolumeToolMedium.png", "Icons.CreateVolumeToolLarge.png")]
-	[ClickHandler("show", "Show")]
 	[GroupHint("show", "Tools.VolumeImage.Create")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class CreateVolumeTool : ImageViewerTool
 	{
 		private static VolumeComponent _volumeComponent;
+		private static IShelf _volumeShelf;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -79,14 +79,21 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.VTK
 				_volumeComponent = new VolumeComponent(this.Context.DesktopWindow);
 
 				// launch the layout component in a shelf
-				// note that the component is thrown away when the shelf is closed by the user
-				ApplicationComponent.LaunchAsShelf(
+				_volumeShelf = ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
 					_volumeComponent,
 					SR.TitleVolumeController,
-					ShelfDisplayHint.DockLeft,
-					delegate(IApplicationComponent component) { _volumeComponent = null; });
+					ShelfDisplayHint.DockLeft);
+
+				_volumeShelf.Closed += VolumeShelf_Closed;
 			}
+		}
+
+		private static void VolumeShelf_Closed(object sender, ClosedEventArgs e) {
+			// note that the component is thrown away when the shelf is closed by the user
+			_volumeShelf.Closed -= VolumeShelf_Closed;
+			_volumeShelf = null;
+			_volumeComponent = null;
 		}
 	}
 }

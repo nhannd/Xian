@@ -285,7 +285,6 @@ namespace ClearCanvas.ImageViewer.VtkItkAdapters
         }
         private unsafe static void CopyFromSigned8(ImageGraphic image, itkImageBase itkImage)
         {
-            int min = int.MaxValue, max = int.MinValue;//remove
             fixed (byte* pDstByte = image.PixelData.Raw)
             {
                 itkImageRegionConstIterator_IUC2 itkIt = new itkImageRegionConstIterator_IUC2(itkImage, itkImage.LargestPossibleRegion);
@@ -306,7 +305,6 @@ namespace ClearCanvas.ImageViewer.VtkItkAdapters
 
         private unsafe static void CopyFromUnsigned8(ImageGraphic image, itkImageBase itkImage)
         {
-            int min = int.MaxValue, max = int.MinValue;//remove
             fixed (byte* pDstByte = image.PixelData.Raw)
             {
                 itkImageRegionConstIterator_IUC2 itkIt = new itkImageRegionConstIterator_IUC2(itkImage, itkImage.LargestPossibleRegion);

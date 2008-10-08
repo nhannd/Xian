@@ -249,7 +249,7 @@ namespace ClearCanvas.Desktop.Applets.WebBrowser
 		/// <param name="title"></param>
 		public void SetDocumentTitle(string title)
 		{
-			this.Host.SetTitle(title);
+			this.Host.Title = title;
 		}
 
 		public void Go()

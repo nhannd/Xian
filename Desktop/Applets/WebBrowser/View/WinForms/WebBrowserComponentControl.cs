@@ -84,7 +84,11 @@ namespace ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms
 				if (_toolbarModel != null)
 				{
 					// Use the toolbar model in the component to build the toolbar
-					ToolStripBuilder.BuildToolbar(_shortcutToolbar.Items, _toolbarModel.ChildNodes, ToolStripItemDisplayStyle.ImageAndText);
+					ToolStripBuilder.ToolStripBuilderStyle style = new ToolStripBuilder.ToolStripBuilderStyle(
+						ToolStripItemDisplayStyle.ImageAndText,
+						ToolStripItemAlignment.Left,
+						TextImageRelation.ImageBeforeText);
+					ToolStripBuilder.BuildToolbar(_shortcutToolbar.Items, _toolbarModel.ChildNodes, style);
 
 					foreach (ToolStripItem item in _shortcutToolbar.Items)
 					{

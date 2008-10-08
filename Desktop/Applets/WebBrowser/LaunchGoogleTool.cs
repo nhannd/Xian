@@ -41,9 +41,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Applets.WebBrowser
 {
-	[ButtonAction("activate", "webbrowser-toolbar/Google")]
-	[ClickHandler("activate", "LaunchGoogle")]
-	//[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[ButtonAction("activate", "webbrowser-toolbar/Google", "LaunchGoogle")]
 	[Tooltip("activate", "Launch Google")]
 	[IconSet("activate", IconScheme.Colour, "Icons.GoogleToolSmall.png", "Icons.GoogleToolSmall.png", "Icons.GoogleToolSmall.png")]
 	[ExtensionOf(typeof(WebBrowserToolExtensionPoint))]

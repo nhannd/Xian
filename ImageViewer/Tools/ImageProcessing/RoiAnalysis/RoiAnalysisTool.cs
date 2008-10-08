@@ -38,9 +38,8 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuRoiAnalysis")]
-    [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarRoiAnalysis")]
-    [ClickHandler("show", "Show")]
+	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuRoiAnalysis", "Show")]
+	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarRoiAnalysis", "Show")]
 	[IconSet("show", IconScheme.Colour, "Icons.RoiHistogramToolSmall.png", "Icons.RoiHistogramToolMedium.png", "Icons.RoiHistogramToolLarge.png")]
 	[Tooltip("show", "TooltipRoiAnalysis")]
 
@@ -52,6 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 	public class RoiAnalysisTool : ImageViewerTool
 	{
 		private static RoiAnalysisComponentContainer _roiAnalysisComponent;
+		private static IShelf _roiAnalysisShelf;
 
         /// <summary>
         /// Constructor
@@ -81,15 +81,22 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 				_roiAnalysisComponent = new RoiAnalysisComponentContainer(this.Context);
 				
                 // launch the layout component in a shelf
-                // note that the component is thrown away when the shelf is closed by the user
-                ApplicationComponent.LaunchAsShelf(
+				_roiAnalysisShelf = ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
 					_roiAnalysisComponent,
                     SR.Title,
-                    ShelfDisplayHint.DockLeft,
-					delegate(IApplicationComponent component) { _roiAnalysisComponent = null; });
+                    ShelfDisplayHint.DockLeft);
+
+				_roiAnalysisShelf.Closed += RoiAnalysisShelf_Closed;
             }
         }
+
+		private static void RoiAnalysisShelf_Closed(object sender, ClosedEventArgs e) {
+			// note that the component is thrown away when the shelf is closed by the user
+			_roiAnalysisShelf.Closed -= RoiAnalysisShelf_Closed;
+			_roiAnalysisShelf = null;
+			_roiAnalysisComponent = null;
+		}
 
 	}
 }
