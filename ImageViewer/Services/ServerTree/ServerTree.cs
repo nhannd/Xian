@@ -837,7 +837,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 				Platform.Log(LogLevel.Warn, e, "Failed to retrieve the dicom server's ae title.");
 			}
 
-			return ae ?? _offlineAE;
+			return ae ?? OfflineAE;
 		}
 
 		public string OfflineAE

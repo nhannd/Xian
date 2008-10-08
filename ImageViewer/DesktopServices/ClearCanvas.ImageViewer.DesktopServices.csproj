@@ -121,7 +121,6 @@
     <Compile Include="Automation\ViewerAutomationTool.cs" />
     <Compile Include="Automation\ViewerSessionTool.cs" />
     <Compile Include="Automation\ViewerAutomationServiceProvider.cs" />
-    <Compile Include="StudyLocator\StudyLocatorServiceProvider.cs" />
     <Compile Include="StudyLocator\StudyLocatorTool.cs" />
   </ItemGroup>
   <ItemGroup>

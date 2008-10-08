@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Services.StudyLocator;
 
 namespace ClearCanvas.ImageViewer.StudyLocator
 {
@@ -13,8 +14,8 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 		public object GetService(Type serviceType)
 		{
-			if (serviceType == typeof(IStudyRootQuery))
-				return new StudyLocatorQueryClient();
+			if (serviceType == typeof(IStudyLocator))
+				return new StudyLocatorServiceClient();
 
 			return null;
 		}
@@ -22,23 +23,41 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 		#endregion
 	}
 
-	internal class StudyLocatorQueryClient : ClientBase<IStudyRootQuery>, IStudyRootQuery
+	internal class StudyLocatorServiceClient : ClientBase<IStudyLocator>, IStudyLocator
 	{
+		public StudyLocatorServiceClient()
+		{
+		}
+
+		#region IStudyLocator Members
+
+		public IList<StudyRootStudyIdentifier> FindByStudyInstanceUid(string[] studyInstanceUids)
+		{
+			return base.Channel.FindByStudyInstanceUid(studyInstanceUids);
+		}
+
+		public IList<StudyRootStudyIdentifier> FindByAccessionNumber(string accessionNumber)
+		{
+			return base.Channel.FindByAccessionNumber(accessionNumber);
+		}
+
+		#endregion
+
 		#region IStudyRootQuery Members
 
 		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryQriteria)
 		{
-			return Channel.StudyQuery(queryQriteria);
+			return base.Channel.StudyQuery(queryQriteria);
 		}
 
 		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria)
 		{
-			return Channel.SeriesQuery(queryQriteria);
+			return base.Channel.SeriesQuery(queryQriteria);
 		}
 
 		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria)
 		{
-			return Channel.ImageQuery(queryQriteria);
+			return base.Channel.ImageQuery(queryQriteria);
 		}
 
 		#endregion

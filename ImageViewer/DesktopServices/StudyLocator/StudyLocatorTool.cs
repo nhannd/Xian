@@ -37,9 +37,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 		{
 			try
 			{
-				using (StudyLocatorServiceClient client = new StudyLocatorServiceClient())
+				IStudyLocator client = Platform.GetService<IStudyLocator>();
+				try 
 				{
 					client.FindByAccessionNumber("test");
+				}
+				finally
+				{
+					if (client is IDisposable)
+						(client as IDisposable).Dispose();
 				}
 
 				base.Context.DesktopWindow.ShowMessageBox("Success!", MessageBoxActions.Ok);

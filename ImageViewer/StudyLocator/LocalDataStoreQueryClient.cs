@@ -5,7 +5,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLocator
