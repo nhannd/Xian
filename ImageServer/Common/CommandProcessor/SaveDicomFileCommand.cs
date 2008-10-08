@@ -40,6 +40,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		#region Private Members
 		private readonly string _path;
 		private readonly DicomFile _file;
+	    private string _backupPath = ServerPlatform.GetTempPath();
+	    private bool _backup;
+	    private bool _saved;
 		#endregion
 
 		public SaveDicomFileCommand(string path, DicomFile file )
@@ -48,18 +51,40 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			Platform.CheckForNullReference(path, "File name");
 			Platform.CheckForNullReference(file, "Dicom File object");
 
+            if (RequiresRollback)
+                Backup();
+
 			_path = path;
 			_file = file;
 		}
 
-		protected override void OnExecute()
+	    private void Backup()
+	    {
+            if (File.Exists(_path))
+            {
+                File.Copy(_path, _backupPath);
+                _backup = true;
+            }
+	    }
+
+
+	    protected override void OnExecute()
 		{
             _file.Save(_path, DicomWriteOptions.Default);
+	        _saved = true;
 		}
 
 		protected override void OnUndo()
 		{
-			File.Delete(_path);
+            if (_backup)
+            {
+                if (_saved)
+                    File.Copy(_backupPath, _path);
+            }
+            else
+            {
+                File.Delete(_path);
+            }
 		}
 	}
 }

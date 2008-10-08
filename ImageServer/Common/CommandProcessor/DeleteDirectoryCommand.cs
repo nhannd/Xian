@@ -14,10 +14,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     {
         #region Private Members
         private readonly string _directory;
-        static string _tempRootDir = Path.GetPathRoot(Path.GetTempPath());
-        private string _backupDirectory = Path.Combine(Path.Combine(_tempRootDir, "temp"), Path.GetRandomFileName());
+        private readonly string _backupDirectory = ServerPlatform.GetTempPath();
         private bool _backedUp = false;
-        private bool _deleteWhenEmpty = false;
+        private readonly bool _deleteWhenEmpty = false;
         #endregion
 
         public DeleteDirectoryCommand(string directory, bool deleteWhenEmpty)

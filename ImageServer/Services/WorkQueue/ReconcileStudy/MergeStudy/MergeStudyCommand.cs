@@ -164,7 +164,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                                             _destStudyStorage,
                                             _imageLevelCommands);
                 updateProcessor.AddCommand(studyUpdateCommand);
-                updateProcessor.Execute();    
+                if (!updateProcessor.Execute())
+                {
+                    throw new ApplicationException(
+                        String.Format("Unable to update existing study: {0}", updateProcessor.FailureReason));
+                }
             }
             
         }

@@ -67,7 +67,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly string _description;
         private readonly Stack<IServerCommand> _stack = new Stack<IServerCommand>();
         private readonly Queue<IServerCommand> _queue = new Queue<IServerCommand>();
-		private string _failureReason;
+        private readonly List<IServerCommand> _list = new List<IServerCommand>(); 
+        private string _failureReason;
 		private IUpdateContext _updateContext = null;
 		#endregion
 
@@ -119,6 +120,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		public void AddCommand(IServerCommand command)
 		{
 			_queue.Enqueue(command);
+		    _list.Add(command);
 		}
         
 		/// <summary>
@@ -213,18 +215,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 				Rollback();
 			}
 
-			foreach (ServerCommand command in _queue)
+			foreach (ServerCommand command in _list)
 			{
                 if (command is IDisposable)
 				    (command as IDisposable).Dispose();
-			}
-
-			while (_stack.Count > 0)
-			{
-                IDisposable command = _stack.Pop() as IDisposable;
-				if (command !=null)
-                    command.Dispose();
-
 			}
 		}
 

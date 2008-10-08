@@ -55,7 +55,6 @@
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandXmlParser.cs" />
     <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
     <Compile Include="StudyProcess\ImageReconciler.cs" />
-    <Compile Include="WebEditStudy\StudyUpdater.cs" />
     <Compile Include="WebEditStudy\UpdateStudyCommand.cs" />
     <Compile Include="ReconcileStudy\Mapping.cs" />
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandProcessor.cs" />
