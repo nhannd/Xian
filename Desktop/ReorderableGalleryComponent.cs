@@ -3,30 +3,68 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Desktop
 {
+	/// <summary>
+	/// A <see cref="GalleryComponent"/> that supports drag-reordering of displayed items.
+	/// </summary>
+	/// <remarks>
+	/// This class can be overriden to complete the gallery with drag and drop support for importing and exporting both <see cref="IGalleryItem"/>s
+	/// and other objects. The default implemention only allowes reordering of items within itself.
+	/// </remarks>
 	public class ReorderableGalleryComponent : GalleryComponent
 	{
 		private IList<IGalleryItem> _draggedItems;
 
+		/// <summary>
+		/// Constructs an empty <see cref="ReorderableGalleryComponent"/> without any tool actions.
+		/// </summary>
 		public ReorderableGalleryComponent() : base() {}
 
+		/// <summary>
+		/// Constructs a <see cref="ReorderableGalleryComponent"/> with the specified data source and without any tool actions.
+		/// </summary>
+		/// <param name="dataSource">An <see cref="IBindingList"/> of <see cref="IGalleryItem"/>s.</param>
 		public ReorderableGalleryComponent(IBindingList dataSource) : base(dataSource) {}
 
+		/// <summary>
+		/// Constructs an empty <see cref="ReorderableGalleryComponent"/>, automatically adding the actions of
+		/// <see cref="GalleryToolExtensionPoint"/>s at the specified action sites.
+		/// </summary>
+		/// <param name="toolbarSite">The site for toolbar actions.</param>
+		/// <param name="contextMenuSite">The site for context menu actions.</param>
 		public ReorderableGalleryComponent(string toolbarSite, string contextMenuSite) : base(toolbarSite, contextMenuSite) {}
 
+		/// <summary>
+		/// Constructs a <see cref="ReorderableGalleryComponent"/> with the specified data source, automatically adding the actions of
+		/// <see cref="GalleryToolExtensionPoint"/>s at the specified action sites.
+		/// </summary>
+		/// <param name="dataSource">An <see cref="IBindingList"/> of <see cref="IGalleryItem"/>s.</param>
+		/// <param name="toolbarSite">The site for toolbar actions.</param>
+		/// <param name="contextMenuSite">The site for context menu actions.</param>
 		public ReorderableGalleryComponent(IBindingList dataSource, string toolbarSite, string contextMenuSite)
 			: base(dataSource, toolbarSite, contextMenuSite) {}
 
+		/// <summary>
+		/// Gets or sets the list of items being dragged.
+		/// </summary>
 		protected IList<IGalleryItem> DraggedItems
 		{
 			get { return _draggedItems; }
 			set { _draggedItems = value; }
 		}
 
+		/// <summary>
+		/// Gets if the gallery supports any drag and drop interaction in between items.
+		/// </summary>
 		public override bool AllowsDropAtIndex
 		{
 			get { return true; }
 		}
 
+		/// <summary>
+		/// Gets a list of  <see cref="IGalleryItem"/>s from the given <see cref="IDragDropObject">data wrapper</see>.
+		/// </summary>
+		/// <param name="dataObject">The data wrapper object.</param>
+		/// <returns>A <see cref="IList{T}"/> of <see cref="IGalleryItem"/>s, or null if the wrapper did not contain a list of 0 or more IGalleryItems.</returns>
 		protected IList<IGalleryItem> ExtractGalleryItemList(IDragDropObject dataObject)
 		{
 			IList<IGalleryItem> itemlist = null;
@@ -209,6 +247,14 @@ namespace ClearCanvas.Desktop
 
 		#region Virtual Members
 
+		/// <summary>
+		/// Checks if drag-dropping <see cref="IGalleryItem"/>s from within this gallery to the specified target index is allowed.
+		/// </summary>
+		/// <param name="droppingItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetIndex">The target index at which the <paramref name="droppingItems"/> are being dropped.</param>
+		/// <param name="actions">The interactions that are being allowed by the data source.</param>
+		/// <param name="modifiers">The modifier keys that currently being pressed.</param>
+		/// <returns>The allowed interactions for dropping the <paramref name="droppingItems"/> here.</returns>
 		protected virtual DragDropOption CheckDropLocalItems(IList<IGalleryItem> droppingItems, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			DragDropOption allowedActions = DragDropOption.None;
@@ -228,31 +274,79 @@ namespace ClearCanvas.Desktop
 			return allowedActions;
 		}
 
+		/// <summary>
+		/// Checks if drag-dropping <see cref="IGalleryItem"/>s from outside this gallery to the specified target index is allowed.
+		/// </summary>
+		/// <param name="droppingItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetIndex">The target index at which the <paramref name="droppingItems"/> are being dropped.</param>
+		/// <param name="actions">The interactions that are being allowed by the data source.</param>
+		/// <param name="modifiers">The modifier keys that currently being pressed.</param>
+		/// <returns>The allowed interactions for dropping the <paramref name="droppingItems"/> here.</returns>
 		protected virtual DragDropOption CheckDropForeignItems(IList<IGalleryItem> droppingItems, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Checks if drag-dropping non-<see cref="IGalleryItem"/> objects from outside this gallery to the specified index is allowed.
+		/// </summary>
+		/// <param name="droppingData">The data object to drop.</param>
+		/// <param name="targetIndex">The target index at which the <paramref name="droppingData"/> is being dropped.</param>
+		/// <param name="actions">The interactions that are being allowed by the data source.</param>
+		/// <param name="modifiers">The modifier keys that currently being pressed.</param>
+		/// <returns>The allowed interactions for dropping the <paramref name="droppingData"/> here.</returns>
 		protected virtual DragDropOption CheckDropForeignObject(IDragDropObject droppingData, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Checks if drag-dropping <see cref="IGalleryItem"/>s from within this gallery on top of the specified item is allowed.
+		/// </summary>
+		/// <param name="droppingItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetItem">The target <see cref="IGalleryItem"/> at which the <paramref name="droppingItems"/> are being dropped.</param>
+		/// <param name="actions">The interactions that are being allowed by the data source.</param>
+		/// <param name="modifiers">The modifier keys that currently being pressed.</param>
+		/// <returns>The allowed interactions for dropping the <paramref name="droppingItems"/> here.</returns>
 		protected virtual DragDropOption CheckDropLocalItems(IList<IGalleryItem> droppingItems, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Checks if drag-dropping <see cref="IGalleryItem"/>s from outside this gallery on top of the specified item is allowed.
+		/// </summary>
+		/// <param name="droppingItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetItem">The target <see cref="IGalleryItem"/> at which the <paramref name="droppingItems"/> are being dropped.</param>
+		/// <param name="actions">The interactions that are being allowed by the data source.</param>
+		/// <param name="modifiers">The modifier keys that currently being pressed.</param>
+		/// <returns>The allowed interactions for dropping the <paramref name="droppingItems"/> here.</returns>
 		protected virtual DragDropOption CheckDropForeignItems(IList<IGalleryItem> droppingItems, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Checks if drag-dropping non-<see cref="IGalleryItem"/> objects from outside this gallery on top of the specified item is allowed.
+		/// </summary>
+		/// <param name="droppingData">The data object to drop.</param>
+		/// <param name="targetItem">The target <see cref="IGalleryItem"/> at which the <paramref name="droppingData"/> is being dropped.</param>
+		/// <param name="actions">The interactions that are being allowed by the data source.</param>
+		/// <param name="modifiers">The modifier keys that currently being pressed.</param>
+		/// <returns>The allowed interactions for dropping the <paramref name="droppingData"/> here.</returns>
 		protected virtual DragDropOption CheckDropForeignObject(IDragDropObject droppingData, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Performs a drag-drop of <see cref="IGalleryItem"/>s from within this gallery to the specified target index.
+		/// </summary>
+		/// <param name="droppedItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetIndex">The target index at which the <paramref name="droppedItems"/> are being dropped.</param>
+		/// <param name="actions">The interaction to take.</param>
+		/// <param name="modifiers">The modifier keys that were pressed at the time of the drop.</param>
+		/// <returns>The actual interaction on the <paramref name="droppedItems"/> that was taken.</returns>
 		protected virtual DragDropOption PerformDropLocalItems(IList<IGalleryItem> droppedItems, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			DragDropOption performedAction = DragDropOption.None;
@@ -289,27 +383,67 @@ namespace ClearCanvas.Desktop
 			return performedAction;
 		}
 
+		/// <summary>
+		/// Performs a drag-drop of <see cref="IGalleryItem"/>s from outside this gallery to the specified target index.
+		/// </summary>
+		/// <param name="droppedItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetIndex">The target index at which the <paramref name="droppedItems"/> are being dropped.</param>
+		/// <param name="actions">The interaction to take.</param>
+		/// <param name="modifiers">The modifier keys that were pressed at the time of the drop.</param>
+		/// <returns>The actual interaction on the <paramref name="droppedItems"/> that was taken.</returns>
 		protected virtual DragDropOption PerformDropForeignItems(IList<IGalleryItem> droppedItems, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppedItem, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
+		/// <summary>
+		/// Performs a drag-drop of a non-<see cref="IGalleryItem"/> object from outside this gallery to the specified index.
+		/// </summary>
+		/// <param name="droppedData">The data object to drop.</param>
+		/// <param name="targetIndex">The target index at which the <paramref name="droppedData"/> is being dropped.</param>
+		/// <param name="actions">The interaction to take.</param>
+		/// <param name="modifiers">The modifier keys that were pressed at the time of the drop.</param>
+		/// <returns>The actual interaction on the <paramref name="droppedData"/> that was taken.</returns>
+		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppedData, int targetIndex, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Performs a drag-drop of <see cref="IGalleryItem"/>s from within this gallery on top of the specified item.
+		/// </summary>
+		/// <param name="droppedItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetItem">The target <see cref="IGalleryItem"/> at which the <paramref name="droppedItems"/> are being dropped.</param>
+		/// <param name="actions">The interaction to take.</param>
+		/// <param name="modifiers">The modifier keys that were pressed at the time of the drop.</param>
+		/// <returns>The actual interaction on the <paramref name="droppedItems"/> that was taken.</returns>
 		protected virtual DragDropOption PerformDropLocalItems(IList<IGalleryItem> droppedItems, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
+		/// <summary>
+		/// Performs a drag-drop of <see cref="IGalleryItem"/>s from outside this gallery on top of the specified item.
+		/// </summary>
+		/// <param name="droppedItems">The list of <see cref="IGalleryItem"/>s to drop.</param>
+		/// <param name="targetItem">The target <see cref="IGalleryItem"/> at which the <paramref name="droppedItems"/> are being dropped.</param>
+		/// <param name="actions">The interaction to take.</param>
+		/// <param name="modifiers">The modifier keys that were pressed at the time of the drop.</param>
+		/// <returns>The actual interaction on the <paramref name="droppedItems"/> that was taken.</returns>
 		protected virtual DragDropOption PerformDropForeignItems(IList<IGalleryItem> droppedItems, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
 
-		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppedItem, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
+		/// <summary>
+		/// Performs a drag-drop of a non-<see cref="IGalleryItem"/> object from outside this gallery on top of the specified item.
+		/// </summary>
+		/// <param name="droppedData">The data object to drop.</param>
+		/// <param name="targetItem">The target <see cref="IGalleryItem"/> at which the <paramref name="droppedData"/> is being dropped.</param>
+		/// <param name="actions">The interaction to take.</param>
+		/// <param name="modifiers">The modifier keys that were pressed at the time of the drop.</param>
+		/// <returns>The actual interaction on the <paramref name="droppedData"/> that was taken.</returns>
+		protected virtual DragDropOption PerformDropForeignObject(IDragDropObject droppedData, IGalleryItem targetItem, DragDropOption actions, ModifierFlags modifiers)
 		{
 			return DragDropOption.None;
 		}
