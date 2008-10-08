@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
@@ -107,11 +108,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         #region Protected methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            
-        }
-
         /// <summary>
         /// Handles event when user clicks on "OK" button.
         /// </summary>
@@ -175,7 +171,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         private void DisplayReconcileSummary()
         {
             StudyInstanceUIDLabel.Text = ReconcileDetails.StudyInstanceUID;
-            
+
             ExistingNameLabel.Text = ReconcileDetails.ExistingPatient.Name;
             ExistingPatientID.Text = ReconcileDetails.ExistingPatient.PatientID;
             ExistingPatientBirthDate.Text = ReconcileDetails.ExistingPatient.BirthDate;
@@ -187,6 +183,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ConflictingPatientID.Text = ReconcileDetails.ConflictingPatient.PatientID;
             ConflictingPatientBirthDate.Text = ReconcileDetails.ConflictingPatient.BirthDate;
             ConflictingPatientSex.Text = ReconcileDetails.ConflictingPatient.Sex;
+            PatientSexValidator.Validate();
+            ConflictingPatientSex.BackColor = Color.Transparent;
+            ConflictingPatientSex.BorderStyle = BorderStyle.None;
+
             ConflictingPatientIssuerOfPatientID.Text = ReconcileDetails.ConflictingPatient.IssuerOfPatientID;
             ConflictingAccessionNumber.Text = ReconcileDetails.ConflictingPatient.AccessionNumber;
 

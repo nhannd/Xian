@@ -171,3 +171,12 @@
     padding-left: 8px;
     color:Red;
 }
+
+.UnknownSexMessage
+{
+    padding-left: 5px;
+    font-size: 10px;
+    color: Red;
+    vertical-align: middle;
+    text-decoration: none;
+}

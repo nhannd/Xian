@@ -128,6 +128,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.Label ExistingPatientSex;
         
         /// <summary>
+        /// InvalidInputIndicator1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidInputIndicator1;
+        
+        /// <summary>
         /// Label325 control.
         /// </summary>
         /// <remarks>
@@ -242,7 +251,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingPatientSex;
+        protected global::System.Web.UI.WebControls.TextBox ConflictingPatientSex;
+        
+        /// <summary>
+        /// UnknownSex control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator UnknownSex;
+        
+        /// <summary>
+        /// PatientSexValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator PatientSexValidator;
         
         /// <summary>
         /// Label5 control.

@@ -186,7 +186,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 PatientName = string.Format("<SetTag TagPath=\"00100010\" Value=\"{0}\"/>", GetConflictingName(studyData));
                 PatientID = string.Format("<SetTag TagPath=\"00100020\" Value=\"{0}\"/>", GetConflictingPatientID(studyData));
                 AccessionNumber = string.Format("<SetTag TagPath=\"00080050\" Value=\"{0}\"/>", GetConflictingPatientAccessionNumber(studyData));
-                PatientSex = string.Format("<SetTag TagPath=\"00100040\" Value=\"{0}\"/>", GetConflictingPatientSex(studyData));
+
+                string sex = GetConflictingPatientSex(studyData).ToLower();                
+                if (sex.Equals("male") || sex.Equals("m"))
+                {
+                    sex = "M";
+                }
+                else if (sex.Equals("female") || sex.Equals("f"))
+                {
+                    sex = "F";
+                }
+                else
+                {
+                    sex = "O";
+                }
+
+                PatientSex = string.Format("<SetTag TagPath=\"00100040\" Value=\"{0}\"/>", sex);
                 IssuerOfPatientID = string.Format("<SetTag TagPath=\"00100021\" Value=\"{0}\"/>", GetConflictingIssuerOfPatientID(studyData));
                 Birthdate = string.Format("<SetTag TagPath=\"00100030\" Value=\"{0}\"/>", GetConflictingPatientBirthDate(studyData));                 
             }
