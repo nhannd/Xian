@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Desktop.Help.UpdateTools" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UpdateInformationServiceUrl" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:4472/UpdateInformationService.asmx</Value>
+    </Setting>
+    <Setting Name="ClearCanvas_Desktop_Help_UpdateTools_UpdateInformationService_UpdateInformationService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://localhost:4472/UpdateInformationService.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

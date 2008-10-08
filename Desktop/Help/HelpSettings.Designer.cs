@@ -30,15 +30,5 @@ namespace ClearCanvas.Desktop.Help {
                 return ((string)(this["UserGuidePath"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:4472/UpdateInformationService.asmx")]
-        public string UpdateServiceUrl {
-            get {
-                return ((string)(this["UpdateServiceUrl"]));
-            }
-        }
     }
 }

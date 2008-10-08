@@ -13,7 +13,7 @@
 // 
 #pragma warning disable 1591
 
-namespace ClearCanvas.Desktop.Help.UpdateInformationService {
+namespace ClearCanvas.Desktop.Help.UpdateTools.UpdateInformationService {
     using System.Diagnostics;
     using System.Web.Services;
     using System.ComponentModel;
@@ -35,7 +35,7 @@ namespace ClearCanvas.Desktop.Help.UpdateInformationService {
         
         /// <remarks/>
         public UpdateInformationService() {
-            this.Url = "http://localhost:4472/UpdateInformationService.asmx";
+            this.Url = global::ClearCanvas.Desktop.Help.UpdateTools.Settings.Default.ClearCanvas_Desktop_Help_UpdateTools_UpdateInformationService_UpdateInformationService;
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
