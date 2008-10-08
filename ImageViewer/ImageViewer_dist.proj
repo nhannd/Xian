@@ -47,7 +47,7 @@
   <Choose>
     <When Condition="'$(OptionsFlags)' == ''">
       <PropertyGroup>
-        <PluginOptions>IncludeStudyBrowser+IncludeDesktopServices+IncludeDicomEditor+IncludeShredConfiguration</PluginOptions>
+        <PluginOptions>IncludeStudyBrowser+IncludeDesktopServices+IncludeDicomEditor+IncludeServiceConfiguration</PluginOptions>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -155,8 +155,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ShredConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.Configuration.dll" />
-    <ShredConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Shreds\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Shreds.Configuration.View.WinForms.dll" />
+    <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.Services.dll" />
+    <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\Services\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.Services.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">
@@ -231,15 +231,15 @@
     <RegexIsMatch Pattern="IncludeDicomEditor" Input="$(PluginOptions)" >
       <Output TaskParameter="IsMatch" PropertyName="IncludeDicomEditor" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeShredConfiguration" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeShredConfiguration" />
+    <RegexIsMatch Pattern="IncludeServiceConfiguration" Input="$(PluginOptions)" >
+      <Output TaskParameter="IsMatch" PropertyName="IncludeServiceConfiguration" />
     </RegexIsMatch>
 
     <Copy SourceFiles="@(StudyBrowserFiles)" Condition="$(IncludeStudyBrowser)" DestinationFolder="$(PluginsDirectory)" />
     <Copy SourceFiles="@(DesktopServiceFiles)" Condition="$(IncludeDesktopServices)" DestinationFolder="$(PluginsDirectory)" />
     <Copy SourceFiles="@(StudyComposerFiles)" Condition="$(IncludeStudyComposer)" DestinationFolder="$(PluginsDirectory)" />
     <Copy SourceFiles="@(DicomEditorFiles)" Condition="$(IncludeDicomEditor)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(ShredConfigurationFiles)" Condition="$(IncludeShredConfiguration)" DestinationFolder="$(PluginsDirectory)" />
+    <Copy SourceFiles="@(ServiceConfigurationFiles)" Condition="$(IncludeServiceConfiguration)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
   <Target Name="Copy Plugin Files" DependsOnTargets="Copy Optional Viewer Plugins">

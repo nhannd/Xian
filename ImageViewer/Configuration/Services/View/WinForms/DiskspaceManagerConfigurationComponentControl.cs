@@ -33,7 +33,7 @@ using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Shreds.Configuration.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.Services.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="DiskspaceManagerConfigurationComponent"/>

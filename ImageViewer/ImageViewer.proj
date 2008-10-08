@@ -62,7 +62,7 @@
     <IncludeDesktopServices>true</IncludeDesktopServices>
     <IncludeStudyComposer>false</IncludeStudyComposer>
     <IncludeDicomEditor>true</IncludeDicomEditor>
-    <IncludeShredConfiguration>true</IncludeShredConfiguration>
+    <IncludeServiceConfiguration>true</IncludeServiceConfiguration>
   </PropertyGroup>
 
   <ItemGroup Condition="$(IncludeStudyBrowser)">
@@ -77,8 +77,8 @@
   <ItemGroup Condition="$(IncludeDicomEditor)">
     <Options Include="IncludeDicomEditor"/>
   </ItemGroup>
-  <ItemGroup Condition="$(IncludeShredConfiguration)">
-    <Options Include="IncludeShredConfiguration"/>
+  <ItemGroup Condition="$(IncludeServiceConfiguration)">
+    <Options Include="IncludeServiceConfiguration"/>
   </ItemGroup>
 
   <Choose>

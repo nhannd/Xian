@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Shreds.Configuration.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.Services.View.WinForms
 {
     partial class DiskspaceManagerConfigurationComponentControl
     {

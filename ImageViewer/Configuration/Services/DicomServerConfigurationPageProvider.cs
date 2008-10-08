@@ -29,41 +29,31 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Shreds.Configuration.View.WinForms
+namespace ClearCanvas.ImageViewer.Configuration.Services
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="DiskspaceManagerConfigurationComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(DiskspaceManagerConfigurationComponentViewExtensionPoint))]
-    public class DiskspaceManagerConfigurationComponentView : WinFormsView, IApplicationComponentView
+	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
+	public class DicomServerConfigurationPageProvider : IConfigurationPageProvider
     {
-        private DiskspaceManagerConfigurationComponent _component;
-        private DiskspaceManagerConfigurationComponentControl _control;
+        public DicomServerConfigurationPageProvider()
+		{
 
+		}
 
-        #region IApplicationComponentView Members
+		#region IConfigurationPageProvider Members
 
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (DiskspaceManagerConfigurationComponent)component;
-        }
+		public IEnumerable<IConfigurationPage> GetPages()
+		{
+			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-        #endregion
+            listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
 
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new DiskspaceManagerConfigurationComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+			return listPages.AsReadOnly();
+		}
+
+		#endregion
+	}
 }

@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
-namespace ClearCanvas.ImageViewer.Shreds.Configuration
+namespace ClearCanvas.ImageViewer.Configuration.Services
 {
 	/// <summary>
 	/// Exception handling policy for <see cref="DicomServerConfigurationHelper.UpdateException"/>s and <see cref="DicomServerConfigurationHelper.RefreshException"/>s.

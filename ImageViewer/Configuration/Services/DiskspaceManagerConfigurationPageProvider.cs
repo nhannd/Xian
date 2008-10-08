@@ -33,7 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Shreds.Configuration
+namespace ClearCanvas.ImageViewer.Configuration.Services
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
 	public class DiskspaceManagerConfigurationPageProvider : IConfigurationPageProvider
