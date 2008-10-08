@@ -99,7 +99,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
+    <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
     <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
   </ItemGroup>
 
