@@ -36,8 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CombineAppConfigs.cs" />
+    <Compile Include="CombineStrings.cs" />
     <Compile Include="FileReplaceText.cs" />
     <Compile Include="NUnitLogParser.cs" />
+    <Compile Include="RegexIsMatch.cs" />
     <Compile Include="RelativeBuildDateTime.cs" />
     <Compile Include="VersionProjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

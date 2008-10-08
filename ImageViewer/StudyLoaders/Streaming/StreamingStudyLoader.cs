@@ -7,9 +7,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
-using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -81,7 +82,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			try
 			{
 				client.Open();
-				Stream stream = client.GetStudyHeader(DicomServerConfigurationHelper.AETitle, headerParams);
+				Stream stream = client.GetStudyHeader(ServerTree.GetClientAETitle(), headerParams);
 				client.Close();
 				return DecompressHeaderStreamToXml(stream);
 			}

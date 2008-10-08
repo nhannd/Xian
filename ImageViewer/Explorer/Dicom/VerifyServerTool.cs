@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.Dicom.Network.Scu;
 
@@ -71,17 +72,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				return;
 			}
 
-			string myAE;
-			
-			try
-			{
-				myAE = DicomServerConfigurationHelper.AETitle;
-			}
-			catch(Exception	e)
-			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				return;
-			}
+			string myAE = ServerTree.GetClientAETitle();
 
 			StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");

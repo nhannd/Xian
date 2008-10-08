@@ -122,6 +122,10 @@ namespace ClearCanvas.Dicom.DataStore
 						new QueryResultFilter<Study>(queryCriteria, Convert.Cast<Study>(studiesFound), GetSpecificCharacterSet);
 					return filter.GetResults();
 				}
+				catch(DataStoreException)
+				{
+					throw;
+				}
 				catch (Exception e)
 				{
 					throw new DataStoreException("An error occurred while performing the study root query.", e);
@@ -138,9 +142,20 @@ namespace ClearCanvas.Dicom.DataStore
 				if (study == null)
 					throw new ArgumentException(String.Format("No study exists with the given study uid ({0}).", studyUid));
 
-				QueryResultFilter<Series> filter = 
-					new QueryResultFilter<Series>(queryCriteria, Convert.Cast<Series>(study.GetSeries()), GetSpecificCharacterSet);
-				return filter.GetResults();
+				try
+				{
+					QueryResultFilter<Series> filter =
+						new QueryResultFilter<Series>(queryCriteria, Convert.Cast<Series>(study.GetSeries()), GetSpecificCharacterSet);
+					return filter.GetResults();
+				}
+				catch(DataStoreException)
+				{
+					throw;
+				}
+				catch(Exception e)
+				{
+					throw new DataStoreException("An error occurred while performing the series query.", e);
+				}
 			}
 
 			private List<DicomAttributeCollection> ImageQuery(QueryCriteria queryCriteria)
@@ -164,9 +179,20 @@ namespace ClearCanvas.Dicom.DataStore
 					throw new ArgumentException(message);
 				}
 
-				QueryResultFilter<SopInstance> filter =
-					new QueryResultFilter<SopInstance>(queryCriteria, Convert.Cast<SopInstance>(series.GetSopInstances()), GetSpecificCharacterSet);
-				return filter.GetResults();
+				try
+				{
+					QueryResultFilter<SopInstance> filter =
+						new QueryResultFilter<SopInstance>(queryCriteria, Convert.Cast<SopInstance>(series.GetSopInstances()), GetSpecificCharacterSet);
+					return filter.GetResults();
+				}
+				catch (DataStoreException)
+				{
+					throw;
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("An error occurred while performing the image query.", e);
+				}
 			}
 
 			private static string GetSpecificCharacterSet(Study study)

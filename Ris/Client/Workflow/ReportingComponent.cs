@@ -1019,7 +1019,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private void OpenImages()
 		{
 			if (ViewImagesHelper.IsSupported)
-				ViewImagesHelper.OpenStudy(this.WorklistItem.AccessionNumber);
+				ViewImagesHelper.Open(this.WorklistItem.AccessionNumber);
 		}
 
 		#endregion

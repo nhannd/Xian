@@ -773,11 +773,11 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Study Root Query.
+        ///   Looks up a localized string similar to Study Locator.
         /// </summary>
-        internal static string StudyRootQuery {
+        internal static string StudyLocator {
             get {
-                return ResourceManager.GetString("StudyRootQuery", resourceCulture);
+                return ResourceManager.GetString("StudyLocator", resourceCulture);
             }
         }
     }

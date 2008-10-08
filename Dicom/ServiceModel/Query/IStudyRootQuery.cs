@@ -3,7 +3,7 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
-	[ServiceContract(SessionMode = SessionMode.NotAllowed, Namespace = QueryNamespace.Value)]
+	[ServiceContract(SessionMode = SessionMode.Allowed, ConfigurationName="IStudyRootQuery" , Namespace = QueryNamespace.Value)]
 	public interface IStudyRootQuery
 	{
 		[FaultContract(typeof(DataValidationFault))]

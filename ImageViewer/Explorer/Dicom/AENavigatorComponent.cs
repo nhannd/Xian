@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -190,7 +191,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ServerTree();
-			_serverTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider = DicomServerConfigurationHelper.GetDicomServerConfigurationProvider();
 
 			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
 			{

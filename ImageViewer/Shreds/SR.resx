@@ -355,7 +355,7 @@ Please check the service logs for more details.</value>
   <data name="MessageWaitingForFilesToBecomeAvailable" xml:space="preserve">
     <value>Waiting for all files to become available ...</value>
   </data>
-  <data name="StudyRootQuery" xml:space="preserve">
-    <value>Study Root Query</value>
+  <data name="StudyLocator" xml:space="preserve">
+    <value>Study Locator</value>
   </data>
 </root>

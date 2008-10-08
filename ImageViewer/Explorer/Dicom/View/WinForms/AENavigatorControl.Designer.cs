@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			{
 				components.Dispose();
 
-				if (_component.ShowLocalDataStoreNode && _component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider != null)
+				if (_component.ShowLocalDataStoreNode)
 				{
 					_aeTreeView.MouseEnter -= new EventHandler(OnLocalDataStoreNodeUpdated);
 					_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed -= new EventHandler(OnLocalDataStoreNodeUpdated);

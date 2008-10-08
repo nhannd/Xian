@@ -1,5 +1,7 @@
 <Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineStrings" AssemblyFile="$(MSBuildProjectDirectory)\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll" />
+
   <Choose>
     <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
       <PropertyGroup>
@@ -55,6 +57,30 @@
     </Otherwise>
   </Choose>
 
+  <PropertyGroup>
+    <IncludeStudyBrowser>true</IncludeStudyBrowser>
+    <IncludeDesktopServices>true</IncludeDesktopServices>
+    <IncludeStudyComposer>false</IncludeStudyComposer>
+    <IncludeDicomEditor>true</IncludeDicomEditor>
+    <IncludeShredConfiguration>true</IncludeShredConfiguration>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(IncludeStudyBrowser)">
+    <Options Include="IncludeStudyBrowser"/>
+  </ItemGroup>
+  <ItemGroup Condition="$(IncludeDesktopServices)">
+    <Options Include="IncludeDesktopServices"/>
+  </ItemGroup>
+  <ItemGroup Condition="$(IncludeStudyComposer)">
+    <Options Include="IncludeStudyComposer"/>
+  </ItemGroup>
+  <ItemGroup Condition="$(IncludeDicomEditor)">
+    <Options Include="IncludeDicomEditor"/>
+  </ItemGroup>
+  <ItemGroup Condition="$(IncludeShredConfiguration)">
+    <Options Include="IncludeShredConfiguration"/>
+  </ItemGroup>
+
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
@@ -67,10 +93,19 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
-  
-	<Target Name="BuildSolution" >
+
+  <Target Name="BuildSolution" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
-    <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
+
+    <CombineStrings InputStrings="@(Options)" Delimiter="+" >
+      <Output TaskParameter="CombinedString" PropertyName="OptionsString" />
+    </CombineStrings>
+
+    <CreateProperty Value="$(ImageViewerProperties);OptionsFlags=$(OptionsString)" >
+      <Output TaskParameter="Value" PropertyName="BuildProperties" />
+    </CreateProperty>
+
+    <MSBuild Projects="ImageViewer.sln" Properties="$(BuildProperties)" />
 	</Target>
 
 </Project>

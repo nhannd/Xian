@@ -34,7 +34,21 @@ using System;
 namespace ClearCanvas.Dicom.DataStore
 {
 	[Serializable]
-	public sealed class DataStoreException : Exception
+	public class DataValidationException : DataStoreException
+	{
+		internal DataValidationException(string message)
+			: base(message)
+		{
+		}
+
+		internal DataValidationException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
+
+	[Serializable]
+	public class DataStoreException : Exception
 	{
 		internal DataStoreException(string message)
 			: base(message)

@@ -126,6 +126,11 @@
   <data name="ExampleServer" xml:space="preserve">
     <value>Example Server</value>
   </data>
+  <data name="FormatLocalDataStoreConfigurationUnavailable" xml:space="preserve">
+    <value>{0} (Offline)
+The configuration is currently unavailable.
+Please ensure all required services are running.</value>
+  </data>
   <data name="FormatLocalDataStoreDetails" xml:space="preserve">
     <value>Server Name: {0}
 AE Title: {1}
@@ -142,10 +147,6 @@ Listening Port: {3}</value>
   <data name="FormatStreamingDetails" xml:space="preserve">
     <value>Streaming Header Port: {0}
 Streaming Image Port: {1}</value>
-  </data>
-  <data name="LocalDataStoreConfigurationUnavailable" xml:space="preserve">
-    <value>The configuration is currently unavailable.
-Please ensure all required services are running.</value>
   </data>
   <data name="Location" xml:space="preserve">
     <value>Location: {0}</value>

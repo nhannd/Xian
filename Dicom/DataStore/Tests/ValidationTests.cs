@@ -74,7 +74,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DataStoreException))]
+		[ExpectedException(typeof(DataValidationException))]
 		public void TestNullStudyInstanceUid()
 		{
 			Study study = NewStudy();
@@ -83,7 +83,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DataStoreException))]
+		[ExpectedException(typeof(DataValidationException))]
 		public void TestEmptyStudyInstanceUid()
 		{
 			Study study = NewStudy();
@@ -92,7 +92,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DataStoreException))]
+		[ExpectedException(typeof(DataValidationException))]
 		public void TestStudyFieldTooLong()
 		{
 			Study study = NewStudy(); 
@@ -101,7 +101,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DataStoreException))]
+		[ExpectedException(typeof(DataValidationException))]
 		public void TestComponentFieldTooLong()
 		{
 			Study study = NewStudy(); 

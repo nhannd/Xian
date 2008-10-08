@@ -88,6 +88,17 @@ namespace ClearCanvas.ImageViewer.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} (Offline)
+        ///The configuration is currently unavailable.
+        ///Please ensure all required services are running..
+        /// </summary>
+        internal static string FormatLocalDataStoreConfigurationUnavailable {
+            get {
+                return ResourceManager.GetString("FormatLocalDataStoreConfigurationUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Name: {0}
         ///AE Title: {1}
         ///Host: {2}
@@ -119,16 +130,6 @@ namespace ClearCanvas.ImageViewer.Services {
         internal static string FormatStreamingDetails {
             get {
                 return ResourceManager.GetString("FormatStreamingDetails", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The configuration is currently unavailable.
-        ///Please ensure all required services are running..
-        /// </summary>
-        internal static string LocalDataStoreConfigurationUnavailable {
-            get {
-                return ResourceManager.GetString("LocalDataStoreConfigurationUnavailable", resourceCulture);
             }
         }
         

@@ -12,7 +12,9 @@ namespace ClearCanvas.Ris.Client
 
     public interface IViewerIntegration
     {
-        void OpenStudy(string accessionNumber);
+        void Open(string accessionNumber);
+    	void Close(string accessionNumber);
+    	void Activate(string accessionNumber);
     }
 
 	public static class ViewImagesHelper
@@ -31,17 +33,55 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private static void CheckSupported()
+		{
+			if (_viewer == null)
+				throw new NotSupportedException("No viewer integration extension found.");
+		}
+
 		public static bool IsSupported
 		{
 			get { return _viewer != null; }
 		}
 
-		public static void OpenStudy(string accession)
+		public static void Open(string accession)
 		{
-			if(_viewer == null)
-				throw new NotSupportedException("No viewer integration extension found.");
+			CheckSupported();
+			_viewer.Open(accession);
+		}
 
-			_viewer.OpenStudy(accession);
+		public static bool Close(string accessionNumber)
+		{
+			CheckSupported();
+
+			try
+			{
+				_viewer.Close(accessionNumber);
+				return true;
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, String.Format("Failed to close the viewer for Accession# {0}.", accessionNumber));
+			}
+
+			return false;
+		}
+
+		public static bool Activate(string accessionNumber)
+		{
+			CheckSupported();
+
+			try
+			{
+				_viewer.Activate(accessionNumber);
+				return true;
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, String.Format("Failed to activate the viewer for Accession# {0}.", accessionNumber));
+			}
+
+			return false;
 		}
 	}
 }

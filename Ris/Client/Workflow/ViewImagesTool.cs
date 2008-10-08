@@ -200,7 +200,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			try
 			{
-				ViewImagesHelper.OpenStudy(accession);
+				ViewImagesHelper.Open(accession);
 			}
 			catch (Exception e)
 			{

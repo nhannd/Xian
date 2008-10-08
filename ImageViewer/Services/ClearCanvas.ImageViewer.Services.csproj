@@ -35,8 +35,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automation\DataContracts.cs" />
+    <Compile Include="Automation\IViewerAutomation.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
+    <Compile Include="DicomServer\DicomServerConfigurationHelper.cs" />
     <Compile Include="DicomServer\DicomServerServiceClient.cs" />
     <Compile Include="DicomServer\IDicomServerService.cs" />
     <Compile Include="DiskspaceManager\DataContracts.cs" />
@@ -57,6 +60,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StudyLocator\IStudyLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -69,6 +73,10 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

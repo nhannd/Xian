@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.Server.ShredHost;
+using ClearCanvas.ImageViewer.Services.StudyLocator;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -41,14 +42,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     public class DicomServerExtension : WcfShred
     {
 		private readonly string _dicomServerEndpointName = "DicomServer";
-		private static readonly string _studyRootQueryEndpointName = "StudyRootQuery";
+		private static readonly string _studyLocatorEndpointName = "StudyLocator";
 
-		private bool _studyRootQueryWCFInitialized;
+		private bool _studyLocatorWCFInitialized;
 		private bool _dicomServerWcfInitialized;
 
         public DicomServerExtension()
         {
-			_studyRootQueryWCFInitialized = false;
+			_studyLocatorWCFInitialized = false;
 			_dicomServerWcfInitialized = false;
         }
 
@@ -88,30 +89,30 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			try
 			{
-				ServiceEndpointDescription sed = StartBasicHttpHost<StudyRootQueryService, IStudyRootQuery>(_studyRootQueryEndpointName, SR.StudyRootQuery);
-				sed.Binding.Namespace = ClearCanvas.Dicom.ServiceModel.Query.QueryNamespace.Value;
+				ServiceEndpointDescription sed = StartBasicHttpHost<StudyLocator.StudyLocator, IStudyLocator>(_studyLocatorEndpointName, SR.StudyLocator);
+				sed.Binding.Namespace = StudyLocatorNamespace.Value;
 
-				_studyRootQueryWCFInitialized = true;
+				_studyLocatorWCFInitialized = true;
 
-				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.StudyRootQuery);
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.StudyLocator);
 				Platform.Log(LogLevel.Info, message);
 				Console.WriteLine(message);
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
-				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.StudyRootQuery));
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.StudyLocator));
 			}
         }
 
         public override void Stop()
         {
-			if (_studyRootQueryWCFInitialized)
+			if (_studyLocatorWCFInitialized)
 			{
 				try
 				{
-					StopHost(_studyRootQueryEndpointName);
-					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.StudyRootQuery));
+					StopHost(_studyLocatorEndpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.StudyLocator));
 				}
 				catch (Exception e)
 				{

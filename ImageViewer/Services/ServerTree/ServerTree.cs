@@ -36,6 +36,7 @@ using System.IO;
 using System.Xml.Serialization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Services.ServerTree
 {
@@ -58,12 +59,31 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		static ServerTree()
 		{
+			DicomServerConfigurationHelper.Changed += new EventHandler(OnServerConfigurationChanged);
+
 			_serializer = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
                     typeof(ServerGroup),
                     typeof(Server),
                     typeof(List<ServerGroup>),
                     typeof(List<Server>)
                 });
+		}
+
+		private static void OnServerConfigurationChanged(object sender, EventArgs e)
+		{
+			try
+			{
+				ServerTree serverTree = new ServerTree();
+				if (serverTree.RootNode.LocalDataStoreNode.OfflineAE != DicomServerConfigurationHelper.AETitle)
+				{
+					serverTree.RootNode.LocalDataStoreNode.OfflineAE = DicomServerConfigurationHelper.AETitle;
+					serverTree.Save();
+				}
+			}
+			catch(Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "Failed to save the server tree.");
+			}
 		}
 
     	public ServerTree()
@@ -95,7 +115,13 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		#region Public Methods
 
-		public void FireServerTreeUpdatedEvent()
+		public static string GetClientAETitle()
+		{
+			ServerTree serverTree = new ServerTree();
+			return serverTree.RootNode.LocalDataStoreNode.GetClientAETitle();
+		}
+
+    	public void FireServerTreeUpdatedEvent()
         {
             EventsHelper.Fire(_serverTreeUpdated, this, EventArgs.Empty);
         }
@@ -267,7 +293,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             return listOfChildrenServers;
 		}
 
-		#endregion
+		public List<IServerTreeNode> FindDefaultServers(ServerGroup serverGroup)
+		{
+			return FindChildServers(serverGroup).FindAll(delegate(IServerTreeNode node) { return node.IsDefault; });
+		}
+
+    	#endregion
 
 		#region Private methods
 
@@ -376,6 +407,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
     public interface IServerTreeNode
     {
+		bool IsDefault { get; }
         bool IsLocalDataStore { get; }
         bool IsServer { get; }
         bool IsServerGroup { get; }
@@ -396,8 +428,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         {
         }
 
-		[XmlIgnore]
-    	public LocalDataStore LocalDataStoreNode
+		public LocalDataStore LocalDataStoreNode
     	{
 			get
 			{
@@ -405,6 +436,10 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 					_localDataStoreNode = new LocalDataStore();
 
 				return _localDataStoreNode;
+			}
+			set
+			{
+				_localDataStoreNode = value;
 			}
     	}
 
@@ -419,6 +454,11 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
         {
             get { return false; }
         }
+
+    	public bool IsDefault
+    	{
+			get { return false; }
+    	}
 
         public bool IsServer
         {
@@ -503,6 +543,11 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		#region IServerTreeNode Members
 
+    	public bool IsDefault
+    	{
+			get { return false; }
+    	}
+
 		public bool IsLocalDataStore
         {
             get { return false; }
@@ -579,6 +624,8 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
     public class Server : IServerTreeNode
 	{
 		#region Private Fields
+
+    	private bool _isDefault;
 		private string _parentPath;
     	private string _path;
 		#endregion
@@ -645,6 +692,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		#endregion
 
 		#region IServerTreeNode Members
+
+		public bool IsDefault
+    	{
+			get { return _isDefault; }
+			set { _isDefault = value; }
+    	}
 
 		public bool IsLocalDataStore
         {
@@ -723,13 +776,19 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		event EventHandler Changed;
 	}
 
+	[Serializable]
 	public class LocalDataStore : IServerTreeNode
 	{
+		public const string DefaultOfflineAE = "AETITLE";
+
 		#region Private Fields
+
+		private string _offlineAE;
 
 		private string _path;
 		private string _parentPath;
-		private IDicomServerConfigurationProvider _dicomServerConfigurationProvider;
+		private static readonly IDicomServerConfigurationProvider _dicomServerConfigurationProvider =
+			DicomServerConfigurationHelper.GetDicomServerConfigurationProvider();
 		
 		#endregion
 
@@ -740,40 +799,59 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		public IDicomServerConfigurationProvider DicomServerConfigurationProvider
 		{
 			get { return _dicomServerConfigurationProvider; }
-			set { _dicomServerConfigurationProvider = value; }
 		}
 
 		public override string ToString()
 		{
-			StringBuilder aeDescText = new StringBuilder();
-
-			if (_dicomServerConfigurationProvider == null)
+			try
 			{
-				aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
+				if (_dicomServerConfigurationProvider.NeedsRefresh)
+					_dicomServerConfigurationProvider.RefreshAsync();
+
+				if (_dicomServerConfigurationProvider.ConfigurationExists)
+					return String.Format(SR.FormatLocalDataStoreDetails, Name, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
 			}
-			else
+			catch (Exception e)
 			{
-				try
-				{
-					if (_dicomServerConfigurationProvider.NeedsRefresh)
-						_dicomServerConfigurationProvider.RefreshAsync();
-
-					if (_dicomServerConfigurationProvider.ConfigurationExists)
-						aeDescText.AppendFormat(SR.FormatLocalDataStoreDetails, Name, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
-					else
-						aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
-				}
-				catch (Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-					aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
-				}
+				Platform.Log(LogLevel.Error, e);
 			}
 
-			return aeDescText.ToString();
+			return String.Format(SR.FormatLocalDataStoreConfigurationUnavailable, OfflineAE);
+		}
+
+		// NOTE: this is not good, but it's the only way to allow certain things to work without altering some of the services.
+		// When the server tree is refactored, this must be dealt with.
+		public string GetClientAETitle()
+		{
+			string ae = null;
+			try
+			{
+				if (_dicomServerConfigurationProvider.NeedsRefresh)
+					_dicomServerConfigurationProvider.RefreshAsync();
+
+				if (_dicomServerConfigurationProvider.ConfigurationExists)
+					ae = _dicomServerConfigurationProvider.AETitle;
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, "Failed to retrieve the dicom server's ae title.");
+			}
+
+			return ae ?? _offlineAE;
+		}
+
+		public string OfflineAE
+		{
+			get { return _offlineAE ?? DefaultOfflineAE; }
+			set { _offlineAE = value ?? DefaultOfflineAE; }
 		}
 
 		#region IServerTreeNode Members
+
+		public bool IsDefault
+		{
+			get { return true; }	
+		}
 
 		public bool IsLocalDataStore
 		{

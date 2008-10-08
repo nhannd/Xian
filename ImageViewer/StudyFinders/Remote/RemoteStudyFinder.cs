@@ -33,10 +33,10 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Network.Scu;
-using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 {
@@ -134,7 +134,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
 
-						IList<DicomAttributeCollection> results = scu.Find(DicomServerConfigurationHelper.AETitle,
+						string myAE = ServerTree.GetClientAETitle();
+
+						IList<DicomAttributeCollection> results = scu.Find(ServerTree.GetClientAETitle(),
 							server.AETitle, server.Host, server.Port,
 							requestCollection);
 

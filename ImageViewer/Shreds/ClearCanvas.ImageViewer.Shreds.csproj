@@ -72,7 +72,6 @@
     <Compile Include="LocalDataStore\ReceivedFileProcessor.cs" />
     <Compile Include="LocalDataStore\ReindexProcessor.cs" />
     <Compile Include="LocalDataStore\SentFileProcessor.cs" />
-    <Compile Include="DicomServer\StudyRootQueryService.cs" />
     <Compile Include="LocalDataStore\SubscriptionManager.cs" />
     <Compile Include="StudyInformationFieldExchanger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -109,6 +108,10 @@
     <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StudyLocator\ClearCanvas.ImageViewer.StudyLocator.csproj">
+      <Project>{68995968-271C-4915-B936-0F06C413F0B4}</Project>
+      <Name>ClearCanvas.ImageViewer.StudyLocator</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

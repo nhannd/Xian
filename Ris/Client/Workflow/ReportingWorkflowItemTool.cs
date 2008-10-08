@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				// open the images
 				if (ViewImagesHelper.IsSupported)
-					ViewImagesHelper.OpenStudy(item.AccessionNumber);
+					ViewImagesHelper.Open(item.AccessionNumber);
 			}
 		}
 

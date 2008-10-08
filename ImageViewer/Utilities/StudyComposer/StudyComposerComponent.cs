@@ -9,6 +9,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.StudyBuilder;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using IImageSopProvider = ClearCanvas.ImageViewer.StudyManagement.IImageSopProvider;
 
@@ -127,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 			}
 
 			foreach (Server destinationAE in aeNavigator.SelectedServers.Servers) {
-				_studyBuilder.Publish(DicomServerConfigurationHelper.AETitle, destinationAE.AETitle, destinationAE.Host, destinationAE.Port);
+				_studyBuilder.Publish(ServerTree.GetClientAETitle(), destinationAE.AETitle, destinationAE.Host, destinationAE.Port);
 			}
 		}
 
