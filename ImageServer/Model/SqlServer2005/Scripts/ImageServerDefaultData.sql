@@ -249,7 +249,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'Check watermark and schedule studies for tier migration, deletion, or purging if necessary')																		 
+           (newid(),100,'FilesystemDelete', 'Filesystem Watermark Check', 'Check watermark and schedule studies for tier migration, deletion, or purging if necessary')																		 
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
