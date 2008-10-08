@@ -1091,16 +1091,18 @@ EXEC dbo.sp_executesql @statement = N'
 -- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: August 16, 2007
--- Update date: January 9, 2008
+-- Update date: October 8, 2008
 -- Description:	Select WorkQueue entries
 -- History:
 --		Oct 29, 2007:	Add @ProcessorID
 --		Jan 9, 2008:	Fixed clustering bug
 --      Sep 4, 2008:    Added @WorkQueueStatusEnumList parameter
+--      Oct 8, 2008:    Added @WorkQueuePriorityEnum parameter
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	@ProcessorID varchar(256),
-	@WorkQueueTypeEnumList varchar(300) = null
+	@WorkQueueTypeEnumList varchar(300) = null,
+	@WorkQueuePriorityEnum smallint = null
 
 AS
 BEGIN
@@ -1133,15 +1135,31 @@ BEGIN
 	
     IF @WorkQueueTypeEnumList is null
 	BEGIN
-		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-			@WorkQueueGUID = WorkQueue.GUID 
-		FROM WorkQueue WITH (READPAST)
-		JOIN
-			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
-		WHERE
-			ScheduledTime < getdate() 
-			AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
-		ORDER BY WorkQueue.ScheduledTime
+		if @WorkQueuePriorityEnum is null
+		BEGIN
+			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
+				@WorkQueueGUID = WorkQueue.GUID 
+			FROM WorkQueue WITH (READPAST)
+			JOIN
+				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+			WHERE
+				ScheduledTime < getdate() 
+				AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
+			ORDER BY WorkQueue.ScheduledTime
+		END
+		ELSE
+		BEGIN
+			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
+				@WorkQueueGUID = WorkQueue.GUID 
+			FROM WorkQueue WITH (READPAST)
+			JOIN
+				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+			WHERE
+				ScheduledTime < getdate() 
+				AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
+				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
+			ORDER BY WorkQueue.ScheduledTime
+		END
 	END
 	ELSE
 	BEGIN
@@ -1170,19 +1188,33 @@ BEGIN
 			END
 		END	
 
-		SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
-				@WorkQueueGUID = WorkQueue.GUID 
-		FROM WorkQueue WITH (READPAST)
-		JOIN
-			StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
-		WHERE
-			ScheduledTime < getdate() 
-			AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
-			AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
-		ORDER BY WorkQueue.ScheduledTime
-
-		
-
+		if @WorkQueuePriorityEnum is null
+		BEGIN
+			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
+					@WorkQueueGUID = WorkQueue.GUID 
+			FROM WorkQueue WITH (READPAST)
+			JOIN
+				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+			WHERE
+				ScheduledTime < getdate() 
+				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
+				AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
+			ORDER BY WorkQueue.ScheduledTime
+		END
+		ELSE
+		BEGIN
+			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
+					@WorkQueueGUID = WorkQueue.GUID 
+			FROM WorkQueue WITH (READPAST)
+			JOIN
+				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
+			WHERE
+				ScheduledTime < getdate() 
+				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
+				AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
+				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
+			ORDER BY WorkQueue.ScheduledTime
+		END		
 	END
 
 	-- We have a record, now do the updates
@@ -2218,6 +2250,9 @@ BEGIN
 	declare @PendingStatusEnum as smallint
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	
+	declare @HighPriorityEnum as smallint
+	select @HighPriorityEnum = Enum from WorkQueuePriorityEnum where Lookup = ''High''
+
 	BEGIN TRANSACTION
 
 	UPDATE StudyStorage
@@ -2243,8 +2278,8 @@ BEGIN
 			declare @NewWorkQueueGUID uniqueidentifier
 			set @NewWorkQueueGUID = NEWID();
 
-			INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
-				values  (@NewWorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @CleanupStudyTypeEnum, @PendingStatusEnum, getdate(), getdate())
+			INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, WorkQueuePriorityEnum)
+				values  (@NewWorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @CleanupStudyTypeEnum, @PendingStatusEnum, getdate(), getdate(),@HighPriorityEnum)
 
 			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID WHERE WorkQueueGUID = @WorkQueueGUID
 

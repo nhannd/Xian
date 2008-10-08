@@ -160,6 +160,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
             columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
             columns.ServerPartitionKey = study.ServerPartitionKey;
+        	columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
             StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
             StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();

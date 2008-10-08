@@ -52,10 +52,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		public const int DefaultWorkQueueProcessDelayHighPrioritySeconds = 1;
 		public const int DefaultLowPriorityMaxBatchSize = 100;
 		public const int DefaultMedPriorityMaxBatchSize = 250;
-		public const int DefaultPrimaryWorkQueueThreadCount = 3;
-		public const int DefaultSecondaryWorkQueueThreadCount = 3;
-		public const string DefaultPrimaryWorkQueueTypes = "StudyProcess,AutoRoute,WebMoveStudy,ReprocessStudy,CleanupStudy,WebEditStudy";
-		public const string DefaultSecondaryWorkQueueTypes = "";
+		public const int DefaultWorkQueueThreadCount = 10;
+		public const int DefaultPriorityWorkQueueThreadCount = 2;
+		public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
+		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
 
 		private static WorkQueueSettings _instance;
 
@@ -164,32 +164,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			set { this["MedPriorityMaxBatchSize"] = value; }
 		}
 
-		[ConfigurationProperty("PrimaryWorkQueueThreadCount", DefaultValue = DefaultPrimaryWorkQueueThreadCount)]
-		public int PrimaryWorkQueueThreadCount
+		[ConfigurationProperty("WorkQueueThreadCount", DefaultValue = DefaultWorkQueueThreadCount)]
+		public int WorkQueueThreadCount
 		{
-			get { return ((int)(this["PrimaryWorkQueueThreadCount"])); }
-			set { this["PrimaryWorkQueueThreadCount"] = value; }
+			get { return ((int)(this["WorkQueueThreadCount"])); }
+			set { this["WorkQueueThreadCount"] = value; }
 		}
 
-		[ConfigurationProperty("SecondaryWorkQueueThreadCount", DefaultValue = DefaultPrimaryWorkQueueThreadCount)]
-		public int SecondaryWorkQueueThreadCount
+		[ConfigurationProperty("PriorityWorkQueueThreadCount", DefaultValue = DefaultPriorityWorkQueueThreadCount)]
+		public int PriorityWorkQueueThreadCount
 		{
-			get { return ((int)(this["SecondaryWorkQueueThreadCount"])); }
-			set { this["SecondaryWorkQueueThreadCount"] = value; }
+			get { return ((int)(this["PriorityWorkQueueThreadCount"])); }
+			set { this["PriorityWorkQueueThreadCount"] = value; }
+		}
+		[ConfigurationProperty("MemoryLimitedWorkQueueThreadCount", DefaultValue = DefaultMemoryLimitedWorkQueueThreadCount)]
+		public int MemoryLimitedWorkQueueThreadCount
+		{
+			get { return ((int)(this["MemoryLimitedWorkQueueThreadCount"])); }
+			set { this["MemoryLimitedWorkQueueThreadCount"] = value; }
 		}
 
-		[ConfigurationProperty("PrimaryWorkQueueTypes", DefaultValue = DefaultPrimaryWorkQueueTypes)]
-		public string PrimaryWorkQueueTypes
+		[ConfigurationProperty("NonMemoryLimitedWorkQueueTypes", DefaultValue = DefaultNonMemoryLimitedWorkQueueTypes)]
+		public string NonMemoryLimitedWorkQueueTypes
 		{
-			get { return ((string)(this["PrimaryWorkQueueTypes"])); }
-			set { this["PrimaryWorkQueueTypes"] = value; }
-		}
-
-		[ConfigurationProperty("SecondaryWorkQueueTypes", DefaultValue = DefaultSecondaryWorkQueueTypes)]
-		public string SecondaryWorkQueueTypes
-		{
-			get { return ((string)(this["SecondaryWorkQueueTypes"])); }
-			set { this["SecondaryWorkQueueTypes"] = value; }
+			get { return ((string)(this["NonMemoryLimitedWorkQueueTypes"])); }
+			set { this["NonMemoryLimitedWorkQueueTypes"] = value; }
 		}
 		#endregion
 
@@ -206,10 +205,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			clone.WorkQueueProcessDelayHighPrioritySeconds = _instance.WorkQueueProcessDelayHighPrioritySeconds;
 			clone.LowPriorityMaxBatchSize = _instance.LowPriorityMaxBatchSize;
 			clone.MedPriorityMaxBatchSize = _instance.MedPriorityMaxBatchSize;
-			clone.PrimaryWorkQueueThreadCount = _instance.PrimaryWorkQueueThreadCount;
-			clone.SecondaryWorkQueueThreadCount = _instance.SecondaryWorkQueueThreadCount;
-			clone.PrimaryWorkQueueTypes = _instance.PrimaryWorkQueueTypes;
-			clone.SecondaryWorkQueueTypes = _instance.SecondaryWorkQueueTypes;
+			clone.WorkQueueThreadCount = _instance.WorkQueueThreadCount;
+			clone.PriorityWorkQueueThreadCount = _instance.PriorityWorkQueueThreadCount;
+			clone.MemoryLimitedWorkQueueThreadCount = _instance.MemoryLimitedWorkQueueThreadCount;
+			clone.NonMemoryLimitedWorkQueueTypes = _instance.NonMemoryLimitedWorkQueueTypes;
 			return clone;
 		}
 	}

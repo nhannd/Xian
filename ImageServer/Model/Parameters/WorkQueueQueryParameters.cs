@@ -41,13 +41,18 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public string WorkQueueTypeEnumList
         {
-			set { this.SubCriteria["WorkQueueTypeEnumList"] = new ProcedureParameter<string>("WorkQueueTypeEnumList", value); }
+			set { SubCriteria["WorkQueueTypeEnumList"] = new ProcedureParameter<string>("WorkQueueTypeEnumList", value); }
         }
 
         public string ProcessorID
         {
-            set { this.SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
+            set { SubCriteria["ProcessorID"] = new ProcedureParameter<string>("ProcessorID", value); }
         }
+
+		public WorkQueuePriorityEnum WorkQueuePriorityEnum
+		{
+			set { SubCriteria["WorkQueuePriorityEnum"] = new ProcedureParameter<ServerEnum>("WorkQueuePriorityEnum", value); }
+		}
 
     }
 }

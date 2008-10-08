@@ -54,8 +54,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private readonly ManualResetEvent _threadStop;
         private bool _stop = false;
 
-    	private readonly List<WorkQueueTypeEnum> _supportedTypesList = new List<WorkQueueTypeEnum>();
-    	private readonly List<WorkQueueTypeEnum> _unsupportedTypesList = new List<WorkQueueTypeEnum>();
+    	private readonly List<WorkQueueTypeEnum> _memoryLimitedList = new List<WorkQueueTypeEnum>();
+
+    	private readonly WorkQueueThreadPoolManager _threadPoolManager;
         #endregion
 
         #region Constructor
@@ -64,6 +65,26 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         	_threadStop = threadStop;
 			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
         	_threadPool.ThreadPoolName = name + " Pool";
+
+        	string memoryLimitedTypes = WorkQueueSettings.Instance.NonMemoryLimitedWorkQueueTypes;
+			if (memoryLimitedTypes.Length > 0)
+			{
+				string[] typeArray = memoryLimitedTypes.Split(',');
+				foreach (string type in typeArray)
+				{
+					WorkQueueTypeEnum val = WorkQueueTypeEnum.GetEnum(type);
+					if (val != null)
+					{
+                        if (!_memoryLimitedList.Contains(val))
+                            _memoryLimitedList.Add(val);
+					}							
+				}
+			}
+
+        	_threadPoolManager =
+        		new WorkQueueThreadPoolManager(WorkQueueSettings.Instance.PriorityWorkQueueThreadCount,
+        		                               WorkQueueSettings.Instance.MemoryLimitedWorkQueueThreadCount,
+        		                               _memoryLimitedList);
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
@@ -91,60 +112,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 	    }
 		#endregion
 
-		#region Public Properties
-
-		public List<WorkQueueTypeEnum> SupportedTypesList
-    	{
-    		get { return _supportedTypesList; }
-    	}
-
-    	public List<WorkQueueTypeEnum> UnsupportedTypesList
-    	{
-    		get { return _unsupportedTypesList; }
-    	}
-
-    	#endregion
-
         #region Methods
-		public string GetWorkQueueTypeString()
-		{
-			string typeString = String.Empty;
-			if (_supportedTypesList.Count > 0)
-			{
-				foreach (WorkQueueTypeEnum type in _supportedTypesList)
-				{
-					if (typeString.Length > 0)
-						typeString += "," + type.Enum;
-					else
-						typeString = type.Enum.ToString();
-				}
-			}
-
-			if (_unsupportedTypesList.Count > 0)
-			{
-				foreach (WorkQueueTypeEnum defaultType in WorkQueueTypeEnum.GetAll())
-				{
-					bool found = false;
-					foreach (WorkQueueTypeEnum unsupportedType in _unsupportedTypesList)
-					{
-						if (unsupportedType.Equals(defaultType))
-						{
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-					{
-						if (typeString.Length > 0)
-							typeString += "," + defaultType.Enum;
-						else
-							typeString = defaultType.Enum.ToString();						
-					}
-				}				
-			}
-			return typeString;
-		}
-
     	/// <summary>
         /// Stop the WorkQueue processor
         /// </summary>
@@ -217,33 +185,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			if (!_threadPool.Active)
 				_threadPool.Start();
 
-        	string workQueueTypes = GetWorkQueueTypeString();
-
             while (true)
             {
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
                 {
                     try
                     {
-                        Model.WorkQueue queueListItem;
-
-                        using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-                        {
-                            IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
-                            WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
-                            parms.ProcessorID = ServiceTools.ProcessorId;
-							if (workQueueTypes.Length > 0)
-								parms.WorkQueueTypeEnumList = workQueueTypes;
-
-							queueListItem = select.FindOne(parms);
-
-							if (queueListItem != null)
-                                updateContext.Commit();
-                        }
-
+                        Model.WorkQueue queueListItem = _threadPoolManager.GetWorkQueueItem(ServiceTools.ProcessorId);
 						if (queueListItem == null)
 						{
-							/* No result found */
+							/* No result found, or reach max queue entries for each type */
 							_threadStop.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
 							_threadStop.Reset();
 						}
@@ -257,8 +208,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 								//Just fail the WorkQueue item, not much else we can do
 								FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum);
+								_threadPoolManager.QueueItemComplete(queueListItem);
 								continue;
 							}
+
+							Platform.Log(LogLevel.Info, "Found Queue Item to process, thread pool status: {0}", _threadPoolManager.ToString());
 
 							IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
 
@@ -271,6 +225,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							{
 								Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
 								FailQueueItem(queueListItem, "Failure getting WorkQueue processor: " + e.Message);
+								_threadPoolManager.QueueItemComplete(queueListItem);
 								continue;
 							}
 
@@ -302,6 +257,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 																				 queueItem.GetKey());
 														}
 
+														_threadPoolManager.QueueItemComplete(queueItem);
+
+														// Signal the parent thread, so it can query again
+														_threadStop.Set();
+														
 														// Cleanup the processor
 														processor.Dispose();
 													});

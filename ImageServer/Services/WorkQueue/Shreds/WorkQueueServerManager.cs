@@ -53,11 +53,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 	public class WorkQueueServerManager : ThreadedService
 	{
 		#region Private Members
-		private static WorkQueueServerManager _primaryInstance;
-		private static WorkQueueServerManager _secondaryInstance;
+		private static WorkQueueServerManager _instance;
 		private WorkQueueProcessor _theProcessor;
 		private readonly int _threadCount;
-		private readonly string _workQueueTypes;
 		private static bool _reset = false;
 		#endregion
 
@@ -65,10 +63,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		/// <summary>
 		/// **** For internal use only***
 		/// </summary>
-		private WorkQueueServerManager(string name, int threadCount, string workQueueTypes) : base(name)
+		private WorkQueueServerManager(string name) : base(name)
 		{
-			_threadCount = threadCount;
-			_workQueueTypes = workQueueTypes;
+			_threadCount = WorkQueueSettings.Instance.WorkQueueThreadCount;
 		}
 		#endregion
 
@@ -80,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 		{
 			get
 			{
-				if (_primaryInstance == null)
+				if (_instance == null)
 				{
 					if (!_reset)
 					{
@@ -96,50 +93,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 										 "Unable to reset WorkQueue items on startup.  There may be WorkQueue items orphaned in the queue.");
 						}
 					}
-					_primaryInstance =
-						new WorkQueueServerManager("Primary WorkQueue", WorkQueueSettings.Instance.PrimaryWorkQueueThreadCount,
-						                           WorkQueueSettings.Instance.PrimaryWorkQueueTypes);
+					_instance =
+						new WorkQueueServerManager("WorkQueue");
 				}
 
-				return _primaryInstance;
+				return _instance;
 			}
 			set
 			{
-				_primaryInstance = value;
-			}
-		}
-		/// <summary>
-		/// Singleton instance of the class.
-		/// </summary>
-		public static WorkQueueServerManager SecondaryInstance
-		{
-			get
-			{
-				if (_secondaryInstance == null)
-				{
-					if (!_reset)
-					{
-						_reset = true;
-						// Reset any queue items related to this system that are in a "In Progress" state.
-						try
-						{
-							ResetFailedItems();
-						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Fatal, e,
-							             "Unable to reset WorkQueue items on startup.  There may be WorkQueue items orphaned in the queue.");
-						}
-					}
-					_secondaryInstance =
-						new WorkQueueServerManager("Secondary WorkQueue", WorkQueueSettings.Instance.SecondaryWorkQueueThreadCount,
-						                           WorkQueueSettings.Instance.SecondaryWorkQueueTypes);
-				}
-				return _secondaryInstance;
-			}
-			set
-			{
-				_secondaryInstance = value;
+				_instance = value;
 			}
 		}
 		#endregion
@@ -214,30 +176,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 				// exception here, instead of getting to the enumerated value initializer.
 				using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 				{
+					readContext.Dispose();
 				}
 
 				_theProcessor = new WorkQueueProcessor(_threadCount, ThreadStop, Name); 
 			
-				if (_workQueueTypes.Length > 0)
-				{
-					string[] typeArray = _workQueueTypes.Split(',');
-					foreach (string type in typeArray)
-					{
-						WorkQueueTypeEnum val = WorkQueueTypeEnum.GetEnum(type);
-						if (val != null)
-						{
-                            if (_theProcessor.SupportedTypesList.Contains(val))
-                            {
-                                Platform.Log(LogLevel.Warn,
-                                             "Multiple work queue processor plugins found that are capable of handling '{0}' work queue entries. Only the first plugin is used.",
-                                             val.Lookup);
-                            }
-                            else
-                                _theProcessor.SupportedTypesList.Add(val);
-						}
-							
-					}
-				}
 			}				
 		}
 

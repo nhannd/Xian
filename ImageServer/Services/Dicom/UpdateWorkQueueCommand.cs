@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
-        	parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+        	parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
             if (_duplicate)
             {

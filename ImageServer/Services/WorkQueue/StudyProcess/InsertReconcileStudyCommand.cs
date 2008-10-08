@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             DateTime now = Platform.Time;
             parameters.ScheduledTime = now;
             parameters.ExpirationTime = now.AddSeconds(settings.WorkQueueExpireDelaySeconds);
-            parameters.Priority = WorkQueuePriorityEnum.Medium;
+            parameters.Priority = WorkQueuePriorityEnum.High;
             Model.WorkQueue workqueue = broker.FindOne(parameters);
             if (workqueue==null)
             {
