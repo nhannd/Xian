@@ -158,13 +158,13 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration
 			return CollectionUtils.Sort(results, SortStudies);
 		}
 
-		private static int SortStudies(StudyRootStudyIdentifier x, StudyRootStudyIdentifier y)
+		internal static int SortStudies(StudyRootStudyIdentifier x, StudyRootStudyIdentifier y)
 		{
 			DateTime? studyDateX = DateParser.Parse(x.StudyDate);
-			DateTime? studyTimeX = DateParser.Parse(x.StudyTime);
+			DateTime? studyTimeX = TimeParser.Parse(x.StudyTime);
 
 			DateTime? studyDateY = DateParser.Parse(y.StudyDate);
-			DateTime? studyTimeY = DateParser.Parse(y.StudyTime);
+			DateTime? studyTimeY = TimeParser.Parse(y.StudyTime);
 
 			DateTime? studyDateTimeX = studyDateX;
 			if (studyDateTimeX != null && studyTimeX != null)
