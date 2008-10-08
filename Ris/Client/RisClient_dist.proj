@@ -96,7 +96,7 @@
 
   <ItemGroup>
     <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
-    <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
+    <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
   </ItemGroup>
 
   <Target Name="AppConfigs">
