@@ -106,7 +106,6 @@ var _IE = document.all;
 
 var Table = {
 
-
 	createTable: function(htmlTable, options, columns, items)
 	{
 		htmlTable._columns = columns;
@@ -123,18 +122,18 @@ var Table = {
 			for(var prop in this._editableTableMixIn)
 				htmlTable[prop] = this._editableTableMixIn[prop];
 		}
-		
+
 		if(options.addColumnHeadings && !options.flow)
 		{
 			var tr = htmlTable.insertRow(0);
 			tr.className = "tableheading";
-		
+
 			var checkboxCellOffset = options.checkBoxes ? 1 : 0;
 			if(options.checkBoxes)
 			{
 				cell = tr.insertCell(0);
 			}
-			
+
 			var cell = null;
 			for(var i=0; i < columns.length; i++)
 			{
@@ -142,7 +141,7 @@ var Table = {
 				cell.innerHTML = columns[i].label;
 			}
 		}
-		
+
 		// do initial binding if supplied   
 		if(items)
 			htmlTable.bindItems(items);
@@ -152,32 +151,31 @@ var Table = {
 
 	// defines the methods that will mix-in to the DOM table object
 	_tableMixIn : {
-		
-		
+
 		bindItems: function(items)
 		{
 			this._removeAllRows();
-			
+
 			this.items = items;
-			
+
 			// bind to events on the items array
 			var table = this;
 			this.items.itemAdded = function(sender, args) { table._addRow(args.item); }
 			this.items.itemRemoved = function(sender, args) { table._removeRow(args.index+1); }
-			
+
 			// init table with items array
 			this.items.each(function(item) { table._addRow(item); });
-			
+
 			// validate items
 			this.updateValidation();
-			
+
 			if (this.onRowClick)
 			{
 				if (this._options.autoSelectFirstElement)
 					this._selectRow(this.rows[1]); // skip header row
 			}
 		},
-		
+
 		getCheckedItems: function()
 		{
 			var result = [];
@@ -188,7 +186,7 @@ var Table = {
 			}
 			return result;
 		},
-		
+
 		setItemCheckState: function(item, checked)
 		{
 			var rowIndex = this.items.indexOf(item) + 1;
@@ -197,7 +195,7 @@ var Table = {
 				this._checkBoxes[rowIndex].checked = checked;
 			}
 		},
-		
+
 		updateValidation: function()
 		{
 			for(var i=1; i < this.rows.length; i++) // skip header row
@@ -214,7 +212,7 @@ var Table = {
 			
 			return -1;
 		},
-		
+
 		_resetRowClassName: function(r)
 		{
 			var index = this._indexOfRow(r);
@@ -240,7 +238,7 @@ var Table = {
 			r.style.cursor="hand"; 
 			r.className = this.mouseOverClassName;
 		},
-		
+
 		_mouseOutRow: function(r) 
 		{ 
 			r.style.cursor=''; 
@@ -273,12 +271,12 @@ var Table = {
 				this.errorProvider.setError(this._checkBoxes[rowIndex], args.error);
 			}
 		},
-		
+
 		_addRow: function(obj)
 		{
 			var index = this.rows.length;
 			var tr = this.insertRow(index);
-			
+
 			// apply row cyclic css class to row
 			if(this.rowCycleClassNames && this.rowCycleClassNames.length > 0)
 				tr.className = this.rowCycleClassNames[(index-1)%(this.rowCycleClassNames.length)];
@@ -286,7 +284,7 @@ var Table = {
 			// fire custom formatting event	
 			if(this.renderRow)
 				this.renderRow(this, { htmlRow: tr, rowIndex: index-1, item: obj });
-			
+
 			if (this.onRowClick)
 			{
 				var htmlTable = this;
@@ -294,62 +292,62 @@ var Table = {
 				tr.onmouseout = function() { htmlTable._mouseOutRow(tr); };
 				tr.onclick = function() { htmlTable._selectRow(tr); };
 			}
-				
+
 			if(this._options.checkBoxes)
 			{
 				// add checkbox cell at start of row
 				var td = tr.insertCell(0);
 				var checkBox = document.createElement("input");
 				checkBox.type = "checkbox";
-			  td.className = "rowCheckCell";
+				td.className = "rowCheckCell";
 				td.appendChild(checkBox);
 				this._checkBoxes[index] = checkBox;
 
 				// add errorProvider image next to checkbox
 				this.errorProvider.setError(checkBox, "");
 			}
-			
+
 			var containerCell;  // used by "flow" style
 			for(var i=0; i < this._columns.length; i++)
 			{
 				var cell = null;
 
-			   if(this._options.flow)
-			   {
+				if(this._options.flow)
+				{
 					// add one containerCell to the table, and flow each of the "columns" inside of it
-				   containerCell = containerCell || tr.insertCell(this._getBaseColumnIndex());
-				   containerCell.className = "containerCell";
-				   
-				   // the cell is not technically a cell in this case, but rather a div
-				   cell = document.createElement("div");
-				   containerCell.appendChild(cell);
-				   cell.className = "divCell";
-				   cell.innerHTML = this._columns[i].label + "<br>";
-			   }
-			   else
-			   {
-				  // add one cell for each column, offset by 1 if there is a checkbox column
-					cell = tr.insertCell(i + this._getBaseColumnIndex());
-			   }
-				 
-			  this._renderCell(index, i, cell, obj);
+					containerCell = containerCell || tr.insertCell(this._getBaseColumnIndex());
+					containerCell.className = "containerCell";
 
-			  // set cell error provider if the column has an error function
-			  if(this._columns[i].getError)
-			  {
-				  var errorElement = cell.lastChild;  // the HTML element where the error will be shown
-				  this.errorProvider.setError(errorElement, "");
-				  
-				  // cache the errorElement in an array in the TR, so we can reference it later
-				  tr._errorElements = tr._errorElements || [];
-				  tr._errorElements[i] = errorElement;
-			  }
+					// the cell is not technically a cell in this case, but rather a div
+					cell = document.createElement("div");
+					containerCell.appendChild(cell);
+					cell.className = "divCell";
+					cell.innerHTML = this._columns[i].label + "<br>";
+				}
+				else
+				{
+					// add one cell for each column, offset by 1 if there is a checkbox column
+					cell = tr.insertCell(i + this._getBaseColumnIndex());
+				}
+
+				this._renderCell(index, i, cell, obj);
+
+				// set cell error provider if the column has an error function
+				if(this._columns[i].getError)
+				{
+					var errorElement = cell.lastChild;  // the HTML element where the error will be shown
+					this.errorProvider.setError(errorElement, "");
+
+					// cache the errorElement in an array in the TR, so we can reference it later
+					tr._errorElements = tr._errorElements || [];
+					tr._errorElements[i] = errorElement;
+				}
 			}
-			
+
 			this._validateRow(index);
-		   
+
 		},
-	
+
 		_renderCell: function(row, col, td, obj)
 		{
 			// by default, set cell content to the value of the specified property of the object
@@ -376,7 +374,7 @@ var Table = {
 			if(this.renderCell)
 				this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
 		},
-		
+
 		// returns the HTML DOM element that represents the "cell" of the table
 		_getCell : function(rowIndex, colIndex)
 		{
@@ -394,248 +392,254 @@ var Table = {
 			}
 			return cell;
 		},
-		
+
 		// returns either 0, if this table does not have a check-box column, or 1 if it does have a check-box column
 		_getBaseColumnIndex: function()
 		{
 			return this._options.checkBoxes ? 1 : 0;
 		},
-		
+
 		_getColumnValue: function(column, obj)
 		{
 			// if column is a string, treat it as an immediate property of the object
 			// otherwise, assume column is a complex object, and look for a getValue function
 			return (typeof(column) == "string") ? obj[column] : ((column.getValue) ? column.getValue(obj) : null);
 		},
-		
+
 		_removeRow: function(index)
 		{
 			// remove any error providers for this row
 			var row = this.rows[index];
 			var errorProvider = this.errorProvider;
 			row._errorElements.each(function(element) { errorProvider.remove(element); });
-			
+
 			// remove the row and row checkbox
 			this.deleteRow(index);
 			this._checkBoxes.removeAt(index);
 		},
-		
+
 		_removeAllRows: function()
 		{
 			for(var i=this.rows.length-1; i > 0; i--)
 				this._removeRow(i);
 		}
 	},
-	
+
 	// defines the methods that will be mixed to an "edit-in-place" style table
 	_editableTableMixIn: {
-		// override the _renderCell method from _tableMixIn
-		_renderCell: function(row, col, td, obj)
+	
+		_renderer :
 		{
-			var column = this._columns[col];
-			var value = this._getColumnValue(column, obj);
-			var table = this;
-
-			if(["readonly"].indexOf(column.cellType) > -1)
+			"readonly": function(row, col, td, obj, column, table)
 			{
 				var field = document.createElement("div");
 				field.className = "readonlyField";
 				td.appendChild(field);
 				td._setCellDisplayValue = function(value) { Field.setPreFormattedValue(field, value); }
-			}
-			else
-			if(["newline"].indexOf(column.cellType) > -1)
-            {
-                var parent = td.parentNode;
-                parent.removeChild(td);
-                
-                var right  = document.createElement("div");
-                right.style['float'] = right;
-                right.style.clear = 'both';
-                right._setCellDisplayValue = function() {};
-                parent.appendChild(right);
-                
-                td = right;
-            }
-			else
-			if(["text"].indexOf(column.cellType) > -1)
+			},
+
+			"newline": function(row, col, td, obj, column, table) 
+			{
+				var parent = td.parentNode;
+				parent.removeChild(td);
+
+				var right  = document.createElement("div");
+				right.style.clear = 'both';
+				right._setCellDisplayValue = function() {};
+				parent.appendChild(right);
+
+				td = right;
+				return td;
+			},
+
+			"text": function(row, col, td, obj, column, table) 
 			{
 				var input = document.createElement("input");
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value; }
 				if(column.size) input.size = column.size;
-				
+
 				// respond to every keystroke
 				input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
-				
+
 				// consider the edit complete when focus is lost
 				input.onblur = function() { table._onEditComplete(row, col); }
-                
-                // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
-                // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-                input.style.padding = '2px';
+
+				// Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+				// This cannot be done in CSS since IE ignores the "type" pseudo selector.
+				input.style.padding = '2px';
 				input.style.border = '1px solid #969696';
-			}
-			else
-			if(["textarea"].indexOf(column.cellType) > -1)
+			},
+
+			"textarea": function(row, col, td, obj, column, table)
 			{
 				var input = document.createElement("textarea");
 				td.appendChild(input);
-				  td.style.height = "100%";  // overwrite default styles heights so whole text area is visible
+				td.style.height = "100%";  // overwrite default styles heights so whole text area is visible
 				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value; }
 				if(column.cols) input.cols = column.cols;
-				  if(column.rows) input.rows = column.rows;
-				  if(column.readOnly) input.readOnly = column.readOnly;
-				
+				if(column.rows) input.rows = column.rows;
+				if(column.readOnly) input.readOnly = column.readOnly;
+
 				// respond to every keystroke
 				input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
-				
+
 				// consider the edit complete when focus is lost
 				input.onblur = function() { table._onEditComplete(row, col); }
-			}
-			else
-			if(["date", "time", "datetime"].indexOf(column.cellType) > -1)
+			},
+
+			_dateHelper: function(row, col, td, obj, column, table) 
 			{
-				if(["date", "datetime"].indexOf(column.cellType) > -1)
-				{
-					var inputDate = document.createElement("input");
-					inputDate.id = this.id + "_" + column.label + "_" + "dateinput" + row;
-					td.appendChild(inputDate);
-					if(column.size) inputDate.size = column.size;
+				var inputDate = document.createElement("input");
+				inputDate.id = table.id + "_" + column.label + "_" + "dateinput" + row;
+				td.appendChild(inputDate);
+				if(column.size) inputDate.size = column.size;
+				
+				// Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+				// This cannot be done in CSS since IE ignores the "type" pseudo selector.
+				inputDate.style.padding = '2px';
+				inputDate.style.border = '1px solid #969696';
+				
+				// consider the edit complete when focus is lost
+				inputDate.onblur = function() 
+				{ 
+					// Just tabbing through an empty field, so don't assume a value
+					if (!inputDate.value && !column.getValue(obj))
+						return;
 					
-                    // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
-                    // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-					inputDate.style.padding = '2px';
-					inputDate.style.border = '1px solid #969696';
-					
-					// consider the edit complete when focus is lost
-					inputDate.onblur = function() 
-					{ 
-						// Just tabbing through an empty field, so don't assume a value
-						if (!inputDate.value && !column.getValue(obj))
-							return;
-						
-						var date;
+					var date;
 
-						try
-						{
-							date = Date.parseDate(inputDate.value, Ris.getDateFormat()) || new Date();
-						}
-						catch(e)
-						{
-							date = new Date();
-						}
-						
-						var extendedDate = column.getValue(obj) || new Date();
-						extendedDate.setDate(date.getDate());
-						extendedDate.setMonth(date.getMonth());
-						extendedDate.setYear(date.getYear());
-						column.setValue(obj, extendedDate);
-						table._onEditComplete(row, col); 
-					}
-
-
-                    // launch calendar on click
-					var findButtonDate = document.createElement("span");
-					findButtonDate.innerText = "     ";
-					findButtonDate.className = "datePickerButton";
-					td.appendChild(findButtonDate);
-					findButtonDate.onclick = function() 
+					try
 					{
-						showDatePicker(findButtonDate, inputDate, 
-							function(date) 
-							{
-								var extendedDate = column.getValue(obj) || new Date();
-								extendedDate.setDate(date.getDate());
-								extendedDate.setMonth(date.getMonth());
-								extendedDate.setYear(date.getYear());
-								column.setValue(obj, extendedDate);
-								table._onCellUpdate(row, col);
-								table._onEditComplete(row, col);
-							});
+						date = Date.parseDate(inputDate.value, Ris.getDateFormat()) || new Date();
 					}
+					catch(e)
+					{
+						date = new Date();
+					}
+					
+					var extendedDate = column.getValue(obj) || new Date();
+					extendedDate.setDate(date.getDate());
+					extendedDate.setMonth(date.getMonth());
+					extendedDate.setYear(date.getYear());
+					column.setValue(obj, extendedDate);
+					table._onEditComplete(row, col); 
 				}
 
-				if(["time", "datetime"].indexOf(column.cellType) > -1)
+
+				// launch calendar on click
+				var findButtonDate = document.createElement("span");
+				findButtonDate.innerText = "     ";
+				findButtonDate.className = "datePickerButton";
+				td.appendChild(findButtonDate);
+				findButtonDate.onclick = function() 
 				{
-					var inputTime = document.createElement("input");
-					inputTime.id = this.id + "_" + column.label + "_" + "timeinput" + row;
-					td.appendChild(inputTime);
-					if(column.size) inputTime.size = column.size;
+					showDatePicker(findButtonDate, inputDate, 
+						function(date) 
+						{
+							var extendedDate = column.getValue(obj) || new Date();
+							extendedDate.setDate(date.getDate());
+							extendedDate.setMonth(date.getMonth());
+							extendedDate.setYear(date.getYear());
+							column.setValue(obj, extendedDate);
+							table._onCellUpdate(row, col);
+							table._onEditComplete(row, col);
+						});
+				}
 
-                    // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
-                    // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-					inputTime.style.padding = '2px';
-					inputTime.style.border = '1px solid #969696';
+				return inputDate;
+			},
+
+			"date": function(row, col, td, obj, column, table) 
+			{
+				var inputDate = this._dateHelper(row, col, td, obj, column, table);
+				td._setCellDisplayValue = function(value) { inputDate.value = value ? Ris.formatDate(value) : ""; };
+			},
+
+			_timeHelper: function(row, col, td, obj, column, table) 
+			{
+				var inputTime = document.createElement("input");
+				inputTime.id = table.id + "_" + column.label + "_" + "timeinput" + row;
+				td.appendChild(inputTime);
+				if(column.size) inputTime.size = column.size;
+
+				// Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+				// This cannot be done in CSS since IE ignores the "type" pseudo selector.
+				inputTime.style.padding = '2px';
+				inputTime.style.border = '1px solid #969696';
+				
+				// consider the edit complete when focus is lost
+				inputTime.onblur = function() 
+				{ 
+					// Just tabbing through an empty field, so don't assume a value
+					if (!inputTime.value && !column.getValue(obj))
+						return;
 					
-					// consider the edit complete when focus is lost
-					inputTime.onblur = function() 
-					{ 
-						// Just tabbing through an empty field, so don't assume a value
-						if (!inputTime.value && !column.getValue(obj))
-							return;
-						
-						var date;
+					var date;
 
-						try
-						{
-							date = sstp_validateTimePicker(inputTime) || new Date();
-						}
-						catch(e)
-						{
-							date = new Date();
-						}
-
-						var extendedDate = column.getValue(obj) || new Date();
-						extendedDate.setHours(date.getHours());  
-						extendedDate.setMinutes(date.getMinutes()); 
-						column.setValue(obj, extendedDate);
-						table._onEditComplete(row, col); 
+					try
+					{
+						date = sstp_validateTimePicker(inputTime) || new Date();
+					}
+					catch(e)
+					{
+						date = new Date();
 					}
 
-					// launch calendar on click
-					var findButtonTime = document.createElement("span");
-					findButtonTime.innerText = "     ";
-					findButtonTime.className = "timePickerButton";
-					td.appendChild(findButtonTime);
-					findButtonTime.onclick = function() 
-					{ 
-						showTimePicker(findButtonTime, inputTime,
-							function(time)
-							{
-								var extendedDate = column.getValue(obj) || new Date();
-								extendedDate.setHours(time.getHours());  // Ensure Date object has extensions defined in jsx.js
-								extendedDate.setMinutes(time.getMinutes());  // Ensure Date object has extensions defined in jsx.js
-								column.setValue(obj, extendedDate);
-								table._onCellUpdate(row, col);
-								table._onEditComplete(row, col);
-							}); 
-					}
+					var extendedDate = column.getValue(obj) || new Date();
+					extendedDate.setHours(date.getHours());  
+					extendedDate.setMinutes(date.getMinutes()); 
+					column.setValue(obj, extendedDate);
+					table._onEditComplete(row, col); 
+				}
+
+				// launch calendar on click
+				var findButtonTime = document.createElement("span");
+				findButtonTime.innerText = "     ";
+				findButtonTime.className = "timePickerButton";
+				td.appendChild(findButtonTime);
+				findButtonTime.onclick = function() 
+				{ 
+					showTimePicker(findButtonTime, inputTime,
+						function(time)
+						{
+							var extendedDate = column.getValue(obj) || new Date();
+							extendedDate.setHours(time.getHours());  // Ensure Date object has extensions defined in jsx.js
+							extendedDate.setMinutes(time.getMinutes());  // Ensure Date object has extensions defined in jsx.js
+							column.setValue(obj, extendedDate);
+							table._onCellUpdate(row, col);
+							table._onEditComplete(row, col);
+						}); 
 				}
 				
-				if(["date"].indexOf(column.cellType) > -1)
-				{
-					td._setCellDisplayValue = function(value) { inputDate.value = value ? Ris.formatDate(value) : ""; };
-				}
-				if(["time"].indexOf(column.cellType) > -1)
-				{
-					td._setCellDisplayValue = function(value) { inputTime.value = value ? Ris.formatTime(value) : ""; };
-				}
-				if(["datetime"].indexOf(column.cellType) > -1)
-				{
-					td._setCellDisplayValue = function(value) 
-					{ 
-						inputDate.value = value ? Ris.formatDate(value) : "";
-						inputTime.value = value ? Ris.formatTime(value) : ""; 
-					};
-				}
-			}
-			else
-			if(["choice", "combobox", "dropdown", "enum", "list", "listbox"].indexOf(column.cellType) > -1)
+				return inputTime;
+			},
+
+			"time": function(row, col, td, obj, column, table) 
+			{
+				var inputTime = this._timeHelper(row, col, td, obj, column, table);
+				td._setCellDisplayValue = function(value) { inputTime.value = value ? Ris.formatTime(value) : ""; };
+			},
+
+			"datetime": function(row, col, td, obj, column, table)
+			{
+				var inputDate = this._dateHelper(row, col, td, obj, column, table);
+				var inputTime = this._timeHelper(row, col, td, obj, column, table);
+				td._setCellDisplayValue = function(value) 
+				{ 
+					inputDate.value = value ? Ris.formatDate(value) : "";
+					inputTime.value = value ? Ris.formatTime(value) : ""; 
+				};
+			},
+
+			"choice": function(row, col, td, obj, column, table)
 			{
 				// define a function to populate the dropdown
 				function addOptions(parent, items)
 				{
+					if(!items)
+						return;
+						
 					items.each(
 						function(item)
 						{
@@ -655,19 +659,19 @@ var Table = {
 							}
 						});
 				}
-			
+
 				var input = document.createElement("select");
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value) { input.value = (value === undefined || value === null) ? "" : value; }
 				if(column.size) input.style.width = column.size + "pc"; // set width in chars
-				
+
 				input.style.marginTop = '1px';
 				input.style.marginBottom = '1px';
-				
+
 				// choices may be an array, or a function that returns an array
 				var choices = (typeof(column.choices) == "function") ? column.choices(obj) : column.choices;
 				addOptions(input, choices);
-				
+
 				input.onchange = function()
 				{
 					column.setValue(obj, (this.value && this.value.length)? this.value : null);
@@ -675,39 +679,44 @@ var Table = {
 					// for a combo box, the edit is completed as soon as the selection changes
 					table._onEditComplete(row, col); 
 				}
-				
-			}
-			else
-			if(["check","checkbox","bool","boolean"].indexOf(column.cellType) > -1)
+			},
+
+			"combobox": function(row, col, td, obj, column, table) { this["choice"](row, col, td, obj, column, table); },
+			"dropdown": function(row, col, td, obj, column, table) { this["choice"](row, col, td, obj, column, table); },
+			"enum": function(row, col, td, obj, column, table) { this["choice"](row, col, td, obj, column, table); },
+			"list": function(row, col, td, obj, column, table) { this["choice"](row, col, td, obj, column, table); },
+			"listbox": function(row, col, td, obj, column, table) { this["choice"](row, col, td, obj, column, table); },
+
+			"check": function(row, col, td, obj, column, table)
 			{
-				  td.className = "checkedDivCell";
+				td.className = "checkedDivCell";
 
-				  // Replace top-level label text with an actual label element
-				  // This allows the check-box to be activated while clicking on the text in addition to the box
-				  // <div>label text<br></div> will ultimately become <div><label><input type="checkbox">label text</label></div>
-				  
-				  var label = document.createElement("label");
-				  td.appendChild(label);
+				// Replace top-level label text with an actual label element
+				// This allows the check-box to be activated while clicking on the text in addition to the box
+				// <div>label text<br></div> will ultimately become <div><label><input type="checkbox">label text</label></div>
 
-				  var input = document.createElement("input");
-				  input.type = "checkbox";
-				  label.appendChild(input);
-				  
-				  if(column.readonly)
-				  {
+				var label = document.createElement("label");
+				td.appendChild(label);
+
+				var input = document.createElement("input");
+				input.type = "checkbox";
+				label.appendChild(input);
+
+				if(column.readonly)
+				{
 					input.disabled = "disabled";
-					}
+				}
 
-				  // move the "label text" from the div/cell to the label element
-				  var text = td.removeChild(td.firstChild);
-				  label.appendChild(text);
+				// move the "label text" from the div/cell to the label element
+				var text = td.removeChild(td.firstChild);
+				label.appendChild(text);
 
-				  // get rid of useless <br>
-				  if(td.firstChild) td.removeChild(td.firstChild);  // get rid of <br>
+				// get rid of useless <br>
+				if(td.firstChild) td.removeChild(td.firstChild);  // get rid of <br>
 
 				td._setCellDisplayValue = function(value) { input.checked = value ? true : false; }
 				if(column.size) input.size = column.size;
-				
+
 				input.onclick = input.onchange = function()
 				{
 					column.setValue(obj, this.checked ? true : false);
@@ -715,9 +724,13 @@ var Table = {
 					// for a check box, the edit is completed as soon as the click happens
 					table._onEditComplete(row, col); 
 				}
-			}
-			else
-			if(column.cellType == "lookup")
+			},
+
+			"checkbox": function(row, col, td, obj, column, table) { this["check"](row, col, td, obj, column, table); },
+			"bool": function(row, col, td, obj, column, table) { this["check"](row, col, td, obj, column, table); },
+			"boolean": function(row, col, td, obj, column, table) { this["check"](row, col, td, obj, column, table); },
+			
+			"lookup": function(row, col, td, obj, column, table) 
 			{
 				// define a helper to do the lookup
 				function doLookup()
@@ -731,7 +744,7 @@ var Table = {
 						input.className = "";	// revert field background color since the query is resolved
 					}
 				}
-				
+
 				var input = document.createElement("input");
 				td.appendChild(input);
 				td._setCellDisplayValue = function(value)
@@ -741,9 +754,9 @@ var Table = {
 				}
 				if(column.size) input.size = column.size;
 
-                // Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
-                // This cannot be done in CSS since IE ignores the "type" pseudo selector.
-                input.style.padding = '2px';
+				// Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
+				// This cannot be done in CSS since IE ignores the "type" pseudo selector.
+				input.style.padding = '2px';
 				input.style.border = '1px solid #969696';
 				
 				input.onkeyup = function()
@@ -764,8 +777,8 @@ var Table = {
 							// if there are any characters in the input field, change color to indicate to user that the query is unresolved
 							input.className = (input.value && column.getValue(obj) === null) ? "unresolved" : "";
 					}
-				}				
-				
+				}
+
 				var findButton = document.createElement("span");
 				findButton.className = "lookupButton";
 				findButton.innerText = "    ";
@@ -776,20 +789,30 @@ var Table = {
 				// consider the edit complete when focus is lost
 				// JR: actually this doesn't work because it blanks the text box when focus moves to the find button
 				//input.onblur = function() { table._onEditComplete(row, col); }
-			}
-			else
-			if (column.cellType == "html")
+			},
+			
+			"html": function(row, col, td, obj, column, table) {}
+		},
+		
+		// override the _renderCell method from _tableMixIn
+		_renderCell: function(row, col, td, obj)
+		{
+			var column = this._columns[col];
+			var value = this._getColumnValue(column, obj);
+			var table = this;
+
+			if(this._renderer[column.cellType])
 			{
+				td = this._renderer[column.cellType](row, col, td, obj, column, table) || td;
 			}
-			
-			
+
 			// initialize the cell value
 			td._setCellDisplayValue(value);
-			
+
 			// initialize the cell visibility
 			//td.style.visibility = (column.getVisible ? column.getVisible(obj) : true) ? "visible" : "hidden";
-		  td.style.display = (column.getVisible ? column.getVisible(obj) : true) ? "block" : "none";
-			
+			td.style.display = (column.getVisible ? column.getVisible(obj) : true) ? "block" : "none";
+
 			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
 			if(this.renderCell)
 				this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
@@ -801,15 +824,15 @@ var Table = {
 			// update validation on the fly as the user types, rather than wait for the edit to complete
 			this._validateRow(row);
 		},
-		
+
 		_onEditComplete: function(rowIndex, colIndex)
 		{
 			var item = this.items[rowIndex-1];
-		   for(var c=0; c < this._columns.length; c++)
+			for(var c=0; c < this._columns.length; c++)
 			{
 				var column = this._columns[c];
 				var cell = this._getCell(rowIndex, c);
-				
+
 				// update the cell's visibility
 				if(column.getVisible)
 				{
@@ -825,7 +848,7 @@ var Table = {
 						column.setValue(item, null);
 					}
 				}
-				
+
 				// update the cell's display value from the item
 				cell._setCellDisplayValue(column.getValue(item));
 			}
@@ -861,12 +884,12 @@ function ErrorProvider(visible)
 {
 	this._providers = [];
 	this._visible = visible ? true : false;
-	
+
 	this.setError = function(htmlElement, message)
 	{
 		// see if there is already a provider for this element
 		var provider = this._providers.find(function(v) { return v.element == htmlElement; });   
-		
+
 		// if not, create one
 		if(!provider)
 		{
@@ -882,14 +905,14 @@ function ErrorProvider(visible)
 				} 
 			};
 			this._providers.add( provider );
-			
+
 			insertAfter(provider.img, htmlElement);
 		}
 		provider.img.title = message || "";
 		provider.img.className = "errorProvider";
 		provider.showError(this._visible);
 	}
-	
+
 	this.remove = function(htmlElement)
 	{
 		// see if there is a provider for this element
@@ -897,12 +920,12 @@ function ErrorProvider(visible)
 		if(provider)
 			this._providers.remove(provider);
 	}
-	
+
 	this.hasErrors = function()
 	{
 		return this._providers.find(function(provider) { return provider.hasError(); }) ? true : false;
 	}
-	
+
 	this.setVisible = function(visible)
 	{
 		this._visible = visible ? true : false;
@@ -930,11 +953,10 @@ function insertAfter(newElement,targetElement)
 }
 
 function NewLineField() {
-    this.label = "";
-    this.cellType = "newline";
-    this.getValue = function(item) { return; };
+	this.label = "";
+	this.cellType = "newline";
+	this.getValue = function(item) { return; };
 	this.setValue = function(item, value) { return; };
-	this.getError = function(item) { return null; };
 }
 
 var Field = 
@@ -1040,22 +1062,22 @@ Date.parseDate = function(str, fmt) {
 
 	fmt = fmt.replace(/dddd/g, "%a")
 			.replace(/ddd/g, "%A")
-            .replace(/dd/g, "%z")   // use an intermediate substitution here
-            .replace(/d/g, "%e")
-            .replace(/MMMM/g, "%B")
-            .replace(/MMM/g, "%b")
-            .replace(/MM/g, "%m")
-            .replace(/HH/g, "%w")   // use an intermediate substitution here
-            .replace(/H/g, "%k")
-            .replace(/hh/g, "%I")
-            .replace(/h/g, "%l")
-            .replace(/mm/g, "%M")
-            .replace(/tt/g, "%p")
-            .replace(/ss/g, "%S")
-            .replace(/yyyy/g, "%Y")
-            .replace(/yy/g, "%y")
-            .replace(/%z/g, "%d")   // replace intermediate substitutions
-            .replace(/%w/g, "%H");  // replace intermediate substitutions
+			.replace(/dd/g, "%z")   // use an intermediate substitution here
+			.replace(/d/g, "%e")
+			.replace(/MMMM/g, "%B")
+			.replace(/MMM/g, "%b")
+			.replace(/MM/g, "%m")
+			.replace(/HH/g, "%w")   // use an intermediate substitution here
+			.replace(/H/g, "%k")
+			.replace(/hh/g, "%I")
+			.replace(/h/g, "%l")
+			.replace(/mm/g, "%M")
+			.replace(/tt/g, "%p")
+			.replace(/ss/g, "%S")
+			.replace(/yyyy/g, "%Y")
+			.replace(/yy/g, "%y")
+			.replace(/%z/g, "%d")   // replace intermediate substitutions
+			.replace(/%w/g, "%H");  // replace intermediate substitutions
 
 	var today = new Date();
 	var y = 0;
