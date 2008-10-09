@@ -33,6 +33,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\CreatePatientForStudy.cs" />
+    <Compile Include="Brokers\AttachStudyToPatient.cs" />
     <Compile Include="Brokers\UpdateQueueStudyState.cs" />
     <Compile Include="Brokers\WebQueryStudyIntegrityQueue.cs" />
     <Compile Include="Brokers\InsertReconcileQueue.cs" />

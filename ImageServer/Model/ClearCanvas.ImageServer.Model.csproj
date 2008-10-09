@@ -46,6 +46,7 @@
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
+    <Compile Include="Brokers\ICreatePatientForStudy.cs" />
     <Compile Include="Brokers\IUpdateQueueStudyState.cs" />
     <Compile Include="Brokers\IWebQueryReconcileQueue.cs" />
     <Compile Include="Brokers\IInserReconcileQueue.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Brokers\IResetWorkQueueItems.cs" />
     <Compile Include="Brokers\IInsertFilesystem.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
+    <Compile Include="Brokers\IAttachStudyToPatient.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
@@ -189,7 +191,9 @@
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="InstanceKeys.cs" />
+    <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
     <Compile Include="Parameters\ReconcileStudyWorkQueueData.cs" />
+    <Compile Include="Parameters\AttachStudyToPatientParamaters.cs" />
     <Compile Include="Parameters\UpdateQueueStudyStateParameters.cs" />
     <Compile Include="Parameters\WebQueryStudyIntegrityQueueParameters.cs" />
     <Compile Include="Parameters\InsertStudyIntegrityQueueParameters.cs" />

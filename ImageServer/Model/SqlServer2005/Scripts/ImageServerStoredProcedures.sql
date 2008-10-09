@@ -148,6 +148,16 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Updat
 DROP PROCEDURE [dbo].[UpdateQueueStudyState]
 GO
 
+/****** Object:  StoredProcedure [dbo].[AttachStudyToPatient]    Script Date: 10/09/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AttachStudyToPatient]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[AttachStudyToPatient]
+GO
+
+
+/****** Object:  StoredProcedure [dbo].[CreatePatientForStudy]    Script Date: 10/09/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CreatePatientForStudy]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[CreatePatientForStudy]
+GO
 
 
 /****** Object:  StoredProcedure [dbo].[UpdateQueueStudyState]    Script Date: 10/01/2008 11:53:24 ******/
@@ -3223,3 +3233,171 @@ END
 GO
 
 
+
+/****** Object:  StoredProcedure [dbo].[AttachStudyToPatient]    Script Date: 10/09/2008 11:53:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AttachStudyToPatient]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 09, 2008
+-- Description:	Attach a study to a new patient and update all object counts for the old and new patient.
+--
+-- =============================================
+CREATE PROCEDURE [dbo].[AttachStudyToPatient]
+	-- Add the parameters for the stored procedure here
+	@StudyGUID uniqueidentifier, 
+	@NewPatientGUID uniqueidentifier
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @ServerPartitionGUID uniqueidentifier
+	DECLARE @CurrentPatientGUID uniqueidentifier
+	DECLARE @StudyInstanceUid varchar(64)
+
+	SELECT @ServerPartitionGUID=Study.ServerPartitionGUID,
+		   @StudyInstanceUid = Study.StudyInstanceUid, @CurrentPatientGUID=PatientGUID
+	FROM Study WHERE Study.GUID=@StudyGUID
+
+
+	UPDATE Study 
+	SET PatientGUID=@NewPatientGUID
+	WHERE GUID=	@StudyGUID
+
+	UPDATE Study 
+	SET Study.PatientsName=Patient.PatientsName,
+		Study.PatientId=Patient.PatientId,
+		Study.IssuerOfPatientId = Patient.IssuerOfPatientId	
+	FROM Study JOIN Patient ON Patient.GUID=Study.PatientGUID
+	WHERE Study.GUID=@StudyGUID
+	
+	UPDATE Patient 
+	SET NumberOfPatientRelatedStudies=NumberOfPatientRelatedStudies+1,
+		NumberOfPatientRelatedSeries=NumberOfPatientRelatedSeries+(SELECT Count(GUID)
+									From Series WITH(READPAST) 			
+									WHERE ServerPartitionGUID=@ServerPartitionGUID AND StudyGUID=@StudyGUID),
+		NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances+(
+			SELECT SUM(NumberOfSeriesRelatedInstances)
+			From Series WITH(READPAST) 
+			WHERE ServerPartitionGUID=@ServerPartitionGUID AND StudyGUID=@StudyGUID)
+
+	WHERE GUID=@NewPatientGUID
+
+	
+	DECLARE @StudyCount int
+
+	SELECT @StudyCount =NumberOfPatientRelatedStudies
+	FROM Patient WHERE GUID=@CurrentPatientGUID
+
+	PRINT @StudyCount
+	IF @StudyCount<=1
+	BEGIN
+		DELETE Patient WHERE GUID=@CurrentPatientGUID
+	END
+	ELSE
+	BEGIN
+		UPDATE Patient Set NumberOfPatientRelatedStudies=NumberOfPatientRelatedStudies-1
+		WHERE GUID=@CurrentPatientGUID 
+	END
+END
+'
+END
+
+GO
+
+
+/****** Object:  StoredProcedure [dbo].[CreatePatientForStudy]    Script Date: 10/09/2008 11:53:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CreatePatientForStudy]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 09, 2008
+-- Description:	Create a new Patient for a study
+-- =============================================
+CREATE PROCEDURE [dbo].[CreatePatientForStudy]
+	-- Add the parameters for the stored procedure here
+	@StudyGUID uniqueidentifier, 
+	@PatientsName nvarchar(64),
+	@PatientId    nvarchar(64),
+	@IssuerOfPatientId nvarchar(64)=null,
+	@SpecificCharacterSet varchar(128)=null	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @ServerPartitionGUID uniqueidentifier
+	DECLARE @PatientGUID uniqueidentifier
+	DECLARE @CurrentPatientGUID uniqueidentifier
+	DECLARE @StudyInstanceUid varchar(64)
+	DECLARE @NumStudiesOwnedByCurrentPatient int
+	DECLARE @NumSeries int
+	DECLARE @NumInstances int
+
+	SELECT	@ServerPartitionGUID=Study.ServerPartitionGUID,
+			@StudyInstanceUid = Study.StudyInstanceUid,
+			@CurrentPatientGUID=PatientGUID,
+			@NumStudiesOwnedByCurrentPatient = Patient.NumberOfPatientRelatedStudies,
+			@NumSeries = NumberOfStudyRelatedSeries,
+			@NumInstances = NumberOfStudyRelatedInstances
+	FROM Study 
+	JOIN Patient ON Patient.GUID = Study.PatientGUID
+	WHERE Study.GUID=@StudyGUID
+
+	SET @PatientGUID = newid()
+
+	INSERT INTO [Patient]([GUID],[ServerPartitionGUID],[PatientsName],[PatientId],[IssuerOfPatientId],
+			[NumberOfPatientRelatedStudies],[NumberOfPatientRelatedSeries],[NumberOfPatientRelatedInstances],[SpecificCharacterSet])
+    VALUES
+           (@PatientGUID,@ServerPartitionGUID,@PatientsName,@PatientId,@IssuerOfPatientId,0,0,0,@SpecificCharacterSet)
+
+	-- Attach study to the new patient
+	UPDATE Study 
+	SET PatientGUID=@PatientGUID
+	WHERE GUID=@StudyGUID
+
+	-- We may consider copy the fields in the Patient record to the Study record.
+	-- Howerver, the Study record should reflect the data in the images and it may also contain information that''s not passed
+	-- in to this stored procedure. It''s assumed that the aplication has access to the images so it can update the Study later.
+	
+	-- Update object count for the new patient	
+	UPDATE Patient
+	SET [NumberOfPatientRelatedStudies]=1,
+		[NumberOfPatientRelatedSeries]=@NumSeries,
+		[NumberOfPatientRelatedInstances]=@NumInstances
+	WHERE GUID=@PatientGUID
+
+	-- Update current patient, delete it if there''s no attached study.
+	IF @NumStudiesOwnedByCurrentPatient=1
+	BEGIN
+		DELETE Patient WHERE GUID = @CurrentPatientGUID
+	END
+	ELSE
+	BEGIN
+		UPDATE Patient
+		SET [NumberOfPatientRelatedStudies]=@NumStudiesOwnedByCurrentPatient-1,
+			[NumberOfPatientRelatedSeries]=[NumberOfPatientRelatedSeries]-@NumSeries,
+			[NumberOfPatientRelatedInstances]=[NumberOfPatientRelatedInstances]-@NumInstances
+		WHERE GUID=@CurrentPatientGUID
+	END
+	
+	
+	SET NOCOUNT OFF;
+
+	SELECT * FROM Patient WHERE GUID=@PatientGUID
+	
+END
+'
+END
+GO

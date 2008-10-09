@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -13,24 +14,59 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
-    /// <summary>
-    /// Enumerated value for patient level update operation.
-    /// </summary>
-    enum UpdateMode
-    {
-        /// <summary>
-        /// Update existing patient with new demographics 
-        /// </summary>
-        UpdatePatient,
 
-        /// <summary>
-        /// Create patient if neccessary
-        /// </summary>
-        CreatePatient,
+
+    class PatientInfo : IEquatable<PatientInfo>
+    {
+        private string _name;
+        private string _patientId;
+        private string _issuerOfPatientId;
+
+        public PatientInfo()
+        {
+        }
+
+        public PatientInfo(PatientInfo other)
+        {
+            Name = other.Name;
+            PatientId = other.PatientId;
+            IssuerOfPatientId = other.IssuerOfPatientId;
+        }
+        
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        public string PatientId
+        {
+            get { return _patientId; }
+            set { _patientId = value; }
+        }
+
+        public string IssuerOfPatientId
+        {
+            get { return _issuerOfPatientId; }
+            set { _issuerOfPatientId = value; }
+        }
+
+        #region IEquatable<PatientInfo> Members
+
+        public bool Equals(PatientInfo other)
+        {
+            PersonName name = new PersonName(_name);
+            PersonName otherName = new PersonName(other.Name);
+            return name.Equals(otherName) && String.Equals(_patientId, other.PatientId, StringComparison.InvariantCultureIgnoreCase);
+        }
+
+        #endregion
     }
 
     class InstanceInfo
@@ -63,24 +99,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #region Private Members
         private readonly List<InstanceInfo> _updatedSopList = new List<InstanceInfo>();
         private readonly StudyStorageLocation _studyLocation;
-        private readonly string _oldPatientId;
-        private readonly string _oldPatientIdIssuer;
-        private readonly string _newPatientId;
-        private readonly string _newPatientIdIssuer;
         private readonly string _oldStudyPath;
         private readonly string _oldStudyInstanceUid;
         private readonly string _newStudyFolder;
         private readonly string _newStudyInstanceUid;
         private readonly string _oldStudyFolder;
+
+        private PatientInfo _oldPatientInfo;
+        private PatientInfo _newPatientInfo;
+
         private readonly IList<IImageLevelUpdateCommand> _commands;
         private readonly string _newStudyPath;
         private readonly string _backupDir = ServerPlatform.GetTempPath();
         private readonly ServerPartition _partition;
         private Study _study;
-        private Patient _patient;
+        private Patient _curPatient;
+        private Patient _newPatient;
         private StudyStorage _storage;
         private bool _originalFolderDeleted = false;
-        private UpdateMode _mode = UpdateMode.UpdatePatient;
+
+        private bool _patientInfoIsNotChanged;
+
         #endregion
 
         #region Constructors
@@ -99,10 +138,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newStudyInstanceUid = _oldStudyInstanceUid;
 
             _study = Study.Find(_oldStudyInstanceUid, _partition);
-            _oldPatientId = _study.PatientId;
-            _newPatientId = _oldPatientId;
-            _oldPatientIdIssuer = _study.IssuerOfPatientId;
-            _newPatientIdIssuer = _oldPatientIdIssuer;
+            
+            _curPatient = Patient.Load(_study.PatientKey);
+
+            _oldPatientInfo = new PatientInfo();
+            _oldPatientInfo.Name = _curPatient.PatientsName;
+            _oldPatientInfo.PatientId = _curPatient.PatientId;
+            _oldPatientInfo.IssuerOfPatientId = _curPatient.IssuerOfPatientId;
+
+            _newPatientInfo = new PatientInfo(_oldPatientInfo);
+            Debug.Assert(_newPatientInfo.Equals(_oldPatientInfo));
 
             foreach (IImageLevelUpdateCommand command in imageLevelCommands)
             {
@@ -121,11 +166,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                         }
                         else if (imageLevelUpdate.Tag.TagValue == DicomTags.PatientId)
                         {
-                            _newPatientId = imageLevelUpdate.GetStringValue();
+                            _newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
                         }
                         else if (imageLevelUpdate.Tag.TagValue == DicomTags.IssuerOfPatientId)
                         {
-                            _newPatientIdIssuer = imageLevelUpdate.GetStringValue();
+                            _newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
+                        }
+                        else if (imageLevelUpdate.Tag.TagValue == DicomTags.PatientsName)
+                        {
+                            _newPatientInfo.Name = imageLevelUpdate.GetStringValue();
                         }
                     }
                 }
@@ -142,68 +191,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newStudyPath = Path.Combine(studyLocation.FilesystemPath, partition.PartitionFolder);
             _newStudyPath = Path.Combine(_newStudyPath, _newStudyFolder);
             _newStudyPath = Path.Combine(_newStudyPath, _newStudyInstanceUid);
-        }
 
-        public UpdateMode Mode
-        {
-            get { return _mode; }
-            set { _mode = value; }
+            _newPatient = FindPatient(_newPatientInfo);
+            _patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
         }
-
         #endregion
 
         #region Private Methods
 
-        private void DetectUseCase()
-        {
-            if (_newPatientId!=_oldPatientId)
-            {
-                switch (_mode)
-                {
-                    case UpdateMode.CreatePatient:
-                        throw new NotSupportedException("Not supported study edit use case: Create study for a new patient");
-
-                    case UpdateMode.UpdatePatient:
-                        {
-                            Patient curPatient = FindPatient(_oldPatientId, _oldPatientIdIssuer);
-                            Patient newPatient = FindPatient(_newPatientId, _newPatientIdIssuer);
-                            
-
-                            if (newPatient==null)
-                            {
-                                // new patient is not in the system, we are trying to udpate the current patient with new patient demographics
-                                Platform.Log(LogLevel.Info, "Use case: Update study and current patient demographics");
-                            }
-                            else
-                            {
-                                Debug.Assert(newPatient != curPatient); // it can't be the same patient since the id is didfferent
-
-                                // We are trying to append the study to an existing patient.
-                                throw new NotSupportedException("Not supported study edit use case: Append study to a different patient");
-                            }
-
-                            break;
-                        }
-                }
-               
-            }
-            else
-            {
-                Platform.Log(LogLevel.Info, "Use case: Update study of the current patient");
-            }
-        }
-
-        private Patient FindPatient(string id, string issuer)
+        private Patient FindPatient(PatientInfo patientInfo)
         {
             IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
             IPatientEntityBroker patientFindBroker = readContext.GetBroker<IPatientEntityBroker>();
             PatientSelectCriteria criteria = new PatientSelectCriteria();
-            criteria.PatientId.EqualTo(id);
-
-            if (String.IsNullOrEmpty(issuer))
-                criteria.IssuerOfPatientId.IsNull();
-            else
-                criteria.IssuerOfPatientId.EqualTo(issuer);
+            criteria.PatientId.EqualTo(patientInfo.PatientId);
+            criteria.PatientsName.EqualTo(patientInfo.Name);
 
             return patientFindBroker.FindOne(criteria);
         }
@@ -211,10 +213,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         protected override void OnExecute(IUpdateContext updateContext)
         {
             PrintUpdateCommands();
-            DetectUseCase();
             BackupFilesystem();
             UpdateFilesystem();
             UpdateDatabase();
+
+            Rearchive();
         }
 
         protected override void OnUndo()
@@ -322,7 +325,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             _storage = StudyStorage.Load(_studyLocation.GetKey());
             _study = Study.Find(_studyLocation.StudyInstanceUid, _partition);
-            _patient = Patient.Load(_study.PatientKey);
         }
 
         private void UpdateDatabase()
@@ -330,18 +332,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             LoadEntities();
 
             UpdateEntity(_study);
-            UpdateEntity(_patient);
+            UpdateEntity(_curPatient);
             UpdateEntity(_storage);
 
+            // Update the Study table
             IStudyEntityBroker studyUpdateBroker = UpdateContext.GetBroker<IStudyEntityBroker>();
             studyUpdateBroker.Update(_study);
-
-            IPatientEntityBroker patientUpdateBroker = UpdateContext.GetBroker<IPatientEntityBroker>();
-            patientUpdateBroker.Update(_patient);
-
+            
+            // Update the StudyStorage table
             IStudyStorageEntityBroker storageUpdateBroker = UpdateContext.GetBroker<IStudyStorageEntityBroker>();
             storageUpdateBroker.Update(_storage);
 
+            // Update the FilesystemStudyStorage table
             IFilesystemStudyStorageEntityBroker filesystemStorageBroker = UpdateContext.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorageSelectCriteria criteria = new FilesystemStudyStorageSelectCriteria();
             criteria.FilesystemKey.Equals(_studyLocation.FilesystemKey);
@@ -349,6 +351,79 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             FilesystemStudyStorageUpdateColumns columns = new FilesystemStudyStorageUpdateColumns();
             columns.StudyFolder = _newStudyFolder;
             filesystemStorageBroker.Update(criteria, columns);
+
+            // Update Patient level info. Different cases can occur here: 
+            //      A) Patient demographic info is not changed ==> update the current patient
+            //      B) New patient demographics matches (another) existing patient in the datbase 
+            //              ==> Transfer the study to that patient. This means the study count on both patients must be updated.
+            //                  The current patient should also be deleted if there's no more study attached to it after the transfer.
+            //      C) New patient demographics doesn't match any patient in the database
+            //              ==> A new patient should be created for this study. The study count on the current patient should be updated
+            //                  and the patient should also be deleted if this is the only study attached to it.
+            if (_patientInfoIsNotChanged)
+            {
+                UpdateCurrentPatient(_study, _curPatient);
+            }
+            else 
+            {
+                if (_newPatient == null) 
+                {
+                    // No matching patient in the database. We should create a new patient for this study
+                    _newPatient = CreateNewPatient(_study, _newPatientInfo); 
+                }
+                else
+                {
+                    // There's already patient in the database with the new patient demographics
+                    // The study should be attached to that patient.
+                    TransferStudy(_study, _oldPatientInfo, _newPatient);
+                }
+            }
+
+
+        }
+
+        private void Rearchive()
+        {
+            Platform.Log(LogLevel.Info, "Scheduling/Update study archive..");
+            Platform.Log(LogLevel.Info, "This feature is not implemented.");
+
+            // TODO: call stored procedure to trigger the archive
+        }
+
+        private Patient CreateNewPatient(Study study, PatientInfo patientInfo)
+        {
+            Platform.Log(LogLevel.Info, "Creating new patient {0}", patientInfo.PatientId);
+            ICreatePatientForStudy createStudyBroker = UpdateContext.GetBroker<ICreatePatientForStudy>();
+            CreatePatientForStudyParameters parms = new CreatePatientForStudyParameters();
+            parms.IssuerOfPatientId = _newPatientInfo.IssuerOfPatientId;
+            parms.PatientId = _newPatientInfo.PatientId;
+            parms.PatientsName = _newPatientInfo.Name;
+            //parms.SpecificCharacterSet = null;
+            parms.StudyKey = _study.GetKey();
+            Patient newPatient = createStudyBroker.FindOne(parms);
+            if (newPatient==null)
+                throw new ApplicationException("Unable to create patient for the study");
+
+            return newPatient;
+        }
+
+        private void UpdateCurrentPatient(Study study, Patient patient)
+        {
+            Platform.Log(LogLevel.Info, "Update current patient record");
+            IPatientEntityBroker patientUpdateBroker = UpdateContext.GetBroker<IPatientEntityBroker>();
+            patientUpdateBroker.Update(_curPatient);
+        }
+
+        private void TransferStudy(Study study, PatientInfo oldPatient, Patient newPatient)
+        {
+            Platform.Log(LogLevel.Info, "Transferring study from {0} [ID={1}] to {2} [ID={3}]",
+                        oldPatient.Name, oldPatient.PatientId, newPatient.PatientsName, newPatient.PatientId);
+
+            IAttachStudyToPatient attachStudyToPatientBroker = UpdateContext.GetBroker<IAttachStudyToPatient>();
+            AttachStudyToPatientParamaters parms = new AttachStudyToPatientParamaters();
+            parms.StudyKey = study.GetKey();
+            parms.NewPatientKey = newPatient.GetKey();
+            attachStudyToPatientBroker.Execute(parms);
         }
 
         private void UpdateFilesystem()

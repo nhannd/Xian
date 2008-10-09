@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         public string GetStringValue()
         {
             if (_value == null)
-                return String.Empty;
+                return null;
             else
                 return _value.ToString();
         }
