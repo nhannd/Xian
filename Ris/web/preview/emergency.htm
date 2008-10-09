@@ -70,7 +70,7 @@
 
 				var patientProfile = data.GetPatientProfileDetailResponse.PatientProfile;
 				var patientAlerts = data.GetPatientProfileDetailResponse.PatientAlerts;
-				var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : null;
+				var orderAlerts = data.GetOrderDetailResponse ? data.GetOrderDetailResponse.OrderAlerts : [];
 				var alerts = patientAlerts.concat(orderAlerts);
 
 				Preview.PatientBannerSection.create($("patientBannerSection"), patientProfile, alerts);
