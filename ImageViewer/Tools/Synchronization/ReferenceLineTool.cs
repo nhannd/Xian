@@ -240,7 +240,7 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 		private static ReferenceLine GetReferenceLine(DicomImagePlane referenceImagePlane, DicomImagePlane targetImagePlane)
 		{
 			// if planes are parallel within tolerance, then they do not intersect and thus no reference lines should be shown
-			const float parallelTolerance = (float)(Math.PI / 36); // 5 degrees of tolerance
+			const float parallelTolerance = (float)(Math.PI / 18); // 10 degrees of tolerance
 			if (referenceImagePlane.IsParallelTo(targetImagePlane, parallelTolerance))
 				return null;
 
