@@ -794,6 +794,11 @@ Preview.ReportListTable = function () {
 			Preview.ProceduresTableHelper.addHeading(parentElement, 'Reports');
 
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
+
+			var reportContent = document.createElement("DIV");
+			reportContent.id = "reportContent";
+			parentElement.appendChild(reportContent);
+
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, autoSelectFirstElement: true, addColumnHeadings:true },
 			[
 				{   label: "Procedure",
@@ -1025,7 +1030,7 @@ Preview.ReportPreview = function () {
 			// UHN report may contain a StructuredReport section
 			var mainReport = _parseReportObject(reportContent);
 			if(mainReport && mainReport.StructuredReport)
-				createStructuredReportPreview(mainReport.StructuredReport.data);
+				_createStructuredReportPreview(mainReport.StructuredReport.data);
 		}
 	};
 }();
