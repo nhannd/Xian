@@ -523,7 +523,7 @@ Preview.ProceduresTable = function () {
  *		- Protocol
  *		- Code
  *		- Author
- *		- WTIS
+ *		- Urgency
  *
  *	Exposes one method: create(...)
  */
@@ -601,7 +601,7 @@ Preview.ProtocolProceduresTable = function () {
 						cellType: "text",
 						getValue: function(item) { return _formatProtocolAuthor(item.Protocol); }
 					},
-					{   label: "WTIS",
+					{   label: "Urgency",
 						cellType: "text",
 						getValue: function(item) { return _formatProtocolUrgency(item.Protocol); }
 					}
@@ -987,15 +987,6 @@ Preview.ReportPreview = function () {
 		return formattedReport;
 	}
 
-	var _createStructuredReportPreview = function(structuredReport)
-	{
-		if(!structuredReport)
-			return;
-
-		Field.show($("radiologistsCommentsHeader"), true);
-		StructuredReportPreview.create(structuredReport, $("structuredReport"));
-	}
-	
 	return {
 		create: function(element, report)
 		{
@@ -1019,18 +1010,11 @@ Preview.ReportPreview = function () {
 			var part0 = report.Parts[0];
 			var reportContent = part0 && part0.ExtendedProperties && part0.ExtendedProperties.ReportContent ? part0.ExtendedProperties.ReportContent : "";
 			formattedReport += "<b>Report" + _formatReportStatus(part0) + "</b>";
-			formattedReport += "<div id=\"structuredReport\" style=\"{color:black;margin-bottom:1em;}\"></div>";
-			formattedReport += "<div class=\"sectionheading\" id=\"radiologistsCommentsHeader\" style=\"{"; 
-			formattedReport += "display:none;margin-bottom:1em;}\">Radiologist's Comments</div>";
+			formattedReport += "<br><br>";
 			formattedReport += _parseReportContent(reportContent);
 			formattedReport += _formatReportPerformer(part0);
 
 			element.innerHTML = formattedReport;
-
-			// UHN report may contain a StructuredReport section
-			var mainReport = _parseReportObject(reportContent);
-			if(mainReport && mainReport.StructuredReport)
-				_createStructuredReportPreview(mainReport.StructuredReport.data);
 		}
 	};
 }();
