@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 	    public void CreateNewStudy(ServerEntityKey itemKey)
         {
-            ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"{0}\" Value=\"{1}\" /></CreateStudy>", DicomConstants.DicomTags.StudyID, DicomUid.GenerateUid().UID), itemKey);
+            ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"{0}\" Value=\"{1}\" /></CreateStudy>", DicomConstants.DicomTags.StudyInstanceUID, DicomUid.GenerateUid().UID), itemKey);
         }
 
         public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
