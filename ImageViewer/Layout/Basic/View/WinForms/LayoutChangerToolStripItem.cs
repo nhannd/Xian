@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		private readonly Color CLEARCANVAS_BLUE = Color.FromArgb(0, 164, 228);
 		private readonly TableDimensionsPicker _picker;
 		private readonly LayoutChangerAction _action;
-		private readonly PseudoLabel _label;
+		private readonly CustomLabel _label;
 		private readonly Panel _panel;
 		private readonly Panel _spacerL;
 		private readonly Panel _spacerR;
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			_picker.Size = new Size(idealPickerWidth, idealPickerHeight);
 			_picker.DimensionsSelected += OnDimensionsSelected;
 			_picker.HotDimensionsChanged += OnHotTrackingDimensionsChanged;
-			_label = new PseudoLabel();
+			_label = new CustomLabel();
 			_label.AutoSize = false;
 			_label.BackColor = Color.Transparent;
 			_label.Click += OnCancel;
@@ -188,9 +188,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		/// Draw our own label because for some reason the regular Label control identifies a smaller region to double buffer the draw
 		/// and as a result, part of the label will flicker (double buffer region width seems to be linked with the actual size of the picker control)
 		/// </summary>
-		private class PseudoLabel : Control
+		private class CustomLabel : Control
 		{
-			public PseudoLabel()
+			public CustomLabel()
 			{
 				base.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
 			}

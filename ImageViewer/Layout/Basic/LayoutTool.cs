@@ -43,13 +43,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
 	[Tooltip("show", "TooltipLayoutManager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
-
-    /// <summary>
-    /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf and coordinates
-    /// it so that it reflects the state of the active workspace, as well as provides a dropdown custom action
-    /// that can directly change the layout in the active imageviewer.
+	/// <summary>
+	/// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf and coordinates
+	/// it so that it reflects the state of the active workspace, as well as provides a dropdown custom action
+	/// that can directly change the layout in the active imageviewer.
 	/// </summary>
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class LayoutTool : ImageViewerTool
 	{
 		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
@@ -57,9 +56,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private ActionModelRoot _actionModel;
 
 		/// <summary>
-        /// Constructor
-        /// </summary>
-        public LayoutTool()
+		/// Constructor
+		/// </summary>
+		public LayoutTool()
 		{
 			_desktopWindow = null;
 		}
@@ -67,24 +66,27 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <summary>
 		/// Gets the action model for the layout drop down menu.
 		/// </summary>
-		public ActionModelNode LayoutDropDownMenuModel {
-			get {
-				if (_actionModel == null) {
+		public ActionModelNode LayoutDropDownMenuModel
+		{
+			get
+			{
+				if (_actionModel == null)
+				{
 					ActionModelRoot root = new ActionModelRoot();
 					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
 					ActionPath pathBoxes = new ActionPath("root/ToolbarLayoutBoxesChooser", resolver);
 					LayoutChangerAction actionBoxes = new LayoutChangerAction("chooseBoxLayout",
-						LayoutConfigurationSettings.MaximumImageBoxRows, 
-						LayoutConfigurationSettings.MaximumImageBoxColumns,
-						this.SetImageBoxLayout, pathBoxes, resolver);
+					                                                          LayoutConfigurationSettings.MaximumImageBoxRows,
+					                                                          LayoutConfigurationSettings.MaximumImageBoxColumns,
+					                                                          this.SetImageBoxLayout, pathBoxes, resolver);
 					root.InsertAction(actionBoxes);
 
 					ActionPath pathTiles = new ActionPath("root/ToolbarLayoutTilesChooser", resolver);
 					LayoutChangerAction actionTiles = new LayoutChangerAction("chooseTileLayout",
-						LayoutConfigurationSettings.MaximumTileRows,
-						LayoutConfigurationSettings.MaximumTileColumns,
-						this.SetTileLayout, pathTiles, resolver);
+					                                                          LayoutConfigurationSettings.MaximumTileRows,
+					                                                          LayoutConfigurationSettings.MaximumTileColumns,
+					                                                          this.SetTileLayout, pathTiles, resolver);
 					root.InsertAction(actionTiles);
 
 					_actionModel = root;
@@ -101,13 +103,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <param name="columns">The number of columns to show.</param>
 		public void SetImageBoxLayout(int rows, int columns)
 		{
-			LayoutComponent layoutComponent = new LayoutComponent(base.ImageViewer.DesktopWindow);
-			InternalHost host = new InternalHost((DesktopWindow)base.ImageViewer.DesktopWindow, layoutComponent);
-			host.StartComponent();
-			layoutComponent.ImageBoxRows = rows;
-			layoutComponent.ImageBoxColumns = columns;
-			layoutComponent.ApplyImageBoxLayout();
-			host.StopComponent();
+			LayoutComponent.SetImageBoxLayout(base.ImageViewer, rows, columns);
 		}
 
 		/// <summary>
@@ -115,14 +111,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		/// <param name="rows">The number of rows to show.</param>
 		/// <param name="columns">The number of columns to show.</param>
-		public void SetTileLayout(int rows, int columns) {
-			LayoutComponent layoutComponent = new LayoutComponent(base.ImageViewer.DesktopWindow);
-			InternalHost host = new InternalHost((DesktopWindow)base.ImageViewer.DesktopWindow, layoutComponent);
-			host.StartComponent();
-			layoutComponent.TileRows = rows;
-			layoutComponent.TileColumns= columns;
-			layoutComponent.ApplyTileLayout();
-			host.StopComponent();
+		public void SetTileLayout(int rows, int columns)
+		{
+			LayoutComponent.SetTileLayout(base.ImageViewer, rows, columns);
 		}
 
 		public void Show()
@@ -138,17 +129,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 				LayoutComponent layoutComponent = new LayoutComponent(_desktopWindow);
 
-            	IShelf shelf = ApplicationComponent.LaunchAsShelf(
+				IShelf shelf = ApplicationComponent.LaunchAsShelf(
 					_desktopWindow,
-            		layoutComponent,
-            		SR.TitleLayoutManager,
-            		"Layout",
-            		ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
+					layoutComponent,
+					SR.TitleLayoutManager,
+					"Layout",
+					ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide);
 				_shelves[_desktopWindow] = shelf;
 
 				_shelves[_desktopWindow].Closed += OnShelfClosed;
-            }
-        }
+			}
+		}
 
 		private void OnShelfClosed(object sender, ClosedEventArgs e)
 		{
@@ -163,20 +154,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_shelves[_desktopWindow].Closed -= OnShelfClosed;
 			_shelves.Remove(_desktopWindow);
 			_desktopWindow = null;
-		}
-
-		private class InternalHost : ApplicationComponentHost
-		{
-			private readonly DesktopWindow _window;
-
-			public InternalHost(DesktopWindow window, IApplicationComponent component) : base(component)
-			{
-				_window = window;
-			}
-
-			public override DesktopWindow DesktopWindow {
-				get { return _window; }
-			}
 		}
 	}
 }
