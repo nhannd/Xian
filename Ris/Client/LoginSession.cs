@@ -29,6 +29,8 @@
 
 #endregion
 
+using System;
+using System.Management;
 using System.Net;
 using System.Security.Principal;
 using System.ServiceModel;
@@ -80,7 +82,7 @@ namespace ClearCanvas.Ris.Client
                     delegate(ILoginService service)
                     {
                         LoginResponse response = service.Login(
-                            new LoginRequest(userName, password, facility == null ? null : facility.FacilityRef, GetIPAddress()));
+                            new LoginRequest(userName, password, facility == null ? null : facility.FacilityRef, GetIPAddress(), GetCpuID()));
 
                         // if the call succeeded, construct a generic principal object on this thread, containing
                         // the set of authority tokens for this user
@@ -112,8 +114,7 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        ChangePasswordResponse response = service.ChangePassword(
-                            new ChangePasswordRequest(userName, oldPassword, newPassword, GetIPAddress()));
+                        service.ChangePassword(new ChangePasswordRequest(userName, oldPassword, newPassword, GetIPAddress(), GetCpuID()));
                     });
 
             }
@@ -146,7 +147,7 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress()));
+                        service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress(), GetCpuID()));
                     });
             }
             finally
@@ -219,5 +220,30 @@ namespace ClearCanvas.Ris.Client
             return addresses.Length > 0 ? addresses[0].ToString() : null;
         }
 
+        /// <summary>
+        /// Return processorId of the first CPU
+        /// </summary>
+        private static string GetCpuID()
+        {
+            try
+            {
+                string cpuInfo = null;
+                ManagementClass mc = new ManagementClass("Win32_Processor");
+                ManagementObjectCollection moc = mc.GetInstances();
+                foreach (ManagementObject mo in moc)
+                {
+                    cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
+                    if (!string.IsNullOrEmpty(cpuInfo))
+                        break;
+                }
+
+                return cpuInfo;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Warn, e);
+                return null;
+            }
+        }
     }
 }

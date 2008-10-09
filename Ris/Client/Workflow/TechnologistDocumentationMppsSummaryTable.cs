@@ -50,17 +50,25 @@ namespace ClearCanvas.Ris.Client.Workflow
                                  delegate(ModalityPerformedProcedureStepDetail mpps) { return FormatStatus(mpps); },
                                  1.2f));
 
-			ITableColumn sortColumn = new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
+            TableColumn<ModalityPerformedProcedureStepDetail, string> sortColumn = 
+                new TableColumn<ModalityPerformedProcedureStepDetail, string>(
                                  SR.ColumnStartTime,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.StartTime; },
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return Format.DateTime(mpps.StartTime); },
                                  1.5f);
+            sortColumn.Comparison = delegate(ModalityPerformedProcedureStepDetail item1, ModalityPerformedProcedureStepDetail item2)
+                { return DateTime.Compare(item1.StartTime, item2.StartTime); };
+
 			this.Columns.Add(sortColumn);
 			this.Sort(new TableSortParams(sortColumn, true));
 
-            this.Columns.Add(new TableColumn<ModalityPerformedProcedureStepDetail, DateTime?>(
+            TableColumn<ModalityPerformedProcedureStepDetail, string> endTimeColumn =
+                new TableColumn<ModalityPerformedProcedureStepDetail, string>(
                                  SR.ColumnEndTime,
-                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return mpps.EndTime; },
-                                 1.5f));
+                                 delegate(ModalityPerformedProcedureStepDetail mpps) { return Format.DateTime(mpps.EndTime); },
+                                 1.5f);
+            endTimeColumn.Comparison = delegate(ModalityPerformedProcedureStepDetail item1, ModalityPerformedProcedureStepDetail item2)
+                { return Nullable.Compare(item1.EndTime, item2.EndTime); };
+            this.Columns.Add(endTimeColumn);
         }
 
         private static string FormatStatus(ModalityPerformedProcedureStepDetail mpps)

@@ -39,12 +39,14 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ProcedureSummary : DataContractBase
     {
-        public ProcedureSummary(EntityRef rpRef, EntityRef orderRef, string index, ProcedureTypeSummary type)
+        public ProcedureSummary(EntityRef rpRef, EntityRef orderRef, string index, ProcedureTypeSummary type, EnumValueInfo laterality, bool portable)
         {
             this.ProcedureRef = rpRef;
             this.OrderRef = orderRef;
             this.Index = index;
             this.Type = type;
+            this.Laterality = laterality;
+            this.Portable = portable;
         }
 
         public ProcedureSummary()
@@ -68,5 +70,11 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public ProcedureTypeSummary Type;
+
+        [DataMember]
+        public EnumValueInfo Laterality;
+
+        [DataMember]
+        public bool Portable;
     }
 }

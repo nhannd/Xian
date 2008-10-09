@@ -191,10 +191,18 @@ namespace ClearCanvas.Ris.Client
 			_mergePractitionerAction = model.AddAction("mergePractitioner", SR.TitleMergePractitioner, "Icons.MergeToolSmall.png",
 				SR.TitleMergePractitioner, MergePractitioner);
 			_mergePractitionerAction.Enabled = false;
+            _mergePractitionerAction.SetPermissibility(
+                OrPermissions(
+                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
 
             _mergeContactPointAction = model.AddAction("mergeContactPoint", SR.TitleMergeContactPoints, "Icons.MergeToolSmall.png",
                 SR.TitleMergeContactPoints, MergeContactPoint);
             _mergeContactPointAction.Enabled = false;
+            _mergeContactPointAction.SetPermissibility(
+                OrPermissions(
+                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ExternalPractitioner,
+                    ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.ExternalPractitioner.Merge));
         }
 
 		protected override bool SupportsDelete

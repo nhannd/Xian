@@ -29,10 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.Login
@@ -40,8 +36,8 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LogoutRequest : LoginServiceRequestBase
     {
-        public LogoutRequest(string user, string sessionToken, string clientIP)
-            :base(user, clientIP)
+        public LogoutRequest(string user, string sessionToken, string clientIP, string clientCpuID)
+            : base(user, clientIP, clientCpuID)
         {
             this.SessionToken = sessionToken;
         }

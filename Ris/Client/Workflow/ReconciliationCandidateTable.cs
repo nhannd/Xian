@@ -63,9 +63,14 @@ namespace ClearCanvas.Ris.Client.Workflow
             this.Columns.Add(
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnHealthcardNumber,
                   delegate(ReconciliationCandidateTableEntry item) { return HealthcardFormat.Format(item.ReconciliationCandidate.PatientProfile.Healthcard); }, 1.0f));
-            this.Columns.Add(
-              new TableColumn<ReconciliationCandidateTableEntry, DateTime?>(SR.ColumnDateOfBirth,
-                  delegate(ReconciliationCandidateTableEntry item) { return item.ReconciliationCandidate.PatientProfile.DateOfBirth; }, 1.0f));
+
+            TableColumn<ReconciliationCandidateTableEntry, string> dateOfBirthColumn =
+              new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnDateOfBirth,
+                  delegate(ReconciliationCandidateTableEntry item) { return Format.DateTime(item.ReconciliationCandidate.PatientProfile.DateOfBirth); }, 1.0f);
+            dateOfBirthColumn.Comparison = delegate(ReconciliationCandidateTableEntry x, ReconciliationCandidateTableEntry y)
+                { return Nullable.Compare(x.ReconciliationCandidate.PatientProfile.DateOfBirth, y.ReconciliationCandidate.PatientProfile.DateOfBirth); };
+            this.Columns.Add(dateOfBirthColumn);
+
             this.Columns.Add(
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnSex,
                   delegate(ReconciliationCandidateTableEntry item) { return item.ReconciliationCandidate.PatientProfile.Sex.Value; }, 0.5f));

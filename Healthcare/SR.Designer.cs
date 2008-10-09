@@ -1114,7 +1114,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Technologist.
+        ///   Looks up a localized string similar to Performing.
         /// </summary>
         internal static string WorklistCategoryTechnologist {
             get {

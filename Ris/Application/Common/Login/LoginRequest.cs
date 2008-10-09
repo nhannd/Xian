@@ -29,19 +29,16 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Login
 {
     [DataContract]
     public class LoginRequest : LoginServiceRequestBase
     {
-        public LoginRequest(string user, string password, EntityRef workingFacility, string clientIP)
-            :base(user, clientIP)
+        public LoginRequest(string user, string password, EntityRef workingFacility, string clientIP, string clientCpuID)
+            : base(user, clientIP, clientCpuID)
         {
             this.Password = password;
             this.WorkingFacility = workingFacility;

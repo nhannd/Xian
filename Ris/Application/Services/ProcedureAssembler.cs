@@ -112,6 +112,8 @@ namespace ClearCanvas.Ris.Application.Services
             summary.ScheduledStartTime = rp.ScheduledStartTime;
             summary.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
             summary.Type = rptAssembler.CreateSummary(rp.Type);
+            summary.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
+            summary.Portable = rp.Portable;
 
             return summary;
         }

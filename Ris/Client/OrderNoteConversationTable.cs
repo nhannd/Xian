@@ -64,10 +64,14 @@ namespace ClearCanvas.Ris.Client
 					},
 				1.0f));
 
-			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, DateTime?>(
-				SR.ColumnNotePostTime,
-				delegate(Checkable<OrderNoteDetail> item) { return item.Item.PostTime; },
-				1.2f));
+		    TableColumn<Checkable<OrderNoteDetail>, string> postTimeColumn =
+		        new TableColumn<Checkable<OrderNoteDetail>, string>(
+		            SR.ColumnNotePostTime,
+		            delegate(Checkable<OrderNoteDetail> item) { return Format.DateTime(item.Item.PostTime); },
+		            1.2f);
+            postTimeColumn.Comparison = delegate(Checkable<OrderNoteDetail> item1, Checkable<OrderNoteDetail> item2)
+                { return Nullable.Compare(item1.Item.PostTime, item2.Item.PostTime); };
+			this.Columns.Add(postTimeColumn);
 
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
 				SR.ColumnTo,

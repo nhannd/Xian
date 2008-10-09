@@ -101,32 +101,14 @@ namespace ClearCanvas.Ris.Client
                                  delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.Modality.Name; },
                                  0.5f));
 
-			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?> sortColumn = new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, DateTime?>(
-								 SR.ColumnScheduledStartTime,
-								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.ScheduledStartTime; },
-								 0.5f);
+			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string> sortColumn = 
+                new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
+				     SR.ColumnScheduledStartTime,
+				     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.mpsDetail.ScheduledStartTime); },
+				     0.5f);
 
-			// New comparison for a nullable DateTime because .NET doesn't have a comparison by default for that type
 			sortColumn.Comparison = delegate(Checkable<ProcedurePlanSummaryTableItem> x, Checkable<ProcedurePlanSummaryTableItem> y)
-			{
-				if (x.Item.mpsDetail.ScheduledStartTime != null && y.Item.mpsDetail.ScheduledStartTime == null)
-					return -1;
-				if (x.Item.mpsDetail.ScheduledStartTime == null && y.Item.mpsDetail.ScheduledStartTime != null)
-					return 1;
-				if (x.Item.mpsDetail.ScheduledStartTime == null && y.Item.mpsDetail.ScheduledStartTime == null)
-					return 0;
-				else
-				{
-					if (x.Item.mpsDetail.ScheduledStartTime.Value > y.Item.mpsDetail.ScheduledStartTime.Value)
-						return 1;
-					else if (x.Item.mpsDetail.ScheduledStartTime.Value < y.Item.mpsDetail.ScheduledStartTime.Value)
-						return -1;
-					else if (x.Item.mpsDetail.ScheduledStartTime.Value.Equals(y.Item.mpsDetail.ScheduledStartTime.Value))
-						return 0;
-					else
-						return 0;
-				}
-			};
+                { return Nullable.Compare(x.Item.mpsDetail.ScheduledStartTime, y.Item.mpsDetail.ScheduledStartTime); };
 
 			this.Columns.Add(sortColumn);
 

@@ -83,7 +83,10 @@
 					readOnly = Ris.getTag("ReadOnly") === "true" ? true : false;
 					Field.show($("readOnlyHeader"), readOnly);
 					
-					Field.setValue($("performedProcedures"), mpps.Description);
+					var combinedProceduresDescription = String.combine(
+						mpps.ModalityProcedureSteps.map(function(mps) { return formatProcedureName(mps.Procedure.Type, mps.Procedure.Portable, mps.Procedure.Laterality); }), 
+						", ");
+					Field.setValue($("performedProcedures"), combinedProceduresDescription);
 				}
 
 				// redirect if this data was captured by a page other than this page
