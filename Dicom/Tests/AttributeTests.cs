@@ -33,6 +33,7 @@
 
 #if UNIT_TESTS
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using ClearCanvas.Dicom.Utilities;
 using NUnit.Framework;
@@ -6802,7 +6803,126 @@ namespace ClearCanvas.Dicom.Tests
 
         #endregion
 
-    }
+		#region DicomAttribute Empty/Null Tests
+		[Test]
+        public void DicomAttributeEmptyTest()
+        {
+			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
+			test.TestEmpty();
+		}
+		[Test]
+		public void DicomAttributeNullTest() {
+			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
+			test.TestNull();
+		}
+		[Test]
+		public void DicomAttributeNotEmptyOrNullTest() {
+			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
+			test.TestNotEmptyOrNull();
+		}
+
+		private class DicomAttributeEmptyNullTestSuite
+		{
+			private readonly IList<DicomTag> _tags;
+
+			public DicomAttributeEmptyNullTestSuite() {
+				uint tag = 0x2101FF00;
+				List<DicomTag> tags = new List<DicomTag>();
+				foreach (DicomVr vr in DicomVr.GetDicomVrList()) {
+					tags.Add(new DicomTag(tag++, "dummy-tag-" + vr.Name, "dummy_tag_" + vr.Name, vr, false, 1, 1, false));
+					tags.Add(new DicomTag(tag++, "dummy-mvtag-" + vr.Name, "dummy_mvtag_" + vr.Name, vr, false, 0, 10, false));
+				}
+				_tags = tags.AsReadOnly();
+			}
+
+			public void TestEmpty() {
+				DicomAttributeCollection collection = new DicomAttributeCollection();
+				foreach(DicomTag tag in _tags) {
+					Assert.IsFalse(collection[tag].IsNull, "non-existent tag should not be null: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+					Assert.IsTrue(collection[tag].IsEmpty, "non-existent tag should be empty: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+				}
+			}
+
+			public void TestNull() {
+				DicomAttributeCollection collection = new DicomAttributeCollection();
+				foreach (DicomTag tag in _tags) {
+					collection[tag].SetNullValue();
+					Assert.IsTrue(collection[tag].IsNull, "tag with null value should be null: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+					Assert.IsFalse(collection[tag].IsEmpty, "tag with null value should not be empty: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+				}
+			}
+
+			public void TestNotEmptyOrNull() {
+				DicomAttributeCollection collection = new DicomAttributeCollection();
+				foreach (DicomTag tag in _tags) {
+					TrySetValue(collection[tag]);
+					Assert.IsFalse(collection[tag].IsNull, "tag with values should not be null: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+					Assert.IsFalse(collection[tag].IsEmpty, "tag with values should not be empty: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+				}
+			}
+
+			private static void TrySetValue(DicomAttribute attrib) {
+				// one of these statements should be able to put a non-null value on the attribute
+				try {
+					attrib.SetDateTime(0, DateTime.Now);
+				} catch(Exception) {
+					try {
+						attrib.SetFloat32(0, 0f);
+					}catch(Exception) {
+						try {
+							attrib.SetInt16(0, 0);
+						} catch (Exception) {
+							try {
+								attrib.SetUInt16(0, 0);
+							} catch (Exception) {
+								try {
+									attrib.SetUid(0, DicomUid.GenerateUid());
+								} catch (Exception) {
+									try {
+										attrib.SetString(0, "fdsa");
+									} catch (Exception) {
+										try {
+											attrib.SetString(0, "1");
+										} catch (Exception) {
+											try {
+												attrib.SetString(0, "11");
+											} catch (Exception) {
+												try {
+													attrib.SetString(0, "1111");
+												} catch (Exception) {
+													try {
+														attrib.SetString(0, "111111");
+													} catch (Exception) {
+														try {
+															attrib.SetString(0, "11111111");
+														} catch (Exception) {
+															try {
+																attrib.SetStringValue("asdf");
+															} catch (Exception) {
+																try {
+																	DicomSequenceItem item = new DicomSequenceItem();
+																	attrib.AddSequenceItem(item);
+																	item[DicomTags.InstanceNumber].SetString(0, "1");
+																} catch (Exception) {
+																	Assert.Fail("Test case deficiency: doesn't know how to set an attribute of VR {0}", attrib.Tag.VR.Name);
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		#endregion
+
+	}
 }
 
 #endif
