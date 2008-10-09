@@ -113,6 +113,8 @@ void DicomJpegCodec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompr
 		float newSize = (float)newPixelData->GetCompressedFrameSize(0);
 		String^ ratio = String::Format("{0:0.000}", oldSize / newSize);
 		newPixelData->LossyImageCompressionRatio = (float) oldSize / newSize;
+		newPixelData->LossyImageCompression = "01";
+		newPixelData->DerivationDescription = String::Format("IJG Compressed: {0:0.000}:1", oldSize / newSize);
 	}
 
 	if (oldPixelData->PhotometricInterpretation == "RGB") {

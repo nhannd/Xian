@@ -129,7 +129,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 		opj_set_default_encoder_parameters(&eparams);
 		eparams.cp_disto_alloc = 1;
 
-		if (newPixelData->TransferSyntax == TransferSyntax::Jpeg2000ImageCompression && jparams->Irreversible) {
+		if (newPixelData->TransferSyntax->Equals(TransferSyntax::Jpeg2000ImageCompression) && jparams->Irreversible) {
 			eparams.irreversible = 1;
 
 			int r = 0;
@@ -240,19 +240,21 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 
 			if (oldPixelData->PhotometricInterpretation == "RGB" && jparams->AllowMCT) {
 				if (jparams->UpdatePhotometricInterpretation) {
-					if (newPixelData->TransferSyntax == TransferSyntax::Jpeg2000ImageCompressionLosslessOnly)
+					if (newPixelData->TransferSyntax->Equals(TransferSyntax::Jpeg2000ImageCompressionLosslessOnly))
 						newPixelData->PhotometricInterpretation = "YBR_RCT";
 					else
 						newPixelData->PhotometricInterpretation = "YBR_ICT";
 				}
 			}
 
-			if (newPixelData->TransferSyntax == TransferSyntax::Jpeg2000ImageCompression && jparams->Irreversible) {
+			if (newPixelData->TransferSyntax->Equals(TransferSyntax::Jpeg2000ImageCompression) && jparams->Irreversible) {
 				newPixelData->LossyImageCompressionMethod = "ISO_15444_1";
 				
 				double oldSize = oldPixelData->UncompressedFrameSize;
 				double newSize = newPixelData->GetCompressedFrameSize(0);
 				newPixelData->LossyImageCompressionRatio = (float) (oldSize / newSize);
+				newPixelData->LossyImageCompression = "01";
+				newPixelData->DerivationDescription = String::Format("OpenJPEG Compressed: {0:0.000}:1", oldSize / newSize);
 			}
 		}
 		finally {

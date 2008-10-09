@@ -98,9 +98,10 @@ namespace ClearCanvas.Dicom
                     DicomUncompressedPixelData pd = new DicomUncompressedPixelData(DataSet);
                     DicomCompressedPixelData fragments = new DicomCompressedPixelData(pd);
 
-                    codec.Encode(pd, fragments, parameters);
+					// Set before compression, the codecs need it.
+					fragments.TransferSyntax = newTransferSyntax;
 
-                    fragments.TransferSyntax = newTransferSyntax;
+					codec.Encode(pd, fragments, parameters);
 
                     fragments.UpdateMessage(this);
                 }
