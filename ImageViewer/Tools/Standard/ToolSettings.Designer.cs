@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.Config {
+namespace ClearCanvas.ImageViewer.Tools.Standard {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

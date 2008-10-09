@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -43,7 +44,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[ExtensionPoint]
-	public sealed class ProbeToolDropDownToolExtensionPoint : ExtensionPoint<ITool> {}
+	public sealed class ProbeToolDropDownToolExtensionPoint : ExtensionPoint<ITool> { }
 
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuProbe", "Select", Flags = ClickActionFlags.CheckAction)]
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
@@ -54,6 +55,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[GroupHint("activate", "Tools.Image.Interrogation.Probe")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
+
+	#region Tool Settings Actions
+
+	[MenuAction("showCTPix", "probetool-dropdown/ShowCTPix", "ToggleShowCTPix")]
+	[CheckedStateObserver("showCTPix", "ShowCTPix", "ShowCTPixChanged")]
+	[Tooltip("showCTPix", "TooltipShowCTPix")]
+	[GroupHint("showCTPix", "Tools.Image.Interrogation.Probe.Modality.CT.ShowPixel")]
+
+	[MenuAction("showNonCTMod", "probetool-dropdown/ShowNonCTMod", "ToggleShowNonCTMod")]
+	[CheckedStateObserver("showNonCTMod", "ShowNonCTMod", "ShowNonCTModChanged")]
+	[Tooltip("showNonCTMod", "TooltipShowNonCTMod")]
+	[GroupHint("showNonCTMod", "Tools.Image.Interrogation.Probe.Modality.NonCT.ShowMod")]
+
+	[MenuAction("showVoiLut", "probetool-dropdown/ShowVoiLut", "ToggleShowVoiLut")]
+	[CheckedStateObserver("showVoiLut", "ShowVoiLut", "ShowVoiLutChanged")]
+	[Tooltip("showVoiLut", "TooltipShowVoiLut")]
+	[GroupHint("showVoiLut", "Tools.Image.Interrogation.Probe.General.ShowVoiLut")]
+
+	#endregion
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ProbeTool : MouseImageViewerTool
@@ -83,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public ActionModelNode DropDownMenuModel {
 			get {
 				if (_actionModel == null) {
-					_actionModel = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Tools.Standard", "probetool-dropdown", base.ImageViewer.ExportedActions);
+					_actionModel = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Tools.Standard", "probetool-dropdown", this.Actions);
 				}
 
 				return _actionModel;
@@ -148,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			Point sourcePointRounded = Point.Truncate(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
-			Config.ToolSettings settings = Config.ToolSettings.Default;
+			ToolSettings settings = ToolSettings.Default;
 			bool isCT = (String.Compare(_selectedImageSop.Modality, "CT", true) == 0);
 			bool showPixelValue = !isCT || settings.ShowCTRawPixelValue;
 			bool showModalityValue = isCT || settings.ShowNonCTModPixelValue;
@@ -252,5 +272,102 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, voiLutValue);
 			}
 		}
+
+		#region Probe Tool Settings
+
+		private static event EventHandler _showCTPixChanged;
+		private static event EventHandler _showNonCTModChanged;
+		private static event EventHandler _showVoiLutChanged;
+		private ToolSettings _settings;
+
+		public override void Initialize() {
+			base.Initialize();
+
+			_settings = ToolSettings.Default;
+		}
+
+		protected override void Dispose(bool disposing) {
+			_settings.Save();
+			_settings = null;
+
+			base.Dispose(disposing);
+		}
+
+		public event EventHandler ShowCTPixChanged {
+			add { _showCTPixChanged += value; }
+			remove { _showCTPixChanged -= value; }
+		}
+
+		public event EventHandler ShowNonCTModChanged {
+			add { _showNonCTModChanged += value; }
+			remove { _showNonCTModChanged -= value; }
+		}
+
+		public event EventHandler ShowVoiLutChanged {
+			add { _showVoiLutChanged += value; }
+			remove { _showVoiLutChanged -= value; }
+		}
+
+		public bool ShowCTPix {
+			get {
+				try {
+					return _settings.ShowCTRawPixelValue;
+				} catch {
+					return false;
+				}
+			}
+			set {
+				if (this.ShowCTPix != value) {
+					_settings.ShowCTRawPixelValue = value;
+					EventsHelper.Fire(_showCTPixChanged, this, new EventArgs());
+				}
+			}
+		}
+
+		public bool ShowNonCTMod {
+			get {
+				try {
+					return _settings.ShowNonCTModPixelValue;
+				} catch {
+					return false;
+				}
+			}
+			set {
+				if (this.ShowNonCTMod != value) {
+					_settings.ShowNonCTModPixelValue = value;
+					EventsHelper.Fire(_showNonCTModChanged, this, new EventArgs());
+				}
+			}
+		}
+
+		public bool ShowVoiLut {
+			get {
+				try {
+					return _settings.ShowVOIPixelValue;
+				} catch {
+					return false;
+				}
+			}
+			set {
+				if (this.ShowVoiLut != value) {
+					_settings.ShowVOIPixelValue = value;
+					EventsHelper.Fire(_showVoiLutChanged, this, new EventArgs());
+				}
+			}
+		}
+
+		public void ToggleShowCTPix() {
+			this.ShowCTPix = !this.ShowCTPix;
+		}
+
+		public void ToggleShowNonCTMod() {
+			this.ShowNonCTMod = !this.ShowNonCTMod;
+		}
+
+		public void ToggleShowVoiLut() {
+			this.ShowVoiLut = !this.ShowVoiLut;
+		}
+
+		#endregion
 	}
 }
