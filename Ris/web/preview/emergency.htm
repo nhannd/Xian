@@ -81,7 +81,15 @@
 				{
 					Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
 					Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
-					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
+					
+					var orderNotesSubsections = 
+						[
+							{category:"PrelimDiagnosis", subsectionHeading:"Preliminary Diagnosis"},
+							{category:"General", subsectionHeading:"General"}, 
+							{category:"Protocol", subsectionHeading:"Protocol"}
+						];
+
+					Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, orderNotesSubsections);
 				}
 				else
 				{
