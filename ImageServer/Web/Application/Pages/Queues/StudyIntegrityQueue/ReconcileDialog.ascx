@@ -24,7 +24,15 @@
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label321" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td><td><asp:Label ID="ExistingPatientID" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label322" runat="server" CssClass="DialogTextBoxLabel">Patient Birthdate</asp:Label></td><td><asp:Label ID="ExistingPatientBirthDate" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label323" runat="server" CssClass="DialogTextBoxLabel">Accession Number</asp:Label></td><td><asp:Label ID="ExistingAccessionNumber" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label324" runat="server" CssClass="DialogTextBoxLabel">Patient Sex</asp:Label></td><td><asp:Label ID="ExistingPatientSex" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label><ccAsp:InvalidInputIndicator ID="InvalidInputIndicator1" runat="server" SkinID="InvalidInputIndicator" /></td></tr>
+                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label324" runat="server" CssClass="DialogTextBoxLabel">Patient Sex</asp:Label></td>
+                                            <td>
+                                                <table cellpadding="0" cellspacing="0">
+                                                    <tr><td><asp:Label ID="ExistingPatientSex" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td>
+                                                        <td><ccAsp:InvalidInputIndicator ID="InvalidInputIndicator1" runat="server" SkinID="InvalidInputIndicator" /></td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>                                                        
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label325" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td><td><asp:Label ID="ExistingPatientIssuerOfPatientID" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>                                     
                                     </table>
                                     </div>

@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
         private readonly StudyIntegrityQueueAdaptor _adaptor = new StudyIntegrityQueueAdaptor();
 
+	    private const string SetTag = "<SetTag TagPath=\"{0}\" Value=\"{1}\"/>";
+
         public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyIntegrityQueueSelectCriteria criteria)
         {
             return _adaptor.Get(criteria);
@@ -137,7 +139,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 	    public void CreateNewStudy(ServerEntityKey itemKey)
         {
-            ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"0020000D\" Value=\"{0}\" /></CreateStudy>", DicomUid.GenerateUid().UID), itemKey);
+            ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"{0}\" Value=\"{1}\" /></CreateStudy>", DicomConstants.DicomTags.StudyID, DicomUid.GenerateUid().UID), itemKey);
         }
 
         public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
@@ -166,12 +168,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     Study study = studyList[0];
 
                     //Set the demographic details using the Existing Patient
-                    PatientName = string.Format("<SetTag TagPath=\"00100010\" Value=\"{0}\"/>", study.PatientsName);
-                    PatientID = string.Format("<SetTag TagPath=\"00100020\" Value=\"{0}\"/>", study.PatientId);
-                    AccessionNumber = string.Format("<SetTag TagPath=\"00080050\" Value=\"{0}\"/>", study.AccessionNumber);
-                    PatientSex = string.Format("<SetTag TagPath=\"00100040\" Value=\"{0}\"/>", study.PatientsSex);
-                    IssuerOfPatientID = string.Format("<SetTag TagPath=\"00100021\" Value=\"{0}\"/>", study.IssuerOfPatientId);
-                    Birthdate = string.Format("<SetTag TagPath=\"00100030\" Value=\"{0}\"/>", study.PatientsBirthDate); 
+                    PatientName = string.Format(SetTag, DicomConstants.DicomTags.PatientsName, study.PatientsName);
+                    PatientID = string.Format(SetTag, DicomConstants.DicomTags.PatientID, study.PatientId);
+                    AccessionNumber = string.Format(SetTag, DicomConstants.DicomTags.AccessionNumber, study.AccessionNumber);
+                    PatientSex = string.Format(SetTag, DicomConstants.DicomTags.PatientsSex, study.PatientsSex);
+                    IssuerOfPatientID = string.Format(SetTag, DicomConstants.DicomTags.IssuerOfPatientID, study.IssuerOfPatientId);
+                    Birthdate = string.Format(SetTag, DicomConstants.DicomTags.PatientsBirthDate, study.PatientsBirthDate); 
                 }               
             }
             else
@@ -183,27 +185,27 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 string studyData = sw.ToString();
 
                 //Set the demographic details using the Conflicting Patient
-                PatientName = string.Format("<SetTag TagPath=\"00100010\" Value=\"{0}\"/>", GetConflictingName(studyData));
-                PatientID = string.Format("<SetTag TagPath=\"00100020\" Value=\"{0}\"/>", GetConflictingPatientID(studyData));
-                AccessionNumber = string.Format("<SetTag TagPath=\"00080050\" Value=\"{0}\"/>", GetConflictingPatientAccessionNumber(studyData));
+                PatientName = string.Format(SetTag, DicomConstants.DicomTags.PatientsName, GetConflictingName(studyData));
+                PatientID = string.Format(SetTag, DicomConstants.DicomTags.PatientID, GetConflictingPatientID(studyData));
+                AccessionNumber = string.Format(SetTag, DicomConstants.DicomTags.AccessionNumber, GetConflictingPatientAccessionNumber(studyData));
 
                 string sex = GetConflictingPatientSex(studyData).ToLower();                
                 if (sex.Equals("male") || sex.Equals("m"))
                 {
-                    sex = "M";
+                    sex = DicomConstants.Male;
                 }
                 else if (sex.Equals("female") || sex.Equals("f"))
                 {
-                    sex = "F";
+                    sex = DicomConstants.Female;
                 }
                 else
                 {
-                    sex = "O";
+                    sex = DicomConstants.Other;
                 }
 
-                PatientSex = string.Format("<SetTag TagPath=\"00100040\" Value=\"{0}\"/>", sex);
-                IssuerOfPatientID = string.Format("<SetTag TagPath=\"00100021\" Value=\"{0}\"/>", GetConflictingIssuerOfPatientID(studyData));
-                Birthdate = string.Format("<SetTag TagPath=\"00100030\" Value=\"{0}\"/>", GetConflictingPatientBirthDate(studyData));                 
+                PatientSex = string.Format(SetTag, DicomConstants.DicomTags.PatientsSex, sex);
+                IssuerOfPatientID = string.Format(SetTag, DicomConstants.DicomTags.IssuerOfPatientID, GetConflictingIssuerOfPatientID(studyData));
+                Birthdate = string.Format(SetTag, DicomConstants.DicomTags.PatientsBirthDate, GetConflictingPatientBirthDate(studyData));                 
             }
             
             ReconcileStudy(String.Format("<MergeStudy>{0}{1}{2}{3}{4}{5}</MergeStudy>", PatientName, PatientID, AccessionNumber, PatientSex, IssuerOfPatientID, Birthdate), itemKey);
@@ -216,39 +218,32 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private static string GetConflictingName(string studyData)
         {
-            string patientNameTag = "00100010";
-            return parseXmlString(studyData, patientNameTag);
+            return parseXmlString(studyData, DicomConstants.DicomTags.PatientsName);
         }
 
         private static string GetConflictingPatientID(string studyData)
         {
-            string patientIDTag = "00100020";
-            return parseXmlString(studyData, patientIDTag);
+            return parseXmlString(studyData, DicomConstants.DicomTags.PatientID);
         }
 
         private static string GetConflictingPatientSex(string studyData)
         {
-            string sexTag = "00100040";
-            return parseXmlString(studyData, sexTag);
+            return parseXmlString(studyData, DicomConstants.DicomTags.PatientsSex);
         }
 
         private static string GetConflictingPatientBirthDate(string studyData)
         {
-            string patientBirthDateTag = "00100030";
-            return parseXmlString(studyData, patientBirthDateTag);
-
+            return parseXmlString(studyData, DicomConstants.DicomTags.PatientsBirthDate);
         }
 
         private static string GetConflictingIssuerOfPatientID(string studyData)
         {
-            string issuerOfPatientIDTag = "00100021";
-            return parseXmlString(studyData, issuerOfPatientIDTag);
+            return parseXmlString(studyData, DicomConstants.DicomTags.IssuerOfPatientID);
         }
 
         private static string GetConflictingPatientAccessionNumber(string studyData)
         {
-            string accessionTag = "00080050";
-            return parseXmlString(studyData, accessionTag);
+            return parseXmlString(studyData, DicomConstants.DicomTags.AccessionNumber);
         }
 
         private static string parseXmlString(string xmlString, string tag)
