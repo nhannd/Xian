@@ -3,14 +3,11 @@
 	<head>
 	<title>Default Report Editor</title>
 	<link href="../css/default.css" rel="stylesheet" type="text/css" />
-	<link href="../css/tabs.css" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="../js/jsx.js"></script>
 	<script type="text/javascript" src="../js/jsml.js"></script>
 	<script type="text/javascript" src="../js/ui.js"></script>
 	<script type="text/javascript" src="../js/ris.js"></script>
 	<script type="text/javascript" src="../js/preview.js"></script>
-	<script type="text/javascript" src="../js/tabs.js"></script>
-	<script type="text/javascript" src="../js/structuredreportsummary.js"></script>
 	<script type="text/javascript" >
 		var report = {};
 		var errorProvider = new ErrorProvider();
@@ -23,8 +20,6 @@
 			try
 			{
 				loadData();
-				if (loadReportedProceduresTable() == false)
-					Field.show($("proceduresTable"), false);
 			}
 			catch(e)
 			{
