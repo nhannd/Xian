@@ -20,7 +20,7 @@
 					// if the capturePageUrl is known, just redirect immediately there 
 					// (this provides a form of versioning, whereby data is always displayed by the same page that captured it in the first place)
 					var data = JSML.parse(Ris.getTag("Documentation")) || {};
-				
+
 					var mpps = Ris.getHealthcareContext();
 
 					// redirect to appropriate page on every load (bug: #2629, to avoid long-term errors in page loading)
@@ -32,41 +32,20 @@
 					Field.setValue($("errorMsg"), message);
 				}
 		}
+		
+		/*
+		 *  This method can be modified to redirect to a documentation page which is appropriate for the 
+		 *  provided mpps.
+		 *  
+		 *  For example, one might declare 
+		 *		var modalityName = mpps.ModalityProcedureSteps[0].Modality.Name;
+		 *  and redirect based on the modalityName.
+		 *
+		 *  See ClearCanvas.Ris.Application.Common.ModalityWorkflow.ModalityPerformedProcedureStepDetail
+		 */
 		function selectPage(mpps)
 		{
-			if(mpps.Description.indexOf("Ultrasound Obstetrical") > -1)
-				return "ob-us-mpps.htm";
-	
-			var modalityName = mpps.ModalityProcedureSteps[0].Modality.Name;
-			
-			if(modalityName == "CT")
-				return "ct-mpps.htm";
-
-			if(modalityName == "MRI")
-				return "mri-mpps.htm";
-
-			if(modalityName == "PET")
-				return "petct-mpps.htm";
-
-			if(modalityName == "Angiography" || modalityName == "Interventional" || modalityName == "Neuro Angiography")
-				return "angio-interv-mpps.htm";
-
-			if(modalityName == "General Radiography" || modalityName == "GI/GU")
-				return "cr-mpps.htm";
-
-			if(modalityName == "Breast Imaging")
-				return "mammo-mpps.htm";
-
-			if(modalityName == "Ultrasound" || modalityName == "Prostate Centre")
-				return "ultrasound-mpps.htm";
-
-			if(modalityName == "CEOU OB" || modalityName == "Hydro Gyn")
-				return "ob-us-mpps.htm";
-
-			if(modalityName == "Nuclear Medicine")
-				return "nucmed-mpps.htm";
-
-			return "about:blank";
+			return "default-mpps.htm";
 		}
 		</script>
 	</head>
