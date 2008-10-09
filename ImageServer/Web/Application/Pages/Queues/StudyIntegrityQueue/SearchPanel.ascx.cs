@@ -88,6 +88,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             StudyIntegrityQueueItemList.DataBind();
         }
 
+        public void UpdateUI()
+        {
+            StudyIntegrityQueueItemList.DataBind();
+            SearchPanelUpdatePanel.Update();
+        }
+
         #endregion Public Methods
 
         #region Protected Methods

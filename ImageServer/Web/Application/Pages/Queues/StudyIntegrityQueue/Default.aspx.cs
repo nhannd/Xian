@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
@@ -64,6 +65,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ReconcileDialog.ReconcileDetails = details;
             ReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
             ReconcileDialog.Show();
+        }
+
+
+        public void UpdateUI()
+        {
+            SearchPanel panel = ServerPartitionTabs.GetUserControlForPartition(ServerPartition.GetKey()).FindControl("SearchPanel_" + ServerPartition.AeTitle) as SearchPanel;
+            panel.UpdateUI();
         }
     }
 }

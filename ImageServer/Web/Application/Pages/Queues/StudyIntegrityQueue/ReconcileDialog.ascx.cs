@@ -118,6 +118,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
             controller.CreateNewStudy(itemKey);
+            
+            ((Default) Page).UpdateUI();
 
             Close();
         }
@@ -141,6 +143,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 controller.MergeStudy(itemKey, false);
             }
 
+            ((Default)Page).UpdateUI();
+
             Close();
         }
 
@@ -154,7 +158,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
             controller.Discard(itemKey);
-            
+
+            ((Default)Page).UpdateUI();
+
             Close();
         }
 
