@@ -195,14 +195,41 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
 		public GetConversationEditorFormDataResponse GetConversationEditorFormData(
     		GetConversationEditorFormDataRequest request)
     	{
+            StaffAssembler staffAssembler = new StaffAssembler();
 			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
-			return new GetConversationEditorFormDataResponse(
+			GetConversationEditorFormDataResponse response = new GetConversationEditorFormDataResponse(
 				CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
 					this.CurrentUserStaff.ActiveGroups,	// only active staff groups should be choices
 					delegate (StaffGroup sg)
 					{
 						return groupAssembler.CreateSummary(sg);
 					}));
+
+            if (request.RecipientStaffIDs != null && request.RecipientStaffIDs.Count > 0)
+            {
+                StaffSearchCriteria criteria = new StaffSearchCriteria();
+                criteria.Id.In(request.RecipientStaffIDs);
+				response.RecipientStaffs = CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
+					PersistenceContext.GetBroker<IStaffBroker>().Find(criteria),
+					delegate(Staff s)
+					{
+						return staffAssembler.CreateStaffSummary(s, PersistenceContext);
+					});
+            }
+
+            if (request.RecipientStaffGroupNames != null && request.RecipientStaffGroupNames.Count > 0)
+            {
+                StaffGroupSearchCriteria criteria = new StaffGroupSearchCriteria();
+                criteria.Name.In(request.RecipientStaffGroupNames);
+                response.RecipientStaffGroups = CollectionUtils.Map<StaffGroup, StaffGroupSummary, List<StaffGroupSummary>>(
+                    PersistenceContext.GetBroker<IStaffGroupBroker>().Find(criteria),
+                    delegate(StaffGroup sg)
+                    {
+                        return groupAssembler.CreateSummary(sg);
+                    });
+            }
+
+            return response;
     	}
 
     	[UpdateOperation]

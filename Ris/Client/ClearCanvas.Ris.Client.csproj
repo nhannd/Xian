@@ -76,6 +76,7 @@
     <Compile Include="Formatting\StaffNameAndRoleFormat.cs" />
     <Compile Include="HeaderFooterSettings.cs" />
     <Compile Include="IExtensionPageProvider.cs" />
+    <Compile Include="OrderNoteConversationRecipientsSettingsHelper.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
     <Compile Include="OrderAdditionalInfoSummaryComponent.cs" />
@@ -543,6 +544,9 @@
     <EmbeddedResource Include="Icons\FolderOpenErrorLarge.png" />
     <EmbeddedResource Include="Icons\FolderOpenErrorMedium.png" />
     <EmbeddedResource Include="Icons\FolderOpenErrorSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="OrderNoteConversationRecipientsSettings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

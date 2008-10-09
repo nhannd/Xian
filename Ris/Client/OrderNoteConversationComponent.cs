@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -223,11 +224,13 @@ namespace ClearCanvas.Ris.Client
 		private string _body;
 
 		private bool _urgent;
+		private bool _reply;
 
 		private IList<StaffGroupSummary> _onBehalfOfChoices;
 		private StaffGroupSummary _onBehalfOf;
 
 		private readonly RecipientTable _recipients;
+		private CrudActionModel _recipientsActionModel;
 		private Checkable<RecipientTableItem> _selectedRecipient;
 
 		private ILookupHandler _staffLookupHandler;
@@ -237,6 +240,8 @@ namespace ClearCanvas.Ris.Client
 		private StaffGroupSummary _selectedStaffGroup = null;
 
 		private ICannedTextLookupHandler _cannedTextLookupHandler;
+
+		private bool _usingDefaultRecipients;
 
 		#endregion
 
@@ -272,11 +277,28 @@ namespace ClearCanvas.Ris.Client
 			_staffGroupLookupHandler = new StaffGroupLookupHandler(this.Host.DesktopWindow, false);
 			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
 
+			List<Checkable<RecipientTableItem>> defaultRecipients = new List<Checkable<RecipientTableItem>>();
+
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					GetConversationEditorFormDataResponse formDataResponse = service.GetConversationEditorFormData(new GetConversationEditorFormDataRequest());
+					GetConversationEditorFormDataRequest formDataRequest = new GetConversationEditorFormDataRequest();
+					formDataRequest.RecipientStaffIDs = OrderNoteConversationRecipientsSettingsHelper.Instance.StaffIDs;
+					formDataRequest.RecipientStaffGroupNames = OrderNoteConversationRecipientsSettingsHelper.Instance.StaffGroupNames;
+					GetConversationEditorFormDataResponse formDataResponse = service.GetConversationEditorFormData(formDataRequest);
 					_onBehalfOfChoices = formDataResponse.OnBehalfOfGroupChoices;
+
+					if (formDataResponse.RecipientStaffs != null && formDataResponse.RecipientStaffs.Count > 0)
+					{
+						defaultRecipients.AddRange(CollectionUtils.Map<StaffSummary, Checkable<RecipientTableItem>>(formDataResponse.RecipientStaffs,
+						delegate(StaffSummary s) { return new Checkable<RecipientTableItem>(new RecipientTableItem(s), OrderNoteConversationRecipientsSettingsHelper.Instance.GetCheckState(s)); }));
+					}
+
+					if (formDataResponse.RecipientStaffGroups != null && formDataResponse.RecipientStaffGroups.Count > 0)
+					{
+						defaultRecipients.AddRange(CollectionUtils.Map<StaffGroupSummary, Checkable<RecipientTableItem>>(formDataResponse.RecipientStaffGroups,
+							delegate(StaffGroupSummary sg) { return new Checkable<RecipientTableItem>(new RecipientTableItem(sg), OrderNoteConversationRecipientsSettingsHelper.Instance.GetCheckState(sg)); }));
+					}
 
 					this.OnBehalfOf = OrderNoteConversationComponentSettings.Default.PreferredOnBehalfOfGroupName;
 
@@ -296,7 +318,7 @@ namespace ClearCanvas.Ris.Client
 					_notes.Items.AddRange(checkableOrderNoteDetails);
 
 					// Set default recipients list
-					InitializeRecipients(response.OrderNotes);
+					InitializeRecipients(response.OrderNotes, defaultRecipients);
 				});
 
 			this.Validation.Add(new ValidationRule("SelectedRecipient",
@@ -312,6 +334,12 @@ namespace ClearCanvas.Ris.Client
 
 					return new ValidationResult(atLeastOneRecipient || notPosting, SR.MessageNoRecipientsSelected);
 				}));
+
+			_reply = this.IsCreatingNewNote;
+
+			// build the action model
+			_recipientsActionModel = new CrudActionModel(false, false, true, new ResourceResolver(this.GetType(), true));
+			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
 			base.Start();
 		}
@@ -362,6 +390,17 @@ namespace ClearCanvas.Ris.Client
 			set { _urgent = value; }
 		}
 
+		public bool Reply
+		{
+			get { return _reply; }
+			set { _reply = value; }
+		}
+
+		public bool HideReply
+		{
+			get { return !_reply; }
+		}
+
 		public ICannedTextLookupHandler CannedTextLookupHandler
 		{
 			get { return _cannedTextLookupHandler; }
@@ -400,6 +439,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _recipients; }
 		}
 
+		public ActionModelNode RecipientsActionModel
+		{
+			get { return _recipientsActionModel; }
+		}
+
 		public ISelection SelectedRecipient
 		{
 			get { return new Selection(_selectedRecipient); }
@@ -409,6 +453,8 @@ namespace ClearCanvas.Ris.Client
 				{
 					_selectedRecipient = (Checkable<RecipientTableItem>)value.Item;
 				}
+
+				OnSelectedRecipientChanged();
 			}
 		}
 
@@ -470,20 +516,23 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		public bool HasExistingNotes
+		{
+			get { return _notes.Items.Count > 0; }
+		}
+
+		public bool IsCreatingNewNote
+		{
+			get { return !this.HasExistingNotes || !_notes.HasUnacknowledgedNotes(); }
+		}
+
 		public string CompleteLabel
 		{
 			get
 			{
-				string label;
-				if (_notes.HasUnacknowledgedNotes())
-				{
-					label = string.IsNullOrEmpty(_body) ? "Acknowledge" : "Acknowledge and Post";
-				}
-				else
-				{
-					label = string.IsNullOrEmpty(_body) && _notes.Items.Count != 0 ? "OK" : "Post";
-				}
-				return label;
+				return _notes.HasUnacknowledgedNotes()
+					? string.IsNullOrEmpty(_body) ? "Acknowledge" : "Acknowledge and Post"
+					: "Post";
 			}
 		}
 
@@ -491,9 +540,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				if (_notes.Items.Count == 0 && _recipients.Items.Count != 0)
+				if (!this.HasExistingNotes && _recipients.Items.Count != 0)
 					return !string.IsNullOrEmpty(_body);
-				else if (_notes.Items.Count > 0 && _recipients.Items.Count != 0)
+				else if (this.HasExistingNotes && _recipients.Items.Count != 0)
 					return !_notes.HasUncheckedUnacknowledgedNotes();
 				else
 					return false;
@@ -505,29 +554,23 @@ namespace ClearCanvas.Ris.Client
 			if (this.HasValidationErrors)
 			{
 				this.ShowValidation(true);
+				return;
 			}
-			//else if (ConversationIsStale())
-			//{
-			//    // Message box
-			//    // "The conversation has been updated.  Please review the additional notes before proceeding."
-			//}
-			else
-			{
-				try
-				{
-					SaveChanges();
 
-					this.Exit(ApplicationComponentExitCode.Accepted);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, "Foo", this.Host.DesktopWindow,
-											delegate()
-											{
-												this.ExitCode = ApplicationComponentExitCode.Error;
-												this.Host.Exit();
-											});
-				}
+			try
+			{
+				SaveChanges();
+
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
+					delegate()
+					{
+						this.ExitCode = ApplicationComponentExitCode.Error;
+						this.Host.Exit();
+					});
 			}
 		}
 
@@ -541,7 +584,7 @@ namespace ClearCanvas.Ris.Client
 
 		#region Private Methods
 
-		private void InitializeRecipients(IEnumerable<OrderNoteDetail> notes)
+		private void InitializeRecipients(IEnumerable<OrderNoteDetail> notes, IEnumerable<Checkable<RecipientTableItem>> defaultRecipients)
 		{
 			foreach (OrderNoteDetail note in notes)
 			{
@@ -567,6 +610,13 @@ namespace ClearCanvas.Ris.Client
 					_recipients.Add(groupRecipient.Group, false);
 				}
 			}
+
+			// Load Default recipients
+			if (_recipients.Items.Count == 0)
+			{
+				_recipients.Items.AddRange(defaultRecipients);
+				_usingDefaultRecipients = true;
+			}
 		}
 
 		private static bool IsStaffCurrentUser(StaffSummary staff)
@@ -582,6 +632,25 @@ namespace ClearCanvas.Ris.Client
 					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, GetOrderNotesToAcknowledge(), GetReply());
 					service.AcknowledgeAndPost(request);
 				});
+
+			if (_usingDefaultRecipients)
+			{
+				OrderNoteConversationRecipientsSettingsHelper.Instance.DefaultRecipients = 
+					CollectionUtils.Map<Checkable<RecipientTableItem>, RecipientSettings, List<RecipientSettings>>(_recipients.Items,
+						delegate(Checkable<RecipientTableItem> item)
+							{
+								RecipientSettings setting = new RecipientSettings();
+								setting.Checked = item.IsChecked;
+								if (item.Item.IsStaffRecipient)
+									setting.StaffId = item.Item.StaffSummary.StaffId;
+								else
+									setting.StaffGroupName = item.Item.StaffGroupSummary.Name;
+
+								return setting;
+							});
+
+				OrderNoteConversationRecipientsSettingsHelper.Instance.Save();
+			}
 		}
 
 		private List<EntityRef> GetOrderNotesToAcknowledge()
@@ -608,6 +677,20 @@ namespace ClearCanvas.Ris.Client
 				_recipients.SelectedStaffGroups);
 
 			return reply;
+		}
+
+		private void DeleteRecipient()
+		{
+			if (_selectedRecipient == null) 
+				return;
+
+			_recipients.Items.Remove(_selectedRecipient);
+			this.SelectedRecipient = Selection.Empty;
+		}
+
+		private void OnSelectedRecipientChanged()
+		{
+			_recipientsActionModel.Delete.Enabled = _selectedRecipient != null;
 		}
 
 		#endregion

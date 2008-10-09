@@ -30,6 +30,7 @@
 #endregion
 
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Ris.Client;
@@ -67,6 +68,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_onBehalf.DataBindings.Add("Value", _component, "OnBehalfOf", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_recipients.Table = _component.Recipients;
+			_recipients.MenuModel = _component.RecipientsActionModel;
 			_recipients.DataBindings.Add("Selection", _component, "SelectedRecipient", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_staffRecipientLookup.LookupHandler = _component.StaffRecipientLookupHandler;
@@ -79,6 +81,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_completeButton.DataBindings.Add("Text", _component, "CompleteLabel", true, DataSourceUpdateMode.OnPropertyChanged);
 			_completeButton.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_replyCheckBox.Visible = !_component.IsCreatingNewNote;
+			_replyCheckBox.DataBindings.Add("Checked", _component, "Reply", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			int reducedHeight = this.Height - _componentSplitContainer.Panel1.Height;
+
+			_componentSplitContainer.Panel1Collapsed = !_component.HasExistingNotes;
+			_componentSplitContainer.DataBindings.Add("Panel2Collapsed", _component, "HideReply", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			if (_componentSplitContainer.Panel1Collapsed)
+				this.Size = new Size(this.Size.Width, reducedHeight);
 
 			_component.PropertyChanged += _component_propertyChanged;
 		}

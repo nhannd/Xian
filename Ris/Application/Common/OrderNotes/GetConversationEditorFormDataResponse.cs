@@ -16,5 +16,11 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
 
     	[DataMember]
     	public List<StaffGroupSummary> OnBehalfOfGroupChoices;
+
+        [DataMember]
+        public List<StaffSummary> RecipientStaffs;
+
+        [DataMember]
+        public List<StaffGroupSummary> RecipientStaffGroups;
     }
 }

@@ -9,5 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     [DataContract]
     public class GetConversationEditorFormDataRequest : DataContractBase
     {
+        [DataMember]
+        public List<string> RecipientStaffIDs;
+
+        [DataMember]
+        public List<string> RecipientStaffGroupNames;
     }
 }
