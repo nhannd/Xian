@@ -31,83 +31,53 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.ImageViewer;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    /// <summary>
-    /// Defines an extension point for views onto a <see cref="LayoutComponent"/>
-    /// </summary>
-    [ExtensionPoint()]
-	public sealed class LayoutComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Defines an extension point for views onto a <see cref="LayoutComponent"/>
+	/// </summary>
+	[ExtensionPoint()]
+	public sealed class LayoutComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
-    /// <summary>
-    /// This component allows a user to control the layout of an associated image viewer.
-    /// Set the <see cref="LayoutComponent.Subject"/> property to the <see cref="IImageViewer"/>
-    /// that is to be controlled.
-    /// </summary>
-    [AssociateView(typeof(LayoutComponentViewExtensionPoint))]
+	/// <summary>
+	/// This component allows a user to control the layout of an associated image viewer.
+	/// Set the <see cref="LayoutComponent.Subject"/> property to the <see cref="IImageViewer"/>
+	/// that is to be controlled.
+	/// </summary>
+	[AssociateView(typeof (LayoutComponentViewExtensionPoint))]
 	public class LayoutComponent : ImageViewerToolComponent
-    {
+	{
 		private int _imageBoxRows;
-        private int _imageBoxColumns;
-        private int _tileRows;
-        private int _tileColumns;
+		private int _imageBoxColumns;
+		private int _tileRows;
+		private int _tileColumns;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public LayoutComponent(IDesktopWindow desktopWindow)
-			: base(desktopWindow)
-        {
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public LayoutComponent(IDesktopWindow desktopWindow)
+			: base(desktopWindow) {}
 
-        #region ApplicationComponent overrides
+		#region Public properties and methods for use by the view
 
-        /// <summary>
-        /// Override of <see cref="ApplicationComponent.Start"/>
-        /// </summary>
-        public override void Start()
-        {
-            base.Start();
-        }
+		/// <summary>
+		/// Indicates to the view whether the image-box section of the user-interface should be enabled
+		/// </summary>
+		public bool ImageBoxSectionEnabled
+		{
+			get { return this.ImageViewer != null && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
+		}
 
-        /// <summary>
-        /// Override of <see cref="ApplicationComponent.Stop"/>
-        /// </summary>
-        public override void Stop()
-        {
-            base.Stop();
-        }
-
-        #endregion
-
-        #region Public properties and methods for use by the view
-
-
-        /// <summary>
-        /// Indicates to the view whether the image-box section of the user-interface should be enabled
-        /// </summary>
-        public bool ImageBoxSectionEnabled
-        {
-            get { return this.ImageViewer != null && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
-        }
-
-        /// <summary>
-        /// Indicates to the view whether the tile section of the user-interface should be enabled
-        /// </summary>
-        public bool TileSectionEnabled
-        {
-            get { return this.ImageBoxSectionEnabled && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
-        }
+		/// <summary>
+		/// Indicates to the view whether the tile section of the user-interface should be enabled
+		/// </summary>
+		public bool TileSectionEnabled
+		{
+			get { return this.ImageBoxSectionEnabled && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
+		}
 
 		/// <summary>
 		/// Gets the maximum allowable rows for image boxes.
@@ -140,14 +110,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			get { return LayoutConfigurationSettings.MaximumTileColumns; }
 		}
-		
+
 		/// <summary>
-        /// Gets/sets the number of image box rows
-        /// </summary>
-        public int ImageBoxRows
-        {
-            get { return _imageBoxRows; }
-            set
+		/// Gets/sets the number of image box rows
+		/// </summary>
+		public int ImageBoxRows
+		{
+			get { return _imageBoxRows; }
+			set
 			{
 				int newValue = Math.Max(value, 1);
 				newValue = Math.Min(newValue, this.MaximumImageBoxRows);
@@ -157,14 +127,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				_imageBoxRows = newValue;
 				NotifyPropertyChanged("ImageBoxRows");
 			}
-        }
+		}
 
-        /// <summary>
-        /// Gets/sets the number of image box columns
-        /// </summary>
-        public int ImageBoxColumns
-        {
-            get { return _imageBoxColumns; }
+		/// <summary>
+		/// Gets/sets the number of image box columns
+		/// </summary>
+		public int ImageBoxColumns
+		{
+			get { return _imageBoxColumns; }
 			set
 			{
 				int newValue = Math.Max(value, 1);
@@ -176,14 +146,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				_imageBoxColumns = newValue;
 				NotifyPropertyChanged("ImageBoxColumns");
 			}
-        }
+		}
 
-        /// <summary>
-        /// Gets/sets the number of tile rows
-        /// </summary>
-        public int TileRows
-        {
-            get { return _tileRows; }
+		/// <summary>
+		/// Gets/sets the number of tile rows
+		/// </summary>
+		public int TileRows
+		{
+			get { return _tileRows; }
 			set
 			{
 				int newValue = Math.Max(value, 1);
@@ -194,14 +164,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				_tileRows = newValue;
 				NotifyPropertyChanged("TileRows");
 			}
-        }
+		}
 
-        /// <summary>
-        /// Gets/sets the number of tile columns
-        /// </summary>
-        public int TileColumns
-        {
-            get { return _tileColumns; }
+		/// <summary>
+		/// Gets/sets the number of tile columns
+		/// </summary>
+		public int TileColumns
+		{
+			get { return _tileColumns; }
 			set
 			{
 				int newValue = Math.Max(value, 1);
@@ -212,98 +182,40 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				_tileColumns = newValue;
 				NotifyPropertyChanged("TileColumns");
 			}
-        }
+		}
 
 		public void Configure()
 		{
 			LayoutConfigurationApplicationComponent.Configure(this.Host.DesktopWindow);
 		}
 
-        /// <summary>
-        /// Called by the view to apply the image layout to the subject
-        /// </summary>
-        public void ApplyImageBoxLayout()
-        {
-            if (this.ImageViewer == null)
-                return;
+		/// <summary>
+		/// Called by the view to apply the image layout to the subject
+		/// </summary>
+		public void ApplyImageBoxLayout()
+		{
+			if (this.ImageViewer == null)
+				return;
 
-			IPhysicalWorkspace physicalWorkspace = this.ImageViewer.PhysicalWorkspace;
-			ILogicalWorkspace logicalWorkspace = this.ImageViewer.LogicalWorkspace;
-
-			UndoableCommand command = new UndoableCommand(physicalWorkspace);
-			command.Name = SR.CommandLayoutImageBoxes;
-			command.BeginState = physicalWorkspace.CreateMemento();
-
-			int oldRows = physicalWorkspace.Rows;
-			int oldColumns = physicalWorkspace.Columns;
-			KeyValuePair<IDisplaySet, int>[,] oldDisplaySets = new KeyValuePair<IDisplaySet, int>[oldRows, oldColumns];
-			for (int row = 0; row < oldRows; ++row)
-			{
-				for (int column = 0; column < oldColumns; ++column)
-				{
-					IImageBox imageBox = physicalWorkspace[row, column];
-					oldDisplaySets[row, column] = new KeyValuePair<IDisplaySet, int>(imageBox.DisplaySet, imageBox.TopLeftPresentationImageIndex);
-				}
-			}
-
-			physicalWorkspace.SetImageBoxGrid(_imageBoxRows, _imageBoxColumns);
-
-            foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
-                imageBox.SetTileGrid(_tileRows, _tileColumns);
-
-			// Try to keep existing display sets in the same row/column position.
-			for (int row = 0; row < physicalWorkspace.Rows && row < oldRows; ++row)
-			{
-				for (int column = 0; column < physicalWorkspace.Columns && column < oldColumns; ++column)
-				{
-					KeyValuePair<IDisplaySet, int> kvp = oldDisplaySets[row, column];
-					if (kvp.Key != null)
-					{
-						IImageBox imageBox = physicalWorkspace[row, column];
-						imageBox.DisplaySet = kvp.Key;
-						imageBox.TopLeftPresentationImageIndex = kvp.Value;
-					}
-				}
-			}
-
-            physicalWorkspace.Draw();
-			physicalWorkspace.SelectDefaultImageBox();
-
-			command.EndState = physicalWorkspace.CreateMemento();
-
-			this.ImageViewer.CommandHistory.AddCommand(command);
-
-        	Update();
-        }
-
-        /// <summary>
-        /// Called by the view to apply the tile layout to the subject
-        /// </summary>
-        public void ApplyTileLayout()
-        {
-            if (this.ImageViewer == null)
-                return;
-
-			IImageBox imageBox = this.ImageViewer.PhysicalWorkspace.SelectedImageBox;
-			UndoableCommand command = new UndoableCommand(imageBox);
-			command.Name = SR.CommandLayoutTiles;
-			command.BeginState = imageBox.CreateMemento();
-
-            int index = imageBox.TopLeftPresentationImageIndex;
-
-            imageBox.SetTileGrid(_tileRows, _tileColumns);
-            imageBox.TopLeftPresentationImageIndex = index;
-            imageBox.Draw();
-			imageBox.SelectDefaultTile();
-
-			command.EndState = imageBox.CreateMemento();
-
-			this.ImageViewer.CommandHistory.AddCommand(command);
+			SetImageBoxLayout(this.ImageViewer, this.ImageBoxRows, this.ImageBoxColumns);
 
 			Update();
-        }
+		}
 
-        #endregion
+		/// <summary>
+		/// Called by the view to apply the tile layout to the subject
+		/// </summary>
+		public void ApplyTileLayout()
+		{
+			if (this.ImageViewer == null)
+				return;
+
+		SetTileLayout(this.ImageViewer, this.TileRows, this.TileColumns);
+
+			Update();
+		}
+
+		#endregion
 
 		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
 		{
@@ -340,5 +252,83 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				}
 			}
 		}
-    }
+
+		public static void SetImageBoxLayout(IImageViewer imageViewer, int rows, int columns)
+		{
+			Platform.CheckForNullReference(imageViewer, "imageViewer");
+			Platform.CheckArgumentRange(rows, 1, LayoutConfigurationSettings.MaximumImageBoxRows, "rows");
+			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumImageBoxColumns, "columns");
+
+			IPhysicalWorkspace physicalWorkspace = imageViewer.PhysicalWorkspace;
+
+			int tileRows = Math.Max(1, physicalWorkspace.SelectedImageBox.Rows);
+			int tileColumns = Math.Max(1, physicalWorkspace.SelectedImageBox.Columns);
+
+			UndoableCommand command = new UndoableCommand(physicalWorkspace);
+			command.Name = SR.CommandLayoutImageBoxes;
+			command.BeginState = physicalWorkspace.CreateMemento();
+
+			int oldRows = physicalWorkspace.Rows;
+			int oldColumns = physicalWorkspace.Columns;
+			KeyValuePair<IDisplaySet, int>[,] oldDisplaySets = new KeyValuePair<IDisplaySet, int>[oldRows,oldColumns];
+			for (int row = 0; row < oldRows; ++row)
+			{
+				for (int column = 0; column < oldColumns; ++column)
+				{
+					IImageBox imageBox = physicalWorkspace[row, column];
+					oldDisplaySets[row, column] = new KeyValuePair<IDisplaySet, int>(imageBox.DisplaySet, imageBox.TopLeftPresentationImageIndex);
+				}
+			}
+
+			physicalWorkspace.SetImageBoxGrid(rows, columns);
+
+			foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
+				imageBox.SetTileGrid(tileRows, tileColumns);
+
+			// Try to keep existing display sets in the same row/column position.
+			for (int row = 0; row < physicalWorkspace.Rows && row < oldRows; ++row)
+			{
+				for (int column = 0; column < physicalWorkspace.Columns && column < oldColumns; ++column)
+				{
+					KeyValuePair<IDisplaySet, int> kvp = oldDisplaySets[row, column];
+					if (kvp.Key != null)
+					{
+						IImageBox imageBox = physicalWorkspace[row, column];
+						imageBox.DisplaySet = kvp.Key;
+						imageBox.TopLeftPresentationImageIndex = kvp.Value;
+					}
+				}
+			}
+
+			physicalWorkspace.Draw();
+			physicalWorkspace.SelectDefaultImageBox();
+
+			command.EndState = physicalWorkspace.CreateMemento();
+
+			imageViewer.CommandHistory.AddCommand(command);
+		}
+
+		public static void SetTileLayout(IImageViewer imageViewer, int rows, int columns)
+		{
+			Platform.CheckForNullReference(imageViewer, "imageViewer");
+			Platform.CheckArgumentRange(rows, 1, LayoutConfigurationSettings.MaximumTileRows, "rows");
+			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumTileColumns, "columns");
+
+			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
+			UndoableCommand command = new UndoableCommand(imageBox);
+			command.Name = SR.CommandLayoutTiles;
+			command.BeginState = imageBox.CreateMemento();
+
+			int index = imageBox.TopLeftPresentationImageIndex;
+
+			imageBox.SetTileGrid(rows, columns);
+			imageBox.TopLeftPresentationImageIndex = index;
+			imageBox.Draw();
+			imageBox.SelectDefaultTile();
+
+			command.EndState = imageBox.CreateMemento();
+
+			imageViewer.CommandHistory.AddCommand(command);
+		}
+	}
 }
