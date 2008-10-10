@@ -151,34 +151,21 @@
 		
 		function createReportLetterhead(facilityCode)
 		{
-			$("letterheadLogo").className = letterHeads[facilityCode].className;
-			Field.setValue($("letterheadFacilityName"), letterHeads[facilityCode].name);
-			Field.setValue($("letterheadFacilityDescription"), letterHeads[facilityCode].description);
-			Field.setValue($("letterheadAddress1"), letterHeads[facilityCode].address1);
-			Field.setValue($("letterheadAddress2"), letterHeads[facilityCode].address2);
-			Field.setValue($("letterheadPhone"), letterHeads[facilityCode].phone);
+			var letterHead = letterHeads[facilityCode] || letterHeads["default"];
+			
+			if(!letterHead)
+				return;
+
+			$("letterheadLogo").className = letterHead.className;
+			Field.setValue($("letterheadFacilityName"), letterHead.name);
+			Field.setValue($("letterheadFacilityDescription"), letterHead.description);
+			Field.setValue($("letterheadAddress1"), letterHead.address1);
+			Field.setValue($("letterheadAddress2"), letterHead.address2);
+			Field.setValue($("letterheadPhone"), letterHead.phone);
 		}
 		
 		var letterHeads = 
 		{
-			"WCH" :
-			{
-				className: "wch",
-				name: "Women's College Hospital",
-				description: "Department of Medical Imaging",
-				address1: "76 Grenville Street",
-				address2: "Toronto, Ontario, M5S 1B2",
-				phone: "Tel: (416) 323-6400 Ext. 4914"
-			},
-			"MSH":
-			{
-				className: "msh",
-				name: "Mount Sinai Hospital",
-				description: "Department of Medical Imaging",
-				address1: "600 University Avenue",
-				address2: "Toronto, Ontario M5G 1X5",
-				phone: "Tel: (416) 586-4411"
-			},
 			"CCH":
 			{
 				className: "cch",
@@ -196,42 +183,6 @@
 				address1: "123 Luthor St",
 				address2: "Metropolis, USA",
 				phone: "Tel: (416) 555-0001"
-			},
-			"UHN":
-			{
-				className: "uhn",
-				name: "University Health Network",
-				description: "Joint Department of Medical Imaging",
-				address1: "190 Elizabeth Street",
-				address2: "Toronto, Ontario M5G 2C4",
-				phone: "Tel: (416) 340-3388"
-			},
-			"TGH":
-			{
-				className: "tgh",
-				name: "Toronto General Hospital",
-				description: "Department of Medical Imaging",
-				address1: "200 Elizabeth St.",
-				address2: "Toronto, Ontario M5G 2C4",
-				phone: "Tel: (416) 340-4800 Ext. 3365"
-			},
-			"TWH":			
-			{
-				className: "twh",
-				name: "Toronto Western Hospital",
-				description: "Department of Medical Imaging",
-				address1: "399 Bathurst Street",
-				address2: "Toronto, Ontario M5T 2S8",
-				phone: "Tel: (416) 603-5800 Ext. 5871"
-			},
-			"PMH":
-			{
-				className: "pmh",
-				name: "Princess Margaret Hospital",
-				description: "Department of Medical Imaging",
-				address1: "610 University Avenue",
-				address2: "Toronto, Ontario M5G 2M9",
-				phone: "Tel: (416) 946-2889"
 			}
 		};		
 	</script>

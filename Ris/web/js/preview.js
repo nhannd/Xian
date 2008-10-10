@@ -993,6 +993,8 @@ Preview.ReportPreview = function () {
 			if (element == null || report == null || report.Parts == null || report.Parts.length == 0)
 				return "";
 
+			element.className = 'reportPreview';
+
 			var formattedReport = "<br>";
 			if (report.Parts.length > 1)
 			{

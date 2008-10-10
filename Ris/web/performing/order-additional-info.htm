@@ -16,12 +16,9 @@
 		<script type="text/javascript" src="../js/layout.js"></script>
 		<script type="text/javascript" src="../js/collapse.js"></script>
 		<script type="text/javascript" src="../js/tabs.js"></script>
-		<script type="text/javascript" src="../js/creatininecalculator.js"></script>
 		<script type="text/javascript" >
 			var data = {};
 			var errorProvider = new ErrorProvider();
-			var _creatinineSex = "";
-			var _creatinineAge = "";
 			
 			function onBodyLoad()
 			{
@@ -54,14 +51,6 @@
 							return;
 						}
 
-						// update patient demography
-						var patientProfile = serviceData.GetPatientProfileDetailResponse.PatientProfile;
-						if (patientProfile)
-						{
-							_creatinineAge = Preview.getPatientAgeInYears(patientProfile.DateOfBirth, patientProfile.DeathIndicator, patientProfile.TimeOfDeath);
-							_creatinineSex = patientProfile.Sex.Value; 
-						}
-						
 						data = JSML.parse(Ris.getTag("PreExamDetails")) || {};
 					}
 
@@ -74,22 +63,15 @@
 					data.vitals = data.vitals || {};
 					data.patientScreening = data.patientScreening || {};
 					data.labResults = data.labResults || {};
-					data.forms = data.forms || {};
 					data.translation = data.translation || {};
-					data.callBack = data.callBack || {};
-					data.research = data.research || {};
 
 					data.patientScreening.drugAllergies = data.patientScreening.drugAllergies || [];
-					data.labResults.creatinineLevel = data.labResults.creatinineLevel || [];
 					data.labResults.psa = data.labResults.psa || [];
 
 					initVitalsTable();
 					initPatientScreeningTable();
 					initLabResultsTable();
-					initFormsTable();
 					initTranslationTable();
-					initCallBackTable();
-					initResearchTable();
 				}
 				catch(e)
 				{
@@ -426,99 +408,6 @@
 
 			function initLabResultsTable()
 			{
-				var creatinineStatusTable = Table.createTable($("creatinineStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						{	label: "Has creatinine results?",
-							cellType: "choice",
-							choices: ["No", "Yes"],
-							getValue: function(item) { return item.creatinineStatus || "No"; },
-							setValue: function(item, value) { item.creatinineStatus = value; Field.show($("creatinineLevelSection"), item.creatinineStatus == "Yes"); },
-							getError: function(item) { return null; }
-						}
-					]);
-				creatinineStatusTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				creatinineStatusTable.bindItems([data.patientScreening]);
-				Field.show($("creatinineLevelSection"), data.patientScreening.creatinineStatus == "Yes");
-
-				var creatinineLevelTable = Table.createTable($("creatinineLevelTable"), { editInPlace: true, flow: true, checkBoxes: true },
-					[
-						{
-							label:"Sex",
-							cellType: "readonly",
-							getValue: function(item) { return item.sex = item.sex || _creatinineSex; },
-							getError: function(item) { return null; },
-							setValue: function(item) { return; },
-							getVisible: function(item) { return false; }
-						},
-						{	label: "Age (yrs)",
-							cellType: "readonly",
-							getValue: function(item) 
-							{ 
-								return item.age = item.age || _creatinineAge; 
-							},
-							getError: function(item) { return null; },
-							setValue: function(item) { return; },
-							getVisible: function(item) { return false; }
-
-						},
-						{	label: "Level",
-							cellType: "text",
-							getValue: function(item) { return item.level; },
-							setValue: function(item, value) { item.level = parseFloat(value) || null; },
-							getError: function(item) { return null; }
-						},
-						{	label: "African-American",
-							cellType: "bool",
-							getValue: function(item) { return item.africanAmerican; },
-							setValue: function(item, value) { item.africanAmerican = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Creatinine methods recalibrated to be traceable to IDMS?",
-							cellType: "bool",
-							getValue: function(item) { return item.recalibrated; },
-							setValue: function(item, value) { item.recalibrated = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Staff",
-							cellType: "lookup",
-							lookup: function(query) { return Ris.resolveStaffName(query); },
-							getValue: function(item) { return item.staffPerson; },
-							setValue: function(item, value) { item.staffPerson = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Date",
-							 cellType: "date",
-							 getValue: function(item) { return item.date; },
-							 setValue: function(item, value) { item.date = value; },
-							 getError: function(item) { return null; }
-						},
-						{	label: "GFR",
-							cellType: "readonly",
-							getValue: function(item) 
-							{ 
-								try
-								{
-									item.clearance = CreatinineCalculator.calculateGFR(item.level, item.age, item.sex, item.africanAmerican, item.recalibrated);
-									return item.clearance ? item.clearance + " " + CreatinineCalculator.gfrUnits() : "N/A";
-								}
-								catch(e)
-								{
-									return e;
-								}
-							}
-						},
-						{	label:"Parameters",
-							cellType: "readonly",
-							getValue: function(item)
-							{
-								return item.sex + ", " + item.age + "-year-old";
-							}
-							
-						}
-					]);
-				creatinineLevelTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				creatinineLevelTable.bindItems(data.labResults.creatinineLevel);
-
 				var psaStatusTable = Table.createTable($("psaStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
 						{	label: "Has psa results?",
@@ -606,36 +495,6 @@
 				otherResultsTable.bindItems([data.labResults]);
 			}
 
-			function initFormsTable()
-			{
-				var table = Table.createTable($("formsTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						{	label: "Screening Form reviewed by",
-							cellType: "lookup",
-							lookup: function(query) { return Ris.resolveStaffName(query); },
-							getValue: function(item) { return item.screeningFormReviewedBy; },
-							setValue: function(item, value) { item.screeningFormReviewedBy = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Contrast consent obtained by",
-							cellType: "lookup",
-							lookup: function(query) { return Ris.resolveStaffName(query); },
-							getValue: function(item) { return item.contrastConsentObtainedBy; },
-							setValue: function(item, value) { item.contrastConsentObtainedBy = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Other consents obtained by",
-							cellType: "lookup",
-							lookup: function(query) { return Ris.resolveStaffName(query); },
-							getValue: function(item) { return item.otherConsentsObtainedBy; },
-							setValue: function(item, value) { item.otherConsentsObtainedBy = value; },
-							getError: function(item) { return null; }
-						}
-					]);
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems([data.forms]);
-			}
-
 			function initTranslationTable()
 			{
 				var table = Table.createTable($("translationTable"), { editInPlace: true, flow: true, checkBoxes: false },
@@ -673,71 +532,6 @@
 				table.bindItems([data.translation]);
 			}
 
-			function initCallBackTable()
-			{
-				var table = Table.createTable($("callBackTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						{	label: "Call back exam?",
-							cellType: "choice",
-							choices: [ "No", "Yes" ],
-							getValue: function(item) { return item.callbackStatus || "No"; },
-							setValue: function(item, value) { item.callbackStatus = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Mammo/US Callback",
-							cellType: "bool",
-							getValue: function(item) { return item.mammoUltrasoundCallback || false; },
-							setValue: function(item, value) { item.mammoUltrasoundCallback = value; },
-							getVisible: function(item) { return item.callbackStatus == "Yes"; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Post-MRI Callback",
-							cellType: "bool",
-							getValue: function(item) { return item.postMriCallback || false; },
-							setValue: function(item, value) { item.postMriCallback = value; },
-							getVisible: function(item) { return item.callbackStatus == "Yes"; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Comments",
-							cellType: "text",
-							size: 100,
-							getValue: function(item) { return item.otherCallback; },
-							setValue: function(item, value) { item.otherCallback = value; },
-							getVisible: function(item) { return item.callbackStatus == "Yes"; },
-							getError: function(item) { return null; }
-						}
-					]);
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems([data.callBack]);
-			}
-
-			function initResearchTable()
-			{
-				var table = Table.createTable($("researchTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						{	label: "Study Name",
-							cellType: "text",
-							getValue: function(item) { return item.studyName; },
-							setValue: function(item, value) { item.studyName = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Coordinator",
-							cellType: "text",
-							getValue: function(item) { return item.coordinator; },
-							setValue: function(item, value) { item.coordinator = value; },
-							getError: function(item) { return null; }
-						},
-						{	label: "Patient Research Number",
-							cellType: "text",
-							getValue: function(item) { return item.patientResearchNumber; },
-							setValue: function(item, value) { item.patientResearchNumber = value; },
-							getError: function(item) { return null; }
-						}
-					]);
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems([data.research]);
-			}
-
 			//////////////////////////////////////////////////////////////////////////
 			// Button Events Methods
 			function onAddDrugAllergies()
@@ -765,33 +559,6 @@
 			function onDrugAllergiesCheckAllNone()
 			{
 				data.patientScreening.drugAllergies.each(function(item) { $("drugAllergiesTable").setItemCheckState(item, $("drugAllergiesCheckAllNone").checked); });
-			}
-
-			function onAddCreatinineLevel()
-			{
-				data.labResults.creatinineLevel.add( {} );   // add an empty item
-			}
-
-			function onDeleteCreatinineLevel()
-			{
-				var checkedItems = $("creatinineLevelTable").getCheckedItems();
-				if(checkedItems.length > 0)
-				{
-					if(confirm("Delete selected creatinine level(s)?"))
-					{
-						checkedItems.each(function(item) { data.labResults.creatinineLevel.remove(item); });
-						$("creatinineLevelCheckAllNone").checked = false;
-					}
-				}
-				else
-				{
-					alert("Nothing selected");
-				}
-			}
-
-			function onCreatinineLevelCheckAllNone()
-			{
-				data.labResults.creatinineLevel.each(function(item) { $("creatinineLevelTable").setItemCheckState(item, $("creatinineLevelCheckAllNone").checked); });
 			}
 
 			function onAddPSA()
@@ -928,20 +695,6 @@
 				</table>
 			</div>
 			<div id="LabResults" class="TabPage">
-				<p class="sectionheading">Creatinine Level</p>
-				<table id="creatinineStatusTable"  width="100%">
-					<tr><td class="tableheading"></td></tr>
-				</table>
-				<div id="creatinineLevelSection">
-					<div class="addDeleteButtons">
-						<input id="addCreatinineButton" type="button" value="Add" onclick="javascript: onAddCreatinineLevel()" />
-						<input type="button" value="Delete" onclick="javascript: onDeleteCreatinineLevel()" />
-					</div>
-					<table id="creatinineLevelTable" border="1" width="100%">
-						<tr><td colspan="2"><label><input id="creatinineLevelCheckAllNone" type="checkbox" onclick="javascript: onCreatinineLevelCheckAllNone()" />Select All/None</label></td></tr>
-					</table>
-				</div>
-
 				<p class="sectionheading">PSA</p>
 				<table id="psaStatusTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
@@ -961,28 +714,12 @@
 				<tr><td class="tableheading"></td></tr>
 				</table>
 			</div>
-			<div id="Forms" class="TabPage">
-				<table id="formsTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
-				</table>
-			</div>
 			<div id="Translation" class="TabPage">
 				<table id="translationTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
 				</table>
 			</div>
-			<div id="CallBack" class="TabPage">
-				<table id="callBackTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
-				</table>
-			</div>
-			<div id="Research" class="TabPage">
-				<table id="researchTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
-				</table>
-			</div>
 		</div>
-
       </form>
 	</body>
 </html>

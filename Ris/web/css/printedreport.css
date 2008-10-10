@@ -26,42 +26,6 @@
 	float:right;
 }
 
-#letterheadLogo.wch {
-	background-image:url(../images/wchlogo.jpg);
-	height:88px;
-	width:100px;
-}
-
-#letterheadLogo.tgh{
-	background-image:url(../images/uhnlogo.png);
-	height:75px;
-	width:63px;
-}
-
-#letterheadLogo.twh{
-	background-image:url(../images/uhnlogo.png);
-	height:75px;
-	width:63px;
-}
-
-#letterheadLogo.pmh{
-	background-image:url(../images/uhnlogo.png);
-	height:75px;
-	width:63px;
-}
-
-#letterheadLogo.uhn{
-	background-image:url(../images/uhnlogo.png);
-	height:75px;
-	width:63px;
-}
-
-#letterheadLogo.msh {
-	background-image:url(../images/MSH_logo.gif);
-	height:70px;
-	width:330px;
-}
-
 #letterheadLogo.cth {
 	background-image:url(../images/GenericHospitalLogo.png);
 	height:74px;
