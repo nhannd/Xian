@@ -63,10 +63,7 @@
 					data.vitals = data.vitals || {};
 					data.patientScreening = data.patientScreening || {};
 					data.labResults = data.labResults || {};
-					data.forms = data.forms || {};
 					data.translation = data.translation || {};
-					data.callBack = data.callBack || {};
-					data.research = data.research || {};
 
 					data.patientScreening.drugAllergies = data.patientScreening.drugAllergies || [];
 					data.labResults.creatinineLevel = data.labResults.creatinineLevel || [];
@@ -75,10 +72,7 @@
 					initVitalsTable();
 					initPatientScreeningTable();
 					initLabResultsTable();
-					initFormsTable();
 					initTranslationTable();
-					initCallBackTable();
-					initResearchTable();
 				}
 				catch(e)
 				{
@@ -228,23 +222,6 @@
 
 			function initLabResultsTable()
 			{
-				var creatinineStatusTable = Table.createTable($("creatinineStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						new readOnlyCell("Has creatinine results?", "creatinineStatus")
-					]);
-				creatinineStatusTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				creatinineStatusTable.bindItems([data.patientScreening]);
-				Field.show($("creatinineLevelSection"), data.patientScreening.creatinineStatus == "Yes");
-
-				var creatinineLevelTable = Table.createTable($("creatinineLevelTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						new readOnlyCell("Level", "level"),
-						new readOnlyCell("Staff", "staffPerson"),
-						new readOnlyDateCell("Date", "date")
-					]);
-				creatinineLevelTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				creatinineLevelTable.bindItems(data.labResults.creatinineLevel);
-
 				var psaStatusTable = Table.createTable($("psaStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
 					[
 						new readOnlyCell("Has psa results?", "psaStatus")
@@ -276,18 +253,6 @@
 				otherResultsTable.bindItems([data.labResults]);
 			}
 
-			function initFormsTable()
-			{
-				var table = Table.createTable($("formsTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						new readOnlyCell("Screening Form reviewed by", "screeningFormReviewedBy"),
-						new readOnlyCell("Contrast consent obtained by", "contrastConsentObtainedBy"),
-						new readOnlyCell("Other consents obtained by", "otherConsentsObtainedBy")
-					]);
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems([data.forms]);
-			}
-
 			function initTranslationTable()
 			{
 				var table = Table.createTable($("translationTable"), { editInPlace: true, flow: true, checkBoxes: false },
@@ -299,31 +264,6 @@
 					]);
 				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				table.bindItems([data.translation]);
-			}
-
-			function initCallBackTable()
-			{
-				var table = Table.createTable($("callBackTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						new readOnlyCell("Call back exam?", "callbackStatus"),
-						new readOnlyCell("Mammo/US Callback", "mammoUltrasoundCallback"),
-						new readOnlyCell("Post-MRI Callback", "postMriCallback"),
-						new readOnlyCell("Comments", "otherCallback")
-					]);
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems([data.callBack]);
-			}
-
-			function initResearchTable()
-			{
-				var table = Table.createTable($("researchTable"), { editInPlace: true, flow: true, checkBoxes: false },
-					[
-						new readOnlyCell("Study Name", "studyName"),
-						new readOnlyCell("Coordinator", "coordinator"),
-						new readOnlyCell("Patient Research Number", "patientResearchNumber")
-					]);
-				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-				table.bindItems([data.research]);
 			}
 
 			//////////////////////////////////////////////////////////////////////////
@@ -429,16 +369,6 @@
 				</table>
 			</div>
 			<div id="LabResults" class="TabPage">
-				<p class="sectionheading">Creatinine Level</p>
-				<table id="creatinineStatusTable"  width="100%">
-					<tr><td class="tableheading"></td></tr>
-				</table>
-				<div id="creatinineLevelSection">
-					<table id="creatinineLevelTable" border="1" width="100%">
-						<tr><td colspan="2"></td></tr>
-					</table>
-				</div>
-
 				<p class="sectionheading">PSA</p>
 				<table id="psaStatusTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
@@ -454,23 +384,8 @@
 				<tr><td class="tableheading"></td></tr>
 				</table>
 			</div>
-			<div id="Forms" class="TabPage">
-				<table id="formsTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
-				</table>
-			</div>
 			<div id="Translation" class="TabPage">
 				<table id="translationTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
-				</table>
-			</div>
-			<div id="CallBack" class="TabPage">
-				<table id="callBackTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
-				</table>
-			</div>
-			<div id="Research" class="TabPage">
-				<table id="researchTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
 				</table>
 			</div>
