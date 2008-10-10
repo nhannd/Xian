@@ -87,6 +87,7 @@
     <Compile Include="Data\WorkQueueController.cs" />
     <Compile Include="Data\WorkQueueDataSource.cs" />
     <Compile Include="Data\WorkQueueUidAdaptor.cs" />
+    <Compile Include="DicomConstants.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
