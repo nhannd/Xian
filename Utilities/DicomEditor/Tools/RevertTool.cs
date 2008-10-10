@@ -62,7 +62,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
             base.Initialize();
             this.Enabled = true;
             this.Context.DisplayedDumpChanged += new EventHandler<DisplayedDumpChangedEventArgs>(OnDisplayedDumpChanged);
-            this.Context.TagEditted += new EventHandler(OnTagEditted);
+            this.Context.TagEdited += new EventHandler(OnTagEditted);
 			this.Context.IsLocalFileChanged += new EventHandler(OnIsLocalFileChanged);
         }
 

@@ -75,6 +75,7 @@ namespace ClearCanvas.Desktop.Help
 
 		public void ShowLicense()
 		{
+			//TODO: fix message.
 			Execute("EULA.rtf", SR.HelpNotFound);
 		}
 

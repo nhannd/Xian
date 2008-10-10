@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
-			const string NULL_STRING = "-";
+			const string nullString = "-";
 
 			IImageSopProvider provider = presentationImage as IImageSopProvider;
 			if (provider == null)
@@ -85,11 +85,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (_showLaterality && _showViewPosition)
 			{
 				if (string.IsNullOrEmpty(laterality))
-					laterality = NULL_STRING;
+					laterality = nullString;
 				if (string.IsNullOrEmpty(viewPosition))
-					viewPosition = NULL_STRING;
+					viewPosition = nullString;
 
-				if (laterality == NULL_STRING && viewPosition == NULL_STRING)
+				if (laterality == nullString && viewPosition == nullString)
 					str = ""; // if both parts are null then just show one hyphen (rather than -/-)
 				else
 					str = String.Format(SR.FormatLateralityViewPosition, laterality, viewPosition);

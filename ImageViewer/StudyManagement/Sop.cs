@@ -39,6 +39,9 @@ using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO: Make a documentation note "Don't alter the DicomAttributes from indexer" or NativeDicomObject.
+	//TODO: Avoid inheritance and use IDicomDataProvider that Sop simply wraps.
+
 	/// <summary>
 	/// A DICOM SOP Instance.
 	/// </summary>

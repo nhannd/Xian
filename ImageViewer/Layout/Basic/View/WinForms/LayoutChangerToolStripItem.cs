@@ -73,6 +73,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			base.Size = _defaultSize = new Size(Math.Max(base.Width, idealPickerWidth), idealPickerHeight + _label.Height);
 		}
 
+		//TODO: remove finalizer.
 		~LayoutChangerToolStripItem()
 		{
 			this.MyOwner = null;

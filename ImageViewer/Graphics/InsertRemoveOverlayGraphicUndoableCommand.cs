@@ -37,6 +37,8 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	//TODO: separate into DeleteGraphicCommand and InsertGraphicCommand.
+
 	/// <summary>
 	/// A subclass of <see cref="DrawableUndoableCommand"/> that performs
 	/// undo/redo operations for insertion and removal of an <see cref="IGraphic"/>

@@ -80,7 +80,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         event EventHandler<DisplayedDumpChangedEventArgs> DisplayedDumpChanged;
 
-        event EventHandler TagEditted;
+		//Edited.
+        event EventHandler TagEdited;
 
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
@@ -152,10 +153,10 @@ namespace ClearCanvas.Utilities.DicomEditor
                 remove { _component._displayedDumpChangedEvent -= value; }
             }
 
-            public event EventHandler TagEditted
+            public event EventHandler TagEdited
             {
-                add { _component._tagEdittedEvent += value; }
-                remove { _component._tagEdittedEvent -= value; }
+                add { _component._tagEditedEvent += value; }
+                remove { _component._tagEditedEvent -= value; }
             }
 
             public ClickHandlerDelegate DefaultActionHandler
@@ -244,6 +245,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             for (int i = 0; i < _loadedFiles.Count; i++)
             {
+				//TODO: deal with saving mixtures of local and non-local files.
                 _loadedFiles[i].Save(DicomWriteOptions.Default);
                 _dirtyFlags[i] = false;
             }
@@ -274,7 +276,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                         _loadedFiles[_position].DataSet[tag].SetStringValue(value);
                     }
                     _dirtyFlags[_position] = true;
-                    EventsHelper.Fire(_tagEdittedEvent, this, EventArgs.Empty);
+                    EventsHelper.Fire(_tagEditedEvent, this, EventArgs.Empty);
                 }
                 else
                 {
@@ -289,7 +291,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                             _loadedFiles[i].DataSet[tag].SetStringValue(value);
                         }
                         _dirtyFlags[i] = true;
-                        EventsHelper.Fire(_tagEdittedEvent, this, EventArgs.Empty);
+                        EventsHelper.Fire(_tagEditedEvent, this, EventArgs.Empty);
                     }
                 }
         }
@@ -340,7 +342,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                                                                                                                                                         {
                                                                                                                                                             d.Value = value;
                                                                                                                                                             _dirtyFlags[_position] = true;
-                                                                                                                                                            EventsHelper.Fire(_tagEdittedEvent, this, EventArgs.Empty);
+                                                                                                                                                            EventsHelper.Fire(_tagEditedEvent, this, EventArgs.Empty);
                                                                                                                                                         }
                                                                                                                                                     }, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.Value); }));
             _title = "";
@@ -545,7 +547,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         private ISelection _currentSelection;
         private event EventHandler _selectedTagChangedEvent;
         private event EventHandler<DisplayedDumpChangedEventArgs> _displayedDumpChangedEvent;
-        private event EventHandler _tagEdittedEvent;
+        private event EventHandler _tagEditedEvent;
 
         private ToolSet _toolSet;
         private ClickHandlerDelegate _defaultActionHandler;

@@ -41,6 +41,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
+	//TODO: create DicomEditorTool base class and factor out enabled code.
+
 	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarReplicate", "Replicate")]
 	[MenuAction("activate", "dicomeditor-contextmenu/MenuReplicate", "Replicate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
