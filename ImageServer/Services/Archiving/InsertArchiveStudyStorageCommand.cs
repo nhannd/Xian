@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -101,7 +102,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 
 			IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
 
-			broker.Execute(parms);
+            if (!broker.Execute(parms))
+                throw new ApplicationException("InsertArchiveStudyStorageCommand failed");
 		}
 	}
 }

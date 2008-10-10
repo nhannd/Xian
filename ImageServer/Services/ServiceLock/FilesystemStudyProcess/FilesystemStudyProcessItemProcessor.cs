@@ -120,12 +120,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 			// Execute the rules engine, insert commands to update the database into the command processor.
             engine.Execute(context);
 
-			// Re-do insert into the archive queue.  Note the "update" flag must be set,
-			// so that we don't insert a new record if the study has been already archived
-			// Note also this should be done after the rules engine, so we don't insert into
-			// the archive queue if a study delete has been input.
+			// Re-do insert into the archive queue.
+			// Note: the stored procedure will update the archive entry if it already exists
 			context.CommandProcessor.AddCommand(
-				new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey(), true));
+				new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey()));
 
 
             // Do the actual database updates.

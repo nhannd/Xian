@@ -2325,13 +2325,16 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: July 11, 2008
+-- Update date: Oct 15, 2008
 -- Description:	Insert and/or update the appropriate ArchiveQueue records
+-- 
+-- Oct 15, 2008:	Removed Update parameter and insert new entry if the study has been archive so that edit can trigger rearchive
+--
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertArchiveQueue] 
 	-- Add the parameters for the stored procedure here
 	@ServerPartitionGUID uniqueidentifier, 
-	@StudyStorageGUID uniqueidentifier,
-	@Update bit
+	@StudyStorageGUID uniqueidentifier
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -2382,13 +2385,11 @@ BEGIN
 				AND ArchiveQueueStatusEnum = @PendingArchiveQueueStatus
 			if @@ROWCOUNT = 0
 			BEGIN
-				IF (@Update = 0 OR @ArchiveStudyStorageCount = 0)
-				BEGIN
-					SET @ArchiveQueueGUID = NEWID();
+				-- There''s no Pending archive entry, insert one
+				SET @ArchiveQueueGUID = NEWID();
 
-					INSERT into ArchiveQueue (GUID, PartitionArchiveGUID, StudyStorageGUID, ArchiveQueueStatusEnum, ScheduledTime)
-					values  (@ArchiveQueueGUID, @PartitionArchiveGUID, @StudyStorageGUID, @PendingArchiveQueueStatus, @ScheduledTime)
-				END
+				INSERT into ArchiveQueue (GUID, PartitionArchiveGUID, StudyStorageGUID, ArchiveQueueStatusEnum, ScheduledTime)
+				values  (@ArchiveQueueGUID, @PartitionArchiveGUID, @StudyStorageGUID, @PendingArchiveQueueStatus, @ScheduledTime)
 			END
 			ELSE
 			BEGIN

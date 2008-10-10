@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			// this command here so that if a delete is inserted at the study level, we will remove
 			// the previously inserted archive request for the study.  Note also this has to be done
 			// after the rules engine is executed.
-			context.CommandProcessor.AddCommand(new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey, true));
+			context.CommandProcessor.AddCommand(new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey));
 
             if (false == context.CommandProcessor.Execute())
             {
@@ -261,7 +261,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
             if (_context.Study == null || _context.Study.StudyInstanceUid != studyInstanceUid)
             {
-                _context.Study = FindStudy(studyInstanceUid, _context.Partition);
+                _context.Study = Study.Find(studyInstanceUid, _context.Partition);
                 // Note: if this is the first image in the study, _study will still be null at point
             }
 
@@ -381,7 +381,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // study rules haven't been run.  We re-run the command when the study processed
                 // rules are run to remove out the archivequeue request again, if it isn't needed.
                 context.CommandProcessor.AddCommand(
-                    new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey(), true));
+                    new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey()));
 
                 // Do the actual processing
                 if (!processor.Execute())

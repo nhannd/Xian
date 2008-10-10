@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -87,6 +88,74 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         }
     }
 
+
+    /// <summary>
+    /// Stores statistics of a WorkQueue instance processing.
+    /// </summary>
+    internal class UpdateStudyStatistics : StatisticsSet
+    {
+        #region Constructors
+
+        public UpdateStudyStatistics(string studyInstanceUid)
+            : this("UpdateStudy", studyInstanceUid)
+        { }
+
+        public UpdateStudyStatistics(string name, string studyInstanceUid)
+            : base(name)
+        {
+            AddField("StudyInstanceUid", studyInstanceUid);
+        }
+
+        #endregion Constructors
+
+        #region Public Properties
+
+        
+        public TimeSpanStatistics ProcessTime
+        {
+            get
+            {
+                if (this["ProcessTime"] == null)
+                    this["ProcessTime"] = new TimeSpanStatistics("ProcessTime");
+
+                return (this["ProcessTime"] as TimeSpanStatistics);
+            }
+            set { this["ProcessTime"] = value; }
+        }
+
+        public ulong StudySize
+        {
+            set
+            {
+                this["StudySize"] = new ByteCountStatistics("StudySize", value);
+            }
+            get
+            {
+                if (this["StudySize"] == null)
+                    this["StudySize"] = new ByteCountStatistics("StudySize");
+
+                return ((ByteCountStatistics)this["StudySize"]).Value;
+            }
+        }
+
+        public int InstanceCount
+        {
+            set
+            {
+                this["InstanceCount"] = new Statistics<int>("InstanceCount", value);
+            }
+            get
+            {
+                if (this["InstanceCount"] == null)
+                    this["InstanceCount"] = new Statistics<int>("InstanceCount");
+
+                return ((Statistics<int>)this["InstanceCount"]).Value;
+            }
+        }
+
+        #endregion Public Properties
+    }
+
     /// <summary>
     /// Command for updating a study.
     /// </summary>
@@ -99,17 +168,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #region Private Members
         private readonly List<InstanceInfo> _updatedSopList = new List<InstanceInfo>();
         private readonly StudyStorageLocation _studyLocation;
-        private readonly string _oldStudyPath;
-        private readonly string _oldStudyInstanceUid;
-        private readonly string _newStudyFolder;
-        private readonly string _newStudyInstanceUid;
-        private readonly string _oldStudyFolder;
+        private string _oldStudyPath;
+        private string _oldStudyInstanceUid;
+        private string _newStudyFolder;
+        private string _newStudyInstanceUid;
+        private string _oldStudyFolder;
 
         private PatientInfo _oldPatientInfo;
         private PatientInfo _newPatientInfo;
 
         private readonly IList<IImageLevelUpdateCommand> _commands;
-        private readonly string _newStudyPath;
+        private string _newStudyPath;
         private readonly string _backupDir = ServerPlatform.GetTempPath();
         private readonly ServerPartition _partition;
         private Study _study;
@@ -120,6 +189,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private bool _patientInfoIsNotChanged;
 
+        private UpdateStudyStatistics _statistics;
+        private int _totalSopCount;
         #endregion
 
         #region Constructors
@@ -131,16 +202,53 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _partition = partition;
             _studyLocation = studyLocation;
             _commands = imageLevelCommands;
-            _oldStudyPath = studyLocation.GetStudyPath();
-            _oldStudyInstanceUid = studyLocation.StudyInstanceUid;
-            _oldStudyFolder = studyLocation.StudyFolder;
+
+            Initialize();
+        }
+
+        public new UpdateStudyStatistics Statistics
+        {
+            get { return _statistics; }
+        }
+
+        #endregion
+
+        #region Protected Method
+        protected override void OnExecute(IUpdateContext updateContext)
+        {
+            Statistics.ProcessTime.Start();
+
+            PrintUpdateCommands();
+            BackupFilesystem();
+            UpdateFilesystem();
+            UpdateDatabase();
+
+            Statistics.ProcessTime.End();
+        }
+
+        protected override void OnUndo()
+        {
+            RestoreFilesystem();
+
+            // db rollback is done by the processor
+        }
+
+
+        #endregion
+
+        #region Private Methods
+        private void Initialize()
+        {
+
+            _oldStudyPath = _studyLocation.GetStudyPath();
+            _oldStudyInstanceUid = _studyLocation.StudyInstanceUid;
+            _oldStudyFolder = _studyLocation.StudyFolder;
             _newStudyFolder = _oldStudyFolder;
             _newStudyInstanceUid = _oldStudyInstanceUid;
 
             _study = Study.Find(_oldStudyInstanceUid, _partition);
-            
+            _totalSopCount = _study.NumberOfStudyRelatedInstances;
             _curPatient = Patient.Load(_study.PatientKey);
-
             _oldPatientInfo = new PatientInfo();
             _oldPatientInfo.Name = _curPatient.PatientsName;
             _oldPatientInfo.PatientId = _curPatient.PatientId;
@@ -149,7 +257,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newPatientInfo = new PatientInfo(_oldPatientInfo);
             Debug.Assert(_newPatientInfo.Equals(_oldPatientInfo));
 
-            foreach (IImageLevelUpdateCommand command in imageLevelCommands)
+            foreach (IImageLevelUpdateCommand command in _commands)
             {
                 if (command is IUpdateImageTagCommand)
                 {
@@ -181,6 +289,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
             }
 
+
             Platform.CheckForNullReference(_newStudyInstanceUid, "_newStudyInstanceUid");
 
             if (String.IsNullOrEmpty(_newStudyFolder))
@@ -188,16 +297,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 _newStudyFolder = ImageServerCommonConfiguration.DefaultStudyRootFolder;
             }
 
-            _newStudyPath = Path.Combine(studyLocation.FilesystemPath, partition.PartitionFolder);
+            _newStudyPath = Path.Combine(_studyLocation.FilesystemPath, _partition.PartitionFolder);
             _newStudyPath = Path.Combine(_newStudyPath, _newStudyFolder);
             _newStudyPath = Path.Combine(_newStudyPath, _newStudyInstanceUid);
 
             _newPatient = FindPatient(_newPatientInfo);
             _patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
-        }
-        #endregion
 
-        #region Private Methods
+            _statistics = new UpdateStudyStatistics(_oldStudyInstanceUid);
+            Statistics.InstanceCount = _study.NumberOfStudyRelatedInstances;
+            Statistics.StudySize = (ulong) DirectoryUtility.CalculateFolderSize(_oldStudyPath);
+
+        }
 
         private Patient FindPatient(PatientInfo patientInfo)
         {
@@ -210,26 +321,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             return patientFindBroker.FindOne(criteria);
         }
 
-        protected override void OnExecute(IUpdateContext updateContext)
-        {
-            PrintUpdateCommands();
-            BackupFilesystem();
-            UpdateFilesystem();
-            UpdateDatabase();
-
-            Rearchive();
-        }
-
-        protected override void OnUndo()
-        {
-            RestoreFilesystem();
-
-            // db rollback is done by the processor
-        }
-
         private void PrintUpdateCommands()
         {
             StringBuilder log = new StringBuilder();
+            log.AppendLine(); 
             log.AppendFormat("Study to be updated:\n");
             log.AppendFormat("\tServer Partition: {0}\n", _partition.AeTitle);
             log.AppendFormat("\tStorage GUID: {0}\n", _studyLocation.GetKey().Key);
@@ -239,6 +334,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             log.AppendFormat("\tStudy ID : {0}\n", _study.StudyId);
             log.AppendFormat("\tStudy Date : {0}\n", _study.StudyDate);
             log.AppendFormat("\tStudy Instance Uid: {0}\n", _study.StudyInstanceUid);
+            log.AppendFormat("\tInstance Count: {0}\n", _study.NumberOfStudyRelatedInstances);
+            log.AppendFormat("\tCurrent location: {0}", _oldStudyPath);
             log.AppendLine();
             log.AppendFormat("Changes:\n");
             foreach (IImageLevelUpdateCommand cmd in _commands)
@@ -247,8 +344,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 log.AppendLine();
             }
 
-            log.AppendFormat("New Study Location: {0}", _newStudyPath);
-
+            log.AppendFormat("\tNew location: {0}", _newStudyPath);
+            log.AppendLine();
             Platform.Log(LogLevel.Info, log);
         }
         private void RestoreFilesystem()
@@ -380,14 +477,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             }
 
 
+            Rearchive();
         }
 
         private void Rearchive()
         {
             Platform.Log(LogLevel.Info, "Scheduling/Update study archive..");
-            Platform.Log(LogLevel.Info, "This feature is not implemented.");
-
-            // TODO: call stored procedure to trigger the archive
+            _storage.Archive(UpdateContext);
         }
 
         private Patient CreateNewPatient(Study study, PatientInfo patientInfo)
@@ -398,7 +494,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             parms.IssuerOfPatientId = _newPatientInfo.IssuerOfPatientId;
             parms.PatientId = _newPatientInfo.PatientId;
             parms.PatientsName = _newPatientInfo.Name;
-            //parms.SpecificCharacterSet = null;
+            parms.SpecificCharacterSet = _curPatient.SpecificCharacterSet; // assume it's the same
             parms.StudyKey = _study.GetKey();
             Patient newPatient = createStudyBroker.FindOne(parms);
             if (newPatient==null)
@@ -461,6 +557,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                         _updatedSopList.Add(instance);
 
                         newStudyXml.AddFile(file);
+
+                        Platform.Log(LogLevel.Info, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
                     }
                     catch (Exception)
                     {
@@ -469,6 +567,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     }
 
                 }
+            }
+
+            if (_updatedSopList.Count != _totalSopCount)
+            {
+                Platform.Log(LogLevel.Warn, "Inconsistent data: expected {0} instances to be updated / Found {1}.", _totalSopCount, _updatedSopList.Count);
             }
 
             Platform.Log(LogLevel.Info, "Generating new study header...");
@@ -526,8 +629,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             {
                 throw new ApplicationException(String.Format("Unable to update image {0} : {1}", file.Filename, filesystemUpdateProcessor.FailureReason));
             }
-
-            Platform.Log(LogLevel.Info, "SOP {0} updated.", sopInstanceUid);
         }
 
         private void BackupFilesystem()

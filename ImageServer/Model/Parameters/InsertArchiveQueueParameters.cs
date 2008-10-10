@@ -48,9 +48,6 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 		{
 			set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
 		}
-		public bool Update
-		{
-			set { SubCriteria["Update"] = new ProcedureParameter<bool>("Update", value); }
-		}
+
 	}
 }

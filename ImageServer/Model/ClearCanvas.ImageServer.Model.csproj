@@ -267,6 +267,7 @@
     <Compile Include="StudyIntegrityQueueUid.gen.cs" />
     <Compile Include="StudyIntegrityReasonEnum.gen.cs" />
     <Compile Include="StudyStatusEnum.gen.cs" />
+    <Compile Include="StudyStorage.cs" />
     <Compile Include="StudyStorage.gen.cs" />
     <Compile Include="StudyStorageLocation.cs" />
     <Compile Include="WorkQueue.gen.cs" />

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -54,16 +55,15 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	{
 		private readonly ServerEntityKey _serverPartitionKey;
 		private readonly ServerEntityKey _studyStorageKey;
-		private readonly bool _update;
+		
 
-		public InsertArchiveQueueCommand(ServerEntityKey serverPartitionKey, ServerEntityKey studyStorageKey, bool update)
+		public InsertArchiveQueueCommand(ServerEntityKey serverPartitionKey, ServerEntityKey studyStorageKey)
 			: base("Insert ArchiveQueue record", true)
 		{
 			_serverPartitionKey = serverPartitionKey;
 
 			_studyStorageKey = studyStorageKey;
 
-			_update = update;
 		}
 
 		protected override void OnExecute(IUpdateContext updateContext)
@@ -72,13 +72,13 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			InsertArchiveQueueParameters parms = new InsertArchiveQueueParameters();
 			parms.ServerPartitionKey = _serverPartitionKey;
 			parms.StudyStorageKey = _studyStorageKey;
-			parms.Update = _update;
-
+			
 			// Get the Insert ArchiveQueue broker and do the insert
 			IInsertArchiveQueue insert = updateContext.GetBroker<IInsertArchiveQueue>();
 
 			// Do the insert
-			insert.Execute(parms);
+            if (!insert.Execute(parms))
+                throw new ApplicationException("InsertArchiveQueueCommand failed");
 		}
 	}
 }

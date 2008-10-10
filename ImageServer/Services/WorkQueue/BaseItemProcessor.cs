@@ -176,23 +176,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 );
             
         }
-        
-        /// <summary>
-        /// Find the <see cref="Study"/> record in the database with the specified study instance uid and residing in the specified partition.
-        /// </summary>
-        /// <param name="studyInstanceUid"></param>
-        /// <param name="partition"></param>
-        /// <returns></returns>
-        protected Study FindStudy(string studyInstanceUid, ServerPartition partition)
-        {
-            IStudyEntityBroker broker = ReadContext.GetBroker<IStudyEntityBroker>();
-            StudySelectCriteria criteria = new StudySelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(partition.GetKey());
-            criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-            Study study = broker.FindOne(criteria);
-
-            return study;
-        }
 
         /// <summary>
         /// Returns the max batch size for a <see cref="WorkQueue"/> item.

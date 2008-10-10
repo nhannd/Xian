@@ -3,40 +3,58 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
+
     class WebEditStudyItemProcessor : BaseItemProcessor
     {
         protected override void ProcessItem(Model.WorkQueue item)
         {
-            LoadStorageLocation(item);
-
-        
-            Platform.Log(LogLevel.Info, "Study Edit started. GUID={0}. Storage={1}", item.GetKey(), item.StudyStorageKey);
-            ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
-            StudyStorage storage = StudyStorage.Load(item.StudyStorageKey);
-            StudyStorageLocation location = StudyStorageLocation.FindStorageLocations(storage)[0];
-
-            WebEditStudyCommandXmlParser parser = new WebEditStudyCommandXmlParser();
-
-            ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study");
-            using (processor)
+            if (!LoadStorageLocation(item))
             {
-                IList<IImageLevelUpdateCommand> updates = parser.ParseImageLevelCommands(item.Data.DocumentElement);
-                UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(partition, location, updates);
-                processor.AddCommand(updateStudyCommand);
-                if (processor.Execute())
+                WorkQueueSettings settings = WorkQueueSettings.Instance;
+
+                DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
+                DateTime expire = newScheduledTime.AddSeconds(settings.WorkQueueExpireDelaySeconds);
+                Platform.Log(LogLevel.Info, "Storage is not ready. Postponing {0} work queue entry (GUID={1}) to {2}",item.WorkQueueTypeEnum, item.GetKey(), newScheduledTime);
+                PostponeItem(item, newScheduledTime, expire);
+            }
+            else
+            {
+                Platform.Log(LogLevel.Info, "Study Edit started. GUID={0}. Storage={1}", item.GetKey(), item.StudyStorageKey);
+                ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
+                StudyStorage storage = StudyStorage.Load(item.StudyStorageKey);
+                StudyStorageLocation location = StudyStorageLocation.FindStorageLocations(storage)[0];
+
+                WebEditStudyCommandXmlParser parser = new WebEditStudyCommandXmlParser();
+
+                ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study");
+                StatisticsSet statistics = null;
+                using (processor)
                 {
-                    Complete();
+                    IList<IImageLevelUpdateCommand> updates = parser.ParseImageLevelCommands(item.Data.DocumentElement);
+                    UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(partition, location, updates);
+                    processor.AddCommand(updateStudyCommand);
+                    if (processor.Execute())
+                    {
+                        Complete();
+                        statistics = updateStudyCommand.Statistics;
+                    }
+                    else
+                    {
+                        FailQueueItem(WorkQueueItem, processor.FailureReason);
+                        Platform.Log(LogLevel.Info, "Study Edit failed. GUID={0}. Reason={1}", WorkQueueItem.GetKey(), processor.FailureReason);
+                    }
                 }
-                else
+
+                if (statistics!=null)
                 {
-                    FailQueueItem(WorkQueueItem, processor.FailureReason);
-                    Platform.Log(LogLevel.Info, "Study Edit failed. GUID={0}. Reason={1}", WorkQueueItem.GetKey(), processor.FailureReason);
+                    StatisticsLogger.Log(LogLevel.Info, statistics);
                 }
             }
         }
