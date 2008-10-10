@@ -71,7 +71,6 @@
 					if (orderDetail)
 					{
 						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
-						Preview.InsuranceSection.create($("insuranceSection"), orderDetail.Visit);
 						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 						Preview.OrderNotesTable.create($("notesSection"), orderDetail.Notes, Preview.OrderNotesTable.defaultSubsections);
 					}
@@ -107,7 +106,6 @@
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
 				<div id="proceduresSection"></div>
-				<div id="insuranceSection"></div>
 				<div id="notesSection"></div>
 			</div>
 			<div id="activeProceduresSection"></div>

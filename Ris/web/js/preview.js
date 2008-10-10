@@ -1021,52 +1021,6 @@ Preview.ReportPreview = function () {
 	};
 }();
 
-
-// TODO: is this uhn specific?
-/*
- *	Create a summary of the insurance details of a single visit.
- */ 
-Preview.InsuranceSection = function () {
-
-	var _html = 
-		'<p class="sectionheading">Insurance</p>'+
-		'<table>'+
-		'	<tr>'+
-		'		<td width="120" class="propertyname">Plan Id</td>'+
-		'		<td><div id="InsurancePlanId"/></td>'+
-		'		<td width="120" class="propertyname">Name of Insured</td>'+
-		'		<td><div id="NameOfInsured"/></td>'+
-		'	</tr>'+
-		'	<tr>'+
-		'		<td width="120" class="propertyname">Company Id</td>'+
-		'		<td><div id="InsuranceCompanyId"/></td>'+
-		'		<td width="120" class="propertyname">Relationship to patient</td>'+
-		'		<td><div id="InsuredsRelationshipToPatient"/></td>'+
-		'	</tr>'+
-		'	<tr>'+
-		'		<td width="120" class="propertyname">Policy Number</td>'+
-		'		<td colspan="3"><div id="PolicyNumber"/></td>'+
-		'	</tr>'+
-		'</table>';
-			
-	return 	{
-		create: function(element, visitDetail) {
-
-			if(visitDetail == null || visitDetail.ExtendedProperties == null)
-				return;
-			// TODO: Code to return if no 
-			
-			element.innerHTML = _html;
-
-			Field.setValue($("InsurancePlanId"), visitDetail.ExtendedProperties.InsurancePlanId);
-			Field.setValue($("NameOfInsured"), visitDetail.ExtendedProperties.NameOfInsured);
-			Field.setValue($("InsuranceCompanyId"), visitDetail.ExtendedProperties.InsuranceCompanyId);
-			Field.setValue($("InsuredsRelationshipToPatient"), visitDetail.ExtendedProperties.InsuredsRelationshipToPatient);
-			Field.setValue($("PolicyNumber"), visitDetail.ExtendedProperties.PolicyNumber);
-		}
-	};
-}();
-
 /*
  *	Create a summary of a single imaging service.
  */

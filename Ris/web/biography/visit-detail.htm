@@ -60,16 +60,6 @@
 						
 						var ambulatoryStatuses = String.combine(visitDetail.AmbulatoryStatuses.map(function(status) { return status.Value; }), ", ");
 						Field.setValue($("AmbulatoryStatuses"), ambulatoryStatuses);
-
-						if (visitDetail.ExtendedProperties)
-						{
-							Field.setValue($("AttendingPhysician"), visitDetail.ExtendedProperties.AttendingPhysician);
-							Field.setValue($("ReferringPhysician"), visitDetail.ExtendedProperties.ReferringPhysician);
-							Field.setValue($("ConsultingPhysician"), visitDetail.ExtendedProperties.ConsultingPhysician);
-							Field.setValue($("AdmittingPhysician"), visitDetail.ExtendedProperties.AdmittingPhysician);
-
-							Preview.InsuranceSection.create($("insuranceSection"), visitDetail);
-						}
 					}
 				}
 				catch(e)
@@ -127,24 +117,6 @@
 					<td><div id="AmbulatoryStatuses"/></td>
 				</tr>
 			</table>
-			
-			<div class="sectionheading">Physicians</div>
-			<table>
-				<tr>
-					<td width="120" class="propertyname">Attending Physician</td>
-					<td><div id="AttendingPhysician"/></td>
-					<td width="120" class="propertyname">Referring Physician</td>
-					<td><div id="ReferringPhysician"/></td>
-				</tr>
-				<tr>
-					<td width="120" class="propertyname">Consulting Physician</td>
-					<td><div id="ConsultingPhysician"/></td>
-					<td width="120" class="propertyname">Admitting Physician</td>
-					<td><div id="AdmittingPhysician"/></td>
-				</tr>
-			</table>
-		
-			<div id="insuranceSection"></div>
 		</form>
 	</body>
 </html>
