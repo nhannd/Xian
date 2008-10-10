@@ -105,13 +105,6 @@ namespace ClearCanvas.Desktop
 				_component.ItemActivated += FireItemActivated;
 			}
 
-			~ToolContext()
-			{
-				_component.SelectionChanged -= FireSelectionChanged;
-				_component.ItemActivated -= FireItemActivated;
-				_component = null;
-			}
-
 			private void FireItemActivated(object sender, GalleryItemEventArgs e)
 			{
 				if (_itemActivated != null)
