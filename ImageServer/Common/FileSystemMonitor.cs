@@ -172,12 +172,14 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return _filesystemList[filesystemKey];
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				return info;
 			}
-			return null;
 		}
 
 		/// <summary>
@@ -189,10 +191,14 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return _filesystemList[filesystemKey].AboveLowWatermark;
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				if (info != null)
+					return info.AboveLowWatermark;
 			}
 			return false;
 		}
@@ -206,10 +212,14 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return _filesystemList[filesystemKey].AboveHighWatermark;
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				if (info != null)
+					return info.AboveHighWatermark;
 			}
 			return false;
 		}
@@ -223,10 +233,14 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return _filesystemList[filesystemKey].BytesToRemove;
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				if (info != null)
+					return info.BytesToRemove;
 			}
 			return 0.0f;
 		}
@@ -240,11 +254,16 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return (Decimal)_filesystemList[filesystemKey].UsedSpacePercentage;
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				if (info != null)
+					return (Decimal)info.UsedSpacePercentage;
 			}
+
 			return 0.00M;
 		}
 
@@ -257,10 +276,14 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return _filesystemList[filesystemKey].Writeable;
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				if (info != null)
+					return info.Writeable;
 			}
 			return false;
 		}
@@ -274,10 +297,14 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			lock (_lock)
 			{
-				if (_filesystemList.ContainsKey(filesystemKey))
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
 				{
-					return _filesystemList[filesystemKey].Readable;
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
+				if (info != null)
+					return info.Readable;
 			}
 			return false;
 		}
@@ -502,9 +529,7 @@ namespace ClearCanvas.ImageServer.Common
 							changed = true;
 						}
 					}
-				}
-
-				
+				}				
 			}
 
 			if (changed && _changedListener != null)
