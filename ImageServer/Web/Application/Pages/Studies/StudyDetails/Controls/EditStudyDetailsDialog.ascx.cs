@@ -95,64 +95,64 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             setNode.SetAttribute("TagPath", "");
             setNode.SetAttribute("Value","");
 
-            string dicomName = PatientLastName.Text + ImageServerConstants.DicomSeparator +
-                               PatientGivenName.Text + ImageServerConstants.DicomSeparator +
-                               PatientMiddleName.Text + ImageServerConstants.DicomSeparator +
-                               PatientTitle.Text + ImageServerConstants.DicomSeparator +
+            string dicomName = PatientLastName.Text + DicomConstants.DicomSeparator +
+                               PatientGivenName.Text + DicomConstants.DicomSeparator +
+                               PatientMiddleName.Text + DicomConstants.DicomSeparator +
+                               PatientTitle.Text + DicomConstants.DicomSeparator +
                                PatientSuffix.Text;
 
             dicomName = dicomName.Trim(new char[] { '^' });
             
             if(!study.PatientsName.Equals(dicomName))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientsName, dicomName));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsName, dicomName));
             }
 
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
-                                        ? DateTime.Parse(PatientBirthDate.Text).ToString(ImageServerConstants.DicomDate)
+                                        ? DateTime.Parse(PatientBirthDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
             if (!study.PatientsBirthDate.Equals(dicomBirthDate))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientsBirthDate, dicomBirthDate));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsBirthDate, dicomBirthDate));
             }
 
             if (!study.PatientsSex.Equals(PatientGender.Text))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientsSex, PatientGender.Text));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsSex, PatientGender.Text));
             }
 
             if (!study.PatientId.Equals(PatientID.Text))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.PatientID, PatientID.Text));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientID, PatientID.Text));
             }
 
             if(String.IsNullOrEmpty(study.StudyDescription)
 				|| !study.StudyDescription.Equals((StudyDescription.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyDescription, StudyDescription.Text));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDescription, StudyDescription.Text));
             }
 
             if(!study.StudyInstanceUid.Equals((StudyInstanceUID.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyInstanceUID, StudyInstanceUID.Text));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyInstanceUID, StudyInstanceUID.Text));
             }
 
 			if (String.IsNullOrEmpty(study.StudyId)
 				|| !study.StudyId.Equals((StudyID.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyID, StudyID.Text));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyID, StudyID.Text));
             }
 
 			if (String.IsNullOrEmpty(study.AccessionNumber)
 				|| !study.AccessionNumber.Equals((AccessionNumber.Text)))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
             }
 
-            dicomName = PhysicianLastName.Text + ImageServerConstants.DicomSeparator +
-                        PhysicianGivenName.Text + ImageServerConstants.DicomSeparator +
-                        PhysicianMiddleName.Text + ImageServerConstants.DicomSeparator +
-                        PhysicianTitle.Text + ImageServerConstants.DicomSeparator +
+            dicomName = PhysicianLastName.Text + DicomConstants.DicomSeparator +
+                        PhysicianGivenName.Text + DicomConstants.DicomSeparator +
+                        PhysicianMiddleName.Text + DicomConstants.DicomSeparator +
+                        PhysicianTitle.Text + DicomConstants.DicomSeparator +
                         PhysicianSuffix.Text;
 
             dicomName = dicomName.Trim(new char[] { '^' });
@@ -160,16 +160,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 			if (String.IsNullOrEmpty(study.ReferringPhysiciansName)
 				|| !study.ReferringPhysiciansName.Equals(dicomName))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.ReferringPhysician, dicomName));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.ReferringPhysician, dicomName));
             }
 
             String dicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
-                                        ? DateTime.Parse(StudyDate.Text).ToString(ImageServerConstants.DicomDate)
+                                        ? DateTime.Parse(StudyDate.Text).ToString(DicomConstants.DicomDate)
                                         : "";
 
             if(!study.StudyDate.Equals(dicomStudyDate))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyDate, dicomStudyDate));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDate, dicomStudyDate));
             }
 
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             string dicomStudyTime = StudyTimeHours.Text.PadLeft(2, '0') + StudyTimeMinutes.Text.PadLeft(2, '0') + StudyTimeSeconds.Text.PadLeft(2, '0');
             if(!study.StudyTime.Equals(dicomStudyTime))
             {
-                rootNode.AppendChild(createChildNode(setNode, ImageServerConstants.DicomTags.StudyTime, dicomStudyTime));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyTime, dicomStudyTime));
             }
 
             changes.AppendChild(rootNode);
@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if (!string.IsNullOrEmpty(study.PatientsBirthDate))
             {
-                DateTime birthDate = DateTime.ParseExact(study.PatientsBirthDate, ImageServerConstants.DicomDate, null);
+                DateTime birthDate = DateTime.ParseExact(study.PatientsBirthDate, DicomConstants.DicomDate, null);
 
                 PatientBirthDate.Text = birthDate.ToString(DateTimeFormatter.DefaultDateFormat);
 
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if (!string.IsNullOrEmpty(study.StudyDate))
             {
-                DateTime studyDate = DateTime.ParseExact(study.StudyDate, ImageServerConstants.DicomDate, null);
+                DateTime studyDate = DateTime.ParseExact(study.StudyDate, DicomConstants.DicomDate, null);
                 StudyDate.Text = studyDate.ToString(DateTimeFormatter.DefaultDateFormat);
             } else
             {
@@ -322,7 +322,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 if(hours > 12)
                 {
                     hours -= 12;
-                    StudyTimeAmPm.SelectedIndex = hours == 12 ? 0 : 1;
+                    StudyTimeAmPm.SelectedIndex = 1;
                     StudyTimeHours.Text = hours.ToString();
                 } else if(hours == 12)
                 {
