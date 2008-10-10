@@ -126,6 +126,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 }
                 catch (Exception e)
                 {
+                    Platform.Log(LogLevel.Info, e);
                     FailQueueItem(item, e.Message);
                 }
             }
