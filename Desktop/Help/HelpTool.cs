@@ -75,8 +75,7 @@ namespace ClearCanvas.Desktop.Help
 
 		public void ShowLicense()
 		{
-			//TODO: fix message.
-			Execute("EULA.rtf", SR.HelpNotFound);
+			Execute("EULA.rtf", SR.LicenseNotFound);
 		}
 
 		private void Execute(string filename, string errorMessage) {
