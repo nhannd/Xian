@@ -774,6 +774,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 		/// <returns>The coordinates of the cell.</returns>
 		protected Point GetCellAtPoint(int x, int y)
 		{
+			if (base.Height <= 0 || base.Width <= 0)
+				return Point.Empty;
+
 			int rows = Math.Min(MaxDimensions.Height, 1 + (int) (1.0*MaxDimensions.Height*y/(base.Height + this.CellSpacing.Vertical)));
 			int cols = Math.Min(MaxDimensions.Width, 1 + (int) (1.0*MaxDimensions.Width*x/(base.Width + this.CellSpacing.Horizontal)));
 			return new Point(cols, rows);
@@ -1117,6 +1120,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				if (_horizontal != value)
 				{
+					Platform.CheckNonNegative(value, "value");
+
 					_horizontal = value;
 					FirePropertyChanged("Horizontal");
 				}
@@ -1142,6 +1147,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				if (_vertical != value)
 				{
+					Platform.CheckNonNegative(value, "value");
+
 					_vertical = value;
 					FirePropertyChanged("Vertical");
 				}
