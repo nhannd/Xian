@@ -31,7 +31,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			WinFormsScreen[] winformsScreens = WinFormsScreen.AllScreens;
 			Screen[] screens = new Screen[winformsScreens.Length];
 			for (int i = 0; i < winformsScreens.Length; ++i)
-				screens[i] = new WinformsScreenProxy(winformsScreens[i]);
+				screens[i] = new WinFormsScreenProxy(winformsScreens[i]);
 
 			return screens;
 		}
@@ -43,14 +43,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 	/// A proxy class for <see cref="System.Windows.Forms.Screen"/> objects.
 	/// </summary>
 	/// <remarks>This class can be instantiated and used anywhere a <see cref="ClearCanvas.Desktop.Screen"/> is needed.</remarks>
-	public class WinformsScreenProxy : Screen, IEquatable<WinformsScreenProxy>
+	public class WinFormsScreenProxy : Screen, IEquatable<WinFormsScreenProxy>
 	{
 		private readonly WinFormsScreen _screen;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public WinformsScreenProxy(WinFormsScreen screen)
+		public WinFormsScreenProxy(WinFormsScreen screen)
 		{
 			Platform.CheckForNullReference(screen, "screen");
 			_screen = screen;
@@ -122,12 +122,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (other == null)
 				return false;
 
-			return this.Equals(other as WinformsScreenProxy);
+			return this.Equals(other as WinFormsScreenProxy);
 		}
 
 		#region IEquatable<WinformsScreenProxy> Members
 
-		public bool Equals(WinformsScreenProxy other)
+		public bool Equals(WinFormsScreenProxy other)
 		{
 			if (other == null)
 				return false;

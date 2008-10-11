@@ -35,6 +35,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
+	//TODO: MouseToolAttributeProcessor
 	internal sealed class MouseImageViewerToolAttributeProcessor
 	{
 		private MouseImageViewerToolAttributeProcessor()

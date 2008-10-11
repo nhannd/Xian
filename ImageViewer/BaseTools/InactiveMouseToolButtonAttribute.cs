@@ -4,6 +4,8 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
+	//TODO: DefaultMouseToolButton
+
 	/// <summary>
 	/// An attribute used by <see cref="MouseImageViewerTool"/> to specify it's inactive <see cref="MouseButtonShortcut"/>.
 	/// </summary>

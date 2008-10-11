@@ -4,7 +4,7 @@ using ClearCanvas.Dicom.ServiceModel.Streaming;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	class HeaderStreamingServiceClient : ClientBase<IHeaderStreamingService>, IHeaderStreamingService
+	internal class HeaderStreamingServiceClient : ClientBase<IHeaderStreamingService>, IHeaderStreamingService
 	{
 		public HeaderStreamingServiceClient()
 		{

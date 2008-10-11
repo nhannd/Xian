@@ -335,7 +335,7 @@ namespace ClearCanvas.ImageViewer
 			_rows = rows;
 			_columns = columns;
 
-			SetNormalizedRectangles();
+			SetImageBoxGrid();
 			OnLayoutCompleted();
 		}
 
@@ -472,11 +472,11 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnScreenRectangleChanged()
 		{
-			SetNormalizedRectangles();
+			SetImageBoxGrid();
 			EventsHelper.Fire(_screenRectangleChanged, this, EventArgs.Empty);
 		}
 
-		private void SetNormalizedRectangles()
+		private void SetImageBoxGrid()
 		{
 			if (_rows < 0 || _columns < 0)
 				return;
@@ -485,7 +485,7 @@ namespace ClearCanvas.ImageViewer
 
 			try
 			{
-				succeeded = SetOptimalNormalizedRectangles();
+				succeeded = OptimizeImageBoxGrid();
 				if (!succeeded)
 					Platform.Log(LogLevel.Warn, "Failed to optimize image box rectangles; defaulting to simple method.");
 			}
@@ -495,21 +495,19 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			if (!succeeded)
-				SetSimpleNormalizedRectangles();
-		}
-
-		private void SetSimpleNormalizedRectangles()
-		{
-			double imageBoxWidth = (1.0d / _columns);
-			double imageBoxHeight = (1.0d / _rows);
-
-			for (int row = 0; row < _rows; row++)
 			{
-				for (int column = 0; column < _columns; column++)
+				//just do the default.
+				double imageBoxWidth = (1.0d / _columns);
+				double imageBoxHeight = (1.0d / _rows);
+
+				for (int row = 0; row < _rows; row++)
 				{
-					double x = column * imageBoxWidth;
-					double y = row * imageBoxHeight;
-					this[row, column].NormalizedRectangle = new RectangleF((float)x, (float)y, (float)imageBoxWidth, (float)imageBoxHeight);
+					for (int column = 0; column < _columns; column++)
+					{
+						double x = column * imageBoxWidth;
+						double y = row * imageBoxHeight;
+						this[row, column].NormalizedRectangle = new RectangleF((float)x, (float)y, (float)imageBoxWidth, (float)imageBoxHeight);
+					}
 				}
 			}
 		}
@@ -518,7 +516,7 @@ namespace ClearCanvas.ImageViewer
 		// on any combination of monitors.  More specifically, where it starts to fail is when the center of the (default positioned)
 		// image box falls off of all of the screens.  In those rare/extreme cases, we don't try to do any optimization
 		// and use the simple rectangle calculation.
-		private bool SetOptimalNormalizedRectangles()
+		private bool OptimizeImageBoxGrid()
 		{
 			Rectangle usableWorkspaceArea = GetUsableArea();
 

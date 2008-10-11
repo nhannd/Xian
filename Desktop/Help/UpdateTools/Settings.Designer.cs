@@ -32,16 +32,5 @@ namespace ClearCanvas.Desktop.Help.UpdateTools {
                 return ((string)(this["UpdateInformationServiceUrl"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:4472/UpdateInformationService.asmx")]
-        public string ClearCanvas_Desktop_Help_UpdateTools_UpdateInformationService_UpdateInformationService {
-            get {
-                return ((string)(this["ClearCanvas_Desktop_Help_UpdateTools_UpdateInformationService_UpdateInformationSe" +
-                    "rvice"]));
-            }
-        }
     }
 }

@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageViewer
 			// Sort the display sets before filling the physical workspace, so that
 			// the order in which the display sets are laid out matches the order
 			// of the studies in the study tree.
+
 			SortDisplaySets();
 			FillPhysicalWorkspace();
 			
@@ -129,7 +130,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		protected virtual void LayoutPhysicalWorkspace()
 		{
-			int numDisplaySets = GetNumDisplaySets();
+			int numDisplaySets = GetNumberOfDisplaySets();
 
 			if (numDisplaySets == 1)
 				ImageViewer.PhysicalWorkspace.SetImageBoxGrid(1, 1);
@@ -235,6 +236,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void SortDisplaySets()
 		{
+			//TODO: move to virtual OnSort
 			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
 			{
 				imageSet.DisplaySets.Sort(new SeriesNumberComparer());
@@ -244,8 +246,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		//TODO: use factory methods to get comparers.
 		private void SortImageSets()
 		{
+			//TODO: move to virtual OnSort
 			LogicalWorkspace.ImageSets.Sort(new StudyDateComparer());
 		}
 
@@ -260,7 +264,7 @@ namespace ClearCanvas.ImageViewer
 			return null;
 		}
 
-		private int GetNumDisplaySets()
+		private int GetNumberOfDisplaySets()
 		{
 			int count = 0;
 

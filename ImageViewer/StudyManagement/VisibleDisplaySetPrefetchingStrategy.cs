@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Name
 		{
+			//TODO: Rename the resource.
 			get { return SR.PrefetchingStrategyNameVisibleDisplaySet; }
 		}
 
@@ -26,6 +27,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Description
 		{
+			//TODO: Rename the resource.
+
 			get { return SR.PrefetchingStrategyDescriptionVisibleDisplaySet; }
 		}
 
@@ -75,6 +78,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (e.NewDisplaySet != null)
 			{
+				//TODO: put whole display set in or presentation images?
+				//TODO: check if same display set is already loading.
+				//TODO: load image by image?
 				_threadPool.Enqueue(delegate()
 				                    	{
 				                    		PrefetchPixelData(e.NewDisplaySet);
@@ -97,13 +103,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				if (provider != null)
 					provider.Frame.GetNormalizedPixelData();
-
-				IAnnotationLayoutProvider annotations = image as IAnnotationLayoutProvider;
-
-				if (annotations != null)
-				{
-					IAnnotationLayout layout = annotations.AnnotationLayout;
-				}
 			}
 		}
 	}

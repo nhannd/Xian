@@ -97,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <WebReferenceUrl Include="http://localhost:4472/UpdateInformationService.asmx">
-      <UrlBehavior>Dynamic</UrlBehavior>
+      <UrlBehavior>Static</UrlBehavior>
       <RelPath>Web References\UpdateInformationService\</RelPath>
       <UpdateFromURL>http://localhost:4472/UpdateInformationService.asmx</UpdateFromURL>
       <ServiceLocationURL>

@@ -35,7 +35,7 @@ namespace ClearCanvas.Desktop.Help.UpdateTools.UpdateInformationService {
         
         /// <remarks/>
         public UpdateInformationService() {
-            this.Url = global::ClearCanvas.Desktop.Help.UpdateTools.Settings.Default.ClearCanvas_Desktop_Help_UpdateTools_UpdateInformationService_UpdateInformationService;
+            this.Url = "http://localhost:4472/UpdateInformationService.asmx";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
