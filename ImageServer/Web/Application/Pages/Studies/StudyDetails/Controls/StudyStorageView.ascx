@@ -24,6 +24,12 @@
                 <asp:Label ID="TransferSyntaxUID" runat="server" />
             </ItemTemplate>
         </asp:TemplateField>
+        <asp:TemplateField HeaderText="Tier: ">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                <asp:Label ID="Tier" runat="server" />
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:TemplateField HeaderText="Study Folder: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>

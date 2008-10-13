@@ -110,7 +110,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 {
                     transferSyntaxUID.Text = TransferSyntax.GetTransferSyntax(ssl.TransferSyntaxUid).Name;
                 }
-            }
+				Label tier = StudyStorageViewControl.FindControl("Tier") as Label;
+				if (tier != null)
+				{
+					tier.Text = ssl.FilesystemTierEnum.Description;
+				}
+			}
         }
 
         #endregion Protected Methods
