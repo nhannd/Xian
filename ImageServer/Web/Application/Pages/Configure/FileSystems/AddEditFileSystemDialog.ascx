@@ -141,11 +141,11 @@
                                                     <td width="120px" align="left" valign="bottom">
                                                         <asp:Label ID="Label4" runat="server" Text="High Watermark" CssClass="DialogTextBoxLabel" /><br />
                                                         <asp:TextBox ID="HighWatermarkTextBox" runat="server" CssClass="DialogTextBox"
-                                                            ValidationGroup="vg1" MaxLength="8" />
+                                                            ValidationGroup="vg1" MaxLength="8" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <asp:TextBox runat="server" ID="HighWatermarkSize" CssClass="DialogTextBox"
-                                                            Text="???.??? GB" Enabled="false"  Style="text-align: right" />%
+                                                            Text="???.??? GB" Enabled="false"  Style="text-align: right" />
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="HighWatermarkHelp" runat="server" SkinID="InvalidInputIndicator">
@@ -169,11 +169,11 @@
                                                 <tr>
                                                     <td width="120px" align="left" valign="bottom">
                                                         <asp:Label ID="Label5" runat="server" Text="Low Watermark" CssClass="DialogTextBoxLabel" /><br />
-                                                        <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="vg1" MaxLength="8" />
+                                                        <asp:TextBox ID="LowWatermarkTextBox" runat="server" CssClass="DialogTextBox" ValidationGroup="vg1" MaxLength="8" />%
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <asp:TextBox runat="server" ID="LowWaterMarkSize" CssClass="DialogTextBox"
-                                                            Text="???.??? GB" Enabled="false" Style="text-align: right" />%
+                                                            Text="???.??? GB" Enabled="false" Style="text-align: right" />
                                                     </td>
                                                     <td align="left" valign="bottom">
                                                         <ccAsp:InvalidInputIndicator ID="LowWatermarkHelp" runat="server" SkinID="InvalidInputIndicator">
