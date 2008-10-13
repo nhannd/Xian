@@ -110,11 +110,26 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 									Platform.Log(LogLevel.Warn, "Found empty study folder: {0}\\{1}", dateDir.Name, studyDir.Name);
 									continue;
 								}
-								FileInfo firstFile = fileList[0];
+								
+								DicomFile file = null;
+								foreach (FileInfo fInfo in fileList)
+									try
+									{
+										file = new DicomFile(fInfo.FullName);
+										file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
+										break;
+									}
+									catch (Exception e)
+									{
+										Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.");
+										file = null;
+									}
 
-
-								DicomFile file = new DicomFile(firstFile.FullName);
-								file.Load(DicomTags.TransferSyntaxUid, DicomReadOptions.DoNotStorePixelDataInDataSet);
+								if (file == null)
+								{
+									Platform.Log(LogLevel.Warn, "Found directory with no readable files: {0}\\{1}", dateDir.Name, studyDir.Name);
+									continue;
+								}
 
 								using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 								{
