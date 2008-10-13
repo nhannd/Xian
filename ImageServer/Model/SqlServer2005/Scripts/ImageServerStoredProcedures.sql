@@ -454,7 +454,13 @@ CREATE PROCEDURE [dbo].[InsertServerPartition]
 	@DuplicateSopPolicyEnum smallint,
 	@AcceptAnyDevice bit = 1,
 	@AutoInsertDevice bit = 1,
-	@DefaultRemotePort int = 104
+	@DefaultRemotePort int = 104,
+    @MatchPatientsName bit = 1,
+    @MatchPatientId bit = 1,
+    @MatchAccessionNumber bit = 1,
+    @MatchPatientsBirthDate bit = 1,
+    @MatchIssuerOfPatientId bit = 1,
+    @MatchPatientsSex bit = 1
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -473,8 +479,10 @@ BEGIN
 	BEGIN TRANSACTION
 
 	INSERT INTO [ImageServer].[dbo].[ServerPartition] 
-		([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort],[DuplicateSopPolicyEnum])
-	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort, @DuplicateSopPolicyEnum)
+			([GUID],[Enabled],[Description],[AeTitle],[Port],[PartitionFolder],[AcceptAnyDevice],[AutoInsertDevice],[DefaultRemotePort],[DuplicateSopPolicyEnum],
+			[MatchPatientsName], [MatchPatientId], [MatchAccessionNumber], [MatchPatientsBirthDate], [MatchIssuerOfPatientId], [MatchPatientsSex])
+	VALUES (@ServerPartitionGUID, @Enabled, @Description, @AeTitle, @Port, @PartitionFolder, @AcceptAnyDevice, @AutoInsertDevice, @DefaultRemotePort, @DuplicateSopPolicyEnum,
+			@MatchPatientsName, @MatchPatientId, @MatchAccessionNumber, @MatchPatientsBirthDate, @MatchIssuerOfPatientId, @MatchPatientsSex)
 
 	-- Populate PartitionSopClass
 	DECLARE cur_sopclass CURSOR FOR 
