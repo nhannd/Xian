@@ -30,23 +30,13 @@
 #endregion
 
 using System;
-using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
-using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
     public partial class Default : BasePage
-    {
-        private ServerPartition _serverPartition = null;
-
-        public ServerPartition ServerPartition
-        {
-            get { return _serverPartition; }
-        }
-        
+    {        
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -54,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                                            {
                                                                SearchPanel panel =
                                                                    LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               _serverPartition = partition;
+                                                               panel.ServerPartition = partition;
                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
                                                                return panel;
                                                            });
@@ -70,8 +60,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         public void UpdateUI()
         {
-            SearchPanel panel = ServerPartitionTabs.GetUserControlForPartition(ServerPartition.GetKey()).FindControl("SearchPanel_" + ServerPartition.AeTitle) as SearchPanel;
-            panel.UpdateUI();
+			foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)
+			{
+				SearchPanel panel =
+					ServerPartitionTabs.GetUserControlForPartition(partition.GetKey()).FindControl("SearchPanel_" +
+																								   partition.AeTitle) as
+					SearchPanel;
+				panel.UpdateUI();
+			}
         }
     }
 }

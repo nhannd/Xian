@@ -30,14 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js", "application/x-javascript")]
@@ -49,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         #region Private members
 
-        private StudyIntegrityQueueController _controller = new StudyIntegrityQueueController();
+    	private ServerPartition _serverPartition;
 
     	#endregion Private members
 
@@ -69,6 +65,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             get { return StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.ClientID; }
         }
 
+		/// <summary>
+		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+		/// </summary>
+		public ServerPartition ServerPartition
+		{
+			get { return _serverPartition; }
+			set { _serverPartition = value; }
+		}
         #endregion Public Properties  
 
         #region Public Methods
@@ -83,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         public override void DataBind()
         {
-            StudyIntegrityQueueItemList.Partition = ((Default)Page).ServerPartition;
+            StudyIntegrityQueueItemList.Partition = ServerPartition;
             base.DataBind();
             StudyIntegrityQueueItemList.DataBind();
         }
@@ -122,7 +126,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
 			StudyIntegrityQueueItemList.DataSourceCreated += delegate(StudyIntegrityQueueDataSource source)
 										{
-											source.Partition = ((Default)Page).ServerPartition;
+											source.Partition = ServerPartition;
 
 											if (!String.IsNullOrEmpty(PatientName.Text))
                                                 //Apply wild card characters to ensure that a result

@@ -31,20 +31,13 @@
 
 using System;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
     public partial class Default : BasePage
     {
-        private ServerPartition _serverPartition = null;
-
-        public ServerPartition ServerPartition
-        {
-            get { return _serverPartition; }
-        }
-        
+      
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -52,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                                                            {
                                                                SearchPanel panel =
                                                                    LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               _serverPartition = partition;
+                                                               panel.ServerPartition = partition;
                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
                                                                return panel;
                                                            });

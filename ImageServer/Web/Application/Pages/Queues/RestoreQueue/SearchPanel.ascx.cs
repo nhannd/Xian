@@ -37,7 +37,6 @@ using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue.SearchPanel.js", "application/x-javascript")]
@@ -49,7 +48,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
     {
         #region Private members
 
-        private RestoreQueueController _controller = new RestoreQueueController();
+        private readonly RestoreQueueController _controller = new RestoreQueueController();
+    	private ServerPartition _serverPartition;
 
     	#endregion Private members
 
@@ -69,6 +69,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             get { return RestoreQueueItemList.RestoreQueueGrid.ClientID; }
         }
 
+		/// <summary>
+		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+		/// </summary>
+		public ServerPartition ServerPartition
+		{
+			get { return _serverPartition; }
+			set { _serverPartition = value; }
+		}
         #endregion Public Properties  
 
         #region Public Methods
@@ -86,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
         public override void DataBind()
         {
-            RestoreQueueItemList.Partition = ((Default)Page).ServerPartition;
+            RestoreQueueItemList.Partition = ServerPartition;
             base.DataBind();
             RestoreQueueItemList.DataBind();
         }
@@ -144,7 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
 			RestoreQueueItemList.DataSourceCreated += delegate(RestoreQueueDataSource source)
 										{
-											source.Partition = ((Default)Page).ServerPartition;
+											source.Partition = ServerPartition;
                                             source.DateFormats = ScheduleDateCalendarExtender.Format;
 
 											if (!String.IsNullOrEmpty(PatientId.Text))
@@ -211,8 +219,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                 foreach (Model.RestoreQueue item in items)
                 {
                     String text = "";
-                    //String.Format("<tr align='left'><td>Patient:{0}&nbsp;&nbsp;</td><td>Accession:{1}&nbsp;&nbsp;</td><td>Description:{2}</td></tr>", 
-                      //              item.PatientsName, item.AccessionNumber, item.StudyDescription);
+                    String.Format("<tr align='left'><td>Study Instance Uid:{0}&nbsp;</td></tr>", 
+                                    StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
                     MessageBox.Message += text;
                 }
                 MessageBox.Message += "</table>";
