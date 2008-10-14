@@ -56,6 +56,7 @@
     <Compile Include="Tools\CreateTool.cs" />
     <Compile Include="Tools\DeleteTool.cs" />
     <Compile Include="Tools\DicomEditorCreateToolComponent.cs" />
+    <Compile Include="Tools\DicomEditorTool.cs" />
     <Compile Include="Tools\NextTool.cs" />
     <Compile Include="Tools\PreviousTool.cs" />
     <Compile Include="Tools\QuickAnonymizeTool.cs" />

@@ -30,15 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
@@ -46,98 +40,47 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 	[MenuAction("activate", "dicomeditor-toolbar/MenuQuickAnonymize", "Apply")]
 	[Tooltip("activate", "TooltipQuickAnonymize")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
-    [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
+	[ExtensionOf(typeof (DicomEditorToolExtensionPoint))]
+	public class QuickAnonymizeTool : DicomEditorTool
+	{
+		private bool _promptForAll;
 
-    [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
-    public class QuickAnonymizeTool : Tool<DicomEditorComponent.DicomEditorToolContext>
-    {
-        private bool _enabled;
-        private event EventHandler _enabledChanged;
-        private bool _promptForAll;
+		/// <summary>
+		/// Default constructor.  A no-args constructor is required by the
+		/// framework.  Do not remove.
+		/// </summary>
+		public QuickAnonymizeTool() : base(true) {}
 
-        /// <summary>
-        /// Default constructor.  A no-args constructor is required by the
-        /// framework.  Do not remove.
-        /// </summary>
-        public QuickAnonymizeTool()
-        {
-            _enabled = true;
-        }
+		public void Apply()
+		{
+			bool applyToAll = false;
 
-        /// <summary>
-        /// Called by the framework to initialize this tool.
-        /// </summary>
-        public override void Initialize()
-        {
-            base.Initialize();
-            this.Enabled = true;
-            this.Context.DisplayedDumpChanged += new EventHandler<DisplayedDumpChangedEventArgs>(OnDisplayedDumpChanged);
-			this.Context.IsLocalFileChanged += new EventHandler(OnIsLocalFileChanged);
-        }
-
-        /// <summary>
-        /// Called to determine whether this tool is enabled/disabled in the UI.
-        /// </summary>
-        public bool Enabled
-        {
-            get { return _enabled; }
-			protected set
+			if (_promptForAll)
 			{
-				value = value & this.Context.IsLocalFile;
-                if (_enabled != value)
-                {
-                    _enabled = value;
-                    EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
-                }
-            }
-        }
+				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmAnonymizeAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+					applyToAll = true;
+			}
 
-        /// <summary>
-        /// Notifies that the Enabled state of this tool has changed.
-        /// </summary>
-        public event EventHandler EnabledChanged
-        {
-            add { _enabledChanged += value; }
-            remove { _enabledChanged -= value; }
-        }
-
-        protected void OnDisplayedDumpChanged(object sender, DisplayedDumpChangedEventArgs e)
-        {
-            _promptForAll = !e.IsCurrentTheOnly;
+			this.Anonymize(applyToAll);
+			this.Context.UpdateDisplay();
 		}
 
-		private void OnIsLocalFileChanged(object sender, EventArgs e) {
-			this.Enabled = base.Context.IsLocalFile;
-		}  
-
-        public void Apply()
-        {
-            
-
-            if (_promptForAll)
-            {
-                if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmAnonymizeAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-                {
-                    this.Anonymize(true);
-                }
-                else
-                {
-                    this.Anonymize(false);
-                }
-            }
-            else
-            {
-                this.Anonymize(false);
-            }
-            
-            this.Context.UpdateDisplay();
-        }
-
-        private void Anonymize(bool applyToAll)
-        {
-            IDicomEditorDumpManagement dump = this.Context.DumpManagement;
+		private void Anonymize(bool applyToAll)
+		{
+			IDicomEditorDumpManagement dump = this.Context.DumpManagement;
 
 			dump.Anonymize(applyToAll);
-        }
-    }
+		}
+
+		protected override void OnDisplayedDumpChanged(object sender, DisplayedDumpChangedEventArgs e)
+		{
+			_promptForAll = !e.IsCurrentTheOnly;
+		}
+
+		protected override void OnIsLocalFileChanged(object sender, EventArgs e)
+		{
+			this.Enabled = base.Context.IsLocalFile;
+		}
+	}
 }
