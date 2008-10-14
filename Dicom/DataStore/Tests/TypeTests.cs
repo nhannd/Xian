@@ -71,76 +71,40 @@ namespace ClearCanvas.Dicom.DataStore.Tests
 		[Test]
 		public void DicomTagPathTests()
 		{
-			//the paths here are not real, they are just made up for the test.
-
 			DicomTagPath path = new PathTest();
 			((PathTest)path).SetPath("(0010,0010)");
 
 			Assert.AreEqual(path, "(0010,0010)"); 
-			Assert.AreEqual(path.ToString(), "(0010,0010)");
 			Assert.AreEqual(path, (uint)0x00100010);
 			Assert.AreEqual(path, NewDicomTag(0x00100010));
 			Assert.IsTrue(path.Equals("(0010,0010)"));
 			Assert.IsTrue(path.Equals((uint)0x00100010));
 			Assert.IsTrue(path.Equals(NewDicomTag(0x00100010)));
 
-			((PathTest)path).SetPath("(0010,0010)\\(0010,0018)");
-			Assert.AreEqual(path, "(0010,0010)\\(0010,0018)"); 
+			((PathTest)path).SetPath("(0054,0220)\\(0054,0222)");
+			Assert.AreEqual(path, "(0054,0220)\\(0054,0222)"); 
+			Assert.IsFalse(path.Equals("(0054,0220)"));
+			Assert.IsFalse(path.Equals((uint)0x00540220));
+			Assert.IsFalse(path.Equals(NewDicomTag(0x00540220)));
 
-			Assert.AreNotEqual(path, (uint)0x00100010);
-			Assert.AreNotEqual(path, NewDicomTag(0x00100010));
-			Assert.IsFalse(path.Equals("(0010,0010)"));
-			Assert.IsFalse(path.Equals((uint)0x00100010));
-			Assert.IsFalse(path.Equals(NewDicomTag(0x00100010)));
-
-			((PathTest)path).SetPath("(0010,0010)\\(0010,0018)\\(0010,0022)");
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)\\(0010,0022)");
-
-			path = new DicomTagPath("(0010,0010)");
-			Assert.AreEqual(path.ToString(), "(0010,0010)");
-
-			path = new DicomTagPath("(0010,0010)\\(0010,0018)");
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)");
-
-			path = new DicomTagPath("(0010,0010)\\(0010,0018)\\(0010,0022)");
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)\\(0010,0022)");
+			((PathTest)path).SetPath("(0054,0220)\\(0054,0222)\\(0010,0022)");
+			Assert.AreEqual(path.ToString(), "(0054,0220)\\(0054,0222)\\(0010,0022)");
 
 			path = new PathTest();
-			((PathTest)path).SetPath(new List<DicomTag>(new DicomTag[] { NewDicomTag(0x00100010) }));
-			Assert.AreEqual(path.ToString(), "(0010,0010)");
+			((PathTest)path).SetPath(new List<DicomTag>(new DicomTag[] { NewDicomTag(0x00540220) }));
+			Assert.AreEqual(path.ToString(), "(0054,0220)");
 
-			((PathTest)path).SetPath(new List<DicomTag>(new DicomTag[] { NewDicomTag(0x00100010), NewDicomTag(0x00100018) }));
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)");
+			((PathTest)path).SetPath(new List<DicomTag>(new DicomTag[] { NewDicomTag(0x00540220), NewDicomTag(0x00540222) }));
+			Assert.AreEqual(path.ToString(), "(0054,0220)\\(0054,0222)");
 
-			((PathTest)path).SetPath(new List<DicomTag>(new DicomTag[] { NewDicomTag(0x00100010), NewDicomTag(0x00100018), NewDicomTag(0x00100022) }));
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)\\(0010,0022)");
+			((PathTest)path).SetPath(new List<DicomTag>(new DicomTag[] { NewDicomTag(0x00540220), NewDicomTag(0x00540222), NewDicomTag(0x00100022) }));
+			Assert.AreEqual(path.ToString(), "(0054,0220)\\(0054,0222)\\(0010,0022)");
 
-			path = new DicomTagPath(NewDicomTag(0x00100010));
-			Assert.AreEqual(path.ToString(), "(0010,0010)");
+			path = new DicomTagPath(new uint[] { 0x00540220, 0x00540222 });
+			Assert.AreEqual(path.ToString(), "(0054,0220)\\(0054,0222)");
 
-			path = new DicomTagPath(new DicomTag[] { NewDicomTag(0x00100010), NewDicomTag(0x00100018) });
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)");
-
-			path = new DicomTagPath(new DicomTag[] { NewDicomTag(0x00100010), NewDicomTag(0x00100018), NewDicomTag(0x00100022) });
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)\\(0010,0022)");
-
-			path = new DicomTagPath(NewDicomTag(0x0010, 0x0010));
-			Assert.AreEqual(path.ToString(), "(0010,0010)");
-
-			path = new DicomTagPath(new DicomTag[] { NewDicomTag(0x0010, 0x0010), NewDicomTag(0x0010, 0x0018) });
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)");
-
-			path = new DicomTagPath(new DicomTag[] { NewDicomTag(0x0010, 0x0010), NewDicomTag(0x0010, 0x0018), NewDicomTag(0x0010, 0x0022) });
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)\\(0010,0022)");
-
-			path = new DicomTagPath(0x00100010);
-			Assert.AreEqual(path.ToString(), "(0010,0010)");
-
-			path = new DicomTagPath(new uint[] { 0x00100010, 0x00100018 });
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)");
-
-			path = new DicomTagPath(new uint[] { 0x00100010, 0x00100018, 0x00100022 });
-			Assert.AreEqual(path.ToString(), "(0010,0010)\\(0010,0018)\\(0010,0022)");
+			path = new DicomTagPath(new uint[] { 0x00540220, 0x00540222, 0x00100010 });
+			Assert.AreEqual(path.ToString(), "(0054,0220)\\(0054,0222)\\(0010,0010)");
 		}
 
 		private DicomTag NewDicomTag(ushort group, ushort element)
