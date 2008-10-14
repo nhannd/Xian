@@ -2246,7 +2246,10 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: April 24, 2008
+-- Update date: Oct 14, 2008
 -- Description:	Stored procedure for deleting WorkQueue entries
+--
+-- Oct 14, 2008: Call UpdateQueueStudyState to update the study status
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2318,6 +2321,8 @@ BEGIN
 		RAISERROR (N''Study could not be locked for deletion of WorkQueue entry.'', 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
 		RETURN 50000
 	END
+
+	EXEC UpdateQueueStudyState @StudyStorageGUID
 
 END
 ' 
