@@ -173,11 +173,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _publishButton
 			// 
-			this._publishButton.Location = new System.Drawing.Point(424, 684);
+			this._publishButton.Location = new System.Drawing.Point(395, 684);
 			this._publishButton.Name = "_publishButton";
-			this._publishButton.Size = new System.Drawing.Size(112, 23);
+			this._publishButton.Size = new System.Drawing.Size(141, 23);
 			this._publishButton.TabIndex = 2;
-			this._publishButton.Text = "Send to Fax Queue";
+			this._publishButton.Text = "Send to Print/Fax Queue";
 			this._publishButton.UseVisualStyleBackColor = true;
 			this._publishButton.Click += new System.EventHandler(this._publishButton_Click);
 			// 
