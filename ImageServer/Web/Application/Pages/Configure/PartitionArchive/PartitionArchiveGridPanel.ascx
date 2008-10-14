@@ -6,10 +6,13 @@
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
     Width="100%">
     <asp:TableRow VerticalAlign="top">
-        <asp:TableCell VerticalAlign="top">   
-            <ccUI:GridView ID="PartitionGridView" SkinID="CustomGlobalGridView" runat="server" OnRowDataBound="Partition_RowDataBound">
+        <asp:TableCell VerticalAlign="top">             
+            <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
+                Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
+                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
+                BorderWidth="0px" HorizontalAlign="left">
                 <Columns>
-                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left" />
+                                    <asp:BoundField DataField="Description" HeaderText="Description" HeaderStyle-HorizontalAlign="Left" />
                     <asp:TemplateField HeaderText="Type">
                         <ItemTemplate>
                              <asp:Label ID="ArchiveType" runat="server" />
@@ -42,7 +45,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" CssClass="GlobalGridViewHeader">
+                   <asp:Table ID="Table1" runat="server" CssClass="GlobalGridViewHeader">
                         <asp:TableHeaderRow>
                             <asp:TableHeaderCell>
                             Description
@@ -68,8 +71,7 @@
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
-                <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
-            </ccUI:GridView>
+            </asp:GridView>
         </asp:TableCell>
     </asp:TableRow>
 </asp:Table>

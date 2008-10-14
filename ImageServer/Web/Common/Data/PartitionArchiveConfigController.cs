@@ -123,6 +123,33 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _archiveAdapter.Delete(partition.GetKey());
         }
 
+        /// <summary>
+        /// Determine if the specified partition can be deleted. If studies are scheduled
+        /// to be archived on that partition or studies are already archived on that partition,
+        /// then the partition may not be deleted.
+        /// 
+        /// </summary>
+        /// <param name="partition"></param>
+        /// <returns></returns>
+        public bool CanDelete(PartitionArchive partition)
+        {          
+            ArchiveQueueAdaptor archiveQueueAdaptor = new ArchiveQueueAdaptor();
+            ArchiveQueueSelectCriteria selectCriteria = new ArchiveQueueSelectCriteria();
+            selectCriteria.PartitionArchiveKey.EqualTo(partition.GetKey());
+
+            ArchiveStudyStorageAdaptor archiveStudyStorageAdaptor = new ArchiveStudyStorageAdaptor();
+            ArchiveStudyStorageSelectCriteria criteria = new ArchiveStudyStorageSelectCriteria();
+            criteria.PartitionArchiveKey.EqualTo(partition.GetKey());
+
+            IList<ArchiveQueue> archiveItems = archiveQueueAdaptor.Get(selectCriteria);
+            IList<ArchiveStudyStorage> storageItems = archiveStudyStorageAdaptor.Get(criteria);
+
+            return ((archiveItems != null && archiveItems.Count > 0) ||
+                (storageItems != null && storageItems.Count > 0)) ? false : true;
+
+
+        }
+
         #endregion // public methods
 
     }

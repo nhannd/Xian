@@ -72,8 +72,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         }
 
 
-        protected void UpdateUI()
-        {
+        public void UpdateUI()
+        {           
             ServerPartitionTabs.Update(0);
             UpdatePanel.Update();
         }

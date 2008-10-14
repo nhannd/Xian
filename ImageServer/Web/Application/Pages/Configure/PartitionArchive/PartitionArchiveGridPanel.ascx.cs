@@ -36,6 +36,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive
 {
@@ -129,6 +130,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             UpdateUI();
         }
 
+        protected void Partition_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateUI();
+        }
+
         #endregion Protected methods
 
         #region Public methods
@@ -136,34 +142,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         public void UpdateUI()
         {
             DataBind();
-
+            
             UpdatePanel.Update(); // force refresh
+            ((Default) Page).UpdateUI();
         }
 
-        protected void Partition_RowDataBound(object sender, GridViewRowEventArgs e)
+        protected void PartitionGridView_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            if (e.Row.RowType == DataControlRowType.DataRow)
+            if (PartitionGridView.EditIndex != e.Row.RowIndex)
             {
-                Model.PartitionArchive pa = e.Row.DataItem as Model.PartitionArchive;
-                Label archiveTypeLabel = e.Row.FindControl("ArchiveType") as Label; 
-                archiveTypeLabel.Text = pa.ArchiveTypeEnum.Description;
-
-                Label configXml = e.Row.FindControl("ConfigurationXML") as Label;
-                configXml.Text = XmlUtils.GetXmlDocumentAsString(pa.ConfigurationXml, true);
-
-                Image img = ((Image)e.Row.FindControl("EnabledImage"));
-                if (img != null)
+                if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    img.ImageUrl = pa.Enabled ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
-                }
+                    Model.PartitionArchive pa = e.Row.DataItem as Model.PartitionArchive;
+                    Label archiveTypeLabel = e.Row.FindControl("ArchiveType") as Label;
+                    archiveTypeLabel.Text = pa.ArchiveTypeEnum.Description;
 
-                img = ((Image)e.Row.FindControl("ReadOnlyImage"));
-                if (img != null)
-                {
-                    img.ImageUrl = pa.ReadOnly ? ImageServerConstants.ImageURLs.Checked : ImageServerConstants.ImageURLs.Unchecked;
-                }
+                    Label configXml = e.Row.FindControl("ConfigurationXML") as Label;
+                    configXml.Text = XmlUtils.GetXmlDocumentAsString(pa.ConfigurationXml, true);
 
-                
+                    Image img = ((Image) e.Row.FindControl("EnabledImage"));
+                    if (img != null)
+                    {
+                        img.ImageUrl = pa.Enabled
+                                           ? ImageServerConstants.ImageURLs.Checked
+                                           : ImageServerConstants.ImageURLs.Unchecked;
+                    }
+
+                    img = ((Image) e.Row.FindControl("ReadOnlyImage"));
+                    if (img != null)
+                    {
+                        img.ImageUrl = pa.ReadOnly
+                                           ? ImageServerConstants.ImageURLs.Checked
+                                           : ImageServerConstants.ImageURLs.Unchecked;
+                    }
+
+                    e.Row.Attributes["OnClick"] =
+                               Page.ClientScript.GetPostBackEventReference(PartitionGridView, "Select$" + e.Row.RowIndex);
+                    e.Row.Style["cursor"] = "hand";
+                }
             }
         }
 
