@@ -66,9 +66,9 @@ namespace ClearCanvas.ImageViewer
 		/// Builds the <see cref="ILogicalWorkspace"/>, lays out and fills the <see cref="IPhysicalWorkspace"/>.
 		/// </summary>
 		/// <remarks>
-		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="LayoutPhysicalWorkspace"/>
-		/// and <see cref="FillPhysicalWorkspace"/> in that order, followed by a call to <see cref="IPhysicalWorkspace.Draw"/>.
-		/// You can override this method entirely, or you can override any of the 3 methods called by this method.
+		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="LayoutPhysicalWorkspace"/>, <see cref="SortDisplaySets"/>,
+		/// <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets"/> in that order, followed by a call to <see cref="IPhysicalWorkspace.Draw"/>.
+		/// You can override this method entirely, or you can override any of the 5 methods called by this method.
 		/// </remarks>
 		public virtual void Layout()
 		{
@@ -186,7 +186,41 @@ namespace ClearCanvas.ImageViewer
 				displaySetIndex++;
 			}
 		}
-		
+
+		protected virtual void SortDisplaySets()
+		{
+			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
+			{
+				imageSet.DisplaySets.Sort(GetDisplaySetComparer());
+
+				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+					displaySet.PresentationImages.Sort(GetPresentationImageComparer());
+			}
+		}
+
+		protected virtual void SortImageSets()
+		{
+			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
+		}
+
+		#region Comparer Factory Methods
+
+		protected virtual IComparer<IDisplaySet> GetDisplaySetComparer()
+		{
+			return new SeriesNumberComparer();
+		}
+
+		protected virtual IComparer<IPresentationImage> GetPresentationImageComparer()
+		{
+			return new InstanceAndFrameNumberComparer();
+		}
+
+		protected virtual IComparer<IImageSet> GetImageSetComparer()
+		{
+			return new StudyDateComparer();
+		}
+
+		#endregion
 		#endregion
 
 		#region Logical Workspace Building Methods
@@ -233,25 +267,6 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		#region Helper Methods
-
-		private void SortDisplaySets()
-		{
-			//TODO: move to virtual OnSort
-			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
-			{
-				imageSet.DisplaySets.Sort(new SeriesNumberComparer());
-
-				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-					displaySet.PresentationImages.Sort(new InstanceAndFrameNumberComparer());
-			}
-		}
-
-		//TODO: use factory methods to get comparers.
-		private void SortImageSets()
-		{
-			//TODO: move to virtual OnSort
-			LogicalWorkspace.ImageSets.Sort(new StudyDateComparer());
-		}
 
 		private IImageSet GetImageSet(string studyInstanceUID)
 		{

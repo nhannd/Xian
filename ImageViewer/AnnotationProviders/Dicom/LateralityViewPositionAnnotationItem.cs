@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations;
