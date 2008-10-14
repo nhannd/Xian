@@ -140,6 +140,7 @@ namespace ClearCanvas.Dicom.DataStore
 						else
 						{
 							//Note: single value matching is supposed to be case-sensitive (except for PN) according to Dicom.
+							//However, in practice, it's a pain for the user; for example, when searching by Study Description.
 							testsPerformed = true;
 							if (string.Compare(criteria, test, true) == 0) //single value matching.
 								return true;

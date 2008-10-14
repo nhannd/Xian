@@ -116,7 +116,7 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _patientId, value); }
     	}
 
-		[QueryableProperty(DicomTags.PatientsName, IsRequired = true, ReturnProperty = "PatientsNameRaw")]
+		[QueryableProperty(DicomTags.PatientsName, IsRequired = true)]
 		public virtual PersonName PatientsName
     	{
     		get { return _patientsName; }

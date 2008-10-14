@@ -30,13 +30,73 @@
 #endregion
 
 using System;
+using System.Globalization;
 using ClearCanvas.Common.Utilities;
+using System.ComponentModel;
 
 namespace ClearCanvas.Dicom.Iod
 {
 	/// <summary>
+	/// <see cref="TypeConverter"/> for <see cref="PersonName"/> class.
+	/// </summary>
+	public class PersonNameConverter : TypeConverter
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public PersonNameConverter()
+		{
+		}
+
+		/// <summary>
+		/// Override of <see cref="TypeConverter.CanConvertTo"/>.
+		/// </summary>
+		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+		{
+			if (destinationType == typeof(string))
+				return true;
+
+			return base.CanConvertFrom(context, destinationType);
+		}
+
+		/// <summary>
+		/// Override of <see cref="TypeConverter.CanConvertFrom"/>.
+		/// </summary>
+		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+		{
+			if (sourceType == typeof(string))
+				return true;
+
+			return base.CanConvertFrom(context, sourceType);
+		}
+
+		/// <summary>
+		/// Override of <see cref="TypeConverter.ConvertFrom(ITypeDescriptorContext,CultureInfo,object)"/>.
+		/// </summary>
+		public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+		{
+			if (value is string)
+				return new PersonName(value as string);
+
+			return base.ConvertFrom(context, culture, value);
+		}
+
+		/// <summary>
+		/// Override of <see cref="TypeConverter.ConvertTo(ITypeDescriptorContext,CultureInfo,object,Type)"/>.
+		/// </summary>
+		public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+		{
+			if (value is PersonName && destinationType == typeof(string))
+				return value.ToString();
+
+			return base.ConvertTo(context, culture, value, destinationType);
+		}
+	}
+
+	/// <summary>
     /// Encapsulates the DICOM Person's Name.
     /// </summary>
+    [TypeConverter(typeof(PersonNameConverter))]
     public class PersonName : IEquatable<PersonName>, IFormattable
     {
 		private string _personsName;
