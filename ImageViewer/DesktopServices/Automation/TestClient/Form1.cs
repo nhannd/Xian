@@ -24,13 +24,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			StudyItem study = GetSelectedStudy();
 			if (study == null)
 			{
-				_openSessions.DataSource = null;
+				_openViewers.DataSource = null;
 			}
 			else
 			{
-				_openSessions.DataSource = study.ActiveSessions;
-				if (study.HasSessions)
-					_openSessions.SelectedIndex = 0;
+				_openViewers.DataSource = study.ActiveViewers;
+				if (study.HasViewers)
+					_openViewers.SelectedIndex = 0;
 			}
 		}
 
@@ -63,10 +63,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 			}
 
-			Guid? selectedSession = GetSelectedSession();
-			if (selectedSession == null)
+			Guid? selectedViewer = GetSelectedViewer();
+			if (selectedViewer == null)
 			{
-				MessageBox.Show("An active session must be selected.");
+				MessageBox.Show("An active viewer must be selected.");
 				return;
 			}
 
@@ -74,10 +74,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			try
 			{
 				client.Open();
-				GetViewerSessionInfoRequest request = new GetViewerSessionInfoRequest();
-				request.ViewerSession = new ViewerSession();
-				request.ViewerSession.SessionId = selectedSession.Value;
-				GetViewerSessionInfoResult result = client.GetViewerSessionInfo(request);
+				GetViewerInfoRequest request = new GetViewerInfoRequest();
+				request.Viewer = new Viewer();
+				request.Viewer.Identifier = selectedViewer.Value;
+				GetViewerInfoResult result = client.GetViewerInfo(request);
 				client.Close();
 
 				StringBuilder builder = new StringBuilder();
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 
 				MessageBox.Show(builder.ToString());
 			}
-			catch (FaultException<NoActiveViewerSessionsFault> ex)
+			catch (FaultException<NoActiveViewersFault> ex)
 			{
 				client.Abort();
 				MessageBox.Show(ex.Message);
@@ -108,11 +108,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		private void OnRequery(object sender, EventArgs e)
 		{
 			RefreshStudyList();
+			RefreshViewers(true);
 		}
 
-		private void OnRefreshAllSessions(object sender, EventArgs e)
+		private void OnRefreshAllViewers(object sender, EventArgs e)
 		{
-			RefreshSessions();
+			RefreshViewers(false);
 		}
 
 		private void OnOpenStudy(object sender, EventArgs e)
@@ -140,15 +141,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				request.ActivateIfAlreadyOpen = _activateIfOpen.Checked;
 
 				OpenStudiesResult result = client.OpenStudies(request);
-				if (result.ViewerSession != null)
+				if (result.Viewer != null)
 				{
-					bool shouldExist = study.HasSessions && _activateIfOpen.Checked;
-					bool exists = study.HasSession(result.ViewerSession.SessionId);
+					bool shouldExist = study.HasViewers && _activateIfOpen.Checked;
+					bool exists = study.HasViewer(result.Viewer.Identifier);
 					if (shouldExist && !exists)
-						study.ClearSessions();
+						study.ClearViewers();
 
 					if (!exists)
-						study.AddSession(result.ViewerSession.SessionId);
+						study.AddViewer(result.Viewer.Identifier);
 				}
 
 				client.Close();
@@ -174,10 +175,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 			}
 
-			Guid? sessionId = GetSelectedSession();
-			if (sessionId == null)
+			Guid? viewerId = GetSelectedViewer();
+			if (viewerId == null)
 			{
-				MessageBox.Show("An active session must be selected.");
+				MessageBox.Show("An active viewer must be selected.");
 				return;
 			}
 
@@ -185,21 +186,21 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			try
 			{
 				client.Open();
-				ActivateViewerSessionRequest request = new ActivateViewerSessionRequest();
-				request.ViewerSession = new ViewerSession();
-				request.ViewerSession.SessionId = sessionId.Value;
-				client.ActivateViewerSession(request);
+				ActivateViewerRequest request = new ActivateViewerRequest();
+				request.Viewer = new Viewer();
+				request.Viewer.Identifier = viewerId.Value;
+				client.ActivateViewer(request);
 				client.Close();
 			}
-			catch(FaultException<ViewerSessionNotFoundFault> ex)
+			catch(FaultException<ViewerNotFoundFault> ex)
 			{
-				study.RemoveSession(sessionId.Value);
+				study.RemoveViewer(viewerId.Value);
 				client.Abort();
 				MessageBox.Show(ex.Message);
 			}
 			catch (Exception ex)
 			{
-				study.RemoveSession(sessionId.Value);
+				study.RemoveViewer(viewerId.Value);
 				client.Abort();
 				MessageBox.Show(ex.Message);
 			}
@@ -214,10 +215,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 			}
 
-			Guid? sessionId = GetSelectedSession();
-			if (sessionId == null)
+			Guid? viewerId = GetSelectedViewer();
+			if (viewerId == null)
 			{
-				MessageBox.Show("An active session must be selected.");
+				MessageBox.Show("An active viewer must be selected.");
 				return;
 			}
 
@@ -225,13 +226,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			try
 			{
 				client.Open();
-				CloseViewerSessionRequest request = new CloseViewerSessionRequest();
-				request.ViewerSession = new ViewerSession();
-				request.ViewerSession.SessionId = sessionId.Value;
-				client.CloseViewerSession(request);
+				CloseViewerRequest request = new CloseViewerRequest();
+				request.Viewer = new Viewer();
+				request.Viewer.Identifier = viewerId.Value;
+				client.CloseViewer(request);
 				client.Close();
 			}
-			catch (FaultException<ViewerSessionNotFoundFault> ex)
+			catch (FaultException<ViewerNotFoundFault> ex)
 			{
 				client.Abort();
 				MessageBox.Show(ex.Message);
@@ -243,7 +244,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			}
 			finally
 			{
-				study.RemoveSession(sessionId.Value);
+				study.RemoveViewer(viewerId.Value);
 			}
 		}
 
@@ -269,34 +270,36 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			}
 		}
 
-		private void RefreshSessions()
+		private void RefreshViewers(bool silent)
 		{
 			ViewerAutomationClient client = new ViewerAutomationClient();
 			try
 			{
 				client.Open();
-				GetActiveViewerSessionsResult result = client.GetActiveViewerSessions();
+				GetActiveViewersResult result = client.GetActiveViewers();
 
-				ClearAllSessions();
+				ClearAllViewers();
 
-				foreach (ViewerSession session in result.ActiveViewerSessions)
+				foreach (Viewer viewer in result.ActiveViewers)
 				{
-					StudyItem study = GetStudy(session.PrimaryStudyInstanceUid);
+					StudyItem study = GetStudy(viewer.PrimaryStudyInstanceUid);
 					if (study != null)
-						study.AddSession(session.SessionId);
+						study.AddViewer(viewer.Identifier);
 				}
 
 				client.Close();
 			}
-			catch (FaultException<NoActiveViewerSessionsFault> ex)
+			catch (FaultException<NoActiveViewersFault> ex)
 			{
-				ClearAllSessions();
+				ClearAllViewers();
 				client.Abort();
-				MessageBox.Show(ex.Message);
+
+				if (!silent)
+					MessageBox.Show(ex.Message);
 			}
 			catch (Exception ex)
 			{
-				ClearAllSessions();
+				ClearAllViewers();
 				client.Abort();
 				MessageBox.Show(ex.Message);
 			}
@@ -339,20 +342,20 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			return studies;
 		}
 
-		private Guid? GetSelectedSession()
+		private Guid? GetSelectedViewer()
 		{
-			if (_openSessions.SelectedIndex < 0)
+			if (_openViewers.SelectedIndex < 0)
 				return null;
 
-			return (Guid)_openSessions.SelectedItem;
+			return (Guid)_openViewers.SelectedItem;
 		}
 
-		private void ClearAllSessions()
+		private void ClearAllViewers()
 		{
 			foreach (DataGridViewRow row in _studyGrid.Rows)
 			{
 				StudyItem item = (StudyItem)row.DataBoundItem;
-				item.ClearSessions();
+				item.ClearViewers();
 			}
 		}
 	}
@@ -362,12 +365,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 	public class StudyItem : INotifyPropertyChanged
 	{
 		private readonly StudyRootStudyIdentifier _study;
-		private readonly BindingList<Guid> _activeSessions;
+		private readonly BindingList<Guid> _activeViewers;
 
 		public StudyItem(StudyRootStudyIdentifier study)
 		{
 			_study = study;
-			_activeSessions = new BindingList<Guid>();
+			_activeViewers = new BindingList<Guid>();
 		}
 
 		public string PatientId
@@ -395,39 +398,39 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			get { return _study.RetrieveAeTitle; }	
 		}
 
-		public bool HasSessions
+		public bool HasViewers
 		{
-			get { return _activeSessions.Count > 0; }
+			get { return _activeViewers.Count > 0; }
 		}
 
-		internal IEnumerable<Guid> ActiveSessions
+		internal IEnumerable<Guid> ActiveViewers
 		{
-			get { return _activeSessions; }
+			get { return _activeViewers; }
 		}
 
-		public bool HasSession(Guid guid)
+		public bool HasViewer(Guid id)
 		{
-			return _activeSessions.Contains(guid);
+			return _activeViewers.Contains(id);
 		}
 
-		public void AddSession(Guid session)
+		public void AddViewer(Guid id)
 		{
-			if (!_activeSessions.Contains(session))
-				_activeSessions.Add(session);
+			if (!_activeViewers.Contains(id))
+				_activeViewers.Add(id);
 
-			FirePropertyChanged("HasSessions");
+			FirePropertyChanged("HasViewers");
 		}
 
-		public void RemoveSession(Guid session)
+		public void RemoveViewer(Guid id)
 		{
-			_activeSessions.Remove(session);
-			FirePropertyChanged("HasSessions");
+			_activeViewers.Remove(id);
+			FirePropertyChanged("HasViewers");
 		}
 
-		public void ClearSessions()
+		public void ClearViewers()
 		{
-			_activeSessions.Clear();
-			FirePropertyChanged("HasSessions");
+			_activeViewers.Clear();
+			FirePropertyChanged("HasViewers");
 		}
 
 		private void FirePropertyChanged(string propertyName)

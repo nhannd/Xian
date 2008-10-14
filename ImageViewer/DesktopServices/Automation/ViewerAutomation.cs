@@ -4,15 +4,14 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.Automation;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Services.StudyLocator;
-using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Services.StudyLocator;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -67,7 +66,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = true, ConfigurationName = "ViewerAutomation", Namespace = AutomationNamespace.Value)]
 	public class ViewerAutomation: IViewerAutomation
 	{
-		private static readonly string _sessionNotFoundReason = "The specified session was not found.";
+		private static readonly string _viewerNotFoundReason = "The specified viewer was not found.";
 
 		public ViewerAutomation()
 		{
@@ -75,56 +74,56 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		#region IViewerAutomation Members
 
-		public GetActiveViewerSessionsResult GetActiveViewerSessions()
+		public GetActiveViewersResult GetActiveViewers()
 		{
-			List<ViewerSession> sessions = new List<ViewerSession>();
+			List<Viewer> viewers = new List<Viewer>();
 
 			foreach (Workspace workspace in GetViewerWorkspaces())
 			{
 				IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
 				if (viewer != null)
 				{
-					Guid? sessionGuid = ViewerSessionTool.GetSessionId(viewer);
-					if (sessionGuid != null)
-						sessions.Add(new ViewerSession((Guid) sessionGuid, GetPrimaryStudyInstanceUid(viewer)));
+					Guid? viewerId = ViewerAutomationTool.GetViewerId(viewer);
+					if (viewerId != null)
+						viewers.Add(new Viewer((Guid) viewerId, GetPrimaryStudyInstanceUid(viewer)));
 				}
 			}
 
-			if (sessions.Count == 0)
-				throw new FaultException<NoActiveViewerSessionsFault>(new NoActiveViewerSessionsFault(), "No active viewer sessions were found.");
+			if (viewers.Count == 0)
+				throw new FaultException<NoActiveViewersFault>(new NoActiveViewersFault(), "No active viewers were found.");
 
-			GetActiveViewerSessionsResult result = new GetActiveViewerSessionsResult();
-			result.ActiveViewerSessions = sessions;
+			GetActiveViewersResult result = new GetActiveViewersResult();
+			result.ActiveViewers = viewers;
 			return result;
 		}
 
-		public GetViewerSessionInfoResult GetViewerSessionInfo(GetViewerSessionInfoRequest request)
+		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
 		{
 			if (request == null)
 			{
-				string message = "The get viewer session info request cannot be null.";
+				string message = "The get viewer info request cannot be null.";
 				Platform.Log(LogLevel.Error, message);
 				throw new FaultException(message);
 			}
 
-			if (request.ViewerSession == null || request.ViewerSession.Equals(Guid.Empty))
+			if (request.Viewer == null || request.Viewer.Identifier.Equals(Guid.Empty))
 			{
-				string message = "A valid viewer session id must be specified.";
+				string message = "A valid viewer id must be specified.";
 				Platform.Log(LogLevel.Error, message);
 				throw new FaultException(message);
 			}
 
-			IImageViewer viewer = ViewerSessionTool.GetViewer(request.ViewerSession.SessionId);
+			IImageViewer viewer = ViewerAutomationTool.GetViewer(request.Viewer.Identifier);
 			if (viewer == null)
 			{
-				string message = String.Format("The specified viewer session ({0}) was not found, " +
-									"likely because it has already been closed by the user.", request.ViewerSession.SessionId);
+				string message = String.Format("The specified viewer ({0}) was not found, " +
+									"likely because it has already been closed by the user.", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, message);
 
-				throw new FaultException<ViewerSessionNotFoundFault>(new ViewerSessionNotFoundFault(message), _sessionNotFoundReason);
+				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
 
-			GetViewerSessionInfoResult result = new GetViewerSessionInfoResult();
+			GetViewerInfoResult result = new GetViewerInfoResult();
 			result.AdditionalStudyInstanceUids = GetAdditionalStudyInstanceUids(viewer);
 			return result;
 		}
@@ -178,7 +177,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 					}
 					else
 					{
-						OpenStudyHelper.Launch((ImageViewerComponent)viewer, ViewerLaunchSettings.WindowBehaviour);
+						//yes, this code is duplicated from OpenStudyHelper.
+						if (ViewerLaunchSettings.WindowBehaviour == WindowBehaviour.Separate)
+							ImageViewerComponent.LaunchInSeparateWindow((ImageViewerComponent)viewer);
+						else
+							ImageViewerComponent.LaunchInActiveWindow((ImageViewerComponent)viewer);
 					}
 
 					//don't block waiting for the user to dismiss a dialog.
@@ -186,11 +189,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 						SynchronizationContext.Current.Post(ReportLoadFailures, loadFailures);
 				}
 
-				Guid? viewerSession = ViewerSessionTool.GetSessionId(viewer);
-				if (viewerSession == null)
-					throw new FaultException("Failed to retrieve the session id for the specified viewer.");
+				Guid? viewerId = ViewerAutomationTool.GetViewerId(viewer);
+				if (viewerId == null)
+					throw new FaultException("Failed to retrieve the id of the specified viewer.");
 
-				result.ViewerSession = new ViewerSession(viewerSession.Value, primaryStudyInstanceUid);
+				result.Viewer = new Viewer(viewerId.Value, primaryStudyInstanceUid);
 				return result;
 			}
 			catch(FaultException)
@@ -205,40 +208,40 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 		}
 
-		public void ActivateViewerSession(ActivateViewerSessionRequest request)
+		public void ActivateViewer(ActivateViewerRequest request)
 		{
 			if (request == null)
 			{
-				string message = "The activate viewer session request cannot be null.";
+				string message = "The activate viewer request cannot be null.";
 				Platform.Log(LogLevel.Error, message);
 				throw new FaultException(message);
 			}
 
-			if (request.ViewerSession == null || request.ViewerSession.Equals(Guid.Empty))
+			if (request.Viewer == null || request.Viewer.Identifier.Equals(Guid.Empty))
 			{
-				string message = "A valid viewer session id must be specified.";
+				string message = "A valid viewer id must be specified.";
 				Platform.Log(LogLevel.Error, message);
 				throw new FaultException(message);
 			}
 
-			IImageViewer viewer = ViewerSessionTool.GetViewer(request.ViewerSession.SessionId);
+			IImageViewer viewer = ViewerAutomationTool.GetViewer(request.Viewer.Identifier);
 			if (viewer == null)
 			{
-				string message = String.Format("The specified viewer session ({0}) was not found, " +
-					"likely because it has already been closed by the user.", request.ViewerSession.SessionId);
+				string message = String.Format("The specified viewer ({0}) was not found, " +
+					"likely because it has already been closed by the user.", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, message);
 
-				throw new FaultException<ViewerSessionNotFoundFault>(new ViewerSessionNotFoundFault(message), _sessionNotFoundReason);
+				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
 
 			IWorkspace workspace = GetViewerWorkspace(viewer);
 			if (workspace == null)
 			{
-				string message = String.Format("The specified viewer session ({0}) was found, " + 
-					"but does not appear to be hosted in one of the active workspaces.", request.ViewerSession.SessionId);
+				string message = String.Format("The specified viewer ({0}) was found, " + 
+					"but does not appear to be hosted in one of the active workspaces.", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, message);
 
-				throw new FaultException<ViewerSessionNotFoundFault>(new ViewerSessionNotFoundFault(message), _sessionNotFoundReason);
+				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
 
 			try
@@ -248,46 +251,46 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			catch(Exception e)
 			{
 				string message = String.Format("An unexpected error has occurred while attempting " + 
-					"to activate the specified viewer session ({0}).", request.ViewerSession.SessionId);
+					"to activate the specified viewer ({0}).", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, e, message);
 				throw new FaultException(message);
 			}
 		}
 
-		public void CloseViewerSession(CloseViewerSessionRequest request)
+		public void CloseViewer(CloseViewerRequest request)
 		{
 			if (request == null)
 			{
-				string message = "The close viewer session request cannot be null.";
+				string message = "The close viewer request cannot be null.";
 				Platform.Log(LogLevel.Error, message);
 				throw new FaultException(message);
 			}
 
-			if (request.ViewerSession == null || request.ViewerSession.Equals(Guid.Empty))
+			if (request.Viewer == null || request.Viewer.Identifier.Equals(Guid.Empty))
 			{
-				string message = "A valid viewer session id must be specified.";
+				string message = "A valid viewer id must be specified.";
 				Platform.Log(LogLevel.Error, message);
 				throw new FaultException(message);
 			}
 
-			IImageViewer viewer = ViewerSessionTool.GetViewer(request.ViewerSession.SessionId);
+			IImageViewer viewer = ViewerAutomationTool.GetViewer(request.Viewer.Identifier);
 			if (viewer == null)
 			{
-				string message = String.Format("The specified viewer session ({0}) was not found, " +
-					"likely because it has already been closed by the user.", request.ViewerSession.SessionId);
+				string message = String.Format("The specified viewer ({0}) was not found, " +
+					"likely because it has already been closed by the user.", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, message);
 
-				throw new FaultException<ViewerSessionNotFoundFault>(new ViewerSessionNotFoundFault(message), _sessionNotFoundReason);
+				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
 
 			IWorkspace workspace = GetViewerWorkspace(viewer);
 			if (workspace == null)
 			{
-				string message = String.Format("The specified viewer session ({0}) was found, " +
-					"but it does not appear to be hosted in one of the active workspaces.", request.ViewerSession.SessionId);
+				string message = String.Format("The specified viewer ({0}) was found, " +
+					"but it does not appear to be hosted in one of the active workspaces.", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, message);
 
-				throw new FaultException<ViewerSessionNotFoundFault>(new ViewerSessionNotFoundFault(message), _sessionNotFoundReason);
+				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
 
 			try
@@ -297,7 +300,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			catch (Exception e)
 			{
 				string message = String.Format("An unexpected error has occurred while attempting " +
-					"to close the specified viewer session ({0}).", request.ViewerSession.SessionId);
+					"to close the specified viewer ({0}).", request.Viewer.Identifier);
 				Platform.Log(LogLevel.Error, e, message);
 				throw new FaultException(message);
 			}

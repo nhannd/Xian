@@ -11,22 +11,22 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class NoActiveViewerSessionsFault
+	public class NoActiveViewersFault
 	{
-		public NoActiveViewerSessionsFault()
+		public NoActiveViewersFault()
 		{}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class ViewerSessionNotFoundFault
+	public class ViewerNotFoundFault
 	{
 		private string _failureDescription;
 
-		public ViewerSessionNotFoundFault()
+		public ViewerNotFoundFault()
 		{
 		}
 
-		public ViewerSessionNotFoundFault(string failureDescription)
+		public ViewerNotFoundFault(string failureDescription)
 		{
 			FailureDescription = failureDescription;
 		}
@@ -63,31 +63,31 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class ViewerSession
+	public class Viewer
 	{
-		private Guid _sessionId;
+		private Guid _identifier;
 		private string _primaryStudyInstanceUid;
 
-		public ViewerSession(Guid sessionId, string primaryStudyInstanceUid)
+		public Viewer(Guid identifier, string primaryStudyInstanceUid)
 		{
-			_sessionId = sessionId;
+			_identifier = identifier;
 			_primaryStudyInstanceUid = primaryStudyInstanceUid;
 		}
 
-		public ViewerSession(Guid sessionId)
-			: this(sessionId, null)
+		public Viewer(Guid viewerId)
+			: this(viewerId, null)
 		{
 		}
 
-		public ViewerSession()
+		public Viewer()
 		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public Guid SessionId
+		public Guid Identifier
 		{
-			get { return _sessionId; }
-			set { _sessionId = value; }
+			get { return _identifier; }
+			set { _identifier = value; }
 		}
 
 		[DataMember(IsRequired = true)]
@@ -99,46 +99,46 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class GetActiveViewerSessionsResult
+	public class GetActiveViewersResult
 	{
-		private List<ViewerSession> _activeViewerSessions;
+		private List<Viewer> _activeViewers;
 
-		public GetActiveViewerSessionsResult()
+		public GetActiveViewersResult()
 		{
-			_activeViewerSessions = new List<ViewerSession>();
+			_activeViewers = new List<Viewer>();
 		}
 
 		[DataMember(IsRequired = true)]
-		public List<ViewerSession> ActiveViewerSessions
+		public List<Viewer> ActiveViewers
 		{
-			get { return _activeViewerSessions; }
-			set { _activeViewerSessions = value; }
+			get { return _activeViewers; }
+			set { _activeViewers = value; }
 		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class GetViewerSessionInfoRequest
+	public class GetViewerInfoRequest
 	{
-		private ViewerSession _viewerSession;
+		private Viewer _viewer;
 
-		public GetViewerSessionInfoRequest()
+		public GetViewerInfoRequest()
 		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public ViewerSession ViewerSession
+		public Viewer Viewer
 		{
-			get { return _viewerSession; }
-			set { _viewerSession = value; }
+			get { return _viewer; }
+			set { _viewer = value; }
 		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class GetViewerSessionInfoResult
+	public class GetViewerInfoResult
 	{
 		private List<string> _additionalStudyInstanceUids;
 
-		public GetViewerSessionInfoResult()
+		public GetViewerInfoResult()
 		{
 			_additionalStudyInstanceUids = new List<string>();
 		}
@@ -156,11 +156,11 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	[DataContract(Namespace = AutomationNamespace.Value)]
 	public class OpenStudiesResult
 	{
-		private ViewerSession _viewerSession;
+		private Viewer _viewer;
 
-		public OpenStudiesResult(ViewerSession viewerSession)
+		public OpenStudiesResult(Viewer viewer)
 		{
-			_viewerSession = viewerSession;
+			_viewer = viewer;
 		}
 
 		public OpenStudiesResult()
@@ -168,10 +168,10 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		}
 
 		[DataMember(IsRequired = true)]
-		public ViewerSession ViewerSession
+		public Viewer Viewer
 		{
-			get { return _viewerSession; }
-			set { _viewerSession = value; }
+			get { return _viewer; }
+			set { _viewer = value; }
 		}
 	}
 
@@ -235,36 +235,36 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class CloseViewerSessionRequest
+	public class CloseViewerRequest
 	{
-		private ViewerSession _viewerSession;
+		private Viewer _viewer;
 
-		public CloseViewerSessionRequest()
+		public CloseViewerRequest()
 		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public ViewerSession ViewerSession
+		public Viewer Viewer
 		{
-			get { return _viewerSession; }
-			set { _viewerSession = value; }
+			get { return _viewer; }
+			set { _viewer = value; }
 		}
 	}
 
 	[DataContract(Namespace = AutomationNamespace.Value)]
-	public class ActivateViewerSessionRequest
+	public class ActivateViewerRequest
 	{
-		private ViewerSession _viewerSession;
+		private Viewer _viewer;
 
-		public ActivateViewerSessionRequest()
+		public ActivateViewerRequest()
 		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public ViewerSession ViewerSession
+		public Viewer Viewer
 		{
-			get { return _viewerSession; }
-			set { _viewerSession = value; }
+			get { return _viewer; }
+			set { _viewer = value; }
 		}
 	}
 }

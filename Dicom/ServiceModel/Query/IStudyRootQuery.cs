@@ -9,16 +9,16 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryQriteria);
+		IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria);
 
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria);
+		IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria);
 
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria);
+		IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria);
 	}
 }

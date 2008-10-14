@@ -3,27 +3,29 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	//NOTE: internal for now because we don't actually implement it anywhere.
+
 	[ServiceContract(SessionMode = SessionMode.NotAllowed, Namespace = QueryNamespace.Value)]
-	public interface IPatientRootQuery
+	internal interface IPatientRootQuery
 	{
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<PatientRootPatientIdentifier> PatientQuery(PatientRootPatientIdentifier queryQriteria);
+		IList<PatientRootPatientIdentifier> PatientQuery(PatientRootPatientIdentifier queryCriteria);
 
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<PatientRootStudyIdentifier> StudyQuery(PatientRootStudyIdentifier queryQriteria);
+		IList<PatientRootStudyIdentifier> StudyQuery(PatientRootStudyIdentifier queryCriteria);
 
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria);
+		IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria);
 
 		[FaultContract(typeof(DataValidationFault))]
 		[FaultContract(typeof(QueryFailedFault))]
 		[OperationContract(IsOneWay = false)]
-		IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria);
+		IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria);
 	}
 }

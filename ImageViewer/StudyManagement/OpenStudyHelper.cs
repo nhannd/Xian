@@ -156,16 +156,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			Platform.Log(LogLevel.Info, message);
 		}
 
-		public static void Launch(ImageViewerComponent imageViewer, WindowBehaviour windowBehaviour)
-		{
-			// Open the images in a separate window
-			if (windowBehaviour == WindowBehaviour.Separate)
-				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
-			// Open the images in the same window
-			else
-				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
-		}
-
 		private static ImageViewerComponent OpenStudiesInternal(OpenStudyArgs openStudyArgs)
 		{
 			if (openStudyArgs.StudyInstanceUids.Length == 1)
@@ -256,6 +246,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 
 			return imageViewer;
+		}
+
+		private static void Launch(ImageViewerComponent imageViewer, WindowBehaviour windowBehaviour)
+		{
+			// Open the images in a separate window
+			if (windowBehaviour == WindowBehaviour.Separate)
+				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
+			// Open the images in the same window
+			else
+				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
 		}
 
 		private static LoadStudyArgs CreateLoadStudyArgs(OpenStudyArgs args, string studyInstanceUid)

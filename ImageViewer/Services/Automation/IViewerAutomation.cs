@@ -7,23 +7,23 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 	public interface IViewerAutomation
 	{
 		[OperationContract(IsOneWay = false)]
-		[FaultContract(typeof(NoActiveViewerSessionsFault))]
-		GetActiveViewerSessionsResult GetActiveViewerSessions();
+		[FaultContract(typeof(NoActiveViewersFault))]
+		GetActiveViewersResult GetActiveViewers();
 
 		[OperationContract(IsOneWay = false)]
-		[FaultContract(typeof(ViewerSessionNotFoundFault))]
-		GetViewerSessionInfoResult GetViewerSessionInfo(GetViewerSessionInfoRequest request);
+		[FaultContract(typeof(ViewerNotFoundFault))]
+		GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request);
 
 		[OperationContract(IsOneWay = false)]
 		[FaultContract(typeof(OpenStudiesFault))]
 		OpenStudiesResult OpenStudies(OpenStudiesRequest request);
 
 		[OperationContract(IsOneWay = false)]
-		[FaultContract(typeof(ViewerSessionNotFoundFault))]
-		void ActivateViewerSession(ActivateViewerSessionRequest request);
+		[FaultContract(typeof(ViewerNotFoundFault))]
+		void ActivateViewer(ActivateViewerRequest request);
 
 		[OperationContract(IsOneWay = false)]
-		[FaultContract(typeof(ViewerSessionNotFoundFault))]
-		void CloseViewerSession(CloseViewerSessionRequest request);
+		[FaultContract(typeof(ViewerNotFoundFault))]
+		void CloseViewer(CloseViewerRequest request);
 	}
 }

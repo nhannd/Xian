@@ -17,13 +17,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class GetActiveViewerSessionsResult : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class GetActiveViewersResult : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession> ActiveViewerSessionsField;
+        private System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer> ActiveViewersField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -38,15 +38,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession> ActiveViewerSessions
+        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer> ActiveViewers
         {
             get
             {
-                return this.ActiveViewerSessionsField;
+                return this.ActiveViewersField;
             }
             set
             {
-                this.ActiveViewerSessionsField = value;
+                this.ActiveViewersField = value;
             }
         }
     }
@@ -54,15 +54,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class ViewerSession : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class Viewer : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private string PrimaryStudyInstanceUidField;
+        private System.Guid IdentifierField;
         
-        private System.Guid SessionIdField;
+        private string PrimaryStudyInstanceUidField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -73,6 +73,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
             set
             {
                 this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public System.Guid Identifier
+        {
+            get
+            {
+                return this.IdentifierField;
+            }
+            set
+            {
+                this.IdentifierField = value;
             }
         }
         
@@ -88,31 +101,18 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
                 this.PrimaryStudyInstanceUidField = value;
             }
         }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public System.Guid SessionId
-        {
-            get
-            {
-                return this.SessionIdField;
-            }
-            set
-            {
-                this.SessionIdField = value;
-            }
-        }
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class GetViewerSessionInfoRequest : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class GetViewerInfoRequest : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSessionField;
+        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer ViewerField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -127,15 +127,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSession
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer Viewer
         {
             get
             {
-                return this.ViewerSessionField;
+                return this.ViewerField;
             }
             set
             {
-                this.ViewerSessionField = value;
+                this.ViewerField = value;
             }
         }
     }
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class GetViewerSessionInfoResult : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class GetViewerInfoResult : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSessionField;
+        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer ViewerField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -307,15 +307,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSession
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer Viewer
         {
             get
             {
-                return this.ViewerSessionField;
+                return this.ViewerField;
             }
             set
             {
-                this.ViewerSessionField = value;
+                this.ViewerField = value;
             }
         }
     }
@@ -323,13 +323,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class ActivateViewerSessionRequest : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class ActivateViewerRequest : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSessionField;
+        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer ViewerField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -344,15 +344,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSession
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer Viewer
         {
             get
             {
-                return this.ViewerSessionField;
+                return this.ViewerField;
             }
             set
             {
-                this.ViewerSessionField = value;
+                this.ViewerField = value;
             }
         }
     }
@@ -360,13 +360,13 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class CloseViewerSessionRequest : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class CloseViewerRequest : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
-        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSessionField;
+        private ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer ViewerField;
         
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData
         {
@@ -381,15 +381,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         }
         
         [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSession ViewerSession
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.Viewer Viewer
         {
             get
             {
-                return this.ViewerSessionField;
+                return this.ViewerField;
             }
             set
             {
-                this.ViewerSessionField = value;
+                this.ViewerField = value;
             }
         }
     }
@@ -397,7 +397,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class NoActiveViewerSessionsFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class NoActiveViewersFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
@@ -419,7 +419,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/imageViewer/automation")]
     [System.SerializableAttribute()]
-    public partial class ViewerSessionNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    public partial class ViewerNotFoundFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
         [System.NonSerializedAttribute()]
@@ -499,18 +499,17 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetActiveViewe" +
-            "rSessions", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetActiveViewe" +
-            "rSessionsResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.NoActiveViewerSessionsFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetActiveViewe" +
-            "rSessionsNoActiveViewerSessionsFaultFault", Name="NoActiveViewerSessionsFault")]
-        ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetActiveViewerSessionsResult GetActiveViewerSessions();
+            "rs", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetActiveViewe" +
+            "rsResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.NoActiveViewersFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetActiveViewe" +
+            "rsNoActiveViewersFaultFault", Name="NoActiveViewersFault")]
+        ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetActiveViewersResult GetActiveViewers();
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetViewerSessi" +
-            "onInfo", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetViewerSessi" +
-            "onInfoResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSessionNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetViewerSessi" +
-            "onInfoViewerSessionNotFoundFaultFault", Name="ViewerSessionNotFoundFault")]
-        ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerSessionInfoResult GetViewerSessionInfo(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerSessionInfoRequest request);
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetViewerInfo", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetViewerInfoR" +
+            "esponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/GetViewerInfoV" +
+            "iewerNotFoundFaultFault", Name="ViewerNotFoundFault")]
+        ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerInfoResult GetViewerInfo(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerInfoRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudies", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/OpenStudiesRes" +
             "ponse")]
@@ -519,18 +518,17 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.OpenStudiesResult OpenStudies(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.OpenStudiesRequest request);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/ActivateViewer" +
-            "Session", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/ActivateViewer" +
-            "SessionResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSessionNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/ActivateViewer" +
-            "SessionViewerSessionNotFoundFaultFault", Name="ViewerSessionNotFoundFault")]
-        void ActivateViewerSession(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ActivateViewerSessionRequest request);
+            "", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/ActivateViewer" +
+            "Response")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/ActivateViewer" +
+            "ViewerNotFoundFaultFault", Name="ViewerNotFoundFault")]
+        void ActivateViewer(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ActivateViewerRequest request);
         
-        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/CloseViewerSes" +
-            "sion", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/CloseViewerSes" +
-            "sionResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerSessionNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/CloseViewerSes" +
-            "sionViewerSessionNotFoundFaultFault", Name="ViewerSessionNotFoundFault")]
-        void CloseViewerSession(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.CloseViewerSessionRequest request);
+        [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/CloseViewer", ReplyAction="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/CloseViewerRes" +
+            "ponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerNotFoundFault), Action="http://www.clearcanvas.ca/imageViewer/automation/IViewerAutomation/CloseViewerVie" +
+            "werNotFoundFaultFault", Name="ViewerNotFoundFault")]
+        void CloseViewer(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.CloseViewerRequest request);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
@@ -567,14 +565,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
         {
         }
         
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetActiveViewerSessionsResult GetActiveViewerSessions()
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetActiveViewersResult GetActiveViewers()
         {
-            return base.Channel.GetActiveViewerSessions();
+            return base.Channel.GetActiveViewers();
         }
         
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerSessionInfoResult GetViewerSessionInfo(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerSessionInfoRequest request)
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerInfoResult GetViewerInfo(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.GetViewerInfoRequest request)
         {
-            return base.Channel.GetViewerSessionInfo(request);
+            return base.Channel.GetViewerInfo(request);
         }
         
         public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.OpenStudiesResult OpenStudies(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.OpenStudiesRequest request)
@@ -582,14 +580,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAu
             return base.Channel.OpenStudies(request);
         }
         
-        public void ActivateViewerSession(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ActivateViewerSessionRequest request)
+        public void ActivateViewer(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ActivateViewerRequest request)
         {
-            base.Channel.ActivateViewerSession(request);
+            base.Channel.ActivateViewer(request);
         }
         
-        public void CloseViewerSession(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.CloseViewerSessionRequest request)
+        public void CloseViewer(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.CloseViewerRequest request)
         {
-            base.Channel.CloseViewerSession(request);
+            base.Channel.CloseViewer(request);
         }
     }
 }

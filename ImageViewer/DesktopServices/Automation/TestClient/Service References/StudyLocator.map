@@ -9,7 +9,7 @@
 	<EndPoints>
 		<EndPoint
 			Address="http://localhost:51122/StudyLocator/StudyLocator"
-			BindingConfiguration="BasicHttpBinding_IStudyLocator1"
+			BindingConfiguration="BasicHttpBinding_IStudyLocator"
 			Contract="ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudyLocator"
 			>
 		</EndPoint>

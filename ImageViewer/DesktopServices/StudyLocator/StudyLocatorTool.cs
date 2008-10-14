@@ -1,11 +1,10 @@
+using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Services.StudyLocator;
-using System.Threading;
-using ClearCanvas.Desktop.Actions;
-using System;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 {

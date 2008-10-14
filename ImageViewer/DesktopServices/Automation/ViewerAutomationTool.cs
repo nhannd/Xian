@@ -1,74 +1,80 @@
 using System;
-using System.ServiceModel;
-using System.ServiceModel.Description;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.Automation;
-using System.Threading;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
 	/// <summary>
 	/// For internal use only.
 	/// </summary>
-	/// <remarks>
-	/// This class is implemented as a desktop tool rather than an application tool in order
-	/// to take advantage of the 'UseSynchronizationContext' WCF service behaviour, which
-	/// automatically marshals all service request over to the thread on which the service host was
-	/// started.
-	/// </remarks>
-
-	//[ButtonAction("test", "global-menus/Test/Test Automation Client", "TestClient")]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class ViewerAutomationTool : DesktopHostTool
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	public class ViewerAutomationTool : ImageViewerTool
 	{
-		internal static SynchronizationContext HostSynchronizationContext;
+		private static readonly object _syncLock = new object();
+		private static readonly List<ViewerAutomationTool> _tools;
+
+		private readonly Guid _viewerId;
+		private volatile IImageViewer _viewer;
+
+		static ViewerAutomationTool()
+		{
+			_tools = new List<ViewerAutomationTool>();
+		}
 
 		public ViewerAutomationTool()
 		{
+			_viewerId = Guid.NewGuid();
 		}
 
-		protected override ServiceHost CreateServiceHost()
+		public override void Initialize()
 		{
-			HostSynchronizationContext = SynchronizationContext.Current;
+			base.Initialize();
 
-			ServiceHost host = new ServiceHost(typeof(ViewerAutomation));
-			foreach (ServiceEndpoint endpoint in host.Description.Endpoints)
-				endpoint.Binding.Namespace = AutomationNamespace.Value;
-
-			return host;
+			_viewer = base.ImageViewer;
+			lock(_syncLock)
+			{
+				_tools.Add(this);
+			}
 		}
 
-		private void TestClient()
+		protected override void Dispose(bool disposing)
 		{
-			SynchronizationContext context = SynchronizationContext.Current;
+			lock(_syncLock)
+			{
+				_tools.Remove(this);
+			}
 
-			//Have to test client on another thread, otherwise there is a deadlock b/c the service is hosted on the main thread.
-			ThreadPool.QueueUserWorkItem(delegate
-			                                {
-												try
-												{
-													using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
-													{
-														client.GetActiveViewerSessions();
-													}
+			base.Dispose(disposing);
+		}
 
-													context.Post(delegate
-											             			{
-											             				base.Context.DesktopWindow.ShowMessageBox("Success!", MessageBoxActions.Ok);
-											             			}, null);
-												}
-												catch (Exception e)
-												{
-													context.Post(delegate
-													{
-														base.Context.DesktopWindow.ShowMessageBox(e.Message, MessageBoxActions.Ok);
-													}, null);
+		internal static Guid? GetViewerId(IImageViewer viewer)
+		{
+			lock (_syncLock)
+			{
+				ViewerAutomationTool foundTool =
+					CollectionUtils.SelectFirst(_tools, delegate(ViewerAutomationTool tool) { return tool._viewer == viewer; });
 
-												}
-											});
+				if (foundTool != null)
+					return foundTool._viewerId;
 
+				return null;
+			}
+		}
+
+		internal static IImageViewer GetViewer(Guid viewerId)
+		{
+			lock (_syncLock)
+			{
+				ViewerAutomationTool foundTool =
+					CollectionUtils.SelectFirst(_tools, delegate(ViewerAutomationTool tool) { return tool._viewerId == viewerId; });
+
+				if (foundTool != null)
+					return foundTool._viewer;
+
+				return null;
+			}
 		}
 	}
 }

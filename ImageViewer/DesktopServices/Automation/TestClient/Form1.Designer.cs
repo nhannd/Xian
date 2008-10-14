@@ -34,18 +34,18 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._closeViewer = new System.Windows.Forms.Button();
 			this._startViewer = new System.Windows.Forms.Button();
 			this._studyGrid = new System.Windows.Forms.DataGridView();
-			this._studyItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this._activateIfOpen = new System.Windows.Forms.CheckBox();
-			this._openSessions = new System.Windows.Forms.ListBox();
+			this._openViewers = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
-			this._refreshAllSessions = new System.Windows.Forms.Button();
+			this._refreshAllViewers = new System.Windows.Forms.Button();
 			this._getSelectedInfo = new System.Windows.Forms.Button();
 			this._requery = new System.Windows.Forms.Button();
+			this._studyItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
+			this.RetrieveAETitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.patientIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.patientsNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.studyDescriptionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.RetrieveAETitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.hasSessionsDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.HasViewers = new System.Windows.Forms.DataGridViewCheckBoxColumn();
 			this.studyInstanceUidDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			((System.ComponentModel.ISupportInitialize)(this._studyGrid)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._studyItemBindingSource)).BeginInit();
@@ -107,11 +107,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._studyGrid.BackgroundColor = System.Drawing.SystemColors.Window;
 			this._studyGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this._studyGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.RetrieveAETitle,
             this.patientIdDataGridViewTextBoxColumn,
             this.patientsNameDataGridViewTextBoxColumn,
             this.studyDescriptionDataGridViewTextBoxColumn,
-            this.RetrieveAETitle,
-            this.hasSessionsDataGridViewCheckBoxColumn,
+            this.HasViewers,
             this.studyInstanceUidDataGridViewTextBoxColumn});
 			this._studyGrid.DataSource = this._studyItemBindingSource;
 			this._studyGrid.Location = new System.Drawing.Point(12, 12);
@@ -120,10 +120,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._studyGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this._studyGrid.Size = new System.Drawing.Size(768, 292);
 			this._studyGrid.TabIndex = 5;
-			// 
-			// _studyItemBindingSource
-			// 
-			this._studyItemBindingSource.DataSource = typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyItem);
 			// 
 			// _activateIfOpen
 			// 
@@ -138,15 +134,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._activateIfOpen.Text = "Activate if already open";
 			this._activateIfOpen.UseVisualStyleBackColor = true;
 			// 
-			// _openSessions
+			// _openViewers
 			// 
-			this._openSessions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			this._openViewers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._openSessions.FormattingEnabled = true;
-			this._openSessions.Location = new System.Drawing.Point(787, 24);
-			this._openSessions.Name = "_openSessions";
-			this._openSessions.Size = new System.Drawing.Size(193, 160);
-			this._openSessions.TabIndex = 7;
+			this._openViewers.FormattingEnabled = true;
+			this._openViewers.Location = new System.Drawing.Point(787, 24);
+			this._openViewers.Name = "_openViewers";
+			this._openViewers.Size = new System.Drawing.Size(193, 160);
+			this._openViewers.TabIndex = 7;
 			// 
 			// label1
 			// 
@@ -154,20 +150,20 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.label1.AutoSize = true;
 			this.label1.Location = new System.Drawing.Point(787, 10);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(78, 13);
+			this.label1.Size = new System.Drawing.Size(73, 13);
 			this.label1.TabIndex = 8;
-			this.label1.Text = "Open Sessions";
+			this.label1.Text = "Open Viewers";
 			// 
-			// _refreshAllSessions
+			// _refreshAllViewers
 			// 
-			this._refreshAllSessions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._refreshAllSessions.Location = new System.Drawing.Point(601, 311);
-			this._refreshAllSessions.Name = "_refreshAllSessions";
-			this._refreshAllSessions.Size = new System.Drawing.Size(179, 23);
-			this._refreshAllSessions.TabIndex = 9;
-			this._refreshAllSessions.Text = "Refresh Sessions";
-			this._refreshAllSessions.UseVisualStyleBackColor = true;
-			this._refreshAllSessions.Click += new System.EventHandler(this.OnRefreshAllSessions);
+			this._refreshAllViewers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._refreshAllViewers.Location = new System.Drawing.Point(601, 311);
+			this._refreshAllViewers.Name = "_refreshAllViewers";
+			this._refreshAllViewers.Size = new System.Drawing.Size(179, 23);
+			this._refreshAllViewers.TabIndex = 9;
+			this._refreshAllViewers.Text = "Refresh Viewers";
+			this._refreshAllViewers.UseVisualStyleBackColor = true;
+			this._refreshAllViewers.Click += new System.EventHandler(this.OnRefreshAllViewers);
 			// 
 			// _getSelectedInfo
 			// 
@@ -190,6 +186,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._requery.Text = "Requery";
 			this._requery.UseVisualStyleBackColor = true;
 			this._requery.Click += new System.EventHandler(this.OnRequery);
+			// 
+			// _studyItemBindingSource
+			// 
+			this._studyItemBindingSource.DataSource = typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyItem);
+			// 
+			// RetrieveAETitle
+			// 
+			this.RetrieveAETitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			this.RetrieveAETitle.DataPropertyName = "RetrieveAETitle";
+			this.RetrieveAETitle.HeaderText = "Retrieve AE";
+			this.RetrieveAETitle.Name = "RetrieveAETitle";
+			this.RetrieveAETitle.ReadOnly = true;
+			this.RetrieveAETitle.Width = 89;
 			// 
 			// patientIdDataGridViewTextBoxColumn
 			// 
@@ -218,23 +227,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.studyDescriptionDataGridViewTextBoxColumn.ReadOnly = true;
 			this.studyDescriptionDataGridViewTextBoxColumn.Width = 106;
 			// 
-			// RetrieveAETitle
+			// HasViewers
 			// 
-			this.RetrieveAETitle.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			this.RetrieveAETitle.DataPropertyName = "RetrieveAETitle";
-			this.RetrieveAETitle.HeaderText = "Retrieve AE";
-			this.RetrieveAETitle.Name = "RetrieveAETitle";
-			this.RetrieveAETitle.ReadOnly = true;
-			this.RetrieveAETitle.Width = 82;
-			// 
-			// hasSessionsDataGridViewCheckBoxColumn
-			// 
-			this.hasSessionsDataGridViewCheckBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-			this.hasSessionsDataGridViewCheckBoxColumn.DataPropertyName = "HasSessions";
-			this.hasSessionsDataGridViewCheckBoxColumn.HeaderText = "Has Sessions";
-			this.hasSessionsDataGridViewCheckBoxColumn.Name = "hasSessionsDataGridViewCheckBoxColumn";
-			this.hasSessionsDataGridViewCheckBoxColumn.ReadOnly = true;
-			this.hasSessionsDataGridViewCheckBoxColumn.Width = 69;
+			this.HasViewers.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.HasViewers.DataPropertyName = "HasViewers";
+			this.HasViewers.HeaderText = "Has Viewer(s)";
+			this.HasViewers.Name = "HasViewers";
+			this.HasViewers.ReadOnly = true;
+			this.HasViewers.Width = 70;
 			// 
 			// studyInstanceUidDataGridViewTextBoxColumn
 			// 
@@ -251,8 +251,8 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.ClientSize = new System.Drawing.Size(992, 341);
 			this.Controls.Add(this._requery);
 			this.Controls.Add(this._getSelectedInfo);
-			this.Controls.Add(this._refreshAllSessions);
-			this.Controls.Add(this._openSessions);
+			this.Controls.Add(this._refreshAllViewers);
+			this.Controls.Add(this._openViewers);
 			this.Controls.Add(this._activateIfOpen);
 			this.Controls.Add(this._studyGrid);
 			this.Controls.Add(this._startViewer);
@@ -279,17 +279,17 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		private System.Windows.Forms.Button _startViewer;
 		private System.Windows.Forms.DataGridView _studyGrid;
 		private System.Windows.Forms.CheckBox _activateIfOpen;
-		private System.Windows.Forms.ListBox _openSessions;
+		private System.Windows.Forms.ListBox _openViewers;
 		private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Button _refreshAllSessions;
+		private System.Windows.Forms.Button _refreshAllViewers;
 		private System.Windows.Forms.Button _getSelectedInfo;
 		private System.Windows.Forms.BindingSource _studyItemBindingSource;
 		private System.Windows.Forms.Button _requery;
+		private System.Windows.Forms.DataGridViewTextBoxColumn RetrieveAETitle;
 		private System.Windows.Forms.DataGridViewTextBoxColumn patientIdDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn patientsNameDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn studyDescriptionDataGridViewTextBoxColumn;
-		private System.Windows.Forms.DataGridViewTextBoxColumn RetrieveAETitle;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn hasSessionsDataGridViewCheckBoxColumn;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn HasViewers;
 		private System.Windows.Forms.DataGridViewTextBoxColumn studyInstanceUidDataGridViewTextBoxColumn;
 	}
 }

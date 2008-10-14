@@ -2,8 +2,10 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	//NOTE: internal for now because we don't actually implement IPatientRootQuery anywhere.
+
 	[DataContract(Namespace = QueryNamespace.Value)]
-	public class PatientRootPatientIdentifier : Identifier
+	internal class PatientRootPatientIdentifier : Identifier
 	{
 		#region Private Fields
 

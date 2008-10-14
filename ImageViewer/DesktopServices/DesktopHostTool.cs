@@ -19,15 +19,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 		{
 			base.Initialize();
 
-			if (_count++ == 0)
+			if (_count == 0)
 				StartHost();
+
+			_count++;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
 
-			if (--_count == 0)
+			_count--;
+
+			if (_count == 0)
 				StopHost();
 		}
 

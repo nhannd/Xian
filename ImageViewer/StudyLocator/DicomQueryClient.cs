@@ -28,7 +28,9 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 			_remotePort = remotePort;
 		}
 
-		protected IList<TIdentifier> Query<TIdentifier, TFindScu>(TIdentifier queryCriteria) where TIdentifier : Identifier, new() where TFindScu : FindScuBase, new()
+		protected IList<TIdentifier> Query<TIdentifier, TFindScu>(TIdentifier queryCriteria)
+			where TIdentifier : Identifier, new()
+			where TFindScu : FindScuBase, new()
 		{
 			if (queryCriteria == null)
 			{
@@ -46,7 +48,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 				{
 					criteria = queryCriteria.ToDicomAttributeCollection();
 				}
-				catch(DicomException e)
+				catch (DicomException e)
 				{
 					DataValidationFault fault = new DataValidationFault();
 					fault.Description = "Failed to convert contract object to DicomAttributeCollection.";
@@ -69,7 +71,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 					if (scu.Status == ScuOperationStatus.Canceled)
 					{
 						String message = String.Format("The remote server cancelled the query ({0})",
-						                               scu.FailureDescription ?? "no failure description provided");
+													   scu.FailureDescription ?? "no failure description provided");
 						QueryFailedFault fault = new QueryFailedFault();
 						fault.Description = message;
 						throw new FaultException<QueryFailedFault>(fault, fault.Description);
@@ -77,7 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 					if (scu.Status == ScuOperationStatus.ConnectFailed)
 					{
 						String message = String.Format("Connection failed ({0})",
-						                               scu.FailureDescription ?? "no failure description provided");
+													   scu.FailureDescription ?? "no failure description provided");
 						QueryFailedFault fault = new QueryFailedFault();
 						fault.Description = message;
 						throw new FaultException<QueryFailedFault>(fault, fault.Description);
@@ -85,7 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 					if (scu.Status == ScuOperationStatus.Failed)
 					{
 						String message = String.Format("The query operation failed ({0})",
-						                               scu.FailureDescription ?? "no failure description provided");
+													   scu.FailureDescription ?? "no failure description provided");
 						QueryFailedFault fault = new QueryFailedFault();
 						fault.Description = message;
 						throw new FaultException<QueryFailedFault>(fault, fault.Description);
@@ -93,13 +95,13 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 					if (scu.Status == ScuOperationStatus.TimeoutExpired)
 					{
 						String message = String.Format("The connection timeout expired ({0})",
-						                               scu.FailureDescription ?? "no failure description provided");
+													   scu.FailureDescription ?? "no failure description provided");
 						QueryFailedFault fault = new QueryFailedFault();
 						fault.Description = message;
 						throw new FaultException<QueryFailedFault>(fault, fault.Description);
 					}
 				}
-				catch(FaultException)
+				catch (FaultException)
 				{
 					throw;
 				}
@@ -143,7 +145,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 			{
 				Dispose(true);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
 			}
@@ -174,38 +176,6 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria)
 		{
 			return Query<ImageIdentifier, StudyRootFindScu>(queryQriteria);
-		}
-
-		#endregion
-	}
-
-	internal class PatientRootQueryClient : DicomQueryClient, IPatientRootQuery
-	{
-		public PatientRootQueryClient(string localAE, string remoteAE, string remoteHost, int remotePort)
-			: base(localAE, remoteAE, remoteHost, remotePort)
-		{
-		}
-
-		#region IPatientRootQuery Members
-
-		public IList<PatientRootPatientIdentifier>  PatientQuery(PatientRootPatientIdentifier queryQriteria)
-		{
-			return Query<PatientRootPatientIdentifier, PatientRootFindScu>(queryQriteria);
-		}
-
-		public IList<PatientRootStudyIdentifier>  StudyQuery(PatientRootStudyIdentifier queryQriteria)
-		{
-			return Query<PatientRootStudyIdentifier, PatientRootFindScu>(queryQriteria);
-		}
-
-		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria)
-		{
-			return Query<SeriesIdentifier, PatientRootFindScu>(queryQriteria);
-		}
-
-		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria)
-		{
-			return Query<ImageIdentifier, PatientRootFindScu>(queryQriteria);
 		}
 
 		#endregion

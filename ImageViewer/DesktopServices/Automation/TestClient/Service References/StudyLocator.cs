@@ -600,10 +600,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
         
         // CODEGEN: Generating message contract since the wrapper namespace (http://www.clearcanvas.ca/dicom/query) of message SeriesQueryRequest does not match the default value (http://www.clearcanvas.ca/imageViewer/studyLocator)
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryDataValidationFa" +
-            "ultFault", Name="DataValidationFault", Namespace="http://www.clearcanvas.ca/dicom/query")]
         [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryQueryFailedFault" +
             "Fault", Name="QueryFailedFault", Namespace="http://www.clearcanvas.ca/dicom/query")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryDataValidationFa" +
+            "ultFault", Name="DataValidationFault", Namespace="http://www.clearcanvas.ca/dicom/query")]
         ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesQueryResponse SeriesQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesQueryRequest request);
         
         // CODEGEN: Generating message contract since the wrapper namespace (http://www.clearcanvas.ca/dicom/query) of message ImageQueryRequest does not match the default value (http://www.clearcanvas.ca/imageViewer/studyLocator)
@@ -632,15 +632,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://www.clearcanvas.ca/dicom/query", Order=0)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryQriteria;
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryCriteria;
         
         public StudyQueryRequest()
         {
         }
         
-        public StudyQueryRequest(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryQriteria)
+        public StudyQueryRequest(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryCriteria)
         {
-            this.queryQriteria = queryQriteria;
+            this.queryCriteria = queryCriteria;
         }
     }
     
@@ -670,15 +670,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://www.clearcanvas.ca/dicom/query", Order=0)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryQriteria;
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryCriteria;
         
         public SeriesQueryRequest()
         {
         }
         
-        public SeriesQueryRequest(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryQriteria)
+        public SeriesQueryRequest(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryCriteria)
         {
-            this.queryQriteria = queryQriteria;
+            this.queryCriteria = queryCriteria;
         }
     }
     
@@ -708,15 +708,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
     {
         
         [System.ServiceModel.MessageBodyMemberAttribute(Namespace="http://www.clearcanvas.ca/dicom/query", Order=0)]
-        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryQriteria;
+        public ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryCriteria;
         
         public ImageQueryRequest()
         {
         }
         
-        public ImageQueryRequest(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryQriteria)
+        public ImageQueryRequest(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryCriteria)
         {
-            this.queryQriteria = queryQriteria;
+            this.queryCriteria = queryCriteria;
         }
     }
     
@@ -778,10 +778,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
             return base.Channel.StudyQuery(request);
         }
         
-        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier> StudyQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryQriteria)
+        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier> StudyQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryCriteria)
         {
             ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyQueryRequest inValue = new ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyQueryRequest();
-            inValue.queryQriteria = queryQriteria;
+            inValue.queryCriteria = queryCriteria;
             ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyQueryResponse retVal = ((ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudyLocator)(this)).StudyQuery(inValue);
             return retVal.StudyQueryResult;
         }
@@ -791,10 +791,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
             return base.Channel.SeriesQuery(request);
         }
         
-        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier> SeriesQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryQriteria)
+        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier> SeriesQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryCriteria)
         {
             ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesQueryRequest inValue = new ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesQueryRequest();
-            inValue.queryQriteria = queryQriteria;
+            inValue.queryCriteria = queryCriteria;
             ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesQueryResponse retVal = ((ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudyLocator)(this)).SeriesQuery(inValue);
             return retVal.SeriesQueryResult;
         }
@@ -804,10 +804,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
             return base.Channel.ImageQuery(request);
         }
         
-        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier> ImageQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryQriteria)
+        public System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier> ImageQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryCriteria)
         {
             ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageQueryRequest inValue = new ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageQueryRequest();
-            inValue.queryQriteria = queryQriteria;
+            inValue.queryCriteria = queryCriteria;
             ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageQueryResponse retVal = ((ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudyLocator)(this)).ImageQuery(inValue);
             return retVal.ImageQueryResult;
         }

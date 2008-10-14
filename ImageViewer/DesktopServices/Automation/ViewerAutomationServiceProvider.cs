@@ -1,8 +1,8 @@
 using System;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.Automation;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -26,36 +26,36 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 	{
 		#region IViewerAutomation Members
 
-		public GetActiveViewerSessionsResult GetActiveViewerSessions()
+		public GetActiveViewersResult GetActiveViewers()
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
 			{
-				return new ViewerAutomation().GetActiveViewerSessions();
+				return new ViewerAutomation().GetActiveViewers();
 			}
 			else
 			{
 				using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
 				{
-					return client.GetActiveViewerSessions();
+					return client.GetActiveViewers();
 				}
 			} 
 		}
 
-		public GetViewerSessionInfoResult GetViewerSessionInfo(GetViewerSessionInfoRequest request)
+		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
 			{
-				return new ViewerAutomation().GetViewerSessionInfo(request);
+				return new ViewerAutomation().GetViewerInfo(request);
 			}
 			else
 			{
 				using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
 				{
-					return client.GetViewerSessionInfo(request);
+					return client.GetViewerInfo(request);
 				}
 			} 
 		}
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
 			{
 				return new ViewerAutomation().OpenStudies(request);
 			}
@@ -77,36 +77,36 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			} 
 		}
 
-		public void ActivateViewerSession(ActivateViewerSessionRequest request)
+		public void ActivateViewer(ActivateViewerRequest request)
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
 			{
-				new ViewerAutomation().ActivateViewerSession(request);
+				new ViewerAutomation().ActivateViewer(request);
 			}
 			else
 			{
 				using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
 				{
-					client.ActivateViewerSession(request);
+					client.ActivateViewer(request);
 				}
 			} 
 		}
 
-		public void CloseViewerSession(CloseViewerSessionRequest request)
+		public void CloseViewer(CloseViewerRequest request)
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
 			{
-				new ViewerAutomation().CloseViewerSession(request);
+				new ViewerAutomation().CloseViewer(request);
 			}
 			else
 			{
 				using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
 				{
-					client.CloseViewerSession(request);
+					client.CloseViewer(request);
 				}
 			} 
 		}
@@ -130,14 +130,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		#region IViewerAutomation Members
 
-		public GetActiveViewerSessionsResult GetActiveViewerSessions()
+		public GetActiveViewersResult GetActiveViewers()
 		{
-			return base.Channel.GetActiveViewerSessions();
+			return base.Channel.GetActiveViewers();
 		}
 
-		public GetViewerSessionInfoResult GetViewerSessionInfo(GetViewerSessionInfoRequest request)
+		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
 		{
-			return base.Channel.GetViewerSessionInfo(request);
+			return base.Channel.GetViewerInfo(request);
 		}
 
 		public OpenStudiesResult OpenStudies(OpenStudiesRequest request)
@@ -145,14 +145,14 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			return base.Channel.OpenStudies(request);
 		}
 
-		public void ActivateViewerSession(ActivateViewerSessionRequest request)
+		public void ActivateViewer(ActivateViewerRequest request)
 		{
-			base.Channel.ActivateViewerSession(request);
+			base.Channel.ActivateViewer(request);
 		}
 
-		public void CloseViewerSession(CloseViewerSessionRequest request)
+		public void CloseViewer(CloseViewerRequest request)
 		{
-			base.Channel.CloseViewerSession(request);
+			base.Channel.CloseViewer(request);
 		}
 
 		#endregion
