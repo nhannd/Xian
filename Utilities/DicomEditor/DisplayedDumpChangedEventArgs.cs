@@ -37,12 +37,12 @@ namespace ClearCanvas.Utilities.DicomEditor
 {
     public class DisplayedDumpChangedEventArgs : EventArgs
     {
-        public DisplayedDumpChangedEventArgs(bool IsCurrentFirst, bool IsCurrentLast, bool IsCurrentTheOnly, bool HasCurrentBeenEditted)
+        public DisplayedDumpChangedEventArgs(bool IsCurrentFirst, bool IsCurrentLast, bool IsCurrentTheOnly, bool hasCurrentBeenEdited)
         {
             _isCurrentFirst = IsCurrentFirst;
             _isCurrentLast = IsCurrentLast;
             _isCurrentTheOnly = IsCurrentTheOnly;
-            _hasCurrentBeenEditted = HasCurrentBeenEditted;
+            _hasCurrentBeenEdited = hasCurrentBeenEdited;
         }
 
         public bool IsCurrentFirst
@@ -60,15 +60,15 @@ namespace ClearCanvas.Utilities.DicomEditor
             get { return _isCurrentTheOnly; }
         }
 
-        public bool HasCurrentBeenEditted
+        public bool HasCurrentBeenEdited
         {
-            get { return _hasCurrentBeenEditted; }
+            get { return _hasCurrentBeenEdited; }
         }
 
         private bool _isCurrentFirst;
         private bool _isCurrentLast;
         private bool _isCurrentTheOnly;
-        private bool _hasCurrentBeenEditted;
+        private bool _hasCurrentBeenEdited;
 
     }
 }
