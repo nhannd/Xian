@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
+namespace ClearCanvas.ImageServer.Services.Dicom {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
-    internal sealed partial class ImageStreamingServerSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class DicomSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static ImageStreamingServerSettings defaultInstance = ((ImageStreamingServerSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageStreamingServerSettings())));
+        private static DicomSettings defaultInstance = ((DicomSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new DicomSettings())));
         
-        public static ImageStreamingServerSettings Default {
+        public static DicomSettings Default {
             get {
                 return defaultInstance;
             }
@@ -25,10 +25,19 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://+:1000/wado/")]
-        public string Address {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ListenIPV6 {
             get {
-                return ((string)(this["Address"]));
+                return ((bool)(this["ListenIPV6"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ListenIPV4 {
+            get {
+                return ((bool)(this["ListenIPV4"]));
             }
         }
     }

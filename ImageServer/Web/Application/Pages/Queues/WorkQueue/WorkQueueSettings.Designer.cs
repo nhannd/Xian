@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
     internal sealed partial class WorkQueueSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static WorkQueueSettings defaultInstance = ((WorkQueueSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new WorkQueueSettings())));
