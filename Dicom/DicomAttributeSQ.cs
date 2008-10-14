@@ -89,12 +89,12 @@ namespace ClearCanvas.Dicom
         {
             DicomSequenceItem[] items = (DicomSequenceItem[])attrib.Values;
 
-            _values = new DicomSequenceItem[items.Length];
-
-            for (int i = 0; i < items.Length; i++)
-            {
-                _values[i] = (DicomSequenceItem)items[i].Copy(copyBinary);
-            }
+			if (items != null)
+			{
+				_values = new DicomSequenceItem[items.Length];
+				for (int i = 0; i < items.Length; i++)
+					_values[i] = (DicomSequenceItem) items[i].Copy(copyBinary);
+			}
         }
 
         #endregion
@@ -123,6 +123,8 @@ namespace ClearCanvas.Dicom
         public void ClearSequenceItems()
         {
             _values = null;
+			base.StreamLength = 0;
+        	base.Count = 0;
         }
 
         /// <summary>
@@ -182,6 +184,8 @@ namespace ClearCanvas.Dicom
                 return false;
             if (Count == 0 && a.Count == 0)
                 return true;
+			if (IsNull && a.IsNull)
+				return true;
 
             for (int i = 0; i < a.Count; i++)
                 if (!array[i].Equals(_values[i]))

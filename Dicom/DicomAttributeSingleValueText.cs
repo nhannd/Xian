@@ -94,10 +94,9 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeSingleValueText(DicomAttributeSingleValueText attrib)
             : base(attrib)
         {
-            String value = attrib;
-
-            _value = String.Copy(value);
-
+			string value = attrib.Values as string;
+			if (value != null)
+				_value = String.Copy(value);
         }
         #endregion
 
@@ -155,9 +154,7 @@ namespace ClearCanvas.Dicom
             if (obj == null || GetType() != obj.GetType()) return false;
 
             DicomAttribute a = (DicomAttribute)obj;
-            string str = (string)a.Values;
-
-            return _value.Equals(str);
+        	return Object.Equals(a.Values, _value);
         }
 
         public override int GetHashCode()

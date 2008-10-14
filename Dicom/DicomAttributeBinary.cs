@@ -116,7 +116,7 @@ namespace ClearCanvas.Dicom
 
     public abstract class DicomAttributeBinary<T> : DicomAttribute
     {
-        protected T[] _values = new T[0];
+        protected T[] _values = null;
         protected NumberStyles _numberStyle = NumberStyles.Any;
         internal FileReference _reference = null;
 
@@ -156,17 +156,18 @@ namespace ClearCanvas.Dicom
             {
                 // just reassign reference, since the object is ready-only anyways
                 _reference = attrib._reference;
-                SetStreamLength();
             }
             else
             {
                 T[] values = (T[]) attrib.Values;
-
-                _values = new T[values.Length];
-
-                values.CopyTo(_values, 0);
-                SetStreamLength();
+				if (values != null)
+				{
+					_values = new T[values.Length];
+					values.CopyTo(_values, 0);
+				}
             }
+
+			SetStreamLength();
         }
         #endregion
 
@@ -256,7 +257,8 @@ namespace ClearCanvas.Dicom
 
         public override void SetNullValue()
         {
-            if (_reference != null) _reference = null;
+            if (_reference != null)
+				_reference = null;
 
             _values = new T[0];
             SetStreamLength();
@@ -399,7 +401,14 @@ namespace ClearCanvas.Dicom
         public override void SetString(int index, string value)
         {
             if (index == Count)
-                AppendString(value);
+            {
+            	AppendString(value);
+            }
+            else if (_values == null)
+            {
+				//get a null reference exception unless we do this.
+				throw new IndexOutOfRangeException("The index is out of range.");
+            }
             else
             {
                 _values[index] = ParseNumber(value);
@@ -432,8 +441,15 @@ namespace ClearCanvas.Dicom
         public void SetValue(int index, T value)
         {
             if (index == Count)
-                AppendValue(value);
-            else
+            {
+            	AppendValue(value);
+            }
+			else if (_values == null)
+			{
+				//get a null reference exception unless we do this.
+				throw new IndexOutOfRangeException("The index is out of range.");
+			}
+			else
             {
                 _values[index] = value;
                 SetStreamLength();
@@ -1567,6 +1583,11 @@ namespace ClearCanvas.Dicom
                 Count = _reference.Length;
                 StreamLength = _reference.Length;
             }
+			else if (_values == null)
+			{
+				Count = 0;
+				StreamLength = 0;
+			}
             else
             {
                 Count = _values.Length;
@@ -1751,7 +1772,12 @@ namespace ClearCanvas.Dicom
                 Count = _reference.Length;
                 StreamLength = _reference.Length;
             }
-            else
+			else if (_values == null)
+			{
+				Count = 0;
+				StreamLength = 0;
+			}
+			else
             {
                 Count = _values.Length;
                 StreamLength = (uint) (_values.Length);
@@ -3395,25 +3421,6 @@ namespace ClearCanvas.Dicom
                 return _values.GetHashCode(); // TODO
         }
 
-        public override bool IsNull
-        {
-            get
-            {
-                if ((Count == 1) && (_values != null) && (_values.Length == 0))
-                    return true;
-                return false;
-            }
-        }
-        public override bool IsEmpty
-        {
-            get
-            {
-                if ((Count == 0) && (_values == null))
-                    return true;
-                return false;
-            }
-        }
-
         public override object Values
         {
             get { return _values; }
@@ -3495,13 +3502,8 @@ namespace ClearCanvas.Dicom
 
         internal DicomAttributeUS(DicomAttributeUS attrib)
             : base(attrib)
-        {
-            ushort[] values = (ushort[])attrib.Values;
-
-            _values = new ushort[values.Length];
-
-            values.CopyTo(_values, 0);
-        }
+		{
+		}
 
 
         #endregion

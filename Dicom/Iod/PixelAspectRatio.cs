@@ -99,7 +99,7 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		public override string ToString()
 		{
-			return String.Format(@"{0:R}\{1:R}", _row, _column);
+			return String.Format(@"{0:G12}\{1:G12}", _row, _column);
 		}
 
 		/// <summary>

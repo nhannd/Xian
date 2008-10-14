@@ -295,27 +295,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		{
 			if (attributeNode.Name.Equals("Attribute"))
 			{
-				DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
-				String tag = attributeNode.Attributes["Tag"].Value;
+				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
 
-				uint tagValue = uint.Parse(tag, NumberStyles.HexNumber);
-
-				DicomTag theTag = DicomTagDictionary.GetDicomTag(tagValue);
-				if (theTag == null)
-					theTag =
-						new DicomTag(tagValue, "Unknown tag", "UnknownTag", xmlVr, false, 1, uint.MaxValue, false);
-
-				if (!theTag.VR.Equals(xmlVr))
-				{
-					theTag =
-						new DicomTag(tagValue, theTag.Name, theTag.VariableName, xmlVr, theTag.MultiVR, theTag.VMLow,
-									 theTag.VMHigh, theTag.Retired);
-				}
 				DicomAttribute attribute = theCollection[theTag];
-
 				if (attribute is DicomAttributeSQ)
 				{
 					DicomAttributeSQ attribSQ = (DicomAttributeSQ)attribute;
+					//set the null value in case there are no child nodes.
+					attribute.SetNullValue();
 
 					if (attributeNode.HasChildNodes)
 					{
@@ -354,6 +341,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 									 tempString);
 					}
 				}
+			}
+			else if (attributeNode.Name.Equals("EmptyAttribute"))
+			{
+				//Means that the tag should not be in this collection, but is in the base.  So, we remove it.
+				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
+				theCollection[theTag] = null;
 			}
 		}
 
@@ -430,6 +423,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 	DicomAttribute attribBase;
                 	if (baseCollection.TryGetAttribute(attribute.Tag, out attribBase))
                 	{
+						//The attribute exists in the base and it is not empty.
                 		isInBase = true;
 
                 		if (!(attribute is DicomAttributeOB)
@@ -443,24 +437,24 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 	}
                 }
 
-				if (!isInBase && attribute.IsEmpty) //special case - attributes not in base that are empty in instance.
-				    continue;
-            	
-                if (!AttributeShouldBeIncluded(attribute, settings))
+				//Only store an empty attribute when:
+				// - there is a base collection
+				// - the attribute is in the base and it is not empty.
+				if (attribute.IsEmpty && (baseCollection == null || !isInBase))
+						continue;
+
+				if (!AttributeShouldBeIncluded(attribute, settings))
                     continue;
 
-                XmlElement instanceElement = theDocument.CreateElement("Attribute");
+				if (attribute.IsEmpty)
+				{
+					XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "EmptyAttribute");
+					instance.AppendChild(emptyAttributeElement);
+					continue;
+				}
 
-                XmlAttribute tag = theDocument.CreateAttribute("Tag");
-                tag.Value = attribute.Tag.HexString;
-
-                XmlAttribute vr = theDocument.CreateAttribute("VR");
-                vr.Value = attribute.Tag.VR.ToString();
-
-                instanceElement.Attributes.Append(tag);
-                instanceElement.Attributes.Append(vr);
-
-                if (attribute is DicomAttributeSQ)
+            	XmlElement instanceElement = CreateDicomAttributeElement(theDocument, attribute, "Attribute");
+            	if (attribute is DicomAttributeSQ)
                 {
                     DicomSequenceItem[] items = (DicomSequenceItem[]) attribute.Values;
                     foreach (DicomSequenceItem item in items)
@@ -515,6 +509,42 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             return instance;
         }
 
-        #endregion
+		private static DicomTag GetTagFromAttributeNode(XmlNode attributeNode)
+		{
+			DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
+			String tag = attributeNode.Attributes["Tag"].Value;
+
+			uint tagValue = uint.Parse(tag, NumberStyles.HexNumber);
+
+			DicomTag theTag = DicomTagDictionary.GetDicomTag(tagValue);
+			if (theTag == null)
+				theTag = new DicomTag(tagValue, "Unknown tag", "UnknownTag", xmlVr, false, 1, uint.MaxValue, false);
+
+			if (!theTag.VR.Equals(xmlVr))
+			{
+				theTag = new DicomTag(tagValue, theTag.Name, theTag.VariableName, xmlVr, theTag.MultiVR, theTag.VMLow,
+								 theTag.VMHigh, theTag.Retired);
+			}
+
+			return theTag;
+		}
+
+    	private static XmlElement CreateDicomAttributeElement(XmlDocument document, DicomAttribute attribute, string name)
+		{
+			XmlElement dicomAttributeElement = document.CreateElement(name);
+
+            XmlAttribute tag = document.CreateAttribute("Tag");
+            tag.Value = attribute.Tag.HexString;
+
+            XmlAttribute vr = document.CreateAttribute("VR");
+            vr.Value = attribute.Tag.VR.ToString();
+
+			dicomAttributeElement.Attributes.Append(tag);
+			dicomAttributeElement.Attributes.Append(vr);
+
+			return dicomAttributeElement;
+		}
+
+    	#endregion
 	}	
 }

@@ -64,17 +64,13 @@ namespace ClearCanvas.Dicom.Tests
 			// Valid date according to OLD Dicom Standard (pre 3.0).
 			// Recommended by Dicom that we still support it.
 			returnValue = DateParser.Parse("2006.06.07", out date);
-			Assert.IsTrue(returnValue);
-			Assert.AreEqual(date, new DateTime(2006, 6, 7));
+			Assert.IsFalse(returnValue);
 
 			//Invalid dates
 			returnValue = DateParser.Parse("a0060607", out date);
 			Assert.IsFalse(returnValue);
 
 			returnValue = DateParser.Parse("2006067", out date);
-			Assert.IsFalse(returnValue);
-
-			returnValue = DateParser.Parse("2006.06.7", out date);
 			Assert.IsFalse(returnValue);
 
 			returnValue = DateParser.Parse(String.Empty, out date);
@@ -358,23 +354,12 @@ namespace ClearCanvas.Dicom.Tests
 				{ "20070101-20070101", "20070101", "20070101", "True" },
 				{ "20070101-20070202", "20070101", "20070202", "True" },
 
-				{ "2007.01.01", "20070101", "", "False" },
-				{ "2007.01.01-", "20070101", "", "True" },
-				{ "-2007.01.01", "", "20070101", "True" },
-				{ "2007.01.01-2007.01.01", "20070101", "20070101", "True" },
-				{ "2007.01.01-2007.02.02", "20070101", "20070202", "True" },
-
-				{ "20070101-2007.01.01", "20070101", "20070101", "True" },
-				{ "2007.01.01-20070101", "20070101", "20070101", "True" },
-
 				//from date is after to
 				{ "20070102-20070101", "", "", "exception" },
 
 				//bad format, extra '-'
 				{ "20070101-20070101-", "", "", "exception" },
 				{ "-20070101-20070101", "", "", "exception" },
-				{ "2007.01.01-2007.01.01-", "", "", "exception" },
-				{ "2007.01.01-2007.01.01-", "", "", "exception" },
 
 				//bad format, missing '-'
 				{ "2007010120070101", "", "", "exception" },

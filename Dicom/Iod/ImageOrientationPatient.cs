@@ -219,7 +219,7 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		public override string ToString()
 		{
-			return String.Format(@"{0:R}\{1:R}\{2:R}\{3:R}\{4:R}\{5:R}", _rowX, _rowY, _rowZ, _columnX, _columnY, _columnZ);
+			return String.Format(@"{0:G12}\{1:G12}\{2:G12}\{3:G12}\{4:G12}\{5:G12}", _rowX, _rowY, _rowZ, _columnX, _columnY, _columnZ);
 		}
 
 		/// <summary>

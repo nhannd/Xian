@@ -445,9 +445,11 @@ namespace ClearCanvas.Dicom.DataStore
 			//Ensure the existing stuff is loaded.
 			LoadStudyXml(false);
 
+			XmlDocument doc = _studyXml.GetMemento(settings);
+
 			using (FileStream stream = GetFileStream(FileMode.Create, FileAccess.Write))
 			{
-				StudyXmlIo.Write(_studyXml.GetMemento(settings), stream);
+				StudyXmlIo.Write(doc, stream);
 				stream.Close();
 			}
 		}

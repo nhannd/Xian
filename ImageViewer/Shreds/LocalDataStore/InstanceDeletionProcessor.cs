@@ -196,7 +196,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 						{
 							IStudy study = reader.GetStudy(instanceUid);
-
 							if (study == null)
 							{
 								errorMessage = String.Format(SR.ExceptionCannotDeleteStudyDoesNotExist, instanceUid);
@@ -205,13 +204,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								continue;
 							}
 
-							List<ISopInstance> sopInstances = new List<ISopInstance>(study.GetSopInstances());
+							List<ISopInstance> sopInstances;
+							try
+							{
+								sopInstances = new List<ISopInstance>(study.GetSopInstances());
+							}
+							catch(Exception e)
+							{
+								sopInstances = new List<ISopInstance>(); //empty list.
+								string message = String.Format("Failed to retrieve sop instances for study ({0}).", study.StudyInstanceUid);
+								Platform.Log(LogLevel.Error, e, message);
+							}
+							
 							GetStatistics(sopInstances, out numberRelatedSopInstancesExistBefore, out totalUsedSpaceBefore);
 
 							try
 							{
-								FileRemover remover = new FileRemover(LocalDataStoreService.Instance.StorageDirectory);
-								
+								FileRemover remover = new FileRemover(Instance.StorageDirectory);
 								remover.DeleteFilesInStudy(study);
 
 								using (IDataStoreStudyRemover studyRemover = DataAccessLayer.GetIDataStoreStudyRemover())
