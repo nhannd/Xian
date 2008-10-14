@@ -53,7 +53,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
-    public class DicomEditorTool : ToolBase
+    public class ShowDicomEditorTool : ToolBase
     {		
         private static IShelf _shelf;
         private static DicomEditorComponent _component = null;
@@ -61,7 +61,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         private bool _enabled;
         private event EventHandler _enabledChanged;
 
-        public DicomEditorTool()
+        public ShowDicomEditorTool()
         {
             _enabled = true;
             _desktopWindow = null;
