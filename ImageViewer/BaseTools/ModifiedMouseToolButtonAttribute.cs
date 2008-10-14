@@ -41,10 +41,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// <seealso cref="MouseButtonShortcut"/>
 	/// <seealso cref="MouseImageViewerTool"/>
 	/// <seealso cref="IViewerShortcutManager"/>
-	/// <seealso cref="InactiveMouseToolButtonAttribute"/>
-	[Obsolete("Additional mouse tool button assignments no longer need to be modified.  Use InactiveMouseToolButtonAttribute instead.")]
+	/// <seealso cref="DefaultMouseToolButtonAttribute"/>
+	[Obsolete("Additional mouse tool button assignments no longer need to be modified.  Use DefaultMouseToolButtonAttribute instead.")]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-	public sealed class ModifiedMouseToolButtonAttribute : InactiveMouseToolButtonAttribute
+	public sealed class ModifiedMouseToolButtonAttribute : DefaultMouseToolButtonAttribute
 	{
 		/// <summary>
 		/// Constructor.

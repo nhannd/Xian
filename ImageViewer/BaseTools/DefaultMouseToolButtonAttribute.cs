@@ -4,23 +4,21 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
-	//TODO: DefaultMouseToolButton
-
 	/// <summary>
-	/// An attribute used by <see cref="MouseImageViewerTool"/> to specify it's inactive <see cref="MouseButtonShortcut"/>.
+	/// An attribute used by <see cref="MouseImageViewerTool"/> to specify it's default <see cref="MouseButtonShortcut"/>.
 	/// </summary>
 	/// <seealso cref="MouseButtonShortcut"/>
 	/// <seealso cref="MouseImageViewerTool"/>
 	/// <seealso cref="IViewerShortcutManager"/>
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-	public class InactiveMouseToolButtonAttribute : Attribute
+	public class DefaultMouseToolButtonAttribute : Attribute
 	{
 		private readonly MouseButtonShortcut _shortcut;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InactiveMouseToolButtonAttribute(XMouseButtons mouseButton)
+		public DefaultMouseToolButtonAttribute(XMouseButtons mouseButton)
 		{
 			_shortcut = new MouseButtonShortcut(mouseButton);
 		}
@@ -28,7 +26,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public InactiveMouseToolButtonAttribute(XMouseButtons mouseButton, ModifierFlags modifierFlags)
+		public DefaultMouseToolButtonAttribute(XMouseButtons mouseButton, ModifierFlags modifierFlags)
 		{
 			_shortcut = new MouseButtonShortcut(mouseButton, modifierFlags);
 		}

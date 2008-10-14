@@ -115,7 +115,7 @@
     <Compile Include="Annotations\Dicom\DicomFixedAnnotationLayoutFactory.cs" />
     <Compile Include="Annotations\IAnnotationResourceResolver.cs" />
     <Compile Include="BaseTools\GraphicTool.cs" />
-    <Compile Include="BaseTools\InactiveMouseToolButtonAttribute.cs" />
+    <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
@@ -165,7 +165,7 @@
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ActiveImageViewerChangedEventArgs.cs" />
     <Compile Include="BaseTools\ModifiedMouseToolButtonAttribute.cs" />
-    <Compile Include="BaseTools\MouseImageViewerToolAttributeProcessor.cs" />
+    <Compile Include="BaseTools\MouseToolAttributeProcessor.cs" />
     <Compile Include="BaseTools\MouseToolButtonAttribute.cs" />
     <Compile Include="BaseTools\MouseWheelHandlerAttribute.cs" />
     <Compile Include="BasicImageOperation.cs" />

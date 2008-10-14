@@ -43,7 +43,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MouseToolButton(XMouseButtons.Right, true)]
-	[InactiveMouseToolButton(XMouseButtons.Middle)]
+	[DefaultMouseToolButton(XMouseButtons.Middle)]
 
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", "Select", KeyStroke = XKeys.W)]

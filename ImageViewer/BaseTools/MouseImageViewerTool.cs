@@ -71,10 +71,10 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// </para>
 	/// <para>
 	/// A mouse tool can also have an additional mouse button shortcut specified 
-	/// (see <see cref="InactiveMouseToolButtonAttribute"/>) that does not require the mouse 
-	/// tool to be activated in order to use it.  The value of <see cref="InactiveMouseButtonShortcut"/> need not be 
+	/// (see <see cref="DefaultMouseToolButtonAttribute"/>) that does not require the mouse 
+	/// tool to be activated in order to use it.  The value of <see cref="DefaultMouseButtonShortcut"/> need not be 
 	/// modified (e.g. Ctrl, Shift),  however if another tool's <see cref="MouseButton"/> has the same value and is active,
-	/// it will supersede any <see cref="InactiveMouseButtonShortcut"/> assignments.  Therefore, <see cref="InactiveMouseButtonShortcut"/>
+	/// it will supersede any <see cref="DefaultMouseButtonShortcut"/> assignments.  Therefore, <see cref="DefaultMouseButtonShortcut"/>
 	/// should typically only be assigned a non-modified value when no other <see cref="MouseImageViewerTool"/> has the same
 	/// <see cref="MouseButton"/> value.
 	/// </para>
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// </para>
 	/// </remarks>
 	/// <seealso cref="MouseToolButtonAttribute"/>
-	/// <seealso cref="InactiveMouseToolButtonAttribute"/>
+	/// <seealso cref="DefaultMouseToolButtonAttribute"/>
 	public abstract class MouseImageViewerTool :
 		ImageViewerTool,
 		IMouseButtonHandler,
@@ -108,8 +108,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private event EventHandler _mouseButtonChanged;
 		private MouseButtonHandlerBehaviour _mousebuttonBehaviour;
 
-		private MouseButtonShortcut _inactiveMouseButtonShortcut;
-		private event EventHandler _inactiveMouseButtonShortcutChanged;
+		private MouseButtonShortcut _defaultMouseButtonShortcut;
+		private event EventHandler _defaultMouseButtonShortcutChanged;
 
 		private MouseWheelShortcut _mouseWheelShortcut;
 		private event EventHandler _mouseWheelShortcutChanged;
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			_tooltipPrefix = tooltipPrefix;
 
 			_mouseButton = XMouseButtons.None;
-			_inactiveMouseButtonShortcut = null;
+			_defaultMouseButtonShortcut = null;
 			_mouseWheelShortcut = null;
 			_active = false;
 		}
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		public override void Initialize()
 		{
 			base.Initialize();
-			MouseImageViewerToolAttributeProcessor.Process(this);
+			MouseToolAttributeProcessor.Process(this);
 		}
 
         /// <summary>
@@ -301,30 +301,30 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Gets or sets the inactive mouse button shortcut assigned to this tool.
+		/// Gets or sets the default mouse button shortcut assigned to this tool.
 		/// </summary>
-		public MouseButtonShortcut InactiveMouseButtonShortcut
+		public MouseButtonShortcut DefaultMouseButtonShortcut
     	{
-			get { return _inactiveMouseButtonShortcut; }
+			get { return _defaultMouseButtonShortcut; }
 			set
 			{
-				if (value != null && value.Equals(_inactiveMouseButtonShortcut))
+				if (value != null && value.Equals(_defaultMouseButtonShortcut))
 						return;
 
-				_inactiveMouseButtonShortcut = value;
-				EventsHelper.Fire(_inactiveMouseButtonShortcutChanged, this, EventArgs.Empty);
+				_defaultMouseButtonShortcut = value;
+				EventsHelper.Fire(_defaultMouseButtonShortcutChanged, this, EventArgs.Empty);
 			}
 		}
 
 		/// <summary>
 		/// Gets or sets the modified mouse button shortcut assigned to this tool.
 		/// </summary>
-		/// <seealso cref="InactiveMouseButtonShortcut"/>
-		[Obsolete("Now just gets/sets InactiveMouseButtonShortcut.")]
+		/// <seealso cref="DefaultMouseButtonShortcut"/>
+		[Obsolete("Now just gets/sets DefaultMouseButtonShortcut.")]
 		public MouseButtonShortcut ModifiedMouseButtonShortcut
 		{
-			get { return InactiveMouseButtonShortcut; }
-			set { InactiveMouseButtonShortcut = value; }
+			get { return DefaultMouseButtonShortcut; }
+			set { DefaultMouseButtonShortcut = value; }
 		}
 
 		/// <summary>
@@ -355,21 +355,21 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <summary>
 		/// Fired when the <see cref="ModifiedMouseButtonShortcut"/> property has changed.
 		/// </summary>
-		/// <seealso cref="InactiveMouseButtonShortcutChanged"/>
-		[Obsolete("Now just observes InactiveMouseButtonShortcutChanged.")]
+		/// <seealso cref="DefaultMouseButtonShortcutChanged"/>
+		[Obsolete("Now just observes DefaultMouseButtonShortcutChanged.")]
 		public event EventHandler ModifiedMouseButtonShortcutChanged
 		{
-			add { InactiveMouseButtonShortcutChanged += value; }
-			remove { InactiveMouseButtonShortcutChanged -= value; }
+			add { DefaultMouseButtonShortcutChanged += value; }
+			remove { DefaultMouseButtonShortcutChanged -= value; }
 		}
 		
 		/// <summary>
-		/// Fired when the <see cref="InactiveMouseButtonShortcut"/> property has changed.
+		/// Fired when the <see cref="DefaultMouseButtonShortcut"/> property has changed.
 		/// </summary>
-		public event EventHandler InactiveMouseButtonShortcutChanged
+		public event EventHandler DefaultMouseButtonShortcutChanged
 		{
-			add { _inactiveMouseButtonShortcutChanged += value; }
-			remove { _inactiveMouseButtonShortcutChanged -= value; }
+			add { _defaultMouseButtonShortcutChanged += value; }
+			remove { _defaultMouseButtonShortcutChanged -= value; }
 		}
 
     	/// <summary>

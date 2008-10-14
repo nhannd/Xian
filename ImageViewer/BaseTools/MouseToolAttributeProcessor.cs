@@ -35,10 +35,9 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
-	//TODO: MouseToolAttributeProcessor
-	internal sealed class MouseImageViewerToolAttributeProcessor
+	internal sealed class MouseToolAttributeProcessor
 	{
-		private MouseImageViewerToolAttributeProcessor()
+		private MouseToolAttributeProcessor()
 		{ 
 		}
 
@@ -71,15 +70,15 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		private static void InitializeModifiedMouseToolButton(MouseImageViewerTool mouseTool)
 		{
-			object[] modifiedButtonAssignments = mouseTool.GetType().GetCustomAttributes(typeof(InactiveMouseToolButtonAttribute), true);
-			if (modifiedButtonAssignments == null || modifiedButtonAssignments.Length == 0)
+			object[] defaultButtonAssignments = mouseTool.GetType().GetCustomAttributes(typeof(DefaultMouseToolButtonAttribute), true);
+			if (defaultButtonAssignments == null || defaultButtonAssignments.Length == 0)
 				return;
 
-			InactiveMouseToolButtonAttribute attribute = (InactiveMouseToolButtonAttribute)modifiedButtonAssignments[0];
+			DefaultMouseToolButtonAttribute attribute = (DefaultMouseToolButtonAttribute)defaultButtonAssignments[0];
 
 			try
 			{
-				mouseTool.InactiveMouseButtonShortcut = attribute.Shortcut;
+				mouseTool.DefaultMouseButtonShortcut = attribute.Shortcut;
 			}
 			catch (Exception e)
 			{

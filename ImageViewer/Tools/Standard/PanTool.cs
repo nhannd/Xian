@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("panup", "imageviewer-keyboard/ToolsStandardPan/PanUp", "PanUp", KeyStroke = XKeys.Control | XKeys.Up)]
 	[KeyboardAction("pandown", "imageviewer-keyboard/ToolsStandardPan/PanDown", "PanDown", KeyStroke = XKeys.Control | XKeys.Down)]
 
-	[InactiveMouseToolButton(XMouseButtons.Left, ModifierFlags.Control)]
 	[MouseToolButton(XMouseButtons.Left, false)]
+	[DefaultMouseToolButton(XMouseButtons.Left, ModifierFlags.Control)]
     
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PanTool : MouseImageViewerTool
