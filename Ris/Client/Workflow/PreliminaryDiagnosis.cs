@@ -3,6 +3,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -29,12 +30,13 @@ namespace ClearCanvas.Ris.Client.Workflow
         /// Displays the prelminary diagnosis conversation dialog.
         /// </summary>
         /// <param name="orderRef"></param>
-        /// <param name="desktopWindow"></param>
+		/// <param name="title"></param>
+		/// <param name="desktopWindow"></param>
         /// <returns></returns>
-        public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, IDesktopWindow desktopWindow)
+        public static ApplicationComponentExitCode ShowConversationDialog(EntityRef orderRef, string title, IDesktopWindow desktopWindow)
         {
             OrderNoteConversationComponent component = new OrderNoteConversationComponent(orderRef, OrderNoteCategory.PreliminaryDiagnosis.Key);
-            return ApplicationComponent.LaunchAsDialog(desktopWindow, component, "Review Preliminary Diagnosis");
+            return ApplicationComponent.LaunchAsDialog(desktopWindow, component, title);
         }
     }
 }

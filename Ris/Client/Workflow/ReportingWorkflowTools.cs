@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -223,7 +224,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// check for a prelim diagnosis
 			if (PreliminaryDiagnosis.ConversationExists(item.OrderRef))
 			{
-				if (PreliminaryDiagnosis.ShowConversationDialog(item.OrderRef, this.Context.DesktopWindow)
+				string title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
+					PersonNameFormat.Format(item.PatientName),
+					MrnFormat.Format(item.Mrn),
+					AccessionFormat.Format(item.AccessionNumber));
+
+				if (PreliminaryDiagnosis.ShowConversationDialog(item.OrderRef, title, this.Context.DesktopWindow)
 					== ApplicationComponentExitCode.None)
 					return false;   // user cancelled out
 			}

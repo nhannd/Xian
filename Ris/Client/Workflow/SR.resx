@@ -354,6 +354,9 @@
   <data name="FormatReportingStatusText" xml:space="preserve">
     <value>- {0} more item(s) available - {1} item(s) completed, {2} item(s) skipped</value>
   </data>
+  <data name="FormatTitleContextDescriptionReviewOrderNoteConversation" xml:space="preserve">
+    <value>Review Preliminary Diagnosis - {0} {1} - {2}</value>
+  </data>
   <data name="MessageChooseRadiologist" xml:space="preserve">
     <value>You must choose a supervisor.</value>
   </data>
