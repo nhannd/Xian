@@ -35,7 +35,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 			if (context && context.AccessionNumber)
 				Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber(context.AccessionNumber));
 			else
-				Field.setValue($("AccessionNumber"), Ris.formatAccessionNumber("000000000"));
+				Field.setValue($("AccessionNumber"), "A#");
 		}
 		catch(e)
 		{
