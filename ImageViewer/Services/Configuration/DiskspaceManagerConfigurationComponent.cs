@@ -36,7 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.ImageViewer.Services.DiskspaceManager;
 
-namespace ClearCanvas.ImageViewer.Configuration.Services
+namespace ClearCanvas.ImageViewer.Services.Configuration
 {
     /// <summary>
     /// Extension point for views onto <see cref="DiskspaceManagerConfigurationComponent"/>

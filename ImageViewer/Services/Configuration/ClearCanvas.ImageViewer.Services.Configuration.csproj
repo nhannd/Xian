@@ -7,8 +7,8 @@
     <ProjectGuid>{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageViewer.Configuration.Services</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageViewer.Configuration.Services</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Services.Configuration</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Services.Configuration</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

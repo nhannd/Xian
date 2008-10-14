@@ -155,8 +155,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\Services\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.Services.dll" />
-    <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\Services\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.Services.View.WinForms.dll" />
+    <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Services\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Configuration.dll" />
+    <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Services\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Configuration.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(DesktopBuild)">

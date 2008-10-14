@@ -7,8 +7,8 @@
     <ProjectGuid>{7FD1F68D-E165-4D79-9863-FBAD8852D62E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageViewer.Configuration.Services.View.WinForms</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageViewer.Configuration.Services.View.WinForms</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Services.Configuration.View.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Services.Configuration.View.WinForms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,9 +77,9 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Configuration.Services.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Services.Configuration.csproj">
       <Project>{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}</Project>
-      <Name>ClearCanvas.ImageViewer.Configuration.Services</Name>
+      <Name>ClearCanvas.ImageViewer.Services.Configuration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

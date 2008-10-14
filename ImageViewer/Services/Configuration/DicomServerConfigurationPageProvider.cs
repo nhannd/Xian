@@ -33,7 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Configuration.Services
+namespace ClearCanvas.ImageViewer.Services.Configuration
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
 	public class DicomServerConfigurationPageProvider : IConfigurationPageProvider
