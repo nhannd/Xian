@@ -45,7 +45,7 @@ namespace ClearCanvas.Enterprise.Core
     /// </summary>
     public class DefaultEntityChangeSetRecorder : IEntityChangeSetRecorder
     {
-        private const string LargeValue = "{large-value}";
+        private const int MaxStringLength = 255;
         private const string NullValue = "{null}";
         private const string MultiValued = "{multiple-values}";
 
@@ -153,11 +153,6 @@ namespace ClearCanvas.Enterprise.Core
             if(value == null)
                 return NullValue;
 
-            if(value is string)
-            {
-                string s = value as string;
-                return s.Length > 255 ? LargeValue : s;
-            }
             // use ISO format for date times, because it is easy to parse
             if(value is DateTime)
                 return DateTimeUtils.FormatISO((DateTime)value);
@@ -179,8 +174,9 @@ namespace ClearCanvas.Enterprise.Core
                 return MultiValued;
 
             // for all other values, including components (ValueObject subclasses)
-            // just call ToString() and hope for the best ;)
-            return value.ToString();
+			// just call ToString() and truncate to MaxStringLength chars
+        	string s = value.ToString();
+			return (s.Length > MaxStringLength) ? s.Substring(0, MaxStringLength) : s;
         }
 
     }
