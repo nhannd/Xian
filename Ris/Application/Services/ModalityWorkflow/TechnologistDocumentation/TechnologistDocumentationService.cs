@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 				: PersistenceContext.Load<Staff>(request.AssignedInterpreter.StaffRef, EntityLoadFlags.Proxy);
 			foreach (Procedure procedure in order.Procedures)
 			{
-				if(IsProcedurePerformed(procedure))
+				if(procedure.IsPerformed)
 				{
 					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
@@ -177,11 +177,15 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 				// schedule the interpretation step if the procedure was performed
 				// Note: this logic is probably UHN-specific... ideally this aspect of the workflow should be configurable,
 				// because it may be desirable to scheduled the interpretation prior to completing the documentation
-				if (IsProcedurePerformed(procedure))
+				if (procedure.IsPerformed)
 				{
 					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
-						interpretationStep.Schedule(now);
+					{
+						// bug #3037: schedule the interpretation for the performed time, which may be earlier than the current time 
+						// in downtime mode
+						interpretationStep.Schedule(procedure.PerformedTime);
+					}
 					interpSteps.Add(interpretationStep);
 				}
 			}
@@ -212,13 +216,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 		{
 			return rp.ModalityProcedureSteps.TrueForAll(
 					delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
-		}
-
-		private static bool IsProcedurePerformed(Procedure rp)
-		{
-			// return true if all MPS are terminated and at least one is completed
-			return AreAllModalityStepsTerminated(rp) && rp.ModalityProcedureSteps.Exists(
-				delegate(ModalityProcedureStep ps) { return ps.State == ActivityStatus.CM; });
 		}
 
 		private InterpretationStep GetPendingInterpretationStep(Procedure procedure)

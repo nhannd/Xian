@@ -139,6 +139,48 @@ namespace ClearCanvas.Healthcare {
     		}
     	}
 
+		/// <summary>
+		/// Gets the time at which the procedure can be considered "performed", which corresponds to the maximum
+		/// completed modality procedure step end-time.
+		/// </summary>
+		/// <remarks>
+		/// This is a computed property and hence should not be used in summaries.
+		/// </remarks>
+    	public virtual DateTime? PerformedTime
+    	{
+    		get
+    		{
+    			List<ModalityProcedureStep> completedSteps = CollectionUtils.Select(this.ModalityProcedureSteps,
+					delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
+
+				// return the max end-time over all completed MPS
+				return CollectionUtils.Max(completedSteps, null,
+					delegate(ModalityProcedureStep mps1, ModalityProcedureStep mps2)
+					{
+						return Nullable.Compare(mps1.EndTime, mps2.EndTime);
+					}).EndTime;
+    		}
+    	}
+
+		/// <summary>
+		/// Gets a value indicating whether this procedure can be considered "performed", meaning all modality procedure
+		/// steps have been terminated, and at least one has been completed.
+		/// </summary>
+		/// <remarks>
+		/// This is a computed property and hence should not be used in summaries.
+		/// </remarks>
+		public virtual bool IsPerformed
+    	{
+    		get
+    		{
+				// return true if all MPS are terminated and at least one is completed
+				return this.ModalityProcedureSteps.TrueForAll(
+						delegate(ModalityProcedureStep mps) { return mps.IsTerminated; })
+					&& this.ModalityProcedureSteps.Exists(
+						delegate(ModalityProcedureStep ps) { return ps.State == ActivityStatus.CM; });
+			}
+    	}
+
         #endregion
 
         #region Public Operations
