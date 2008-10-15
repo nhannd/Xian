@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{316C730A-492A-4201-87CD-3C2F3260571C}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -59,7 +59,6 @@
     <Compile Include="CompressedStorageScpExtension.cs" />
     <Compile Include="DeviceManager.cs" />
     <Compile Include="DicomScpContext.cs" />
-    <Compile Include="DicomSettings.Designer.cs" />
     <Compile Include="DicomSettings1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
