@@ -1006,7 +1006,7 @@ CREATE TABLE [dbo].[PartitionArchive](
 ) ON [STATIC]
 END
 GO
-/****** Object:  Table [dbo].[RestoreQueue]    Script Date: 07/08/2008 18:10:33 ******/
+/****** Object:  Table [dbo].[RestoreQueue]    Script Date: 10/14/2008 23:27:23 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1022,7 +1022,7 @@ CREATE TABLE [dbo].[RestoreQueue](
 	[ScheduledTime] [datetime] NOT NULL,
 	[RestoreQueueStatusEnum] [smallint] NOT NULL,
 	[ProcessorId] [varchar](128) NULL,
- CONSTRAINT [PK_RestoreQueue] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_RestoreQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
@@ -1030,6 +1030,12 @@ CREATE TABLE [dbo].[RestoreQueue](
 END
 GO
 SET ANSI_PADDING OFF
+GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[RestoreQueue]') AND name = N'IXC_RestoreQueue')
+CREATE CLUSTERED INDEX [IXC_RestoreQueue] ON [dbo].[RestoreQueue] 
+(
+	[ScheduledTime] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
 GO
 /****** Object:  Table [dbo].[ArchiveStudyStorage]    Script Date: 07/08/2008 18:10:25 ******/
 SET ANSI_NULLS ON
@@ -1052,7 +1058,7 @@ CREATE TABLE [dbo].[ArchiveStudyStorage](
 ) ON [PRIMARY]
 END
 GO
-/****** Object:  Table [dbo].[ArchiveQueue]    Script Date: 07/08/2008 18:10:23 ******/
+/****** Object:  Table [dbo].[ArchiveQueue]    Script Date: 10/14/2008 23:27:20 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1074,6 +1080,14 @@ CREATE TABLE [dbo].[ArchiveQueue](
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 ) ON [QUEUES]
 END
+GO
+SET ANSI_PADDING OFF
+GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]') AND name = N'IXC_ArchiveQueue')
+CREATE CLUSTERED INDEX [IXC_ArchiveQueue] ON [dbo].[ArchiveQueue] 
+(
+	[ScheduledTime] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
 GO
 
 
