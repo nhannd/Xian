@@ -45,23 +45,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
     public partial class Default : BasePage
     {
         #region Private Members
-
-        private ServerPartition _serverPartition;
-
         // used for database interaction
         private PartitionArchiveConfigController _controller = new PartitionArchiveConfigController();
 
         #endregion
-
-        #region Public Properties
-
-        public ServerPartition ServerPartition
-        {
-            get { return _serverPartition; }
-        }
-
-        #endregion
-
 
         #region Protected Methods
 
@@ -73,8 +60,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
 
         public void UpdateUI()
-        {           
-            ServerPartitionTabs.Update(0);
+        {
+			foreach (ServerPartition partition in ServerPartitionTabs.ServerPartitionList)
+			{
+				ServerPartitionTabs.Update(partition.Key);
+			}
             UpdatePanel.Update();
         }
 
@@ -86,11 +76,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
-                                                               _serverPartition = partition;
-                                                               
                                                                PartitionArchivePanel panel =
                                                                    LoadControl("PartitionArchivePanel.ascx") as PartitionArchivePanel;
                                                                panel.ID = "PartitionArchivePanel_" + partition.AeTitle;
+                                                           	   panel.ServerPartition = partition;
                                                                return panel;
                                                            });
 
@@ -140,19 +129,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
         #region Public Methods
 
-        public void AddPartition()
+        public void AddPartition(ServerPartition partition)
         {
             // display the add dialog
             AddEditPartitionDialog.PartitionArchive = null;
             AddEditPartitionDialog.EditMode = false;
             AddEditPartitionDialog.Show(true);
-        }
+			AddEditPartitionDialog.Partition = partition;
+		}
 
         public void EditPartition(Model.PartitionArchive partitionArchive)
         {
             AddEditPartitionDialog.PartitionArchive = partitionArchive;
             AddEditPartitionDialog.EditMode = true;
             AddEditPartitionDialog.Show(true);
+        	AddEditPartitionDialog.Partition = ServerPartition.Load(partitionArchive.ServerPartitionKey);
         }
 
         public void DeletePartition(Model.PartitionArchive partitionArchive)

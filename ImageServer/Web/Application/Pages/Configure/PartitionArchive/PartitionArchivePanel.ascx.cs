@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
         private IList<Model.PartitionArchive> _partitionArchives = new List<Model.PartitionArchive>();
         // used for database interaction
         private PartitionArchiveConfigController _theController;
+		private ServerPartition _serverPartition;
 
         #endregion Private Members
 
@@ -103,6 +104,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             set { _theController = value; }
         }
 
+		/// <summary>
+		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+		/// </summary>
+		public ServerPartition ServerPartition
+		{
+			get { return _serverPartition; }
+			set { _serverPartition = value; }
+		}
         #endregion Public Properties
 
         #region Protected Methods
@@ -206,6 +215,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
                     criteria.Enabled.EqualTo(false);
             }
 
+        	criteria.ServerPartitionKey.EqualTo(ServerPartition.Key);
+
             PartitionArchives =
                 _theController.GetPartitions(criteria);
         }
@@ -217,7 +228,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
         protected void AddPartitionButton_Click(object sender, ImageClickEventArgs e)
         {
-           ((Default)Page).AddPartition();
+           ((Default)Page).AddPartition(ServerPartition);
         }
 
         protected void EditPartitionButton_Click(object sender, ImageClickEventArgs e)

@@ -31,15 +31,12 @@
 
 using System;
 using System.IO;
-using System.Security;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
-using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchive
 {
@@ -52,8 +49,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
         private bool _editMode;
         private Model.PartitionArchive _partitionArchive;
+    	private ServerPartition _partition;
 
-        #endregion
+    	#endregion
 
         #region Public Properties
 
@@ -80,6 +78,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             }
             get { return _partitionArchive; }
         }
+
+		/// <summary>
+		/// Sets the list of partitions users allowed to pick.
+		/// </summary>
+		public ServerPartition Partition
+		{
+			set
+			{
+				_partition = value;
+				ViewState[ClientID + "_ServerPartition"] = value;
+			}
+
+			get { return _partition; }
+		}
 
         #endregion // public members
 
@@ -112,6 +124,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
                     ServerEntityKey partitionKey = ViewState[ClientID + "_EdittedPartitionArchive"] as ServerEntityKey;
                     _partitionArchive = Model.PartitionArchive.Load(partitionKey);
                 }
+
+				if (ViewState[ClientID + "_ServerPartition"] != null)
+					_partition = (ServerPartition)ViewState[ClientID + "_ServerPartition"];
+
             }
 
             ArchiveTypeDropDownList.Items.Clear();
@@ -173,7 +189,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
                 Description.Text = "Partition Archive Name";
                 ArchiveDelay.Text = "12";
                 EnabledCheckBox.Checked = true;
-                ReadOnlyCheckBox.Checked = true;
+                ReadOnlyCheckBox.Checked = false;
                 ArchiveTypeDropDownList.SelectedIndex = 0;
                 ConfigurationXML.Text = "<HsmArchive>\n\t<RootDir>C:\\ImageServer\\Archive</RootDir>\n</HsmArchive>";
             }
@@ -199,7 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
                 PartitionArchive = new Model.PartitionArchive();
             }
 
-            PartitionArchive.ServerPartitionKey = ((Default)Page).ServerPartition.GetKey();
+            PartitionArchive.ServerPartitionKey = Partition.Key;
             PartitionArchive.Description = Description.Text;
             PartitionArchive.ArchiveDelayHours = int.Parse(ArchiveDelay.Text);
 
