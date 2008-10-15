@@ -23,11 +23,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private bool _backedup = true;
         private readonly string _backupSrcDir = ServerPlatform.GetTempPath();
         private readonly string _backupDestDir = ServerPlatform.GetTempPath();
-        private bool _undo;
         #endregion
 
         public MoveDirectoryCommand(string src, string dest)
-            : base("Move Directory", true)
+            : base("MoveDirectory", true)
         {
             Platform.CheckForNullReference(src, "src");
             Platform.CheckForNullReference(dest, "dest");
@@ -71,8 +70,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         protected override void OnUndo()
         {
-            _undo = true;
-
             try
             {
                 DirectoryUtility.DeleteIfExists(_dest, true);

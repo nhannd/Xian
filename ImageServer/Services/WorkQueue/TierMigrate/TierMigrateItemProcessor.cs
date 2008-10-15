@@ -46,20 +46,19 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
+    
     /// <summary>
     /// Class for processing TierMigrate <see cref="WorkQueue"/> entries.
     /// </summary>
     class TierMigrateItemProcessor : BaseItemProcessor
     {
-        #region Private static members
-        private static int _sessionStudiesMigrate = 0;
-        private static TierMigrationAverageStatistics _averageStatisics = new TierMigrationAverageStatistics();
+        #region Private Static Members
+        private static readonly Object _statisticsLock = new Object();
+        private static TierMigrationAverageStatistics _average = new TierMigrationAverageStatistics();
+        private static int _studiesMigratedCount = 0;
+
         #endregion
 
-        #region Private Members
-        private readonly StatisticsSet _statistics = new StatisticsSet("TierMigration");
-        
-        #endregion
 
         /// <summary>
         /// Simple routine for failing a work queue item.
@@ -140,7 +139,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             stat.StudyInstanceUid = storage.StudyInstanceUid;
             stat.ProcessSpeed.Start();
 
-            long studySize = (long) DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
+            ulong studySize = (ulong)DirectoryUtility.CalculateFolderSize(storage.GetStudyPath());
+            stat.StudySize = studySize;
 
             Platform.Log(LogLevel.Info, "Migrating study {0} from {1}", storage.StudyInstanceUid, storage.FilesystemTierEnum);
 			ServerFilesystemInfo currFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(storage.FilesystemKey);
@@ -158,8 +158,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 throw new ApplicationException(msg);
             }
 
-            TimeSpanStatistics dbUpdateTime;
-            TimeSpanStatistics fileCopyTime;
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
             {
                 TierMigrationContext context = new TierMigrationContext();
@@ -186,35 +184,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 {
                     throw new ApplicationException(processor.FailureReason);
                 }
-                dbUpdateTime = updateDBCommand.Statistics;
-                fileCopyTime = moveCommand.Statistics;
-            }
 
+                stat.DBUpdate = updateDBCommand.Statistics;
+                stat.CopyFiles = moveCommand.Statistics;
+            }
 
             stat.ProcessSpeed.SetData(studySize);
             stat.ProcessSpeed.End();
            
-            _averageStatisics.AverageProcessSpeed.AddSample(stat.ProcessSpeed);
-            _averageStatisics.AverageDBUpdateTime.AddSample(dbUpdateTime);
-            _averageStatisics.AverageFileMoveTime.AddSample(fileCopyTime);
-            _averageStatisics.AverageStudySize.AddSample(studySize);
-            _statistics.AddSubStats(stat);
-
-            _sessionStudiesMigrate++;
-
-
             Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} [ {3} @ {4}]",
                             storage.StudyInstanceUid, storage.FilesystemTierEnum, newFilesystem.Filesystem.FilesystemTierEnum, ByteCountFormatter.Format((ulong)studySize), stat.ProcessSpeed.FormattedValue);
 
-
-            if (_sessionStudiesMigrate%5==0)
-            {
-                StatisticsLogger.Log(LogLevel.Info, _averageStatisics);
-                _averageStatisics = new TierMigrationAverageStatistics();
-            }
+            UpdateAverageStatistics(stat);
+           
+            
         }
 
-
+        private static void UpdateAverageStatistics(TierMigrationStatistics stat)
+        {
+            lock(_statisticsLock)
+            {
+                _average.AverageProcessSpeed.AddSample(stat.ProcessSpeed);
+                _average.AverageStudySize.AddSample(stat.StudySize);
+                _average.AverageStudySize.AddSample(stat.ProcessSpeed);
+                _average.AverageFileMoveTime.AddSample(stat.CopyFiles);
+                _average.AverageDBUpdateTime.AddSample(stat.DBUpdate);
+                _studiesMigratedCount++;
+                if (_studiesMigratedCount % 5 ==0)
+                {
+                    StatisticsLogger.Log(LogLevel.Info, _average);
+                    _average = new TierMigrationAverageStatistics();
+                }
+            }
+        }
 
         protected override bool CannotStart()
         {

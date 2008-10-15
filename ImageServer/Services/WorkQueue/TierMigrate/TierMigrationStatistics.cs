@@ -4,6 +4,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
     internal class TierMigrationStatistics : StatisticsSet
     {
+        public TierMigrationStatistics()
+            : base("TierMigrationStatistics")
+        {
+        }
         public string StudyInstanceUid
         {
             set
@@ -19,6 +23,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
             }
         }
 
+        public ulong StudySize
+        {
+            set
+            {
+                this["StudySize"] = new ByteCountStatistics("StudySize", value);
+            }
+            get
+            {
+                if (this["StudySize"] == null)
+                    this["StudySize"] = new ByteCountStatistics("StudySize");
+
+                return (this["StudySize"] as ByteCountStatistics).Value;
+            }
+        }
+
         public RateStatistics ProcessSpeed
         {
             get
@@ -29,6 +48,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 return (this["ProcessSpeed"] as RateStatistics);
             }
             set { this["ProcessSpeed"] = value; }
+        }
+
+        public TimeSpanStatistics DBUpdate
+        {
+            get
+            {
+                if (this["DBUpdate"] == null)
+                    this["DBUpdate"] = new TimeSpanStatistics("DBUpdate");
+
+                return (this["DBUpdate"] as TimeSpanStatistics);
+            }
+            set { this["DBUpdate"] = value; }
+        }
+
+        public TimeSpanStatistics CopyFiles
+        {
+            get
+            {
+                if (this["CopyFiles"] == null)
+                    this["CopyFiles"] = new TimeSpanStatistics("CopyFiles");
+
+                return (this["CopyFiles"] as TimeSpanStatistics);
+            }
+            set { this["CopyFiles"] = value; }
         }
 
     }

@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -26,35 +28,48 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             }
             else
             {
-                Platform.Log(LogLevel.Info, "Study Edit started. GUID={0}. Storage={1}", item.GetKey(), item.StudyStorageKey);
-                ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
-                StudyStorage storage = StudyStorage.Load(item.StudyStorageKey);
-                StudyStorageLocation location = StudyStorageLocation.FindStorageLocations(storage)[0];
+                ServerFilesystemInfo filesystem =
+                    FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
 
-                WebEditStudyCommandXmlParser parser = new WebEditStudyCommandXmlParser();
+                Debug.Assert(filesystem != null);
 
-                ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study");
-                StatisticsSet statistics = null;
-                using (processor)
+                if (!filesystem.Readable && !filesystem.Writeable)
                 {
-                    IList<IImageLevelUpdateCommand> updates = parser.ParseImageLevelCommands(item.Data.DocumentElement);
-                    UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(partition, location, updates);
-                    processor.AddCommand(updateStudyCommand);
-                    if (processor.Execute())
-                    {
-                        Complete();
-                        statistics = updateStudyCommand.Statistics;
-                    }
-                    else
-                    {
-                        FailQueueItem(WorkQueueItem, processor.FailureReason);
-                        Platform.Log(LogLevel.Info, "Study Edit failed. GUID={0}. Reason={1}", WorkQueueItem.GetKey(), processor.FailureReason);
-                    }
+                    String reason = String.Format("Filesystem {0} is not readable and writable.", filesystem.Filesystem.Description);
+                    FailQueueItem(item, reason);
                 }
-
-                if (statistics!=null)
+                else
                 {
-                    StatisticsLogger.Log(LogLevel.Info, statistics);
+                    Platform.Log(LogLevel.Info, "Study Edit started. GUID={0}. Storage={1}", item.GetKey(), item.StudyStorageKey);
+                    ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
+                    StudyStorage storage = StudyStorage.Load(item.StudyStorageKey);
+                    StudyStorageLocation location = StudyStorageLocation.FindStorageLocations(storage)[0];
+
+                    WebEditStudyCommandXmlParser parser = new WebEditStudyCommandXmlParser();
+
+                    ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study");
+                    StatisticsSet statistics = null;
+                    using (processor)
+                    {
+                        IList<IImageLevelUpdateCommand> updates = parser.ParseImageLevelCommands(item.Data.DocumentElement);
+                        UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(partition, location, updates);
+                        processor.AddCommand(updateStudyCommand);
+                        if (processor.Execute())
+                        {
+                            Complete();
+                            statistics = updateStudyCommand.Statistics;
+                        }
+                        else
+                        {
+                            FailQueueItem(WorkQueueItem, processor.FailureReason);
+                            Platform.Log(LogLevel.Info, "Study Edit failed. GUID={0}. Reason={1}", WorkQueueItem.GetKey(), processor.FailureReason);
+                        }
+                    }
+
+                    if (statistics != null)
+                    {
+                        StatisticsLogger.Log(LogLevel.Info, statistics);
+                    }
                 }
             }
         }
