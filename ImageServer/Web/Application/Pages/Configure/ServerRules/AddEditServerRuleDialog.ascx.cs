@@ -197,6 +197,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
 				@"');
                 params = new Array();
                 params.serverRule=escape(control.value);
+				var oList = document.getElementById('" +
+								RuleTypeDropDownList.ClientID +
+								@"');
+				params.ruleType = oList.options[oList.selectedIndex].value;
                 return params;
             }
 

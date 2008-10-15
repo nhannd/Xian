@@ -39,11 +39,11 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// Defines an extension point for types of actions that can be parsed by the <see cref="XmlActionCompiler{T}"/>.
+	/// Defines an extension point for types of actions that can be parsed by the <see cref="XmlActionCompiler{TActionContext, TSchemaContext}"/>.
     /// </summary>
-    /// <seealso cref="IXmlActionCompilerOperator{T}"/>
+	/// <seealso cref="IXmlActionCompilerOperator{TActionContext, TSchemaContext}"/>
     [ExtensionPoint]
-    public sealed class XmlActionCompilerOperatorExtensionPoint<T> : ExtensionPoint<IXmlActionCompilerOperator<T>>
+	public sealed class XmlActionCompilerOperatorExtensionPoint<TActionContext, TSchemaContext> : ExtensionPoint<IXmlActionCompilerOperator<TActionContext, TSchemaContext>>
     {
     }
 
@@ -52,21 +52,21 @@ namespace ClearCanvas.Common.Actions
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The <see cref="XmlActionCompiler{T}"/> can be used to compile a set of actions to perform
-    /// from XML.  The <see cref="XmlActionCompiler{T}.Compile"/> method can be called to create the
+	/// The <see cref="XmlActionCompiler{TActionContext, TSchemaContext}"/> can be used to compile a set of actions to perform
+	/// from XML.  The <see cref="XmlActionCompiler{TActionContext, TSchemaContext}.Compile"/> method can be called to create the
     /// set of actions to be performed.  These actions can then be executed based on input data.
     /// </para>
     /// <para>
-    /// Actions are defined by the <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/> extension
+	/// Actions are defined by the <see cref="XmlActionCompilerOperatorExtensionPoint{TActionContext, TSchemaContext}"/> extension
     /// point.  The compiler does not contain any predefined actions.  The compiler makes no assumptions
     /// about the attributes of the <see cref="XmlElement"/> for the action.  Any attributes can be defined
     /// for the action and are interpreted by the operation defined for the action type.
     /// </para>
     /// </remarks>
-    public class XmlActionCompiler<T>
+    public class XmlActionCompiler<TActionContext, TSchemaContext>
     {
-        private readonly Dictionary<string, IXmlActionCompilerOperator<T>> _operatorMap = new Dictionary<string, IXmlActionCompilerOperator<T>>();
-        private XmlSchema _schema;
+		private readonly Dictionary<string, IXmlActionCompilerOperator<TActionContext, TSchemaContext>> _operatorMap = new Dictionary<string, IXmlActionCompilerOperator<TActionContext, TSchemaContext>>();
+        private readonly Dictionary<TSchemaContext,XmlSchema> _schemas = new Dictionary<TSchemaContext, XmlSchema>();
 
         /// <summary>
         /// Constructor.
@@ -74,22 +74,22 @@ namespace ClearCanvas.Common.Actions
         public XmlActionCompiler()
         {
             // add extension operators
-            XmlActionCompilerOperatorExtensionPoint<T> xp = new XmlActionCompilerOperatorExtensionPoint<T>();
-            foreach (IXmlActionCompilerOperator<T> compilerOperator in xp.CreateExtensions())
+			XmlActionCompilerOperatorExtensionPoint<TActionContext, TSchemaContext> xp = new XmlActionCompilerOperatorExtensionPoint<TActionContext, TSchemaContext>();
+			foreach (IXmlActionCompilerOperator<TActionContext, TSchemaContext> compilerOperator in xp.CreateExtensions())
             {
                 AddOperator(compilerOperator);
             }
-            _schema = CreateSchema();
         }
 
-        private XmlSchema CreateSchema()
+        private XmlSchema CreateSchema(TSchemaContext context)
         {
             XmlSchema baseSchema = new XmlSchema();
 
-            foreach (IXmlActionCompilerOperator<T> op in _operatorMap.Values)
+			foreach (IXmlActionCompilerOperator<TActionContext, TSchemaContext> op in _operatorMap.Values)
             {
-                XmlSchemaElement element = op.GetSchema();
-                baseSchema.Items.Add(element);
+                XmlSchemaElement element = op.GetSchema(context);
+				if (element != null)
+					baseSchema.Items.Add(element);
             }
 
             XmlSchemaSet set = new XmlSchemaSet();
@@ -110,28 +110,21 @@ namespace ClearCanvas.Common.Actions
         }
 
         /// <summary>
-        /// An XML Schema representing the valid XML for the compiler.
-        /// </summary>
-        public XmlSchema Schema
-        {
-            get { return _schema; }
-        }
-
-        /// <summary>
         /// Compile a set of actions to perform.
         /// </summary>
         /// <remarks>
         /// <para>
         /// This method will parse the child <see cref="XmlElement"/>s of <paramref name="containingNode"/>.
-        /// Based on the name of the element, the the compiler will look for an <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>
+		/// Based on the name of the element, the the compiler will look for an <see cref="XmlActionCompilerOperatorExtensionPoint{TActionContext, TSchemaContext}"/>
         /// extension that handles the element type.  A list is constructed of all actions to perform, and a class implementing the 
         /// <see cref="IActionSet{T}"/> interface is returned which can be called to exectute the actions based on input data.
         /// </para>
         /// </remarks>
         /// <param name="containingNode">The input XML containg actions to perform.</param>
+        /// <param name="schemaContext"></param>
         /// <param name="checkSchema">Check the schema when compiling.</param>
         /// <returns>A class instance that implements the <see cref="IActionSet{T}"/> interface.</returns>
-        public IActionSet<T> Compile(XmlElement containingNode, bool checkSchema)
+        public IActionSet<TActionContext> Compile(XmlElement containingNode, TSchemaContext schemaContext, bool checkSchema)
         {
             // Note, recursive calls are made to this method to compile.  The schema is not
             // checked on recursive calls, but should be checked once on an initial compile.
@@ -155,7 +148,11 @@ namespace ClearCanvas.Common.Actions
 
                 XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
                 xmlReaderSettings.Schemas = new XmlSchemaSet();
-                xmlReaderSettings.Schemas.Add(Schema);
+				if (!_schemas.ContainsKey(schemaContext))
+				{
+					_schemas.Add(schemaContext, CreateSchema(schemaContext));
+				}
+				xmlReaderSettings.Schemas.Add(_schemas[schemaContext]);
                 xmlReaderSettings.ValidationType = ValidationType.Schema;
                 xmlReaderSettings.ConformanceLevel = ConformanceLevel.Fragment;
 
@@ -164,14 +161,14 @@ namespace ClearCanvas.Common.Actions
                 xmlReader.Close();
             }
 
-            List<IActionItem<T>> actions = new List<IActionItem<T>>();
+            List<IActionItem<TActionContext>> actions = new List<IActionItem<TActionContext>>();
             ICollection<XmlNode> nodes = GetChildElements(containingNode);
             
 			foreach(XmlNode node in nodes)
             {
                 if (_operatorMap.ContainsKey(node.Name))
                 {
-                    IXmlActionCompilerOperator<T> op = _operatorMap[node.Name];
+                    IXmlActionCompilerOperator<TActionContext, TSchemaContext> op = _operatorMap[node.Name];
                     actions.Add(op.Compile(node as XmlElement));
                 }
                 else
@@ -180,10 +177,10 @@ namespace ClearCanvas.Common.Actions
                 }
             }
 
-			return new ActionSet<T>(actions);
+			return new ActionSet<TActionContext>(actions);
         }
 
-        private void AddOperator(IXmlActionCompilerOperator<T> op)
+        private void AddOperator(IXmlActionCompilerOperator<TActionContext,TSchemaContext> op)
         {
             _operatorMap.Add(op.OperatorTag, op);
         }

@@ -33,11 +33,12 @@ using System.Xml;
 using System.Xml.Schema;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
 {
-    [ExtensionOf(typeof (XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-    public class AutoRouteActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext, ServerRuleTypeEnum>))]
+	public class AutoRouteActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext, ServerRuleTypeEnum>
     {
         public AutoRouteActionOperator()
             : base("auto-route")
@@ -56,8 +57,11 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             return new AutoRouteActionItem(device);
         }
 
-        public XmlSchemaElement GetSchema()
-        {
+		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
+		{
+			if (!ruleType.Equals(ServerRuleTypeEnum.AutoRoute))
+				return null;
+
             XmlSchemaComplexType type = new XmlSchemaComplexType();
 
             XmlSchemaAttribute attrib = new XmlSchemaAttribute();

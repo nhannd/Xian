@@ -35,9 +35,9 @@ using System.Xml.Schema;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// Interface for extensions implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
+    /// Interface for extensions implementing <see cref="XmlActionCompilerOperatorExtensionPoint{TActionContext,TSchemaContext}"/>.
     /// </summary>
-    public interface IXmlActionCompilerOperator<T>
+    public interface IXmlActionCompilerOperator<TActionContext, TSchemaContext>
     {
         /// <summary>
         /// The name of the action implemented.  This is typically the name of the <see cref="XmlElement"/> describing the action.
@@ -49,12 +49,13 @@ namespace ClearCanvas.Common.Actions
         /// </summary>
         /// <param name="xmlNode">Input <see cref="XmlElement"/> describing the action to perform.</param>
         /// <returns>A class implementing the <see cref="IActionItem{T}"/> interface which can perform the action.</returns>
-        IActionItem<T> Compile(XmlElement xmlNode);
+        IActionItem<TActionContext> Compile(XmlElement xmlNode);
 
         /// <summary>
         /// Get an <see cref="XmlSchemaElement"/> describing the ActionItem for validation purposes.
         /// </summary>
+        /// <param name="context">A context in which the schema is being generated.</param>
         /// <returns></returns>
-        XmlSchemaElement GetSchema();
+        XmlSchemaElement GetSchema(TSchemaContext context);
     }
 }

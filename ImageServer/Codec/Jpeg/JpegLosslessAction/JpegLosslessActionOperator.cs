@@ -36,12 +36,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Actions;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.ImageServer.Codec.Jpeg.JpegExtendedAction;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
 {
-	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext>))]
-	public class JpegLosslessActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext>
+	[ExtensionOf(typeof(XmlActionCompilerOperatorExtensionPoint<ServerActionContext, ServerRuleTypeEnum>))]
+	public class JpegLosslessActionOperator : ActionOperatorCompilerBase, IXmlActionCompilerOperator<ServerActionContext, ServerRuleTypeEnum>
 	{
 		public JpegLosslessActionOperator()
 			: base("jpeg-lossless")
@@ -89,8 +90,11 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegLosslessAction
 			}
 		}
 
-		public XmlSchemaElement GetSchema()
+		public XmlSchemaElement GetSchema(ServerRuleTypeEnum ruleType)
 		{
+			if (!ruleType.Equals(ServerRuleTypeEnum.StudyCompress))
+				return null;
+
 			XmlSchemaElement element = GetTimeSchema(OperatorTag);
 
 			return element;

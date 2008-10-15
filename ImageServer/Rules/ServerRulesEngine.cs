@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageServer.Rules
                 // Create the specification and action compilers
                 // We'll compile the rules right away
                 XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
-                XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
+                XmlActionCompiler<ServerActionContext, ServerRuleTypeEnum> actionCompiler = new XmlActionCompiler<ServerActionContext, ServerRuleTypeEnum>();
 
                 foreach (ServerRule serverRule in list)
                 {
@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Rules
                                                                  delegate(XmlNode child) { return child.Name.Equals("rule"); });
 
 
-                        theRule.Compile(ruleNode, specCompiler, actionCompiler);
+						theRule.Compile(ruleNode, serverRule.ServerRuleTypeEnum, specCompiler, actionCompiler);
 
                         RuleTypeCollection typeCollection;
 

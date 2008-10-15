@@ -31,6 +31,7 @@
 
 using System;
 using System.Xml;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
@@ -60,7 +61,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             }
 
             string error;
-            if (false == Rule.ValidateRule(theDoc, out error))
+			// TODO:  This code currently isn't used, but we should fix it somehow at some point!
+            if (false == Rule.ValidateRule(ServerRuleTypeEnum.StudyCompress, theDoc, out error))
             {
                 ErrorMessage = error;
                 return false;

@@ -37,6 +37,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
@@ -108,9 +109,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         /// Validate a ServerRule for proper formatting.
         /// </summary>
         /// <param name="serverRule">A string representing the rule.</param>
+        /// <param name="ruleType">An string enumerated value of <see cref="ServerRuleTypeEnum"/></param>
         /// <returns>The result of the validation.</returns>
         [WebMethod]
-        public ValidationResult ValidateServerRule(string serverRule)
+        public ValidationResult ValidateServerRule(string serverRule, string ruleType)
         {
             ValidationResult result = new ValidationResult();
 
@@ -122,7 +124,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
                 return result;
             }
 
-            XmlDocument theDoc = new XmlDocument();
+        	ServerRuleTypeEnum type;
+			try
+			{
+				type = ServerRuleTypeEnum.GetEnum(ruleType);
+			}
+			catch (Exception e)
+			{
+				result.ErrorText = "Unable to parse rule type: " + e.Message;
+				result.Success = false;
+				result.ErrorCode = -5000;
+				return result;
+			}
+
+        	XmlDocument theDoc = new XmlDocument();
 
             try
             {
@@ -138,7 +153,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             }
 
             string error;
-            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(theDoc, out error))
+            if (false == ClearCanvas.ImageServer.Rules.Rule.ValidateRule(type, theDoc, out error))
             {
                 result.ErrorText = error;
                 result.Success = false;

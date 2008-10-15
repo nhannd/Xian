@@ -83,8 +83,8 @@ namespace ClearCanvas.ImageServer.Rules
 
         #region Public Methods
 
-        public void Compile(XmlNode ruleNode, XmlSpecificationCompiler specCompiler,
-                            XmlActionCompiler<ServerActionContext> actionCompiler)
+		public void Compile(XmlNode ruleNode, ServerRuleTypeEnum ruleType, XmlSpecificationCompiler specCompiler,
+                            XmlActionCompiler<ServerActionContext,ServerRuleTypeEnum> actionCompiler)
         {
             XmlNode conditionNode =
                 CollectionUtils.SelectFirst<XmlNode>(ruleNode.ChildNodes,
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Rules
                                                      delegate(XmlNode child) { return child.Name.Equals("action"); });
 
 			if (actionNode != null)
-				_actions = actionCompiler.Compile(actionNode as XmlElement, true);
+				_actions = actionCompiler.Compile(actionNode as XmlElement, ruleType, true);
 			else if (!IsExempt)
 				throw new ApplicationException("No action element defined for the rule.");
 			else
@@ -153,16 +153,18 @@ namespace ClearCanvas.ImageServer.Rules
         /// <summary>
         /// Method for validating proper format of a ServerRule.
         /// </summary>
+        /// <param name="type">The type of rule to validate</param>
         /// <param name="rule">The rule to validate</param>
         /// <param name="errorDescription">A failure description on error.</param>
         /// <returns>true on successful validation, otherwise false.</returns>
-        public static bool ValidateRule(XmlDocument rule, out string errorDescription)
+        public static bool ValidateRule(ServerRuleTypeEnum type, XmlDocument rule, out string errorDescription)
         {
             XmlSpecificationCompiler specCompiler = new XmlSpecificationCompiler("dicom");
-            XmlActionCompiler<ServerActionContext> actionCompiler = new XmlActionCompiler<ServerActionContext>();
+            XmlActionCompiler<ServerActionContext,ServerRuleTypeEnum> actionCompiler = new XmlActionCompiler<ServerActionContext,ServerRuleTypeEnum>();
 
             ServerRule theServerRule = new ServerRule();
             theServerRule.RuleXml = rule;
+        	theServerRule.ServerRuleTypeEnum = type;
 
             Rule theRule = new Rule();
             theRule.Name = theServerRule.RuleName;
@@ -174,7 +176,7 @@ namespace ClearCanvas.ImageServer.Rules
 
             try
             {
-                theRule.Compile(ruleNode, specCompiler, actionCompiler);
+                theRule.Compile(ruleNode, type, specCompiler, actionCompiler);
             }
             catch (Exception e)
             {
