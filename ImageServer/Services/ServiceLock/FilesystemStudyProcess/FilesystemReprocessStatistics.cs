@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         {
             AddField(new Statistics<string>("Filesystem"));
             AddField(new Statistics<int>("NumStudies"));
-            AddField(new RateStatistics("StudyRate", RateType.MESSAGES));
+            AddField(new RateStatistics("StudyRate", "studies"));
         }
 
         #endregion Constructors

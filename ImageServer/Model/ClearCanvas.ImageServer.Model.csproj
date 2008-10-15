@@ -52,6 +52,7 @@
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\ICreatePatientForStudy.cs" />
+    <Compile Include="Brokers\ILockStudy.cs" />
     <Compile Include="Brokers\IUpdateQueueStudyState.cs" />
     <Compile Include="Brokers\IWebQueryReconcileQueue.cs" />
     <Compile Include="Brokers\IInserReconcileQueue.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="FilesystemTierEnum.gen.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
+    <Compile Include="Parameters\LockStudyParameters.cs" />
     <Compile Include="Parameters\ReconcileStudyWorkQueueData.cs" />
     <Compile Include="Parameters\AttachStudyToPatientParamaters.cs" />
     <Compile Include="Parameters\UpdateQueueStudyStateParameters.cs" />
@@ -276,6 +278,7 @@
     <Compile Include="StudyStorage.cs" />
     <Compile Include="StudyStorage.gen.cs" />
     <Compile Include="StudyStorageLocation.cs" />
+    <Compile Include="WorkQueue.cs" />
     <Compile Include="WorkQueue.gen.cs" />
     <Compile Include="Parameters\StudyStorageInsertParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -4,7 +4,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 {
@@ -61,13 +63,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 fsQueueUpdateColumns.FilesystemKey = Context.Destination.Filesystem.GetKey();
                 fsQueueBroker.Update(fsQueueSearchCriteria, fsQueueUpdateColumns);
                 
-                // insert new tier-migration eligiblility entry for the new filesystem
-                FilesystemQueueUpdateColumns columns = new FilesystemQueueUpdateColumns();
-                columns.FilesystemKey = Context.Destination.Filesystem.GetKey();
-                columns.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
-                columns.ScheduledTime = Platform.Time;
-                columns.StudyStorageKey = Context.OriginalStudyLocation.GetKey();
-                fsQueueBroker.Insert(columns);
+                // Insert or update Filesystem Queue table.
+                IInsertFilesystemQueue insertFilesystemQueueBroker = updateContext.GetBroker<IInsertFilesystemQueue>();
+                FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+                parms.FilesystemKey = Context.Destination.Filesystem.GetKey();
+                parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
+                parms.ScheduledTime = Platform.Time;
+                parms.StudyStorageKey = Context.OriginalStudyLocation.GetKey();
+                insertFilesystemQueueBroker.Execute(parms);
             }
         }
     }

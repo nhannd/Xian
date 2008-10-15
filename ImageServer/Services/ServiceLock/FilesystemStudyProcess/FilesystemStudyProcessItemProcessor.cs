@@ -103,34 +103,51 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="engine">The rules engine to use when processing the study.</param>
         private void ProcessStudy(StudyStorageLocation location, ServerRulesEngine engine)
         {
-            DicomFile msg = LoadInstance(location);
-            if (msg == null)
+            if (!location.AcquireLock())
             {
-                Platform.Log(LogLevel.Error, "Unable to load file for study {0}", location.StudyInstanceUid);
-                return;
+                Platform.Log(LogLevel.Error, "Unable to lock study {0}. The study may be being processed.", location.StudyInstanceUid); 
+            }
+            else
+            {
+                try
+                {
+                    DicomFile msg = LoadInstance(location);
+                    if (msg == null)
+                    {
+                        Platform.Log(LogLevel.Error, "Unable to load file for study {0}", location.StudyInstanceUid);
+                        return;
+                    }
+
+                    
+                    ServerActionContext context = new ServerActionContext(msg, location.FilesystemKey, location.ServerPartitionKey, location.GetKey());
+                    context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
+
+                    // Add a command to delete the current filesystemQueue entries, so that they can 
+                    // be reinserted by the rules engine.
+                    context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey()));
+
+                    // Execute the rules engine, insert commands to update the database into the command processor.
+                    engine.Execute(context);
+
+                    // Re-do insert into the archive queue.
+                    // Note: the stored procedure will update the archive entry if it already exists
+                    context.CommandProcessor.AddCommand(
+                        new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey()));
+
+
+                    // Do the actual database updates.
+                    if (false == context.CommandProcessor.Execute())
+                    {
+                        Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", location.StudyInstanceUid);
+                    }
+                }
+                finally
+                {
+                    location.ReleaseLock();
+                }
             }
 
-            ServerActionContext context = new ServerActionContext(msg, location.FilesystemKey, location.ServerPartitionKey, location.GetKey());
-            context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
-
-            // Add a command to delete the current filesystemQueue entries, so that they can 
-            // be reinserted by the rules engine.
-            context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey()));
-
-			// Execute the rules engine, insert commands to update the database into the command processor.
-            engine.Execute(context);
-
-			// Re-do insert into the archive queue.
-			// Note: the stored procedure will update the archive entry if it already exists
-			context.CommandProcessor.AddCommand(
-				new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey()));
-
-
-            // Do the actual database updates.
-            if (false == context.CommandProcessor.Execute())
-            {
-                Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", location.StudyInstanceUid);
-            }
+            
         }
 
         /// <summary>
@@ -168,8 +185,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                         catch (Exception e)
                         {
                             Platform.Log(LogLevel.Error, e,
-                                         "Unexpected exception loading storage location or processing study: {0} on partition {1}.",
-                                         studyInstanceUid, partition.Description);
+                                         "Unexpected error while processing study: {0} on partition {1}.", studyInstanceUid, partition.Description);
                         }                        
                     }
                 }

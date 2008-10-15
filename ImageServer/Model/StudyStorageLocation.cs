@@ -160,6 +160,70 @@ namespace ClearCanvas.ImageServer.Model
 
             return path;
         }
+
+        /// <summary>
+        /// Acquires a lock on the study for processing
+        /// </summary>
+        /// <returns>
+        /// <b>true</b> if the study is successfully locked.
+        /// <b>false</b> if the study cannot be locked or is being locked by another process.
+        /// </returns>
+        /// <remarks>
+        /// This method is non-blocking. Caller must check the return value to ensure the study has been
+        /// successfully locked.
+        /// </remarks>
+        public bool AcquireLock()
+        {
+            IUpdateContext context =
+                PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+            using (context)
+            {
+                ILockStudy lockStudyBroker = context.GetBroker<ILockStudy>();
+                LockStudyParameters parms = new LockStudyParameters();
+                parms.StudyStorageKey = this.GetKey();
+                parms.Lock = true;
+                if (!lockStudyBroker.Execute(parms))
+                    return false;
+
+
+                context.Commit();
+                return parms.Successful;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Releases a lock acquired via <see cref="AcquireLock"/>
+        /// </summary>
+        /// <returns>
+        /// <b>true</b> if the study is successfully unlocked.
+        /// </returns>
+        /// <remarks>
+        /// This method is non-blocking. Caller must check the return value to ensure the study has been
+        /// successfully unlocked.
+        /// </remarks>
+        public bool ReleaseLock()
+        {
+            IUpdateContext context =
+                PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+            using (context)
+            {
+                ILockStudy lockStudyBroker = context.GetBroker<ILockStudy>();
+                LockStudyParameters parms = new LockStudyParameters();
+                parms.StudyStorageKey = this.GetKey();
+                parms.Lock = false;
+                if (!lockStudyBroker.Execute(parms))
+                    return false;
+
+
+                context.Commit();
+                return parms.Successful;
+            }
+
+            return false;
+        }
+
         #endregion
 
         /// <summary>
@@ -177,6 +241,9 @@ namespace ClearCanvas.ImageServer.Model
             IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
             return studyLocationList;
         }
+
+
+
         
     }
 }

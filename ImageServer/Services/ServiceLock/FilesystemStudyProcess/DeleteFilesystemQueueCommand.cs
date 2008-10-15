@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -54,16 +55,28 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 
         protected override void OnExecute(IUpdateContext updateContext)
         {
-            IFilesystemQueueEntityBroker select = updateContext.GetBroker<IFilesystemQueueEntityBroker>();
-
+            IFilesystemQueueEntityBroker filesystemQueueBroker= updateContext.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueueSelectCriteria criteria = new FilesystemQueueSelectCriteria();
-
             criteria.StudyStorageKey.EqualTo(_storageLocationKey);
-            IList<FilesystemQueue> list = select.Find(criteria);
+            IList<FilesystemQueue> filesystemQueueItems = filesystemQueueBroker.Find(criteria);
 
-            foreach (FilesystemQueue queue in list)
+            IWorkQueueEntityBroker workQueueBroker = updateContext.GetBroker<IWorkQueueEntityBroker>();
+            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+            workQueueCriteria.StudyStorageKey.EqualTo(_storageLocationKey);
+            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.PurgeStudy, WorkQueueTypeEnum.DeleteStudy, WorkQueueTypeEnum.CompressStudy, WorkQueueTypeEnum.MigrateStudy });
+            IList<WorkQueue> workQueueItems = workQueueBroker.Find(workQueueCriteria);
+
+            foreach (FilesystemQueue queue in filesystemQueueItems)
             {
-                select.Delete(queue.GetKey());
+                if (!filesystemQueueBroker.Delete(queue.GetKey()))
+                    throw new ApplicationException("Unable to delete items in the filesystem queue");
+            }
+
+            // delete work queue
+            foreach (WorkQueue item in workQueueItems)
+            {
+                if (!item.Delete(updateContext))
+                    throw new ApplicationException("Unable to delete items in the work queue");
             }
         }
     }

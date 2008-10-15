@@ -160,6 +160,12 @@ DROP PROCEDURE [dbo].[CreatePatientForStudy]
 GO
 
 
+/****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 17:35:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LockStudy]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[LockStudy]
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[UpdateQueueStudyState]    Script Date: 10/01/2008 11:53:24 ******/
 SET ANSI_NULLS ON
 GO
@@ -3415,3 +3421,56 @@ END
 '
 END
 GO
+
+GO
+/****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 16:45:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LockStudy]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 15, 2008
+-- Description:	Lock/Unlock a study
+-- =============================================
+CREATE PROCEDURE [dbo].[LockStudy] 
+	@StudyStorageGUID uniqueidentifier,
+	@Lock bit = 1,
+	@Successful bit output
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	SET @Successful= 1;
+
+	IF @Lock=1
+	BEGIN
+		UPDATE StudyStorage 
+		SET Lock=1, LastAccessedTime = getdate()
+		WHERE GUID=@StudyStorageGUID AND Lock=0
+
+		IF (@@ROWCOUNT=0)
+			SET @Successful=0
+		
+	END
+	ELSE
+	BEGIN
+		-- unlock if the study is being locked
+		UPDATE StudyStorage 
+		SET Lock=0, LastAccessedTime = getdate()
+		WHERE GUID=@StudyStorageGUID AND Lock=1
+
+		IF (@@ROWCOUNT=0)
+			SET @Successful=0
+
+	END
+	
+
+END
+'
+END
+GO
+
