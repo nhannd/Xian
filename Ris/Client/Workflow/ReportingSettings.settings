@@ -14,7 +14,7 @@
     <Setting Name="SupervisorID" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="TranscriptionistStaffTypeFilters" Description="A comma separated list of staff type codes used to determine which staff can be used as a Transcriptionist" Type="System.String" Scope="Application">
+    <Setting Name="DowntimeTranscriptionistStaffTypeFilters" Description="A comma separated list of staff type codes used to determine which staff can be used as a Transcriptionist" Type="System.String" Scope="Application">
       <Value Profile="(Default)">STRA</Value>
     </Setting>
   </Settings>

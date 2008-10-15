@@ -68,16 +68,16 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        /// A comma separated list of staff type codes used to determine which staff can be used as a Transcriptionist
+        /// A comma separated list of staff type codes used to determine which staff can be used as a downtime Transcriptionist
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of staff type codes used to determine which staff can be u" +
-            "sed as a Transcriptionist")]
+            "sed as a downtime Transcriptionist")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("STRA")]
-        public string TranscriptionistStaffTypeFilters {
+        public string DowntimeTranscriptionistStaffTypeFilters {
             get {
-                return ((string)(this["TranscriptionistStaffTypeFilters"]));
+                return ((string)(this["DowntimeTranscriptionistStaffTypeFilters"]));
             }
         }
     }

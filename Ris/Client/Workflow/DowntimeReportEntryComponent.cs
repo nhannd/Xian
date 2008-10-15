@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_interpreterLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, radStaffTypes);
 
 			// transcriptionist staff lookup handler, using filters provided by application configuration
-			string transFilters = ReportingSettings.Default.TranscriptionistStaffTypeFilters;
+			string transFilters = ReportingSettings.Default.DowntimeTranscriptionistStaffTypeFilters;
 			string[] transStaffTypes = string.IsNullOrEmpty(transFilters) ? new string[] { } :
 				CollectionUtils.Map<string, string>(transFilters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
 			_transcriptionistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, transStaffTypes);
