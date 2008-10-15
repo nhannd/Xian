@@ -937,7 +937,7 @@ Preview.ReportPreview = function () {
 		if (!reportObject)
 		{
 			// the Content was not JSML, but just plain text
-			return reportJsml || "None";
+			return reportJsml || null;
 		}
 
 		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
@@ -948,7 +948,7 @@ Preview.ReportPreview = function () {
 			reportText = reportObject.ReportText;
 
 		if (!reportText)
-			reportText = "None";
+			return null;
 
 		return reportText.replaceLineBreak();
 	}
@@ -1002,10 +1002,14 @@ Preview.ReportPreview = function () {
 				{
 					var addendumPart = report.Parts[i];
 					var addendumContent = addendumPart && addendumPart.ExtendedProperties && addendumPart.ExtendedProperties.ReportContent ? addendumPart.ExtendedProperties.ReportContent : "";
-					formattedReport += "<b>Addendum " + _formatReportStatus(addendumPart, true) + ": </b><br><br>";
-					formattedReport += _parseReportContent(addendumContent);
-					formattedReport += _formatReportPerformer(addendumPart);
-					formattedReport += "<br><br>";
+					var parsedReportContent = _parseReportContent(addendumContent);
+					if (parsedReportContent)
+					{
+						formattedReport += "<b>Addendum " + _formatReportStatus(addendumPart, true) + ": </b><br><br>";
+						formattedReport += parsedReportContent;
+						formattedReport += _formatReportPerformer(addendumPart);
+						formattedReport += "<br><br>";
+					}
 				}
 			}
 

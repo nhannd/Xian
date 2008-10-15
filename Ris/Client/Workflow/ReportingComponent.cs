@@ -134,6 +134,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		bool CanSaveReport { get; }
 
 		/// <summary>
+		/// Gets a value indicating the active report part is an addendum.
+		/// </summary>
+		bool IsAddendum { get; }
+
+		/// <summary>
 		/// Gets or sets the report content for the active report part.
 		/// </summary>
 		string ReportContent { get; set; }
@@ -306,6 +311,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			public bool CanSaveReport
 			{
 				get { return Owner.SaveReportEnabled; }
+			}
+
+			public bool IsAddendum
+			{
+				get { return Owner._activeReportPartIndex > 0; }
 			}
 
 			public string ReportContent
