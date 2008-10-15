@@ -99,12 +99,11 @@ namespace ClearCanvas.Enterprise.Hibernate
                             });
 
                 // for updates, include only the properties that have actually changed
-                // but exclude collection properties since we have elected not to track changes to these due to complexity
                 case EntityChangeType.Update:
                     return CollectionUtils.Select(_propertyDiffs,
                             delegate(PropertyDiff diff)
                             {
-                                return diff.PropertyName != "Version" && !diff.IsCollectionProperty && diff.IsChanged;
+                                return diff.PropertyName != "Version" && diff.IsChanged;
                             });
 
                 // include no properties    

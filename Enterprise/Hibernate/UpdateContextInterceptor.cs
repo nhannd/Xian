@@ -42,6 +42,8 @@ using System.Collections;
 using ClearCanvas.Common.Utilities;
 using System.Reflection;
 using NHibernate.Type;
+using NHibernate.Collection;
+using Iesi.Collections;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -233,9 +235,64 @@ namespace ClearCanvas.Enterprise.Hibernate
             {
                 object oldValue = previousState == null ? null : previousState[i];
                 object newValue = currentState == null ? null : currentState[i];
-                diffs[i] = new PropertyDiff(propertyNames[i], types[i], oldValue, newValue);
-            }
+
+				// need to handle collections specially
+				if (types[i].IsCollectionType && ReferenceEquals(oldValue, newValue))
+				{
+					// the collection instance itself has not changed, but perhaps the content has?
+					// if the oldValue is a persistent collection, then we can get a snapshot from
+					// when the collection was initially loaded, and see if it is dirty
+					if (oldValue is IPersistentCollection)
+					{
+						oldValue = GetCollectionSnapshot(oldValue as IPersistentCollection);
+					}
+				}
+
+				diffs[i] = new PropertyDiff(propertyNames[i], types[i], oldValue, newValue);
+			}
             return diffs;
         }
+
+		private static object GetCollectionSnapshot(IPersistentCollection collection)
+		{
+			// the collection is not dirty, then the snapshot is the collection
+			if (!collection.IsDirty)
+			{
+				return collection;
+			}
+
+			// it is dirty, so we need to get the snapshot
+			ICollection snapshot = collection.CollectionSnapshot.Snapshot;
+			
+			// unfortunately, the snapshot is not always stored in the same data structure as the collection itself
+			if(collection is ISet)
+			{
+				// "set"
+				// we return an untyped set - this is a bit lazy, we could create a typed set with some extra effort, but do we need it?
+				return new HybridSet(((IDictionary)snapshot).Values);
+			}
+			else if(collection is IList && snapshot is IDictionary)
+			{
+				// "idbag"
+				// we return an untyped list - this is a bit lazy, we could create a typed list with some extra effort, but do we need it?
+				return new ArrayList(((IDictionary) snapshot).Values);
+			}
+			else if(collection is IList && snapshot is IList)
+			{
+				// "list" or "bag"
+				// in this case, the NH snapshot is the same type as the original collection
+				return snapshot;
+			}
+			else if(collection is IDictionary)
+			{
+				// in this case, the NH snapshot is the same type as the original collection
+				return snapshot;
+			}
+			else
+			{
+				// TODO: implement this for other types of collection
+				throw new NotImplementedException("Snapshot is not implemented for this collection type.");
+			}
+		}
     }
 }

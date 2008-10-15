@@ -124,6 +124,7 @@
     <Compile Include="Modelling\DeactivationFlagAttribute.cs" />
     <Compile Include="Modelling\EmbeddedValueAttribute.cs" />
     <Compile Include="Modelling\EmbeddeValueRuleSet.cs" />
+    <Compile Include="Modelling\ExtendedPropertiesCollectionAttribute.cs" />
     <Compile Include="Modelling\IPropertyBoundRule.cs" />
     <Compile Include="Modelling\IUniqueConstraintValidationBroker.cs" />
     <Compile Include="Modelling\IValidationRuleSet.cs" />

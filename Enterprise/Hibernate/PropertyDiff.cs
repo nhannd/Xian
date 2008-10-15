@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
 using NHibernate.Type;
+using ClearCanvas.Common.Utilities;
+using NHibernate.Collection;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -10,19 +13,26 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// Used by <see cref="ChangeRecord"/> to record changes to individual properties.
     /// </summary>
     class PropertyDiff
-    {
-        private readonly string _propertyName;
+	{
+		private readonly string _propertyName;
         private readonly object _oldValue;
         private readonly object _newValue;
         private readonly IType _hibernateType;
 
-        public PropertyDiff(string propertyName, IType hibernateType, object oldValue, object newValue)
-        {
-            _propertyName = propertyName;
-            _hibernateType = hibernateType;
-            _oldValue = oldValue;
-            _newValue = newValue;
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="propertyName"></param>
+		/// <param name="hibernateType"></param>
+		/// <param name="oldValue"></param>
+		/// <param name="newValue"></param>
+		public PropertyDiff(string propertyName, IType hibernateType, object oldValue, object newValue)
+		{
+			_propertyName = propertyName;
+			_hibernateType = hibernateType;
+			_oldValue = oldValue;
+			_newValue = newValue;
+		}
 
         public string PropertyName
         {
@@ -38,9 +48,16 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             get
             {
-                // check if the property is dirty
-                // note: if the property is a collection, this comparison probably won't be accurate
-                return !Equals(_oldValue, _newValue);
+				// if we're dealing with a collection property that has both old and new values,
+				// need to compare the collection elements
+				if(IsCollectionProperty && _oldValue != null && _newValue != null)
+				{
+					//TODO: collections with list semantics should use order-sensitive comparisons, but how do we know??
+					//(e.g how do we differentiate a "bag" from a "list"?)
+					return !CollectionUtils.Equal((ICollection) _oldValue, (ICollection) _newValue, false);
+				}
+
+            	return !Equals(_oldValue, _newValue);
             }
         }
 
@@ -60,7 +77,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </remarks>
         public PropertyDiff Compound(PropertyDiff previousChange)
         {
-            return new PropertyDiff(_propertyName, _hibernateType, previousChange._oldValue, _newValue);
-        }
+			return new PropertyDiff(_propertyName, _hibernateType, previousChange._oldValue, _newValue);
+		}
     }
 }

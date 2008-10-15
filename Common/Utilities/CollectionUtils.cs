@@ -989,5 +989,38 @@ namespace ClearCanvas.Common.Utilities
 		{
 			return Map<object, TOutput>(target, delegate(object input) { return (TOutput) input; });
 		}
+
+		/// <summary>
+		/// Concatenates all target collections into a single collection.  The items are added
+		/// in order.
+		/// </summary>
+		/// <typeparam name="TItem"></typeparam>
+		/// <param name="targets"></param>
+		/// <returns></returns>
+		public static List<TItem> Concat<TItem>(params IEnumerable<TItem>[] targets)
+		{
+			List<TItem> result = new List<TItem>();
+			foreach (IEnumerable<TItem> target in targets)
+			{
+				result.AddRange(target);
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// Concatenates all target collections into a single collection.  The items are added
+		/// in order.
+		/// </summary>
+		/// <param name="targets"></param>
+		/// <returns></returns>
+		public static ArrayList Concat(params ICollection[] targets)
+		{
+			ArrayList result = new ArrayList();
+			foreach (ICollection target in targets)
+			{
+				result.AddRange(target);
+			}
+			return result;
+		}
 	}
 }

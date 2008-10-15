@@ -94,6 +94,7 @@ class FieldDef < ElementDef
     attrs << "Required" if isMandatory
     attrs << "Length(#{@length})" if @length
     attrs << "Unique" if @unique
+	attrs << "ExtendedPropertiesCollection" if @accessorName == "ExtendedProperties"
     attrs
   end
   

@@ -37,6 +37,8 @@ using System.Xml;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 using System.Collections;
+using System.Reflection;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -75,12 +77,12 @@ namespace ClearCanvas.Enterprise.Core
         {
             get { return _operationName; }
             set { _operationName = value; }
-        }
+		}
 
 
-        #region ITransactionLogger Members
+		#region IEntityChangeSetRecorder Members
 
-        /// <summary>
+		/// <summary>
         /// Creates a <see cref="AuditLogEntry"/> for the specified change set.
         /// </summary>
         /// <param name="changeSet"></param>
@@ -119,7 +121,7 @@ namespace ClearCanvas.Enterprise.Core
                 // for creates and updates, write property changes
                 if(entityChange.ChangeType != EntityChangeType.Delete)
                 {
-                    WriteProperties(writer, entityChange.ChangeType, entityChange.PropertyChanges);
+                    WriteProperties(writer, entityChange);
                 }
 
                 writer.WriteEndElement();
@@ -128,25 +130,83 @@ namespace ClearCanvas.Enterprise.Core
             writer.WriteEndDocument();
         }
 
-        private void WriteProperties(XmlWriter writer, EntityChangeType changeType, IEnumerable<PropertyChange> propertyChanges)
+        private void WriteProperties(XmlWriter writer, EntityChange entityChange)
         {
-            foreach (PropertyChange prop in propertyChanges)
+        	Type entityClass = EntityRefUtils.GetClass(entityChange.EntityRef);
+
+            foreach (PropertyChange prop in entityChange.PropertyChanges)
             {
-                writer.WriteStartElement("property");
-                writer.WriteAttributeString("name", prop.PropertyName);
-                if (changeType == EntityChangeType.Update)
-                {
-                    WritePropertyValue(writer, "old-value", prop.OldValue);
-                }
-                WritePropertyValue(writer, "new-value", prop.NewValue);
-                writer.WriteEndElement();
+            	PropertyInfo pi = entityClass.GetProperty(prop.PropertyName);
+
+				// special handling of extended properties collections
+            	if(AttributeUtils.HasAttribute<ExtendedPropertiesCollectionAttribute>(pi))
+            	{
+            		WriteExtendedProperties(writer, prop, entityChange.ChangeType);
+            	}
+				else
+            	{
+					WriteProperty(writer, prop.PropertyName, prop.OldValue, prop.NewValue, entityChange.ChangeType);
+				}
             }
         }
 
+		private void WriteProperty(XmlWriter writer, string propertyName, object oldValue, object newValue, EntityChangeType changeType)
+		{
+			writer.WriteStartElement("property");
+			writer.WriteAttributeString("name", propertyName);
+			if (changeType == EntityChangeType.Update)
+			{
+				WritePropertyValue(writer, "old-value", oldValue);
+			}
+			WritePropertyValue(writer, "new-value", newValue);
+			writer.WriteEndElement();
+		}
+
+		private void WriteExtendedProperties(XmlWriter writer, PropertyChange propertyChange, EntityChangeType changeType)
+		{
+			string collectionName = propertyChange.PropertyName;
+			IDictionary oldColl = propertyChange.OldValue == null ? new Hashtable() : (IDictionary) propertyChange.OldValue;
+			IDictionary newColl = propertyChange.NewValue == null ? new Hashtable() : (IDictionary) propertyChange.NewValue;
+
+			// obtain unique set of keys over both items
+			ArrayList keys = CollectionUtils.Unique(CollectionUtils.Concat(oldColl.Keys, newColl.Keys));
+
+			// enumerate each key
+			foreach (object key in keys)
+			{
+				object oldValue = oldColl.Contains(key) ? oldColl[key] : null;
+				object newValue = newColl.Contains(key) ? newColl[key] : null;
+
+				// has this "property" changed?
+				if(!Equals(oldValue, newValue))
+				{
+					string propertyName = string.Concat(collectionName, ".", key);
+					WriteProperty(writer, propertyName, oldValue, newValue, changeType);
+				}
+			}
+		}
+
         private void WritePropertyValue(XmlWriter writer, string tagName, object propertyValue)
         {
-            writer.WriteElementString(tagName, GetSerializedValue(propertyValue));   
+			if(propertyValue is ICollection)
+			{
+				writer.WriteStartElement(tagName);
+				WriteCollectionContent(writer, propertyValue);
+				writer.WriteEndElement();
+			}
+			else
+			{
+				writer.WriteElementString(tagName, GetSerializedValue(propertyValue));
+			}
         }
+
+		private void WriteCollectionContent(XmlWriter writer, object collection)
+		{
+			foreach (object item in (IEnumerable)collection)
+			{
+				writer.WriteElementString("item", GetSerializedValue(item));
+			}
+		}
 
         private string GetSerializedValue(object value)
         {
@@ -168,7 +228,7 @@ namespace ClearCanvas.Enterprise.Core
             if(value is EnumValue)
                 return (value as EnumValue).Code;
 
-            // don't support dealing with collection properties at the present time
+            // don't support dealing with nested collections at the present time
             // just write out that it is multi-valued
             if(value is ICollection || value is IList)
                 return MultiValued;
