@@ -150,13 +150,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			// radiologist staff lookup handler, using filters provided by application configuration
-			string radFilters = TechnologistDocumentationComponentSettings.Default.RadiologistStaffTypeFilters;
+			string radFilters = DowntimeSettings.Default.ReportEntryRadiologistStaffTypeFilters;
 			string[] radStaffTypes = string.IsNullOrEmpty(radFilters) ? new string[] { } :
 				CollectionUtils.Map<string, string>(radFilters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
 			_interpreterLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, radStaffTypes);
 
 			// transcriptionist staff lookup handler, using filters provided by application configuration
-			string transFilters = ReportingSettings.Default.DowntimeTranscriptionistStaffTypeFilters;
+			string transFilters = DowntimeSettings.Default.ReportEntryTranscriptionistStaffTypeFilters;
 			string[] transStaffTypes = string.IsNullOrEmpty(transFilters) ? new string[] { } :
 				CollectionUtils.Map<string, string>(transFilters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
 			_transcriptionistLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, transStaffTypes);
