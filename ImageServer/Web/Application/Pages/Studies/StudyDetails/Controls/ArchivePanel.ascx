@@ -18,9 +18,11 @@
                             <asp:BoundField DataField="ArchiveQueueStatusEnum" HeaderText="Status">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="ScheduledTime" HeaderText="Schedule">
-                                <HeaderStyle wrap="False" />    
-                            </asp:BoundField>
+                            <asp:TemplateField HeaderText="Scheduled Time">
+                                <ItemTemplate>
+                                    <ccUI:DateTimeLabel ID="ScheduledTime" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
+                                </ItemTemplate>
+                            </asp:TemplateField>                            
                             <asp:BoundField DataField="ProcessorID" HeaderText="Processor ID">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>                            
@@ -62,8 +64,11 @@
                 <asp:Label ID="ServerTranseferSyntax" runat="server"></asp:Label>
             </ItemTemplate>
         </asp:TemplateField>
-        <asp:BoundField DataField="ArchiveTime" HeaderText="Archive Time">
-        </asp:BoundField>
+        <asp:TemplateField HeaderText="Archive Time">
+            <ItemTemplate>
+                <ccUI:DateTimeLabel ID="ArchiveTime" runat="server" Value='<%# Eval("ArchiveTime") %>' ></ccUI:DateTimeLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:TemplateField HeaderText="Archive XML">
             <ItemTemplate>
                 <asp:Label ID="XmlText" runat="server"></asp:Label>

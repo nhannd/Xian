@@ -37,8 +37,8 @@
             </tr>
             </table>
     </div>
-                  
-        <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
-        
+
+    <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />                  
+       
     </ContentTemplate>
 </asp:UpdatePanel>

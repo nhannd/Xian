@@ -1,3 +1,4 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks.ServiceLockGridView"
     Codebehind="ServiceLockGridView.ascx.cs" %>
 
@@ -40,7 +41,7 @@
                     </asp:TemplateField>
                      <asp:TemplateField HeaderText="Schedule">
                         <ItemTemplate>
-                            <ccUI:DateTimeLabel ID="Schedule" runat="server" Text='<%# Eval("ScheduledTime") %>'></ccUI:DateTimeLabel>
+                            <ccUI:DateTimeLabel ID="Schedule" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
                         </ItemTemplate>
                         <HeaderStyle HorizontalAlign="Center" />
                         <ItemStyle HorizontalAlign="Center" wrap="false" />

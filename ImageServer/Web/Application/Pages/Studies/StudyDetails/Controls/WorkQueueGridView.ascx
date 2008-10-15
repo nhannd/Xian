@@ -17,9 +17,12 @@
                             <asp:BoundField DataField="WorkQueueTypeEnum" HeaderText="Type">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="ScheduledTime" HeaderText="Schedule">
+                            <asp:TemplateField HeaderText="Schedule">
                                 <HeaderStyle wrap="False" />    
-                            </asp:BoundField>
+                                <ItemTemplate>
+                                    <ccUI:DateTimeLabel ID="ScheduledTime" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
+                                </ItemTemplate>
+                            </asp:TemplateField>
                             <asp:BoundField DataField="WorkQueuePriorityEnum" HeaderText="Priority">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>

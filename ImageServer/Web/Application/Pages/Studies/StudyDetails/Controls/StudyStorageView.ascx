@@ -3,12 +3,18 @@
 <asp:DetailsView ID="StudyStorageViewControl" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" OnDataBound="StudyStorageView_DataBound"
      CssClass="GlobalGridView" Width="100%">
     <Fields>
-        <asp:BoundField DataField="InsertTime" HeaderText="Insert Time: ">
+        <asp:TemplateField HeaderText="Insert Time:">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
-        </asp:BoundField>
-        <asp:BoundField DataField="LastAccessedTime" HeaderText="Last Accessed: ">
+            <ItemTemplate>
+                <ccUI:DateTimeLabel ID="InsertTime" runat="server" Value='<%# Eval("InsertTime") %>' ></ccUI:DateTimeLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
+        <asp:TemplateField HeaderText="Last Accessed:">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
-        </asp:BoundField>
+            <ItemTemplate>
+                <ccUI:DateTimeLabel ID="LastAccessedTime" runat="server" Value='<%# Eval("LastAccessedTime") %>' ></ccUI:DateTimeLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:BoundField DataField="Lock" HeaderText="Lock: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>

@@ -49,7 +49,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         private Default _enclosingPage;
         #endregion Private Members
 
-
         #region Public Properties
 
         /// <summary>

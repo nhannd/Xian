@@ -18,9 +18,12 @@
                             <asp:BoundField DataField="FilesystemQueueTypeEnum" HeaderText="Type">
                                 <HeaderStyle wrap="False" />    
                             </asp:BoundField>
-                            <asp:BoundField DataField="ScheduledTime" HeaderText="Schedule">
+                            <asp:TemplateField HeaderText="Scheduled Time">
+                                <ItemTemplate>
+                                    <ccUI:DateTimeLabel ID="ScheduledTime" runat="server" Value='<%# Eval("ScheduledTime") %>' ></ccUI:DateTimeLabel>
+                                </ItemTemplate>
                                 <HeaderStyle wrap="False" />    
-                            </asp:BoundField>
+                            </asp:TemplateField>
                             <asp:TemplateField HeaderText="Queue XML">
                                 <ItemTemplate>
                                     <asp:Label ID="XmlText" runat="server"></asp:Label>
