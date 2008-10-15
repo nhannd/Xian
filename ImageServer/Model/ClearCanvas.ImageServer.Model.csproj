@@ -235,6 +235,7 @@
     <Compile Include="ServerRuleTypeEnum.gen.cs" />
     <Compile Include="ServerSopClass.gen.cs" />
     <Compile Include="ServerTransferSyntax.gen.cs" />
+    <Compile Include="ServiceLock.cs" />
     <Compile Include="ServiceLock.gen.cs" />
     <Compile Include="ServiceLockTypeEnum.gen.cs" />
     <Compile Include="FilesystemStudyStorage.gen.cs" />

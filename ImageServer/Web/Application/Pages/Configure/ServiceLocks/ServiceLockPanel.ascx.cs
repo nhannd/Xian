@@ -30,14 +30,14 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
 {
@@ -208,14 +208,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
         /// Load the devices for the partition based on the filters specified in the filter panel.
         /// </summary>
         /// <remarks>
-        /// This method only reloads and binds the list bind to the internal grid. <seealso cref="UpdateUI()"/> should be called
-        /// to explicit update the list in the grid. 
-        /// <para>
-        /// This is intentionally so that the list can be reloaded so that it is available to other controls during postback.  In
-        /// some cases we may not want to refresh the list if there's no change. Calling <seealso cref="UpdateUI()"/> will
-        /// give performance hit as the data will be transfered back to the browser.
-        ///  
-        /// </para>
+        /// This method only reloads and binds the list bind to the internal grid.
         /// </remarks>
         public void LoadServiceLocks()
         {
@@ -236,14 +229,49 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                     criteria.Enabled.EqualTo(false);
             }
 
-            criteria.Enabled.SortDesc(1);
-            criteria.ServiceLockTypeEnum.SortAsc(2);
-            criteria.ScheduledTime.SortAsc(3);
+            IList<ServiceLock> services = controller.GetServiceLocks(criteria);
 
-            IList<Model.ServiceLock> services = controller.GetServiceLocks(criteria);
+        	List<ServiceLock> sortedServices =
+        		CollectionUtils.Sort(services, delegate(ServiceLock a, ServiceLock b)
+        		                               	{
+        		                               		if (a == null)
+        		                               		{
+        		                               			if (b == null)
+        		                               			{
+        		                               				// If both null, they're equal. 
+        		                               				return 0;
+        		                               			}
+        		                               			else
+        		                               			{
+        		                               				// If x is null and y is not null, y
+        		                               				// is greater. 
+        		                               				return -1;
+        		                               			}
+        		                               		}
+        		                               		else
+        		                               		{
+        		                               			// If a is not null...
+        		                               			if (b == null)
+        		                               			{
+															// ...and b is null, x is greater.
+															return 1;
+        		                               			}
+        		                               			else
+        		                               			{
+        		                               				// just compare
+        		                               				int retVal =
+        		                               					a.Filesystem.Description.CompareTo(
+        		                               						b.Filesystem.Description);
+															if (retVal == 0)
+																return a.ServiceLockTypeEnum.Description.CompareTo(b.ServiceLockTypeEnum.Description);
+        		                               				return retVal;
+        		                               			}
+        		                               		}
+        		                               	});
 
+			
             ServiceLockCollection items = new ServiceLockCollection();
-            items.Add(services);
+            items.Add(sortedServices);
 
             ServiceLockGridViewControl.ServiceLocks = items;
 
