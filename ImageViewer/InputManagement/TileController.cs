@@ -253,7 +253,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (_captureHandler != null && _captureHandler is IMemorable)
 				{
 					IMemorable originator = (IMemorable) _captureHandler;
-					_command = new DrawableUndoableCommand(_tile, originator);
+					ITile tile = _tile;
+					_command = new UndoableCommand(originator);
+					_command.Executed += delegate { tile.Draw(); };
+					_command.Unexecuted += delegate { tile.Draw(); };
 					_command.BeginState = originator.CreateMemento();
 				}
 				

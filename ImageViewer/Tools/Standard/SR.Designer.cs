@@ -178,6 +178,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sort Images.
+        /// </summary>
+        internal static string CommandSortImages {
+            get {
+                return ResourceManager.GetString("CommandSortImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stack.
         /// </summary>
         internal static string CommandStack {

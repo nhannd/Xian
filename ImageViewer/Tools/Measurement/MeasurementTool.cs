@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private RoiGraphic _createRoiGraphic;
 		private InteractiveGraphic _currentChangingRoi;
 
+		private InsertGraphicUndoableCommand _undoableCommand;
+
 		private List<IRoiAnalyzer<T>> _roiAnalyzers;
 
 		/// <summary>
@@ -97,14 +99,20 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_createRoiGraphic != null)
 				return _createRoiGraphic.Start(mouseInformation);
 
-			IOverlayGraphicsProvider image = mouseInformation.Tile.PresentationImage as IOverlayGraphicsProvider;
-			if (image == null)
+			IPresentationImage image = mouseInformation.Tile.PresentationImage;
+			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
+			if (provider == null)
 				return false;
 
 			_createRoiGraphic = CreateRoiGraphic();
 			_createRoiGraphic.RoiChanged += OnRoiChanged;
 
-			image.OverlayGraphics.Add(_createRoiGraphic);
+			_undoableCommand = new InsertGraphicUndoableCommand(_createRoiGraphic, provider.OverlayGraphics, provider.OverlayGraphics.Count);
+			_undoableCommand.Executed += delegate { image.Draw(); };
+			_undoableCommand.Unexecuted += delegate { image.Draw(); };
+			_undoableCommand.Name = CreationCommandName;
+			_undoableCommand.Execute();
+
 			OnRoiCreation(_createRoiGraphic);
 			CreateAnalyzersInternal();
 
@@ -133,10 +141,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			ResetActivelyChangingRoi();
 
-			InsertRemoveOverlayGraphicUndoableCommand command =
-				InsertRemoveOverlayGraphicUndoableCommand.GetRemoveCommand(mouseInformation.Tile.PresentationImage, _createRoiGraphic);
-			command.Name = this.CreationCommandName;
-			_createRoiGraphic.ImageViewer.CommandHistory.AddCommand(command);
+			_createRoiGraphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_undoableCommand = null;
 			_createRoiGraphic = null;
 			return false;
 		}
@@ -154,10 +160,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			// Cancel pending delayed event.
 			_roiChangedDelayedEventPublisher.Cancel();
 
-			IPresentationImage parentImage = _createRoiGraphic.ParentPresentationImage;
-			((IOverlayGraphicsProvider)parentImage).OverlayGraphics.Remove(_createRoiGraphic);
+			_undoableCommand.Unexecute();
+			_undoableCommand = null;
 
-			parentImage.Draw();
 			_createRoiGraphic = null;
 		}
 

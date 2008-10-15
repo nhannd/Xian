@@ -126,7 +126,7 @@
   <data name="MenuClose" xml:space="preserve">
     <value>Close Menu</value>
   </data>
-  <data name="DeleteGraphic" xml:space="preserve">
+  <data name="MenuDeleteMeasurement" xml:space="preserve">
     <value>Delete</value>
   </data>
   <data name="NotApplicable" xml:space="preserve">
@@ -143,9 +143,6 @@
   </data>
   <data name="ToolsMeasurementFormatLengthPixels" xml:space="preserve">
     <value>Length: {0:F0} pixels</value>
-  </data>
-  <data name="NameDeleteGraphic" xml:space="preserve">
-    <value>DeleteGraphic</value>
   </data>
   <data name="MenuMeasurement" xml:space="preserve">
     <value>Measurement</value>
@@ -238,10 +235,13 @@
     <value>An error has occurred while analyzing the Roi.
 Please check the log for more details.</value>
   </data>
-  <data name="DeleteAllGraphics" xml:space="preserve">
-    <value>Delete All</value>
-  </data>
-  <data name="DeleteAllMeasurementGraphics" xml:space="preserve">
+  <data name="MenuDeleteAllMeasurements" xml:space="preserve">
     <value>Delete All Measurements</value>
+  </data>
+  <data name="CommandDeleteAllMeasurements" xml:space="preserve">
+    <value>Delete All Measurements</value>
+  </data>
+  <data name="CommandDeleteMeasurement" xml:space="preserve">
+    <value>Delete Measurement</value>
   </data>
 </root>

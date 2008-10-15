@@ -579,4 +579,7 @@ Please check the log for more details.</value>
   <data name="TooltipShowVoiLut" xml:space="preserve">
     <value>Shows the VOI LUT pixel value on images</value>
   </data>
+  <data name="CommandSortImages" xml:space="preserve">
+    <value>Sort Images</value>
+  </data>
 </root>

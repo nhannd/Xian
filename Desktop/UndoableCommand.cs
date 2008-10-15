@@ -30,6 +30,8 @@
 #endregion
 
 using ClearCanvas.Common;
+using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -49,9 +51,12 @@ namespace ClearCanvas.Desktop
 	/// <seealso cref="IMemorable"/>
 	public class UndoableCommand : Command
 	{
-		private IMemorable _originator;
+		private readonly IMemorable _originator;
 		private object _beginState;
 		private object _endState;
+
+		private event EventHandler _executed;
+		private event EventHandler _unexecuted;
 
 		/// <summary>
 		/// Default constructor for subclasses.
@@ -108,6 +113,28 @@ namespace ClearCanvas.Desktop
 			set { _endState = value; }
 		}
 
+		public event EventHandler Executed
+		{
+			add { _executed += value; }
+			remove { _executed -= value; }
+		}
+
+		public event EventHandler Unexecuted
+		{
+			add { _unexecuted += value; }
+			remove { _unexecuted -= value; }
+		}
+
+		protected virtual void OnExecuted()
+		{
+			EventsHelper.Fire(_executed, this, EventArgs.Empty);
+		}
+
+		protected virtual void OnUnexecuted()
+		{
+			EventsHelper.Fire(_unexecuted, this, EventArgs.Empty);
+		}
+
 		/// <summary>
 		/// Performs a 'redo' by calling <see cref="IMemorable.SetMemento"/> on the 
 		/// <see cref="Originator"/> with the <see cref="EndState"/> as a parameter.
@@ -116,6 +143,8 @@ namespace ClearCanvas.Desktop
 		{
 			if (_originator != null)
 				_originator.SetMemento(_endState);
+
+			OnExecuted();
 		}
 
 		/// <summary>
@@ -126,6 +155,8 @@ namespace ClearCanvas.Desktop
 		{
 			if (_originator != null)
 				_originator.SetMemento(_beginState);
+
+			OnUnexecuted();
 		}
 	}
 }

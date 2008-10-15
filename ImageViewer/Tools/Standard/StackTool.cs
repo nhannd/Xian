@@ -116,8 +116,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			//try to keep the top-left image the same.
 			IPresentationImage topLeftImage = imageBox.TopLeftPresentationImage;
 
-			DrawableUndoableCommand command = new DrawableUndoableCommand(imageBox, imageBox);
-			command.Name = "Sort Images";
+			UndoableCommand command = new UndoableCommand(imageBox);
+			_command.Executed += delegate { imageBox.Draw(); };
+			_command.Unexecuted += delegate { imageBox.Draw(); };
+			command.Name = SR.CommandSortImages;
 			command.BeginState = imageBox.CreateMemento();
 
 			displaySet.PresentationImages.Sort(sortMenuItem.Comparer);

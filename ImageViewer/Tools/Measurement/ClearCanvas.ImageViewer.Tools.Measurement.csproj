@@ -111,7 +111,7 @@
     <Compile Include="ProtractorInteractiveGraphic.cs" />
     <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorTool.cs" />
-    <Compile Include="DeleteGraphicTool.cs" />
+    <Compile Include="DeleteMeasurementsTool.cs" />
     <Compile Include="RectangleAnalyzers.cs" />
     <Compile Include="RectangularROITool.cs" />
     <Compile Include="RoiInfo.cs" />

@@ -31,6 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using System;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -44,9 +45,10 @@ namespace ClearCanvas.ImageViewer
 	/// <see cref="IDrawable.Draw"/> on the object passed to the constructor
 	/// after <see cref="Execute"/> and <see cref="Unexecute"/>.
 	/// </remarks>
+	[Obsolete("Use the UndoableCommand's Executed and Unexecuted events instead.")]
 	public class DrawableUndoableCommand : UndoableCommand
 	{
-		private IDrawable _drawable;
+		private readonly IDrawable _drawable;
 
 		/// <summary>
 		/// Constructor.

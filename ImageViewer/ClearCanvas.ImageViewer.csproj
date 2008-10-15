@@ -126,10 +126,12 @@
     <Compile Include="Graphics\IArcGraphic.cs" />
     <Compile Include="Graphics\IBoundableGraphic.cs" />
     <Compile Include="Graphics\ImageTransformPolicy.cs" />
+    <Compile Include="Graphics\InsertGraphicUndoableCommand.cs" />
     <Compile Include="Graphics\InvariantArcPrimitive.cs" />
     <Compile Include="Graphics\InvariantBoundablePrimitive.cs" />
     <Compile Include="Graphics\InvariantEllipsePrimitive.cs" />
     <Compile Include="Graphics\IVectorGraphic.cs" />
+    <Compile Include="Graphics\RemoveGraphicUndoableCommand.cs" />
     <Compile Include="Graphics\SpatialTransformValidationPolicy.cs" />
     <Compile Include="Graphics\Tests\InvariantArcPrimitiveTest.cs" />
     <Compile Include="Imaging\DataLut.cs" />
@@ -357,7 +359,6 @@
     <Compile Include="InteractiveGraphics\MoveControlPointGraphicState.cs" />
     <Compile Include="InteractiveGraphics\MoveGraphicState.cs" />
     <Compile Include="InteractiveGraphics\PolyLineGraphic.cs" />
-    <Compile Include="Graphics\InsertRemoveOverlayGraphicUndoableCommand.cs" />
     <Compile Include="InteractiveGraphics\RectangleMemento.cs" />
     <Compile Include="InteractiveGraphics\ROIGraphic.cs" />
     <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
