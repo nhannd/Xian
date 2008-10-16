@@ -38,4 +38,9 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
     public class AcceptOrderProtocolResponse : DataContractBase
     {
     }
+
+	[DataContract]
+	public class AcceptProtocolResponse : DataContractBase
+	{
+	}
 }

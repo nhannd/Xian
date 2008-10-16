@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -46,6 +47,30 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 
 		[DataMember]
 		public EntityRef OrderRef;
+
+		[DataMember]
+		public bool ShouldClaim;
+
+		[DataMember]
+		public string NoteCategory;
+	}
+
+	[DataContract]
+	public class StartProtocolRequest : DataContractBase
+	{
+		public StartProtocolRequest(EntityRef protocolAssignmentStepRef, List<EntityRef> linkedProtocolAssignmentStepRef, bool shouldClaim, string noteCategory)
+		{
+			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
+			this.LinkedProtocolAssignmentStepRef = linkedProtocolAssignmentStepRef;
+			this.ShouldClaim = shouldClaim;
+			this.NoteCategory = noteCategory;
+		}
+
+		[DataMember]
+		public EntityRef ProtocolAssignmentStepRef;
+
+		[DataMember]
+		public List<EntityRef> LinkedProtocolAssignmentStepRef;
 
 		[DataMember]
 		public bool ShouldClaim;

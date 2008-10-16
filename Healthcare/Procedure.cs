@@ -127,19 +127,6 @@ namespace ClearCanvas.Healthcare {
         }
 
 		/// <summary>
-		/// Gets the associated <see cref="Protocol"/> or null if no protocol has been created for this procedure.
-		/// </summary>
-    	public virtual Protocol Protocol
-    	{
-    		get
-    		{
-				// there will only ever be 0 or 1 elements in the protocols collection
-				// it is mapped as a collection due to an NHibernate bug (see #2354)
-    			return CollectionUtils.FirstElement(_protocols);
-    		}
-    	}
-
-		/// <summary>
 		/// Gets the time at which the procedure can be considered "performed", which corresponds to the maximum
 		/// completed modality procedure step end-time.
 		/// </summary>
@@ -409,9 +396,9 @@ namespace ClearCanvas.Healthcare {
 				_procedureCheckIn.TimeShift(minutes);
 			}
 
-			foreach (Protocol protocol in _protocols)
+			if(_protocol != null)
 			{
-				protocol.TimeShift(minutes);
+				_protocol.TimeShift(minutes);
 			}
 
 			foreach (ProcedureStep step in _procedureSteps)

@@ -14,4 +14,16 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[DataMember]
 		public EntityRef OrderRef;
 	}
+
+	[DataContract]
+	public class ReviseSubmittedProtocolRequest2 : DataContractBase
+	{
+		public ReviseSubmittedProtocolRequest2(EntityRef protocolAssignementStepRef)
+		{
+			this.ProtocolAssignmentStepRef = protocolAssignementStepRef;
+		}
+
+		[DataMember]
+		public EntityRef ProtocolAssignmentStepRef;
+	}
 }

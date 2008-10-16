@@ -34,8 +34,13 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
-    [DataContract]
-    public class SaveProtocolResponse : DataContractBase
-    {
-    }
+	[DataContract]
+	public class SaveProtocolResponse : DataContractBase
+	{
+	}
+
+	[DataContract]
+	public class SaveProtocolResponse2 : DataContractBase
+	{
+	}
 }

@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _isInitialItem = true;
 
 		private ReportingWorklistItem _worklistItem;
-		private EntityRef _orderRef;
+		private EntityRef _protocolAssignmentStepRef;
 		private EntityRef _assignedStaffRef;
 		private List<OrderNoteDetail> _notes;
 
@@ -256,7 +256,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(_orderRef, this.ProtocolDetails, _notes));
+						//service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(_orderRef, this.ProtocolDetails, _notes));
+						service.AcceptProtocol(new AcceptProtocolRequest(_protocolAssignmentStepRef, this.ProtocolDetail, _notes));
 					});
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.CompletedProtocolFolder));
@@ -305,10 +306,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						service.SubmitProtocolForApproval(
-							new SubmitProtocolForApprovalRequest(
-								_orderRef, 
-								this.ProtocolDetails, 
+						//service.SubmitProtocolForApproval(
+						//    new SubmitProtocolForApprovalRequest(
+						//        _orderRef, 
+						//        this.ProtocolDetails, 
+						//        _notes));
+						service.SubmitProtocolForApproval2(
+							new SubmitProtocolForApprovalRequest2(
+								_protocolAssignmentStepRef,
+								this.ProtocolDetail,
 								_notes));
 					});
 
@@ -356,9 +362,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						service.RejectOrderProtocol(new RejectOrderProtocolRequest(
-							_orderRef,
-							this.ProtocolDetails,
+						//service.RejectOrderProtocol(new RejectOrderProtocolRequest(
+						//    _orderRef,
+						//    this.ProtocolDetails,
+						//    _notes,
+						//    reason,
+						//    CreateAdditionalCommentsNote(additionalComments)));
+						service.RejectProtocol(new RejectProtocolRequest(
+							_protocolAssignmentStepRef,
+							this.ProtocolDetail,
 							_notes,
 							reason,
 							CreateAdditionalCommentsNote(additionalComments)));
@@ -395,7 +407,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						service.SaveOrderProtocol(new SaveProtocolRequest(_orderRef, this.ProtocolDetails, _notes));
+						//service.SaveOrderProtocol(new SaveProtocolRequest(_orderRef, this.ProtocolDetails, _notes));
+						service.SaveProtocol(new SaveProtocolRequest2(_protocolAssignmentStepRef, this.ProtocolDetail, _notes));
 					});
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
@@ -426,7 +439,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IProtocollingWorkflowService service)
 					{
 						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _worklistItem.ProcedureStepRef, _notes, shouldUnclaim, _assignedStaffRef));
+						//service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _worklistItem.ProcedureStepRef, _notes, shouldUnclaim, _assignedStaffRef));
+						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, shouldUnclaim, _assignedStaffRef));
 					});
 
 				SkipCurrentItemAndBeginNextItemOrExit();
@@ -454,7 +468,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					delegate(IProtocollingWorkflowService service)
 					{
 						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _worklistItem.ProcedureStepRef, _notes, shouldUnclaim, _assignedStaffRef));
+						//service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(_orderRef, _worklistItem.ProcedureStepRef, _notes, shouldUnclaim, _assignedStaffRef));
+						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, shouldUnclaim, _assignedStaffRef));
 					});
 
 				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
@@ -602,8 +617,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					bool shouldClaim = _componentMode == ProtocollingComponentMode.Assign;
 
-					StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef, shouldClaim, OrderNoteCategory.Protocol.Key));
-					_orderRef = response.OrderRef;
+					//StartOrderProtocolResponse response = service.StartOrderProtocol(new StartOrderProtocolRequest(_worklistItem.OrderRef, shouldClaim, OrderNoteCategory.Protocol.Key));
+					//_orderRef = response.OrderRef;
+					//_assignedStaffRef = response.AssignedStaffRef;
+
+					StartProtocolResponse response = service.StartProtocol(new StartProtocolRequest(_worklistItem.ProcedureStepRef, null, shouldClaim, OrderNoteCategory.Protocol.Key));
+					_protocolAssignmentStepRef = response.ProtocolAssignmentStepRef;
 					_assignedStaffRef = response.AssignedStaffRef;
 
 					_notes = response.ProtocolNotes;
@@ -662,23 +681,35 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return null;
 		}
 
-		private List<ProtocolDetail> ProtocolDetails
+		//private List<ProtocolDetail> ProtocolDetails
+		//{
+		//    get
+		//    {
+		//        List<ProtocolDetail> list = new List<ProtocolDetail>();
+		//        list.Add(((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProtocolDetail);
+		//        return list;
+		//        //return CollectionUtils.Map<ProtocolEditorProcedurePlanSummaryTableItem, ProtocolDetail>(
+		//        //    ((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProcedurePlanSummaryTable.Items,
+		//        //    delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.ProtocolDetail; });
+		//    }
+		//}
+
+		private ProtocolDetail ProtocolDetail
 		{
-			get
-			{
-				return CollectionUtils.Map<ProtocolEditorProcedurePlanSummaryTableItem, ProtocolDetail>(
-					((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProcedurePlanSummaryTable.Items,
-					delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.ProtocolDetail; });
-			}
+			get { return ((ProtocolEditorComponent) _protocolEditorComponentHost.Component).ProtocolDetail; }
 		}
 
 		private bool SupervisorRequred()
 		{
-			bool supervisorRequired = 
+			//bool supervisorRequired = 
+			//    !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
+			//    && !CollectionUtils.TrueForAll(
+			//            this.ProtocolDetails, 
+			//            delegate(ProtocolDetail detail) { return detail.Supervisor != null; });
+
+			bool supervisorRequired =
 				!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
-				&& !CollectionUtils.TrueForAll(
-				    	this.ProtocolDetails, 
-				    	delegate(ProtocolDetail detail) { return detail.Supervisor != null; });
+				&& this.ProtocolDetail.Supervisor != null; 
 
 			if (supervisorRequired)
 			{

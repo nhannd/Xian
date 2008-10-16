@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Workflow;
 
@@ -79,6 +80,59 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class StartProtocolOperation : ProtocollingOperation
 		{
+			public void Execute(ProtocolAssignmentStep assignmentStep, List<ProtocolAssignmentStep> linkedSteps, Staff protocolPerformer, bool canPerformerAcceptProtocols, out bool protocolClaimed, out Staff assignedStaff)
+			{
+				protocolClaimed = false;
+				assignedStaff = null;
+
+				if (assignmentStep.IsInitial)
+				{
+					assignedStaff = assignmentStep.AssignedStaff;
+
+					// Scheduled assignment step exists (i.e. Protocol has not been claimed), so claim it
+					assignmentStep.Start(protocolPerformer);
+
+					// Current user should be set as the supervisor if the protocol is awaiting approval 
+					// and the user is able to accept protocols
+					if (assignmentStep.Protocol.Status == ProtocolStatus.AA)
+					{
+						if (!canPerformerAcceptProtocols)
+						{
+							// User is unable to approve
+							//throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
+							throw new Exception("TODO: user unable to approve");
+						}
+					}
+					// otherwise, it's just a new protocol
+					else
+					{
+						assignmentStep.Protocol.Author = protocolPerformer;
+					}
+
+					protocolClaimed = true;
+
+					if (linkedSteps != null)
+					{
+						foreach (ProtocolAssignmentStep step in linkedSteps)
+						{
+							step.LinkToProtocol(assignmentStep.Protocol);
+						}
+					}
+				}
+				else
+				{
+					// In-progress assignment step started by someone else
+					if (assignmentStep.PerformingStaff != protocolPerformer)
+					{
+						// So not available to this user to start
+						//throw new RequestValidationException(SR.ExceptionNoProtocolAssignmentStep);
+						throw new Exception("TODO: protocol already started");
+					}
+
+					// otherwise, it's been claimed by this user, so do nothing
+				}
+			}
+
 			public void Execute(Order order, Staff protocolPerformer, bool canPerformerAcceptProtocols, out bool protocolClaimed, out Staff assignedStaff)
 			{
 				protocolClaimed = false;
@@ -150,6 +204,25 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class DiscardProtocolOperation : ProtocollingOperation
 		{
+			public void Execute(ProtocolAssignmentStep assignmentStep, Staff reassignToStaff)
+			{
+				assignmentStep.Discontinue();
+				if (assignmentStep.Protocol.Status != ProtocolStatus.AA)
+				{
+					assignmentStep.Protocol.Author = null;
+				}
+
+				// Replace with new step scheduled step
+				ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
+				assignmentStep.Procedure.AddProcedureStep(replacementAssignmentStep);
+				if (reassignToStaff != null)
+				{
+					replacementAssignmentStep.Assign(reassignToStaff);
+				}
+
+				replacementAssignmentStep.Schedule(DateTime.Now);
+			}
+
 			public void Execute(Order order, Staff reassignToStaff)
 			{
 				foreach (Procedure rp in order.Procedures)
@@ -203,6 +276,15 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class AcceptProtocolOperation : ProtocollingOperation
 		{
+			public void Execute(ProtocolAssignmentStep assignmentStep, Staff acceptedBy)
+			{
+				if (assignmentStep.State == ActivityStatus.IP)
+					assignmentStep.Complete();
+				else
+					assignmentStep.Complete(acceptedBy);
+				assignmentStep.Protocol.Accept();
+			}
+
 			public void Execute(Order order, Staff acceptedBy)
 			{
 				foreach (Procedure rp in order.Procedures)
@@ -249,6 +331,20 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class RejectProtocolOperation : ProtocollingOperation
 		{
+			public void Execute(ProtocolAssignmentStep assignmentStep, Staff rejectedBy, ProtocolRejectReasonEnum reason)
+			{
+				if (assignmentStep.State == ActivityStatus.SC)
+				{
+					assignmentStep.Start(rejectedBy);
+				}
+				assignmentStep.Discontinue();
+				assignmentStep.Protocol.Reject(reason);
+
+				// TODO: one resolution step or one per procedure?
+				ProtocolResolutionStep resolutionStep = new ProtocolResolutionStep(assignmentStep.Protocol);
+				assignmentStep.Procedure.AddProcedureStep(resolutionStep);
+			}
+
 			public void Execute(Order order, Staff rejectedBy, ProtocolRejectReasonEnum reason)
 			{
 				foreach (Procedure rp in order.Procedures)
@@ -334,6 +430,27 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class SubmitForApprovalOperation : ProtocollingOperation
 		{
+			public void Execute(ProtocolAssignmentStep assignmentStep, Staff supervisor, bool canOmitSupervisor)
+			{
+				assignmentStep.Complete();
+				assignmentStep.Protocol.SubmitForApproval();
+
+				// Replace with new step scheduled step
+				ProtocolAssignmentStep approvalStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
+				assignmentStep.Procedure.AddProcedureStep(approvalStep);
+
+				approvalStep.Schedule(DateTime.Now);
+				if (supervisor == null)
+				{
+					// Use previously supervisor set in previous operation if it exists.
+					supervisor = assignmentStep.Protocol.Supervisor;
+
+					if (supervisor == null && !canOmitSupervisor)
+						throw new SupervisorRequiredException();
+				}
+				approvalStep.Assign(supervisor);
+			}
+
 			public void Execute(Order order, Staff supervisor, bool canOmitSupervisor)
 			{
 				foreach (Procedure rp in order.Procedures)
@@ -380,6 +497,21 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class ReviseSubmittedProtocolOperation : ProtocollingOperation
 		{
+			public ProtocolAssignmentStep Execute(ProtocolAssignmentStep assignmentStep, Staff author)
+			{
+				assignmentStep.Protocol.Status = ProtocolStatus.PN;
+				assignmentStep.Protocol.Supervisor = null;
+				assignmentStep.Discontinue();
+
+				// Replace with new step scheduled step
+				ProtocolAssignmentStep replacementStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
+				assignmentStep.Procedure.AddProcedureStep(replacementStep);
+				replacementStep.Assign(author);
+				replacementStep.Start(author);
+
+				return replacementStep;
+			}
+
 			public ProtocolAssignmentStep Execute(Order order, Staff author)
 			{
 				ProtocolAssignmentStep oneStep = null;

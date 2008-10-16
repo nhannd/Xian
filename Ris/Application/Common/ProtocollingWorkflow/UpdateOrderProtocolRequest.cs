@@ -23,4 +23,24 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[DataMember]
 		public List<OrderNoteDetail> OrderNotes;
 	}
+
+	[DataContract]
+	public class UpdateProtocolRequest : DataContractBase
+	{
+		public UpdateProtocolRequest(EntityRef protocolAssignmentStepRef, ProtocolDetail protocol, List<OrderNoteDetail> orderNotes)
+		{
+			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
+			this.Protocol = protocol;
+			this.OrderNotes = orderNotes;
+		}
+
+		[DataMember]
+		public EntityRef ProtocolAssignmentStepRef;
+
+		[DataMember]
+		public ProtocolDetail Protocol;
+
+		[DataMember]
+		public List<OrderNoteDetail> OrderNotes;
+	}
 }

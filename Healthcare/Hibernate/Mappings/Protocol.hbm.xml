@@ -6,8 +6,10 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <!-- one-to-one enforced by unique constraint -->
-    <many-to-one name="Procedure" class="Procedure" column="ProcedureOID_" not-null="true" unique="true"/>
+    <set name="Procedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="ProtocolOID_"/>
+      <one-to-many class="Procedure"/>
+    </set>
 
     <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
     <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>

@@ -195,6 +195,43 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanStartOrderProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public StartProtocolResponse StartProtocol(StartProtocolRequest request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+
+			bool protocolClaimed = false;
+			bool canPerformerAcceptProtocols = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
+			Staff assignedStaff = null;
+
+			// todo: linked procedures
+
+			if (request.ShouldClaim)
+			{
+				try
+				{
+					ProtocollingOperations.StartProtocolOperation op = new ProtocollingOperations.StartProtocolOperation();
+					op.Execute(assignmentStep, null, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed, out assignedStaff);
+				}
+				catch (Exception e)
+				{
+					throw new RequestValidationException(e.Message);
+				}
+			}
+
+			List<OrderNoteDetail> noteDetails = GetNoteDetails(assignmentStep.Procedure.Order, request.NoteCategory);
+
+			this.PersistenceContext.SynchState();
+
+			return new StartProtocolResponse(
+				assignmentStep.GetRef(),
+				assignedStaff == null ? null : assignedStaff.GetRef(),
+				protocolClaimed,
+				noteDetails);
+		}
+
+		[UpdateOperation]
 		[OperationEnablement("CanDiscardOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
@@ -234,6 +271,40 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanDiscardOrderProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public DiscardProtocolResponse DiscardProtocol(DiscardProtocolRequest request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+			Staff staff = request.ReassignToStaff == null ? null : this.PersistenceContext.Load<Staff>(request.ReassignToStaff);
+
+			if (request.ShouldUnclaim)
+			{
+				// demand authority token if trying to cancel a protocol that is perfomed by someone else
+				if ((assignmentStep.State == ActivityStatus.SC && !Equals(assignmentStep.AssignedStaff, this.CurrentUserStaff)) ||
+					(assignmentStep.State == ActivityStatus.IP && !Equals(assignmentStep.PerformingStaff, this.CurrentUserStaff)))
+				{
+					PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
+					permission.Demand();
+				}
+			}
+
+			if (request.ShouldUnclaim)
+			{
+				ProtocollingOperations.DiscardProtocolOperation op = new ProtocollingOperations.DiscardProtocolOperation();
+				op.Execute(assignmentStep, staff);
+			}
+
+			// Does it make sense to save notes here?
+			if (request.OrderNotes != null)
+				UpdateOrderNotes(assignmentStep.Procedure.Order, request.OrderNotes);
+
+			this.PersistenceContext.SynchState();
+
+			return new DiscardProtocolResponse();
+		}
+
+		[UpdateOperation]
 		[OperationEnablement("CanAcceptOrderProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
 		public AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request)
@@ -248,6 +319,23 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			this.PersistenceContext.SynchState();
 
 			return new AcceptOrderProtocolResponse();
+		}
+
+		[UpdateOperation]
+		[OperationEnablement("CanAcceptOrderProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
+		public AcceptProtocolResponse AcceptProtocol(AcceptProtocolRequest request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+
+			ProtocollingOperations.AcceptProtocolOperation op = new ProtocollingOperations.AcceptProtocolOperation();
+			op.Execute(assignmentStep, this.CurrentUserStaff);
+
+			this.PersistenceContext.SynchState();
+
+			return new AcceptProtocolResponse();
 		}
 
 		[UpdateOperation]
@@ -273,6 +361,28 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanRejectOrderProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public RejectProtocolResponse RejectProtocol(RejectProtocolRequest request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+
+			ProtocolRejectReasonEnum reason =
+				EnumUtils.GetEnumValue<ProtocolRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
+
+			ProtocollingOperations.RejectProtocolOperation op = new ProtocollingOperations.RejectProtocolOperation();
+			op.Execute(assignmentStep, this.CurrentUserStaff, reason);
+
+			AddAdditionalCommentsNote(request.AdditionalCommentsNote, assignmentStep.Procedure.Order);
+
+			this.PersistenceContext.SynchState();
+
+			return new RejectProtocolResponse();
+		}
+
+		[UpdateOperation]
 		[OperationEnablement("CanSaveProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public SaveProtocolResponse SaveOrderProtocol(SaveProtocolRequest request)
@@ -282,6 +392,18 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			SaveProtocolHelper(order, request.Protocols, request.OrderNotes);
 
 			return new SaveProtocolResponse();
+		}
+
+		[UpdateOperation]
+		[OperationEnablement("CanSaveProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		public SaveProtocolResponse2 SaveProtocol(SaveProtocolRequest2 request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+
+			return new SaveProtocolResponse2();
 		}
 
 		[UpdateOperation]
@@ -332,6 +454,38 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanSubmitProtocolForApproval")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
+		public SubmitProtocolForApprovalResponse2 SubmitProtocolForApproval2(SubmitProtocolForApprovalRequest2 request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+			Staff supervisor = null;
+
+			if (request.Protocol != null)
+			{
+				supervisor = GetSupervisor(request.Protocol);
+			}
+
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+
+			bool canOmitSupervisor = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.OmitSupervisor);
+
+			try
+			{
+				ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
+				op.Execute(assignmentStep, supervisor, canOmitSupervisor);
+			}
+			catch (SupervisorRequiredException e)
+			{
+				throw new RequestValidationException(e.Message);
+			}
+
+			this.PersistenceContext.SynchState();
+
+			return new SubmitProtocolForApprovalResponse2();
+		}
+
+		[UpdateOperation]
 		[OperationEnablement("CanReviseSubmittedProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
 		public ReviseSubmittedProtocolResponse ReviseSubmittedProtocol(ReviseSubmittedProtocolRequest request)
@@ -346,6 +500,20 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			return new ReviseSubmittedProtocolResponse(GetWorklistItemSummary(step));
 		}
 
+		[UpdateOperation]
+		[OperationEnablement("CanReviseSubmittedProtocol")]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
+		public ReviseSubmittedProtocolResponse2 ReviseSubmittedProtocol2(ReviseSubmittedProtocolRequest2 request)
+		{
+			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
+
+			ProtocollingOperations.ReviseSubmittedProtocolOperation op = new ProtocollingOperations.ReviseSubmittedProtocolOperation();
+			ProtocolAssignmentStep step = op.Execute(assignmentStep, this.CurrentUserStaff);
+
+			this.PersistenceContext.SynchState();
+
+			return new ReviseSubmittedProtocolResponse2(GetWorklistItemSummary(step));
+		}
 
 		#endregion
 
@@ -475,6 +643,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		#endregion
 
+		// REMOVE
 		private void SaveProtocolHelper(Order order, List<ProtocolDetail> protocols, List<OrderNoteDetail> notes)
 		{
 			if (protocols != null)
@@ -484,11 +653,30 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 				UpdateOrderNotes(order, notes);
 		}
 
+		private void SaveProtocolHelper(ProtocolAssignmentStep step, ProtocolDetail protocolDetail, List<OrderNoteDetail> notes)
+		{
+			if (protocolDetail != null)
+			{
+				ProtocolAssembler assembler = new ProtocolAssembler();
+				Protocol protocol = this.PersistenceContext.Load<Protocol>(protocolDetail.ProtocolRef);
+				assembler.UpdateProtocol(protocol, protocolDetail, this.PersistenceContext);
+			}
+
+			if (notes != null)
+				UpdateOrderNotes(step.Procedure.Order, notes);
+		}
+
 		private Staff GetSupervisor(List<ProtocolDetail> protocols)
 		{
 			ProtocolDetail supervisedDetail = CollectionUtils.SelectFirst(
 				protocols, delegate(ProtocolDetail detail) { return detail.Supervisor != null; });
 			EntityRef supervisorRef = supervisedDetail == null ? null : supervisedDetail.Supervisor.StaffRef;
+			return supervisorRef == null ? null : this.PersistenceContext.Load<Staff>(supervisorRef);
+		}
+
+		private Staff GetSupervisor(ProtocolDetail protocolDetail)
+		{
+			EntityRef supervisorRef = (protocolDetail != null && protocolDetail.Supervisor != null) ? protocolDetail.Supervisor.StaffRef : null;
 			return supervisorRef == null ? null : this.PersistenceContext.Load<Staff>(supervisorRef);
 		}
 
@@ -523,6 +711,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 					});
 		}
 
+		// REMOVE
 		private void UpdateProtocols(List<ProtocolDetail> protocolDetails)
 		{
 			ProtocolAssembler assembler = new ProtocolAssembler();

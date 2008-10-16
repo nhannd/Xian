@@ -48,4 +48,18 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		{
 		}
 	}
+
+	[DataContract]
+	public class AcceptProtocolRequest : UpdateProtocolRequest
+	{
+		public AcceptProtocolRequest(EntityRef protocolAssignmentStepRef, ProtocolDetail protocol, List<OrderNoteDetail> orderNotes)
+			: base(protocolAssignmentStepRef, protocol, orderNotes)
+		{
+		}
+
+		public AcceptProtocolRequest(EntityRef protocolAssignmentStepRef)
+			: this(protocolAssignmentStepRef, null, null)
+		{
+		}
+	}
 }

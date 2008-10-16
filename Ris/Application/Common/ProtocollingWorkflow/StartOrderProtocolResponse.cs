@@ -58,4 +58,32 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[DataMember]
 		public List<OrderNoteDetail> ProtocolNotes;
 	}
+
+	[DataContract]
+	public class StartProtocolResponse : DataContractBase
+	{
+		public StartProtocolResponse(
+			EntityRef protocolAssignmentStepRef,
+			EntityRef assignedStaffRef,
+			bool protocolClaimed,
+			List<OrderNoteDetail> protocolNotes)
+		{
+			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
+			this.AssignedStaffRef = assignedStaffRef;
+			this.ProtocolClaimed = protocolClaimed;
+			this.ProtocolNotes = protocolNotes;
+		}
+
+		[DataMember]
+		public EntityRef ProtocolAssignmentStepRef;
+
+		[DataMember]
+		public EntityRef AssignedStaffRef;
+
+		[DataMember]
+		public bool ProtocolClaimed;
+
+		[DataMember]
+		public List<OrderNoteDetail> ProtocolNotes;
+	}
 }

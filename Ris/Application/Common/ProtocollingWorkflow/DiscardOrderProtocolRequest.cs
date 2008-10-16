@@ -60,4 +60,26 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[DataMember]
 		public EntityRef ReassignToStaff;
 	}
+
+	[DataContract]
+	public class DiscardProtocolRequest : UpdateProtocolRequest
+	{
+		public DiscardProtocolRequest(EntityRef protocolStepRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
+			: base(protocolStepRef, null, orderNotes)
+		{
+			this.ShouldUnclaim = shouldUnclaim;
+			this.ReassignToStaff = reassignToStaff;
+		}
+
+		public DiscardProtocolRequest(EntityRef protocolStepRef)
+			: this(protocolStepRef, null, true, null)
+		{
+		}
+
+		[DataMember]
+		public bool ShouldUnclaim;
+
+		[DataMember]
+		public EntityRef ReassignToStaff;
+	}
 }

@@ -29,6 +29,8 @@
 
 #endregion
 
+using ClearCanvas.Workflow;
+
 namespace ClearCanvas.Healthcare
 {
 	/// <summary>
@@ -37,8 +39,10 @@ namespace ClearCanvas.Healthcare
 	public partial class Protocol : ClearCanvas.Enterprise.Core.Entity
 	{
 		public Protocol(Procedure procedure)
+			: this()
 		{
-			_procedure = procedure;
+			_procedures.Add(procedure);
+			procedure.Protocol = this;
 		}
 
 		/// <summary>
@@ -82,6 +86,25 @@ namespace ClearCanvas.Healthcare
 		protected internal virtual void TimeShift(int minutes)
 		{
 			// no times to shift
+		}
+
+		/// <summary>
+		/// Links a <see cref="Procedure"/> to this report, meaning that the protocol covers
+		/// this radiology procedure.
+		/// </summary>
+		/// <param name="procedure"></param>
+		protected internal virtual void LinkProcedure(Procedure procedure)
+		{
+			if (_procedures.Contains(procedure))
+				throw new WorkflowException("The procedure is already associated with this protocol.");
+
+			// does the procedure already have a report?
+			Protocol otherProtocol = procedure.Protocol;
+			if (otherProtocol != null && !this.Equals(otherProtocol))
+				throw new WorkflowException("Cannot link this procedure because it already has an active protocol.");
+
+			_procedures.Add(procedure);
+			procedure.Protocol = this;
 		}
 	}
 }

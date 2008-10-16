@@ -13,7 +13,7 @@
       <key column="ProcedureOID_"/>
       <one-to-many class="ProcedureStep"/>
     </set>
-    
+
     <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
     <property name="StartTime" column="StartTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
     <property name="EndTime" column="EndTime_" type="DateTime" not-null="false" access="nosetter.camelcase-underscore"/>
@@ -22,7 +22,7 @@
     <property name="Laterality" column="Laterality_" type="ClearCanvas.Healthcare.Hibernate.LateralityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <property name="Portable" type="Boolean" column="Portable_"/>
     <many-to-one name="ProcedureCheckIn" column="ProcedureCheckInOID_" class="ProcedureCheckIn" cascade="all" fetch="join"/>
-    
+
     <!-- Specifies whether the procedure is currently in downtime recovery mode -->
     <property name="DowntimeRecoveryMode" column="DowntimeRecoveryMode_" type="Boolean" not-null="true"/>
 
@@ -35,16 +35,7 @@
       <many-to-many column="ReportOID_" class="Report" fetch="join"/>
     </set>
 
-    <!-- Bug #2354: removed this property because NHibernate loads it eagerly rather than lazily - probably an NHibernate bug
-      <one-to-one name="Protocol" class="Protocol" property-ref="Procedure" access="nosetter.camelcase-underscore"/>
-      
-      Instead, map this as a set, even though it will only ever contain one element.  Then we can add a property
-      to the class to retrieve the single element.
-    -->
-    <set name="Protocols" lazy="true" inverse="true" cascade="all-delete-orphan" access="field.camelcase-underscore">
-      <key column="ProcedureOID_"/>
-      <one-to-many class="Protocol"/>
-    </set>
+    <many-to-one name="Protocol" class="Protocol" column="ProtocolOID_"/>
 
   </class>
 </hibernate-mapping>

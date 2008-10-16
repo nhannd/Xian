@@ -61,4 +61,34 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[DataMember]
 		public OrderNoteDetail AdditionalCommentsNote;
 	}
+
+	[DataContract]
+	public class RejectProtocolRequest : UpdateProtocolRequest
+	{
+		public RejectProtocolRequest(
+			EntityRef protocolAssignmentStepRef,
+			ProtocolDetail protocol,
+			List<OrderNoteDetail> orderNotes,
+			EnumValueInfo rejectReason,
+			OrderNoteDetail additionalCommentsNote)
+			: base(protocolAssignmentStepRef, protocol, orderNotes)
+		{
+			this.RejectReason = rejectReason;
+			this.AdditionalCommentsNote = additionalCommentsNote;
+		}
+
+		public RejectProtocolRequest(
+			EntityRef protocolAssignmentStepRef, 
+			EnumValueInfo rejectReason, 
+			OrderNoteDetail additionalCommentsNote)
+			: this(protocolAssignmentStepRef, null, null, rejectReason, additionalCommentsNote)
+		{
+		}
+
+		[DataMember]
+		public EnumValueInfo RejectReason;
+
+		[DataMember]
+		public OrderNoteDetail AdditionalCommentsNote;
+	}
 }
