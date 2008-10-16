@@ -40,6 +40,8 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
+
+
     public static class ReconcileDetailsAssembler
     {
         private static int ArraySize = 100;
@@ -92,8 +94,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 details.ExistingPatient.Series = existingSeriesList.ToArray();
             }
 
-            details.ExistingPatient.Name = GetExistingName(item.Description);
-            details.ConflictingPatient.Name = GetConflictingName(item.Description);
+            ReconcileStudyQueueDescription description = ParseDescription(item.Description);
+
+            details.ExistingPatient.Name = description.ExistingPatientName;
+            details.ConflictingPatient.Name = description.ConflictingPatientName;
 
             StringWriter sw = new StringWriter();
             XmlTextWriter xw = new XmlTextWriter(sw);
@@ -167,19 +171,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             return details;
         }
 
-        //Extract the Existing Patient name from the description column
-        private static string GetExistingName(string description)
+        private static ReconcileStudyQueueDescription ParseDescription(string description)
         {
-            String patientNames = description.Substring(description.IndexOf("=") + 1);
-            return patientNames.Substring(0, patientNames.IndexOf("\r\n"));
+            ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
+            desc.Parse(description);
+            return desc;
         }
 
-        //Extract the conflicting patient name from the description column
-        private static string GetConflictingName(string description)
-        {
-            String patientNames = description.Substring(description.IndexOf("=") + 1);
-            return patientNames.Substring(patientNames.IndexOf("=") + 1);
-        }
 
         private static string GetConflictingPatientID(string studyData)
         {

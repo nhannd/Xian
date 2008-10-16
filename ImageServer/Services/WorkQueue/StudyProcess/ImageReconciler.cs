@@ -79,8 +79,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             ImageSetDescriptor fileDesc = ImageSetDescriptor.Parse(file);
             XmlNode node = XmlUtils.Serialize(fileDesc);
 
-            ImageSetDescriptor d2 = XmlUtils.Deserialize<ImageSetDescriptor>(node);
-            Debug.Assert(d2.Equals(fileDesc));
+#if DEBUG
+            // This is important: Make sure the serialize and deserialization are correct. 
+            ImageSetDescriptor deserializeDesc = XmlUtils.Deserialize<ImageSetDescriptor>(node);
+            Debug.Assert(deserializeDesc.Equals(fileDesc));
+#endif
 
             if (histories == null || histories.Count == 0)
                 return null;

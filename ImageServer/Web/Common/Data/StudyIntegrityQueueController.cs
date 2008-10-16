@@ -37,6 +37,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -168,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     Study study = studyList[0];
 
                     //Set the demographic details using the Existing Patient
-                    PatientName = string.Format(SetTag, DicomConstants.DicomTags.PatientsName, study.PatientsName);
+                    PatientName = string.Format(SetTag, DicomConstants.DicomTags.PatientsName, XmlUtils.EncodeValue(study.PatientsName));
                     PatientID = string.Format(SetTag, DicomConstants.DicomTags.PatientID, study.PatientId);
                     AccessionNumber = string.Format(SetTag, DicomConstants.DicomTags.AccessionNumber, study.AccessionNumber);
                     PatientSex = string.Format(SetTag, DicomConstants.DicomTags.PatientsSex, study.PatientsSex);

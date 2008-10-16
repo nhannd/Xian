@@ -168,20 +168,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 						if (parm2.Output)
 							throw new PersistenceException("Unsupported output parameter type: XmlDocument", null);
 
-                        MemoryStream sw = new MemoryStream();
-
-                        XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
-                        xmlWriterSettings.Encoding = Encoding.UTF8;
-                        xmlWriterSettings.ConformanceLevel = ConformanceLevel.Fragment;
-                        xmlWriterSettings.Indent = true;
-                        xmlWriterSettings.NewLineOnAttributes = false;
-                        xmlWriterSettings.IndentChars = "";
-
-                        XmlWriter xmlWriter = XmlWriter.Create(sw, xmlWriterSettings);
-                        parm2.Value.DocumentElement.WriteTo(xmlWriter);
-                        xmlWriter.Close();
-
-                        SqlXml xml = new SqlXml(sw);
+                        XmlNodeReader reader = new XmlNodeReader(parm2.Value.DocumentElement);                        
+                        SqlXml xml = new SqlXml(reader);
 
                         command.Parameters.AddWithValue(sqlParmName, xml);
                     }

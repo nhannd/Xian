@@ -50,7 +50,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _value = String.Empty;
             else
             {
-                _value = attr.ToString();
+                // Make sure the value is Xml compatible.
+                _value = XmlUtils.EncodeValue(attr.ToString());
             }
         }
 

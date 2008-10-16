@@ -201,9 +201,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			summary.TheStudyIntegrityQueueItem = item;
 			summary.ThePartition = Partition;
 
-            String patientNames = item.Description.Substring(item.Description.IndexOf("=") + 1);
-		    summary.ExistingPatientName = patientNames.Substring(0, patientNames.IndexOf("\r\n"));
-	    	summary.ConflictingPatientName = patientNames.Substring(patientNames.IndexOf("=") + 1);
+		    ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
+		    queueDescription.Parse(item.Description);
+
+		    summary.ExistingPatientName = queueDescription.ExistingPatientName;
+		    summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
 		    summary.ReceivedTime = item.InsertTime;
 
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();

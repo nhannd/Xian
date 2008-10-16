@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -13,6 +16,8 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    
+
     /// <summary>
     /// Command for inserting a Reconcile Queue entry for a dicom file.
     /// </summary>
@@ -37,11 +42,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             ImageSetDescriptor desc = ImageSetDescriptor.Parse(_context.File);
             XmlDocument descXml = new XmlDocument();
             descXml.AppendChild(descXml.ImportNode(XmlUtils.Serialize(desc), true));
-            
+
+            ReconcileStudyQueueDescription queueDesc = GetQueueEntryDescription();
 
             IInsertStudyIntegrityQueue broker = updateContext.GetBroker<IInsertStudyIntegrityQueue>();
             InsertStudyIntegrityQueueParameters parameters = new InsertStudyIntegrityQueueParameters();
-            parameters.Description = GetImageSearchableDescription();
+            parameters.Description = queueDesc.ToString();
             parameters.StudyInstanceUid = _context.CurrentStudyLocation.StudyInstanceUid;
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
@@ -70,14 +76,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
         }
 
-        private string GetImageSearchableDescription()
+        private ReconcileStudyQueueDescription GetQueueEntryDescription()
         {
-            StringBuilder text = new StringBuilder();
-            text.AppendFormat("{0}={1}", "ExistingPatientsName", _context.CurrentStudy.PatientsName);
-            text.Append(Environment.NewLine);
-            text.AppendFormat("{0}={1}", "NewPatientsName", _context.File.DataSet[DicomTags.PatientsName].GetString(0, String.Empty));
-
-            return text.ToString();
+            ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
+            desc.ExistingPatientName = _context.CurrentStudy.PatientsName;
+            desc.ConflictingPatientName = _context.File.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
+            
+            return desc;
         }
     }
 }

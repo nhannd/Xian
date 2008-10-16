@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
@@ -66,14 +67,31 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             Platform.CheckForNullReference(obj, "obj");
 
             StringWriter sw = new StringWriter();
+            XmlTextWriter xmlTextWriter = new XmlTextWriter(sw);
             XmlSerializer serializer = new XmlSerializer(obj.GetType());
-            serializer.Serialize(sw, obj);
+            serializer.Serialize(xmlTextWriter, obj);
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(sw.ToString());
-
             return doc.DocumentElement;
         }
-    
+
+        /// <summary>
+        /// Ensures the value is Xml compatible.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string EncodeValue(string value)
+        {
+            string text = SecurityElement.Escape(value);
+            
+            // Remove escape characters
+            string escape = String.Format("{0}", (char)0x1B);
+            string replacement = "";
+            text = text.Replace(escape, replacement);
+
+            return text;
+        }
+
     }
 }
