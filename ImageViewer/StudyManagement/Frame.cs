@@ -773,12 +773,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		protected virtual byte[] CreateNormalizedPixelData()
 		{
-			return CreateNormalizedPixelData(this.ParentImageSop.NativeDicomObject);
-		}
-
-		//TODO: these helpers should probably be static if they are to be truly general.
-		protected byte[] CreateNormalizedPixelData(DicomMessageBase message)
-		{
+			DicomMessageBase message = this.ParentImageSop.NativeDicomObject;
 			PhotometricInterpretation photometricInterpretation;
 			byte[] rawPixelData;
 
@@ -805,34 +800,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return rawPixelData;
 		}
 
-		//TODO: this method seems unecessary, and I'm not certain it's correct.
-		protected byte[] CreateNormalizedPixelData(byte[] compressedPixelData)
-		{
-			DicomMessageBase message = ParentImageSop.NativeDicomObject;
-			PhotometricInterpretation photometricInterpretation;
-			byte[] rawPixelData;
-
-			if (!message.TransferSyntax.Encapsulated)
-			{
-				rawPixelData = compressedPixelData;
-				photometricInterpretation = this.PhotometricInterpretation;
-			}
-			else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
-			{
-				DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message, compressedPixelData);
-				string pi;
-				rawPixelData = pixelData.GetFrame(this.FrameNumber - 1, out pi);
-				photometricInterpretation = PhotometricInterpretationHelper.FromString(pi);
-			}
-			else
-				throw new DicomCodecException("Unsupported transfer syntax");
-
-			if (this.IsColor)
-				rawPixelData = this.ToArgb(rawPixelData, photometricInterpretation);
-
-			return rawPixelData;
-		}
-		
 		/// <summary>
 		/// Unloads the pixel data.
 		/// </summary>

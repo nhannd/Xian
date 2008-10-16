@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	//TODO: remove this and use CompositeCommand.
 
 	/// <summary>
 	/// Encapsulates the creating and restoring of mementos across all

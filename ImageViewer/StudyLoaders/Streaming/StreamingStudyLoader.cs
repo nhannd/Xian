@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			get 
 			{
 				if (_prefetchingStrategy == null)
-					_prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy();
+					_prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy(StreamingSettings.Default.PrefetchingConcurrency);
 
 				return _prefetchingStrategy;
 			}

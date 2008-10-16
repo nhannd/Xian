@@ -39,6 +39,7 @@ using ClearCanvas.Dicom.Utilities;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	//TODO: get rid of this or incorporate into Dicom somehow.
+	//NOTE: Leave this until we do ServerTree refactoring.
 
 	/// <summary>
 	/// Represents a remote dicom server.

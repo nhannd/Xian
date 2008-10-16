@@ -1,6 +1,6 @@
-using System.Threading;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Annotations;
+using System.Threading;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -12,6 +12,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private IImageViewer _imageViewer;
 		private volatile bool _stopped = false;
 		private SimpleBlockingThreadPool _threadPool;
+		private readonly int _numberOfThreads = 5;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public VisibleDisplaySetPrefetchingStrategy()
+		{
+		}
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public VisibleDisplaySetPrefetchingStrategy(int numberOfThreads)
+		{
+			Platform.CheckArgumentRange(numberOfThreads, 0, 50, "numberOfThreads");
+
+			_numberOfThreads = numberOfThreads;
+		}
 
 		/// <summary>
 		/// Gets the friendly name of the prefetching strategy.
@@ -38,18 +56,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public void Start(IImageViewer imageViewer)
 		{
-			if (_threadPool == null)
+			if (_numberOfThreads > 0)
 			{
-				const int numberOfThreads = 10;
-				_threadPool = new SimpleBlockingThreadPool(numberOfThreads);
-			}
+				if (_threadPool == null)
+				{
+					_threadPool = new SimpleBlockingThreadPool(_numberOfThreads);
+					_threadPool.ThreadPriority = ThreadPriority.Lowest;
+				}
 
-			_threadPool.Start();
+				_threadPool.Start();
 
-			if (_imageViewer == null)
-			{
-				_imageViewer = imageViewer;
-				_imageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+				if (_imageViewer == null)
+				{
+					_imageViewer = imageViewer;
+					_imageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+				}
 			}
 		}
 
@@ -75,9 +96,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			if (e.NewDisplaySet != null)
 			{
-				//TODO: put whole display set in or presentation images?
-				//TODO: check if same display set is already loading.
-				//TODO: load image by image?
+				// TODO: Later, we may need to revise the strategy to be more predictive,
+				// and to load images rather than display sets.
 				_threadPool.Enqueue(delegate()
 				                    	{
 				                    		PrefetchPixelData(e.NewDisplaySet);
