@@ -34,9 +34,11 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 {
@@ -130,7 +132,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 			Study study = studyAdaptor.GetFirst(criteria);
 
 			if (study != null) _study = study;
-
+            else
+			{
+			    StudyNotFoundException exception = new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");		        
+			    ExceptionHandler.ThrowException(exception);
+			} 
+                
 
             StudyDetailsPanel.Study = _study;
             StudyDetailsPanel.DataBind();
@@ -142,12 +149,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             
             if (_partition!=null && _study == null)
             {
-                Response.Write("<Br>NO SUCH STUDY FOUND<Br>");
+                StudyNotFoundException exception = new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> OnPreRender()");
+                ExceptionHandler.ThrowException(exception);
             } 
+            if (_partition == null)
+            {
+                PartitionNotFoundException exception = new PartitionNotFoundException(_serverae, "The Server Partition is null in Default.aspx -> OnPreRender()");
+                ExceptionHandler.ThrowException(exception);
+            }
 
             if (_study==null)
             {
-                StudyDetailsPanel.Visible = false;
+                StudyNotFoundException exception = new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> OnPreRender()");
+                ExceptionHandler.ThrowException(exception);
             }
             else
             {

@@ -32,6 +32,7 @@
 using System;
 using System.Web;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Modules
 {
@@ -59,6 +60,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
 
         #endregion
 
+        public void OnError(object obj, EventArgs args)
+        {
+            HttpContext context = HttpContext.Current;
+
+            Exception baseException = context.Server.GetLastError();
+
+            if (baseException != null)
+            {
+                baseException = baseException.GetBaseException();
+
+                context.Server.ClearError();
+
+                string logMessage = string.Format("Message: {0}\nSource:{1}\nStack Trace:{2}", baseException.Message, baseException.Source, baseException.StackTrace);
+                Platform.Log(LogLevel.Error, logMessage);
+
+                ExceptionHandler.ThrowException(baseException);
+            }
+        }
+        
         public void application_Error(object sender, EventArgs e)
         {
             HttpContext ctx = HttpContext.Current;
@@ -79,6 +99,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
             {
                 Platform.Log(LogLevel.Error, "Unhandled exception: {0}", theException);
             }
+
+            ExceptionHandler.ThrowException(theException);
         }
     }
 }
