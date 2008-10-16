@@ -86,9 +86,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		//TODO: re-evaluate whether or not all of these should be deprecated, since some of them
-		//have nothing to do with Frames and always apply to the ImageSop.
-
 		#region General Image Module
 
 		/// <summary>
@@ -435,8 +432,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
-
-		//TODO: see above comment RE: deprecation of all ImageSop properties.  These have nothing to do with Frames.
 
 		#region Mammography Image Module / DX Anatomy Imaged Module / Intra-Oral Image Module / Ocular Region Imaged Module
 

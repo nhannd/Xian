@@ -71,15 +71,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			headerParams.ServerAETitle = _ae.AETitle;
 			headerParams.ReferenceID = Guid.NewGuid().ToString();
 
-			//TODO: make it a setting
-			string uri = String.Format("http://{0}:{1}/HeaderStreaming/HeaderStreaming", _ae.Host, _ae.HeaderServicePort);
+			string uri = String.Format(StreamingSettings.Default.FormatHeaderServiceUri, _ae.Host, _ae.HeaderServicePort);
 			EndpointAddress endpoint = new EndpointAddress(uri);
 
-			//TODO: load strictly from configuration
-			HeaderStreamingServiceClient client = 
-				new HeaderStreamingServiceClient(
-				"BasicHttpBinding_IHeaderStreamingService",
-				endpoint);
+			HeaderStreamingServiceClient client = new HeaderStreamingServiceClient();
+			client.Endpoint.Address = endpoint;
 
 			try
 			{

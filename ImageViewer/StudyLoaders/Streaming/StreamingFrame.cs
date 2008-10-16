@@ -27,8 +27,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		protected override byte[] CreateNormalizedPixelData()
 		{
-			//TODO: Put it in a setting.
-			Uri uri = new Uri(String.Format("http://{0}:{1}/WADO", _host, _wadoServicePort));
+			Uri uri = new Uri(String.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
 
 			StreamingClient client = new StreamingClient(uri);
 			byte[] pixelData = client.RetrievePixelData(

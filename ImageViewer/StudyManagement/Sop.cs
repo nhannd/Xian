@@ -694,8 +694,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region Dicom Tag Retrieval Methods
 
-		//TODO: Later, add GetMultiValuedTag(T[])
-
 		private delegate void GetTagDelegate<T>(DicomAttribute attribute, uint position, out T value);
 
 		/// <summary>
@@ -885,7 +883,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			value = value ?? "";
 		}
 
-		//TODO: should make DicomAttributeCollections read-only.
 		public DicomAttribute this[DicomTag tag]
 		{
 			get { return this[tag.TagValue]; }

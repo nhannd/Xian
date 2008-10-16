@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -44,6 +45,12 @@
     </Compile>
     <Compile Include="StreamingFrame.cs" />
     <Compile Include="StreamingImageSop.cs" />
+    <Compile Include="StreamingSettings.cs" />
+    <Compile Include="StreamingSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>StreamingSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StreamingStudyLoader.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +81,13 @@
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="StreamingSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>StreamingSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

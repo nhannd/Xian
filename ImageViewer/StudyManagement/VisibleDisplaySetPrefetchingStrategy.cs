@@ -18,8 +18,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Name
 		{
-			//TODO: Rename the resource.
-			get { return SR.PrefetchingStrategyNameVisibleDisplaySet; }
+			get { return SR.NamePrefetchingStrategyVisibleDisplaySet; }
 		}
 
 		/// <summary>
@@ -27,9 +26,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Description
 		{
-			//TODO: Rename the resource.
-
-			get { return SR.PrefetchingStrategyDescriptionVisibleDisplaySet; }
+			get { return SR.DescriptionPrefetchingStrategyVisibleDisplaySet; }
 		}
 
 		/// <summary>
