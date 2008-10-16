@@ -16,7 +16,7 @@ namespace <%= namespace %>
     /// <summary>
     /// <%= @className %> component
     /// </summary>
-	public sealed partial class <%= className %> : <%= superClassName %>, IEquatable<<%= @className %>>
+	public sealed partial class <%= className %> : <%= superClassName %>, IEquatable<<%= @className %>>, IAuditFormattable
 	{
        	#region Private fields
        	
@@ -126,5 +126,16 @@ namespace <%= namespace %>
 		<% end %>
 			return clone;
         }
+		
+		#region IAuditFormattable Members
+
+		void IAuditFormattable.Write(IObjectWriter writer)
+		{
+			<% fields.each do |f| %>
+		  	writer.WriteProperty("<%= f.accessorName %>", <%= f.fieldName %>);
+		  	<% end %>
+		}
+
+		#endregion
 	}
 }

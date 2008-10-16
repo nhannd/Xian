@@ -86,6 +86,8 @@
     <Compile Include="ExceptionLogEntry.cs" />
     <Compile Include="ExceptionLogger.cs" />
     <Compile Include="ExceptionLoggingAdvice.cs" />
+    <Compile Include="IAuditFormattable.cs" />
+    <Compile Include="IObjectWriter.cs" />
     <Compile Include="IEntityChangeSetRecorder.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />

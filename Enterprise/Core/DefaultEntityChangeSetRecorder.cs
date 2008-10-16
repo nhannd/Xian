@@ -51,8 +51,28 @@ namespace ClearCanvas.Enterprise.Core
         private const string NullValue = "{null}";
         private const string MultiValued = "{multiple-values}";
 
+		#region ObjectWriter implementation
 
-        private string _operationName;
+		class ObjectWriter : IObjectWriter
+		{
+			private readonly XmlWriter _xmlWriter;
+			private readonly DefaultEntityChangeSetRecorder _owner;
+
+			public ObjectWriter(DefaultEntityChangeSetRecorder owner, XmlWriter xmlWriter)
+			{
+				_owner = owner;
+				_xmlWriter = xmlWriter;
+			}
+
+			public void WriteProperty(string name, object value)
+			{
+				_owner.WritePropertyValue(_xmlWriter, name, value);
+			}
+		}
+
+		#endregion
+
+		private string _operationName;
 
         /// <summary>
         /// Constructor.
@@ -196,7 +216,20 @@ namespace ClearCanvas.Enterprise.Core
 			}
 			else
 			{
-				writer.WriteElementString(tagName, GetSerializedValue(propertyValue));
+				writer.WriteStartElement(tagName);
+				if(propertyValue is IAuditFormattable)
+				{
+					// allow value to write itself
+					IAuditFormattable formattable = propertyValue as IAuditFormattable;
+					formattable.Write(new ObjectWriter(this, writer));
+				}
+				else
+				{
+					// use simple serialization
+					writer.WriteValue(GetSerializedValue(propertyValue));
+				}
+
+				writer.WriteEndElement();
 			}
         }
 
@@ -204,11 +237,11 @@ namespace ClearCanvas.Enterprise.Core
 		{
 			foreach (object item in (IEnumerable)collection)
 			{
-				writer.WriteElementString("item", GetSerializedValue(item));
+				WritePropertyValue(writer, "item", item);
 			}
 		}
 
-        private string GetSerializedValue(object value)
+        private static string GetSerializedValue(object value)
         {
             if(value == null)
                 return NullValue;

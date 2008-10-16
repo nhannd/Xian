@@ -46,7 +46,7 @@ namespace ClearCanvas.Healthcare {
     /// case the range extends infinitely in that direction.
     /// </summary>
     [Serializable]
-	public class DateTimeRange : IEquatable<DateTimeRange>, ICloneable
+	public class DateTimeRange : IEquatable<DateTimeRange>, ICloneable, IAuditFormattable
 	{
         private DateTime? _from;
         private DateTime? _until;
@@ -222,5 +222,15 @@ namespace ClearCanvas.Healthcare {
             DateTime y1 = y ?? DateTime.MinValue;
             return x1.CompareTo(y1);
         }
-    }
+
+		#region IAuditFormattable Members
+
+		void IAuditFormattable.Write(IObjectWriter writer)
+		{
+			writer.WriteProperty("From", _from);
+			writer.WriteProperty("Until", _until);
+		}
+
+		#endregion
+	}
 }
