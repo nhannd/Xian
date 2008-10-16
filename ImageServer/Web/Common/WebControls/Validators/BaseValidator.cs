@@ -32,6 +32,7 @@
 using System;
 using System.Drawing;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -300,7 +301,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 							InvalidInputIndicator.TooltipLabel.Text = ErrorMessage;
                         InvalidInputIndicator.Show();
                     }
-
+					Platform.Log(LogLevel.Warn,"Control failed server side validation: {0}", ErrorMessage);
                     return false;
                 }
             }
