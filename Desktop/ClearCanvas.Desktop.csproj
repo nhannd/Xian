@@ -85,7 +85,7 @@
     <Compile Include="CloseHelperComponent.cs" />
     <Compile Include="CloseHelperTool.cs" />
     <Compile Include="CodeEditorFactory.cs" />
-    <Compile Include="UndoableCommandProcessor.cs" />
+    <Compile Include="CompositeUndoableCommand.cs" />
     <Compile Include="DefaultCodeEditorComponent.cs" />
     <Compile Include="DefaultSuggestionProvider.cs" />
     <Compile Include="DesktopMonitorComponent.cs" />

@@ -7,7 +7,7 @@ namespace ClearCanvas.Desktop
 	/// An <see cref="UndoableCommand"/> whose only purpose is to process other <see cref="UndoableCommand"/>s in
 	/// a repeatable manner, such that the entire set of commands can be undone/redone.
 	/// </summary>
-	public class UndoableCommandProcessor : UndoableCommand
+	public class CompositeUndoableCommand : UndoableCommand
 	{
 		private readonly Stack<UndoableCommand> _unexecuteStack;
 		private readonly Queue<UndoableCommand> _executeQueue;
@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public UndoableCommandProcessor()
+		public CompositeUndoableCommand()
 		{
 			_unexecuteStack = new Stack<UndoableCommand>();
 			_executeQueue = new Queue<UndoableCommand>();

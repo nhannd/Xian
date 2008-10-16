@@ -194,17 +194,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (roiGraphics.Count == 0)
 				return;
 
-			UndoableCommandProcessor processor = new UndoableCommandProcessor();
-			processor.Executed += delegate { image.Draw(); };
-			processor.Unexecuted += delegate { image.Draw(); };
-			processor.Name = SR.CommandDeleteAllMeasurements;
+			CompositeUndoableCommand command = new CompositeUndoableCommand();
+			command.Executed += delegate { image.Draw(); };
+			command.Unexecuted += delegate { image.Draw(); };
+			command.Name = SR.CommandDeleteAllMeasurements;
 
 			foreach (RoiGraphic graphic in roiGraphics)
-				processor.Enqueue(new RemoveGraphicUndoableCommand(graphic));
+				command.Enqueue(new RemoveGraphicUndoableCommand(graphic));
 			
-			processor.Execute();
+			command.Execute();
 
-			image.ImageViewer.CommandHistory.AddCommand(processor);
+			image.ImageViewer.CommandHistory.AddCommand(command);
 		}
 
 		public static void Delete(RoiGraphic roiGraphic)
