@@ -3,7 +3,6 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
-	//TODO: add Request/Reply contracts?
 	[ServiceContract(SessionMode = SessionMode.Allowed, ConfigurationName="IStudyRootQuery" , Namespace = QueryNamespace.Value)]
 	public interface IStudyRootQuery
 	{
