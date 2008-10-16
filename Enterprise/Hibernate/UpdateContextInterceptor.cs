@@ -263,6 +263,11 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 			// it is dirty, so we need to get the snapshot
 			ICollection snapshot = collection.CollectionSnapshot.Snapshot;
+
+			// sometimes it seems there is no snapshot - in this case we just return null
+			// to indicate that the snapshot is empty
+			if (snapshot == null)
+			    return null;
 			
 			// unfortunately, the snapshot is not always stored in the same data structure as the collection itself
 			if(collection is ISet)
