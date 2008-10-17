@@ -55,6 +55,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
       private static readonly WorkQueueTypeEnum _PurgeStudy = GetEnum("PurgeStudy");
       private static readonly WorkQueueTypeEnum _ReprocessStudy = GetEnum("ReprocessStudy");
       private static readonly WorkQueueTypeEnum _ReconcileStudy = GetEnum("ReconcileStudy");
+      private static readonly WorkQueueTypeEnum _ReconcileCleanup = GetEnum("ReconcileCleanup");
       #endregion
 
       #region Public Static Properties
@@ -141,6 +142,13 @@ public partial class WorkQueueTypeEnum : ServerEnum
       public static WorkQueueTypeEnum ReconcileStudy
       {
           get { return _ReconcileStudy; }
+      }
+      /// <summary>
+      /// Cleanup a failed Reconcile Study entry
+      /// </summary>
+      public static WorkQueueTypeEnum ReconcileCleanup
+      {
+          get { return _ReconcileCleanup; }
       }
 
       #endregion

@@ -40,7 +40,6 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -719,12 +718,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         /// <summary>
         /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 
-        /// if the item should be postponed to later time.
+        /// if the process can begin.
         /// </summary>
-        /// <returns>True if the work queue item should be postponed. False otherwise.</returns>
+        /// <returns>True if the processing can begin. False otherwise.</returns>
         /// <remarks>
         /// </remarks>
-        protected abstract bool CannotStart();
+        protected abstract bool CanStart();
 
         /// <summary>
         /// Called before the <see cref="WorkQueue"/> item is processed
@@ -768,7 +767,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             _workQueueItem = item;
 
-            if (CannotStart())
+            if (!CanStart())
             {
                 WorkQueueSettings settings = WorkQueueSettings.Instance;
                 DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);

@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.Data, "item.Data");
             
-            if (CannotStart())
+            if (!CanStart())
             {
                 WorkQueueSettings settings = WorkQueueSettings.Instance;
                 DateTime newScheduledTime = Platform.Time.Add(TimeSpan.FromMilliseconds(settings.WorkQueueQueryDelay));
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         }
 
         
-        protected override bool CannotStart()
+        protected override bool CanStart()
         {
             // cannot start if the existing study is scheduled for update
             WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                                               });
 
             List<Model.WorkQueue> items = FindRelatedWorkQueueItems(WorkQueueItem, criteria);
-            return items.Count > 0;
+            return items==null || items.Count == 0;
         }
 
 

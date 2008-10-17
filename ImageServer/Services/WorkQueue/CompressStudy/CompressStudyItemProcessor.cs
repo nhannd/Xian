@@ -315,7 +315,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			_studyStats.Description = String.Format("{0}", item.WorkQueueTypeEnum);
 		}
 
-        protected override bool CannotStart()
+        protected override bool CanStart()
         {
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
             workQueueCriteria.WorkQueueStatusEnum.In(
                 new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed });
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-            return relatedItems != null && relatedItems.Count > 0;
+            return relatedItems == null || relatedItems.Count == 0;
         }
     }
 }

@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 		#endregion
 
-        protected override bool CannotStart()
+        protected override bool CanStart()
         {
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
             workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-            return (relatedItems != null && relatedItems.Count > 0);
+            return (relatedItems == null || relatedItems.Count == 0);
         }
     }
 }

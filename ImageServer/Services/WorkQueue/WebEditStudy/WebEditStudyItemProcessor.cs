@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Platform.Log(LogLevel.Info, "Study Edit completed. GUID={0}", WorkQueueItem.GetKey());
         }
 
-        protected override bool CannotStart()
+        protected override bool CanStart()
         {
             Model.WorkQueue item = WorkQueueItem;
 
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
-            return (relatedItems != null && relatedItems.Count > 0);
+            return (relatedItems == null || relatedItems.Count == 0);
         }
     }
 }

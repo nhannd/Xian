@@ -71,6 +71,13 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),111,'ReconcileStudy','Reconcile Study','Reconcile images.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),112,'ReconcileCleanup','Cleanup Failed Reconcile Study','Cleanup a failed Reconcile Study entry')
+GO
+
+
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])

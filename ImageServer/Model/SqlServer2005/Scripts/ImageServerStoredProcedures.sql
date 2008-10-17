@@ -2271,8 +2271,9 @@ BEGIN
 
 	declare @StudyProcessTypeEnum as smallint
 	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
-	declare @CleanupStudyTypeEnum as smallint
-	select @CleanupStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''CleanupStudy''
+	declare @ReconcileStudyTypeEnum as smallint
+	select @ReconcileStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
+
 	
 	declare @PendingStatusEnum as smallint
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
@@ -2295,13 +2296,11 @@ BEGIN
 
 		BEGIN TRANSACTION
 
-		IF (@workQueueTypeEnum != @StudyProcessTypeEnum)
+		-- Create ''CleanupStudy'' when deleting ''StudyProcess'' 
+		IF (@workQueueTypeEnum = @StudyProcessTypeEnum)
 		BEGIN
-			DELETE FROM WorkQueueUid WHERE WorkQueueGUID = @WorkQueueGUID
-			DELETE FROM WorkQueue WHERE GUID = @WorkQueueGUID;
-		END
-		ELSE
-		BEGIN
+			declare @CleanupStudyTypeEnum as smallint
+			select @CleanupStudyTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''CleanupStudy''
 			declare @NewWorkQueueGUID uniqueidentifier
 			set @NewWorkQueueGUID = NEWID();
 
@@ -2310,7 +2309,39 @@ BEGIN
 
 			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID WHERE WorkQueueGUID = @WorkQueueGUID
 
+			DELETE FROM WorkQueue where GUID = @WorkQueueGUID			
+		END
+		-- Create ''ReconcileCleanup'' when deleting ''ReconcileStudy'' 
+		ELSE IF (@workQueueTypeEnum = @ReconcileStudyTypeEnum)
+		BEGIN
+			DECLARE @StudyHistoryGUID as uniqueidentifier
+			DECLARE @CleanupReconcileTypeEnum as smallint
+			SELECT @CleanupReconcileTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileCleanup''
+			
+			SET @NewWorkQueueGUID = NEWID();
+			SELECT @StudyHistoryGUID=StudyHistoryGUID FROM WorkQueue WHERE GUID=@WorkQueueGUID
+			
+			INSERT WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime, WorkQueuePriorityEnum)
+				values  (@NewWorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @CleanupReconcileTypeEnum, @PendingStatusEnum, getdate(), getdate(),@HighPriorityEnum)
+			
+			UPDATE newrec
+			SET newrec.Data = oldrec.Data
+			FROM WorkQueue newrec, WorkQueue oldrec
+			WHERE oldrec.GUID=@WorkQueueGUID and newrec.GUID=@NewWorkQueueGUID
+
+			UPDATE WorkQueueUid set WorkQueueGUID = @NewWorkQueueGUID WHERE WorkQueueGUID = @WorkQueueGUID
+
 			DELETE FROM WorkQueue where GUID = @WorkQueueGUID
+
+			-- Delete the study history to force user to manually deal with new images later.
+			DELETE StudyHistory WHERE GUID=@StudyHistoryGUID
+
+			
+		END
+		ELSE
+		BEGIN
+			DELETE FROM WorkQueueUid WHERE WorkQueueGUID = @WorkQueueGUID
+			DELETE FROM WorkQueue WHERE GUID = @WorkQueueGUID;
 		END			
 
 		UPDATE StudyStorage
