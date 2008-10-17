@@ -36,6 +36,7 @@ using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
@@ -107,8 +108,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         {
             base.OnInit(e);
 
-            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
-            
+            ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
+                           
             // setup child controls
             GridPagerBottom.Target = ArchiveQueueItemList.ArchiveQueueGrid;
 

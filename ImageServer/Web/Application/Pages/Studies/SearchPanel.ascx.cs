@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         private void SetupChildControls()
         {
-            ClearStudyDateButton.OnClientClick = "document.getElementById('" + StudyDate.ClientID + "').value=''; return false;";
+            ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid);
             GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid);

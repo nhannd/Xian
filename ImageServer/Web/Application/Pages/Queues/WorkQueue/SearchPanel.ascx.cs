@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
@@ -82,9 +83,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             base.OnInit(e);
 
-       
-            ClearScheduleDateButton.OnClientClick = "document.getElementById('" + ScheduleDate.ClientID + "').value=''; return false;";
 
+            ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
+                
             // setup child controls
 
             GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerWorkQueueSingleItem;

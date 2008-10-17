@@ -33,6 +33,7 @@ using System;
 using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
@@ -106,8 +107,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             base.OnInit(e);
 
-            ClearReceivedDateButton.OnClientClick = "document.getElementById('" + ReceivedDate.ClientID + "').value=''; return false;";
-          
+            ClearReceivedDateButton.OnClientClick = ScriptHelper.ClearDate(ReceivedDate.ClientID, ReceivedDateCalendarExtender.ClientID);
+                         
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
                                              App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
                                              StudyIntegrityQueueItemList.StudyIntegrityQueueGrid);
