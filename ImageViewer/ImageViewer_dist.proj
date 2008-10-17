@@ -166,6 +166,9 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll" />
 
+    <!-- Help -->
+    <PluginFiles Include="$(TrunkDirectory)\Desktop\Help\UpdateTools\bin\$(Configuration)\ClearCanvas.Desktop.Help.UpdateTools.dll" />
+
     <!-- Configuration -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.View.WinForms.dll" />
