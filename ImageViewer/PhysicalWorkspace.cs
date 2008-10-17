@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="PhysicalWorkspace"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="Rows"/> is <i>only</i> valid if <see cref="SetImageBoxGrid"/> has
+		/// <see cref="Rows"/> is <i>only</i> valid if <see cref="SetImageBoxGrid(int, int)"/> has
 		/// been called.  Otherwise, the value is meaningless.
 		/// </remarks>
 		public int Rows
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="PhysicalWorkspace"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="Columns"/> is <i>only</i> valid if <see cref="SetImageBoxGrid"/> has
+		/// <see cref="Columns"/> is <i>only</i> valid if <see cref="SetImageBoxGrid(int, int)"/> has
 		/// been called.  Otherwise, the value is meaningless.
 		/// </remarks>
 		public int Columns
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer
 		/// <param name="row">the zero-based row index of the image box to retrieve</param>
 		/// <param name="column">the zero-based column index of the image box to retrieve</param>
 		/// <returns>the image box at the specified row and column indices</returns>
-		/// <remarks>This method is only valid if <see cref="SetImageBoxGrid"/> has been called and/or the 
+		/// <remarks>This method is only valid if <see cref="SetImageBoxGrid(int, int)"/> has been called and/or the 
 		/// layout is, in fact, rectangular.</remarks>
 		/// <exception cref="InvalidOperationException">Thrown if the layout is not currently rectangular</exception>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if either of the row/column indices are out of range</exception>
@@ -234,7 +234,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// <see cref="LayoutCompleted"/> is raised by the Framework when
-		/// <see cref="SetImageBoxGrid"/> has been called.  If you are adding/removing
+		/// <see cref="SetImageBoxGrid(int, int)"/> has been called.  If you are adding/removing
 		/// <see cref="IImageBox"/> objects manually, you should raise this event when
 		/// you're done by calling <see cref="OnLayoutCompleted"/>.  This event is
 		/// consumed by the view to reduce flicker when layouts are changed.  
@@ -314,7 +314,7 @@ namespace ClearCanvas.ImageViewer
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
 		/// <remarks>
-		/// <see cref="SetImageBoxGrid"/> is a convenience method that adds
+		/// <see cref="SetImageBoxGrid(int, int)"/> is a convenience method that adds
 		/// <see cref="IImageBox"/> objects to the <see cref="IPhysicalWorkspace"/>
 		/// in a rectangular grid.
 		/// </remarks>
@@ -344,7 +344,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// If you are adding/removing <see cref="IImageBox"/> objects manually 
-		/// (i.e., instead of using <see cref="SetImageBoxGrid"/>), you should call
+		/// (i.e., instead of using <see cref="SetImageBoxGrid(int, int)"/>), you should call
 		/// <see cref="OnLayoutCompleted"/> to raise the <see cref="LayoutCompleted"/> event.  
 		/// This event is consumed by the view to reduce flicker when layouts are changed.  
 		/// In that way, it is similar to the WinForms methods <b>SuspendLayout</b>
@@ -359,7 +359,7 @@ namespace ClearCanvas.ImageViewer
 		/// Selects the first <see cref="IImageBox"/> in the image box collection.
 		/// </summary>
 		/// <remarks>
-		/// When <see cref="SetImageBoxGrid"/> has been used to setup the 
+		/// When <see cref="SetImageBoxGrid(int, int)"/> has been used to setup the 
 		/// <see cref="IPhysicalWorkspace"/>, the first <see cref="IImageBox"/> in the
 		/// image box collection will be the top-left <see cref="IImageBox"/>.
 		/// </remarks>
