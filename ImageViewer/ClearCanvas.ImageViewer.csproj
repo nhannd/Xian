@@ -236,10 +236,8 @@
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\BackBuffer.cs" />
-    <Compile Include="Rendering\CustomBackBuffer.cs" />
     <Compile Include="Rendering\GDIRenderer.cs" />
     <Compile Include="Rendering\IRendererFactory.cs" />
-    <Compile Include="Rendering\ManagedBackBuffer.cs" />
     <Compile Include="Rendering\RendererBase.cs" />
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />

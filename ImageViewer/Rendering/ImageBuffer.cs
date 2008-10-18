@@ -33,22 +33,18 @@
 
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
+using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	internal class ImageBuffer : IDisposable
     {
+        private Bitmap _bitmap;
 		private System.Drawing.Graphics _graphics;
-		private Bitmap _buffer;
 		private Size _size;
-		private readonly bool _useIndexedBuffer;
 
-        public ImageBuffer(bool useIndexedBuffer)
+        public ImageBuffer()
         {
-        	_useIndexedBuffer = useIndexedBuffer;
         }
 
 		public System.Drawing.Graphics Graphics
@@ -56,131 +52,70 @@ namespace ClearCanvas.ImageViewer.Rendering
 			get
 			{
 				if (_graphics == null)
-					_graphics = System.Drawing.Graphics.FromImage(Bitmap);
+				{
+					_graphics = System.Drawing.Graphics.FromImage(this.Bitmap);
+					//_graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+				}
 
 				return _graphics;
 			}
+		}
+
+        public Size Size
+        {
+            get { return _size; }
+			set
+			{
+				if (_size == value)
+					return;
+
+				_size = value;
+				DisposeBuffer();
+			}
+		}
+
+		public int Width
+		{
+			get { return _size.Width; }	
+		}
+
+		public int Height
+		{
+			get { return _size.Height; }	
 		}
 
 		public Bitmap Bitmap
 		{
 			get
 			{
-				CreateBuffer();
-				return _buffer;
-			}
-		}
+				if (_bitmap == null && !_size.IsEmpty)
+					_bitmap = new Bitmap(_size.Width, _size.Height);
 
-		public Size Size
-		{
-			get { return _size; }
-			set { _size = value; }
-		}
-
-		public void Render(ImageBuffer source)
-		{
-			CreateBuffer();
-
-			if (_useIndexedBuffer)
-				RenderToIndexedBuffer(source.Bitmap);
-			else
-				Graphics.DrawImageUnscaled(source.Bitmap, 0, 0);
-		}
-
-		private void RenderToIndexedBuffer(Bitmap source)
-		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			_size = source.Size;
-
-			Rectangle rect = new Rectangle(0, 0, source.Width, source.Height);
-			BitmapData src = source.LockBits(rect, ImageLockMode.ReadOnly, source.PixelFormat);
-			BitmapData dest = _buffer.LockBits(rect, ImageLockMode.WriteOnly, _buffer.PixelFormat);
-
-			try
-			{
-				Blit(src, dest);
-			}
-			finally
-			{
-				source.UnlockBits(src);
-				_buffer.UnlockBits(dest);
-			}
-
-			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("BackBuffer.RenderToIndexedImage", clock.Seconds);
-		}
-
-		private void CreateBuffer()
-		{
-			if (_buffer == null || _buffer.Width != _size.Width || _buffer.Height != _size.Height)
-			{
-				DisposeBuffer();
-				if (_useIndexedBuffer)
-				{
-					_buffer = new Bitmap(_size.Width, _size.Height, PixelFormat.Format8bppIndexed);
-
-					ColorPalette pal = _buffer.Palette;
-					for (int i = 0; i < 256; i++)
-						pal.Entries[i] = Color.FromArgb(255, i, i, i);
-					_buffer.Palette = pal;
-				}
-				else
-				{
-					_buffer = new Bitmap(_size.Width, _size.Height);
-				}
-			}
-		}
-
-		private static unsafe void Blit(BitmapData source, BitmapData dest)
-		{
-			int srcOffset = source.Stride - 4 * source.Width;
-			int dstOffset = dest.Stride - dest.Width;
-			byte* ptrSrc = (byte*)source.Scan0;
-			byte* ptrDst = (byte*)dest.Scan0;
-			for (int y = 0; y < source.Height; y++, ptrSrc += srcOffset, ptrDst += dstOffset)
-			{
-				for (int x = 0; x < source.Width; x++, ptrSrc += 4, ptrDst++)
-				{
-					*ptrDst = *ptrSrc;
-				}
-			}
-		}
-
-		protected virtual void DisposeBuffer()
-		{
-			if (_graphics != null)
-			{
-				_graphics.Dispose();
-				_graphics = null;
-			}
-
-			if (_buffer != null)
-			{
-				_buffer.Dispose();
-				_buffer = null;
-			}
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				DisposeBuffer();
+				return _bitmap;
 			}
 		}
 
 		public void Dispose()
         {
-			try
-			{
-				Dispose(true);
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
-			}
+			DisposeBuffer();
         }
+
+		private void DisposeBuffer()
+		{
+			if (_graphics != null)
+			{
+				_graphics.Flush();
+				_graphics.Dispose();
+				// MUST set bitmaps and graphics to null after disposal, 
+				// or app will occasionally crash on exit
+				_graphics = null;
+			}
+
+			if (_bitmap != null)
+			{
+				_bitmap.Dispose();
+				_bitmap = null;
+			}
+		}
 	}
 }

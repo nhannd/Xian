@@ -39,7 +39,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 {
 	internal sealed class GdiRenderingSurface : IRenderingSurface
 	{
-		private BackBuffer _backBuffer;
+		private ImageBuffer _imageBuffer;
+		private BackBuffer _finalBuffer;
 
 		private IntPtr _windowID;
 		private IntPtr _contextID;
@@ -48,10 +49,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		public GdiRenderingSurface(IntPtr windowID, int width, int height)
 		{
-			_backBuffer = new ManagedBackBuffer(false);
-			//_backBuffer = new ManagedBackBuffer(true);
-			//_backBuffer = new CustomBackBuffer(false);
-			//_backBuffer = new CustomBackBuffer(true);
+			_imageBuffer = new ImageBuffer();
+			_finalBuffer = new BackBuffer();
 
 			_windowID = windowID;
 			this.ClientRectangle = new Rectangle(0, 0, width, height);
@@ -71,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			set 
 			{ 
 				_contextID = value;
-				BackBuffer.ContextID = _contextID;
+				FinalBuffer.ContextID = _contextID;
 			}
 		}
 
@@ -94,7 +93,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 				if (_clientRectangle != value)
 				{
 					_clientRectangle = value;
-					_backBuffer.ClientRectangle = _clientRectangle;
+					_imageBuffer.Size = new Size(_clientRectangle.Width, _clientRectangle.Height);
+					_finalBuffer.ClientRectangle = _clientRectangle;
 				}
 			}
 		}
@@ -114,9 +114,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		#endregion
 
-		public BackBuffer BackBuffer
+		public ImageBuffer ImageBuffer
 		{
-			get { return _backBuffer; }
+			get { return _imageBuffer; }
+		}
+
+		public BackBuffer FinalBuffer
+		{
+			get { return _finalBuffer; }
 		}
 
 		#region IDisposable Members
@@ -145,10 +150,16 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			if (disposing)
 			{
-				if (_backBuffer != null)
+				if (_imageBuffer != null)
 				{
-					_backBuffer.Dispose();
-					_backBuffer = null;
+					_imageBuffer.Dispose();
+					_imageBuffer = null;
+				}
+
+				if (_finalBuffer != null)
+				{
+					_finalBuffer.Dispose();
+					_finalBuffer = null;
 				}
 			}
 		}
