@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using Ionic.Utils.Zip;
@@ -36,43 +37,64 @@ using Ionic.Utils.Zip;
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
 	/// <summary>
-	/// <see cref="ServerCommand"/> for extracting a zip file containing study files to a specific directory.
+	/// Class for extracting a file from a zip over the top of another file, and preserving
+	/// the old file for restoring on failure.
 	/// </summary>
-	public class ExtractZipCommand : ServerCommand
+	public class ExtractZipFileAndReplaceCommand : ServerCommand, IDisposable
 	{
 		private readonly string _zipFile;
 		private readonly string _destinationFolder;
-		private readonly bool _overwrite;
+		private readonly string _sourceFile;
+		private readonly CreateTempDirectoryCommand _tempDirectory;
+		private bool _fileBackedup = false;
+		private string _storageFile = String.Empty;
+		private string _backupFile = String.Empty;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="zip">The zip file to extract.</param>
-		/// <param name="destinationFolder">The destination folder.</param>
-		public ExtractZipCommand(string zip, string destinationFolder): base("Extract Zip File",true)
+		public ExtractZipFileAndReplaceCommand(string zipFile, string sourceFile, string destinationFolder, CreateTempDirectoryCommand tempDirectory)
+			: base("Extract file from Zip and replace existing file", true)
 		{
-			_zipFile = zip;
+			_zipFile = zipFile;
 			_destinationFolder = destinationFolder;
-			_overwrite = false;
+			_sourceFile = sourceFile;
+			_tempDirectory = tempDirectory;
 		}
 
-		/// <summary>
-		/// Do the unzip.
-		/// </summary>
 		protected override void OnExecute()
 		{
+			_storageFile = Path.Combine(_destinationFolder, _sourceFile);
+			_backupFile = Path.Combine(_tempDirectory.TempDirectory, _sourceFile);
+
+
+			string baseDirectory = _backupFile.Substring(0, _backupFile.LastIndexOfAny(new char[] { Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar }));
+			if (!Directory.Exists(baseDirectory))
+				Directory.CreateDirectory(baseDirectory);
+
+			if (File.Exists(_storageFile))
+			{
+				File.Move(_storageFile, _backupFile);
+				_fileBackedup = true;
+			}
 			using (ZipFile zip = new ZipFile(_zipFile))
 			{
-				zip.ExtractAll(_destinationFolder,_overwrite);
+				zip.Extract(_sourceFile, _destinationFolder, true);
 			}
 		}
 
-		/// <summary>
-		/// Undo.  Remove the destination folder.
-		/// </summary>
 		protected override void OnUndo()
 		{
-			Directory.Delete(_destinationFolder, true);
+			if (_fileBackedup)
+			{
+				if (File.Exists(_storageFile))
+					File.Delete(_storageFile);
+				File.Move(_backupFile, _storageFile);
+				_fileBackedup = false;
+			}
+		}
+
+		public void Dispose()
+		{
+			if (File.Exists(_backupFile))
+				File.Delete(_backupFile);
 		}
 	}
 }

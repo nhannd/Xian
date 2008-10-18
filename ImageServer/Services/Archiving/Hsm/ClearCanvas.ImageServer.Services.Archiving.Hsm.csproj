@@ -45,6 +45,7 @@
     <Compile Include="ApplyRulesCommand.cs" />
     <Compile Include="CreateStudyZipCommand.cs" />
     <Compile Include="ExtractZipCommand.cs" />
+    <Compile Include="ExtractZipFileAndReplaceCommand.cs" />
     <Compile Include="HsmArchive.cs" />
     <Compile Include="HsmArchiveService.cs" />
     <Compile Include="HsmRestoreService.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="HsmStudyArchive.cs" />
     <Compile Include="HsmStudyRestore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdateStudyStateCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">

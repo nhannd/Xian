@@ -132,6 +132,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             return row.getAttribute('deleted')=='true';
         },
         
+        _studyCanRestore : function(row)
+        {
+            //"nearline" is a custom attribute injected by the study list control
+            return row.getAttribute('canrestore')=='true';
+        },
+        
         _studyIsNearline : function(row)
         {
             //"nearline" is a custom attribute injected by the study list control
@@ -140,7 +146,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         
         _studyIsReconcileScheduled : function(row)
         {
-            //"nearline" is a custom attribute injected by the study list control
+            //"reconcileScheduled" is a custom attribute injected by the study list control
             return row.getAttribute('reconcileScheduled')=='true';
         },
         
@@ -213,7 +219,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
 					this._enableRestoreButton(true);                    
                     for(i=0; i<rows.length; i++)
                     {
-                        if (!this._studyIsNearline(rows[i])) 
+                        if (!this._studyCanRestore(rows[i])) 
                         {
                             this._enableRestoreButton(false);   
                         }

@@ -44,6 +44,7 @@
     <Compile Include="Alert.cs" />
     <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
+    <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />

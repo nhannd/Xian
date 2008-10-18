@@ -89,9 +89,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
         /// </summary>
-        public ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView StudyListGrid
+        public Web.Common.WebControls.UI.GridView StudyListGrid
         {
-            get { return this.StudyListControl; }
+            get { return StudyListControl; }
         }
 
 
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         /// <summary>
         /// Gets/Sets the current selected device.
         /// </summary>
-        public IList<Study> SelectedStudies
+        public IList<StudySummary> SelectedStudies
         {
             get
             {
@@ -115,11 +115,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 if (rows == null || rows.Length == 0)
                     return null;
 
-				IList<Study> studies = new List<Study>();
+				IList<StudySummary> studies = new List<StudySummary>();
                 for(int i=0; i<rows.Length; i++)
                 {
 					if (rows[i] < Studies.Count)
-						studies.Add(Studies[rows[i]].TheStudy);
+						studies.Add(Studies[rows[i]]);
                 }
 
                 return studies;
@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedStudies"></param>
-        public delegate void StudySelectedEventHandler(object sender, IList<Model.Study> selectedStudies);
+        public delegate void StudySelectedEventHandler(object sender, IList<StudySummary> selectedStudies);
 
         /// <summary>
         /// Occurs when the selected device in the list is changed.
@@ -198,7 +198,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            StudyListControl.SelectedIndexChanged += new EventHandler(StudyListControl_SelectedIndexChanged);
+            StudyListControl.SelectedIndexChanged += StudyListControl_SelectedIndexChanged;
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -225,7 +225,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 							row.Attributes.Add("deleted", "true");
 						if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
 							row.Attributes.Add("nearline", "true");
-                        if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled))
+						if (study.CanRestore)
+							row.Attributes.Add("canrestore", "true");
+						if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled))
                             row.Attributes.Add("reconcileScheduled", "true");
 					}
                 }
@@ -235,7 +237,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         protected void StudyListControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            IList<Study> studies = SelectedStudies;
+            IList<StudySummary> studies = SelectedStudies;
             if (studies != null)
                 if (OnStudySelectionChanged != null)
                     OnStudySelectionChanged(this, studies);            

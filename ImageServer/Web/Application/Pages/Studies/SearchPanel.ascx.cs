@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Web.UI;
 using AjaxControlToolkit;
@@ -37,7 +38,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
@@ -59,28 +59,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("DeleteButtonClientID")]
         public string DeleteButtonClientID
         {
-            get { return this.DeleteStudyButton.ClientID; }
+            get { return DeleteStudyButton.ClientID; }
         }
 
         [ExtenderControlProperty]
         [ClientPropertyName("OpenButtonClientID")]
         public string OpenButtonClientID
         {
-            get { return this.ViewStudyDetailsButton.ClientID; }
+            get { return ViewStudyDetailsButton.ClientID; }
         }
 
 		[ExtenderControlProperty]
 		[ClientPropertyName("RestoreButtonClientID")]
 		public string RestoreButtonClientID
 		{
-			get { return this.RestoreStudyButton.ClientID; }
+			get { return RestoreStudyButton.ClientID; }
 		}
 
         [ExtenderControlProperty]
         [ClientPropertyName("SendButtonClientID")]
         public string SendButtonClientID
         {
-            get { return this.MoveStudyButton.ClientID; }
+            get { return MoveStudyButton.ClientID; }
         }
 
         [ExtenderControlProperty]
@@ -139,7 +139,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         _controller.DeleteStudy(study);
                                     }
                                 }
-                                else if (data is Study)
+								if (data is IList<StudySummary>)
+								{
+									IList<StudySummary> studies = data as IList<StudySummary>;
+									foreach (StudySummary study in studies)
+									{
+										_controller.DeleteStudy(study.TheStudy);
+									}
+								}
+								else if (data is Study)
                                 {
                                     Study study = data as Study;
                                     _controller.DeleteStudy(study);
@@ -159,6 +167,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         _controller.RestoreStudy(study);
                                     }
                                 }
+								else if (data is IList<StudySummary>)
+								{
+									IList<StudySummary> studies = data as IList<StudySummary>;
+									foreach (StudySummary study in studies)
+									{
+										_controller.RestoreStudy(study.TheStudy);
+									}
+								}
                                 else if (data is Study)
                                 {
                                     Study study = data as Study;
@@ -257,7 +273,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
-            IList<Study> studies = StudyListGridView.SelectedStudies;
+            IList<StudySummary> studies = StudyListGridView.SelectedStudies;
 
             if (studies != null && studies.Count>0)
             {
@@ -269,14 +285,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
                 DeleteMessageBox.Title = App_GlobalResources.Titles.DeleteStudyConfirmation;
                 DeleteMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-                DeleteMessageBox.Data = studies;
+            	IList<Study> studyList = new List<Study>();
+				foreach (StudySummary summary in studies)
+					studyList.Add(summary.TheStudy);
+				DeleteMessageBox.Data = studyList;
                 DeleteMessageBox.Show();
             }
         }
 
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
 		{
-			IList<Study> studies = StudyListGridView.SelectedStudies;
+			IList<StudySummary> studies = StudyListGridView.SelectedStudies;
 
 			if (studies != null && studies.Count > 0)
 			{
@@ -288,20 +307,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				
 			    RestoreMessageBox.Title = App_GlobalResources.Titles.RestoreStudyConfirmation;
                 RestoreMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-				RestoreMessageBox.Data = studies;
+				IList<Study> studyList = new List<Study>();
+				foreach (StudySummary summary in studies)
+					studyList.Add(summary.TheStudy);
+				RestoreMessageBox.Data = studyList;
 				RestoreMessageBox.Show();
 			}
 		}
 
         protected void UpdateToolbarButtonState()
         {
-            IList<Study> studies = StudyListGridView.SelectedStudies;
+            IList<StudySummary> studies = StudyListGridView.SelectedStudies;
             if (studies != null)
             {
 				RestoreStudyButton.Enabled = true;
-				foreach (Study study in studies)
+				foreach (StudySummary study in studies)
 				{
-					if (!study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+					if (!study.CanRestore)
 					{
 						RestoreStudyButton.Enabled = false;
 						break;
@@ -312,7 +334,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             	ViewStudyDetailsButton.Enabled = true;
 				DeleteStudyButton.Enabled = true;
                 MoveStudyButton.Enabled = true;
-                foreach (Study study in studies)
+                foreach (StudySummary study in studies)
                 {
 					if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline) || 
                         study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileRequired))
@@ -320,7 +342,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 						DeleteStudyButton.Enabled = false;
 						MoveStudyButton.Enabled = false;
 					}
-                    else if (_controller.IsScheduledForDelete(study))
+                    else if (_controller.IsScheduledForDelete(study.TheStudy))
                     {
                         DeleteStudyButton.Enabled = false;
                         break;

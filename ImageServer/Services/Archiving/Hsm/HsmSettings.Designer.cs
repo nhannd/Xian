@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
     internal sealed partial class HsmSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static HsmSettings defaultInstance = ((HsmSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new HsmSettings())));

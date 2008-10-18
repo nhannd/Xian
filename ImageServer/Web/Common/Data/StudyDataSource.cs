@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	/// </summary>
 	/// <remarks>
 	/// </remarks>
+	[Serializable]
 	public class StudySummary
 	{
 		#region Private members
@@ -58,6 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private Study _theStudy;
 		private ServerPartition _thePartition;
 		private QueueStudyStateEnum _queueStudyStateEnum;
+		private ArchiveStudyStorage _theArchiveLocation;
 
 		#endregion Private members
 
@@ -149,6 +152,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		{
 			get { return _thePartition; }
 			set { _thePartition = value; }
+		}
+
+		public ArchiveStudyStorage TheArchiveLocation
+		{
+			get { return _theArchiveLocation; }
+			set { _theArchiveLocation = value; }
+		}
+
+		public bool CanRestore
+		{
+			get
+			{
+				if (StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+					return true;
+				
+				if (_theArchiveLocation != null)
+					return true;
+			
+				return false;
+			}
 		}
 		#endregion Public Properties
 	}
@@ -336,6 +359,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			summary.TheStudy = study;
 			summary.ThePartition = Partition;
 			summary.QueueStudyStateEnum = study.QueueStudyStateEnum;
+
+			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
+			if (archiveList.Count > 0)
+				summary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
+			
 			return summary;
 		}
 	}

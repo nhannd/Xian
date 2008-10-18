@@ -66,7 +66,9 @@ namespace ClearCanvas.ImageServer.Model
         private bool _writeOnly;
         private FilesystemTierEnum _filesystemTierEnum;
     	private String _transferSyntaxUid;
-        #endregion
+    	private ServerEntityKey _filesystemStudyStorageKey;
+
+    	#endregion
 
         #region Public Properties
         public ServerEntityKey ServerPartitionKey
@@ -149,6 +151,11 @@ namespace ClearCanvas.ImageServer.Model
 			get { return _transferSyntaxUid; }
 			set { _transferSyntaxUid = value; }
 		}
+    	public ServerEntityKey FilesystemStudyStorageKey
+    	{
+			get { return _filesystemStudyStorageKey; }
+			set { _filesystemStudyStorageKey = value; }
+    	}
 		#endregion
 
         #region Public Methods

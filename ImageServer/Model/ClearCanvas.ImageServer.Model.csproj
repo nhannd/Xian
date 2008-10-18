@@ -49,6 +49,7 @@
     <Compile Include="AlertLevelEnum.gen.cs" />
     <Compile Include="ArchiveQueue.gen.cs" />
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />
+    <Compile Include="ArchiveStudyStorage.cs" />
     <Compile Include="ArchiveStudyStorage.gen.cs" />
     <Compile Include="ArchiveTypeEnum.gen.cs" />
     <Compile Include="Brokers\ICreatePatientForStudy.cs" />

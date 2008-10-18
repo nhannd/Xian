@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			_studyInstanceUid = studyInstanceUid;
 			_context = context;
 			_engine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyRestored, _context.ServerPartitionKey);
+			_engine.Load();
 		}
 
 		/// <summary>
@@ -95,13 +96,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			DicomFile defaultFile = null;
 			bool rulesExecuted = false;
 			foreach (SeriesXml seriesXml in theXml)
+			{
 				foreach (InstanceXml instanceXml in seriesXml)
 				{
 					// Skip non-image objects
 					if (instanceXml.SopClass.Equals(SopClass.KeyObjectSelectionDocumentStorage)
-						|| instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
-						|| instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
-						|| instanceXml.SopClass.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass))
+					    || instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
+					    || instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
+					    || instanceXml.SopClass.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass))
 					{
 						// Save the first one encountered, just in case the whole study is non-image objects.
 						if (defaultFile == null)
@@ -109,12 +111,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						continue;
 					}
 
-					DicomFile file = new DicomFile("test", new DicomAttributeCollection(),instanceXml.Collection);
+					DicomFile file = new DicomFile("test", new DicomAttributeCollection(), instanceXml.Collection);
 					_context.Message = file;
 					_engine.Execute(_context);
 					rulesExecuted = true;
 					break;
 				}
+				if (rulesExecuted) break;
+			}
 
 			if (!rulesExecuted && defaultFile != null)
 			{

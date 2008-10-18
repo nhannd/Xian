@@ -29,50 +29,71 @@
 
 #endregion
 
+using System;
 using System.IO;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using Ionic.Utils.Zip;
+using ClearCanvas.ImageServer.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
+namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
-	/// <see cref="ServerCommand"/> for extracting a zip file containing study files to a specific directory.
+	/// Create a temporary directory.  Remove the directory and its contents when disposed.
 	/// </summary>
-	public class ExtractZipCommand : ServerCommand
+	public class CreateTempDirectoryCommand : ServerCommand, IDisposable
 	{
-		private readonly string _zipFile;
-		private readonly string _destinationFolder;
-		private readonly bool _overwrite;
+		#region Private Members
+		private readonly string _directory;
+		private bool _created = false;
+		#endregion
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="zip">The zip file to extract.</param>
-		/// <param name="destinationFolder">The destination folder.</param>
-		public ExtractZipCommand(string zip, string destinationFolder): base("Extract Zip File",true)
+		public string TempDirectory
 		{
-			_zipFile = zip;
-			_destinationFolder = destinationFolder;
-			_overwrite = false;
+			get { return _directory; }
+		}
+		public CreateTempDirectoryCommand()
+			: base("Create Temp Directory", true)
+		{
+			_directory = ServerPlatform.GetTempPath();
 		}
 
-		/// <summary>
-		/// Do the unzip.
-		/// </summary>
 		protected override void OnExecute()
 		{
-			using (ZipFile zip = new ZipFile(_zipFile))
+			if (Directory.Exists(_directory))
 			{
-				zip.ExtractAll(_destinationFolder,_overwrite);
+				_created = false;
+				return;
+			}
+
+			try
+			{
+			    Directory.CreateDirectory(_directory);
+			}
+            catch(UnauthorizedAccessException)
+            {
+                //alert the system admin
+                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Critical, "Filesystem", AlertTypeCodes.NoPermission,
+                                     "Unauthorized access to {0} from {1}", _directory, ServiceTools.HostId);
+                throw;
+            }
+
+			_created = true;
+		}
+
+		protected override void OnUndo()
+		{
+			if (_created)
+			{
+				DirectoryUtility.DeleteIfExists(_directory);
+				_created = false;
 			}
 		}
 
-		/// <summary>
-		/// Undo.  Remove the destination folder.
-		/// </summary>
-		protected override void OnUndo()
+		public void Dispose()
 		{
-			Directory.Delete(_destinationFolder, true);
+			if (_created)
+			{
+				DirectoryUtility.DeleteIfExists(_directory);
+				_created = false;
+			}
 		}
 	}
 }

@@ -401,7 +401,7 @@ BEGIN
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -413,7 +413,7 @@ BEGIN
 	BEGIN
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -425,7 +425,7 @@ BEGIN
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -2121,6 +2121,7 @@ BEGIN
 		SELECT @StudyGUID = GUID FROM Study WHERE ServerPartitionGUID = @ServerPartitionGUID AND StudyInstanceUid = @StudyInstanceUid
 		UPDATE Study SET StudyStatusEnum = @StudyStatusEnum WHERE GUID = @StudyGUID
 		UPDATE Series SET StudyStatusEnum = @StudyStatusEnum WHERE StudyGUID = @StudyGUID
+		UPDATE StudyStorage SET StudyStatusEnum = @StudyStatusEnum WHERE ServerPartitionGUID = @ServerPartitionGUID AND StudyInstanceUid = @StudyInstanceUid
 
 	END
 

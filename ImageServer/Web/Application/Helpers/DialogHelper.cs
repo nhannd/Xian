@@ -31,44 +31,58 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Configuration;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Helpers
 {
-    public class DialogHelper
-    {
-        public static string createConfirmationMessage(string message)
-        {
-            return string.Format("<span class=\"ConfirmDialogMessage\">{0}</span>", message);
-        }
+	public class DialogHelper
+	{
+		public static string createConfirmationMessage(string message)
+		{
+			return string.Format("<span class=\"ConfirmDialogMessage\">{0}</span>", message);
+		}
 
-        public static string createStudyTable(IList<Study> studies)
-        {
-            string message;
+		public static string createStudyTable(IList<Study> studies)
+		{
+			string message;
 
-            message =
-                "<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Patient</td><td colspan=\"2\">Accession</td><td>Description</td></tr>";
+			message =
+				"<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Patient</td><td colspan=\"2\">Accession</td><td>Description</td></tr>";
 
-            int i = 0;
-            foreach (Study study in studies)
-            {
-                String text = String.Format("<tr class=\"ConfirmDialogItemText\"><td>{0}</td><td>&nbsp;</td><td>{1}</td><td>&nbsp;</td><td>{2}</td></tr>",
-                                 study.PatientsName, study.AccessionNumber, study.StudyDescription);
-                message += text;
+			int i = 0;
+			foreach (Study study in studies)
+			{
+				String text = String.Format("<tr class=\"ConfirmDialogItemText\"><td>{0}</td><td>&nbsp;</td><td>{1}</td><td>&nbsp;</td><td>{2}</td></tr>",
+								 study.PatientsName, study.AccessionNumber, study.StudyDescription);
+				message += text;
 
-                i++;
-            }
-            message += "</table>";
+				i++;
+			}
+			message += "</table>";
 
-            return message;
-        }
-    }
+			return message;
+		}
+
+		public static string createStudyTable(IList<StudySummary> studies)
+		{
+			string message;
+
+			message =
+				"<table cellpadding=\"3\" cellspacing=\"0\" width=\"100%\" class=\"ConfirmDialogTable\"><tr class=\"ConfirmDialogHeadingText\"><td colspan=\"2\">Patient</td><td colspan=\"2\">Accession</td><td>Description</td></tr>";
+
+			int i = 0;
+			foreach (StudySummary study in studies)
+			{
+				String text = String.Format("<tr class=\"ConfirmDialogItemText\"><td>{0}</td><td>&nbsp;</td><td>{1}</td><td>&nbsp;</td><td>{2}</td></tr>",
+								 study.PatientsName, study.AccessionNumber, study.StudyDescription);
+				message += text;
+
+				i++;
+			}
+			message += "</table>";
+
+			return message;
+		}
+	}
 }

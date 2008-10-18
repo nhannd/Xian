@@ -332,6 +332,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             ArchiveStudyStorageAdaptor adaptor = new ArchiveStudyStorageAdaptor();
             ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
             archiveStudyStorageCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+        	archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
 
             return adaptor.Get(archiveStudyStorageCriteria);
         }
@@ -349,11 +350,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                 IList<StudyStorageLocation> storage = select.Find(parms);
 
-                if (storage == null || storage.Count == 0)
-                {
-                    Platform.Log(LogLevel.Error, "Unable to find storage location for Study item: {0}",
+                if (storage == null)
+				{
+					storage = new List<StudyStorageLocation>();
+				    Platform.Log(LogLevel.Warn, "Unable to find storage location for Study item: {0}",
                                  study.GetKey().ToString());
-                    throw new ApplicationException("Unable to find storage location for Study item.");
                 }
 
                 if (storage.Count > 1)

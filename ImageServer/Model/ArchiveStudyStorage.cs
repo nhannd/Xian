@@ -29,50 +29,20 @@
 
 #endregion
 
-using System.IO;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using Ionic.Utils.Zip;
-
-namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
+namespace ClearCanvas.ImageServer.Model
 {
-	/// <summary>
-	/// <see cref="ServerCommand"/> for extracting a zip file containing study files to a specific directory.
-	/// </summary>
-	public class ExtractZipCommand : ServerCommand
+	public partial class ArchiveStudyStorage
 	{
-		private readonly string _zipFile;
-		private readonly string _destinationFolder;
-		private readonly bool _overwrite;
+		private ServerTransferSyntax _transferSyntax = null;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		/// <param name="zip">The zip file to extract.</param>
-		/// <param name="destinationFolder">The destination folder.</param>
-		public ExtractZipCommand(string zip, string destinationFolder): base("Extract Zip File",true)
+		public ServerTransferSyntax ServerTransferSyntax
 		{
-			_zipFile = zip;
-			_destinationFolder = destinationFolder;
-			_overwrite = false;
-		}
-
-		/// <summary>
-		/// Do the unzip.
-		/// </summary>
-		protected override void OnExecute()
-		{
-			using (ZipFile zip = new ZipFile(_zipFile))
+			get
 			{
-				zip.ExtractAll(_destinationFolder,_overwrite);
+				if (_transferSyntax == null)
+					_transferSyntax = ServerTransferSyntax.Load(_serverTransferSyntaxKey);
+				return _transferSyntax;
 			}
-		}
-
-		/// <summary>
-		/// Undo.  Remove the destination folder.
-		/// </summary>
-		protected override void OnUndo()
-		{
-			Directory.Delete(_destinationFolder, true);
 		}
 	}
 }

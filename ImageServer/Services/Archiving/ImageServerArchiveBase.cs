@@ -80,6 +80,15 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		}
 
 		public abstract ArchiveTypeEnum ArchiveType { get; }
+
+		/// <summary>
+		/// The persistent store.
+		/// </summary>
+		public IPersistentStore PersistentStore
+		{
+			get { return _store; }
+		}
+
 		public abstract void Start(PartitionArchive archive);
 		public abstract void Stop();
 
@@ -94,7 +103,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		{
 			RestoreQueue queueItem;
 
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				QueryRestoreQueueParameters parms = new QueryRestoreQueueParameters();
 
@@ -121,7 +130,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		{
 			ArchiveQueue queueItem;
 
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				QueryArchiveQueueParameters parms = new QueryArchiveQueueParameters();
 
@@ -156,7 +165,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// <param name="scheduledTime">The scheduled time to set the entry to.</param>
 		public void UpdateArchiveQueue(ArchiveQueue item, ArchiveQueueStatusEnum status, DateTime scheduledTime)
 		{
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				UpdateArchiveQueueParameters parms = new UpdateArchiveQueueParameters();
 				parms.ArchiveQueueKey = item.GetKey();
@@ -183,7 +192,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// <param name="scheduledTime">The scheduled time to set the entry to.</param>
 		public void UpdateRestoreQueue(RestoreQueue item, RestoreQueueStatusEnum status, DateTime scheduledTime)
 		{
-			using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				UpdateRestoreQueueParameters parms = new UpdateRestoreQueueParameters();
 				parms.RestoreQueueKey = item.GetKey();
