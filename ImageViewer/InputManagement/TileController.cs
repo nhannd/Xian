@@ -243,7 +243,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				{
 					_command.EndState = ((IMemorable) _captureHandler).CreateMemento();
 					if (_command.BeginState != null && !_command.BeginState.Equals(_command.EndState))
-						_tile.ImageViewer.CommandHistory.AddCommand(_command);
+					{
+						DrawableUndoableCommand drawableCommand = new DrawableUndoableCommand(_tile);
+						drawableCommand.Enqueue(_command);
+						_tile.ImageViewer.CommandHistory.AddCommand(drawableCommand);
+					}
 					
 					_command = null;
 				}
@@ -255,8 +259,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 					IMemorable originator = (IMemorable) _captureHandler;
 					ITile tile = _tile;
 					_command = new UndoableCommand(originator);
-					_command.Executed += delegate { tile.Draw(); };
-					_command.Unexecuted += delegate { tile.Draw(); };
 					_command.BeginState = originator.CreateMemento();
 				}
 				

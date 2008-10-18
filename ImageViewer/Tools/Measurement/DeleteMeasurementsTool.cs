@@ -194,9 +194,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (roiGraphics.Count == 0)
 				return;
 
-			CompositeUndoableCommand command = new CompositeUndoableCommand();
-			command.Executed += delegate { image.Draw(); };
-			command.Unexecuted += delegate { image.Draw(); };
+			DrawableUndoableCommand command = new DrawableUndoableCommand(image);
 			command.Name = SR.CommandDeleteAllMeasurements;
 
 			foreach (RoiGraphic graphic in roiGraphics)
@@ -214,9 +212,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			IPresentationImage image = roiGraphic.ParentPresentationImage;
 
-			RemoveGraphicUndoableCommand command = new RemoveGraphicUndoableCommand(roiGraphic);
-			command.Executed += delegate { image.Draw(); };
-			command.Unexecuted += delegate { image.Draw(); };
+			DrawableUndoableCommand command = new DrawableUndoableCommand(image);
+			command.Enqueue(new RemoveGraphicUndoableCommand(roiGraphic));
 			command.Name = SR.CommandDeleteMeasurement;
 			command.Execute();
 

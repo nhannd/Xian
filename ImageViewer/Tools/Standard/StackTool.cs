@@ -117,8 +117,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			IPresentationImage topLeftImage = imageBox.TopLeftPresentationImage;
 
 			UndoableCommand command = new UndoableCommand(imageBox);
-			command.Executed += delegate { imageBox.Draw(); };
-			command.Unexecuted += delegate { imageBox.Draw(); };
 			command.Name = SR.CommandSortImages;
 			command.BeginState = imageBox.CreateMemento();
 

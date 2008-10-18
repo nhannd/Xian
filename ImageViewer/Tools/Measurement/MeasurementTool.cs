@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private RoiGraphic _createRoiGraphic;
 		private InteractiveGraphic _currentChangingRoi;
 
-		private InsertGraphicUndoableCommand _undoableCommand;
+		private DrawableUndoableCommand _undoableCommand;
 
 		private List<IRoiAnalyzer<T>> _roiAnalyzers;
 
@@ -107,9 +107,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_createRoiGraphic = CreateRoiGraphic();
 			_createRoiGraphic.RoiChanged += OnRoiChanged;
 
-			_undoableCommand = new InsertGraphicUndoableCommand(_createRoiGraphic, provider.OverlayGraphics, provider.OverlayGraphics.Count);
-			_undoableCommand.Executed += delegate { image.Draw(); };
-			_undoableCommand.Unexecuted += delegate { image.Draw(); };
+			_undoableCommand = new DrawableUndoableCommand(image);
+			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_createRoiGraphic, provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Name = CreationCommandName;
 			_undoableCommand.Execute();
 

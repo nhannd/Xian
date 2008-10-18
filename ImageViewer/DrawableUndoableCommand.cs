@@ -31,7 +31,6 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using System;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -45,8 +44,7 @@ namespace ClearCanvas.ImageViewer
 	/// <see cref="IDrawable.Draw"/> on the object passed to the constructor
 	/// after <see cref="Execute"/> and <see cref="Unexecute"/>.
 	/// </remarks>
-	[Obsolete("Use the UndoableCommand's Executed and Unexecuted events instead.")]
-	public class DrawableUndoableCommand : UndoableCommand
+	public class DrawableUndoableCommand : CompositeUndoableCommand
 	{
 		private readonly IDrawable _drawable;
 
@@ -54,29 +52,10 @@ namespace ClearCanvas.ImageViewer
 		/// Constructor.
 		/// </summary>
 		/// <param name="drawable">The object to redraw after <see cref="Execute"/> or <see cref="Unexecute"/>.</param>
-		/// <param name="originator">The originator is the object responsible for creating
-		/// memento objects and restoring state from them.</param>
-		public DrawableUndoableCommand(IDrawable drawable, IMemorable originator)
-			: base(originator)
+		public DrawableUndoableCommand(IDrawable drawable)
 		{
 			Platform.CheckForNullReference(drawable, "drawable");
-			Platform.CheckForNullReference(originator, "originator");
 
-			_drawable = drawable;
-		}
-
-		/// <summary>
-		/// Default constructor for subclasses.
-		/// </summary>
-		/// <remarks>
-		/// Subclasses that use this constructor <b>must</b> override
-		/// <see cref="Execute"/> and <see cref="Unexecute"/>, otherwise
-		/// the command will do nothing (<see cref="UndoableCommand.Originator"/> will be null).
-		/// </remarks>
-		protected DrawableUndoableCommand(IDrawable drawable)
-			: base()
-		{
-			Platform.CheckForNullReference(drawable, "drawable");
 			_drawable = drawable;
 		}
 
