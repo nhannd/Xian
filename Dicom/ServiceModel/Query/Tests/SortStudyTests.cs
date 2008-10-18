@@ -1,12 +1,10 @@
 #if UNIT_TESTS
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
-namespace ClearCanvas.Ris.Client.ViewerIntegration.Tests
+namespace ClearCanvas.Dicom.ServiceModel.Query.Tests
 {
 	[TestFixture]
 	public class SortStudyTests
@@ -27,7 +25,7 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration.Tests
 			identifiers.Add(CreateStudyIdentifier("5", "", ""));
 			identifiers.Add(CreateStudyIdentifier("6", "", ""));
 
-			identifiers.Sort(ViewerAutomationAdapter.SortStudies);
+			identifiers.Sort(new StudyDateTimeComparer());
 
 			int i = 1;
 			foreach (StudyRootStudyIdentifier identifier in identifiers)
@@ -47,4 +45,5 @@ namespace ClearCanvas.Ris.Client.ViewerIntegration.Tests
 		}
 	}
 }
+
 #endif

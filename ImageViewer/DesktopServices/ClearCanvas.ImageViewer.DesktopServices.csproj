@@ -121,7 +121,7 @@
     <Compile Include="Automation\ViewerAutomationHostTool.cs" />
     <Compile Include="Automation\ViewerAutomationTool.cs" />
     <Compile Include="Automation\ViewerAutomationServiceProvider.cs" />
-    <Compile Include="StudyLocator\StudyLocatorTool.cs" />
+    <Compile Include="StudyLocator\StudyLocatorHostTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -31,6 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO: move this stuff into ImageViewer.Services and deprecate it (use IStudyRootQuery).
 	/// <summary>
 	/// Defines a study finder.
 	/// </summary>

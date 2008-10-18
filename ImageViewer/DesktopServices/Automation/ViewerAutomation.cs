@@ -10,7 +10,6 @@ using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.Automation;
 using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.Services.StudyLocator;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
@@ -70,6 +69,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		public ViewerAutomation()
 		{
+		}
+
+		private static IStudyRootQuery GetStudyRootQuery()
+		{
+			return Platform.GetService<IStudyRootQuery>();
 		}
 
 		#region IViewerAutomation Members
@@ -317,16 +321,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			if (incomplete.Count == 0)
 				return;
 
-			string[] incompleteStudyUids = new string[incomplete.Count];
-			int i = 0;
-			foreach (OpenStudyInfo info in incomplete)
-				incompleteStudyUids[i++] = info.StudyInstanceUid;
+			List<string> incompleteStudyUids = CollectionUtils.Map<OpenStudyInfo, string>(incomplete,
+				delegate(OpenStudyInfo info) { return info.StudyInstanceUid; });
 
-			IStudyLocator studyLocator = Platform.GetService<IStudyLocator>();
-
-			try
+			using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(GetStudyRootQuery()))
 			{
-				IList<StudyRootStudyIdentifier> foundStudies = studyLocator.FindByStudyInstanceUid(incompleteStudyUids);
+				IList<StudyRootStudyIdentifier> foundStudies = bridge.QueryByStudyInstanceUid(incompleteStudyUids);
 				foreach (StudyRootStudyIdentifier study in foundStudies)
 				{
 					foreach (OpenStudyInfo info in openStudyInfo)
@@ -339,42 +339,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 					}
 				}
 			}
-			finally
-			{
-				if (studyLocator is IDisposable)
-					(studyLocator as IDisposable).Dispose();
-			}
-		}
-
-		private static IDictionary<string, ApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
-		{
-			Dictionary<string, ApplicationEntity> serverMap = new Dictionary<string, ApplicationEntity>();
-
-			string localAE = ServerTree.GetClientAETitle();
-			serverMap[localAE] = null;
-
-			ServerTree serverTree = new ServerTree();
-			List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
-
-			foreach (OpenStudyInfo info in openStudies)
-			{
-				if (!String.IsNullOrEmpty(info.SourceAETitle) && !serverMap.ContainsKey(info.SourceAETitle))
-				{
-					Server server = servers.Find(delegate(IServerTreeNode node)
-								{
-									return ((Server)node).AETitle == info.SourceAETitle;
-								}) as Server;
-
-					//only add streaming servers.
-					if (server != null && server.IsStreaming)
-					{
-						serverMap[info.SourceAETitle] = 
-							new ApplicationEntity(server.Host, server.AETitle, server.Port, server.HeaderServicePort, server.WadoServicePort);
-					}
-				} 
-			}
-
-			return serverMap;
 		}
 
 		private static ImageViewerComponent CreateViewer(OpenStudiesRequest args, out List<OpenStudyResult> loadFailures)
@@ -424,6 +388,37 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			}
 
 			return component;
+		}
+
+		private static IDictionary<string, ApplicationEntity> GetServerMap(IEnumerable<OpenStudyInfo> openStudies)
+		{
+			Dictionary<string, ApplicationEntity> serverMap = new Dictionary<string, ApplicationEntity>();
+
+			string localAE = ServerTree.GetClientAETitle();
+			serverMap[localAE] = null;
+
+			ServerTree serverTree = new ServerTree();
+			List<IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode);
+
+			foreach (OpenStudyInfo info in openStudies)
+			{
+				if (!String.IsNullOrEmpty(info.SourceAETitle) && !serverMap.ContainsKey(info.SourceAETitle))
+				{
+					Server server = servers.Find(delegate(IServerTreeNode node)
+								{
+									return ((Server)node).AETitle == info.SourceAETitle;
+								}) as Server;
+
+					//only add streaming servers.
+					if (server != null && server.IsStreaming)
+					{
+						serverMap[info.SourceAETitle] =
+							new ApplicationEntity(server.Host, server.AETitle, server.Port, server.HeaderServicePort, server.WadoServicePort);
+					}
+				}
+			}
+
+			return serverMap;
 		}
 
 		private static void ReportLoadFailures(object loadFailures)

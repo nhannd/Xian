@@ -35,6 +35,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automation\IViewerAutomationBridge.cs" />
+    <Compile Include="Automation\ViewerAutomationBridge.cs" />
     <Compile Include="Automation\DataContracts.cs" />
     <Compile Include="Automation\IViewerAutomation.cs" />
     <Compile Include="DataContracts.cs" />
@@ -60,7 +62,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StudyLocator\IStudyLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -23,19 +23,19 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 		#region IStudyRootQuery Members
 
-		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryQriteria)
+		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
 		{
-			return Query(queryQriteria);
+			return Query(queryCriteria);
 		}
 
-		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria)
+		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
 		{
-			return Query(queryQriteria);
+			return Query(queryCriteria);
 		}
 
-		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria)
+		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
 		{
-			return Query(queryQriteria);
+			return Query(queryCriteria);
 		}
 
 		#endregion

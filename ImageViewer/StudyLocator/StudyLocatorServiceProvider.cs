@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Services.StudyLocator;
 
 namespace ClearCanvas.ImageViewer.StudyLocator
 {
@@ -14,7 +13,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 		public object GetService(Type serviceType)
 		{
-			if (serviceType == typeof(IStudyLocator))
+			if (serviceType == typeof(IStudyRootQuery))
 				return new StudyLocatorServiceClient();
 
 			return null;
@@ -23,41 +22,27 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 		#endregion
 	}
 
-	internal class StudyLocatorServiceClient : ClientBase<IStudyLocator>, IStudyLocator
+	internal class StudyLocatorServiceClient : ClientBase<IStudyRootQuery>, IStudyRootQuery
 	{
 		public StudyLocatorServiceClient()
 		{
 		}
 
-		#region IStudyLocator Members
-
-		public IList<StudyRootStudyIdentifier> FindByStudyInstanceUid(string[] studyInstanceUids)
-		{
-			return base.Channel.FindByStudyInstanceUid(studyInstanceUids);
-		}
-
-		public IList<StudyRootStudyIdentifier> FindByAccessionNumber(string accessionNumber)
-		{
-			return base.Channel.FindByAccessionNumber(accessionNumber);
-		}
-
-		#endregion
-
 		#region IStudyRootQuery Members
 
-		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryQriteria)
+		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
 		{
-			return base.Channel.StudyQuery(queryQriteria);
+			return base.Channel.StudyQuery(queryCriteria);
 		}
 
-		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria)
+		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
 		{
-			return base.Channel.SeriesQuery(queryQriteria);
+			return base.Channel.SeriesQuery(queryCriteria);
 		}
 
-		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria)
+		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
 		{
-			return base.Channel.ImageQuery(queryQriteria);
+			return base.Channel.ImageQuery(queryCriteria);
 		}
 
 		#endregion

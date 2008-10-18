@@ -31,6 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	//TODO: move this stuff into ImageViewer.Services.
 	public class StudyLoaderArgs
 	{
 		private string _studyInstanceUid;

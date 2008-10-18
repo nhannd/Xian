@@ -34,7 +34,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.Server.ShredHost;
-using ClearCanvas.ImageViewer.Services.StudyLocator;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -89,8 +88,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			try
 			{
-				ServiceEndpointDescription sed = StartBasicHttpHost<StudyLocator.StudyLocator, IStudyLocator>(_studyLocatorEndpointName, SR.StudyLocator);
-				sed.Binding.Namespace = StudyLocatorNamespace.Value;
+				ServiceEndpointDescription sed = 
+					StartBasicHttpHost<StudyLocator.StudyLocator, IStudyRootQuery>(_studyLocatorEndpointName, SR.StudyLocator);
+				sed.Binding.Namespace = QueryNamespace.Value;
 
 				_studyLocatorWCFInitialized = true;
 

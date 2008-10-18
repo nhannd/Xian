@@ -597,6 +597,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
+				CloseImages();
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
 					return;
 
@@ -677,6 +679,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
+				CloseImages();
+				
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
@@ -743,6 +747,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return;
 				}
 
+				CloseImages();
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
 					return;
 
@@ -792,6 +798,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				CloseImages();
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
 					return;
 
@@ -837,6 +845,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				CloseImages();
+
 				if (_worklistItemManager.ShouldUnclaim)
 				{
 					Platform.GetService<IReportingWorkflowService>(
@@ -866,6 +876,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
+				CloseImages();
+
 				if (_worklistItemManager.ShouldUnclaim)
 				{
 					Platform.GetService<IReportingWorkflowService>(
@@ -1036,6 +1048,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			if (ViewImagesHelper.IsSupported)
 				ViewImagesHelper.Open(this.WorklistItem.AccessionNumber);
+		}
+
+		private void CloseImages()
+		{
+			if (ViewImagesHelper.IsSupported)
+				ViewImagesHelper.Close(_worklistItemManager.WorklistItem.AccessionNumber);
 		}
 
 		#endregion

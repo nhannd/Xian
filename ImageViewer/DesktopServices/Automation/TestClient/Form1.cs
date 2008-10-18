@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		{
 			_studyItemBindingSource.Clear();
 
-			StudyLocatorClient client = new StudyLocatorClient();
+			StudyRootQueryClient client = new StudyRootQueryClient();
 
 			try
 			{

@@ -3,161 +3,141 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom.ServiceModel.Query;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.ServiceModel;
-using ClearCanvas.ImageViewer.Services.StudyLocator;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyLocator
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = StudyLocatorNamespace.Value)]
-	public class StudyLocator : IStudyLocator
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = QueryNamespace.Value)]
+	public class StudyLocator : IStudyRootQuery
 	{
 		private delegate IList<T> QueryDelegate<T>(T criteria, IStudyRootQuery query) where T : Identifier;
 		private delegate string GetUidDelegate<T>(T identifier) where T : Identifier;
 
-		#region Static Helpers
+		private class GenericQuery<T> where T : Identifier, new()
+		{
+			private readonly QueryDelegate<T> _query;
+			private readonly GetUidDelegate<T> _getUid;
 
-		private static IList<StudyRootStudyIdentifier> DoStudyQuery(StudyRootStudyIdentifier criteria, IStudyRootQuery query)
-		{
-			return query.StudyQuery(criteria);
-		}
-		private static IList<SeriesIdentifier> DoSeriesQuery(SeriesIdentifier criteria, IStudyRootQuery query)
-		{
-			return query.SeriesQuery(criteria);
-		}
-		private static IList<ImageIdentifier> DoImageQuery(ImageIdentifier criteria, IStudyRootQuery query)
-		{
-			return query.ImageQuery(criteria);
-		}
-
-		private static string GetStudyUid(StudyRootStudyIdentifier identifier)
-		{
-			return identifier.StudyInstanceUid;
-		}
-		private static string GetSeriesUid(SeriesIdentifier identifier)
-		{
-			return identifier.SeriesInstanceUid;
-		}
-		private static string GetImageUid(ImageIdentifier identifier)
-		{
-			return identifier.SopInstanceUid;
-		}
-
-		private static IList<T> Query<T>(T queryQriteria, QueryDelegate<T> doQuery, GetUidDelegate<T> getUid) where T : Identifier
-		{
-			if (queryQriteria == null)
+			public GenericQuery(QueryDelegate<T> query, GetUidDelegate<T> getUid)
 			{
-				string message = "The argument cannot be null.";
-				Platform.Log(LogLevel.Error, message);
-				throw new FaultException(message);
+				_query = query;
+				_getUid = getUid;
 			}
 
-			Dictionary<string, T> combinedResults = new Dictionary<string, T>();
-
-			try
+			public IList<T> Query(T queryCriteria)
 			{
-				bool anySucceeded = false;
-				foreach (IStudyRootQuery query in GetQueryInterfaces())
+				if (queryCriteria == null)
 				{
-					try
+					string message = "The argument cannot be null.";
+					Platform.Log(LogLevel.Error, message);
+					throw new FaultException(message);
+				}
+
+				Dictionary<string, T> combinedResults = new Dictionary<string, T>();
+
+				try
+				{
+					bool anySucceeded = false;
+					foreach (IStudyRootQuery query in GetQueryInterfaces())
 					{
-						IList<T> results = doQuery(queryQriteria, query);
-						anySucceeded = true;
-						foreach (T result in results)
+						try
 						{
-							string uid = getUid(result);
-							if (!combinedResults.ContainsKey(uid))
-								combinedResults[uid] = result;
+							IList<T> results = _query(queryCriteria, query);
+							anySucceeded = true;
+							foreach (T result in results)
+							{
+								string uid = _getUid(result);
+								if (!combinedResults.ContainsKey(uid))
+									combinedResults[uid] = result;
+							}
+						}
+						catch (Exception e)
+						{
+							string message = string.Format("Query failed (server: {0}).", query);
+							Platform.Log(LogLevel.Error, e, message);
+						}
+						finally
+						{
+							if (query is IDisposable)
+								(query as IDisposable).Dispose();
 						}
 					}
-					catch (Exception e)
+
+					if (!anySucceeded)
 					{
-						string message = string.Format("Query failed (server: {0}).", query);
-						Platform.Log(LogLevel.Error, e, message);
-					}
-					finally
-					{
-						if (query is IDisposable)
-							(query as IDisposable).Dispose();
+						QueryFailedFault fault = new QueryFailedFault();
+						fault.Description = String.Format("Failed to query any of the default servers.");
+						Platform.Log(LogLevel.Error, fault.Description);
+						throw new FaultException<QueryFailedFault>(fault, fault.Description);
 					}
 				}
-
-				if (!anySucceeded)
+				catch (FaultException)
+				{
+					throw;
+				}
+				catch (Exception e)
 				{
 					QueryFailedFault fault = new QueryFailedFault();
-					fault.Description = String.Format("Failed to query any of the default servers.");
-					Platform.Log(LogLevel.Error, fault.Description);
+					fault.Description = String.Format("An unexpected error has occurred.");
+					Platform.Log(LogLevel.Error, e, fault.Description);
 					throw new FaultException<QueryFailedFault>(fault, fault.Description);
 				}
-			}
-			catch(FaultException)
-			{
-				throw;
-			}
-			catch(Exception	e)
-			{
-				QueryFailedFault fault = new QueryFailedFault();
-				fault.Description = String.Format("An unexpected error has occurred.");
-				Platform.Log(LogLevel.Error, e, fault.Description);
-				throw new FaultException<QueryFailedFault>(fault, fault.Description);
-			}
 
-			return new List<T>(combinedResults.Values);
+				return new List<T>(combinedResults.Values);
+			}
 		}
-
-		#endregion
-
-		#region IStudyLocator Members
-
-		public IList<StudyRootStudyIdentifier> FindByStudyInstanceUid(string[] studyInstanceUids)
-		{
-			if(studyInstanceUids == null || studyInstanceUids.Length == 0)
-				throw new FaultException("The argument cannot be null or empty.");
-
-			string studyUids = DicomStringHelper.GetDicomStringArray(studyInstanceUids);
-			if (String.IsNullOrEmpty(studyUids))
-				throw new FaultException("The argument must have valid study instance uid values.");
-
-			StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-			identifier.StudyInstanceUid = studyUids;
-			return StudyQuery(identifier);
-		}
-
-		public IList<StudyRootStudyIdentifier> FindByAccessionNumber(string accessionNumber)
-		{
-			if (String.IsNullOrEmpty(accessionNumber))
-				throw new FaultException("The argument cannot be null or empty.");
-				
-			if (accessionNumber.Contains("\\") || accessionNumber.Contains("*") || accessionNumber.Contains("?"))
-			{
-				DataValidationFault fault = new DataValidationFault();
-				fault.Description = "The accession number cannot contain any wildcard characters, or multiple values.";
-				Platform.Log(LogLevel.Error, fault.Description);
-				throw new FaultException<DataValidationFault>(fault, fault.Description);
-			}
-
-			StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-			identifier.AccessionNumber = accessionNumber;
-			return StudyQuery(identifier);
-		}
-
-		#endregion
 
 		#region IStudyRootQuery Members
 
-		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryQriteria)
+		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
 		{
-			return Query(queryQriteria, DoStudyQuery, GetStudyUid);
+			QueryDelegate<StudyRootStudyIdentifier> query =
+				delegate(StudyRootStudyIdentifier criteria, IStudyRootQuery studyRootQuery)
+					{
+						return studyRootQuery.StudyQuery(criteria);
+					};
+
+			GetUidDelegate<StudyRootStudyIdentifier> getUid =
+				delegate(StudyRootStudyIdentifier result)
+					{
+						return result.StudyInstanceUid;
+					};
+
+			return new GenericQuery<StudyRootStudyIdentifier>(query, getUid).Query(queryCriteria);
 		}
 
-		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryQriteria)
+		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
 		{
-			return Query(queryQriteria, DoSeriesQuery, GetSeriesUid);
+			QueryDelegate<SeriesIdentifier> query =
+				delegate(SeriesIdentifier criteria, IStudyRootQuery studyRootQuery)
+					{
+						return studyRootQuery.SeriesQuery(criteria);
+					};
+
+			GetUidDelegate<SeriesIdentifier> getUid =
+				delegate(SeriesIdentifier result)
+					{
+						return result.SeriesInstanceUid;
+					};
+
+			return new GenericQuery<SeriesIdentifier>(query, getUid).Query(queryCriteria);
 		}
 
-		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryQriteria)
+		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
 		{
-			return Query(queryQriteria, DoImageQuery, GetImageUid);
+			QueryDelegate<ImageIdentifier> query =
+				delegate(ImageIdentifier criteria, IStudyRootQuery studyRootQuery)
+					{
+						return studyRootQuery.ImageQuery(criteria);
+					};
+
+			GetUidDelegate<ImageIdentifier> getUid =
+				delegate(ImageIdentifier result)
+					{
+						return result.SopInstanceUid;
+					};
+
+			return new GenericQuery<ImageIdentifier>(query, getUid).Query(queryCriteria);
 		}
 
 		#endregion
