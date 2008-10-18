@@ -46,8 +46,6 @@ namespace ClearCanvas.Desktop
 				command.Execute();
 				_unexecuteStack.Push(command);
 			}
-
-			base.Execute();
 		}
 
 		/// <summary>
@@ -64,8 +62,6 @@ namespace ClearCanvas.Desktop
 				command.Unexecute();
 				_executeQueue.Enqueue(command);
 			}
-
-			base.Unexecute();
 		}
 	}
 }

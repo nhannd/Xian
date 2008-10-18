@@ -125,6 +125,7 @@
     <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="UndaobleOperationApplicator.cs" />
     <Compile Include="IUndoableOperation.cs" />
+    <Compile Include="UndoableCommand.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />
     <Compile Include="Actions\Tests\ActionModelStoreTests.cs" />
@@ -275,7 +276,7 @@
     <Compile Include="Tools\Tool.cs" />
     <Compile Include="Tools\ToolContext.cs" />
     <Compile Include="Tools\ToolSet.cs" />
-    <Compile Include="UndoableCommand.cs" />
+    <Compile Include="MemorableUndoableCommand.cs" />
     <Compile Include="Validation\XmlValidationCompiler.cs" />
     <Compile Include="ViewFactory.cs" />
     <Compile Include="Workspace.cs" />

@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private IImageBox _selectedImageBox;
 
-		private UndoableCommand _command;
+		private MemorableUndoableCommand _command;
 
 		private volatile bool _stopThread;
 		private readonly object _threadLock;
@@ -277,7 +277,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (CanStart())
 			{
 				_selectedImageBox = ImageViewer.SelectedImageBox;
-				_command = new UndoableCommand(_selectedImageBox);
+				_command = new MemorableUndoableCommand(_selectedImageBox);
 				_command.Name = SR.CommandCine;
 				_command.BeginState = _selectedImageBox.CreateMemento();
 

@@ -509,7 +509,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Creates a memento for this object.
 		/// </summary>
-		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
+		/// <remarks>Typically used in conjunction with <see cref="MemorableUndoableCommand"/>
 		/// to support undo/redo.</remarks>
 		public virtual object CreateMemento()
 		{
@@ -527,7 +527,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Sets a memento for this object.
 		/// </summary>
-		/// <remarks>Typically used in conjunction with <see cref="UndoableCommand"/>
+		/// <remarks>Typically used in conjunction with <see cref="MemorableUndoableCommand"/>
 		/// to support undo/redo.</remarks>
 		/// <exception cref="ArgumentNullException"><b>memento</b>
 		/// is <b>null</b>.</exception>

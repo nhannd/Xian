@@ -32,8 +32,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_command.Execute();
 				_command = ((RemoveGraphicCommand)_command).GetUndoCommand();
 			}
-
-			base.Execute();
 		}
 
 		/// <summary>
@@ -46,8 +44,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 				_command.Execute();
 				_command = ((InsertGraphicCommand)_command).GetUndoCommand();
 			}
-
-			base.Unexecute();
 		}
 	}
 	

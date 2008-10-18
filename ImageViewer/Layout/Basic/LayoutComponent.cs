@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			int tileRows = Math.Max(1, physicalWorkspace.SelectedImageBox.Rows);
 			int tileColumns = Math.Max(1, physicalWorkspace.SelectedImageBox.Columns);
 
-			UndoableCommand command = new UndoableCommand(physicalWorkspace);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(physicalWorkspace);
 			command.Name = SR.CommandLayoutImageBoxes;
 			command.BeginState = physicalWorkspace.CreateMemento();
 
@@ -315,7 +315,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumTileColumns, "columns");
 
 			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
-			UndoableCommand command = new UndoableCommand(imageBox);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
 			command.Name = SR.CommandLayoutTiles;
 			command.BeginState = imageBox.CreateMemento();
 

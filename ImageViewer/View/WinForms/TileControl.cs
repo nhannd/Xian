@@ -403,7 +403,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			_tile.Select();
 
-			UndoableCommand command = new UndoableCommand(_tile.ParentImageBox);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(_tile.ParentImageBox);
 			command.BeginState = _tile.ParentImageBox.CreateMemento();
 
 			IDisplaySet displaySet = (IDisplaySet) drgevent.Data.GetData(typeof (DisplaySet));

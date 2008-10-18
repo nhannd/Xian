@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)
 		{
-			UndoableCommand command = new UndoableCommand(this.ImageViewer.SelectedImageBox);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(this.ImageViewer.SelectedImageBox);
 			command.BeginState = this.ImageViewer.SelectedImageBox.CreateMemento();
 
 			// always create a 'fresh copy' to show in the image box.  We never want to show

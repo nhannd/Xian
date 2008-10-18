@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class DynamicTeTool : MouseImageViewerTool, IImageOperation
 	{
-		private UndoableCommand _command;
+		private MemorableUndoableCommand _command;
 		private ImageOperationApplicator _applicator;
 
 		/// <summary>
@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 				return;
 
 			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, this);
-			_command = new UndoableCommand(_applicator);
+			_command = new MemorableUndoableCommand(_applicator);
 			_command.Name = "Dynamic Te";
 			_command.BeginState = _applicator.CreateMemento();
 		}

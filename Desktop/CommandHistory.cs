@@ -168,7 +168,7 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Calls <see cref="UndoableCommand.Execute"/> in order to 'redo' the current command.
+		/// Calls <see cref="Command.Execute"/> in order to 'redo' the current command.
 		/// </summary>
 		/// <remarks>
 		/// The <see cref="CurrentCommandIndex"/> will be incremented unless the <see cref="CurrentCommandIndex"/> is 

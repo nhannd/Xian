@@ -191,13 +191,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 		public override void Execute()
 		{
-			base.Execute();
 			CommandHistoryTest._message = "Executed TestCommand1";
 		}
 
 		public override void Unexecute()
 		{
-			base.Unexecute();
 			CommandHistoryTest._message = "Unexecuted TestCommand1";
 		}
 	}
@@ -211,13 +209,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 		public override void Execute()
 		{
-			base.Execute();
 			CommandHistoryTest._message = "Executed TestCommand2";
 		}
 
 		public override void Unexecute()
 		{
-			base.Unexecute();
 			CommandHistoryTest._message = "Unexecuted TestCommand2";
 		}
 	}
@@ -231,13 +227,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 		public override void Execute()
 		{
-			base.Execute();
 			CommandHistoryTest._message = "Executed TestCommand3";
 		}
 
 		public override void Unexecute()
 		{
-			base.Unexecute();
 			CommandHistoryTest._message = "Unexecuted TestCommand3";
 		}
 	}
@@ -251,13 +245,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 		public override void Execute()
 		{
-			base.Execute();
 			CommandHistoryTest._message = "Executed TestCommand4";
 		}
 
 		public override void Unexecute()
 		{
-			base.Unexecute();
 			CommandHistoryTest._message = "Unexecuted TestCommand4";
 		}
 	}
@@ -271,13 +263,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 		public override void Execute()
 		{
-			base.Execute();
 			CommandHistoryTest._message = "Executed TestCommand5";
 		}
 
 		public override void Unexecute()
 		{
-			base.Unexecute();
 			CommandHistoryTest._message = "Unexecuted TestCommand5";
 		}
 	}
@@ -291,13 +281,11 @@ namespace ClearCanvas.Desktop.Tests.CommandHistoryTest
 
 		public override void Execute()
 		{
-			base.Execute();
 			CommandHistoryTest._message = "Executed TestCommand6";
 		}
 
 		public override void Unexecute()
 		{
-			base.Unexecute();
 			CommandHistoryTest._message = "Unexecuted TestCommand6";
 		}
 	}

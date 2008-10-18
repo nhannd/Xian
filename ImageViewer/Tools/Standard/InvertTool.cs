@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.Context.Viewer.SelectedPresentationImage, _operation);
-			UndoableCommand command = new UndoableCommand(applicator);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
 			command.Name = "Invert";
 			command.BeginState = applicator.CreateMemento();
 

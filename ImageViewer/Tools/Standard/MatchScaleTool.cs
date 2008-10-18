@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			applicator.AppliedOperation += RedrawImage;
 			applicator.ItemMementoSet += RedrawImage;
 
-			UndoableCommand command = new UndoableCommand(applicator);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
 			command.Name = SR.CommandMatchScale;
 			command.BeginState = applicator.CreateMemento();
 

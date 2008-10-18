@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			else if (sourceDisplaySetIndex >= parentImageSet.DisplaySets.Count)
 				sourceDisplaySetIndex = 0;
 
-			UndoableCommand command = new UndoableCommand(imageBox);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
 			command.BeginState = imageBox.CreateMemento();
 
 			imageBox.DisplaySet = parentImageSet.DisplaySets[sourceDisplaySetIndex].CreateFreshCopy();

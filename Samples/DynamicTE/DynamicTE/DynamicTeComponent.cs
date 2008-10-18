@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.ImageViewer.SelectedPresentationImage, this);
-			UndoableCommand command = new UndoableCommand(applicator);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
 			command.Name = "Dynamic Te";
 			command.BeginState = applicator.CreateMemento();
 

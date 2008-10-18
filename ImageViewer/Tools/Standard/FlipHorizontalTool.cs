@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			// Save the old state
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			UndoableCommand command = new UndoableCommand(applicator);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
 			command.Name = SR.CommandFlipHorizontal;
 			command.BeginState = applicator.CreateMemento();
 

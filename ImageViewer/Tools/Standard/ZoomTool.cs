@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		internal static readonly float DefaultMaximumZoom = 64F;
 
 		private readonly ImageSpatialTransformImageOperation _operation; 
-		private UndoableCommand _command;
+		private MemorableUndoableCommand _command;
 		private ImageOperationApplicator _applicator;
 
 		public ZoomTool()
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			_command = new UndoableCommand(_applicator);
+			_command = new MemorableUndoableCommand(_applicator);
 			_command.Name = SR.CommandZoom;
 			_command.BeginState = _applicator.CreateMemento();
 		}

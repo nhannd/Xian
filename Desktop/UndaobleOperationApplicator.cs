@@ -123,7 +123,7 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Occurs when the <see cref="IUndoableOperation{T}"/> has been applied to an item of type <typeparam name="T"/>.
+		/// Occurs when the <see cref="IUndoableOperation{T}"/> has been applied to an item.
 		/// </summary>
 		public event EventHandler<ItemEventArgs<T>> AppliedOperation
 		{

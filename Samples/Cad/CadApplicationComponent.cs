@@ -226,7 +226,7 @@ namespace ClearCanvas.Samples.Cad
 				overlayProvider.OverlayGraphics.Add(cadOverlay);
 			}
 
-			UndoableCommand command = new UndoableCommand(cadOverlay);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(cadOverlay);
 			command.BeginState = cadOverlay.CreateMemento();
 			cadOverlay.Threshold = (int)this.Threshold;
 			cadOverlay.Opacity = (int)this.Opacity;

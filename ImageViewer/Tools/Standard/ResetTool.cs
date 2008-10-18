@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			UndoableCommand command = new UndoableCommand(applicator);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
 			command.Name = SR.CommandReset;
 			command.BeginState = applicator.CreateMemento();
 

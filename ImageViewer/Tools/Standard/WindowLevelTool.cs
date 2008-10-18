@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		private readonly VoiLutImageOperation _operation;
 
-		private UndoableCommand _command;
+		private MemorableUndoableCommand _command;
 		private ImageOperationApplicator _applicator;
 
 		public WindowLevelTool()
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			_command = new UndoableCommand(_applicator);
+			_command = new MemorableUndoableCommand(_applicator);
 			_command.Name = SR.CommandWindowLevel;
 			_command.BeginState = _applicator.CreateMemento();
 		}

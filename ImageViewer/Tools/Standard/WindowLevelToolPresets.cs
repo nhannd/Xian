@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private void Apply()
 			{
 				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, _preset.Operation);
-				UndoableCommand command = new UndoableCommand(applicator);
+				MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
 				command.BeginState = applicator.CreateMemento();
 
 				applicator.ApplyToAllImages();

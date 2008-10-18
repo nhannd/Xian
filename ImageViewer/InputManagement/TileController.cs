@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private Point _currentMousePoint;
 		private Rectangle _tileClientRectangle;
 
-		private UndoableCommand _command;
+		private MemorableUndoableCommand _command;
 		private IMouseButtonHandler _captureHandler;
 		private CursorToken _cursorToken;
 		
@@ -258,7 +258,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				{
 					IMemorable originator = (IMemorable) _captureHandler;
 					ITile tile = _tile;
-					_command = new UndoableCommand(originator);
+					_command = new MemorableUndoableCommand(originator);
 					_command.BeginState = originator.CreateMemento();
 				}
 				

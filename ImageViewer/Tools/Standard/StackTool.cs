@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public partial class StackTool : MouseImageViewerTool
 	{
-		private UndoableCommand _command;
+		private MemorableUndoableCommand _command;
 		private int _initialPresentationImageIndex;
 		private IImageBox _currentImageBox;
 
@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			//try to keep the top-left image the same.
 			IPresentationImage topLeftImage = imageBox.TopLeftPresentationImage;
 
-			UndoableCommand command = new UndoableCommand(imageBox);
+			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
 			command.Name = SR.CommandSortImages;
 			command.BeginState = imageBox.CreateMemento();
 
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureBeginState(IImageBox imageBox)
 		{
-			_command = new UndoableCommand(imageBox);
+			_command = new MemorableUndoableCommand(imageBox);
 			_command.Name = SR.CommandStack;
 
 			// Capture state before stack
