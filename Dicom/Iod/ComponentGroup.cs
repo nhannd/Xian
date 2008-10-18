@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.Iod
 {
@@ -156,5 +157,55 @@ namespace ClearCanvas.Dicom.Iod
 				_suffix = components[4];
 			}
 		}
+
+
+
+        static private bool AreSame(string x, string y, PersonNameComparisonOptions options)
+        {
+            if (String.IsNullOrEmpty(x))
+                return String.IsNullOrEmpty(y);
+            else
+            {
+                switch (options)
+                {
+                    case PersonNameComparisonOptions.CaseSensitive:
+                        return x.Equals(y);
+                    case PersonNameComparisonOptions.CaseInsensitive:
+                        return x.Equals(y, StringComparison.InvariantCultureIgnoreCase);
+                }
+
+                return false;
+            }
+
+        }
+
+        #region IEquatable<ComponentGroup> Members
+
+        /// <summary>
+        /// Returns a value indicating whether two <see cref="ComponentGroup"/> are the same.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public bool AreSame(ComponentGroup other, PersonNameComparisonOptions options)
+        {
+            if (other == null)
+                return false;
+
+            if (IsEmpty)
+                return other.IsEmpty;
+            else
+            {
+                return AreSame(FamilyName, other.FamilyName, options) &&
+                       AreSame(GivenName, other.GivenName, options) &&
+                       AreSame(MiddleName, other.MiddleName, options) &&
+                       AreSame(Prefix, other.Prefix, options) &&
+                       AreSame(Suffix, other.Suffix, options);                
+            }
+
+        }
+
+
+	    #endregion
     }
 }

@@ -75,6 +75,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls
         public ScriptTemplate(Assembly assembly, string name)
         {
             Stream stream = assembly.GetManifestResourceStream(name);
+            if (stream == null)
+                throw new Exception(String.Format("Resource not found: {0}", name));
             StreamReader reader = new StreamReader(stream);
             _script = reader.ReadToEnd();
             stream.Close();

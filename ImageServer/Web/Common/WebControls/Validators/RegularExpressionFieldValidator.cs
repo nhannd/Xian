@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         #region Private Members
 
         private string _regEx;
-
+        private bool _required = false;
         #endregion Private Members
 
         #region Public Properties
@@ -74,6 +74,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             get { return _regEx; }
             set { _regEx = value; }
+        }
+
+        public bool Required
+        {
+            get { return _required; }
+            set { _required = value; }
         }
 
         #endregion Public Properties
@@ -99,6 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             ScriptTemplate template =
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
+            template.Replace("@@REQUIRED@@", _required? "true":"false");
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
 
 

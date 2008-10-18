@@ -116,6 +116,13 @@
     <Compile Include="Controls\PartitionTabs.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Controls\PersonNameInputPanel.ascx.cs">
+      <DependentUpon>PersonNameInputPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\PersonNameInputPanel.ascx.designer.cs">
+      <DependentUpon>PersonNameInputPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\SectionPanel.ascx.cs">
       <DependentUpon>SectionPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -846,6 +853,7 @@
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
+    <Content Include="App_Themes\Default\images\Indicators\IdeographicName.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\QueryFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\RetrieveFeature.png" />
@@ -895,6 +903,8 @@
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
     <Content Include="Controls\ModalDialog.ascx" />
+    <EmbeddedResource Include="Controls\PersonNameInputPanel.js" />
+    <Content Include="Controls\PersonNameInputPanel.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
@@ -1171,7 +1181,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1302</DevelopmentServerPort>
+          <DevelopmentServerPort>3783</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

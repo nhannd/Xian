@@ -2,6 +2,7 @@ using System;
 using System.Web.UI.WebControls;
 using System.Xml;
 using AjaxControlToolkit;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -95,17 +96,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             setNode.SetAttribute("TagPath", "");
             setNode.SetAttribute("Value","");
 
-            string dicomName = PatientLastName.Text + DicomConstants.DicomSeparator +
-                               PatientGivenName.Text + DicomConstants.DicomSeparator +
-                               PatientMiddleName.Text + DicomConstants.DicomSeparator +
-                               PatientTitle.Text + DicomConstants.DicomSeparator +
-                               PatientSuffix.Text;
+            PersonName oldPatientName = new PersonName(_study.PatientsName);
+            PersonName newPatientName = PatientNamePanel.PersonName;
 
-            dicomName = dicomName.Trim(new char[] { '^' });
-            
-            if(!study.PatientsName.Equals(dicomName))
+            if (!oldPatientName.AreSame(newPatientName, PersonNameComparisonOptions.CaseInsensitive))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsName, dicomName));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsName, newPatientName.ToString()));
             }
 
             String dicomBirthDate = !(string.IsNullOrEmpty(PatientBirthDate.Text))
@@ -149,18 +145,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
             }
 
-            dicomName = PhysicianLastName.Text + DicomConstants.DicomSeparator +
-                        PhysicianGivenName.Text + DicomConstants.DicomSeparator +
-                        PhysicianMiddleName.Text + DicomConstants.DicomSeparator +
-                        PhysicianTitle.Text + DicomConstants.DicomSeparator +
-                        PhysicianSuffix.Text;
+            PersonName oldPhysicianName = new PersonName(_study.ReferringPhysiciansName);
+            PersonName newPhysicianName = ReferringPhysicianNamePanel.PersonName;
 
-            dicomName = dicomName.Trim(new char[] { '^' });
-
-			if (String.IsNullOrEmpty(study.ReferringPhysiciansName)
-				|| !study.ReferringPhysiciansName.Equals(dicomName))
+            if (!newPhysicianName.AreSame(oldPhysicianName, PersonNameComparisonOptions.CaseInsensitive))
             {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.ReferringPhysician, dicomName));
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.ReferringPhysician, newPhysicianName.ToString()));
             }
 
             String dicomStudyDate = !(string.IsNullOrEmpty(StudyDate.Text))
@@ -195,30 +185,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             string dicomName = study.PatientsName;
 
             string[] splitDicomName = dicomName.Split('^');
-
-            int i = 0;
-            while(i < splitDicomName.Length)
-            {
-                switch(i)
-                {
-                    case 0:
-                        PatientLastName.Text = splitDicomName[i];
-                        break;
-                    case 1:
-                        PatientGivenName.Text = splitDicomName[i];
-                        break;
-                    case 2:
-                        PatientMiddleName.Text = splitDicomName[i];
-                        break;
-                    case 3:
-                        PatientTitle.Text = splitDicomName[i];
-                        break;
-                    default:
-                        PatientSuffix.Text = splitDicomName[i];
-                        break;
-                }
-                i++;
-            }
 
             if (!study.PatientsSex.Equals(string.Empty))
             {
@@ -278,30 +244,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             dicomName = study.ReferringPhysiciansName;
             splitDicomName = dicomName.Split('^');
 
-            i = 0;
-            while (i < splitDicomName.Length)
-            {
-                switch (i)
-                {
-                    case 0:
-                        PhysicianLastName.Text = splitDicomName[i];
-                        break;
-                    case 1:
-                        PhysicianGivenName.Text = splitDicomName[i];
-                        break;
-                    case 2:
-                        PhysicianMiddleName.Text = splitDicomName[i];
-                        break;
-                    case 3:
-                        PhysicianTitle.Text = splitDicomName[i];
-                        break;
-                    default:
-                        PhysicianSuffix.Text = splitDicomName[i];
-                        break;
-                }
-                i++;
-            }
-
             if (!string.IsNullOrEmpty(study.StudyDate))
             {
                 DateTime studyDate = DateTime.ParseExact(study.StudyDate, DicomConstants.DicomDate, null);
@@ -339,6 +281,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeSeconds.Text = "00";
                 StudyTimeAmPm.SelectedIndex = 0;
             }
+
+            PersonName patientName = new PersonName(_study.PatientsName);
+            PersonName physicianName = new PersonName(_study.ReferringPhysiciansName);
+            PatientNamePanel.PersonName = patientName;
+            ReferringPhysicianNamePanel.PersonName = physicianName;
+            DataBind();
         }
 
         #endregion

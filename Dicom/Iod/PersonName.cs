@@ -36,6 +36,12 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Dicom.Iod
 {
+    public enum PersonNameComparisonOptions
+    {
+        CaseSensitive,
+        CaseInsensitive,
+    }
+
 	/// <summary>
 	/// <see cref="TypeConverter"/> for <see cref="PersonName"/> class.
 	/// </summary>
@@ -157,6 +163,22 @@ namespace ClearCanvas.Dicom.Iod
             get { return this.SingleByte.GivenName; }
         }
 
+        /// <summary>
+        /// Gets the patient's middle name.
+        /// </summary>
+        public String MiddleName
+        {
+            get { return this.SingleByte.MiddleName; }
+        }
+
+        /// <summary>
+        /// Gets the patient's title.
+        /// </summary>
+        public String Title
+        {
+            get { return this.SingleByte.Prefix; }
+        }
+
 		/// <summary>
 		/// Gets the patient's name, formatted like: Last Name, First Name.
 		/// </summary>
@@ -227,6 +249,25 @@ namespace ClearCanvas.Dicom.Iod
 		{
 			return base.GetHashCode();
 		}
+
+        /// <summary>
+        /// Returns a value indicating whether two <see cref="PersonName"/> are the same.
+        /// </summary>
+        /// <param name="other">Another <see cref="PersonName"/> to compare with</param>
+        /// <param name="options">Comparison option</param>
+        /// <returns>
+        /// <b>true</b> if this person's name is the same as the other. <b>false</b> otherwise.
+        /// </returns>
+        public bool AreSame(PersonName other, PersonNameComparisonOptions options)
+        {
+            if (other == null)
+                return false;
+
+            return
+                SingleByte.AreSame(other.SingleByte, options) && 
+                Phonetic.AreSame(other.Phonetic, options) &&
+                Ideographic.AreSame(other.Ideographic, options);
+        }
 
 		public override bool Equals(object obj)
 		{

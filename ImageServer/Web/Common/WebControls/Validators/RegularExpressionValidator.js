@@ -21,6 +21,8 @@ function @@CLIENTID@@_ClientSideEvaluator()
     );
     
     this.regex = new RegExp('@@REGULAR_EXPRESSION@@');
+    
+    this.isRequired = @@REQUIRED@@;
 }
 
 // override BaseClientValidator.OnEvaludate() 
@@ -34,28 +36,34 @@ function @@CLIENTID@@_ClientSideEvaluator()
         return result;
     }
      
+     
     
-    if (this.input.value=='' && @@IGNORE_EMPTY_VALUE@@)
+    if (this.input.value=='' && this.isRequired)
     {
-        result.OK = true;
-    }
-    else if (this.input.value.match(this.regex)) {
-        result.OK = true;
-    } else {
         result.OK = false;
+        result.Message = 'Required';
     }
-
-
-    if (result.OK == false)
-    {
-        if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
-        {
-            result.Message = 'Invalid format';
+    
+    else{
+        if (this.input.value.match(this.regex)) {
+            result.OK = true;
+        } else {
+            result.OK = false;
         }
-        else
-            result.Message = '@@ERROR_MESSAGE@@';
-        
-    }   
+
+        if (result.OK == false)
+        {
+            if ('@@ERROR_MESSAGE@@' == null || '@@ERROR_MESSAGE@@'=='')
+            {
+                result.Message = 'Invalid format';
+            }
+            else
+                result.Message = '@@ERROR_MESSAGE@@';
+            
+        }  
+    }
+    
+ 
     
     return result;
 };

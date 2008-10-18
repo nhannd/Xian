@@ -70,6 +70,6 @@ function @@CLIENTID@@_ClientSideEvaluator()
 @@CLIENTID@@_ClientSideEvaluator.prototype.SetErrorMessage = function(result)
 {
     BaseClientValidator.prototype.SetErrorMessage.call(this, result);
-    alert(result.Message);
+    //alert(result.Message);
 }
 

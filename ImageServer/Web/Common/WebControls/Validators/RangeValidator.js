@@ -19,6 +19,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
             '@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'),
             '@@IGNORE_EMPTY_VALUE@@'
     );
+    
 }
 
 // override BaseClientValidator.OnEvaludate() 
