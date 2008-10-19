@@ -38,9 +38,4 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	public class SaveProtocolResponse : DataContractBase
 	{
 	}
-
-	[DataContract]
-	public class SaveProtocolResponse2 : DataContractBase
-	{
-	}
 }

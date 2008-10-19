@@ -29,66 +29,13 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class RejectOrderProtocolRequest : UpdateOrderProtocolRequest
+	public class RejectProtocolResponse : DataContractBase
 	{
-		public RejectOrderProtocolRequest(
-			EntityRef orderRef, 
-			List<ProtocolDetail> protocols, 
-			List<OrderNoteDetail> orderNotes, 
-			EnumValueInfo rejectReason, 
-			OrderNoteDetail additionalCommentsNote)
-			: base(orderRef, protocols, orderNotes)
-		{
-			this.RejectReason = rejectReason;
-			this.AdditionalCommentsNote = additionalCommentsNote;
-		}
-
-		public RejectOrderProtocolRequest(EntityRef orderRef, EnumValueInfo rejectReason, OrderNoteDetail additionalCommentsNote)
-			: this(orderRef, null, null, rejectReason, additionalCommentsNote)
-		{
-		}
-
-		[DataMember]
-		public EnumValueInfo RejectReason;
-
-		[DataMember]
-		public OrderNoteDetail AdditionalCommentsNote;
-	}
-
-	[DataContract]
-	public class RejectProtocolRequest : UpdateProtocolRequest
-	{
-		public RejectProtocolRequest(
-			EntityRef protocolAssignmentStepRef,
-			ProtocolDetail protocol,
-			List<OrderNoteDetail> orderNotes,
-			EnumValueInfo rejectReason,
-			OrderNoteDetail additionalCommentsNote)
-			: base(protocolAssignmentStepRef, protocol, orderNotes)
-		{
-			this.RejectReason = rejectReason;
-			this.AdditionalCommentsNote = additionalCommentsNote;
-		}
-
-		public RejectProtocolRequest(
-			EntityRef protocolAssignmentStepRef, 
-			EnumValueInfo rejectReason, 
-			OrderNoteDetail additionalCommentsNote)
-			: this(protocolAssignmentStepRef, null, null, rejectReason, additionalCommentsNote)
-		{
-		}
-
-		[DataMember]
-		public EnumValueInfo RejectReason;
-
-		[DataMember]
-		public OrderNoteDetail AdditionalCommentsNote;
 	}
 }

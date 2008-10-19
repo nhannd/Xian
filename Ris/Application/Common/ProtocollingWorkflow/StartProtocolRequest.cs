@@ -29,18 +29,33 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class RejectOrderProtocolResponse : DataContractBase
+	public class StartProtocolRequest : DataContractBase
 	{
-	}
+		public StartProtocolRequest(EntityRef protocolAssignmentStepRef, List<EntityRef> linkedProtocolAssignmentStepRef, bool shouldClaim, string noteCategory)
+		{
+			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
+			this.LinkedProtocolAssignmentStepRef = linkedProtocolAssignmentStepRef;
+			this.ShouldClaim = shouldClaim;
+			this.NoteCategory = noteCategory;
+		}
 
-	[DataContract]
-	public class RejectProtocolResponse : DataContractBase
-	{
+		[DataMember]
+		public EntityRef ProtocolAssignmentStepRef;
+
+		[DataMember]
+		public List<EntityRef> LinkedProtocolAssignmentStepRef;
+
+		[DataMember]
+		public bool ShouldClaim;
+
+		[DataMember]
+		public string NoteCategory;
 	}
 }

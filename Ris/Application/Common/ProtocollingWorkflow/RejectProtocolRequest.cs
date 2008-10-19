@@ -36,50 +36,32 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class DiscardOrderProtocolRequest : UpdateOrderProtocolRequest
+	public class RejectProtocolRequest : UpdateProtocolRequest
 	{
-		public DiscardOrderProtocolRequest(EntityRef orderRef, EntityRef protocolStepRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
-			: base(orderRef, null, orderNotes)
+		public RejectProtocolRequest(
+			EntityRef protocolAssignmentStepRef,
+			ProtocolDetail protocol,
+			List<OrderNoteDetail> orderNotes,
+			EnumValueInfo rejectReason,
+			OrderNoteDetail additionalCommentsNote)
+			: base(protocolAssignmentStepRef, protocol, orderNotes)
 		{
-			this.ProtocolStepRef = protocolStepRef;
-			this.ShouldUnclaim = shouldUnclaim;
-			this.ReassignToStaff = reassignToStaff;
+			this.RejectReason = rejectReason;
+			this.AdditionalCommentsNote = additionalCommentsNote;
 		}
 
-		public DiscardOrderProtocolRequest(EntityRef orderRef, EntityRef protocolStepRef)
-			: this(orderRef, protocolStepRef, null, true, null)
-		{
-		}
-
-		[DataMember]
-		public EntityRef ProtocolStepRef;
-
-		[DataMember]
-		public bool ShouldUnclaim;
-
-		[DataMember]
-		public EntityRef ReassignToStaff;
-	}
-
-	[DataContract]
-	public class DiscardProtocolRequest : UpdateProtocolRequest
-	{
-		public DiscardProtocolRequest(EntityRef protocolStepRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
-			: base(protocolStepRef, null, orderNotes)
-		{
-			this.ShouldUnclaim = shouldUnclaim;
-			this.ReassignToStaff = reassignToStaff;
-		}
-
-		public DiscardProtocolRequest(EntityRef protocolStepRef)
-			: this(protocolStepRef, null, true, null)
+		public RejectProtocolRequest(
+			EntityRef protocolAssignmentStepRef, 
+			EnumValueInfo rejectReason, 
+			OrderNoteDetail additionalCommentsNote)
+			: this(protocolAssignmentStepRef, null, null, rejectReason, additionalCommentsNote)
 		{
 		}
 
 		[DataMember]
-		public bool ShouldUnclaim;
+		public EnumValueInfo RejectReason;
 
 		[DataMember]
-		public EntityRef ReassignToStaff;
+		public OrderNoteDetail AdditionalCommentsNote;
 	}
 }

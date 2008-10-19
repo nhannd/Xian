@@ -7,9 +7,4 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	public class SubmitProtocolForApprovalResponse : DataContractBase
 	{
 	}
-
-	[DataContract]
-	public class SubmitProtocolForApprovalResponse2 : DataContractBase
-	{
-	}
 }

@@ -36,46 +36,24 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class StartOrderProtocolRequest : DataContractBase
+	public class DiscardProtocolRequest : UpdateProtocolRequest
 	{
-		public StartOrderProtocolRequest(EntityRef orderRef, bool shouldClaim, string noteCategory)
+		public DiscardProtocolRequest(EntityRef protocolStepRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
+			: base(protocolStepRef, null, orderNotes)
 		{
-			this.OrderRef = orderRef;
-			this.ShouldClaim = shouldClaim;
-			this.NoteCategory = noteCategory;
+			this.ShouldUnclaim = shouldUnclaim;
+			this.ReassignToStaff = reassignToStaff;
+		}
+
+		public DiscardProtocolRequest(EntityRef protocolStepRef)
+			: this(protocolStepRef, null, true, null)
+		{
 		}
 
 		[DataMember]
-		public EntityRef OrderRef;
+		public bool ShouldUnclaim;
 
 		[DataMember]
-		public bool ShouldClaim;
-
-		[DataMember]
-		public string NoteCategory;
-	}
-
-	[DataContract]
-	public class StartProtocolRequest : DataContractBase
-	{
-		public StartProtocolRequest(EntityRef protocolAssignmentStepRef, List<EntityRef> linkedProtocolAssignmentStepRef, bool shouldClaim, string noteCategory)
-		{
-			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
-			this.LinkedProtocolAssignmentStepRef = linkedProtocolAssignmentStepRef;
-			this.ShouldClaim = shouldClaim;
-			this.NoteCategory = noteCategory;
-		}
-
-		[DataMember]
-		public EntityRef ProtocolAssignmentStepRef;
-
-		[DataMember]
-		public List<EntityRef> LinkedProtocolAssignmentStepRef;
-
-		[DataMember]
-		public bool ShouldClaim;
-
-		[DataMember]
-		public string NoteCategory;
+		public EntityRef ReassignToStaff;
 	}
 }

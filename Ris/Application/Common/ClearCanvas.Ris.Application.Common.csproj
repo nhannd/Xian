@@ -193,7 +193,7 @@
     <Compile Include="OrderNotes\QueryNoteboxResponse.cs" />
     <Compile Include="OrderNotes\AddStaffGroupsRequest.cs" />
     <Compile Include="OrderNotes\AddStaffGroupsResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\UpdateOrderProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\UpdateProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolFormDataResponse.cs" />
     <Compile Include="ProtocollingWorkflow\SubmitProtocolForApprovalRequest.cs" />
@@ -262,12 +262,12 @@
     <Compile Include="ReportDetail.cs" />
     <Compile Include="OrderNoteDetail.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationRequestBase.cs" />
-    <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\DiscardOrderProtocolResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\DiscardProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\DiscardProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsRequest.cs" />
     <Compile Include="ReportingWorkflow\GetLinkableInterpretationsResponse.cs" />
-    <Compile Include="ProtocollingWorkflow\StartOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\StartOrderProtocolResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\StartProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\StartProtocolResponse.cs" />
     <Compile Include="ReportingWorkflow\PriorProcedureSummary.cs" />
     <Compile Include="WorklistItemSummaryBase.cs" />
     <Compile Include="Login\GetWorkingFacilityChoicesRequest.cs" />
@@ -502,8 +502,8 @@
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ProtocolCodeDetail.cs" />
-    <Compile Include="ProtocollingWorkflow\AcceptOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\AcceptOrderProtocolResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\AcceptProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\AcceptProtocolResponse.cs" />
     <Compile Include="ProtocollingWorkflow\AddOrderProtocolStepsRequest.cs" />
     <Compile Include="ProtocollingWorkflow\AddOrderProtocolStepsResponse.cs" />
     <Compile Include="ProtocollingWorkflow\ApproveResidentProtocolRequest.cs" />
@@ -514,8 +514,8 @@
     <Compile Include="ProtocollingWorkflow\GetProtocolGroupDetailRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetProtocolGroupDetailResponse.cs" />
     <Compile Include="ProtocolDetail.cs" />
-    <Compile Include="ProtocollingWorkflow\RejectOrderProtocolRequest.cs" />
-    <Compile Include="ProtocollingWorkflow\RejectOrderProtocolResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\RejectProtocolRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\RejectProtocolResponse.cs" />
     <Compile Include="ProtocollingWorkflow\ResubmitProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\ResubmitProtocolResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadSearchPatientFormDataRequest.cs" />

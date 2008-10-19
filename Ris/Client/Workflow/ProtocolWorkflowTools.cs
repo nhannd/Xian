@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class AcceptProtocolTool : ProtocolWorkflowItemTool
 	{
 		public AcceptProtocolTool()
-			: base("AcceptOrderProtocol")
+			: base("AcceptProtocol")
 		{
 		}
 
@@ -33,7 +33,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
-					//service.AcceptOrderProtocol(new AcceptOrderProtocolRequest(item.OrderRef));
 					service.AcceptProtocol(new AcceptProtocolRequest(item.ProcedureStepRef));
 				});
 
@@ -51,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class RejectProtocolTool : ProtocolWorkflowItemTool
 	{
 		public RejectProtocolTool()
-			: base("RejectOrderProtocol")
+			: base("RejectProtocol")
 		{
 		}
 
@@ -70,10 +69,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						//service.RejectOrderProtocol(new RejectOrderProtocolRequest(
-						//                                item.OrderRef, 
-						//                                component.Reason, 
-						//                                CreateAdditionalCommentsNote(component.OtherReason)));
 						service.RejectProtocol(new RejectProtocolRequest(
 														item.ProcedureStepRef,
 														component.Reason,
@@ -133,8 +128,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
-					//service.SubmitProtocolForApproval(new SubmitProtocolForApprovalRequest(item.OrderRef));
-					service.SubmitProtocolForApproval2(new SubmitProtocolForApprovalRequest2(item.ProcedureStepRef));
+					service.SubmitProtocolForApproval(new SubmitProtocolForApprovalRequest(item.ProcedureStepRef));
 				});
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.AwaitingReviewFolder));
@@ -152,7 +146,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class CancelProtocolTool : ProtocolWorkflowItemTool
 	{
 		public CancelProtocolTool()
-			: base("DiscardOrderProtocol")
+			: base("DiscardProtocol")
 		{
 		}
 
@@ -168,7 +162,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
-					//service.DiscardOrderProtocol(new DiscardOrderProtocolRequest(item.OrderRef, item.ProcedureStepRef));
 					service.DiscardProtocol(new DiscardProtocolRequest(item.ProcedureStepRef));
 				});
 

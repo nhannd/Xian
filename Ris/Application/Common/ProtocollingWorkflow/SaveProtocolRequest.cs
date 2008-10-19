@@ -36,18 +36,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 {
 	[DataContract]
-	public class SaveProtocolRequest : UpdateOrderProtocolRequest
+	public class SaveProtocolRequest : UpdateProtocolRequest
 	{
-		public SaveProtocolRequest(EntityRef orderRef, List<ProtocolDetail> protocols, List<OrderNoteDetail> protocolNotes)
-			: base(orderRef, protocols, protocolNotes)
-		{
-		}
-	}
-
-	[DataContract]
-	public class SaveProtocolRequest2 : UpdateProtocolRequest
-	{
-		public SaveProtocolRequest2(EntityRef protocolAssignmentStepRef, ProtocolDetail protocol, List<OrderNoteDetail> protocolNotes)
+		public SaveProtocolRequest(EntityRef protocolAssignmentStepRef, ProtocolDetail protocol, List<OrderNoteDetail> protocolNotes)
 			: base(protocolAssignmentStepRef, protocol, protocolNotes)
 		{
 		}

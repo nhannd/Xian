@@ -160,42 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
-		[OperationEnablement("CanStartOrderProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.Workflow.Protocol.Create)]
-		public StartOrderProtocolResponse StartOrderProtocol(StartOrderProtocolRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-
-			bool protocolClaimed = false;
-			bool canPerformerAcceptProtocols = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
-			Staff assignedStaff = null;
-
-			if (request.ShouldClaim)
-			{
-				try
-				{
-					ProtocollingOperations.StartProtocolOperation op = new ProtocollingOperations.StartProtocolOperation();
-					op.Execute(order, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed, out assignedStaff);
-				}
-				catch(Exception e)
-				{
-					throw new RequestValidationException(e.Message);
-				}
-			}
-
-			List<OrderNoteDetail> noteDetails = GetNoteDetails(order, request.NoteCategory);
-
-			this.PersistenceContext.SynchState();
-
-			return new StartOrderProtocolResponse(
-				order.GetRef(), 
-				assignedStaff == null ? null : assignedStaff.GetRef(), 
-				protocolClaimed, 
-				noteDetails);
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanStartOrderProtocol")]
+		[OperationEnablement("CanStartProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public StartProtocolResponse StartProtocol(StartProtocolRequest request)
 		{
@@ -232,46 +197,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
-		[OperationEnablement("CanDiscardOrderProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
-		public DiscardOrderProtocolResponse DiscardOrderProtocol(DiscardOrderProtocolRequest request)
-		{
-			if (request.ProtocolStepRef != null && request.ShouldUnclaim)
-			{
-				// demand authority token if trying to cancel a protocol that is perfomed by someone else
-				ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProtocolStepRef, EntityLoadFlags.None);
-				if ((step.State == ActivityStatus.SC && !Equals(step.AssignedStaff, this.CurrentUserStaff)) ||
-					(step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, this.CurrentUserStaff)))
-				{
-					PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
-					permission.Demand();
-				}
-			}
-			else
-			{
-				// don't care, since the operation won't be enabled.
-			}
-
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			Staff staff = request.ReassignToStaff == null ? null : this.PersistenceContext.Load<Staff>(request.ReassignToStaff);
-
-			if (request.ShouldUnclaim)
-			{
-				ProtocollingOperations.DiscardProtocolOperation op = new ProtocollingOperations.DiscardProtocolOperation();
-				op.Execute(order, staff);
-			}
-
-			// Does it make sense to save notes here?
-			if (request.OrderNotes != null)
-				UpdateOrderNotes(order, request.OrderNotes);
-
-			this.PersistenceContext.SynchState();
-
-			return new DiscardOrderProtocolResponse();
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanDiscardOrderProtocol")]
+		[OperationEnablement("CanDiscardProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public DiscardProtocolResponse DiscardProtocol(DiscardProtocolRequest request)
 		{
@@ -305,24 +231,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
-		[OperationEnablement("CanAcceptOrderProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
-		public AcceptOrderProtocolResponse AcceptOrderProtocol(AcceptOrderProtocolRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-
-			SaveProtocolHelper(order, request.Protocols, request.OrderNotes);
-
-			ProtocollingOperations.AcceptProtocolOperation op = new ProtocollingOperations.AcceptProtocolOperation();
-			op.Execute(order, this.CurrentUserStaff);
-
-			this.PersistenceContext.SynchState();
-
-			return new AcceptOrderProtocolResponse();
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanAcceptOrderProtocol")]
+		[OperationEnablement("CanAcceptProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Accept)]
 		public AcceptProtocolResponse AcceptProtocol(AcceptProtocolRequest request)
 		{
@@ -339,29 +248,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[UpdateOperation]
-		[OperationEnablement("CanRejectOrderProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
-		public RejectOrderProtocolResponse RejectOrderProtocol(RejectOrderProtocolRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-
-			SaveProtocolHelper(order, request.Protocols, request.OrderNotes);
-
-			ProtocolRejectReasonEnum reason =
-				EnumUtils.GetEnumValue<ProtocolRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
-
-			ProtocollingOperations.RejectProtocolOperation op = new ProtocollingOperations.RejectProtocolOperation();
-			op.Execute(order, this.CurrentUserStaff, reason);
-
-			AddAdditionalCommentsNote(request.AdditionalCommentsNote, order);
-
-			this.PersistenceContext.SynchState();
-
-			return new RejectOrderProtocolResponse();
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanRejectOrderProtocol")]
+		[OperationEnablement("CanRejectProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
 		public RejectProtocolResponse RejectProtocol(RejectProtocolRequest request)
 		{
@@ -385,25 +272,13 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanSaveProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
-		public SaveProtocolResponse SaveOrderProtocol(SaveProtocolRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-
-			SaveProtocolHelper(order, request.Protocols, request.OrderNotes);
-
-			return new SaveProtocolResponse();
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanSaveProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
-		public SaveProtocolResponse2 SaveProtocol(SaveProtocolRequest2 request)
+		public SaveProtocolResponse SaveProtocol(SaveProtocolRequest request)
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 
 			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
 
-			return new SaveProtocolResponse2();
+			return new SaveProtocolResponse();
 		}
 
 		[UpdateOperation]
@@ -425,38 +300,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[OperationEnablement("CanSubmitProtocolForApproval")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
 		public SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-			Staff supervisor = null;
-
-			if (request.Protocols != null)
-			{
-				supervisor = GetSupervisor(request.Protocols);
-			}
-
-			SaveProtocolHelper(order, request.Protocols, request.OrderNotes);
-
-			bool canOmitSupervisor = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.OmitSupervisor);
-
-			try
-			{
-				ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
-				op.Execute(order, supervisor, canOmitSupervisor);
-			}
-			catch (SupervisorRequiredException e)
-			{
-				throw new RequestValidationException(e.Message);
-			}
-
-			this.PersistenceContext.SynchState();
-
-			return new SubmitProtocolForApprovalResponse();
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanSubmitProtocolForApproval")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
-		public SubmitProtocolForApprovalResponse2 SubmitProtocolForApproval2(SubmitProtocolForApprovalRequest2 request)
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 			Staff supervisor = null;
@@ -482,28 +325,13 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			this.PersistenceContext.SynchState();
 
-			return new SubmitProtocolForApprovalResponse2();
+			return new SubmitProtocolForApprovalResponse();
 		}
 
 		[UpdateOperation]
 		[OperationEnablement("CanReviseSubmittedProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
 		public ReviseSubmittedProtocolResponse ReviseSubmittedProtocol(ReviseSubmittedProtocolRequest request)
-		{
-			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
-
-			ProtocollingOperations.ReviseSubmittedProtocolOperation op = new ProtocollingOperations.ReviseSubmittedProtocolOperation();
-			ProtocolAssignmentStep step = op.Execute(order, this.CurrentUserStaff);
-
-			this.PersistenceContext.SynchState();
-
-			return new ReviseSubmittedProtocolResponse(GetWorklistItemSummary(step));
-		}
-
-		[UpdateOperation]
-		[OperationEnablement("CanReviseSubmittedProtocol")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.SubmitForReview)]
-		public ReviseSubmittedProtocolResponse2 ReviseSubmittedProtocol2(ReviseSubmittedProtocolRequest2 request)
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 
@@ -512,21 +340,21 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			this.PersistenceContext.SynchState();
 
-			return new ReviseSubmittedProtocolResponse2(GetWorklistItemSummary(step));
+			return new ReviseSubmittedProtocolResponse(GetWorklistItemSummary(step));
 		}
 
 		#endregion
 
 		#region OperationEnablement methods
 
-		public bool CanStartOrderProtocol(ProtocolOperationEnablementContext enablementContext)
+		public bool CanStartProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
 				return false;
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.StartProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
-		public bool CanDiscardOrderProtocol(ProtocolOperationEnablementContext enablementContext)
+		public bool CanDiscardProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
 				return false;
@@ -546,14 +374,14 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.DiscardProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
-		public bool CanAcceptOrderProtocol(ProtocolOperationEnablementContext enablementContext)
+		public bool CanAcceptProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept))
 				return false;
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.AcceptProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
 
-		public bool CanRejectOrderProtocol(ProtocolOperationEnablementContext enablementContext)
+		public bool CanRejectProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
 				return false;
@@ -643,16 +471,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		#endregion
 
-		// REMOVE
-		private void SaveProtocolHelper(Order order, List<ProtocolDetail> protocols, List<OrderNoteDetail> notes)
-		{
-			if (protocols != null)
-				UpdateProtocols(protocols);
-
-			if (notes != null)
-				UpdateOrderNotes(order, notes);
-		}
-
 		private void SaveProtocolHelper(ProtocolAssignmentStep step, ProtocolDetail protocolDetail, List<OrderNoteDetail> notes)
 		{
 			if (protocolDetail != null)
@@ -664,14 +482,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			if (notes != null)
 				UpdateOrderNotes(step.Procedure.Order, notes);
-		}
-
-		private Staff GetSupervisor(List<ProtocolDetail> protocols)
-		{
-			ProtocolDetail supervisedDetail = CollectionUtils.SelectFirst(
-				protocols, delegate(ProtocolDetail detail) { return detail.Supervisor != null; });
-			EntityRef supervisorRef = supervisedDetail == null ? null : supervisedDetail.Supervisor.StaffRef;
-			return supervisorRef == null ? null : this.PersistenceContext.Load<Staff>(supervisorRef);
 		}
 
 		private Staff GetSupervisor(ProtocolDetail protocolDetail)
@@ -709,17 +519,6 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 					{
 						return noteAssembler.CreateOrderNoteDetail(note, this.PersistenceContext);
 					});
-		}
-
-		// REMOVE
-		private void UpdateProtocols(List<ProtocolDetail> protocolDetails)
-		{
-			ProtocolAssembler assembler = new ProtocolAssembler();
-			foreach (ProtocolDetail protocolDetail in protocolDetails)
-			{
-				Protocol protocol = this.PersistenceContext.Load<Protocol>(protocolDetail.ProtocolRef);
-				assembler.UpdateProtocol(protocol, protocolDetail, this.PersistenceContext);
-			}
 		}
 
 		private void UpdateOrderNotes(Order order, IList<OrderNoteDetail> notes)
