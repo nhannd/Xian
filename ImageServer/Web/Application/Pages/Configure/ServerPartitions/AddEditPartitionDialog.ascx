@@ -191,9 +191,9 @@
                                                                                         
                             </tr>
                             <tr>
-                                <td><asp:CheckBox ID="MatchAccessionNumber" runat="server" Text="Match Accession Number" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchAccessionNumber" runat="server" Text="Accession Number" CssClass="DialogCheckBox"/></td>
                                 <td></td>                                                        
-                                <td><asp:CheckBox ID="MatchIssuer" runat="server" Text="Match Issuer of Patient ID" CssClass="DialogCheckBox"/></td>
+                                <td><asp:CheckBox ID="MatchIssuer" runat="server" Text="Issuer of Patient ID" CssClass="DialogCheckBox"/></td>
                             </tr>
                         </table>
                         </asp:Panel>
