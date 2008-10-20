@@ -2,242 +2,102 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare", "..\..\Healthcare\ClearCanvas.Healthcare.csproj", "{748C08F1-FD6E-49F6-90BB-90C3A323C714}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Hibernate", "..\..\Healthcare\Hibernate\ClearCanvas.Healthcare.Hibernate.csproj", "{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Workflow", "..\..\Workflow\ClearCanvas.Workflow.csproj", "{576C4A35-B314-49D0-BF53-4BD43D8D1F31}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Workflow.Hibernate", "..\..\Workflow\Hibernate\ClearCanvas.Workflow.Hibernate.csproj", "{8B6F26E3-F067-414E-BEAA-F27481E0EFE0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Configuration", "..\..\Enterprise\Configuration\ClearCanvas.Enterprise.Configuration.csproj", "{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Configuration.Hibernate", "..\..\Enterprise\Configuration\Hibernate\ClearCanvas.Enterprise.Configuration.Hibernate.csproj", "{32C097AB-931A-44B0-9ED2-B6F343C3F588}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7", "..\..\HL7\ClearCanvas.HL7.csproj", "{401164C1-D492-4E0F-88B8-2A86BD2D6B0E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Server", "ClearCanvas.Ris.Server.csproj", "{977A05C3-8145-4EB0-A620-6526F91B2016}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Server.Executable", "Executable\ClearCanvas.Ris.Server.Executable.csproj", "{E5F0BD79-A7CF-4356-AD62-0AA3DEBFAB9A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
-		{92396DFA-583F-4683-B227-08010E064579} = {92396DFA-583F-4683-B227-08010E064579}
-		{09F49217-CD98-4773-8CFB-594F189EEE3B} = {09F49217-CD98-4773-8CFB-594F189EEE3B}
-		{576C4A35-B314-49D0-BF53-4BD43D8D1F31} = {576C4A35-B314-49D0-BF53-4BD43D8D1F31}
-		{6EF89577-03CB-4911-8625-587B858AF6F0} = {6EF89577-03CB-4911-8625-587B858AF6F0}
-		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07} = {8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}
-		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
-		{C460FBF7-F40E-4055-8FBF-F958670880FF} = {C460FBF7-F40E-4055-8FBF-F958670880FF}
 		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0} = {F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}
-		{02388208-2EE6-4C48-9E57-A53D02663C36} = {02388208-2EE6-4C48-9E57-A53D02663C36}
-		{A6E1347C-A2ED-4A60-9CFB-AF404252B4AF} = {A6E1347C-A2ED-4A60-9CFB-AF404252B4AF}
-		{3F89E4AE-F7BE-49E1-958B-D96654C46524} = {3F89E4AE-F7BE-49E1-958B-D96654C46524}
-		{3218D7F0-68A5-4F8B-ADA7-56260009A3F3} = {3218D7F0-68A5-4F8B-ADA7-56260009A3F3}
+		{D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93} = {D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93}
+		{92396DFA-583F-4683-B227-08010E064579} = {92396DFA-583F-4683-B227-08010E064579}
+		{C460FBF7-F40E-4055-8FBF-F958670880FF} = {C460FBF7-F40E-4055-8FBF-F958670880FF}
 		{AED104F7-3ADA-4376-A8EB-D39BA7A5F707} = {AED104F7-3ADA-4376-A8EB-D39BA7A5F707}
-		{1615BE92-5257-43BB-AEE7-BE9A1257B3A8} = {1615BE92-5257-43BB-AEE7-BE9A1257B3A8}
-		{5A1124C0-5058-4E1C-89D1-BB6D26C659A3} = {5A1124C0-5058-4E1C-89D1-BB6D26C659A3}
+		{9CF7AFF6-F312-434B-B802-4253B13368D7} = {9CF7AFF6-F312-434B-B802-4253B13368D7}
 		{748C08F1-FD6E-49F6-90BB-90C3A323C714} = {748C08F1-FD6E-49F6-90BB-90C3A323C714}
+		{3218D7F0-68A5-4F8B-ADA7-56260009A3F3} = {3218D7F0-68A5-4F8B-ADA7-56260009A3F3}
 		{8B6F26E3-F067-414E-BEAA-F27481E0EFE0} = {8B6F26E3-F067-414E-BEAA-F27481E0EFE0}
 		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA} = {B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868} = {B5EBFFD7-6641-4932-91C9-4C4322B41868}
+		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07} = {8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}
+		{FDD0E6CB-9DA4-4E5D-A91A-755790118BEE} = {FDD0E6CB-9DA4-4E5D-A91A-755790118BEE}
 		{977A05C3-8145-4EB0-A620-6526F91B2016} = {977A05C3-8145-4EB0-A620-6526F91B2016}
 		{4CED35C2-4659-492D-8F85-F560E469BE11} = {4CED35C2-4659-492D-8F85-F560E469BE11}
 		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1} = {FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}
 		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E} = {401164C1-D492-4E0F-88B8-2A86BD2D6B0E}
+		{5A1124C0-5058-4E1C-89D1-BB6D26C659A3} = {5A1124C0-5058-4E1C-89D1-BB6D26C659A3}
+		{3F89E4AE-F7BE-49E1-958B-D96654C46524} = {3F89E4AE-F7BE-49E1-958B-D96654C46524}
 		{32C097AB-931A-44B0-9ED2-B6F343C3F588} = {32C097AB-931A-44B0-9ED2-B6F343C3F588}
 		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B} = {E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}
+		{1615BE92-5257-43BB-AEE7-BE9A1257B3A8} = {1615BE92-5257-43BB-AEE7-BE9A1257B3A8}
 		{E2266084-462A-446F-9CEA-9D132BC36851} = {E2266084-462A-446F-9CEA-9D132BC36851}
+		{A6E1347C-A2ED-4A60-9CFB-AF404252B4AF} = {A6E1347C-A2ED-4A60-9CFB-AF404252B4AF}
+		{6EF89577-03CB-4911-8625-587B858AF6F0} = {6EF89577-03CB-4911-8625-587B858AF6F0}
 		{11548867-F0DC-4142-82E8-59EBC36B8980} = {11548867-F0DC-4142-82E8-59EBC36B8980}
-		{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD} = {487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}
-		{298A5358-EF8F-4D27-A935-5E0E2BEF754F} = {298A5358-EF8F-4D27-A935-5E0E2BEF754F}
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WSClient", "..\WSClient\WSClient.csproj", "{3E87D49F-FA93-48D2-AF37-D78DD39D8627}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-	ProjectSection(ProjectDependencies) = postProject
-		{748C08F1-FD6E-49F6-90BB-90C3A323C714} = {748C08F1-FD6E-49F6-90BB-90C3A323C714}
-		{8B6F26E3-F067-414E-BEAA-F27481E0EFE0} = {8B6F26E3-F067-414E-BEAA-F27481E0EFE0}
-		{B5EBFFD7-6641-4932-91C9-4C4322B41868} = {B5EBFFD7-6641-4932-91C9-4C4322B41868}
-		{977A05C3-8145-4EB0-A620-6526F91B2016} = {977A05C3-8145-4EB0-A620-6526F91B2016}
-		{4CED35C2-4659-492D-8F85-F560E469BE11} = {4CED35C2-4659-492D-8F85-F560E469BE11}
-		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1} = {FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}
-		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E} = {401164C1-D492-4E0F-88B8-2A86BD2D6B0E}
-		{32C097AB-931A-44B0-9ED2-B6F343C3F588} = {32C097AB-931A-44B0-9ED2-B6F343C3F588}
-		{E2266084-462A-446F-9CEA-9D132BC36851} = {E2266084-462A-446F-9CEA-9D132BC36851}
-		{E5F0BD79-A7CF-4356-AD62-0AA3DEBFAB9A} = {E5F0BD79-A7CF-4356-AD62-0AA3DEBFAB9A}
 		{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD} = {487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}
 		{298A5358-EF8F-4D27-A935-5E0E2BEF754F} = {298A5358-EF8F-4D27-A935-5E0E2BEF754F}
 		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
 		{576C4A35-B314-49D0-BF53-4BD43D8D1F31} = {576C4A35-B314-49D0-BF53-4BD43D8D1F31}
-		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0} = {F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}
+		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
+		{09F49217-CD98-4773-8CFB-594F189EEE3B} = {09F49217-CD98-4773-8CFB-594F189EEE3B}
+		{02388208-2EE6-4C48-9E57-A53D02663C36} = {02388208-2EE6-4C48-9E57-A53D02663C36}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Core", "..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj", "{431E9444-9915-4D49-B92D-9B7EC086622A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication", "..\..\Enterprise\Authentication\ClearCanvas.Enterprise.Authentication.csproj", "{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication.Hibernate", "..\..\Enterprise\Authentication\Hibernate\ClearCanvas.Enterprise.Authentication.Hibernate.csproj", "{E2266084-462A-446F-9CEA-9D132BC36851}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate", "..\..\Enterprise\Hibernate\ClearCanvas.Enterprise.Hibernate.csproj", "{4CED35C2-4659-492D-8F85-F560E469BE11}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Hibernate.DdlWriter", "..\..\Enterprise\Hibernate\DdlWriter\ClearCanvas.Enterprise.Hibernate.DdlWriter.csproj", "{298A5358-EF8F-4D27-A935-5E0E2BEF754F}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Common", "..\Application\Common\ClearCanvas.Ris.Application.Common.csproj", "{09F49217-CD98-4773-8CFB-594F189EEE3B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Services", "..\Application\Services\ClearCanvas.Ris.Application.Services.csproj", "{11548867-F0DC-4142-82E8-59EBC36B8980}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hibernate", "..\..\HL7\Hibernate\ClearCanvas.HL7.Hibernate.csproj", "{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.HL7.Hapi", "..\..\HL7\NHapi\ClearCanvas.HL7.Hapi.csproj", "{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{EE365C28-1573-42BB-866E-0CA92A3ACE93}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
 		RisServer_dist.proj = RisServer_dist.proj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Uhn", "..\..\Healthcare\Uhn\ClearCanvas.Healthcare.Uhn.csproj", "{6EF89577-03CB-4911-8625-587B858AF6F0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Uhn.Hibernate", "..\..\Healthcare\Uhn\Hibernate\ClearCanvas.Healthcare.Uhn.Hibernate.csproj", "{02388208-2EE6-4C48-9E57-A53D02663C36}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Uhn.Common", "..\Application\Uhn\Common\ClearCanvas.Ris.Application.Uhn.Common.csproj", "{3F89E4AE-F7BE-49E1-958B-D96654C46524}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Uhn.Services", "..\Application\Uhn\Services\ClearCanvas.Ris.Application.Uhn.Services.csproj", "{A6E1347C-A2ED-4A60-9CFB-AF404252B4AF}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Fax", "..\..\Healthcare\Fax\ClearCanvas.Healthcare.Fax.csproj", "{5A1124C0-5058-4E1C-89D1-BB6D26C659A3}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Healthcare.Fax.Hibernate", "..\..\Healthcare\Fax\Hibernate\ClearCanvas.Healthcare.Fax.Hibernate.csproj", "{1615BE92-5257-43BB-AEE7-BE9A1257B3A8}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Fax.Common", "..\Application\Fax\Common\ClearCanvas.Ris.Application.Fax.Common.csproj", "{AED104F7-3ADA-4376-A8EB-D39BA7A5F707}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Fax.Services", "..\Application\Fax\Services\ClearCanvas.Ris.Application.Fax.Services.csproj", "{3218D7F0-68A5-4F8B-ADA7-56260009A3F3}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Shreds.Publication", "..\Shreds\Publication\ClearCanvas.Ris.Shreds.Publication.csproj", "{C460FBF7-F40E-4055-8FBF-F958670880FF}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{8B6F26E3-F067-414E-BEAA-F27481E0EFE0} = {8B6F26E3-F067-414E-BEAA-F27481E0EFE0}
 		{4CED35C2-4659-492D-8F85-F560E469BE11} = {4CED35C2-4659-492D-8F85-F560E469BE11}
@@ -247,54 +107,48 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Shreds.Publ
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHostService", "..\..\Server\ShredHostService\ClearCanvas.Server.ShredHostService.csproj", "{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0} = {F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}
-		{02388208-2EE6-4C48-9E57-A53D02663C36} = {02388208-2EE6-4C48-9E57-A53D02663C36}
-		{09F49217-CD98-4773-8CFB-594F189EEE3B} = {09F49217-CD98-4773-8CFB-594F189EEE3B}
-		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
-		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
-		{576C4A35-B314-49D0-BF53-4BD43D8D1F31} = {576C4A35-B314-49D0-BF53-4BD43D8D1F31}
-		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
-		{298A5358-EF8F-4D27-A935-5E0E2BEF754F} = {298A5358-EF8F-4D27-A935-5E0E2BEF754F}
-		{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD} = {487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}
-		{11548867-F0DC-4142-82E8-59EBC36B8980} = {11548867-F0DC-4142-82E8-59EBC36B8980}
-		{6EF89577-03CB-4911-8625-587B858AF6F0} = {6EF89577-03CB-4911-8625-587B858AF6F0}
-		{A6E1347C-A2ED-4A60-9CFB-AF404252B4AF} = {A6E1347C-A2ED-4A60-9CFB-AF404252B4AF}
-		{E2266084-462A-446F-9CEA-9D132BC36851} = {E2266084-462A-446F-9CEA-9D132BC36851}
-		{1615BE92-5257-43BB-AEE7-BE9A1257B3A8} = {1615BE92-5257-43BB-AEE7-BE9A1257B3A8}
-		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B} = {E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}
-		{32C097AB-931A-44B0-9ED2-B6F343C3F588} = {32C097AB-931A-44B0-9ED2-B6F343C3F588}
-		{3F89E4AE-F7BE-49E1-958B-D96654C46524} = {3F89E4AE-F7BE-49E1-958B-D96654C46524}
-		{5A1124C0-5058-4E1C-89D1-BB6D26C659A3} = {5A1124C0-5058-4E1C-89D1-BB6D26C659A3}
-		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E} = {401164C1-D492-4E0F-88B8-2A86BD2D6B0E}
-		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1} = {FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}
-		{4CED35C2-4659-492D-8F85-F560E469BE11} = {4CED35C2-4659-492D-8F85-F560E469BE11}
-		{977A05C3-8145-4EB0-A620-6526F91B2016} = {977A05C3-8145-4EB0-A620-6526F91B2016}
-		{B5EBFFD7-6641-4932-91C9-4C4322B41868} = {B5EBFFD7-6641-4932-91C9-4C4322B41868}
-		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA} = {B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}
-		{8B6F26E3-F067-414E-BEAA-F27481E0EFE0} = {8B6F26E3-F067-414E-BEAA-F27481E0EFE0}
-		{3218D7F0-68A5-4F8B-ADA7-56260009A3F3} = {3218D7F0-68A5-4F8B-ADA7-56260009A3F3}
-		{748C08F1-FD6E-49F6-90BB-90C3A323C714} = {748C08F1-FD6E-49F6-90BB-90C3A323C714}
-		{AED104F7-3ADA-4376-A8EB-D39BA7A5F707} = {AED104F7-3ADA-4376-A8EB-D39BA7A5F707}
-		{C460FBF7-F40E-4055-8FBF-F958670880FF} = {C460FBF7-F40E-4055-8FBF-F958670880FF}
 		{92396DFA-583F-4683-B227-08010E064579} = {92396DFA-583F-4683-B227-08010E064579}
+		{C460FBF7-F40E-4055-8FBF-F958670880FF} = {C460FBF7-F40E-4055-8FBF-F958670880FF}
+		{AED104F7-3ADA-4376-A8EB-D39BA7A5F707} = {AED104F7-3ADA-4376-A8EB-D39BA7A5F707}
+		{748C08F1-FD6E-49F6-90BB-90C3A323C714} = {748C08F1-FD6E-49F6-90BB-90C3A323C714}
+		{3218D7F0-68A5-4F8B-ADA7-56260009A3F3} = {3218D7F0-68A5-4F8B-ADA7-56260009A3F3}
+		{8B6F26E3-F067-414E-BEAA-F27481E0EFE0} = {8B6F26E3-F067-414E-BEAA-F27481E0EFE0}
+		{B44450E0-F3D6-46E1-B9A3-8CEE20565FBA} = {B44450E0-F3D6-46E1-B9A3-8CEE20565FBA}
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868} = {B5EBFFD7-6641-4932-91C9-4C4322B41868}
+		{977A05C3-8145-4EB0-A620-6526F91B2016} = {977A05C3-8145-4EB0-A620-6526F91B2016}
+		{4CED35C2-4659-492D-8F85-F560E469BE11} = {4CED35C2-4659-492D-8F85-F560E469BE11}
+		{FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1} = {FFBEB9C1-2E09-4A9E-A863-B104CFDC55F1}
+		{401164C1-D492-4E0F-88B8-2A86BD2D6B0E} = {401164C1-D492-4E0F-88B8-2A86BD2D6B0E}
+		{5A1124C0-5058-4E1C-89D1-BB6D26C659A3} = {5A1124C0-5058-4E1C-89D1-BB6D26C659A3}
+		{3F89E4AE-F7BE-49E1-958B-D96654C46524} = {3F89E4AE-F7BE-49E1-958B-D96654C46524}
+		{32C097AB-931A-44B0-9ED2-B6F343C3F588} = {32C097AB-931A-44B0-9ED2-B6F343C3F588}
+		{E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B} = {E9E53B95-F35E-4D2E-93F4-E3B66E0CC74B}
+		{1615BE92-5257-43BB-AEE7-BE9A1257B3A8} = {1615BE92-5257-43BB-AEE7-BE9A1257B3A8}
+		{E2266084-462A-446F-9CEA-9D132BC36851} = {E2266084-462A-446F-9CEA-9D132BC36851}
+		{A6E1347C-A2ED-4A60-9CFB-AF404252B4AF} = {A6E1347C-A2ED-4A60-9CFB-AF404252B4AF}
+		{6EF89577-03CB-4911-8625-587B858AF6F0} = {6EF89577-03CB-4911-8625-587B858AF6F0}
+		{11548867-F0DC-4142-82E8-59EBC36B8980} = {11548867-F0DC-4142-82E8-59EBC36B8980}
+		{487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD} = {487A1D60-7FD7-4EBB-8EF2-2E0FA49652FD}
+		{298A5358-EF8F-4D27-A935-5E0E2BEF754F} = {298A5358-EF8F-4D27-A935-5E0E2BEF754F}
+		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
+		{576C4A35-B314-49D0-BF53-4BD43D8D1F31} = {576C4A35-B314-49D0-BF53-4BD43D8D1F31}
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
+		{8347B928-805E-42E7-B980-08D8AF1A0671} = {8347B928-805E-42E7-B980-08D8AF1A0671}
+		{09F49217-CD98-4773-8CFB-594F189EEE3B} = {09F49217-CD98-4773-8CFB-594F189EEE3B}
+		{02388208-2EE6-4C48-9E57-A53D02663C36} = {02388208-2EE6-4C48-9E57-A53D02663C36}
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0} = {F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor", "..\Shreds\Publication\MailFaxProcessor\ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor.csproj", "{92396DFA-583F-4683-B227-08010E064579}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Oto", "..\..\Oto\ClearCanvas.Oto.csproj", "{FDD0E6CB-9DA4-4E5D-A91A-755790118BEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Oto.Executable", "..\..\Oto\Executable\ClearCanvas.Oto.Executable.csproj", "{9CF7AFF6-F312-434B-B802-4253B13368D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Oto", "..\..\Enterprise\Oto\ClearCanvas.Enterprise.Oto.csproj", "{D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -342,10 +196,6 @@ Global
 		{E5F0BD79-A7CF-4356-AD62-0AA3DEBFAB9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5F0BD79-A7CF-4356-AD62-0AA3DEBFAB9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5F0BD79-A7CF-4356-AD62-0AA3DEBFAB9A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E87D49F-FA93-48D2-AF37-D78DD39D8627}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -434,6 +284,18 @@ Global
 		{92396DFA-583F-4683-B227-08010E064579}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92396DFA-583F-4683-B227-08010E064579}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92396DFA-583F-4683-B227-08010E064579}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDD0E6CB-9DA4-4E5D-A91A-755790118BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDD0E6CB-9DA4-4E5D-A91A-755790118BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDD0E6CB-9DA4-4E5D-A91A-755790118BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDD0E6CB-9DA4-4E5D-A91A-755790118BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CF7AFF6-F312-434B-B802-4253B13368D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0BB4B6F-C620-43CC-A9B3-ABACFB3FFB93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
