@@ -507,6 +507,28 @@ namespace ClearCanvas.ImageViewer
 		/// <param name="studyInstanceUID">The Study Instance UID of the study to be loaded.</param>
 		/// <param name="studyLoaderName">The name of the <see cref="IStudyLoader"/> to use, which is specified
 		/// by <see cref="IStudyLoader.Name"/>.</param>
+		/// <remarks>
+		/// <para>This method has been deprecated and will be removed in the future. Use the <see cref="LoadStudy(LoadStudyArgs)"/> overload instead.</para>
+		/// <para>After this method is executed, the image viewer's <see cref="StudyTree"/>
+		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
+		/// and <see cref="ImageSop"/> objects.</para>
+		/// <para>By default, the Framework provides an implementation of 
+		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader</b> which loads
+		/// studies from the local database.  If you have implemented your own 
+		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
+		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.</para>
+		/// </remarks>
+		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
+		/// <seealso cref="LoadStudy(LoadStudyArgs)"/>
+		[Obsolete("This method has been deprecated and will be removed in the future. Use the LoadStudy(LoadStudyArgs) overload instead.")]
+		public void LoadStudy(string studyInstanceUID, string studyLoaderName)
+		{
+			LoadStudy(new LoadStudyArgs(studyInstanceUID, null, studyLoaderName));
+		}
+
+		/// <summary>
+		/// Loads a study using the specified parameters.
+		/// </summary>
 		/// <remarks>After this method is executed, the image viewer's <see cref="StudyTree"/>
 		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
 		/// and <see cref="ImageSop"/> objects.
@@ -517,13 +539,8 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IStudyLoader"/> and want to load a study using that implementation,
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
 		/// </remarks>
+		/// <param name="loadStudyArgs">A <see cref="LoadStudyArgs"/> object containing information about the study to be loaded.</param>
 		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
-		[Obsolete("This method has been deprecated and will be removed in the future. Use LoadStudies method instead.")]
-		public void LoadStudy(string studyInstanceUID, string studyLoaderName)
-		{
-			LoadStudy(new LoadStudyArgs(studyInstanceUID, null, studyLoaderName));
-		}
-
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
 			IStudyLoader studyLoader = this.StudyLoaders[loadStudyArgs.StudyLoaderName];

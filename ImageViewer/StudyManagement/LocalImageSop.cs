@@ -64,6 +64,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return NativeDicomObject as DicomFile; }
 		}
 
+		/// <summary>
+		/// Called to ensure that all DICOM data is loaded into memory.
+		/// </summary>
+		/// <remarks>
+		/// <para>Subclasses of <see cref="Sop"/> should override this method to provide any necessary additional logic to load all
+		/// DICOM data into memory.</para>
+		/// </remarks>
 		protected override void EnsureLoaded()
 		{
             DicomFile.Load(DicomReadOptions.Default | DicomReadOptions.StorePixelDataReferences);

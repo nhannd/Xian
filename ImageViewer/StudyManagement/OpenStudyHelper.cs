@@ -60,6 +60,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		Separate
 	}
 
+	/// <summary>
+	/// Holds the parameters that specify the studies to be opened using the <see cref="OpenStudyHelper"/>
+	/// </summary>
 	public class OpenStudyArgs
 	{
 		private string[] _studyInstanceUids;
@@ -67,6 +70,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private object _server;
 		private string _studyLoaderName;
 
+		/// <summary>
+		/// Constructs a new <see cref="OpenStudyArgs"/> using the specified parameters.
+		/// </summary>
+		/// <param name="studyInstanceUids">The Study Instance UIDs of the studies to be opened.</param>
+		/// <param name="server">An object specifying the server to open the study from, such as
+		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.</param>
+		/// <param name="studyLoaderName">The name of the <see cref="IStudyLoader"/> to use, which is specified by <see cref="IStudyLoader.Name"/>.</param>
+		/// <param name="windowBehaviour">The window launch options.</param>
 		public OpenStudyArgs(
 			string[] studyInstanceUids, 
 			object server, 
@@ -85,21 +96,34 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_windowBehaviour = windowBehaviour;
 		}
 
+		/// <summary>
+		/// Gets the Study Instance UIDs of the studies to be opened.
+		/// </summary>
 		public string[] StudyInstanceUids
 		{
 			get { return _studyInstanceUids; }
 		}
 
+		/// <summary>
+		/// Gets the server to open the study from, such as
+		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.
+		/// </summary>
 		public object Server
 		{
 			get { return _server; }
 		}
 
+		/// <summary>
+		/// Gets the name of the <see cref="IStudyLoader"/> to use, which is specified by <see cref="IStudyLoader.Name"/>.
+		/// </summary>
 		public string StudyLoaderName
 		{
 			get { return _studyLoaderName; }
 		}
 
+		/// <summary>
+		/// Gets the window launch options.
+		/// </summary>
 		public WindowBehaviour WindowBehaviour
 		{
 			get { return _windowBehaviour; }
@@ -134,12 +158,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
 		/// </summary>
-		[Obsolete("This method has been deprecated and will be removed in the future. Use OpenStudies(OpenStudyArgs) overload instead.")]
+		/// <remarks>
+		/// <para>This method has been deprecated and will be removed in the future. Use the <see cref="OpenStudies(OpenStudyArgs)"/> overload instead.</para>
+		/// </remarks>
+		[Obsolete("This method has been deprecated and will be removed in the future. Use the OpenStudies(OpenStudyArgs) overload instead.")]
 		public static void OpenStudies(string studyLoaderName, string[] studyInstanceUids, WindowBehaviour windowBehaviour)
 		{
 			OpenStudies(new OpenStudyArgs(studyInstanceUids, null, studyLoaderName, windowBehaviour));
 		}
 
+		/// <summary>
+		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
+		/// </summary>
+		/// <param name="openStudyArgs">The <see cref="OpenStudyArgs"/> object containing information about the studies to be opened.</param>
 		public static void OpenStudies(OpenStudyArgs openStudyArgs)
 		{
 			CodeClock codeClock = new CodeClock();

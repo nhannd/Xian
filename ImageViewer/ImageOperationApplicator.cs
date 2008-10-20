@@ -245,12 +245,19 @@ namespace ClearCanvas.ImageViewer
 
 		#region IMemorable Members
 
+		/// <summary>
+		/// Captures the state of the linked <see cref="IPresentationImage"/>s.
+		/// </summary>
 		public object CreateMemento()
 		{
 			_imageEnumerator.ExcludeReferenceImage = false;
 			return _applicator.CreateMemento();
 		}
 
+		/// <summary>
+		/// Restores the state of the linked <see cref="IPresentationImage"/>s.
+		/// </summary>
+		/// <param name="memento">The state object that was originally created with <see cref="CreateMemento"/>.</param>
 		public void SetMemento(object memento)
 		{
 			_applicator.SetMemento(memento);

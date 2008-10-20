@@ -688,6 +688,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		}
 		
+		/// <summary>
+		/// Called to ensure that all DICOM data is loaded into memory.
+		/// </summary>
+		/// <remarks>
+		/// <para>Subclasses of <see cref="Sop"/> should override this method to provide any necessary additional logic to load all
+		/// DICOM data into memory.</para>
+		/// </remarks>
 		protected virtual void EnsureLoaded()
 		{
 		}
@@ -709,6 +716,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out ushort value, out bool tagExists)
 		{
@@ -728,6 +737,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out ushort value, uint position, out bool tagExists)
 		{
@@ -746,6 +757,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out int value, out bool tagExists)
 		{
@@ -765,6 +778,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out int value, uint position, out bool tagExists)
 		{
@@ -783,6 +798,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out double value, out bool tagExists)
 		{
@@ -802,6 +819,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out double value, uint position, out bool tagExists)
 		{
@@ -820,6 +839,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out string value, out bool tagExists)
 		{
@@ -839,6 +860,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out string value, uint position, out bool tagExists)
 		{
@@ -858,6 +881,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetTag(uint tag, out byte[] value, out bool tagExists)
 		{
@@ -876,6 +901,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
+		/// <seealso cref="this[DicomTag]"/>
+		/// <seealso cref="this[uint]"/>
 		[Obsolete("This method is now obsolete - use the indexers instead.")]
 		public virtual void GetMultiValuedTagRaw(uint tag, out string value, out bool tagExists)
 		{

@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>
 		/// Internally, this method calls <see cref="BuildLogicalWorkspace"/>, <see cref="LayoutPhysicalWorkspace"/>, <see cref="SortDisplaySets"/>,
-		/// <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets"/> in that order, followed by a call to <see cref="IPhysicalWorkspace.Draw"/>.
+		/// <see cref="FillPhysicalWorkspace"/> and <see cref="SortImageSets"/> in that order, followed by a call to <see cref="IDrawable.Draw">IPhysicalWorkspace.Draw</see>.
 		/// You can override this method entirely, or you can override any of the 5 methods called by this method.
 		/// </remarks>
 		public virtual void Layout()
@@ -187,6 +187,16 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Called to sort the display sets.
+		/// </summary>
+		/// <remarks>
+		/// <para>The base implmentation of this method sorts the display sets by the <see cref="IComparer{T}"/> supplied by <see cref="GetDisplaySetComparer"/>,
+		/// and sorts each display set internally by the <see cref="IComparer{T}"/> supplied by <see cref="GetPresentationImageComparer"/>.</para>
+		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>s, or to override this method entirely.</para>
+		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
+		/// </remarks>
+		/// <seealso cref="Layout"/>
 		protected virtual void SortDisplaySets()
 		{
 			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
@@ -198,6 +208,15 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Called to sort the image sets.
+		/// </summary>
+		/// <remarks>
+		/// <para>The base implementation of this method sorts the image sets by the <see cref="IComparer{T}"/> supplied by <see cref="GetImageSetComparer"/>.</para>
+		/// <para>Subclasses may choose to override just the supplied <see cref="IComparer{T}"/>, or to override this method entirely.</para>
+		/// <para>This method is called by the base implementation of <see cref="Layout"/>.</para>
+		/// </remarks>
+		/// <seealso cref="Layout"/>
 		protected virtual void SortImageSets()
 		{
 			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
@@ -205,16 +224,46 @@ namespace ClearCanvas.ImageViewer
 
 		#region Comparer Factory Methods
 
+		/// <summary>
+		/// Gets an <see cref="IComparer{T}"/> with which to sort <see cref="IDisplaySet"/>s.
+		/// </summary>
+		/// <remarks>
+		/// <para>The base implementation of this method returns an ascending <see cref="SeriesNumberComparer"/>.</para>
+		/// <para>Subclasses may choose to override this method to provide any <see cref="IComparer{T}"/> of <see cref="IDisplaySet"/>s.</para>
+		/// <para>This method is called by the base implementation of <see cref="SortDisplaySets"/>.</para>
+		/// </remarks>
+		/// <returns>The <see cref="IComparer{T}"/> with which to sort <see cref="IDisplaySet"/>s.</returns>
+		/// <seealso cref="SortDisplaySets"/>
 		protected virtual IComparer<IDisplaySet> GetDisplaySetComparer()
 		{
 			return new SeriesNumberComparer();
 		}
 
+		/// <summary>
+		/// Gets an <see cref="IComparer{T}"/> with which to sort <see cref="IPresentationImage"/>s.
+		/// </summary>
+		/// <remarks>
+		/// <para>The base implementation of this method returns an ascending <see cref="InstanceAndFrameNumberComparer"/>.</para>
+		/// <para>Subclasses may choose to override this method to provide any <see cref="IComparer{T}"/> of <see cref="IPresentationImage"/>s.</para>
+		/// <para>This method is called by the base implementation of <see cref="SortDisplaySets"/>.</para>
+		/// </remarks>
+		/// <returns>The <see cref="IComparer{T}"/> with which to sort <see cref="IPresentationImage"/>s.</returns>
+		/// <seealso cref="SortDisplaySets"/>
 		protected virtual IComparer<IPresentationImage> GetPresentationImageComparer()
 		{
 			return new InstanceAndFrameNumberComparer();
 		}
 
+		/// <summary>
+		/// Gets an <see cref="IComparer{T}"/> with which to sort <see cref="IImageSet"/>s.
+		/// </summary>
+		/// <remarks>
+		/// <para>The base implementation of this method returns an asecending <see cref="StudyDateComparer"/>.</para>
+		/// <para>Subclasses may choose to override this method to provide any <see cref="IComparer{T}"/> of <see cref="IImageSet"/>s.</para>
+		/// <para>This method is called by the base implementation of <see cref="SortImageSets"/>.</para>
+		/// </remarks>
+		/// <returns>The <see cref="IComparer{T}"/> with which to sort <see cref="IImageSet"/>s.</returns>
+		/// <seealso cref="SortImageSets"/>
 		protected virtual IComparer<IImageSet> GetImageSetComparer()
 		{
 			return new StudyDateComparer();

@@ -32,23 +32,39 @@
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	//TODO: move this stuff into ImageViewer.Services.
+
+	/// <summary>
+	/// Holds the parameters that specify the study to be loaded.
+	/// </summary>
 	public class StudyLoaderArgs
 	{
 		private string _studyInstanceUid;
 		private object _server;
 
+		/// <summary>
+		/// Constructs a new <see cref="StudyLoaderArgs"/> using the specified parameters.
+		/// </summary>
+		/// <param name="studyInstanceUid">The Study Instance UID of the study to be loaded.</param>
+		/// <param name="server">An object specifying the server to retrieve the study from, such as
+		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.</param>
 		public StudyLoaderArgs(string studyInstanceUid, object server)
 		{
 			_studyInstanceUid = studyInstanceUid;
 			_server = server;
 		}
 
-
+		/// <summary>
+		/// Gets the Study Instance UID of the study to be loaded.
+		/// </summary>
 		public string StudyInstanceUid
 		{
 			get { return _studyInstanceUid; }
 		}
 
+		/// <summary>
+		/// Gets the server to load the study from, such as
+		/// <code>null</code> for the local server or an <see cref="ApplicationEntity"/> object specifying the remote server.
+		/// </summary>
 		public object Server
 		{
 			get { return _server; }
