@@ -96,7 +96,6 @@
   <ItemGroup>
     <OtoScripts Include="$(EnterpriseDirectory)\Oto\scripts\*.js" />
     <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
-    <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
   </ItemGroup>
   
   <ItemGroup>
