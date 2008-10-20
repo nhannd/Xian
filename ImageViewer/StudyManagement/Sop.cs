@@ -883,11 +883,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			value = value ?? "";
 		}
 
+		/// <summary>
+		/// Gets a specific DICOM tag in the underlying native object.
+		/// </summary>
+		/// <param name="tag">The DICOM tag to retrieve.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the specified DICOM tag is not within the valid range for either the meta info or the dataset.</exception>
 		public DicomAttribute this[DicomTag tag]
 		{
 			get { return this[tag.TagValue]; }
 		}
 
+		/// <summary>
+		/// Gets a specific DICOM tag in the underlying native object.
+		/// </summary>
+		/// <param name="tag">The DICOM tag to retrieve.</param>
+		/// <returns></returns>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if the specified DICOM tag is not within the valid range for either the meta info or the dataset.</exception>
 		public virtual DicomAttribute this[uint tag]
 		{
 			get
