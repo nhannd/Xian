@@ -52,6 +52,13 @@ namespace ClearCanvas.Enterprise.Core
         TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker;
 
         /// <summary>
+        /// Returns a broker that implements the specified interface to retrieve data into this persistence context.
+        /// </summary>
+        /// <param name="brokerInterface"></param>
+        /// <returns></returns>
+        object GetBroker(Type brokerInterface);
+
+        /// <summary>
         /// Locks the specified entity into the context.  If this is an update context, the entity will be
         /// treated as "clean".  Use the other overload to specify that the entity is dirty.
         /// </summary>

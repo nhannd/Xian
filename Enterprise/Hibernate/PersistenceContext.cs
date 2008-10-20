@@ -78,8 +78,13 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public TBrokerInterface GetBroker<TBrokerInterface>() where TBrokerInterface : IPersistenceBroker
         {
+            return (TBrokerInterface)GetBroker(typeof(TBrokerInterface));
+        }
+
+        public object GetBroker(Type brokerInterface)
+        {
             BrokerExtensionPoint xp = new BrokerExtensionPoint();
-            TBrokerInterface broker = (TBrokerInterface)xp.CreateExtension(new TypeExtensionFilter(typeof(TBrokerInterface)));
+            IPersistenceBroker broker = (IPersistenceBroker)xp.CreateExtension(new TypeExtensionFilter(brokerInterface));
             broker.SetContext(this);
             return broker;
         }

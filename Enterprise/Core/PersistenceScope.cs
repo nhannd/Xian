@@ -183,6 +183,16 @@ namespace ClearCanvas.Enterprise.Core
             get { return _head != null ? _head._context : null; }
         }
 
+        public static PersistenceScope CurrentScope
+        {
+            get { return _head; }
+        }
+
+        public IPersistenceContext Context
+        {
+            get { return _context; }
+        }
+
         public void Complete()
         {
             if (_vote == Vote.Undecided)
