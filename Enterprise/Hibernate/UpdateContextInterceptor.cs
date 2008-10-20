@@ -104,9 +104,8 @@ namespace ClearCanvas.Enterprise.Hibernate
 
 
             // Build a list of dirty properties for validation
-            // include collection properties even if not dirty, because we can't rely on the Equals for collections
             List<PropertyDiff> dirtyProperties = CollectionUtils.Select(propertyDiffs,
-                delegate(PropertyDiff diff) { return diff.IsCollectionProperty || diff.IsChanged; });
+                delegate(PropertyDiff diff) { return diff.IsChanged; });
 
             // validate the entity prior to flush, passing the list of dirty properties 
             // in order to optimize which rules are tested
@@ -242,7 +241,7 @@ namespace ClearCanvas.Enterprise.Hibernate
 					// the collection instance itself has not changed, but perhaps the content has?
 					// if the oldValue is a persistent collection, then we can get a snapshot from
 					// when the collection was initially loaded, and see if it is dirty
-					if (oldValue is IPersistentCollection)
+                    if (oldValue is IPersistentCollection && NHibernateUtil.IsInitialized(oldValue))
 					{
 						oldValue = GetCollectionSnapshot(oldValue as IPersistentCollection);
 					}

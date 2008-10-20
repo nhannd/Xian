@@ -6,6 +6,7 @@ using ClearCanvas.Enterprise.Common;
 using NHibernate.Type;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Collection;
+using NHibernate;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -48,10 +49,18 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             get
             {
-				// if we're dealing with a collection property that has both old and new values,
-				// need to compare the collection elements
-				if(IsCollectionProperty && _oldValue != null && _newValue != null)
+				// if we're dealing with a collection property
+				if(IsCollectionProperty)
 				{
+                    // see if the collection object itself is different
+                    if (!ReferenceEquals(_oldValue, _newValue))
+                        return true;
+
+                    // an uninitialized collection cannot have changed
+                    if (!NHibernateUtil.IsInitialized(_newValue))
+                        return false;
+
+                    //need to compare collection contents
 					//TODO: collections with list semantics should use order-sensitive comparisons, but how do we know??
 					//(e.g how do we differentiate a "bag" from a "list"?)
 					return !CollectionUtils.Equal((ICollection) _oldValue, (ICollection) _newValue, false);
