@@ -321,7 +321,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             ArchiveQueueAdaptor adaptor = new ArchiveQueueAdaptor();
             ArchiveQueueSelectCriteria archiveQueueCriteria = new ArchiveQueueSelectCriteria();
             archiveQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
-
+			archiveQueueCriteria.ScheduledTime.SortDesc(0);
             return adaptor.Get(archiveQueueCriteria);
         }
 
