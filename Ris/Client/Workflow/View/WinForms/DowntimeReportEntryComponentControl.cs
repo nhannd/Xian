@@ -61,6 +61,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         	_radioPasteReport.Checked = _component.HasReport;
         	_radioToBeReported.Checked = !_component.HasReport;
 
+			_reportText.Enabled = _component.HasReport;
+			_interpreterLookup.Enabled = _component.HasReport;
+			_transcriptionistLookup.Enabled = _component.HasReport;
+
         	_reportText.DataBindings.Add("Value", _component, "ReportText", true, DataSourceUpdateMode.OnPropertyChanged);
 
         	_interpreterLookup.LookupHandler = _component.InterpreterLookupHandler;
@@ -78,6 +82,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private void _radioPasteReport_CheckedChanged(object sender, EventArgs e)
 		{
 			_component.HasReport = _radioPasteReport.Checked;
+			_reportText.Enabled = _component.HasReport;
+			_interpreterLookup.Enabled = _component.HasReport;
+			_transcriptionistLookup.Enabled = _component.HasReport;
 		}
 
 		private void _okButton_Click(object sender, EventArgs e)

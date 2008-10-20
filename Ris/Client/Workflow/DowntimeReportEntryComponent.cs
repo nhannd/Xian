@@ -170,7 +170,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool HasReport
 		{
 			get { return _hasReport; }
-			set { _hasReport = value;  }
+			set
+			{
+				_hasReport = value;
+
+				// only need to validate if submitting a report
+				this.ShowValidation(_hasReport && this.HasValidationErrors);
+			}
 		}
 
 		[ValidateNotNull]
