@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
                 PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
                 SearchResultPage page = new SearchResultPage(0, _batchSize);
 
-                items = PersistenceScope.Current.GetBroker<IPublicationStepBroker>().Find(criteria, page);
+                items = PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().Find(criteria, page);
 
                 scope.Complete();
             }
@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
-                IUpdateContext context = (IUpdateContext)PersistenceScope.Current;
+                IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
                 context.ChangeSetRecorder.OperationName = this.GetType().FullName;
                 try
                 {
@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
                     foreach (IPublicationStepProcessor processor in _publicationStepProcessors)
                     {
-                        processor.Process(publicationStep, PersistenceScope.Current);
+                        processor.Process(publicationStep, PersistenceScope.CurrentContext);
                     }
 
                     publicationStep.Complete(publicationStep.AssignedStaff);

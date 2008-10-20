@@ -72,23 +72,33 @@ namespace ClearCanvas.Enterprise.Core
     // Taken and modified from the following MSDN article by Stephen Toub:
     // http://msdn.microsoft.com/msdnmag/issues/06/09/NETMatters/default.aspx
     public class PersistenceScope : IDisposable
-    {
-        enum Vote
+	{
+		#region Vote enum
+
+		enum Vote
         {
             Undecided,
             Abort,
             Complete
-        }
+		}
 
-        private bool _disposed;
+		#endregion
+
+		#region Private members
+
+		[ThreadStatic]
+		private static PersistenceScope _head;
+
+		private bool _disposed;
         private IPersistenceContext _context;
-        private PersistenceScope _parent;
+        private readonly PersistenceScope _parent;
         private Vote _vote;
 
-        [ThreadStatic]
-        private static PersistenceScope _head;
+		#endregion
 
-        /// <summary>
+		#region Constructors
+
+		/// <summary>
         /// Creates a new persistence scope for the specified context.  The scope assumes ownership of the context
         /// and closes it when the scope terminates.
         /// </summary>
@@ -96,7 +106,6 @@ namespace ClearCanvas.Enterprise.Core
         public PersistenceScope(IPersistenceContext context)
         {
             _context = context;
-
             _parent = _head;
             _head = this;
         }
@@ -137,9 +146,105 @@ namespace ClearCanvas.Enterprise.Core
         public PersistenceScope(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
             : this(InheritOrCreateContext(contextType, scopeOption))
         {
-        }
+		}
 
-        private static IPersistenceContext InheritOrCreateContext(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
+		#endregion
+
+		#region Public API
+
+		/// <summary>
+		/// Gets the <see cref="IPersistenceContext"/> associated with the current <see cref="PersistenceScope"/>,
+		/// or null if there is no current scope.
+		/// </summary>
+		public static IPersistenceContext CurrentContext
+		{
+			get { return _head != null ? _head._context : null; }
+		}
+
+		/// <summary>
+		/// Gets the current <see cref="PersistenceScope"/>, or null if no scope has been established.
+		/// </summary>
+		public static PersistenceScope Current
+		{
+			get { return _head; }
+		}
+
+		/// <summary>
+		/// Gets the <see cref="IPersistenceContext"/> associated with this scope.
+		/// </summary>
+		public IPersistenceContext Context
+		{
+			get { return _context; }
+		}
+
+		/// <summary>
+		/// Marks this scope as complete, meaning the scope will vote to commit any changes made in
+		/// the associated persistence context.
+		/// </summary>
+		public void Complete()
+		{
+			if (_vote == Vote.Undecided)
+			{
+
+				_vote = Vote.Complete;
+			}
+			else
+			{
+				// an Abort vote cannot be changed
+			}
+		}
+
+		/// <summary>
+		/// Disposes of this scope.
+		/// </summary>
+		/// <remarks>
+		/// If this scope is associated with an update context and is the owner of that context,
+		/// then disposal will commit or rollback the changes made in the update context, depending
+		/// on whether this scope was marked Completed.  If <see cref="Complete"/> was called on this scope,
+		/// then disposal will attempt to commit the update context, otherwise it will simply dispose it,
+		/// which is effectively a rollback.
+		/// </remarks>
+		public void Dispose()
+		{
+			if (!_disposed)
+			{
+				_disposed = true;
+
+				if (this != _head)
+					throw new InvalidOperationException("Disposed out of order.");
+
+				try
+				{
+					if (OwnsContext)
+					{
+						CloseContext();
+					}
+					else
+					{
+						// if the vote is still "undecided", treat it as an abort
+						if (_vote == Vote.Undecided)
+						{
+							_vote = Vote.Abort;
+
+							// we have an inherited context, so we need to propagate "aborts" up to the parent
+							_parent._vote = Vote.Abort;
+						}
+					}
+				}
+				finally
+				{
+					// if CloseContext fails, we are still disposing of this scope, so we set the head
+					// to point to the parent
+					_head = _parent;
+				}
+			}
+		}
+
+		#endregion
+
+		#region Helpers
+
+		private static IPersistenceContext InheritOrCreateContext(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
         {
             if (scopeOption == PersistenceScopeOption.RequiresNew)
             {
@@ -155,12 +260,12 @@ namespace ClearCanvas.Enterprise.Core
                 if (contextType == PersistenceContextType.Update)
                 {
                     // if no current context, create an update context
-                    if (PersistenceScope.Current == null)
+                    if (PersistenceScope.CurrentContext == null)
                         return PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
 
                     // if the current context is an update context, inherit
-                    if (PersistenceScope.Current is IUpdateContext)
-                        return PersistenceScope.Current;
+                    if (PersistenceScope.CurrentContext is IUpdateContext)
+                        return PersistenceScope.CurrentContext;
 
                     // can't ask for an update context when current context is a read context
                     throw new InvalidOperationException(SR.ExceptionIncompatiblePersistenceContext);
@@ -168,79 +273,16 @@ namespace ClearCanvas.Enterprise.Core
                 else
                 {
                     // if no current context, create a read context
-                    if (PersistenceScope.Current == null)
+                    if (PersistenceScope.CurrentContext == null)
                         return PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
 
                     // otherwise return the current context, regardless of its type
                     // (read operations are allowed to execute in an update context)
-                    return PersistenceScope.Current;
+                    return PersistenceScope.CurrentContext;
                 }
             }
         }
 
-        public static IPersistenceContext Current
-        {
-            get { return _head != null ? _head._context : null; }
-        }
-
-        public static PersistenceScope CurrentScope
-        {
-            get { return _head; }
-        }
-
-        public IPersistenceContext Context
-        {
-            get { return _context; }
-        }
-
-        public void Complete()
-        {
-            if (_vote == Vote.Undecided)
-            {
-
-                _vote = Vote.Complete;
-            }
-            else
-            {
-                //throw new InvalidOperationException("The vote has already been placed");
-            }
-        }
-
-        public void Dispose()
-        {
-            if (!_disposed)
-            {
-                _disposed = true;
-
-                if (this != _head)
-                    throw new InvalidOperationException("Disposed out of order.");
-
-                try
-                {
-                    if (OwnsContext)
-                    {
-                        CloseContext();
-                    }
-                    else
-                    {
-                        // if the vote is still "undecided", treat it as an abort
-                        if (_vote == Vote.Undecided)
-                        {
-                            _vote = Vote.Abort;
-
-                            // we have an inherited context, so we need to propagate "aborts" up to the parent
-                            _parent._vote = Vote.Abort;
-                        }
-                    }
-                }
-                finally
-                {
-                    // if CloseContext fails, we are still disposing of this scope, so we set the head
-                    // to point to the parent
-                    _head = _parent;
-                }
-            }
-        }
 
         /// <summary>
         /// This scope owns the context if there is no parent scope, or if there is a parent scope
@@ -270,6 +312,8 @@ namespace ClearCanvas.Enterprise.Core
                 _context.Dispose();
                 _context = null;
 	        }
-        }
-    }
+		}
+
+		#endregion
+	}
 }

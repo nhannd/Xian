@@ -68,7 +68,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         public TestResult Test(object obj)
         {
-            IPersistenceContext context = PersistenceScope.Current;
+            IPersistenceContext context = PersistenceScope.CurrentContext;
             if (context == null)
                 throw new SpecificationException(SR.ExceptionPersistenceContextRequired);
 

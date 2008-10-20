@@ -79,8 +79,8 @@ namespace ClearCanvas.Enterprise.Core.Imex
                     {
                         using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                         {
-                            ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                            Import(lines, (IUpdateContext)PersistenceScope.Current);
+                            ((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = this.GetType().FullName;
+                            Import(lines, (IUpdateContext)PersistenceScope.CurrentContext);
                             scope.Complete();
                         }
                     }

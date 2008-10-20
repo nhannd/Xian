@@ -113,7 +113,7 @@ namespace ClearCanvas.Enterprise.Core
             if(logEntry != null)
             {
                 // save the log entry
-                PersistenceScope.Current.Lock(logEntry, DirtyState.New);
+                PersistenceScope.CurrentContext.Lock(logEntry, DirtyState.New);
             }
         }
 

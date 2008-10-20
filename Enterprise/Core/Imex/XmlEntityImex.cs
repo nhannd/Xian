@@ -74,7 +74,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
                 {
-                    IReadContext context = (IReadContext)PersistenceScope.Current;
+                    IReadContext context = (IReadContext)PersistenceScope.CurrentContext;
                     IList<TEntity> items = GetItemsForExport(context, row, ItemsPerReadTransaction);
                     foreach (TEntity entity in items)
                     {
@@ -96,7 +96,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
             {
                 using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                 {
-                    IUpdateContext context = (IUpdateContext)PersistenceScope.Current;
+                    IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
                     context.ChangeSetRecorder.OperationName = this.GetType().FullName;
 
                     for (int j = 0; j < ItemsPerUpdateTransaction && more; j++)

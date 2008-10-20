@@ -58,7 +58,7 @@ namespace ClearCanvas.Enterprise.Core
                 using (PersistenceScope scope = a.CreatePersistenceScope())
                 {
                     // configure change-set auditing
-                    ConfigureAuditing(PersistenceScope.Current, a, invocation);
+                    ConfigureAuditing(PersistenceScope.CurrentContext, a, invocation);
 
                     // proceed with invocation
                     retval = invocation.Proceed(args);

@@ -113,8 +113,8 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
-                ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
+                ((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = this.GetType().FullName;
+                ImportFromPlugins((IUpdateContext)PersistenceScope.CurrentContext);
 
                 scope.Complete();
             }

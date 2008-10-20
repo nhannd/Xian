@@ -21,12 +21,12 @@ namespace ClearCanvas.Enterprise.Core
 				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
 				{
 					// disable change-set auditing for this context
-					((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder = null;
+					((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder = null;
 
 					DefaultExceptionRecorder recorder = new DefaultExceptionRecorder();
 					ExceptionLogEntry logEntry = recorder.CreateLogEntry(operationName, e);
 
-					PersistenceScope.Current.Lock(logEntry, DirtyState.New);
+					PersistenceScope.CurrentContext.Lock(logEntry, DirtyState.New);
 
 					scope.Complete();
 				}

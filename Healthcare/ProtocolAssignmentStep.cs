@@ -53,7 +53,7 @@ namespace ClearCanvas.Healthcare
             ProtocolAssignmentStep step = new ProtocolAssignmentStep(protocol);
 
             //note: this is not ideal but there is no other way to save the protocol object
-            PersistenceScope.Current.Lock(protocol, DirtyState.New);
+            PersistenceScope.CurrentContext.Lock(protocol, DirtyState.New);
 
             return step;
         }

@@ -40,7 +40,7 @@ namespace ClearCanvas.Enterprise.Core
     {
         protected IPersistenceContext PersistenceContext
         {
-            get { return PersistenceScope.Current; }
+            get { return PersistenceScope.CurrentContext; }
         }
     }
 }

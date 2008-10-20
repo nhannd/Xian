@@ -67,7 +67,7 @@ namespace ClearCanvas.Healthcare {
                 where.Id.EqualTo(modalityId);
 
                 // TODO might as well cache this query
-                step.Modality = PersistenceScope.Current.GetBroker<IModalityBroker>().FindOne(where);
+                step.Modality = PersistenceScope.CurrentContext.GetBroker<IModalityBroker>().FindOne(where);
             }
             catch (EntityNotFoundException e)
             {

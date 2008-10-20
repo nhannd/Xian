@@ -77,7 +77,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
             {
-                IReadContext context = (IReadContext) PersistenceScope.Current;
+                IReadContext context = (IReadContext) PersistenceScope.CurrentContext;
                 IMetadataBroker metaBroker = context.GetBroker<IMetadataBroker>();
                 IEnumBroker enumBroker = context.GetBroker<IEnumBroker>();
                 List<Type> enumClasses = CollectionUtils.Sort(metaBroker.ListEnumValueClasses(),
@@ -100,7 +100,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
         {
             using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
             {
-                IUpdateContext context = (IUpdateContext) PersistenceScope.Current;
+                IUpdateContext context = (IUpdateContext) PersistenceScope.CurrentContext;
                 context.ChangeSetRecorder.OperationName = this.GetType().FullName;
 
                 IMetadataBroker metaBroker = context.GetBroker<IMetadataBroker>();

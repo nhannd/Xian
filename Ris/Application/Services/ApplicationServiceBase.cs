@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services
         /// </summary>
         public IPersistenceContext PersistenceContext
         {
-            get { return PersistenceScope.Current; }
+            get { return PersistenceScope.CurrentContext; }
         }
     }
 }

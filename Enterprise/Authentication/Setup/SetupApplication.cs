@@ -62,11 +62,11 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
 				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 				{
-					((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
+					((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = this.GetType().FullName;
 
 					// import authority tokens
 					AuthorityTokenImporter tokenImporter = new AuthorityTokenImporter();
-					IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.Current);
+					IList<AuthorityToken> allTokens = tokenImporter.ImportFromPlugins((IUpdateContext)PersistenceScope.CurrentContext);
 
 
 					// create the sys admin group, which has all tokens assigned by default
@@ -76,19 +76,19 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 					AuthorityGroupImporter groupImporter = new AuthorityGroupImporter();
 
 					IList<AuthorityGroup> groups = 
-						groupImporter.Import(new AuthorityGroupDefinition[] { adminGroupDef }, (IUpdateContext)PersistenceScope.Current);
+						groupImporter.Import(new AuthorityGroupDefinition[] { adminGroupDef }, (IUpdateContext)PersistenceScope.CurrentContext);
 
 					// find the admin group entity that was just created
 					AuthorityGroup adminGroup = CollectionUtils.SelectFirst(groups,
 						delegate(AuthorityGroup g) { return g.Name == SysAdminGroup; });
 
 					// create the "sa" user
-					CreateSysAdminUser(adminGroup, PersistenceScope.Current, Console.Out);
+					CreateSysAdminUser(adminGroup, PersistenceScope.CurrentContext, Console.Out);
 
 					// optionally import other default authority groups defined in other plugins
 					if (cmdLine.ImportDefaultAuthorityGroups)
 					{
-						groupImporter.ImportFromPlugins((IUpdateContext) PersistenceScope.Current);
+						groupImporter.ImportFromPlugins((IUpdateContext) PersistenceScope.CurrentContext);
 					}
 
 					scope.Complete();

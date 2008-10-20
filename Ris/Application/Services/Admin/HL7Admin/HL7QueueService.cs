@@ -174,8 +174,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                 // Ensures queue item's status is updated but domain object changes are rolled back
                 using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
                 {
-                    ((IUpdateContext)PersistenceScope.Current).ChangeSetRecorder.OperationName = this.GetType().FullName;
-                    PersistenceScope.Current.Lock(queueItem);
+                    ((IUpdateContext)PersistenceScope.CurrentContext).ChangeSetRecorder.OperationName = this.GetType().FullName;
+                    PersistenceScope.CurrentContext.Lock(queueItem);
                     queueItem.SetError(e.Message);
                     scope.Complete();
                 }
