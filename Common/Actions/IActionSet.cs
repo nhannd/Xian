@@ -34,7 +34,7 @@ using ClearCanvas.Common.Specifications;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// Interface representing a compiled set of actions returned by <see cref="XmlActionCompiler{T}"/>.
+	/// Interface representing a compiled set of actions returned by <see cref="XmlActionCompiler{TActionContext, TSchemaContext}"/>.
     /// </summary>
     public interface IActionSet<T>
     {

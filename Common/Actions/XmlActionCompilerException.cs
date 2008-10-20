@@ -34,8 +34,8 @@ using System;
 namespace ClearCanvas.Common.Actions
 {
     /// <summary>
-    /// Exception thrown by <see cref="XmlActionCompiler{T}"/> or extensions 
-    /// implementing <see cref="XmlActionCompilerOperatorExtensionPoint{T}"/>.
+	/// Exception thrown by <see cref="XmlActionCompiler{TActionContext, TSchemaContext}"/> or extensions 
+	/// implementing <see cref="XmlActionCompilerOperatorExtensionPoint{TActionContext, TSchemaContext}"/>.
     /// </summary>
     [Serializable]
     public class XmlActionCompilerException : Exception
