@@ -10,7 +10,7 @@
     <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
     <many-to-one name="Author" class="Staff" column="AuthorOID_" not-null="true"/>
     <many-to-one name="Category" class="PatientNoteCategory" column="CategoryOID_" not-null="true"/>
-    <property name="Comment" column="Comment_" type="String" not-null="true" length ="1024"/>
+    <property name="Comment" column="Comment_" type="String" length ="1024"/>
     <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
       <column name="ValidFrom_"/>
       <column name="ValidUntil_"/>

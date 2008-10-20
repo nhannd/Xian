@@ -71,7 +71,6 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        [ValidateNotNull]
         public string Comment
         {
             get { return _note.Comment; }
