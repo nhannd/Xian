@@ -159,7 +159,9 @@ namespace ClearCanvas.Enterprise.Core
             	PropertyInfo pi = entityClass.GetProperty(prop.PropertyName);
 
 				// special handling of extended properties collections
-            	if(AttributeUtils.HasAttribute<ExtendedPropertiesCollectionAttribute>(pi))
+                // note that we need to check pi != null because it may represent a field-access "property"
+                // which has no corresponding .NET property
+            	if(pi != null && AttributeUtils.HasAttribute<ExtendedPropertiesCollectionAttribute>(pi))
             	{
             		WriteExtendedProperties(writer, prop, entityChange.ChangeType);
             	}
