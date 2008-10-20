@@ -221,8 +221,8 @@ namespace ClearCanvas.Dicom.Network
         // increase performance.  The PDU header is 6 bytes, and should 
         // be subtracted from the multiple of 1460 to get the PDU size.
         // For instance (1460 * 80) - 6 = 116,794 bytes
-        private uint _localMaxPduLength = 116794;
-        private uint _remoteMaxPduLength = 116794;
+        private uint _localMaxPduLength = NetworkSettings.Default.LocalMaxPduLength;
+        private uint _remoteMaxPduLength = NetworkSettings.Default.RemoteMaxPduLength;
         private String _calledAE;
         private String _callingAE;
         private DicomUid _appCtxNm;
@@ -236,12 +236,12 @@ namespace ClearCanvas.Dicom.Network
 
         // Sizes that result in PDUs that are multiples of the MTU work better.
         // Setting these values to an even multiple of the TCP/IP maximum
-        // segement size of 1460 can help increase performance.
-        private int _sendBufferSize = 81 * 1460;
-        private int _receiveBufferSize = 81 * 1460;
-        private int _readTimeout = 30 * 1000; // 30 seconds
-        private int _writeTimeout = 30 * 1000; // 30 seconds
-        private int _connectTimeout = 10 * 1000; // 10 seconds
+        // segement size of 1460 can help increase performance.  81 * 1460 is the default
+        private int _sendBufferSize = NetworkSettings.Default.SendBufferSize;
+        private int _receiveBufferSize = NetworkSettings.Default.ReceiveBufferSize;
+        private int _readTimeout = NetworkSettings.Default.ReadTimeout; // 30 seconds
+        private int _writeTimeout = NetworkSettings.Default.WriteTimeout; // 30 seconds
+        private int _connectTimeout = NetworkSettings.Default.ConnectTimeout; // 10 seconds
         private ushort _maxOperationsInvoked = 1;
         private ushort _maxOperationsPerformed = 1;
 
