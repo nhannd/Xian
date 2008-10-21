@@ -114,10 +114,11 @@
 
 .ReconcileButtonsTable
 {
-    background: #cccccc;
+    background: #B8D8EE url(../../images/Controls/Dialog/ReconcileButtonBackground.png) repeat-x bottom;
     border-left: solid 1px #16425D;
     border-right: solid 1px #16425D;
     border-bottom: solid 1px #16425D;
+    color: #16425D;
 }
 
 .MergeDemographicsMessage
@@ -126,44 +127,6 @@
     text-align: center;
     background: #B8D8EE;
     padding: 2px 4px 4px 4px;
-}
-
-.ReconcileButtonRow
-{
-    background: #B8D8EE;
-    text-align: center;
-    padding: 4px;
-}
-
-.MergeStudyButton
-{
-    background: #B8D8EE url(../../images/Controls/Dialog/ReconcileButtonBackground.png) repeat-x bottom;
-}
-
-.CreateNewStudyButton
-{
-    background: #E1EFF8 ;
-    border-left: solid 1px #618FAD;
-    border-top: solid 1px #618FAD;
-    border-right: solid 1px #618FAD;
-}
-
-.DiscardButton
-{
-    background: #E1EFF8;
-    border-top: solid 1px #618FAD;
-}
-
-.ReconcileButton
-{
-    color: red;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.ReconcileDemographicsLabel
-{
-    padding-left: 8px;
 }
 
 .ConflictingValueLabel
@@ -180,3 +143,4 @@
     vertical-align: middle;
     text-decoration: none;
 }
+

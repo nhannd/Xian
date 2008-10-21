@@ -113,51 +113,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void NewStudyButton_Click(object sender, EventArgs e)
-        {
-            ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
-            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
-            controller.CreateNewStudy(itemKey);
-            
-            ((Default) Page).UpdateUI();
-
-            Close();
-        }
-
-        /// <summary>
-        /// Handles event when user clicks on "Cancel" button.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void MergeStudyButton_Click(object sender, EventArgs e)
+        protected void OKButton_Click(object sender, EventArgs e)
         {
             ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
 
-            if(ExistingStudyButton.Checked)
+            if(MergeUsingExistingStudy.Checked)
             {
-                controller.MergeStudy(itemKey, true);
+               controller.MergeStudy(itemKey, true);
             }
+            else if(MergeUsingConflictingStudy.Checked)
+            {
+               controller.MergeStudy(itemKey, false);
+            }
+            else if (CreateNewStudy.Checked)
+            {
+               controller.CreateNewStudy(itemKey);
+            } 
             else
             {
-                controller.MergeStudy(itemKey, false);
+                controller.Discard(itemKey);
             }
-
-            ((Default)Page).UpdateUI();
-
-            Close();
-        }
-
-        /// <summary>
-        /// Handles event when user clicks on "Discard" button.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void DiscardButton_Click(object sender, EventArgs e)
-        {
-            ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
-            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
-            controller.Discard(itemKey);
 
             ((Default)Page).UpdateUI();
 
@@ -170,11 +146,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <param name="sender"></param>
         /// <param name="e"></param>
         protected void CancelButton_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        protected void OKButton_Click(object sender, EventArgs e)
         {
             Close();
         }

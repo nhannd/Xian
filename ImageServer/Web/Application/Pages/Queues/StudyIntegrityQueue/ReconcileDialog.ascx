@@ -108,11 +108,9 @@
                             <asp:TableRow>
                                 <asp:TableCell style="padding: 0px 10px 6px 10px;">
                                     <table cellpadding="0" cellspacing="0" width="100%" class="ReconcileButtonsTable">
-                                        <tr><td colspan="3" class="MergeDemographicsMessage">Use demographics from: <asp:radiobutton runat="server" ID="ExistingStudyButton" Text="Existing Study" Checked="true" GroupName="MergeDemographics"/>  <asp:radiobutton runat="server" ID="ConflictingStudyButton" Text="Conflicting Study" GroupName="MergeDemographics"/></td></tr>
-                                        <tr class="ReconcileButtonRow">
-                                            <td class="MergeStudyButton"><asp:LinkButton ID="MergeButton" runat="server" OnClick="MergeStudyButton_Click" CssClass="ReconcileButton">Merge Study</asp:LinkButton></td>
-                                            <td class="CreateNewStudyButton"><asp:LinkButton ID="LinkButton1" runat="server" OnClick="NewStudyButton_Click" CssClass="ReconcileButton">Create New Study</asp:LinkButton></td>
-                                            <td class="DiscardButton"><asp:LinkButton ID="LinkButton2" runat="server" OnClick="DiscardButton_Click" CssClass="ReconcileButton">Discard Study</asp:LinkButton></td></tr></table>
+                                        <tr style="padding-left: 5px; padding-top: 5px"><td ><asp:radiobutton runat="server" ID="MergeUsingExistingStudy" Text=" Merge Using Existing Study" GroupName="ReconcileStudy" Checked="true"/></td><td><asp:radiobutton runat="server" ID="CreateNewStudy" Text=" Create New Study" GroupName="ReconcileStudy" CssClass="ReconcileRadioButton"/></td></tr>
+                                        <tr style="padding-left: 5px; padding-bottom: 8px;"><td ><asp:radiobutton runat="server" ID="MergeUsingConflictingStudy" Text=" Merge Using Conflicting Study" GroupName="ReconcileStudy"/></td><td><asp:radiobutton runat="server" ID="DiscardStudy" Text=" Discard Study" GroupName="ReconcileStudy"/></td></tr>
+                                    </table>                                        
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>                                    

@@ -299,49 +299,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.GridView ConflictingPatientSeriesGridView;
         
         /// <summary>
-        /// ExistingStudyButton control.
+        /// MergeUsingExistingStudy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton ExistingStudyButton;
+        protected global::System.Web.UI.WebControls.RadioButton MergeUsingExistingStudy;
         
         /// <summary>
-        /// ConflictingStudyButton control.
+        /// CreateNewStudy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton ConflictingStudyButton;
+        protected global::System.Web.UI.WebControls.RadioButton CreateNewStudy;
         
         /// <summary>
-        /// MergeButton control.
+        /// MergeUsingConflictingStudy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton MergeButton;
+        protected global::System.Web.UI.WebControls.RadioButton MergeUsingConflictingStudy;
         
         /// <summary>
-        /// LinkButton1 control.
+        /// DiscardStudy control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
-        
-        /// <summary>
-        /// LinkButton2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton2;
+        protected global::System.Web.UI.WebControls.RadioButton DiscardStudy;
         
         /// <summary>
         /// OKButton control.
