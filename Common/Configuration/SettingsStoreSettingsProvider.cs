@@ -150,7 +150,8 @@ namespace ClearCanvas.Common.Configuration
             // seems like implementing this method would be quite inefficient, unless we could be sure that
             // the ISettingsStore implementation had sufficient optimizations in place
             // let's leave this to be implemented "as needed"
-            throw new Exception("The method or operation is not implemented.");
+            //throw new Exception("The method or operation is not implemented.");
+        	return null;
         }
 
         /// <summary>
