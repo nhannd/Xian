@@ -30,8 +30,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Web.UI;
 using AjaxControlToolkit;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
@@ -109,9 +112,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 bool scheduledForDelete = controller.IsScheduledForDelete(Study);
                 bool scheduledForEdit = controller.IsScheduledForEdit(Study);
                 bool scheduledForReconcile = Study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled);
+            	bool lossyCompressed = false;
+				if (!Study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+				{
+					ArchiveStudyStorage archiveStorage = CollectionUtils.FirstElement(controller.GetArchiveStudyStorage(Study));
+					StudyStorageLocation studyStorage = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(Study));
+	
+					if (archiveStorage != null && studyStorage != null)
+					{
+						if (archiveStorage.ServerTransferSyntax.Lossless &&
+							TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
+							lossyCompressed = true;
+					}
+				}
 
-                DeleteStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit);
-                EditStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit);
+            	DeleteStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit || Study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline));
+				EditStudyButton.Enabled = !(scheduledForDelete || scheduledForEdit || lossyCompressed || Study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline));
 
                 if (scheduledForDelete)
                 {
