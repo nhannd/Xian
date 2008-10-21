@@ -28,13 +28,32 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug ASP|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug ASP\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;USE_ASP</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release ASP|AnyCPU' ">
+    <OutputPath>bin\Release ASP\</OutputPath>
+    <DefineConstants>TRACE;USE_ASP</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -51,45 +70,108 @@
       <SubType>Designer</SubType>
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <None Include="app.config" />
     <None Include="Properties\DataSources\StudyItem.datasource" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="Service References\StudyLocator.map" />
-    <None Include="Service References\ViewerAutomation.map" />
-    <None Include="PostBuild_dist.proj" />
+    <None Include="Service References\StudyLocatorWcf.map" />
+    <None Include="Service References\ViewerAutomationWcf.map" />
     <None Include="Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    <None Include="Web References\StudyLocatorAsp\ImageIdentifier.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\StudyLocatorAsp\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\StudyLocatorAsp\SeriesIdentifier.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\StudyLocatorAsp\StudyLocator.wsdl" />
+    <None Include="Web References\StudyLocatorAsp\StudyLocator.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\StudyLocatorAsp\StudyLocator0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\StudyLocatorAsp\StudyLocator1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\StudyLocatorAsp\StudyRootStudyIdentifier.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\Automation.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\Automation0.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\Automation1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\GetActiveViewersResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\GetViewerInfoResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\OpenStudiesResult.datasource">
+      <DependentUpon>Reference.map</DependentUpon>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ViewerAutomationAsp\ViewerAutomation.wsdl" />
+    <Compile Include="Service References\StudyLocatorWcf.cs">
+      <DependentUpon>StudyLocatorWcf.map</DependentUpon>
     </Compile>
-    <Compile Include="Service References\StudyLocator.cs">
-      <DependentUpon>StudyLocator.map</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\ViewerAutomation.cs">
-      <DependentUpon>ViewerAutomation.map</DependentUpon>
+    <Compile Include="Service References\ViewerAutomationWcf.cs">
+      <DependentUpon>ViewerAutomationWcf.map</DependentUpon>
     </Compile>
     <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Web References\StudyLocatorAsp\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\ViewerAutomationAsp\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://127.0.0.1:51124/ClearCanvas/ImageViewer/Automation%3fwsdl">
+      <UrlBehavior>Static</UrlBehavior>
+      <RelPath>Web References\ViewerAutomationAsp\</RelPath>
+      <UpdateFromURL>http://127.0.0.1:51124/ClearCanvas/ImageViewer/Automation%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>ClearCanvas_ImageViewer_DesktopServices_Automation_TestClient_ViewerAutomationAsp_ViewerAutomation</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://127.0.0.1:51124/ClearCanvas/ImageViewer/StudyLocator%3fwsdl">
+      <UrlBehavior>Static</UrlBehavior>
+      <RelPath>Web References\StudyLocatorAsp\</RelPath>
+      <UpdateFromURL>http://127.0.0.1:51124/ClearCanvas/ImageViewer/StudyLocator%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>ClearCanvas_ImageViewer_DesktopServices_Automation_TestClient_StudyLocatorAsp_StudyLocator</CachedSettingsPropName>
+    </WebReferenceUrl>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -100,6 +182,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(ConfigurationName);ProjectName=$(ProjectName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);DistributionDir=$(DistributionDir)</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

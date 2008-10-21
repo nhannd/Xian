@@ -4,10 +4,19 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using System.ServiceModel;
 using System.Text;
+
+#if USE_ASP
+using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomationAsp;
+using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocatorAsp;
+using AutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomationAsp.ViewerAutomation;
+using QueryClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocatorAsp.StudyLocator;
+#else
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation;
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator;
+using AutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerAutomationClient;
+using QueryClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootQueryClient;
+#endif
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 {
@@ -16,6 +25,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		public Form1()
 		{
 			InitializeComponent();
+#if USE_ASP
+			this.Text = "Automation Test Client (ASP)";
+#else	
+			this.Text = "Automation Test Client (WCF)";
+#endif
 			_studyGrid.SelectionChanged += new EventHandler(OnStudySelectionChanged);
 		}
 
@@ -70,33 +84,27 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 			}
 
-			ViewerAutomationClient client = new ViewerAutomationClient();
-			try
+			using (AutomationClient client = new AutomationClient())
 			{
-				client.Open();
-				GetViewerInfoRequest request = new GetViewerInfoRequest();
-				request.Viewer = new Viewer();
-				request.Viewer.Identifier = selectedViewer.Value;
-				GetViewerInfoResult result = client.GetViewerInfo(request);
-				client.Close();
+				try
+				{
+					GetViewerInfoRequest request = new GetViewerInfoRequest();
+					request.Viewer = new Viewer();
+					request.Viewer.Identifier = GetIdentifier(selectedViewer.Value);
+					GetViewerInfoResult result = client.GetViewerInfo(request);
 
-				StringBuilder builder = new StringBuilder();
-				builder.AppendLine("Additional studies:");
+					StringBuilder builder = new StringBuilder();
+					builder.AppendLine("Additional studies:");
 
-				foreach (string additionalStudyUid in result.AdditionalStudyInstanceUids)
-					builder.AppendLine(additionalStudyUid);
+					foreach (string additionalStudyUid in result.AdditionalStudyInstanceUids)
+						builder.AppendLine(additionalStudyUid);
 
-				MessageBox.Show(builder.ToString());
-			}
-			catch (FaultException<NoActiveViewersFault> ex)
-			{
-				client.Abort();
-				MessageBox.Show(ex.Message);
-			}
-			catch (Exception ex)
-			{
-				client.Abort();
-				MessageBox.Show(ex.Message);
+					MessageBox.Show(builder.ToString());
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
 			}
 		}
 
@@ -122,22 +130,20 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			if (study == null)
 				return;
 
-			ViewerAutomationClient client = new ViewerAutomationClient();
+			using (AutomationClient client = new AutomationClient())
 			try
 			{
-				client.Open();
-
 				OpenStudiesRequest request = new OpenStudiesRequest();
 				BindingList<OpenStudyInfo> studiesToOpen = new BindingList<OpenStudyInfo>();
 				foreach (StudyItem s in GetSelectedStudies())
 				{
 					OpenStudyInfo info = new OpenStudyInfo();
 					info.StudyInstanceUid = s.StudyInstanceUid;
-					//info.SourceAETitle = s.RetrieveAETitle;
+					info.SourceAETitle = s.RetrieveAETitle;
 					studiesToOpen.Add(info);
 				}
 
-				request.StudiesToOpen = studiesToOpen;
+				request.StudiesToOpen = GetStudiesToOpen(studiesToOpen);
 				request.ActivateIfAlreadyOpen = _activateIfOpen.Checked;
 
 				OpenStudiesResult result = client.OpenStudies(request);
@@ -151,17 +157,9 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 					if (!exists)
 						study.AddViewer(result.Viewer.Identifier);
 				}
-
-				client.Close();
-			}
-			catch (FaultException<OpenStudiesFault> ex)
-			{
-				client.Abort();
-				MessageBox.Show(ex.Message);
 			}
 			catch (Exception ex)
 			{
-				client.Abort();
 				MessageBox.Show(ex.Message);
 			}
 		}
@@ -182,27 +180,20 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 			}
 
-			ViewerAutomationClient client = new ViewerAutomationClient();
-			try
+			using (AutomationClient client = new AutomationClient())
 			{
-				client.Open();
-				ActivateViewerRequest request = new ActivateViewerRequest();
-				request.Viewer = new Viewer();
-				request.Viewer.Identifier = viewerId.Value;
-				client.ActivateViewer(request);
-				client.Close();
-			}
-			catch(FaultException<ViewerNotFoundFault> ex)
-			{
-				study.RemoveViewer(viewerId.Value);
-				client.Abort();
-				MessageBox.Show(ex.Message);
-			}
-			catch (Exception ex)
-			{
-				study.RemoveViewer(viewerId.Value);
-				client.Abort();
-				MessageBox.Show(ex.Message);
+				try
+				{
+					ActivateViewerRequest request = new ActivateViewerRequest();
+					request.Viewer = new Viewer();
+					request.Viewer.Identifier = GetIdentifier(viewerId.Value);
+					client.ActivateViewer(request);
+				}
+				catch (Exception ex)
+				{
+					study.RemoveViewer(viewerId.Value);
+					MessageBox.Show(ex.Message);
+				}
 			}
 		}
 
@@ -222,24 +213,16 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 			}
 
-			ViewerAutomationClient client = new ViewerAutomationClient();
+			using (AutomationClient client = new AutomationClient())
 			try
 			{
-				client.Open();
 				CloseViewerRequest request = new CloseViewerRequest();
 				request.Viewer = new Viewer();
-				request.Viewer.Identifier = viewerId.Value;
+				request.Viewer.Identifier = GetIdentifier(viewerId.Value);
 				client.CloseViewer(request);
-				client.Close();
-			}
-			catch (FaultException<ViewerNotFoundFault> ex)
-			{
-				client.Abort();
-				MessageBox.Show(ex.Message);
 			}
 			catch (Exception ex)
 			{
-				client.Abort();
 				MessageBox.Show(ex.Message);
 			}
 			finally
@@ -252,56 +235,54 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		{
 			_studyItemBindingSource.Clear();
 
-			StudyRootQueryClient client = new StudyRootQueryClient();
-
-			try
+			using (QueryClient client = new QueryClient())
 			{
-				StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
-				BindingList<StudyRootStudyIdentifier> results = client.StudyQuery(identifier);
-				client.Close();
+				try
+				{
+					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
+					string accessionFilter = _accession.Text ?? "";
+					if (!String.IsNullOrEmpty(accessionFilter))
+						identifier.AccessionNumber = accessionFilter + "*";
 
-				foreach (StudyRootStudyIdentifier study in results)
-					_studyItemBindingSource.Add(new StudyItem(study));
-			}
-			catch (Exception ex)
-			{
-				client.Abort();
-				MessageBox.Show(this, ex.Message);
+					string patientIdFilter = _patientId.Text ?? "";
+					if (!String.IsNullOrEmpty(patientIdFilter))
+						identifier.PatientId = patientIdFilter + "*";
+
+					BindingList<StudyRootStudyIdentifier> results = DoStudyQuery(client, identifier);
+
+					foreach (StudyRootStudyIdentifier study in results)
+						_studyItemBindingSource.Add(new StudyItem(study));
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(this, ex.Message);
+				}
 			}
 		}
 
 		private void RefreshViewers(bool silent)
 		{
-			ViewerAutomationClient client = new ViewerAutomationClient();
-			try
+			using (AutomationClient client = new AutomationClient())
 			{
-				client.Open();
-				GetActiveViewersResult result = client.GetActiveViewers();
-
-				ClearAllViewers();
-
-				foreach (Viewer viewer in result.ActiveViewers)
+				try
 				{
-					StudyItem study = GetStudy(viewer.PrimaryStudyInstanceUid);
-					if (study != null)
-						study.AddViewer(viewer.Identifier);
+					GetActiveViewersResult result = client.GetActiveViewers();
+
+					ClearAllViewers();
+
+					foreach (Viewer viewer in result.ActiveViewers)
+					{
+						StudyItem study = GetStudy(viewer.PrimaryStudyInstanceUid);
+						if (study != null)
+							study.AddViewer(viewer.Identifier);
+					}
 				}
-
-				client.Close();
-			}
-			catch (FaultException<NoActiveViewersFault> ex)
-			{
-				ClearAllViewers();
-				client.Abort();
-
-				if (!silent)
-					MessageBox.Show(ex.Message);
-			}
-			catch (Exception ex)
-			{
-				ClearAllViewers();
-				client.Abort();
-				MessageBox.Show(ex.Message);
+				catch (Exception ex)
+				{
+					ClearAllViewers();
+					if (!silent)
+						MessageBox.Show(ex.Message);
+				}
 			}
 		}
 
@@ -358,6 +339,44 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				item.ClearViewers();
 			}
 		}
+
+#if USE_ASP
+
+		private static string GetIdentifier(Guid selectedViewer)
+		{
+			return selectedViewer.ToString();
+		}
+
+		private static BindingList<StudyRootStudyIdentifier> DoStudyQuery(QueryClient client, StudyRootStudyIdentifier identifier)
+		{
+			return new BindingList<StudyRootStudyIdentifier>(client.StudyQuery(identifier));
+		}
+
+		private OpenStudyInfo[] GetStudiesToOpen(BindingList<OpenStudyInfo> studiesToOpen)
+		{
+			OpenStudyInfo[] returnInfo = new OpenStudyInfo[studiesToOpen.Count];
+			int i = 0;
+			foreach (OpenStudyInfo info in studiesToOpen)
+				returnInfo[i++] = info;
+
+			return returnInfo;
+		}
+#else
+		private static Guid GetIdentifier(Guid selectedViewer)
+		{
+			return selectedViewer;
+		}
+
+		private static BindingList<StudyRootStudyIdentifier> DoStudyQuery(QueryClient client, StudyRootStudyIdentifier identifier)
+		{
+			return client.StudyQuery(identifier);
+		}
+
+		private BindingList<OpenStudyInfo> GetStudiesToOpen(BindingList<OpenStudyInfo> studiesToOpen)
+		{
+			return studiesToOpen;
+		}
+#endif
 	}
 
 	#region StudyItem class
@@ -371,6 +390,11 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		{
 			_study = study;
 			_activeViewers = new BindingList<Guid>();
+		}
+
+		public string AccessionNumber
+		{
+			get { return _study.AccessionNumber; }
 		}
 
 		public string PatientId
@@ -408,9 +432,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			get { return _activeViewers; }
 		}
 
+		public bool HasViewer(string id)
+		{
+			return _activeViewers.Contains(new Guid(id));
+		}
+
 		public bool HasViewer(Guid id)
 		{
 			return _activeViewers.Contains(id);
+		}
+
+		public void AddViewer(string id)
+		{
+			AddViewer(new Guid(id));
 		}
 
 		public void AddViewer(Guid id)
@@ -445,5 +479,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 
 		#endregion
 	}
+
 	#endregion
 }

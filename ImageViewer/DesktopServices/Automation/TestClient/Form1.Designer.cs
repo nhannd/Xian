@@ -34,19 +34,24 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._closeViewer = new System.Windows.Forms.Button();
 			this._startViewer = new System.Windows.Forms.Button();
 			this._studyGrid = new System.Windows.Forms.DataGridView();
+			this.RetrieveAETitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.HasViewers = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+			this.patientIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.AccessionNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.patientsNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.studyDescriptionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.studyInstanceUidDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this._studyItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this._activateIfOpen = new System.Windows.Forms.CheckBox();
 			this._openViewers = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this._refreshAllViewers = new System.Windows.Forms.Button();
 			this._getSelectedInfo = new System.Windows.Forms.Button();
 			this._requery = new System.Windows.Forms.Button();
-			this._studyItemBindingSource = new System.Windows.Forms.BindingSource(this.components);
-			this.RetrieveAETitle = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.patientIdDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.patientsNameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.studyDescriptionDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.HasViewers = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-			this.studyInstanceUidDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this._accession = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.label3 = new System.Windows.Forms.Label();
+			this._patientId = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this._studyGrid)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._studyItemBindingSource)).BeginInit();
 			this.SuspendLayout();
@@ -54,10 +59,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			// _openStudy
 			// 
 			this._openStudy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._openStudy.Location = new System.Drawing.Point(786, 223);
+			this._openStudy.Location = new System.Drawing.Point(786, 330);
 			this._openStudy.Name = "_openStudy";
 			this._openStudy.Size = new System.Drawing.Size(194, 23);
-			this._openStudy.TabIndex = 0;
+			this._openStudy.TabIndex = 11;
 			this._openStudy.Text = "Open Study";
 			this._openStudy.UseVisualStyleBackColor = true;
 			this._openStudy.Click += new System.EventHandler(this.OnOpenStudy);
@@ -65,10 +70,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			// _activateViewer
 			// 
 			this._activateViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._activateViewer.Location = new System.Drawing.Point(786, 252);
+			this._activateViewer.Location = new System.Drawing.Point(786, 359);
 			this._activateViewer.Name = "_activateViewer";
 			this._activateViewer.Size = new System.Drawing.Size(194, 23);
-			this._activateViewer.TabIndex = 1;
+			this._activateViewer.TabIndex = 12;
 			this._activateViewer.Text = "Activate Viewer";
 			this._activateViewer.UseVisualStyleBackColor = true;
 			this._activateViewer.Click += new System.EventHandler(this.OnActivateViewer);
@@ -76,10 +81,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			// _closeViewer
 			// 
 			this._closeViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._closeViewer.Location = new System.Drawing.Point(786, 281);
+			this._closeViewer.Location = new System.Drawing.Point(786, 388);
 			this._closeViewer.Name = "_closeViewer";
 			this._closeViewer.Size = new System.Drawing.Size(194, 23);
-			this._closeViewer.TabIndex = 2;
+			this._closeViewer.TabIndex = 13;
 			this._closeViewer.Text = "Close Viewer";
 			this._closeViewer.UseVisualStyleBackColor = true;
 			this._closeViewer.Click += new System.EventHandler(this.OnCloseViewer);
@@ -87,10 +92,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			// _startViewer
 			// 
 			this._startViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._startViewer.Location = new System.Drawing.Point(786, 194);
+			this._startViewer.Location = new System.Drawing.Point(786, 301);
 			this._startViewer.Name = "_startViewer";
 			this._startViewer.Size = new System.Drawing.Size(194, 23);
-			this._startViewer.TabIndex = 3;
+			this._startViewer.TabIndex = 10;
 			this._startViewer.Text = "Start Viewer";
 			this._startViewer.UseVisualStyleBackColor = true;
 			this._startViewer.Click += new System.EventHandler(this.OnStartViewer);
@@ -108,88 +113,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this._studyGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this._studyGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.RetrieveAETitle,
+            this.HasViewers,
             this.patientIdDataGridViewTextBoxColumn,
+            this.AccessionNumber,
             this.patientsNameDataGridViewTextBoxColumn,
             this.studyDescriptionDataGridViewTextBoxColumn,
-            this.HasViewers,
             this.studyInstanceUidDataGridViewTextBoxColumn});
 			this._studyGrid.DataSource = this._studyItemBindingSource;
 			this._studyGrid.Location = new System.Drawing.Point(12, 12);
 			this._studyGrid.Name = "_studyGrid";
 			this._studyGrid.ReadOnly = true;
 			this._studyGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this._studyGrid.Size = new System.Drawing.Size(768, 292);
-			this._studyGrid.TabIndex = 5;
-			// 
-			// _activateIfOpen
-			// 
-			this._activateIfOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._activateIfOpen.AutoSize = true;
-			this._activateIfOpen.Checked = true;
-			this._activateIfOpen.CheckState = System.Windows.Forms.CheckState.Checked;
-			this._activateIfOpen.Location = new System.Drawing.Point(787, 311);
-			this._activateIfOpen.Name = "_activateIfOpen";
-			this._activateIfOpen.Size = new System.Drawing.Size(137, 17);
-			this._activateIfOpen.TabIndex = 6;
-			this._activateIfOpen.Text = "Activate if already open";
-			this._activateIfOpen.UseVisualStyleBackColor = true;
-			// 
-			// _openViewers
-			// 
-			this._openViewers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._openViewers.FormattingEnabled = true;
-			this._openViewers.Location = new System.Drawing.Point(787, 24);
-			this._openViewers.Name = "_openViewers";
-			this._openViewers.Size = new System.Drawing.Size(193, 160);
-			this._openViewers.TabIndex = 7;
-			// 
-			// label1
-			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(787, 10);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(73, 13);
-			this.label1.TabIndex = 8;
-			this.label1.Text = "Open Viewers";
-			// 
-			// _refreshAllViewers
-			// 
-			this._refreshAllViewers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._refreshAllViewers.Location = new System.Drawing.Point(601, 311);
-			this._refreshAllViewers.Name = "_refreshAllViewers";
-			this._refreshAllViewers.Size = new System.Drawing.Size(179, 23);
-			this._refreshAllViewers.TabIndex = 9;
-			this._refreshAllViewers.Text = "Refresh Viewers";
-			this._refreshAllViewers.UseVisualStyleBackColor = true;
-			this._refreshAllViewers.Click += new System.EventHandler(this.OnRefreshAllViewers);
-			// 
-			// _getSelectedInfo
-			// 
-			this._getSelectedInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._getSelectedInfo.Location = new System.Drawing.Point(416, 311);
-			this._getSelectedInfo.Name = "_getSelectedInfo";
-			this._getSelectedInfo.Size = new System.Drawing.Size(179, 23);
-			this._getSelectedInfo.TabIndex = 10;
-			this._getSelectedInfo.Text = "Get Additional Info";
-			this._getSelectedInfo.UseVisualStyleBackColor = true;
-			this._getSelectedInfo.Click += new System.EventHandler(this.OnGetSelectedInfo);
-			// 
-			// _requery
-			// 
-			this._requery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._requery.Location = new System.Drawing.Point(12, 311);
-			this._requery.Name = "_requery";
-			this._requery.Size = new System.Drawing.Size(179, 23);
-			this._requery.TabIndex = 11;
-			this._requery.Text = "Requery";
-			this._requery.UseVisualStyleBackColor = true;
-			this._requery.Click += new System.EventHandler(this.OnRequery);
-			// 
-			// _studyItemBindingSource
-			// 
-			this._studyItemBindingSource.DataSource = typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyItem);
+			this._studyGrid.Size = new System.Drawing.Size(768, 341);
+			this._studyGrid.TabIndex = 0;
 			// 
 			// RetrieveAETitle
 			// 
@@ -198,7 +134,16 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.RetrieveAETitle.HeaderText = "Retrieve AE";
 			this.RetrieveAETitle.Name = "RetrieveAETitle";
 			this.RetrieveAETitle.ReadOnly = true;
-			this.RetrieveAETitle.Width = 89;
+			this.RetrieveAETitle.Width = 82;
+			// 
+			// HasViewers
+			// 
+			this.HasViewers.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.HasViewers.DataPropertyName = "HasViewers";
+			this.HasViewers.HeaderText = "Has Viewer(s)";
+			this.HasViewers.Name = "HasViewers";
+			this.HasViewers.ReadOnly = true;
+			this.HasViewers.Width = 70;
 			// 
 			// patientIdDataGridViewTextBoxColumn
 			// 
@@ -207,7 +152,16 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.patientIdDataGridViewTextBoxColumn.HeaderText = "Patient Id";
 			this.patientIdDataGridViewTextBoxColumn.Name = "patientIdDataGridViewTextBoxColumn";
 			this.patientIdDataGridViewTextBoxColumn.ReadOnly = true;
-			this.patientIdDataGridViewTextBoxColumn.Width = 77;
+			this.patientIdDataGridViewTextBoxColumn.Width = 71;
+			// 
+			// AccessionNumber
+			// 
+			this.AccessionNumber.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+			this.AccessionNumber.DataPropertyName = "AccessionNumber";
+			this.AccessionNumber.HeaderText = "Accession #";
+			this.AccessionNumber.Name = "AccessionNumber";
+			this.AccessionNumber.ReadOnly = true;
+			this.AccessionNumber.Width = 84;
 			// 
 			// patientsNameDataGridViewTextBoxColumn
 			// 
@@ -227,15 +181,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.studyDescriptionDataGridViewTextBoxColumn.ReadOnly = true;
 			this.studyDescriptionDataGridViewTextBoxColumn.Width = 106;
 			// 
-			// HasViewers
-			// 
-			this.HasViewers.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.HasViewers.DataPropertyName = "HasViewers";
-			this.HasViewers.HeaderText = "Has Viewer(s)";
-			this.HasViewers.Name = "HasViewers";
-			this.HasViewers.ReadOnly = true;
-			this.HasViewers.Width = 70;
-			// 
 			// studyInstanceUidDataGridViewTextBoxColumn
 			// 
 			this.studyInstanceUidDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -244,11 +189,121 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.studyInstanceUidDataGridViewTextBoxColumn.Name = "studyInstanceUidDataGridViewTextBoxColumn";
 			this.studyInstanceUidDataGridViewTextBoxColumn.ReadOnly = true;
 			// 
+			// _studyItemBindingSource
+			// 
+			this._studyItemBindingSource.DataSource = typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyItem);
+			// 
+			// _activateIfOpen
+			// 
+			this._activateIfOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._activateIfOpen.AutoSize = true;
+			this._activateIfOpen.Checked = true;
+			this._activateIfOpen.CheckState = System.Windows.Forms.CheckState.Checked;
+			this._activateIfOpen.Location = new System.Drawing.Point(787, 418);
+			this._activateIfOpen.Name = "_activateIfOpen";
+			this._activateIfOpen.Size = new System.Drawing.Size(137, 17);
+			this._activateIfOpen.TabIndex = 14;
+			this._activateIfOpen.Text = "Activate if already open";
+			this._activateIfOpen.UseVisualStyleBackColor = true;
+			// 
+			// _openViewers
+			// 
+			this._openViewers.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._openViewers.FormattingEnabled = true;
+			this._openViewers.Location = new System.Drawing.Point(787, 24);
+			this._openViewers.Name = "_openViewers";
+			this._openViewers.Size = new System.Drawing.Size(193, 264);
+			this._openViewers.TabIndex = 2;
+			// 
+			// label1
+			// 
+			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(787, 10);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(73, 13);
+			this.label1.TabIndex = 1;
+			this.label1.Text = "Open Viewers";
+			// 
+			// _refreshAllViewers
+			// 
+			this._refreshAllViewers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._refreshAllViewers.Location = new System.Drawing.Point(601, 418);
+			this._refreshAllViewers.Name = "_refreshAllViewers";
+			this._refreshAllViewers.Size = new System.Drawing.Size(179, 23);
+			this._refreshAllViewers.TabIndex = 9;
+			this._refreshAllViewers.Text = "Refresh Viewers";
+			this._refreshAllViewers.UseVisualStyleBackColor = true;
+			this._refreshAllViewers.Click += new System.EventHandler(this.OnRefreshAllViewers);
+			// 
+			// _getSelectedInfo
+			// 
+			this._getSelectedInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._getSelectedInfo.Location = new System.Drawing.Point(416, 418);
+			this._getSelectedInfo.Name = "_getSelectedInfo";
+			this._getSelectedInfo.Size = new System.Drawing.Size(179, 23);
+			this._getSelectedInfo.TabIndex = 8;
+			this._getSelectedInfo.Text = "Get Additional Info";
+			this._getSelectedInfo.UseVisualStyleBackColor = true;
+			this._getSelectedInfo.Click += new System.EventHandler(this.OnGetSelectedInfo);
+			// 
+			// _requery
+			// 
+			this._requery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._requery.Location = new System.Drawing.Point(15, 418);
+			this._requery.Name = "_requery";
+			this._requery.Size = new System.Drawing.Size(179, 23);
+			this._requery.TabIndex = 7;
+			this._requery.Text = "Requery";
+			this._requery.UseVisualStyleBackColor = true;
+			this._requery.Click += new System.EventHandler(this.OnRequery);
+			// 
+			// _accession
+			// 
+			this._accession.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._accession.Location = new System.Drawing.Point(39, 392);
+			this._accession.Name = "_accession";
+			this._accession.Size = new System.Drawing.Size(155, 20);
+			this._accession.TabIndex = 6;
+			// 
+			// label2
+			// 
+			this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(12, 395);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(21, 13);
+			this.label2.TabIndex = 5;
+			this.label2.Text = "A#";
+			// 
+			// label3
+			// 
+			this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(12, 369);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(26, 13);
+			this.label3.TabIndex = 3;
+			this.label3.Text = "P.Id";
+			// 
+			// _patientId
+			// 
+			this._patientId.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this._patientId.Location = new System.Drawing.Point(39, 366);
+			this._patientId.Name = "_patientId";
+			this._patientId.Size = new System.Drawing.Size(155, 20);
+			this._patientId.TabIndex = 4;
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(992, 341);
+			this.ClientSize = new System.Drawing.Size(992, 448);
+			this.Controls.Add(this.label3);
+			this.Controls.Add(this._patientId);
+			this.Controls.Add(this.label2);
+			this.Controls.Add(this._accession);
 			this.Controls.Add(this._requery);
 			this.Controls.Add(this._getSelectedInfo);
 			this.Controls.Add(this._refreshAllViewers);
@@ -262,7 +317,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			this.Controls.Add(this.label1);
 			this.Name = "Form1";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-			this.Text = "Form1";
+			this.Text = "Automation Test Client";
 			this.Load += new System.EventHandler(this.OnFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this._studyGrid)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._studyItemBindingSource)).EndInit();
@@ -285,11 +340,16 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		private System.Windows.Forms.Button _getSelectedInfo;
 		private System.Windows.Forms.BindingSource _studyItemBindingSource;
 		private System.Windows.Forms.Button _requery;
+		private System.Windows.Forms.TextBox _accession;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.Label label3;
+		private System.Windows.Forms.TextBox _patientId;
 		private System.Windows.Forms.DataGridViewTextBoxColumn RetrieveAETitle;
+		private System.Windows.Forms.DataGridViewCheckBoxColumn HasViewers;
 		private System.Windows.Forms.DataGridViewTextBoxColumn patientIdDataGridViewTextBoxColumn;
+		private System.Windows.Forms.DataGridViewTextBoxColumn AccessionNumber;
 		private System.Windows.Forms.DataGridViewTextBoxColumn patientsNameDataGridViewTextBoxColumn;
 		private System.Windows.Forms.DataGridViewTextBoxColumn studyDescriptionDataGridViewTextBoxColumn;
-		private System.Windows.Forms.DataGridViewCheckBoxColumn HasViewers;
 		private System.Windows.Forms.DataGridViewTextBoxColumn studyInstanceUidDataGridViewTextBoxColumn;
 	}
 }
