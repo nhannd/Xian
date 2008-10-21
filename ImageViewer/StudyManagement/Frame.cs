@@ -780,6 +780,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _pixelData;
 		}
 
+		/// <summary>
+		/// Gets the pixel data in normalized form.
+		/// </summary>
+		/// <remarks>
+		/// <para>Virtual method called by the <see cref="GetNormalizedPixelData"/> to get the normalized pixel data.</para>
+		/// <para>The <see cref="GetNormalizedPixelData"/> method encapsulates the necessary code to make the operation thread-safe.</para>
+		/// </remarks>
+		/// <returns></returns>
+		/// <see cref="GetNormalizedPixelData"/>
 		protected virtual byte[] CreateNormalizedPixelData()
 		{
 			DicomMessageBase message = this.ParentImageSop.NativeDicomObject;
