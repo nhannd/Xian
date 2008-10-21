@@ -23,6 +23,11 @@
                                                 <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" />
                                             </td>
                                             <td align="left" valign="bottom">
+                                                <asp:Label ID="Label3" runat="server" Text="Accession #" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" />
+                                            </td>
+                                            <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="Time Received " CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />

@@ -173,6 +173,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             Close();
         }
+
+        protected void OKButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
         
         private void DisplayReconcileSummary()
         {

@@ -74,7 +74,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
             desc.ExistingPatientName = _context.CurrentStudy.PatientsName;
+            desc.ExistingAccessionNumber = _context.CurrentStudy.AccessionNumber;
             desc.ConflictingPatientName = _context.File.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
+            desc.ConflictingAccessionNumber = _context.File.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty);
             
             return desc;
         }

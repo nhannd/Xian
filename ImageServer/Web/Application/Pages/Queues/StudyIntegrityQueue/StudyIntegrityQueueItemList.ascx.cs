@@ -30,11 +30,13 @@
 #endregion
 
 using System;
+using System.Drawing;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
@@ -242,6 +244,55 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 				DataSourceCreated(_dataSource);
 
 		}
+
+        protected void StudyIntegrityQueueItemList_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            GridViewRow row = e.Row;
+
+            if (StudyIntegrityQueueGridView.EditIndex != e.Row.RowIndex)
+            {
+                if (row.RowType == DataControlRowType.DataRow)
+                {
+                    CustomizeColumns(e.Row);
+                }
+            }
+        }
+
+        private void CustomizeColumns(GridViewRow row)
+        {
+            StudyIntegrityQueueSummary summary = row.DataItem as StudyIntegrityQueueSummary;
+
+            if (summary != null)
+            {
+                Label existingPatientName = row.FindControl("ExistingPatientName") as Label;
+                Label conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
+                Label existingAccessionNumber = row.FindControl("ExistingAccessionNumber") as Label;
+                Label conflictingAccessionNumber = row.FindControl("ConflictingAccessionNumber") as Label;
+                if (existingPatientName != null && existingAccessionNumber != null)
+                {
+                    existingPatientName.Text = summary.ExistingPatientName;
+                    existingAccessionNumber.Text = summary.ExistingAccessionNumber;
+                }
+                if (conflictingPatientName != null && conflictingAccessionNumber != null)
+                {
+                    conflictingPatientName.Text = summary.ConflictingPatientName;
+                    conflictingAccessionNumber.Text = summary.ConflictingAccessionNumber;
+
+                    if (!summary.ExistingPatientName.Equals(summary.ConflictingPatientName))
+                    {
+                        conflictingPatientName.ForeColor = Color.Red;
+                    }
+                    if (!summary.ExistingAccessionNumber.Equals(summary.ConflictingAccessionNumber))
+                    {
+                        conflictingAccessionNumber.ForeColor = Color.Red;
+                    }
+                }
+
+                DateTimeLabel timeReceived = row.FindControl("TimeReceived") as DateTimeLabel;
+                if (timeReceived != null)
+                    timeReceived.Value = summary.ReceivedTime;
+            }
+        }
         #endregion
 
         #region public methods
@@ -255,6 +306,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             StudyIntegrityQueueGridView.DataBind();
         }
+
+
 
         #endregion // public methods
 

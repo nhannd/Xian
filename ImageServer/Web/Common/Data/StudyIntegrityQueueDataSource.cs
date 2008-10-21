@@ -43,6 +43,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#region Private members
 
 		private string _existingPatientName;
+        private string _existingAccessionNumber;
+        private string _conflictingAccessionNumber;
         private string _conflictingPatientName;
 	    private string _studyInstanceUID;
 	    private DateTime _receivedTime;
@@ -52,6 +54,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		#region Public Properties
 
+        public string ExistingAccessionNumber
+        {
+            get { return _existingAccessionNumber; }
+            set { _existingAccessionNumber = value; }
+        }
+        public string ConflictingAccessionNumber
+        {
+            get { return _conflictingAccessionNumber; }
+            set { _conflictingAccessionNumber = value; }
+        }
         public StudyIntegrityQueue TheStudyIntegrityQueueItem
         {
             get { return _studyIntegrityQueueItem; }
@@ -100,6 +112,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#region Private Members
 		private StudyIntegrityQueueController _searchController = new StudyIntegrityQueueController();
 		private string _description;
+        private string _patientName;
+        private string _accessionNumber;
 		private string _insertTime;
 		private int _resultCount;
 		private ServerPartition _partition;
@@ -117,6 +131,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _description; }
 			set { _description = value; }
 		}
+        public string PatientName
+        {
+            get { return _patientName; }
+            set { _patientName = value; }
+        }
+        public string AccessionNumber
+        {
+            get { return _accessionNumber; }
+            set { _accessionNumber = value; }
+        }
 		public string InsertTime
 		{
 			get { return _insertTime; }
@@ -205,9 +229,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		    queueDescription.Parse(item.Description);
 
 		    summary.ExistingPatientName = queueDescription.ExistingPatientName;
+            summary.ExistingAccessionNumber = queueDescription.ExistingAccessionNumber;
 		    summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
+		    summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
 		    summary.ReceivedTime = item.InsertTime;
-
+            
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);           
             StudyAdaptor studyAdaptor = new StudyAdaptor();
@@ -231,14 +257,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             // only query for device in this partition
             criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
-            if (!String.IsNullOrEmpty(Description))
+            string description = string.Empty;
+
+            if (!String.IsNullOrEmpty(PatientName) && !String.IsNullOrEmpty(AccessionNumber))
             {
-                string key = Description + "%";
-                key = key.Replace("*", "%");
-                key = key.Replace("?", "_");
-                criteria.Description.Like(key);
+                description = PatientName + "%" + AccessionNumber + "%";
+            }
+            else if (!String.IsNullOrEmpty(PatientName))
+            {
+                description = PatientName + "%";
+            }
+            else if(!String.IsNullOrEmpty(AccessionNumber))
+            {
+                description = AccessionNumber + "%";                
             }
 
+            if(!String.IsNullOrEmpty(description))
+            {
+                description = description.Replace("*", "%");
+                description = description.Replace("?", "_");
+                criteria.Description.Like(description);    
+            }
+                       
             if (!String.IsNullOrEmpty(InsertTime))
             {
                 DateTime insertTime = DateTime.Parse(InsertTime);

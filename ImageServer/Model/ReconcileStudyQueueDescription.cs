@@ -95,6 +95,32 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
+        [QueueSearchableDescription]
+        public String ExistingAccessionNumber
+        {
+            get
+            {
+                return this["ExistingAccessionNumber"] as String;
+            }
+            set
+            {
+                this["ExistingAccessionNumber"] = value;
+            }
+        }
+
+        [QueueSearchableDescription]
+        public String ConflictingAccessionNumber
+        {
+            get
+            {
+                return this["ConflictingAccessionNumber"] as String;
+            }
+            set
+            {
+                this["ConflictingAccessionNumber"] = value;
+            }
+        }
+
     }
 
 }

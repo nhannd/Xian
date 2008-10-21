@@ -130,9 +130,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 											source.Partition = ServerPartition;
 
 											if (!String.IsNullOrEmpty(PatientName.Text))
-                                                //Apply wild card characters to ensure that a result
-                                                //is returned if the name is anywhere within the Description
-												source.Description = "*" + PatientName.Text + "*";
+												source.PatientName = "*" + PatientName.Text + "*";
+                                            if (!String.IsNullOrEmpty(AccessionNumber.Text))
+										        source.AccessionNumber = "*" + AccessionNumber.Text + "*";
                                             if (!String.IsNullOrEmpty(ReceivedDate.Text))
                                                 source.InsertTime =ReceivedDate.Text;
 										};

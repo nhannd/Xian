@@ -11,24 +11,34 @@
 				<ccUI:GridView ID="StudyIntegrityQueueGridView" runat="server" SkinID="CustomGlobalGridView"
 					OnSelectedIndexChanged="StudyIntegrityQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="StudyIntegrityQueueGridView_PageIndexChanging"
-					SelectionMode="Single" DataSourceID="StudyIntegrityQueueDataSourceObject">
+					SelectionMode="Single" DataSourceID="StudyIntegrityQueueDataSourceObject"
+					OnRowDataBound="StudyIntegrityQueueItemList_RowDataBound">
 					<Columns>
 					    <asp:BoundField DataField="StudyInstanceUID" HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:BoundField DataField="ExistingPatientName" HeaderText="Existing Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
-						</asp:BoundField>
-						<asp:BoundField DataField="ConflictingPatientName" HeaderText="Conflicting Patient" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center" ItemStyle-ForeColor="red">
-						</asp:BoundField>
-						<asp:BoundField DataField="ReceivedTime" HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
-						</asp:BoundField>
+						<asp:TemplateField HeaderText="Existing Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+							<itemtemplate>
+                                <asp:Label ID="ExistingPatientName" runat="server"></asp:Label> / <asp:Label ID="ExistingAccessionNumber" runat="server"></asp:Label>
+                            </itemtemplate>
+						</asp:TemplateField>
+		                <asp:TemplateField HeaderText="Conflicting Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+							<itemtemplate>
+                                <asp:Label ID="ConflictingPatientName" runat="server"></asp:Label> / <asp:Label ID="ConflictingAccessionNumber" runat="server"></asp:Label>
+                            </itemtemplate>
+						</asp:TemplateField>
+			            <asp:TemplateField HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+							<itemtemplate>
+                                <ccUI:DateTimeLabel ID="TimeReceived" runat="server"></ccUI:DateTimeLabel>
+                            </itemtemplate>
+						</asp:TemplateField>
 					</Columns>
 					<EmptyDataTemplate>
 						<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
 							CssClass="GlobalGridViewHeader">
 							<asp:TableHeaderRow Height="23px">
 								<asp:TableHeaderCell HorizontalAlign="Left">Study Instance UID</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Existing Patient</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Conflicting Patient</asp:TableHeaderCell>
+								<asp:TableHeaderCell HorizontalAlign="Left">Existing Study</asp:TableHeaderCell>
+								<asp:TableHeaderCell HorizontalAlign="Left">Conflicting Study</asp:TableHeaderCell>
 								<asp:TableHeaderCell HorizontalAlign="Center">Time Received</asp:TableHeaderCell>
 							</asp:TableHeaderRow>
                         </asp:Table>							
