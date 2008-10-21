@@ -39,7 +39,6 @@ using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO: Make a documentation note "Don't alter the DicomAttributes from indexer" or NativeDicomObject.
 	//TODO: Avoid inheritance and use IDicomDataProvider that Sop simply wraps.
 
 	/// <summary>
@@ -142,6 +141,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the DICOM toolkit representation of this <see cref="Sop"/>.
 		/// </summary>
+		/// <remarks>
+		/// Although this object is public, it is not recommended that it's <see cref="DicomAttribute"/>s
+		/// be modified in any way.  This object can be deep-cloned via <see cref="DicomAttributeCollection.Copy()"/>
+		/// and whatever operation/modification is required can be performed on the clone.
+		/// </remarks>
 		public virtual DicomMessageBase NativeDicomObject
 		{
 			get
@@ -913,8 +917,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets a specific DICOM tag in the underlying native object.
 		/// </summary>
+		/// <remarks>
+		/// <see cref="DicomAttribute"/>s returned from this indexer are considered
+		/// read-only and should not be modified in any way.  See <see cref="NativeDicomObject"/>
+		/// for more information.
+		/// </remarks>
 		/// <param name="tag">The DICOM tag to retrieve.</param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the specified DICOM tag is not within the valid range for either the meta info or the dataset.</exception>
 		public DicomAttribute this[DicomTag tag]
 		{
@@ -924,8 +932,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets a specific DICOM tag in the underlying native object.
 		/// </summary>
+		/// <remarks>
+		/// <see cref="DicomAttribute"/>s returned from this indexer are considered
+		/// read-only and should not be modified in any way.  See <see cref="NativeDicomObject"/>
+		/// for more information.
+		/// </remarks>
 		/// <param name="tag">The DICOM tag to retrieve.</param>
-		/// <returns></returns>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the specified DICOM tag is not within the valid range for either the meta info or the dataset.</exception>
 		public virtual DicomAttribute this[uint tag]
 		{
