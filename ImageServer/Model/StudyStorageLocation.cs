@@ -196,8 +196,6 @@ namespace ClearCanvas.ImageServer.Model
                 context.Commit();
                 return parms.Successful;
             }
-
-            return false;
         }
 
         /// <summary>
@@ -227,8 +225,6 @@ namespace ClearCanvas.ImageServer.Model
                 context.Commit();
                 return parms.Successful;
             }
-
-            return false;
         }
 
         #endregion
