@@ -80,9 +80,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			try
 			{
 				client.Open();
-				Stream stream = client.GetStudyHeader(ServerTree.GetClientAETitle(), headerParams);
+				XmlDocument headerXmlDocument;
+				using (Stream stream = client.GetStudyHeader(ServerTree.GetClientAETitle(), headerParams))
+				{
+					headerXmlDocument = DecompressHeaderStreamToXml(stream);
+				}
 				client.Close();
-				return DecompressHeaderStreamToXml(stream);
+				return headerXmlDocument;
 			}
 			catch(Exception)
 			{
