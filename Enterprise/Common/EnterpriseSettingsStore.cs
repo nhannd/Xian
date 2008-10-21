@@ -157,7 +157,7 @@ namespace ClearCanvas.Enterprise.Common
         public void UpgradeUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
         {
             // TODO implement this later
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public IList<SettingsGroupDescriptor> ListSettingsGroups()
