@@ -128,6 +128,20 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return q.List<InterpretationStep>();
 		}
 
+		/// <summary>
+		/// Obtains a set of interpretation steps that are candidates for linked reporting to the specified interpretation step.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="author"></param>
+		/// <returns></returns>
+		public IList<ProtocolAssignmentStep> GetLinkedProtocolCandidates(ProtocolAssignmentStep step, Staff author)
+		{
+			NHibernate.IQuery q = this.Context.GetNamedHqlQuery("linkedProtocolCandidates");
+			q.SetParameter(0, step);
+			q.SetParameter(1, author);
+			return q.List<ProtocolAssignmentStep>();
+		}
+
 		#endregion
 
 		#region Overrides

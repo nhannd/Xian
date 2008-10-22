@@ -95,6 +95,39 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		}
 
 		[ReadOperation]
+		public GetLinkableProtocolsResponse GetLinkableProtocols(GetLinkableProtocolsRequest request)
+		{
+			ProtocolAssignmentStep step = PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef, EntityLoadFlags.Proxy);
+
+			IReportingWorklistItemBroker broker = PersistenceContext.GetBroker<IReportingWorklistItemBroker>();
+			IList<ProtocolAssignmentStep> candidateSteps = broker.GetLinkedProtocolCandidates(step, this.CurrentUserStaff);
+
+			// if any candidate steps were found, need to convert them to worklist items
+			IList<WorklistItem> worklistItems;
+			if (candidateSteps.Count > 0)
+			{
+				// because CLR does not support List co-variance, need to map to a list of the more general type (this seems silly!)
+				List<ProtocolProcedureStep> protocolSteps =
+					CollectionUtils.Map<ProtocolAssignmentStep, ProtocolProcedureStep>(
+						candidateSteps, delegate(ProtocolAssignmentStep s) { return s; });
+
+				worklistItems = broker.GetWorklistItems(protocolSteps);
+			}
+			else
+			{
+				worklistItems = new List<WorklistItem>();
+			}
+
+			ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+			return new GetLinkableProtocolsResponse(
+				CollectionUtils.Map<WorklistItem, ReportingWorklistItem>(worklistItems,
+				delegate(WorklistItem item)
+				{
+					return assembler.CreateWorklistItemSummary(item, PersistenceContext);
+				}));
+		}
+
+		[ReadOperation]
 		public ListProtocolGroupsForProcedureResponse ListProtocolGroupsForProcedure(ListProtocolGroupsForProcedureRequest request)
 		{
 			ProtocolAssembler assembler = new ProtocolAssembler();
@@ -127,7 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 			ProcedureStep uncastProtocolStep = CollectionUtils.SelectFirst(
 				rp.ProcedureSteps,
-				delegate(ProcedureStep ps) { return ps.Is<ProtocolProcedureStep>(); });
+				delegate(ProcedureStep ps) { return ps.Is<ProtocolProcedureStep>() && ps.State != ActivityStatus.DC; });
 
 			if (uncastProtocolStep != null)
 			{
@@ -170,14 +203,20 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			bool canPerformerAcceptProtocols = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Accept);
 			Staff assignedStaff = null;
 
-			// todo: linked procedures
+			List<ProtocolAssignmentStep> linkedSteps = new List<ProtocolAssignmentStep>();
+			if (request.LinkedProtocolAssignmentStepRefs != null && request.LinkedProtocolAssignmentStepRefs.Count > 0)
+			{
+				linkedSteps = CollectionUtils.Map<EntityRef, ProtocolAssignmentStep>(
+					request.LinkedProtocolAssignmentStepRefs,
+					delegate(EntityRef stepRef) { return PersistenceContext.Load<ProtocolAssignmentStep>(stepRef); });
+			}
 
 			if (request.ShouldClaim)
 			{
 				try
 				{
 					ProtocollingOperations.StartProtocolOperation op = new ProtocollingOperations.StartProtocolOperation();
-					op.Execute(assignmentStep, null, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed, out assignedStaff);
+					op.Execute(assignmentStep, linkedSteps, this.CurrentUserStaff, canPerformerAcceptProtocols, out protocolClaimed, out assignedStaff);
 				}
 				catch (Exception e)
 				{

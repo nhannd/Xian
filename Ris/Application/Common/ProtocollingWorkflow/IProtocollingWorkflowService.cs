@@ -98,5 +98,8 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		ResubmitProtocolResponse ResubmitProtocol(ResubmitProtocolRequest request);
+
+		[OperationContract]
+		GetLinkableProtocolsResponse GetLinkableProtocols(GetLinkableProtocolsRequest request);
 	}
 }

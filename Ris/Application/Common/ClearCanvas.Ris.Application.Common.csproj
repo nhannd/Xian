@@ -137,6 +137,8 @@
     <Compile Include="Admin\WorkQueueAdmin\RemoveWorkQueueItemResponse.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemRequest.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemResponse.cs" />
+    <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsRequest.cs" />
+    <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsResponse.cs" />
     <Compile Include="WorkQueueItemDetail.cs" />
     <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolResponse.cs" />

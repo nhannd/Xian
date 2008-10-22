@@ -60,5 +60,13 @@ namespace ClearCanvas.Healthcare.Brokers
         /// <param name="interpreter"></param>
         /// <returns></returns>
         IList<InterpretationStep> GetLinkedInterpretationCandidates(InterpretationStep step, Staff interpreter);
+
+        /// <summary>
+        /// Obtains a set of protocol steps that are candidates for linked protocolling to the specified assignment step.
+        /// </summary>
+        /// <param name="step"></param>
+        /// <param name="author"></param>
+        /// <returns></returns>
+        IList<ProtocolAssignmentStep> GetLinkedProtocolCandidates(ProtocolAssignmentStep step, Staff author);
     }
 }

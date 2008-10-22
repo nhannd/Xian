@@ -55,6 +55,7 @@
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
+    <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
     <Compile Include="ProtocolWorkflowItemTool.cs" />
     <Compile Include="ProtocolWorkflowTools.cs" />

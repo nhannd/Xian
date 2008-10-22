@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
@@ -59,28 +58,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 	{
 		#region Private Fields
 
-		private readonly ProtocollingComponentMode _componentMode;
-		private readonly string _folderName;
-		private readonly EntityRef _worklistRef;
-		private readonly string _worklistClassName;
-		private int _completedItems = 0;
-		private bool _isInitialItem = true;
+		private readonly ProtocollingComponentWorklistItemManager _worklistItemManager;
 
-		private ReportingWorklistItem _worklistItem;
 		private EntityRef _protocolAssignmentStepRef;
 		private EntityRef _assignedStaffRef;
 		private List<OrderNoteDetail> _notes;
-
-		private readonly List<ReportingWorklistItem> _skippedItems;
-		private readonly Stack<ReportingWorklistItem> _worklistCache;
 
 		private ChildComponentHost _bannerComponentHost;
 		private ChildComponentHost _protocolEditorComponentHost;
 		private ChildComponentHost _orderDetailViewComponentHost;
 		private ChildComponentHost _priorReportsComponentHost;
 		private ChildComponentHost _orderNotesComponentHost;
-
-		private bool _protocolNextItem;
 
 		private bool _acceptEnabled;
 		private bool _submitForApprovalEnabled;
@@ -96,16 +84,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </summary>
 		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
-			_worklistItem = worklistItem;
-			_componentMode = mode;
-			_folderName = folderName;
-			_worklistRef = worklistRef;
-			_worklistClassName = worklistClassName;
-
-			_protocolNextItem = this.CanProtocolMultipleItems;
-
-			_skippedItems = new List<ReportingWorklistItem>();
-			_worklistCache = new Stack<ReportingWorklistItem>();
+			_worklistItemManager = new ProtocollingComponentWorklistItemManager(worklistItem, mode, folderName, worklistRef, worklistClassName);
+			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
 		}
 
 		#endregion
@@ -116,66 +96,92 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			StartProtocollingWorklistItem();
 
-			this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+			this.Host.Title = ProtocollingComponentDocument.GetTitle(this.WorklistItem);
 
-			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(_worklistItem));
+			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 			_bannerComponentHost.StartComponent();
 
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.Protocol));
 			_orderNotesComponentHost.StartComponent();
-			((OrderNoteSummaryComponent) _orderNotesComponentHost.Component).Notes = _notes;
+			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
 
-			_protocolEditorComponentHost = new ChildComponentHost(this.Host, new ProtocolEditorComponent(_worklistItem));
+			_protocolEditorComponentHost = new ChildComponentHost(this.Host, new ProtocolEditorComponent(this.WorklistItem));
 			_protocolEditorComponentHost.StartComponent();
-			((ProtocolEditorComponent) _protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
+			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
 
-			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(_worklistItem));
+			_priorReportsComponentHost = new ChildComponentHost(this.Host, new PriorReportComponent(this.WorklistItem));
 			_priorReportsComponentHost.StartComponent();
 
-            _orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(_worklistItem.PatientRef, _worklistItem.OrderRef));
+			_orderDetailViewComponentHost = new ChildComponentHost(this.Host, new ProtocollingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef));
 			_orderDetailViewComponentHost.StartComponent();
 
 			base.Start();
 		}
 
-        public override void Stop()
-        {
-            if (_bannerComponentHost != null)
-            {
-                _bannerComponentHost.StopComponent();
-                _bannerComponentHost = null;
-            }
+		public override void Stop()
+		{
+			if (_bannerComponentHost != null)
+			{
+				_bannerComponentHost.StopComponent();
+				_bannerComponentHost = null;
+			}
 
-            if (_orderNotesComponentHost != null)
-            {
-                _orderNotesComponentHost.StopComponent();
-                _orderNotesComponentHost = null;
-            }
+			if (_orderNotesComponentHost != null)
+			{
+				_orderNotesComponentHost.StopComponent();
+				_orderNotesComponentHost = null;
+			}
 
-            if (_protocolEditorComponentHost != null)
-            {
-                _protocolEditorComponentHost.StopComponent();
-                _protocolEditorComponentHost = null;
-            }
+			if (_protocolEditorComponentHost != null)
+			{
+				_protocolEditorComponentHost.StopComponent();
+				_protocolEditorComponentHost = null;
+			}
 
-            if (_priorReportsComponentHost != null)
-            {
-                _priorReportsComponentHost.StopComponent();
-                _priorReportsComponentHost = null;
-            }
+			if (_priorReportsComponentHost != null)
+			{
+				_priorReportsComponentHost.StopComponent();
+				_priorReportsComponentHost = null;
+			}
 
-            if (_orderDetailViewComponentHost != null)
-            {
-                _orderDetailViewComponentHost.StopComponent();
-                _orderDetailViewComponentHost = null;
-            }
+			if (_orderDetailViewComponentHost != null)
+			{
+				_orderDetailViewComponentHost.StopComponent();
+				_orderDetailViewComponentHost = null;
+			}
 
-            base.Stop();
-        }
+			base.Stop();
+		}
 
 		#endregion
 
+		private ReportingWorklistItem WorklistItem
+		{
+			get { return _worklistItemManager.WorklistItem; }
+		}
+
 		#region Public members
+
+		public string StatusText
+		{
+			get { return _worklistItemManager.StatusText; }
+		}
+
+		public bool ShowStatusText
+		{
+			get { return _worklistItemManager.ShowStatusText; }
+		}
+
+		public bool ProtocolNextItem
+		{
+			get { return _worklistItemManager.ProtocolNextItem; }
+			set { _worklistItemManager.ProtocolNextItem = value; }
+		}
+
+		public bool ProtocolNextItemEnabled
+		{
+			get { return _worklistItemManager.ProtocolNextItemEnabled; }
+		}
 
 		public ApplicationComponentHost BannerComponentHost
 		{
@@ -202,40 +208,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _priorReportsComponentHost; }
 		}
 
-		public string StatusText
-		{
-			get
-			{
-				string status = string.Format(SR.FormatProtocolFolderName, _folderName);
-
-				if (!_isInitialItem)
-				{
-					status = status + string.Format(SR.FormatProtocolStatusText, _worklistCache.Count, _completedItems, _skippedItems.Count);
-				}
-
-				return status;
-			}
-		}
-
-		public bool ShowStatusText
-		{
-			get { return this.CanProtocolMultipleItems; }
-		}
-
-		/// <summary>
-		/// Specifies if the next <see cref="ReportingWorklistItem"/> should be protocolled
-		/// </summary>
-		public bool ProtocolNextItem
-		{
-			get { return _protocolNextItem; }
-			set { _protocolNextItem = value; }
-		}
-
-		public bool ProtocolNextItemEnabled
-		{
-			get { return this.CanProtocolMultipleItems; }
-		}
-
 		#region Accept
 
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Accept)]
@@ -260,9 +232,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					});
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.CompletedProtocolFolder));
-				InvalidateSourceFolders();
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception e)
 			{
@@ -313,9 +284,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					});
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.AwaitingApprovalProtocolFolder));
-				InvalidateSourceFolders();
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception e)
 			{
@@ -365,9 +335,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 					});
 
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.RejectedProtocolFolder));
-				InvalidateSourceFolders();
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception e)
 			{
@@ -401,7 +370,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
 				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftProtocolFolder));
 
-				BeginNextWorklistItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
 			}
 			catch (Exception e)
 			{
@@ -425,11 +394,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, shouldUnclaim, _assignedStaffRef));
+						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, _worklistItemManager.ShouldUnclaim, _assignedStaffRef));
 					});
 
-				SkipCurrentItemAndBeginNextItemOrExit();
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
 			}
 			catch (Exception e)
 			{
@@ -439,7 +407,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool SkipEnabled
 		{
-			get { return _protocolNextItem && this.ProtocolNextItemEnabled; }
+			get { return _worklistItemManager.CanSkipItem; }
 		}
 
 		#endregion
@@ -453,8 +421,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Platform.GetService<IProtocollingWorkflowService>(
 					delegate(IProtocollingWorkflowService service)
 					{
-						bool shouldUnclaim = _componentMode == ProtocollingComponentMode.Assign;
-						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, shouldUnclaim, _assignedStaffRef));
+						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, _worklistItemManager.ShouldUnclaim, _assignedStaffRef));
 					});
 
 				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
@@ -475,121 +442,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Private methods
 
-		private bool CanProtocolMultipleItems
-		{
-			get { return _componentMode == ProtocollingComponentMode.Assign && (_worklistRef != null || _worklistClassName != null); }
-		}
 
-		/// <summary>
-		/// Invalidates source folders appropriate to current <see cref="ProtocollingComponentMode"/>
-		/// </summary>
-		private void InvalidateSourceFolders()
+		private void OnWorklistItemChangedEvent(object sender, EventArgs args)
 		{
-			if (_componentMode == ProtocollingComponentMode.Assign)
+			if (this.WorklistItem != null)
 			{
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeReviewedFolder));
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.AssignedForReviewProtocolFolder));
-			}
-			else if (_componentMode == ProtocollingComponentMode.Edit)
-			{
-				DocumentManager.InvalidateFolder(typeof(Folders.Reporting.DraftFolder));
-			}
-		}
-
-		private void BeginNextWorklistItemOrExit()
-		{
-			if (this.ProtocolNextItem)
-			{
-				_completedItems++;
-				LoadNextWorklistItem();
+				try
+				{
+					StartProtocollingWorklistItem();
+					UpdateChildComponents();
+				}
+				catch (Exception)
+				{
+					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Invalid);
+				}
 			}
 			else
 			{
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}
-		}
-
-		private void SkipCurrentItemAndBeginNextItemOrExit()
-		{
-			// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
-			// discontinued with a new scheduled one replacing it
-			DocumentManager.InvalidateFolder(typeof(Folders.Reporting.ToBeProtocolledFolder));
-
-			_skippedItems.Add(_worklistItem);
-			LoadNextWorklistItem();
-		}
-
-		private void LoadNextWorklistItem()
-		{
-			try
-			{
-				_worklistItem = GetNextWorklistItem();
-
-				if (_worklistItem != null)
-				{
-					_isInitialItem = false;
-
-					StartProtocollingWorklistItem();
-					UpdateChildComponents();
-				}
-				else
-				{
-					// TODO : Dialog "No more"
-					this.Exit(ApplicationComponentExitCode.None);
-				}
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
-
-		private ReportingWorklistItem GetNextWorklistItem()
-		{
-			if (_worklistCache.Count == 0)
-			{
-				RefreshWorklistItemCache();
-			}
-
-			return _worklistCache.Count > 0 ? _worklistCache.Pop() : null;
-		}
-
-		private void RefreshWorklistItemCache()
-		{
-			try
-			{
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						QueryWorklistRequest request = _worklistRef != null
-							? new QueryWorklistRequest(_worklistRef, true, true, DowntimeRecovery.InDowntimeRecoveryMode)
-							: new QueryWorklistRequest(_worklistClassName, true, true, DowntimeRecovery.InDowntimeRecoveryMode);
-
-						QueryWorklistResponse<ReportingWorklistItem> response = service.QueryWorklist(request);
-
-						foreach (ReportingWorklistItem item in response.WorklistItems)
-						{
-							if (WorklistItemWasPreviouslySkipped(item) == false)
-							{
-								_worklistCache.Push(item);
-							}
-						}
-					});
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-			}
-		}
-
-		private bool WorklistItemWasPreviouslySkipped(ReportingWorklistItem item)
-		{
-			return CollectionUtils.Contains(_skippedItems,
-				delegate(ReportingWorklistItem skippedItem)
-				{
-					return skippedItem.AccessionNumber == item.AccessionNumber;
-				});
 		}
 
 		private void StartProtocollingWorklistItem()
@@ -600,9 +471,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
-					bool shouldClaim = _componentMode == ProtocollingComponentMode.Assign;
+					List<ReportingWorklistItem> linkedProtocols;
+					List<ReportingWorklistItem> candidateProtocols;
+					PromptForLinkedInterpretations(this.WorklistItem, out linkedProtocols, out candidateProtocols);
 
-					StartProtocolResponse response = service.StartProtocol(new StartProtocolRequest(_worklistItem.ProcedureStepRef, null, shouldClaim, OrderNoteCategory.Protocol.Key));
+					List<EntityRef> linkedProtocolRefs = linkedProtocols.ConvertAll<EntityRef>(
+						delegate(ReportingWorklistItem x) { return x.ProcedureStepRef; });
+
+					bool shouldClaim = _worklistItemManager.ShouldUnclaim;
+
+					StartProtocolResponse response = service.StartProtocol(new StartProtocolRequest(this.WorklistItem.ProcedureStepRef, linkedProtocolRefs, shouldClaim, OrderNoteCategory.Protocol.Key));
 					_protocolAssignmentStepRef = response.ProtocolAssignmentStepRef;
 					_assignedStaffRef = response.AssignedStaffRef;
 
@@ -611,7 +489,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					if (response.ProtocolClaimed == shouldClaim)
 					{
 						GetOperationEnablementResponse enablementResponse =
-							service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
+							service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
 
 						_acceptEnabled = enablementResponse.OperationEnablementDictionary["AcceptProtocol"];
 						_rejectEnabled = enablementResponse.OperationEnablementDictionary["RejectProtocol"];
@@ -620,24 +498,81 @@ namespace ClearCanvas.Ris.Client.Workflow
 					}
 					else
 					{
-						SkipCurrentItemAndBeginNextItemOrExit();
+						// If start interpretation failed and there were candidates for linking, let the user know and move to next item.
+						if (candidateProtocols.Count > 0 && this.IsStarted)
+						{
+							this.Host.ShowMessageBox(SR.ExceptionCannotStartLinkedProcedures, MessageBoxActions.Ok);
+							_worklistItemManager.IgnoreWorklistItems(candidateProtocols);
+						}
+						throw new Exception();
 					}
 				});
 		}
 
+		private bool PromptForLinkedInterpretations(ReportingWorklistItem item, out List<ReportingWorklistItem> linkedItems, out List<ReportingWorklistItem> candidateItems)
+		{
+			linkedItems = new List<ReportingWorklistItem>();
+			candidateItems = new List<ReportingWorklistItem>();
+
+			// query server for link candidates
+			List<ReportingWorklistItem> anonCandidates = new List<ReportingWorklistItem>();  // cannot use out param in anonymous delegate.
+			Platform.GetService<IProtocollingWorkflowService>(
+				delegate(IProtocollingWorkflowService service)
+				{
+					GetLinkableProtocolsRequest request = new GetLinkableProtocolsRequest(item.ProcedureStepRef);
+					anonCandidates = service.GetLinkableProtocols(request).ProtocolItems;
+				});
+			candidateItems.AddRange(anonCandidates);
+
+			// if there are candidates, prompt user to select
+			if (candidateItems.Count > 0)
+			{
+				ResetChildComponents();
+
+				LinkedInterpretationComponent component = new LinkedInterpretationComponent(item, candidateItems);
+				ApplicationComponentExitCode exitCode = LaunchAsDialog(
+					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					linkedItems.AddRange(component.SelectedItems);
+					return true;
+				}
+				return false;
+			}
+			else
+			{
+				// no candidates
+				return true;
+			}
+		}
+
+		private void ResetChildComponents()
+		{
+			// if no child components have been initialized, just return
+			if (_bannerComponentHost == null)
+				return;
+
+			_acceptEnabled = false;
+			_rejectEnabled = false;
+			_submitForApprovalEnabled = false;
+			_saveEnabled = false;
+
+			UpdateChildComponents();
+		}
+
 		private void UpdateChildComponents()
 		{
-			((BannerComponent)_bannerComponentHost.Component).HealthcareContext = _worklistItem;
-			((PriorReportComponent)_priorReportsComponentHost.Component).WorklistItem = _worklistItem;
-			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = _worklistItem;
+			((BannerComponent)_bannerComponentHost.Component).HealthcareContext = this.WorklistItem;
+			((PriorReportComponent)_priorReportsComponentHost.Component).WorklistItem = this.WorklistItem;
+			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).WorklistItem = this.WorklistItem;
 			((ProtocolEditorComponent)_protocolEditorComponentHost.Component).CanEdit = this.SaveEnabled;
-			((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).Context = new OrderDetailViewComponent.OrderContext(_worklistItem.OrderRef);
+			((ProtocollingOrderDetailViewComponent)_orderDetailViewComponentHost.Component).Context = new OrderDetailViewComponent.OrderContext(this.WorklistItem.OrderRef);
 
 			// Load notes for new current item.
 			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
 
 			// Update title
-			this.Host.Title = ProtocollingComponentDocument.GetTitle(_worklistItem);
+			this.Host.Title = ProtocollingComponentDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
 		}
@@ -664,14 +599,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private ProtocolDetail ProtocolDetail
 		{
-			get { return ((ProtocolEditorComponent) _protocolEditorComponentHost.Component).ProtocolDetail; }
+			get { return ((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProtocolDetail; }
 		}
 
 		private bool SupervisorRequred()
 		{
 			bool supervisorRequired =
 				!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
-				&& this.ProtocolDetail.Supervisor != null; 
+				&& this.ProtocolDetail.Supervisor != null;
 
 			if (supervisorRequired)
 			{

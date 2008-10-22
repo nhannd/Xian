@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ActivateIfAlreadyOpen(item))
 				return true;
 
-			// open the report editor
+			// open the protocol editor
 			ProtocollingComponentDocument protocollingComponentDocument = new ProtocollingComponentDocument(item, GetMode(item), this.Context);
 			protocollingComponentDocument.Open();
 
@@ -95,14 +95,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool CanCreateProtocol(ReportingWorklistItem item)
 		{
-			return this.Context.GetOperationEnablement("StartOrderProtocol");
+			return this.Context.GetOperationEnablement("StartProtocol");
 		}
 
 		private bool CanEditProtocol(ReportingWorklistItem item)
 		{
 			// there is no specific workflow operation for editing a previously created draft,
 			// so we enable the tool if it looks like a draft and SaveReport is enabled
-			return this.Context.GetOperationEnablement("SaveOrderProtocol") && item.ActivityStatus.Code == StepState.InProgress;
+			return this.Context.GetOperationEnablement("SaveProtocol") && item.ActivityStatus.Code == StepState.InProgress;
 		}
 	}
 }

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Protocolling
@@ -154,14 +155,30 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 			public void Execute(ProtocolAssignmentStep assignmentStep, Staff reassignToStaff)
 			{
 				assignmentStep.Discontinue();
-				if (assignmentStep.Protocol.Status != ProtocolStatus.AA)
-				{
-					assignmentStep.Protocol.Author = null;
-				}
 
-				// Replace with new step scheduled step
-				ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
-				assignmentStep.Procedure.AddProcedureStep(replacementAssignmentStep);
+				// if it's an approval step, replace the assignment step but keep the existing protocol
+				if (assignmentStep.Protocol.Status == ProtocolStatus.AA)
+				{
+					// replace the step and unclaim the protocol
+					ReplaceAssignmentStep(assignmentStep.Procedure, assignmentStep.Protocol, reassignToStaff);
+				}
+				// other wise, create a new assignment step with its own new protocol for each procedure in the old protocol
+				else
+				{
+					List<Procedure> procedures = new List<Procedure>(assignmentStep.Protocol.Procedures);
+					foreach (Procedure procedure in procedures)
+					{
+						Protocol protocol = new Protocol(procedure);
+						ReplaceAssignmentStep(procedure, protocol, reassignToStaff);
+						PersistenceScope.CurrentContext.Lock(protocol, DirtyState.New);
+					}
+				}
+			}
+
+			private void ReplaceAssignmentStep(Procedure procedure, Protocol protocol, Staff reassignToStaff)
+			{
+				ProtocolAssignmentStep replacementAssignmentStep = new ProtocolAssignmentStep(protocol);
+				procedure.AddProcedureStep(replacementAssignmentStep);
 				if (reassignToStaff != null)
 				{
 					replacementAssignmentStep.Assign(reassignToStaff);

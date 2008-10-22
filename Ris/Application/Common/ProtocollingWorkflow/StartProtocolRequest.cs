@@ -38,10 +38,10 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class StartProtocolRequest : DataContractBase
 	{
-		public StartProtocolRequest(EntityRef protocolAssignmentStepRef, List<EntityRef> linkedProtocolAssignmentStepRef, bool shouldClaim, string noteCategory)
+		public StartProtocolRequest(EntityRef protocolAssignmentStepRef, List<EntityRef> linkedProtocolAssignmentStepRefs, bool shouldClaim, string noteCategory)
 		{
 			this.ProtocolAssignmentStepRef = protocolAssignmentStepRef;
-			this.LinkedProtocolAssignmentStepRef = linkedProtocolAssignmentStepRef;
+			this.LinkedProtocolAssignmentStepRefs = linkedProtocolAssignmentStepRefs;
 			this.ShouldClaim = shouldClaim;
 			this.NoteCategory = noteCategory;
 		}
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		public EntityRef ProtocolAssignmentStepRef;
 
 		[DataMember]
-		public List<EntityRef> LinkedProtocolAssignmentStepRef;
+		public List<EntityRef> LinkedProtocolAssignmentStepRefs;
 
 		[DataMember]
 		public bool ShouldClaim;

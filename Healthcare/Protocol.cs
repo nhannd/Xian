@@ -98,13 +98,24 @@ namespace ClearCanvas.Healthcare
 			if (_procedures.Contains(procedure))
 				throw new WorkflowException("The procedure is already associated with this protocol.");
 
-			// does the procedure already have a report?
+			// does the procedure already have a non-new protocol?
 			Protocol otherProtocol = procedure.Protocol;
-			if (otherProtocol != null && !this.Equals(otherProtocol))
+			if (otherProtocol.IsNew() == false && !this.Equals(otherProtocol))
 				throw new WorkflowException("Cannot link this procedure because it already has an active protocol.");
 
 			_procedures.Add(procedure);
 			procedure.Protocol = this;
+		}
+
+		protected internal virtual bool IsNew()
+		{
+			if (_status != ProtocolStatus.PN)
+				return false;
+			if (_author != null)
+				return false;
+			if (!_codes.IsEmpty)
+				return false;
+			return true;
 		}
 	}
 }
