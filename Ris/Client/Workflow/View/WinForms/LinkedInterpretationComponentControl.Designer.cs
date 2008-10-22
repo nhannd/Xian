@@ -30,8 +30,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
 			this._worklistItemTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._okButton = new System.Windows.Forms.Button();
-			this.label1 = new System.Windows.Forms.Label();
-			this.label2 = new System.Windows.Forms.Label();
+			this._instructionsLabel = new System.Windows.Forms.Label();
+			this._heading = new System.Windows.Forms.Label();
 			this._sourceWorklistItem = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this.SuspendLayout();
 			// 
@@ -58,27 +58,27 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
-			// label1
+			// _instructionsLabel
 			// 
-			this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			this._instructionsLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)));
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(10, 117);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(324, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Check any additional procedures that should be linked to this report";
+			this._instructionsLabel.AutoSize = true;
+			this._instructionsLabel.Location = new System.Drawing.Point(10, 116);
+			this._instructionsLabel.Name = "_instructionsLabel";
+			this._instructionsLabel.Size = new System.Drawing.Size(324, 13);
+			this._instructionsLabel.TabIndex = 0;
+			this._instructionsLabel.Text = "Check any additional procedures that should be linked to this report";
 			// 
-			// label2
+			// _heading
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(10, 10);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(56, 13);
-			this.label2.TabIndex = 3;
-			this.label2.Text = "Reporting:";
+			this._heading.AutoSize = true;
+			this._heading.Location = new System.Drawing.Point(10, 9);
+			this._heading.Name = "_heading";
+			this._heading.Size = new System.Drawing.Size(56, 13);
+			this._heading.TabIndex = 3;
+			this._heading.Text = "Reporting:";
 			// 
-			// _selectedItem
+			// _sourceWorklistItem
 			// 
 			this._sourceWorklistItem.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
@@ -94,8 +94,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._sourceWorklistItem);
-			this.Controls.Add(this.label2);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this._heading);
+			this.Controls.Add(this._instructionsLabel);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._worklistItemTableView);
 			this.Name = "LinkedInterpretationComponentControl";
@@ -109,8 +109,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.TableView _worklistItemTableView;
 		private System.Windows.Forms.Button _okButton;
-        private System.Windows.Forms.Label label1;
-		private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label _instructionsLabel;
+		private System.Windows.Forms.Label _heading;
 		private ClearCanvas.Desktop.View.WinForms.TableView _sourceWorklistItem;
     }
 }

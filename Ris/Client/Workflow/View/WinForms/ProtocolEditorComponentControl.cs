@@ -52,10 +52,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_component = component;
 
-			//_procedurePlanSummary.Table = _component.ProcedurePlanSummaryTable;
-			//_procedurePlanSummary.DataBindings.Add("Selection", _component, "SelectedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
-			//_component.SelectedProcedureChanged += RefreshTables;
-
 			_urgency.DataSource = _component.UrgencyChoices;
 			_urgency.DataBindings.Add("Value", _component, "Urgency", true, DataSourceUpdateMode.OnPropertyChanged);
 			_urgency.DataBindings.Add("Enabled", _component, "CanEdit", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -93,12 +89,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			}
 		}
 
-		//private void RefreshTables(object sender, EventArgs e)
-		//{
-		//    _protocolCodesSelector.AvailableItemsTable = _component.AvailableProtocolCodesTable;
-		//    _protocolCodesSelector.SelectedItemsTable = _component.SelectedProtocolCodesTable;
-		//}
-
 		private void _btnSetDefault_Click(object sender, EventArgs e)
 		{
 			using (new CursorManager(this, Cursors.WaitCursor))
@@ -106,6 +96,5 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 				_component.SetDefaultProtocolGroup();
 			}
 		}
-
 	}
 }

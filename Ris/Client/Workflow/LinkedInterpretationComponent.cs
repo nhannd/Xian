@@ -39,90 +39,105 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="LinkedInterpretationComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class LinkedInterpretationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Extension point for views onto <see cref="LinkedInterpretationComponent"/>
+	/// </summary>
+	[ExtensionPoint]
+	public class LinkedInterpretationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    /// <summary>
-    /// LinkedInterpretationComponent class
-    /// </summary>
-    [AssociateView(typeof(LinkedInterpretationComponentViewExtensionPoint))]
-    public class LinkedInterpretationComponent : ApplicationComponent
-    {
-        private Table<Checkable<ReportingWorklistItem>> _candidateTable;
-        private readonly List<ReportingWorklistItem> _candidates;
+	/// <summary>
+	/// LinkedInterpretationComponent class
+	/// </summary>
+	[AssociateView(typeof(LinkedInterpretationComponentViewExtensionPoint))]
+	public class LinkedInterpretationComponent : ApplicationComponent
+	{
+		private Table<Checkable<ReportingWorklistItem>> _candidateTable;
+		private readonly List<ReportingWorklistItem> _candidates;
 
-        private readonly ReportingWorklistItem _sourceItem;
-        private ReportingWorklistTable _sourceTable;
+		private readonly ReportingWorklistItem _sourceItem;
+		private ReportingWorklistTable _sourceTable;
 
+		private readonly string _instructions;
+		private readonly string _heading;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public LinkedInterpretationComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems)
-        {
-            _candidates = candidateItems;
-            _sourceItem = sourceItem;
-        }
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public LinkedInterpretationComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems, string instructions, string heading)
+		{
+			_candidates = candidateItems;
+			_sourceItem = sourceItem;
+			_instructions = instructions;
+			_heading = heading;
+		}
 
-        public override void Start()
-        {
-            _candidateTable = new Table<Checkable<ReportingWorklistItem>>();
-            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, bool>(".",
-                delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; },
-                delegate(Checkable<ReportingWorklistItem> item, bool value) { item.IsChecked = value; }, 0.20f));
-            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnAccessionNumber,
-                delegate(Checkable<ReportingWorklistItem> item) { return AccessionFormat.Format(item.Item.AccessionNumber); }, 0.75f));
-            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnImagingService,
-                delegate(Checkable<ReportingWorklistItem> item) { return item.Item.DiagnosticServiceName; }, 1.0f));
-            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
-                delegate(Checkable<ReportingWorklistItem> item) { return item.Item.ProcedureName; }, 1.0f));
-            _candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnTime,
-                delegate(Checkable<ReportingWorklistItem> item) { return Format.Time(item.Item.Time); }, 0.5f));
+		public LinkedInterpretationComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems)
+			: this(sourceItem, candidateItems, SR.TextLinkReportInstructions, SR.TextLinkReportlHeading)
+		{
+		}
 
-            foreach (ReportingWorklistItem item in _candidates)
-            {
-                _candidateTable.Items.Add(new Checkable<ReportingWorklistItem>(item));
-            }
+		public override void Start()
+		{
+			_candidateTable = new Table<Checkable<ReportingWorklistItem>>();
+			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, bool>(".",
+				delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; },
+				delegate(Checkable<ReportingWorklistItem> item, bool value) { item.IsChecked = value; }, 0.20f));
+			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
+				delegate(Checkable<ReportingWorklistItem> item) { return item.Item.ProcedureName; }, 2.75f));
+			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnTime,
+				delegate(Checkable<ReportingWorklistItem> item) { return Format.Time(item.Item.Time); }, 0.5f));
 
-            _sourceTable = new ReportingWorklistTable();
-            _sourceTable.Items.Add(_sourceItem);
+			foreach (ReportingWorklistItem item in _candidates)
+			{
+				_candidateTable.Items.Add(new Checkable<ReportingWorklistItem>(item));
+			}
 
-            base.Start();
-        }
+			_sourceTable = new ReportingWorklistTable();
+			_sourceTable.Items.Add(_sourceItem);
 
-        public List<ReportingWorklistItem> SelectedItems
-        {
-            get
-            {
-                return CollectionUtils.Map<Checkable<ReportingWorklistItem>, ReportingWorklistItem>(
-                    CollectionUtils.Select(_candidateTable.Items,
-                        delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; }),
-                            delegate(Checkable<ReportingWorklistItem> checkableItem) { return checkableItem.Item; });
-            }
-        }
+			base.Start();
+		}
 
-        #region Presentation Model
+		public List<ReportingWorklistItem> SelectedItems
+		{
+			get
+			{
+				return CollectionUtils.Map<Checkable<ReportingWorklistItem>, ReportingWorklistItem>(
+					CollectionUtils.Select(_candidateTable.Items,
+						delegate(Checkable<ReportingWorklistItem> item) { return item.IsChecked; }),
+							delegate(Checkable<ReportingWorklistItem> checkableItem) { return checkableItem.Item; });
+			}
+		}
 
-        public ITable SourceTable
-        {
-            get { return _sourceTable; }
-        }
+		#region Presentation Model
 
-        public ITable CandidateTable
-        {
-            get { return _candidateTable; }
-        }
+		public ITable SourceTable
+		{
+			get { return _sourceTable; }
+		}
 
-        public void Accept()
-        {
-            this.Exit(ApplicationComponentExitCode.Accepted);
-        }
+		public ITable CandidateTable
+		{
+			get { return _candidateTable; }
+		}
 
-        #endregion
-    }
+		public string Instructions
+		{
+			get { return _instructions; }
+		}
+
+		public string Heading
+		{
+			get { return _heading; }
+		}
+
+		public void Accept()
+		{
+			this.Exit(ApplicationComponentExitCode.Accepted);
+		}
+
+		#endregion
+	}
 }

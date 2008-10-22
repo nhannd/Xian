@@ -30,44 +30,53 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
 			this.components = new System.ComponentModel.Container();
 			this._tableLayoutInner = new System.Windows.Forms.TableLayoutPanel();
+			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this._protocolCodesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
 			this._protocolGroup = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._btnSetDefault = new System.Windows.Forms.Button();
-			this._grpProcedures = new System.Windows.Forms.GroupBox();
-			this._procedurePlanSummary = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._urgency = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._author = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._tableLayoutInner.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
-			this._grpProcedures.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _tableLayoutInner
 			// 
 			this._tableLayoutInner.ColumnCount = 1;
 			this._tableLayoutInner.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutInner.Controls.Add(this._supervisor, 0, 4);
-			this._tableLayoutInner.Controls.Add(this.groupBox1, 0, 2);
-			this._tableLayoutInner.Controls.Add(this._grpProcedures, 0, 0);
-			this._tableLayoutInner.Controls.Add(this._urgency, 0, 1);
-			this._tableLayoutInner.Controls.Add(this._author, 0, 3);
+			this._tableLayoutInner.Controls.Add(this._supervisor, 0, 3);
+			this._tableLayoutInner.Controls.Add(this.groupBox1, 0, 1);
+			this._tableLayoutInner.Controls.Add(this._urgency, 0, 0);
+			this._tableLayoutInner.Controls.Add(this._author, 0, 2);
 			this._tableLayoutInner.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayoutInner.Location = new System.Drawing.Point(0, 0);
 			this._tableLayoutInner.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayoutInner.Name = "_tableLayoutInner";
-			this._tableLayoutInner.RowCount = 5;
-			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+			this._tableLayoutInner.RowCount = 4;
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableLayoutInner.Size = new System.Drawing.Size(527, 695);
 			this._tableLayoutInner.TabIndex = 3;
+			// 
+			// _supervisor
+			// 
+			this._supervisor.AutoSize = true;
+			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
+			this._supervisor.Location = new System.Drawing.Point(2, 652);
+			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+			this._supervisor.Name = "_supervisor";
+			this._supervisor.Size = new System.Drawing.Size(523, 41);
+			this._supervisor.TabIndex = 4;
+			this._supervisor.Value = null;
 			// 
 			// groupBox1
 			// 
@@ -75,10 +84,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.groupBox1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.groupBox1.Controls.Add(this.tableLayoutPanel3);
 			this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.groupBox1.Location = new System.Drawing.Point(0, 145);
+			this.groupBox1.Location = new System.Drawing.Point(0, 45);
 			this.groupBox1.Margin = new System.Windows.Forms.Padding(0);
 			this.groupBox1.Name = "groupBox1";
-			this.groupBox1.Size = new System.Drawing.Size(527, 461);
+			this.groupBox1.Size = new System.Drawing.Size(527, 561);
 			this.groupBox1.TabIndex = 2;
 			this.groupBox1.TabStop = false;
 			this.groupBox1.Text = "Codes";
@@ -99,7 +108,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel3.RowCount = 2;
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 442);
+			this.tableLayoutPanel3.Size = new System.Drawing.Size(521, 542);
 			this.tableLayoutPanel3.TabIndex = 0;
 			// 
 			// _protocolCodesSelector
@@ -115,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolCodesSelector.SelectedItemsTable = null;
 			this._protocolCodesSelector.ShowColumnHeading = false;
 			this._protocolCodesSelector.ShowToolbars = false;
-			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 391);
+			this._protocolCodesSelector.Size = new System.Drawing.Size(498, 491);
 			this._protocolCodesSelector.TabIndex = 2;
 			// 
 			// _protocolGroup
@@ -146,33 +155,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._btnSetDefault.UseVisualStyleBackColor = true;
 			this._btnSetDefault.Click += new System.EventHandler(this._btnSetDefault_Click);
 			// 
-			// _grpProcedures
-			// 
-			this._grpProcedures.AutoSize = true;
-			this._grpProcedures.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._grpProcedures.Controls.Add(this._procedurePlanSummary);
-			this._grpProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._grpProcedures.Location = new System.Drawing.Point(0, 0);
-			this._grpProcedures.Margin = new System.Windows.Forms.Padding(0);
-			this._grpProcedures.Name = "_grpProcedures";
-			this._grpProcedures.Size = new System.Drawing.Size(527, 100);
-			this._grpProcedures.TabIndex = 0;
-			this._grpProcedures.TabStop = false;
-			this._grpProcedures.Text = "Procedures";
-			// 
-			// _procedurePlanSummary
-			// 
-			this._procedurePlanSummary.AutoSize = true;
-			this._procedurePlanSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._procedurePlanSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._procedurePlanSummary.Location = new System.Drawing.Point(3, 16);
-			this._procedurePlanSummary.MultiSelect = false;
-			this._procedurePlanSummary.Name = "_procedurePlanSummary";
-			this._procedurePlanSummary.ReadOnly = false;
-			this._procedurePlanSummary.ShowToolbar = false;
-			this._procedurePlanSummary.Size = new System.Drawing.Size(521, 81);
-			this._procedurePlanSummary.TabIndex = 0;
-			// 
 			// _urgency
 			// 
 			this._urgency.AutoSize = true;
@@ -182,7 +164,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._urgency.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._urgency.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._urgency.LabelText = "Urgency";
-			this._urgency.Location = new System.Drawing.Point(2, 102);
+			this._urgency.Location = new System.Drawing.Point(2, 2);
 			this._urgency.Margin = new System.Windows.Forms.Padding(2, 2, 20, 2);
 			this._urgency.Name = "_urgency";
 			this._urgency.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
@@ -207,19 +189,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._author.ToolTip = null;
 			this._author.Value = null;
 			// 
-			// _supervisor
-			// 
-			this._supervisor.AutoSize = true;
-			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
-			this._supervisor.Location = new System.Drawing.Point(2, 652);
-			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
-			this._supervisor.Name = "_supervisor";
-			this._supervisor.Size = new System.Drawing.Size(523, 41);
-			this._supervisor.TabIndex = 4;
-			this._supervisor.Value = null;
-			// 
 			// ProtocolEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -233,8 +202,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.groupBox1.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
-			this._grpProcedures.ResumeLayout(false);
-			this._grpProcedures.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -245,8 +212,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _protocolGroup;
-        private System.Windows.Forms.GroupBox _grpProcedures;
-        private ClearCanvas.Desktop.View.WinForms.TableView _procedurePlanSummary;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutInner;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Button _btnSetDefault;

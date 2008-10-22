@@ -396,6 +396,18 @@
   <data name="TextAny" xml:space="preserve">
     <value>(Any)</value>
   </data>
+  <data name="TextLinkProtocolHeading" xml:space="preserve">
+    <value>Protocolling:</value>
+  </data>
+  <data name="TextLinkProtocolInstructions" xml:space="preserve">
+    <value>Check any additional procedures that should be linked to this protocol</value>
+  </data>
+  <data name="TextLinkReportInstructions" xml:space="preserve">
+    <value>Check any additional procedures that should be linked to this report</value>
+  </data>
+  <data name="TextLinkReportlHeading" xml:space="preserve">
+    <value>Reporting:</value>
+  </data>
   <data name="TextNotScheduled" xml:space="preserve">
     <value>Not Scheduled</value>
   </data>

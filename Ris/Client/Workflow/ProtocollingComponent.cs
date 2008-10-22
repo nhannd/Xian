@@ -529,7 +529,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				ResetChildComponents();
 
-				LinkedInterpretationComponent component = new LinkedInterpretationComponent(item, candidateItems);
+				LinkedInterpretationComponent component = new LinkedInterpretationComponent(item, candidateItems, SR.TextLinkProtocolInstructions, SR.TextLinkProtocolHeading);
 				ApplicationComponentExitCode exitCode = LaunchAsDialog(
 					this.Host.DesktopWindow, component, SR.TitleLinkProcedures);
 				if (exitCode == ApplicationComponentExitCode.Accepted)

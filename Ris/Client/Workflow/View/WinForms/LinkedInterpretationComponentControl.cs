@@ -45,13 +45,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         /// Constructor
         /// </summary>
         public LinkedInterpretationComponentControl(LinkedInterpretationComponent component)
-            :base(component)
+            : base(component)
         {
             InitializeComponent();
 
             _component = component;
             _sourceWorklistItem.Table = _component.SourceTable;
             _worklistItemTableView.Table = _component.CandidateTable;
+
+            _instructionsLabel.Text = _component.Instructions;
+            _heading.Text = _component.Heading;
         }
 
         private void _okButton_Click(object sender, EventArgs e)
