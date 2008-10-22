@@ -61,6 +61,9 @@
                         <ItemStyle HorizontalAlign="Center" />
                     </asp:TemplateField>
                 </Columns>
+                <EmptyDataTemplate>
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No services were found using the provided criteria." />
+                </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />

@@ -40,21 +40,8 @@
 						<asp:BoundField DataField="StudyStatusEnumString" HeaderText="Status" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
 					</Columns>
-					<EmptyDataTemplate>
-						<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-							CssClass="GlobalGridViewHeader">
-							<asp:TableHeaderRow>
-								<asp:TableHeaderCell HorizontalAlign="Left">Patient Name</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Patient ID</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Accession #</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Study Date</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Description</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Series</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Instances</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Modality</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Status</asp:TableHeaderCell>
-							</asp:TableHeaderRow>
-						</asp:Table>
+					<EmptyDataTemplate>				    
+                        <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" Message="No studies were found using the provided criteria." />
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

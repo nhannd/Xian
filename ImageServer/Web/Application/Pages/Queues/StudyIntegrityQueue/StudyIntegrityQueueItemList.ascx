@@ -32,17 +32,9 @@
                                 </ItemTemplate>
                         </asp:TemplateField>   
 					</Columns>
-					<EmptyDataTemplate>
-						<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-							CssClass="GlobalGridViewHeader">
-							<asp:TableHeaderRow Height="23px">
-								<asp:TableHeaderCell HorizontalAlign="Left">Study Instance UID</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Existing Study</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Conflicting Study</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Time Received</asp:TableHeaderCell>
-							</asp:TableHeaderRow>
-                        </asp:Table>							
-					</EmptyDataTemplate>
+				    <EmptyDataTemplate>
+                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />
+					</EmptyDataTemplate>					
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 					<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />

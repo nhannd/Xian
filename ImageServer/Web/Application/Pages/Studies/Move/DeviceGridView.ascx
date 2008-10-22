@@ -54,32 +54,7 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.DeviceGridV
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="4" CellSpacing="0"
-                        CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            AE Title
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            IPAddress
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Port
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Enabled
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            DHCP
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Features
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No devices were found using the provided criteria." />
                 </EmptyDataTemplate>
                         <RowStyle CssClass="GlobalGridViewRow" />
                         <HeaderStyle CssClass="GlobalGridViewHeader"/>

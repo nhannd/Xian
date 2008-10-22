@@ -21,16 +21,7 @@ Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.StudyGridVi
                     <asp:BoundField DataField="StudyDescription" HeaderText="Description"></asp:BoundField>
                                     </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>Patient Name</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Patient ID</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Accession #</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Study Date</asp:TableHeaderCell>
-                            <asp:TableHeaderCell>Description</asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No studies were found using the provided criteria." />
                 </EmptyDataTemplate>
                         <RowStyle CssClass="GlobalGridViewRow"/>
                         <HeaderStyle CssClass="GlobalGridViewHeader"/>

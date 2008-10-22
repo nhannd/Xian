@@ -34,6 +34,7 @@ using System.Web.UI.WebControls;
 using System.Collections.Generic;
 
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 
@@ -186,6 +187,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected void Page_Load(object sender, EventArgs e)
         {
 			StudyListControl.DataBind();
+
         }
         
         protected override void OnInit(EventArgs e)
@@ -205,8 +207,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             base.OnPreRender(e);
 
-			if (Studies == null)
-				return;
+            if (Studies == null)
+            {
+                return;
+            } 
 
             foreach (GridViewRow row in StudyListControl.Rows)
             {

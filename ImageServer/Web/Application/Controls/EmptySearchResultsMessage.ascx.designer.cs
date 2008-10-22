@@ -8,33 +8,33 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices {
+namespace ClearCanvas.ImageServer.Web.Application.Controls {
     
     
     /// <summary>
-    /// DeviceGridView class.
+    /// EmptySearchResultsMessage class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class DeviceGridView {
+    public partial class EmptySearchResultsMessage {
         
         /// <summary>
-        /// ContainerTable control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table ContainerTable;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// GridView1 control.
+        /// ResultsMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::System.Web.UI.WebControls.Label ResultsMessage;
     }
 }

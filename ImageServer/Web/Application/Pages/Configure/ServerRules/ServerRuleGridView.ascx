@@ -55,29 +55,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            Name
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Type
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Apply Time
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Enabled
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell >
-                            Default
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell >
-                            Exempt
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No server rules were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />

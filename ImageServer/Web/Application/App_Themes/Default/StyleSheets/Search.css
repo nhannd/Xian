@@ -83,3 +83,12 @@
     padding: 0px 2px 0px 2px;
     margin-left: 18px;
 }
+
+.EmptySearchResultsMessage
+{
+    margin: 30px 50px 0px 50px; 
+    text-align: center; 
+    padding: 5px; 
+    font-size: 16px; 
+    color: #205F87;
+}

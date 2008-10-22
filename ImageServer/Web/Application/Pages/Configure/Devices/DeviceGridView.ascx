@@ -52,32 +52,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            AE Title
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            IPAddress
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Port
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Enabled
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            DHCP
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Features
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No devices were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />

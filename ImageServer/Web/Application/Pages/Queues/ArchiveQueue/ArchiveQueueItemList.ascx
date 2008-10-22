@@ -29,15 +29,7 @@
 							ItemStyle-HorizontalAlign="Center" />
 					</Columns>
 					<EmptyDataTemplate>
-						<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-							CssClass="GlobalGridViewHeader">
-							<asp:TableHeaderRow>
-								<asp:TableHeaderCell HorizontalAlign="Left">Patient Name</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Patient ID</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Center">Scheduled Time</asp:TableHeaderCell>
-								<asp:TableHeaderCell HorizontalAlign="Left">Status</asp:TableHeaderCell>
-							</asp:TableHeaderRow>
-						</asp:Table>
+                        <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

@@ -57,29 +57,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Read
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Write
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Tier
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Path
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Disk Usage
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                   <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No file systems were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />

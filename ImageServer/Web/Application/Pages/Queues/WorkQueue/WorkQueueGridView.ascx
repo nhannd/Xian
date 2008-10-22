@@ -46,19 +46,7 @@
 						<asp:BoundField HeaderText="Notes" DataField="Notes" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left"/>
 						</Columns>
 						<EmptyDataTemplate>
-							<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-								CssClass="GlobalGridViewHeader">
-								<asp:TableHeaderRow>
-									<asp:TableHeaderCell>Patient ID</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Patient Name</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Type</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Schedule</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Priority</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Status</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Processing Server</asp:TableHeaderCell>
-									<asp:TableHeaderCell>Notes</asp:TableHeaderCell>
-								</asp:TableHeaderRow>
-							</asp:Table>
+                            <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />
 						</EmptyDataTemplate>
 						<RowStyle CssClass="GlobalGridViewRow" />
 						<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

@@ -49,35 +49,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                    <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"
-                        CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            AE Title
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Port
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Partition Folder
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Enabled
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Accept Any Device
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Duplication Object Policy
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Studies
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No server partitions were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />

@@ -45,28 +45,7 @@
                     </asp:TemplateField>
                 </Columns>
                 <EmptyDataTemplate>
-                   <asp:Table ID="Table1" runat="server" CssClass="GlobalGridViewHeader">
-                        <asp:TableHeaderRow>
-                            <asp:TableHeaderCell>
-                            Description
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Type
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Archive Delay Hours
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Enabled
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell HorizontalAlign="Center">
-                            Read Only
-                            </asp:TableHeaderCell>
-                            <asp:TableHeaderCell>
-                            Configuration XML
-                            </asp:TableHeaderCell>
-                        </asp:TableHeaderRow>
-                    </asp:Table>
+                  <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No partition archives were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
