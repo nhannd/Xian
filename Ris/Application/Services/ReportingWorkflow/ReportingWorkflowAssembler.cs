@@ -29,12 +29,8 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow.Reporting;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
@@ -58,6 +54,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
                 domainItem.ProcedureName,
+				domainItem.ProcedurePortable,
+				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
                 domainItem.ProcedureStepName,
                 domainItem.Time,
                 EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context),

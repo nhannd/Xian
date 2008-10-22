@@ -9,6 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class PriorProcedureSummary: DataContractBase
     {
+		public PriorProcedureSummary()
+		{
+		}
+
         public PriorProcedureSummary(
             EntityRef orderRef,
             EntityRef procedureRef,
@@ -16,6 +20,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             string accessionNumber,
             DiagnosticServiceSummary diagnosticService,
             ProcedureTypeSummary procedureType,
+			bool procedurePortable,
+			EnumValueInfo procedureLaterality,
             EnumValueInfo reportStatus,
             DateTime? performedDate)
         {
@@ -25,6 +31,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.AccessionNumber = accessionNumber;
             this.DiagnosticService = diagnosticService;
             this.ProcedureType = procedureType;
+        	this.ProcedurePortable = procedurePortable;
+        	this.ProcedureLaterality = procedureLaterality;
             this.ReportStatus = reportStatus;
             this.PerformedDate = performedDate;
         }
@@ -47,6 +55,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public ProcedureTypeSummary ProcedureType;
+
+		[DataMember]
+		public bool ProcedurePortable;
+
+		[DataMember]
+		public EnumValueInfo ProcedureLaterality;
 
         [DataMember]
         public EnumValueInfo ReportStatus;

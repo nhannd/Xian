@@ -139,16 +139,6 @@ var Preview = function () {
 			return String.combine(facilities, "<br>");
 		},
 		
-		formatProcedureName: function(procedureType, portable, laterality)
-		{
-			var procedureDecorator = portable ? "Portable" : null;
-			if (laterality && laterality.Code != "N")
-				procedureDecorator = procedureDecorator ? procedureDecorator + "/" + laterality.Value : laterality.Value;
-
-			procedureDecorator = procedureDecorator ? " (" + procedureDecorator + ")" : "";
-			return procedureType.Name + procedureDecorator;
-		},
-
 		filterProcedureByModality: function(procedures, modalityIdFilter)
 		{
 			var isStepInModality = function (step)
@@ -417,7 +407,7 @@ Preview.ImagingServiceTable = function () {
 			 [
 				{   label: "Procedure",
 					cellType: "text",
-					getValue: function(item) { return Preview.formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
+					getValue: function(item) { return Ris.formatProcedureName(item); }
 				},
 				{   label: "Schedule",
 					cellType: "text",
@@ -491,7 +481,7 @@ Preview.ProceduresTable = function () {
 				 [
 					{   label: "Procedure",
 						cellType: "text",
-						getValue: function(item) { return Preview.formatProcedureName(item.Type, item.Portable, item.Laterality); }
+						getValue: function(item) { return Ris.formatProcedureName(item); }
 					},
 					{   label: "Status",
 						cellType: "text",
@@ -587,7 +577,7 @@ Preview.ProtocolProceduresTable = function () {
 				 [
 					{   label: "Procedure",
 						cellType: "text",
-						getValue: function(item) { return Preview.formatProcedureName(item.Type, item.Portable, item.Laterality); }
+						getValue: function(item) { return Ris.formatProcedureName(item); }
 					},
 					{   label: "Status",
 						cellType: "text",
@@ -718,7 +708,7 @@ Preview.ReportingProceduresTable = function () {
 				 [
 					{   label: "Procedure",
 						cellType: "text",
-						getValue: function(item) { return Preview.formatProcedureName(item.Type, item.Portable, item.Laterality); }
+						getValue: function(item) { return Ris.formatProcedureName(item); }
 					},
 					{   label: "Status",
 						cellType: "text",
@@ -803,7 +793,7 @@ Preview.ReportListTable = function () {
 			[
 				{   label: "Procedure",
 					cellType: "text",
-					getValue: function(item) { return Preview.formatProcedureName(item.ProcedureType, item.ProcedurePortable, item.ProcedureLaterality); }
+					getValue: function(item) { return Ris.formatProcedureName(item); }
 				},
 				{   label: "Status",
 					cellType: "text",

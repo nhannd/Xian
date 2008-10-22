@@ -48,6 +48,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EnumValueInfo orderPriority,
             EnumValueInfo patientClass,
             string diagnosticServiceName,
+			string procedureName,
+			bool procedurePortable,
+			EnumValueInfo procedureLaterality,
             DateTime? time,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
@@ -64,7 +67,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                null,
+				procedureName,
+				procedurePortable,
+				procedureLaterality,
                 null,
                 time
             )

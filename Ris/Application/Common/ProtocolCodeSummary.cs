@@ -46,6 +46,10 @@ namespace ClearCanvas.Ris.Application.Common
         	Deactivated = deactivated;
         }
 
+		public ProtocolCodeSummary()
+		{
+		}
+
         [DataMember]
         public EntityRef ProtocolCodeRef;
 

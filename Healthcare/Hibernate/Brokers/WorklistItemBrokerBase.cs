@@ -95,6 +95,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         protected static readonly HqlSelect SelectOrderScheduledStartTime = new HqlSelect("o.ScheduledStartTime");
         protected static readonly HqlSelect SelectOrderSchedulingRequestTime = new HqlSelect("o.SchedulingRequestTime");
+		protected static readonly HqlSelect SelectProcedurePortable = new HqlSelect("rp.Portable");
+		protected static readonly HqlSelect SelectProcedureLaterality = new HqlSelect("rp.Laterality");
         protected static readonly HqlSelect SelectProcedureScheduledStartTime = new HqlSelect("rp.ScheduledStartTime");
         protected static readonly HqlSelect SelectProcedureCheckInTime = new HqlSelect("rp.ProcedureCheckIn.CheckInTime");
         protected static readonly HqlSelect SelectProcedureCheckOutTime = new HqlSelect("rp.ProcedureCheckIn.CheckOutTime");
@@ -160,6 +162,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 SelectPatientClass,
                 SelectDiagnosticServiceName,
                 SelectProcedureTypeName,
+				SelectProcedurePortable,
+				SelectProcedureLaterality,
                 SelectProcedureScheduledStartTime
              };
 
@@ -653,6 +657,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                     SelectPatientClass,
                     SelectDiagnosticServiceName,
                     SelectProcedureTypeName,
+					SelectProcedurePortable,
+					SelectProcedureLaterality,
                     selectTime
                 };
 		}

@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
@@ -55,6 +52,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
+				domainItem.ProcedureName,
+				domainItem.ProcedurePortable,
+				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
                 domainItem.Time,
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,

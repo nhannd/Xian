@@ -84,7 +84,7 @@
 							getValue: function(item) 
 							{
 								// Write values to the hidden procedure template table
-								Field.setValue($("ProcedureTypeName"), Preview.formatProcedureName(item.Type, item.Portable, item.Laterality));
+								Field.setValue($("ProcedureTypeName"), Ris.formatProcedureName(item));
 								Field.setValue($("ProcedurePerformingFacility"), item.PerformingFacility.Name);
 								Field.setValue($("ProcedureStatus"), item.Status.Value);
 								Field.setValue($("ProcedureScheduledStartTime"), Ris.formatDateTime(item.ScheduledStartTime));

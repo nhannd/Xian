@@ -29,12 +29,9 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -56,6 +53,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
                 domainItem.ProcedureName,
+				domainItem.ProcedurePortable,
+				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
                 domainItem.ProcedureStepName,
                 domainItem.Time
                 );

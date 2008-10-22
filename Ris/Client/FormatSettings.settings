@@ -50,5 +50,8 @@
     <Setting Name="AccessionNumberMask" Description="Mask applied to the '%N' placeholder in an Accession number format string" Type="System.String" Scope="Application">
       <Value Profile="(Default)">000000000 </Value>
     </Setting>
+    <Setting Name="ProcedurePortableLateralityDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%P/%L</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -34,6 +34,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -83,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                    delegate(CheckInOrderTableEntry entry, bool value) { entry.Checked = value; }, 0.30f));
             this.Columns.Add(
                 new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnProcedures,
-                    delegate(CheckInOrderTableEntry entry) { return entry.Procedure.Type.Name; }, 1.0f));
+                    delegate(CheckInOrderTableEntry entry) { return ProcedureFormat.Format(entry.Procedure); }, 1.0f));
             this.Columns.Add(
                 new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnTime,
                 delegate(CheckInOrderTableEntry entry) { return Format.Date(entry.Procedure.ScheduledStartTime); }, 0.5f));

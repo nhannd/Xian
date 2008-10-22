@@ -65,6 +65,9 @@ namespace ClearCanvas.Ris.Application.Common
             this.Performer = performer;
         }
 
+		public ProcedureStepDetail()
+		{			
+		}
 
         [DataMember]
         public EntityRef ProcedureStepRef;

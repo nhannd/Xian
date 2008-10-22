@@ -41,6 +41,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -227,7 +228,7 @@ namespace ClearCanvas.Ris.Client
 						_reportListItems, 
 						delegate (ReportListItem item)
 						{
-							return item.ProcedureType.Name;
+							return ProcedureFormat.Format(item);
 						}).ToArray());
 
 				s += " : " + _reportListItems[0].ReportStatus.Value;

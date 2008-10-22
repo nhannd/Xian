@@ -52,6 +52,8 @@ namespace ClearCanvas.Healthcare
         private readonly PatientClassEnum _patientClass;
         private readonly string _diagnosticServiceName;
         private readonly string _procedureName;
+    	private readonly bool _procedurePortable;
+    	private readonly Laterality _procedureLaterality;
         private readonly string _procedureStepName;
         private readonly DateTime? _time;
 
@@ -69,7 +71,9 @@ namespace ClearCanvas.Healthcare
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-            DateTime? time
+			bool procedurePortable,
+			Laterality procedureLaterality,
+			DateTime? time
             )
         {
             _procedureStepRef = procedureStep == null ? null : procedureStep.GetRef();
@@ -84,6 +88,8 @@ namespace ClearCanvas.Healthcare
             _patientClass = patientClass;
             _diagnosticServiceName = diagnosticServiceName;
             _procedureName = procedureName;
+        	_procedurePortable = procedurePortable;
+        	_procedureLaterality = procedureLaterality;
             _procedureStepName = procedureStep == null ? null : procedureStep.Name;
             _time = time;
         }
@@ -148,6 +154,16 @@ namespace ClearCanvas.Healthcare
         {
             get { return _procedureName; }
         }
+
+    	public bool ProcedurePortable
+    	{
+			get { return _procedurePortable; }
+    	}
+
+    	public Laterality ProcedureLaterality
+    	{
+			get { return _procedureLaterality; }
+    	}
 
         public string ProcedureStepName
         {

@@ -365,6 +365,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                         procedure.Order.AccessionNumber,
                         dsAssembler.CreateSummary(procedure.Order.DiagnosticService),
                         rptAssembler.CreateSummary(procedure.Type),
+						procedure.Portable,
+						EnumUtils.GetEnumValueInfo(procedure.Laterality, PersistenceContext),
                         EnumUtils.GetEnumValueInfo(priorReport.Status, PersistenceContext),
                         procedure.ProcedureCheckIn.CheckOutTime);
 

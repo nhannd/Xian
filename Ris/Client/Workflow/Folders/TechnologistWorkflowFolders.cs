@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		public class SearchFolder : WorklistSearchResultsFolder<ModalityWorklistItem, IModalityWorkflowService>
 		{
 			public SearchFolder()
-				: base(new ModalityWorklistTable())
+				: base(new TechnologistWorklistTable())
 			{
 			}
 

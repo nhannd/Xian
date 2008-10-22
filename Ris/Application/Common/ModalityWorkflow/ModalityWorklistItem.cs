@@ -51,6 +51,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             EnumValueInfo patientClass,
             string diagnosticServiceName,
             string procedureName,
+			bool procedurePortable,
+			EnumValueInfo procedureLaterality,
             string procedureStepName,
             DateTime? time)
             :base(
@@ -66,6 +68,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
+				procedurePortable,
+				procedureLaterality,
                 procedureStepName,
                 time
             )

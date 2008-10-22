@@ -76,6 +76,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 			null,
 			null,
 			null,
+			false,// technically this should be null, but we don't have that option because its a value type
+			Laterality.N,// technically this should be null, but we don't have that option because its a value type
 			null)
 		{
 		}
@@ -95,6 +97,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 			PatientClassEnum patientClass,
 			string diagnosticServiceName,
 			string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
 			DateTime? time)
 			: base(
 			null,
@@ -109,6 +113,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 			patientClass,
 			diagnosticServiceName,
 			procedureName,
+			procedurePortable,
+			procedureLaterality,
 			time)
 		{
 
@@ -130,6 +136,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
             DateTime? time)
             : base(
                 procedureStep,
@@ -144,6 +152,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
+				procedurePortable, 
+				procedureLaterality,
                 time
             )
         {

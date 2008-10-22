@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -54,7 +52,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             EnumValueInfo patientClass,
             string diagnosticServiceName,
             string procedureName,
-            string procedureStepName,
+			bool procedurePortable,
+			EnumValueInfo procedureLaterality,
+			string procedureStepName,
             DateTime? time,
             EnumValueInfo activityStatus,
 			int reportPartIndex)
@@ -71,6 +71,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
+				procedurePortable,
+				procedureLaterality,
                 procedureStepName,
                 time
             )

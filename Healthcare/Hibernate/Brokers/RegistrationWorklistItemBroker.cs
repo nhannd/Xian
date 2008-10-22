@@ -52,6 +52,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private static readonly HqlJoin[] WorklistItemJoins
             = {
                   JoinOrder,
+				  JoinProcedureType,
                   JoinDiagnosticService,
                   JoinVisit,
                   JoinPatient,
@@ -156,6 +157,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                       SelectPriority,
                       SelectPatientClass,
                       SelectDiagnosticServiceName,
+					  SelectProcedureTypeName,
+					  SelectProcedurePortable,
+					  SelectProcedureLaterality,
                       selectTime,
                       SelectHealthcard,
                       SelectDateOfBirth,

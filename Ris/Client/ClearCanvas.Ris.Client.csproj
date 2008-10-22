@@ -74,6 +74,7 @@
     <Compile Include="ExternalPractitionerContactPointMergeComponent.cs" />
     <Compile Include="ExternalPractitionerMergeComponent.cs" />
     <Compile Include="FolderTreeNode.cs" />
+    <Compile Include="Formatting\ProcedureFormat.cs" />
     <Compile Include="Formatting\StaffNameAndRoleFormat.cs" />
     <Compile Include="HeaderFooterSettings.cs" />
     <Compile Include="IExtensionPageProvider.cs" />

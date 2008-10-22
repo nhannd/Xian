@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Common;
@@ -79,6 +78,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             OrderPriority orderPriority,
             PatientClassEnum patientClass,
             string diagnosticServiceName,
+			string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
             DateTime? time,
             HealthcardNumber healthcardNumber,
             DateTime? dateOfBirth,
@@ -95,7 +97,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 orderPriority,
                 patientClass,
                 diagnosticServiceName,
-                null,
+				procedureName,
+				procedurePortable,
+				procedureLaterality,
                 time
             )
         {
@@ -125,7 +129,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 OrderPriority.R,    // technically this should be null, but we don't have that option because its a value type
                 null,
                 null,
-                null,
+				null,
+				false,				// technically this should be null, but we don't have that option because its a value type
+				Laterality.N,		// technically this should be null, but we don't have that option because its a value type
                 null
             )
         {
@@ -149,6 +155,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 			PatientClassEnum patientClass,
 			string diagnosticServiceName,
 			string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
 			DateTime? time)
 			: base(
 				null,
@@ -163,6 +171,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 				patientClass,
 				diagnosticServiceName,
 				procedureName,
+				procedurePortable,
+				procedureLaterality,
 				time)
 		{
 			_healthcardNumber = profile.Healthcard;

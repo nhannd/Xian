@@ -39,6 +39,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.BrowsePatientData;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -192,6 +194,46 @@ namespace ClearCanvas.Ris.Client
                     return detail == null ? "" : StaffNameAndRoleFormat.Format(detail);
                 }
             }
+
+			public string FormatProcedureName(string jsml)
+			{
+				DataContractBase item = null;
+
+				item = TryCast<ProcedureSummary>(jsml);
+				if (item != null)
+					return ProcedureFormat.Format((ProcedureSummary)item);
+
+				item = TryCast<ProcedureDetail>(jsml);
+				if (item != null)
+					return ProcedureFormat.Format((ProcedureDetail)item);
+
+				item = TryCast<OrderListItem>(jsml);
+				if (item != null)
+					return ProcedureFormat.Format((OrderListItem)item);
+
+				item = TryCast<WorklistItemSummaryBase>(jsml);
+				if (item != null)
+					return ProcedureFormat.Format((WorklistItemSummaryBase)item);
+
+				item = TryCast<PriorProcedureSummary>(jsml);
+				if (item != null)
+					return ProcedureFormat.Format((PriorProcedureSummary)item);
+
+				return null;
+			}
+
+			private static T TryCast<T>(string jsml)
+				where T : new()
+			{
+				try
+				{
+					return JsmlSerializer.Deserialize<T>(jsml);
+				}
+				catch (InvalidCastException)
+				{
+					return default(T);
+				}
+			}
 
             public string FormatTelephone(string jsml)
             {

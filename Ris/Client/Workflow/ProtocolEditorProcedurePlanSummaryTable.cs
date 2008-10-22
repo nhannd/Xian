@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -39,7 +40,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             ITableColumn sortColumn = new TableColumn<ProtocolEditorProcedurePlanSummaryTableItem, string>(
                 "Procedure Description",
-                delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return item.ProcedureDetail.Type.Name; },
+                delegate(ProtocolEditorProcedurePlanSummaryTableItem item) { return ProcedureFormat.Format(item.ProcedureDetail); },
                 0.5f);
 
             this.Columns.Add(sortColumn);

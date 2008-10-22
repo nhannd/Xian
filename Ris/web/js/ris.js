@@ -138,6 +138,11 @@ if(window.external)
 			return staffSummaryOrDetail ? window.external.FormatStaffNameAndRole(JSML.create(staffSummaryOrDetail, "Staff")) :"";
 		},
 		
+		formatProcedureName: function(procedureRelatedDataContract)
+		{
+			return procedureRelatedDataContract ? window.external.FormatProcedureName(JSML.create(procedureRelatedDataContract, "Procedure")) :"";
+		},
+
 		// formats the specified telephone object
 		formatTelephone: function(telephone)
 		{

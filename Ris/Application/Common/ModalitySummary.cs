@@ -48,6 +48,10 @@ namespace ClearCanvas.Ris.Application.Common
         	this.Deactivated = deactivated;
         }
 
+		public ModalitySummary()
+		{
+		}
+
         [DataMember]
         public EntityRef ModalityRef;
 

@@ -81,6 +81,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
             DateTime? time,
             ActivityStatus activityStatus)
             : base(
@@ -96,6 +98,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
+				procedurePortable,
+				procedureLaterality,
                 time
             )
         {
@@ -118,7 +122,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-            DateTime? scheduledStartTime,
+			bool procedurePortable,
+			Laterality procedureLaterality,
+			DateTime? scheduledStartTime,
             ActivityStatus activityStatus,
             Report report,
 			ReportPart reportPart)
@@ -135,6 +141,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
+				procedurePortable,
+				procedureLaterality,
                 scheduledStartTime
             )
         {
@@ -168,6 +176,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			null,
 			null,
 			null,
+			false,// technically this should be null, but we don't have that option because its a value type
+			Laterality.N,// technically this should be null, but we don't have that option because its a value type
 			null)
 		{
 		}
@@ -187,6 +197,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
             DateTime? time)
 			:base(
 			null,
@@ -201,6 +213,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			patientClass,
 			diagnosticServiceName,
 			procedureName,
+			procedurePortable,
+			procedureLaterality,
 			time)
         {
         	

@@ -46,6 +46,10 @@ namespace ClearCanvas.Ris.Application.Common
         	this.Deactivated = deactivated;
         }
 
+		public ProcedureTypeSummary()
+		{
+		}
+
         [DataMember]
         public EntityRef ProcedureTypeRef;
 

@@ -30,11 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
-using System.Reflection;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -54,6 +51,8 @@ namespace ClearCanvas.Ris.Application.Common
             EnumValueInfo patientClass,
             string diagnosticServiceName,
             string procedureName,
+			bool procedurePortable,
+			EnumValueInfo procedureLaterality,
             string procedureStepName,
             DateTime? time)
         {
@@ -69,9 +68,15 @@ namespace ClearCanvas.Ris.Application.Common
             this.PatientClass = patientClass;
             this.DiagnosticServiceName = diagnosticServiceName;
             this.ProcedureName = procedureName;
+        	this.ProcedurePortable = procedurePortable;
+        	this.ProcedureLaterality = procedureLaterality;
             this.ProcedureStepName = procedureStepName;
             this.Time = time;
         }
+
+		public WorklistItemSummaryBase()
+		{
+		}
 
         [DataMember]
         public EntityRef ProcedureStepRef;
@@ -109,7 +114,13 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string ProcedureName;
 
-        [DataMember]
+		[DataMember]
+		public bool ProcedurePortable;
+
+		[DataMember]
+		public EnumValueInfo ProcedureLaterality;
+
+		[DataMember]
         public string ProcedureStepName;
 
         [DataMember]

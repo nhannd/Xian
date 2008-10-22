@@ -38,17 +38,17 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class ModalityWorklistTable : Table<ModalityWorklistItem>
+    public class TechnologistWorklistTable : Table<ModalityWorklistItem>
     {
         private static readonly int NumRows = 2;
         private static readonly int DescriptionRow = 1;
 
-        public ModalityWorklistTable()
+        public TechnologistWorklistTable()
             : this(NumRows)
         {
         }
 
-        private ModalityWorklistTable(int cellRowCount)
+        private TechnologistWorklistTable(int cellRowCount)
             : base(cellRowCount)
         {
             // Visible Columns
@@ -81,10 +81,11 @@ namespace ClearCanvas.Ris.Client.Workflow
                 SR.ColumnDescription,
                 delegate(ModalityWorklistItem item)
                 {
-                    return string.Format("{0} {1} - {2}",
-                        AccessionFormat.Format(item.AccessionNumber),
-                        item.DiagnosticServiceName,
-                        item.ProcedureName);
+					// if there is no accession number, this item represents a patient only, not an order
+					if (item.AccessionNumber == null)
+						return null;
+					else
+						return string.Format("{0} {1}", AccessionFormat.Format(item.AccessionNumber), ProcedureFormat.Format(item));
                 },
                 1.0f,
                 DescriptionRow);
@@ -102,15 +103,9 @@ namespace ClearCanvas.Ris.Client.Workflow
                 0.75f);
             accessionNumberColumn.Visible = false;
 
-            TableColumn<ModalityWorklistItem, string> diagnosticServiceColumn = new TableColumn<ModalityWorklistItem, string>(
-                SR.ColumnImagingService,
-                delegate(ModalityWorklistItem item) { return item.DiagnosticServiceName; },
-                1.0f);
-            diagnosticServiceColumn.Visible = false;
-
             TableColumn<ModalityWorklistItem, string> procedureNameColumn = new TableColumn<ModalityWorklistItem, string>(
                 SR.ColumnProcedure,
-                delegate(ModalityWorklistItem item) { return item.ProcedureName; },
+				delegate(ModalityWorklistItem item) { return ProcedureFormat.Format(item); },
                 1.0f);
             procedureNameColumn.Visible = false;
 
@@ -120,7 +115,6 @@ namespace ClearCanvas.Ris.Client.Workflow
             this.Columns.Add(nameColumn);
             this.Columns.Add(patientClassColumn);
             this.Columns.Add(accessionNumberColumn);
-            this.Columns.Add(diagnosticServiceColumn);
             this.Columns.Add(procedureNameColumn);
             this.Columns.Add(scheduledForColumn);
             this.Columns.Add(descriptionRow);

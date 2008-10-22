@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public abstract class TechnologistWorkflowFolder : WorklistFolder<ModalityWorklistItem, IModalityWorkflowService>
     {
 		public TechnologistWorkflowFolder()
-            : base(new ModalityWorklistTable())
+            : base(new TechnologistWorklistTable())
         {
         }
     }
