@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMatchScale", "Activate")]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMatchScale", "Activate")]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardMatchScaleTool/Activate", "Activate", KeyStroke = XKeys.F)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardMatchScaleTool/Activate", "Activate", KeyStroke = XKeys.M)]
 	[IconSet("activate", IconScheme.Colour, "Icons.MatchScaleToolSmall.png", "Icons.MatchScaleToolMedium.png", "Icons.MatchScaleToolLarge.png")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
