@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -49,38 +50,90 @@ namespace ClearCanvas.Enterprise.Core
 
         public void EqualTo(TEntity entity)
         {
-            this.IdentityCondition.EqualTo(entity);
+            this.OID.EqualTo(entity.OID);
         }
 
         public void NotEqualTo(TEntity entity)
         {
-            this.IdentityCondition.NotEqualTo(entity);
+            this.OID.NotEqualTo(entity.OID);
         }
 
         public void In(IEnumerable<TEntity> entities)
         {
-            this.IdentityCondition.In(entities);
+            this.OID.In(
+				CollectionUtils.Map<TEntity, object>(entities,
+					delegate (TEntity item) { return item.OID; }));
         }
 
         public void IsNull()
         {
-            this.IdentityCondition.IsNull();
+            this.OID.IsNull();
         }
 
         public void IsNotNull()
         {
-            this.IdentityCondition.IsNotNull();
+            this.OID.IsNotNull();
         }
 
-        private ISearchCondition<TEntity> IdentityCondition
+		/// <summary>
+		/// Specifies that the condition variable be less than the specified value.
+		/// </summary>
+		public void LessThan(TEntity entity)
+		{
+			this.OID.LessThan(entity.OID);
+		}
+
+		/// <summary>
+		/// Specifies that the condition variable be less than or equal to the specified value.
+		/// </summary>
+		public void LessThanOrEqualTo(TEntity entity)
+		{
+			this.OID.LessThanOrEqualTo(entity.OID);
+		}
+
+    	/// <summary>
+		/// Specifies that the condition variable be more than the specified value.
+		/// </summary>
+		public void MoreThan(TEntity entity)
+    	{
+			this.OID.MoreThan(entity.OID);
+		}
+
+    	/// <summary>
+		/// Specifies that the condition variable be more than or equal to the specified value.
+		/// </summary>
+		public void MoreThanOrEqualTo(TEntity entity)
+    	{
+			this.OID.MoreThanOrEqualTo(entity.OID);
+		}
+
+		/// <summary>
+		/// Specifies that the condition variable be used to sort the results in ascending order.
+		/// </summary>
+		/// <param name="position">Specifies the priority of this sort constraint relative to other sort constraints</param>
+		public void SortAsc(int position)
+		{
+	    	this.OID.SortAsc(position);
+		}
+
+		/// <summary>
+		/// Specifies that the condition variable be used to sort the results in descending order.
+		/// </summary>
+		/// <param name="position">Specifies the priority of this sort constraint relative to other sort constraints</param>
+		public void SortDesc(int position)
+		{
+			this.OID.SortDesc(position);
+		}
+
+    	public ISearchCondition<object> OID
         {
             get
             {
                 if (!this.SubCriteria.ContainsKey("OID"))
                 {
-                    this.SubCriteria["OID"] = new SearchCondition<TEntity>("OID");
+					this.SubCriteria["OID"] = new SearchCondition<object>("OID");
                 }
-                return (ISearchCondition<TEntity>) this.SubCriteria["OID"];
+				return (ISearchCondition<object>)this.SubCriteria["OID"];
             }
         }
    }
