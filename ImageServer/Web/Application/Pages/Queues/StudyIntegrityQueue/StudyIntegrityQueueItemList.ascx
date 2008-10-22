@@ -27,10 +27,10 @@
                             </itemtemplate>
 						</asp:TemplateField>
 			            <asp:TemplateField HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
-							<itemtemplate>
-                                <ccUI:DateTimeLabel ID="TimeReceived" runat="server"></ccUI:DateTimeLabel>
-                            </itemtemplate>
-						</asp:TemplateField>
+                                <ItemTemplate>
+                                    <ccUI:DateTimeLabel ID="TimeReceived" runat="server" Value='<%# Eval("ReceivedTime") %>' ></ccUI:DateTimeLabel>
+                                </ItemTemplate>
+                        </asp:TemplateField>   
 					</Columns>
 					<EmptyDataTemplate>
 						<asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0"

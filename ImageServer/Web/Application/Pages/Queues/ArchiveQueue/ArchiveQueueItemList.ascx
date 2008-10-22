@@ -20,8 +20,11 @@
 						</asp:TemplateField>
 						<asp:BoundField DataField="PatientId" HeaderText="Patient ID" HeaderStyle-HorizontalAlign="Left">
 						</asp:BoundField>
-						<asp:BoundField DataField="ScheduledDateTime" HeaderText="Scheduled Time" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
-						</asp:BoundField>
+						<asp:TemplateField HeaderText="Scheduled Time" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
+							<itemtemplate>
+                                <ccUI:DateTimeLabel ID="ScheduledDateTime" Value='<%# Eval("ScheduledDateTime") %>' runat="server"></ccUI:DateTimeLabel>
+                            </itemtemplate>
+						</asp:TemplateField>
 						<asp:BoundField DataField="StatusString" HeaderText="Status" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
 					</Columns>
