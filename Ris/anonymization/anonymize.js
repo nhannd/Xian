@@ -30,9 +30,9 @@ function main()
 	// init Healthcare model
 	initModel();
 	
-	//anonymizePatients("D:\\junk\\patients.txt", true);
+	anonymizePatients("D:\\junk\\patients.txt", true);
 	//anonymizeStaff("D:\\junk\\staff.txt", true);
-	anonymizePractitioner("D:\\junk\\practitioners.txt", true);	
+	//anonymizePractitioner("D:\\junk\\practitioners.txt", true);	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ function anonymizePatients(outputFile, dryRun)
 				return processPatient(item);
 			},
 			outputFileName: outputFile,
-			dryRun: true
+			dryRun: dryRun
 		}
 	);
 }
