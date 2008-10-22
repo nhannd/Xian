@@ -163,9 +163,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDate, dicomStudyDate));
             }
 
-
-            if (StudyTimeAmPm.SelectedValue.Equals("PM") || (StudyTimeAmPm.SelectedValue.Equals("AM") && StudyTimeHours.Text.Equals("12"))) StudyTimeHours.Text = (Int16.Parse(StudyTimeHours.Text) + 12).ToString();
-            string dicomStudyTime = StudyTimeHours.Text.PadLeft(2, '0') + StudyTimeMinutes.Text.PadLeft(2, '0') + StudyTimeSeconds.Text.PadLeft(2, '0');
+            int hh = StudyTimeAmPm.SelectedValue=="AM"? int.Parse(StudyTimeHours.Text)%12: 12+(int.Parse(StudyTimeHours.Text)%12) ;
+            int mm = int.Parse(StudyTimeMinutes.Text);
+            int ss = int.Parse(StudyTimeSeconds.Text);
+            String dicomStudyTime = String.Format("{0:00}{1:00}{2:00}", hh, mm, ss);
+            
             if(!study.StudyTime.Equals(dicomStudyTime))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyTime, dicomStudyTime));
