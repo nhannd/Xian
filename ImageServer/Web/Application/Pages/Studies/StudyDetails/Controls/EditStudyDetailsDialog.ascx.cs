@@ -3,6 +3,7 @@ using System.Web.UI.WebControls;
 using System.Xml;
 using AjaxControlToolkit;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -241,45 +242,58 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             StudyID.Text = study.StudyId;
             AccessionNumber.Text = study.AccessionNumber;
 
-            dicomName = study.ReferringPhysiciansName;
-            splitDicomName = dicomName.Split('^');
-
             if (!string.IsNullOrEmpty(study.StudyDate))
             {
-                DateTime studyDate = DateTime.ParseExact(study.StudyDate, DicomConstants.DicomDate, null);
-                StudyDate.Text = studyDate.ToString(DateTimeFormatter.DefaultDateFormat);
+                DateTime? studyDate = DateParser.Parse(study.StudyDate);
+                if (studyDate!=null)
+                {
+                    StudyDate.Text = studyDate.Value.ToString(DateTimeFormatter.DefaultDateFormat);
+                }
+                else
+                {
+                    StudyDate.Text = String.Empty;
+                }
             } else
             {
-                StudyDate.Text = string.Empty;
+                StudyDate.Text = String.Empty;
             }
 
-            if (!string.IsNullOrEmpty(study.StudyTime) && study.StudyTime.Length == 6)
+            if (!string.IsNullOrEmpty(study.StudyTime))
             {
-                StudyTimeHours.Text = study.StudyTime.Substring(0, 2);
-                StudyTimeMinutes.Text = study.StudyTime.Substring(2, 2);
-                StudyTimeSeconds.Text = study.StudyTime.Substring(4, 2);
+                DateTime? studyTime = TimeParser.Parse(study.StudyTime);
+                if (studyTime!=null)
+                {
+                    if (studyTime.Value.Hour == 0)
+                        StudyTimeHours.Text = "12";
+                    else
+                        StudyTimeHours.Text =
+                            String.Format("{0:00}",studyTime.Value.Hour <= 12 ? studyTime.Value.Hour : studyTime.Value.Hour - 12);
 
-                int hours = int.Parse(StudyTimeHours.Text);
 
-                if(hours > 12)
-                {
-                    hours -= 12;
-                    StudyTimeAmPm.SelectedIndex = 1;
-                    StudyTimeHours.Text = hours.ToString();
-                } else if(hours == 12)
-                {
-                    StudyTimeAmPm.SelectedIndex = 1;
-                } else
-                {
-                    StudyTimeAmPm.SelectedIndex = 0;
+                    StudyTimeMinutes.Text = String.Format("{0:00}", studyTime.Value.Minute);
+                    StudyTimeSeconds.Text = String.Format("{0:00}", studyTime.Value.Second);
+
+                    if (studyTime.Value.Hour < 12)
+                        StudyTimeAmPm.SelectedValue = "AM";
+                    else
+                        StudyTimeAmPm.SelectedValue = "PM";
                 }
+                else
+                {
+                    // The time is invalid, display it in the boxes
+                    StudyTimeHours.Text = "";
+                    StudyTimeMinutes.Text = "";
+                    StudyTimeSeconds.Text = "";
+                    StudyTimeAmPm.SelectedValue = "AM";
+                }
+
             }
             else
             {
                 StudyTimeHours.Text = "12";
                 StudyTimeMinutes.Text = "00";
                 StudyTimeSeconds.Text = "00";
-                StudyTimeAmPm.SelectedIndex = 0;
+                StudyTimeAmPm.SelectedValue = "AM";
             }
 
             PersonName patientName = new PersonName(_study.PatientsName);
