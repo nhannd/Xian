@@ -211,22 +211,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             if (!string.IsNullOrEmpty(study.PatientsBirthDate))
             {
-                DateTime birthDate = DateTime.ParseExact(study.PatientsBirthDate, DicomConstants.DicomDate, null);
+                DateTime? birthDate = DateParser.Parse(study.PatientsBirthDate);
+                if (birthDate!=null)
+                {
+                    PatientBirthDate.Text = birthDate.Value.ToString(DateTimeFormatter.DefaultDateFormat);
 
-                PatientBirthDate.Text = birthDate.ToString(DateTimeFormatter.DefaultDateFormat);
-
-                TimeSpan age = DateTime.Now - birthDate;
-                if (age > TimeSpan.FromDays(365))
-                {
-                    PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
-                }
-                else if (age > TimeSpan.FromDays(30))
-                {
-                    PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
-                }
-                else
-                {
-                    PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
+                    TimeSpan age = DateTime.Now - birthDate.Value;
+                    if (age > TimeSpan.FromDays(365))
+                    {
+                        PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
+                    }
+                    else if (age > TimeSpan.FromDays(30))
+                    {
+                        PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
+                    }
+                    else
+                    {
+                        PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
+                    }
                 }
             }
             else
