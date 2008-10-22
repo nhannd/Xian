@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// Note that at the current time only one cadidate is returned at a time.
 		/// </remarks>
 		/// <returns>A restore candidate.  null will be returned if no candidates exist.</returns>
-		public RestoreQueue GetRestoreCandidate()
+		public virtual RestoreQueue GetRestoreCandidate()
 		{
 			RestoreQueue queueItem;
 
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 
 				parms.PartitionArchiveKey = _partitionArchive.GetKey();
 				parms.ProcessorId = ServiceTools.ProcessorId;
-
+				parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Pending;
 				IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
 
 				// Stored procedure only returns 1 result.

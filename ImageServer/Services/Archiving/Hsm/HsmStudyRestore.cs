@@ -116,18 +116,18 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				// Also store the "StudyFolder" for use below
 				string studyFolder = String.Empty;
 				string filename = String.Empty;
+				string studyInstanceUid = String.Empty;
 				XmlElement element = _archiveStudyStorage.ArchiveXml.DocumentElement;
 				foreach (XmlElement node in element.ChildNodes)
 					if (node.Name.Equals("StudyFolder"))
 						studyFolder = node.InnerText;
 					else if (node.Name.Equals("Filename"))
 						filename = node.InnerText;
+					else if (node.Name.Equals("Uid"))
+						studyInstanceUid = node.InnerText;
 
 				string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
-				if (_location == null)
-					zipFile = Path.Combine(zipFile, _studyStorage.StudyInstanceUid);
-				else
-					zipFile = Path.Combine(zipFile, _location.StudyInstanceUid);
+				zipFile = Path.Combine(zipFile, studyInstanceUid);
 				zipFile = Path.Combine(zipFile, filename);
 
 
@@ -141,8 +141,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				}
 				catch (Exception)
 				{
-					// Just reschedule, the file is unreadable.
-					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending,
+					// Just reschedule in "Restoring" state, the file is unreadable.
+					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
 					                               Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds));
 					return;
 				}

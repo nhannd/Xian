@@ -734,6 +734,10 @@ INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup]
      VALUES (newid(),103,'Failed','Failed','The Queue entry has failed.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[RestoreQueueStatusEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),104,'Restoring','Restoring','The Queue entry is waiting for the study to be restored by the archive.')
+GO
+
 
 -- ArchiveTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[ArchiveTypeEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])

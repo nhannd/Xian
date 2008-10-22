@@ -49,5 +49,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm {
                 return ((int)(this["ReadFailRescheduleDelaySeconds"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("20")]
+        public int MaxSimultaneousRestores {
+            get {
+                return ((int)(this["MaxSimultaneousRestores"]));
+            }
+        }
     }
 }

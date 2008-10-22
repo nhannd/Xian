@@ -52,7 +52,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
 
       #region Public Static Properties
       /// <summary>
-      /// Purge Data from a Filesystem
+      /// Check watermark and schedule studies for tier migration, deletion, or purging if necessary
       /// </summary>
       public static ServiceLockTypeEnum FilesystemDelete
       {

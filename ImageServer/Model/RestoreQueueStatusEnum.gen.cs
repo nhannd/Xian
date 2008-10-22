@@ -47,6 +47,7 @@ public partial class RestoreQueueStatusEnum : ServerEnum
       private static readonly RestoreQueueStatusEnum _InProgress = GetEnum("In Progress");
       private static readonly RestoreQueueStatusEnum _Completed = GetEnum("Completed");
       private static readonly RestoreQueueStatusEnum _Failed = GetEnum("Failed");
+      private static readonly RestoreQueueStatusEnum _Restoring = GetEnum("Restoring");
       #endregion
 
       #region Public Static Properties
@@ -77,6 +78,13 @@ public partial class RestoreQueueStatusEnum : ServerEnum
       public static RestoreQueueStatusEnum Failed
       {
           get { return _Failed; }
+      }
+      /// <summary>
+      /// The Queue entry is waiting for the study to be restored by the archive.
+      /// </summary>
+      public static RestoreQueueStatusEnum Restoring
+      {
+          get { return _Restoring; }
       }
 
       #endregion

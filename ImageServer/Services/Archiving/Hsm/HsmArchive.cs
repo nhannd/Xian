@@ -31,7 +31,12 @@
 
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
@@ -93,6 +98,55 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		public override ArchiveTypeEnum ArchiveType
 		{
 			get { return ArchiveTypeEnum.HsmArchive; }
+		}
+
+		public override RestoreQueue GetRestoreCandidate()
+		{
+			RestoreQueue queueItem;
+
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				QueryRestoreQueueParameters parms = new QueryRestoreQueueParameters();
+
+				parms.PartitionArchiveKey = _partitionArchive.GetKey();
+				parms.ProcessorId = ServiceTools.ProcessorId;
+				parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Restoring;
+				IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
+
+				// Stored procedure only returns 1 result.
+				queueItem = broker.FindOne(parms);
+
+	
+
+				if (queueItem != null)
+					updateContext.Commit();
+			}
+			if (queueItem == null)
+			{
+				using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					RestoreQueueSelectCriteria criteria = new RestoreQueueSelectCriteria();
+					criteria.RestoreQueueStatusEnum.EqualTo(RestoreQueueStatusEnum.Restoring);
+					IRestoreQueueEntityBroker restoreQueueBroker = updateContext.GetBroker<IRestoreQueueEntityBroker>();
+
+					if (restoreQueueBroker.Count(criteria) > HsmSettings.Default.MaxSimultaneousRestores)
+						return null;
+
+					QueryRestoreQueueParameters parms = new QueryRestoreQueueParameters();
+
+					parms.PartitionArchiveKey = _partitionArchive.GetKey();
+					parms.ProcessorId = ServiceTools.ProcessorId;
+					parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Pending;
+					IQueryRestoreQueue broker = updateContext.GetBroker<IQueryRestoreQueue>();
+
+					parms.RestoreQueueStatusEnum = RestoreQueueStatusEnum.Pending;
+					queueItem = broker.FindOne(parms);
+
+					if (queueItem != null)
+						updateContext.Commit();
+				}
+			}
+			return queueItem;
 		}
 
 		/// <summary>

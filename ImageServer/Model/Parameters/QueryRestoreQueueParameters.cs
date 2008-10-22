@@ -49,5 +49,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 		{
 			set { SubCriteria["ProcessorId"] = new ProcedureParameter<string>("ProcessorId", value); }
 		}
+
+		public RestoreQueueStatusEnum RestoreQueueStatusEnum
+		{
+			set { SubCriteria["RestoreQueueStatusEnum"] = new ProcedureParameter<ServerEnum>("RestoreQueueStatusEnum", value);}
+		}
 	}
 }

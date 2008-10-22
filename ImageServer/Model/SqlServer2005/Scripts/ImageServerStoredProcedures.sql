@@ -2628,6 +2628,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryRestoreQueue] 
 	@PartitionArchiveGUID uniqueidentifier,
+	@RestoreQueueStatusEnum smallint,
 	@ProcessorID varchar(256)
 AS
 BEGIN
@@ -2645,10 +2646,8 @@ BEGIN
 
 	declare @StudyStorageGUID uniqueidentifier
 	declare @RestoreQueueGUID uniqueidentifier
-	declare @PendingStatusEnum as int
 	declare @InProgressStatusEnum as int
 
-	select @PendingStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''Pending''
 	select @InProgressStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''In Progress''
 	
 	SELECT TOP (1) @StudyStorageGUID = RestoreQueue.StudyStorageGUID,
@@ -2661,7 +2660,7 @@ BEGIN
 	WHERE
 		ScheduledTime < getdate() 
 		AND ArchiveStudyStorage.PartitionArchiveGUID = @PartitionArchiveGUID
-		AND RestoreQueue.RestoreQueueStatusEnum = @PendingStatusEnum
+		AND RestoreQueue.RestoreQueueStatusEnum = @RestoreQueueStatusEnum
 	ORDER BY RestoreQueue.ScheduledTime
 
 	-- We have a record, now do the updates

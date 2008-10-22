@@ -149,6 +149,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				XmlElement filenameElement = _archiveXml.CreateElement("Filename");
 				hsmArchiveElement.AppendChild(filenameElement);
 				filenameElement.InnerText = filename;
+				XmlElement studyInstanceUidElement = _archiveXml.CreateElement("Uid");
+				hsmArchiveElement.AppendChild(studyInstanceUidElement);
+				studyInstanceUidElement.InnerText = _storageLocation.StudyInstanceUid;
 				
 
 				// Create the Zip file
