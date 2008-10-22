@@ -61,9 +61,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                                         "document.getElementById('" + PatientAge.ClientID +
                                                         "').value=''; return false;";
 
-            ChangeStudyInstanceUIDButton.OnClientClick = "document.getElementById('" + StudyInstanceUID.ClientID +
-                                                        "').value='" + DicomUid.GenerateUid().UID + "'; return false;";
-
             Page.ClientScript.RegisterStartupScript(GetType(), "changeAge", @"function changeAge() {" +
                                                                             "var today=new Date();" +
                                                                             "var birthDate=new Date(document.getElementById('" + PatientBirthDate.ClientID + "').value);" +
@@ -127,11 +124,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 				|| !study.StudyDescription.Equals((StudyDescription.Text)))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyDescription, StudyDescription.Text));
-            }
-
-            if(!study.StudyInstanceUid.Equals((StudyInstanceUID.Text)))
-            {
-                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.StudyInstanceUID, StudyInstanceUID.Text));
             }
 
 			if (String.IsNullOrEmpty(study.StudyId)
@@ -241,8 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             
             // Study Information
 
-            StudyDescription.Text = study.StudyDescription;
-            StudyInstanceUID.Text = study.StudyInstanceUid;
+            StudyDescription.Text = study.StudyDescription;            
             StudyID.Text = study.StudyId;
             AccessionNumber.Text = study.AccessionNumber;
 

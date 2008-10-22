@@ -179,10 +179,6 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 </td>
                                 </tr>
                                 <tr>
-                                <td class="DialogLabelBackground"><asp:Label ID="Label5" runat="server" Text="Study Instance UID" CssClass="DialogTextBoxLabel"/></td>
-                                <td><ccUI:TextBox ID="StudyInstanceUID" runat="server" CssClass="DialogTextBox"  Width="325" ReadOnly="true"/><asp:LinkButton ID="ChangeStudyInstanceUIDButton" Text="Change" runat="server" CssClass="DialogLinkButton" /></td>
-                                </tr>
-                                <tr>
                                 <td class="DialogLabelBackground"><asp:Label ID="Label11" runat="server" Text="Study Date/Time" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
