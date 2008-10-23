@@ -48,8 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
     [MenuAction("apply", "folderexplorer-items-contextmenu/Complete Downtime Recovery...", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Complete Downtime Recovery...", "Apply")]
-	//TODO: need icon
-	//[IconSet("apply", IconScheme.Colour, "PerformingOpenDocumentationSmall.png", "PerformingOpenDocumentationMedium.png", "PerformingOpenDocumentationLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "VerifyReportSmall.png", "VerifyReportMedium.png", "VerifyReportLarge.png")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
