@@ -71,3 +71,19 @@
 	color: #3a74ae;
 	font-weight: bold;
 }
+
+.AddPartitionMessage
+{
+    background: white;
+    text-align: center;
+    color: #205F87;
+    font-size: 16px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.AddPartitionLink
+{
+    color: Red;
+    font-size: 16px;
+}

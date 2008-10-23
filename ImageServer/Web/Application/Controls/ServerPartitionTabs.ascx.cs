@@ -86,6 +86,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         public void SetupLoadPartitionTabs(GetTabPanel tabDelegate)
         {
+            if(ServerPartitionList == null || ServerPartitionList.Count == 0)
+            {
+                return;
+            }
+            
             int n = 0;
 
             this.PartitionTabContainer.Tabs.Clear();
@@ -123,14 +128,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     tabPanel.Controls.Add(updatePanel);
                 }
 
-               
-
                 // Add the tab into the tabstrip
                 PartitionTabContainer.Tabs.Add(tabPanel);
             }
 
             if (ServerPartitionList != null && ServerPartitionList.Count > 0)
+            {
                 PartitionTabContainer.ActiveTabIndex = 1;
+            }
             else
             {
                 PartitionTabContainer.ActiveTabIndex = -1;
