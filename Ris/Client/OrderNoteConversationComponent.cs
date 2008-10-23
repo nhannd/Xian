@@ -330,7 +330,7 @@ namespace ClearCanvas.Ris.Client
 							return checkable.IsChecked;
 						});
 
-					bool notPosting = _notes.HasUnacknowledgedNotes() && string.IsNullOrEmpty(_body);
+					bool notPosting = string.IsNullOrEmpty(_body);
 
 					return new ValidationResult(atLeastOneRecipient || notPosting, SR.MessageNoRecipientsSelected);
 				}));
@@ -532,7 +532,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				return _notes.HasUnacknowledgedNotes()
 					? string.IsNullOrEmpty(_body) ? "Acknowledge" : "Acknowledge and Post"
-					: "Post";
+					: string.IsNullOrEmpty(_body) && _notes.Items.Count != 0 ? "OK" : "Post";
 			}
 		}
 
@@ -540,9 +540,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				if (!this.HasExistingNotes && _recipients.Items.Count != 0)
+				if (!this.HasExistingNotes)
 					return !string.IsNullOrEmpty(_body);
-				else if (this.HasExistingNotes && _recipients.Items.Count != 0)
+				else if (this.HasExistingNotes)
 					return !_notes.HasUncheckedUnacknowledgedNotes();
 				else
 					return false;
