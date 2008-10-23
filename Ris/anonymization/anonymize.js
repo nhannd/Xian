@@ -171,6 +171,7 @@ function processVisit(visit)
 function processOrder(order)
 {
 	LogInfo("Processing order " + order.AccessionNumber);
+	order.PlacerNumber = null;	// placer # not needed
 	order.AccessionNumber = accessionSequence.next();
 	order.Notes.Clear();	// remove all order notes since they may contain sensitive information
 }
@@ -185,7 +186,7 @@ function processReport(report, substitutions)
 				var s = part.ExtendedProperties["ReportContent"];
 				for(var k in substitutions)
 				{
-					s.replace(k, substitutions[k]);
+					s = s.replace(k, substitutions[k]);
 				}
 				
 				part.ExtendedProperties["ReportContent"] = s;
