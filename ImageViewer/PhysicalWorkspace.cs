@@ -427,10 +427,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
 
 			this.ImageBoxes.Clear();
-
-			_rows = workspaceMemento.Rows;
-			_columns = workspaceMemento.Columns;
-
+			
 			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
 			{
 				object imageBoxMemento = workspaceMemento.ImageBoxMementos[i];
@@ -440,6 +437,10 @@ namespace ClearCanvas.ImageViewer
 				this.ImageBoxes.Add(imageBox);
 			}
 
+			_rows = workspaceMemento.Rows;
+			_columns = workspaceMemento.Columns;
+
+			SetImageBoxGrid();
 			OnLayoutCompleted();
 
 			Draw();
