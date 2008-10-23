@@ -123,8 +123,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				columns.ExpirationTime = DateTime.Now.AddMinutes(1);
 				columns.FailureCount = 0;
 
-				WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-				workqueueAdaptor.Add(ctx, columns);
+                IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
+                workQueueBroker.Insert(columns);
 
 				ctx.Commit();
 
@@ -171,20 +171,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool EditStudy(Study study, XmlDocument modifiedFields)
         {
+            Platform.Log(LogLevel.Info, "editing study");
+				
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
+                Platform.Log(LogLevel.Info, "loading storage");
 				StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
 
+                Platform.Log(LogLevel.Info, "Editing study");
+				
 				LockStudyParameters lockParms = new LockStudyParameters();
 				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
 				lockParms.StudyStorageKey = storage.Key;
 
-				ILockStudy broker = ctx.GetBroker<ILockStudy>();
+			    ILockStudy broker = ctx.GetBroker<ILockStudy>();
 				broker.Execute(lockParms);
+                Platform.Log(LogLevel.Info, "study edit");
 				if (!lockParms.Successful)
 					return false;
 
-				WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+				IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
 				WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
 				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
 				columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
@@ -197,7 +203,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				columns.FailureCount = 0;
 				columns.Data = modifiedFields;
 
-				workqueueAdaptor.Add(columns);
+                workQueueBroker.Insert(columns);
 				ctx.Commit();
 				return true;
 			}
