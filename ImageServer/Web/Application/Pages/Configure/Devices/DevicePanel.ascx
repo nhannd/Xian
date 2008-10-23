@@ -74,6 +74,7 @@
             <b></b></b></b>
     </div>
         
-        <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
     </ContentTemplate>
 </asp:UpdatePanel>
+
+        <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />

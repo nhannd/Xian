@@ -53,7 +53,8 @@
   </tr>
   
   </table>
-    
-            <ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="Move Confirmation" />
+   
     </ContentTemplate>
 </asp:UpdatePanel>
+
+<ccAsp:MessageBox ID="MoveConfirmation" runat="server" Title="Move Confirmation" />
