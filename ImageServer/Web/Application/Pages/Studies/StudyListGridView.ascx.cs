@@ -222,17 +222,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 					{
 						row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
 						row.Attributes.Add("serverae", study.ThePartition.AeTitle);
-						if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled)
-						    || study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.PurgeScheduled)
-							|| study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled)
-							|| study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled))
-							row.Attributes.Add("deleted", "true");
-						if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-							row.Attributes.Add("nearline", "true");
-						if (study.CanRestore)
-							row.Attributes.Add("canrestore", "true");
-						if (study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled))
-                            row.Attributes.Add("reconcileScheduled", "true");
+
+					    StudyController controller = new StudyController();
+                        if (controller.CanScheduleDelete(study))
+							row.Attributes.Add("candelete", "true");
+
+                        if (controller.CanScheduleMove(study))
+                            row.Attributes.Add("canmove", "true");
+
+                        if (controller.CanScheduleRestore(study))
+                            row.Attributes.Add("canrestore", "true");
 					}
                 }
             }

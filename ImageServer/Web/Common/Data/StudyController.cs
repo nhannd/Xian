@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -368,6 +370,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
+        public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyStorageLocation storage)
+        {
+            Platform.CheckForNullReference(storage, "storage");
+
+            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                IStudyIntegrityQueueEntityBroker integrityQueueBroker = ctx.GetBroker<IStudyIntegrityQueueEntityBroker>();
+                StudyIntegrityQueueSelectCriteria parms = new StudyIntegrityQueueSelectCriteria();
+
+                parms.ServerPartitionKey.EqualTo(storage.ServerPartitionKey);
+                parms.StudyStorageKey.EqualTo(storage.GetKey());
+
+                return integrityQueueBroker.Find(parms);
+            }
+        }
+
 
         public bool UpdateStudyState(StudyStorage studyStorage)
         {
@@ -386,6 +404,53 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return false;
+        }
+
+        public bool CanScheduleDelete(StudySummary study)
+        {
+            return !study.IsLocked && !study.IsReconcileRequired;
+        }
+
+        public bool CanScheduleEdit(StudySummary study)
+        {
+            if (study.IsLocked || study.IsProcessing)
+                return false;
+
+            if (study.IsNearline)
+            {
+                Platform.CheckTrue(study.IsArchived, "study.IsArchived");
+
+                ArchiveStudyStorage archiveStorage = CollectionUtils.FirstElement(GetArchiveStudyStorage(study.TheStudy));
+                StudyStorageLocation studyStorage = CollectionUtils.FirstElement(GetStudyStorageLocation(study.TheStudy));
+
+                if (archiveStorage != null && studyStorage != null)
+                {
+                    if (archiveStorage.ServerTransferSyntax.Lossless &&
+                        TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
+                    {
+                        // archive is lossless but current copy is lossy. can't edit until the lossless is restored.
+                        return false; 
+                    }
+                        
+                }
+            }
+
+            return true;
+        }
+
+        public bool CanScheduleMove(StudySummary study)
+        {
+            return !study.IsLocked && !study.IsReconcileRequired;
+        }
+
+        public bool CanScheduleRestore(StudySummary study)
+        {
+            return study.IsArchived && !study.IsLocked && !study.IsReconcileRequired;
+        }
+
+        public bool CanScheduleReconcile(StudySummary study)
+        {
+            return !study.IsLocked && !study.IsReconcileRequired;
         }
         #endregion
     }

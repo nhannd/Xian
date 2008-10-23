@@ -250,19 +250,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				DataBind();
 			} 
         }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-
-			UpdateUI();
-			base.OnPreRender(e);
-        }
-
-        protected void UpdateUI()
-        {
-            UpdateToolbarButtonState();
-            
-        }
         
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
@@ -314,49 +301,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				RestoreMessageBox.Show();
 			}
 		}
-
-        protected void UpdateToolbarButtonState()
-        {
-            IList<StudySummary> studies = StudyListGridView.SelectedStudies;
-            if (studies != null)
-            {
-				RestoreStudyButton.Enabled = true;
-				foreach (StudySummary study in studies)
-				{
-					if (!study.CanRestore)
-					{
-						RestoreStudyButton.Enabled = false;
-						break;
-					}
-				}
-
-
-            	ViewStudyDetailsButton.Enabled = true;
-				DeleteStudyButton.Enabled = true;
-                MoveStudyButton.Enabled = true;
-                foreach (StudySummary study in studies)
-                {
-					if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline) || 
-                        study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileRequired))
-					{
-						DeleteStudyButton.Enabled = false;
-						MoveStudyButton.Enabled = false;
-					}
-                    else if (_controller.IsScheduledForDelete(study.TheStudy))
-                    {
-                        DeleteStudyButton.Enabled = false;
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                ViewStudyDetailsButton.Enabled = false;
-                MoveStudyButton.Enabled = false;
-                DeleteStudyButton.Enabled = false;
-            	RestoreStudyButton.Enabled = false;
-            }
-        }
 
         #endregion Protected Methods
     }

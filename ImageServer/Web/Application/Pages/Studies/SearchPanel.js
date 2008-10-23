@@ -125,29 +125,24 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             //"serverae" is a custom attribute injected by the study list control
             return row.getAttribute('serverae');
         },
+                
         
-        _studyIsDeleted : function(row)
+        _canRestoreStudy:function(row)
         {
-            //"deleted" is a custom attribute injected by the study list control
-            return row.getAttribute('deleted')=='true';
-        },
-        
-        _studyCanRestore : function(row)
-        {
-            //"nearline" is a custom attribute injected by the study list control
+            //"canrestore" is a custom attribute injected by the study list control
             return row.getAttribute('canrestore')=='true';
         },
         
-        _studyIsNearline : function(row)
+         _canDeleteStudy:function(row)
         {
-            //"nearline" is a custom attribute injected by the study list control
-            return row.getAttribute('nearline')=='true';
+            //"candelete" is a custom attribute injected by the study list control
+            return row.getAttribute('candelete')=='true';
         },
         
-        _studyIsReconcileScheduled : function(row)
+        _canMoveStudy:function(row)
         {
-            //"reconcileScheduled" is a custom attribute injected by the study list control
-            return row.getAttribute('reconcileScheduled')=='true';
+            //"canmove" is a custom attribute injected by the study list control
+            return row.getAttribute('canmove')=='true';
         },
         
         _openSelectedStudies : function()
@@ -210,47 +205,48 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         {
             var studylist = $find(this._StudyListClientID);
                       
+            this._enableDeleteButton(false);
+            this._enableOpenStudyButton(false);
+            this._enableSendStudyButton(false);
+            this._enableRestoreButton(false);
+                
             if (studylist!=null )
             {
                 var rows = studylist.getSelectedRowElements();
-                if (rows.length>0)
+                
+                if (rows!=null && rows.length>0)
                 {
+		            var selectedStudyCount = rows.length; 
+                    var canMoveCount=0;   
+		            var canDeleteCount=0; 
+		            var canRestoreCount = 0;                  
+                    if (rows.length>0)
+                    {
+					    for(i=0; i<rows.length; i++)
+                        {
+                            if (this._canMoveStudy(rows[i]))
+                            {
+                                canMoveCount++;
+                            }
+                            if (this._canDeleteStudy(rows[i]))
+                            {
+                                canDeleteCount++;
+                            }
+                            if (this._canRestoreStudy(rows[i]))
+                            {
+                                canRestoreCount++;
+                            }
+                        }
+                    }
+                    // always enabled open button when a row is selected
                     this._enableOpenStudyButton(true);
-					this._enableRestoreButton(true);                    
-                    for(i=0; i<rows.length; i++)
-                    {
-                        if (!this._studyCanRestore(rows[i])) 
-                        {
-                            this._enableRestoreButton(false);   
-                        }
-                    }
-
-                    for(i=0; i<rows.length; i++)
-                    {
-                        if (this._studyIsDeleted(rows[i]) || this._studyIsNearline(rows[i]) || this._studyIsReconcileScheduled(rows[i]))
-                        {
-                            this._enableDeleteButton(false);
-                            this._enableSendStudyButton(false);
-                            return;
-                        }
-                    }
-                    this._enableDeleteButton(true);
-                    this._enableSendStudyButton(true);
+    				
+                    this._enableDeleteButton(canDeleteCount==selectedStudyCount);
+                    this._enableSendStudyButton(canMoveCount==selectedStudyCount);
+                    this._enableRestoreButton(canRestoreCount==selectedStudyCount);
+                    
                 }
-                else
-                {
-                    this._enableDeleteButton(false);
-                    this._enableOpenStudyButton(false);
-                    this._enableSendStudyButton(false);
-                    this._enableRestoreButton(false);
-                }
-            }
-            else
-            {
-                this._enableDeleteButton(false);
-                this._enableOpenStudyButton(false);
-                this._enableSendStudyButton(false);
-                this._enableRestoreButton(false);
+                
             }
         },
         

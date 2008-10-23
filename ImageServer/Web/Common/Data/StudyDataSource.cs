@@ -58,9 +58,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private StudyStatusEnum _studyStatusEnum;
 		private string _modalitiesInStudy;
 		private Study _theStudy;
+	    private bool _isReconcileRequired;
 		private ServerPartition _thePartition;
+	    private bool _isProcessing;
 		private QueueStudyStateEnum _queueStudyStateEnum;
 		private ArchiveStudyStorage _theArchiveLocation;
+	    private bool _isLocked;
 
 		#endregion Private members
 
@@ -160,20 +163,44 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _theArchiveLocation = value; }
 		}
 
-		public bool CanRestore
-		{
-			get
-			{
-				if (StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-					return true;
-				
-				if (_theArchiveLocation != null)
-					return true;
-			
-				return false;
-			}
-		}
-		#endregion Public Properties
+	    public bool IsArchived
+	    {
+	        get
+	        {
+	            return _theArchiveLocation != null;
+	        }
+	    }
+
+	    public bool IsLocked
+	    {
+	        get
+	        {
+                return _isLocked;
+	        }
+            set
+            {
+                _isLocked = value;
+            }
+	    }
+
+	    public bool IsProcessing
+	    {
+	        get { return _isProcessing; }
+	        set { _isProcessing = value; }
+	    }
+
+	    public bool IsReconcileRequired
+	    {
+	        get { return _isReconcileRequired; }
+	        set { _isReconcileRequired = value; }
+	    }
+
+	    public bool IsNearline
+	    {
+            get { return _studyStatusEnum == Model.StudyStatusEnum.Nearline; }
+	    }
+
+	    #endregion Public Properties
 	}
 
 	/// <summary>
@@ -312,8 +339,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			_list = new List<StudySummary>();
 
+		    StudySummaryAssembler assembler = new StudySummaryAssembler();
+
 			foreach (Study study in studyList)
-				_list.Add(CreateStudySummary(study));
+                _list.Add(assembler.CreateStudySummary(study));
 
 			if (StudyFoundSet != null)
 				StudyFoundSet(_list);
@@ -333,38 +362,67 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		}
 		#endregion
 
-		/// <summary>
-		/// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.
-		/// </summary>
-		/// <param name="study"></param>
-		/// <returns></returns>
-		/// <remark>
-		/// 
-		/// </remark>
-		private StudySummary CreateStudySummary(Study study)
-		{
-			StudySummary summary = new StudySummary();
-			StudyController controller = new StudyController();
-
-			summary.Key = study.GetKey();
-			summary.AccessionNumber = study.AccessionNumber;
-			summary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
-			summary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
-			summary.PatientId = study.PatientId;
-			summary.PatientsName = study.PatientsName;
-			summary.StudyDate = study.StudyDate;
-			summary.StudyDescription = study.StudyDescription;
-			summary.StudyStatusEnum = study.StudyStatusEnum;
-			summary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
-			summary.TheStudy = study;
-			summary.ThePartition = Partition;
-			summary.QueueStudyStateEnum = study.QueueStudyStateEnum;
-
-			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
-			if (archiveList.Count > 0)
-				summary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
-			
-			return summary;
-		}
 	}
+
+    public class StudySummaryAssembler
+    {
+
+        /// <summary>
+        /// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.
+        /// </summary>
+        /// <param name="study"></param>
+        /// <returns></returns>
+        /// <remark>
+        /// 
+        /// </remark>
+        public StudySummary CreateStudySummary(Study study)
+        {
+            StudySummary studySummary = new StudySummary();
+            StudyController controller = new StudyController();
+
+            studySummary.Key = study.GetKey();
+            studySummary.AccessionNumber = study.AccessionNumber;
+            studySummary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
+            studySummary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
+            studySummary.PatientId = study.PatientId;
+            studySummary.PatientsName = study.PatientsName;
+            studySummary.StudyDate = study.StudyDate;
+            studySummary.StudyDescription = study.StudyDescription;
+            studySummary.StudyStatusEnum = study.StudyStatusEnum;
+            studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
+            studySummary.TheStudy = study;
+            studySummary.ThePartition = ServerPartition.Load(study.ServerPartitionKey);
+            studySummary.QueueStudyStateEnum = study.QueueStudyStateEnum;
+
+            IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
+            if (archiveList.Count > 0)
+                studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
+
+            IList<StudyStorageLocation> locations = controller.GetStudyStorageLocation(study);
+
+            studySummary.IsProcessing = locations != null && locations.Count>0 && locations[0].Lock;
+
+            // the study is considered "locked" if it's being processed or some action which requires the lock has been scheduled
+            // No additional action should be allowed on the study until everything is completed.
+            studySummary.IsLocked = studySummary.IsProcessing || (study.QueueStudyStateEnum != Model.QueueStudyStateEnum.Idle);
+            
+            if (locations!=null)
+            {
+                foreach (StudyStorageLocation loc in locations)
+                {
+                    IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(loc);
+
+                    if (integrityQueueItems != null && integrityQueueItems.Count > 0)
+                    {
+                        studySummary.IsReconcileRequired = true;
+                        break;
+                    }
+
+                }
+
+            }
+            
+            return studySummary;
+        }
+    }
 }
