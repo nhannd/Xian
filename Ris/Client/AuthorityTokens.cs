@@ -12,8 +12,6 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public static class Development
 		{
-			[AuthorityToken(Description = "Allow the homepage to be closed and re-opened.")]
-			public const string RestartHomepage = "Development/Restart Homepage";
 		}
 
 	}

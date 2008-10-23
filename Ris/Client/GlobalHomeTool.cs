@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client
 			base.Initialize();
 
 			// automatically launch home page on startup, only if current user is a Staff
-			if (LoginSession.Current.IsStaff)
+			if (LoginSession.Current.IsStaff && HomePageSettings.Default.ShowHomepageOnStartUp)
 			{
 				Launch();
 			}
@@ -57,12 +57,12 @@ namespace ClearCanvas.Ris.Client
 
 		protected override bool IsUserClosableWorkspace
 		{
-			get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.RestartHomepage); }
+			get { return !HomePageSettings.Default.PreventHomepageFromClosing; }
 		}
 
 		public bool Visible
 		{
-			get { return LoginSession.Current.IsStaff && this.HasFolderSystems && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Development.RestartHomepage); }
+			get { return LoginSession.Current.IsStaff; }
 		}
 
 		public event EventHandler VisibleChanged

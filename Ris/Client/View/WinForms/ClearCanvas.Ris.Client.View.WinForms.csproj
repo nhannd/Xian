@@ -159,6 +159,13 @@
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointSummaryComponentView.cs" />
+    <Compile Include="HomepageConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HomepageConfigurationComponentControl.Designer.cs">
+      <DependentUpon>HomepageConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="HomepageConfigurationComponentView.cs" />
     <Compile Include="MergeComponentBaseControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -599,6 +606,10 @@
     <EmbeddedResource Include="DiagnosticServiceSummaryComponentControl.resx">
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HomepageConfigurationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>HomepageConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Splash.png" />
     <EmbeddedResource Include="SR.resx">
