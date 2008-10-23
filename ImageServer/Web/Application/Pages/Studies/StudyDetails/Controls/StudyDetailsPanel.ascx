@@ -3,6 +3,7 @@
 
 <%@ Register Src="PatientSummaryPanel.ascx" TagName="PatientSummaryPanel" TagPrefix="localAsp" %>
 <%@ Register Src="StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
+<%@ Register Src="StudyStateAlertPanel.ascx" TagName="StudyStateAlertPanel" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
     <ContentTemplate>
@@ -17,7 +18,7 @@
                 <td class="PatientInfo" colspan="2">
                     <table width="100%" cellpadding="0" cellspacing="0" class="PatientSummaryTable">
                         <tr><td>
-                            <asp:Panel CssClass="StudyDetailsMessage" runat="server" ID="MessagePanel" ><asp:Label ID="ConfirmationMessage" runat="Server" Text="" /></asp:Panel>
+                            <localAsp:StudyStateAlertPanel runat="server" ID="StudyStateAlertPanel" />
                         </td></tr>
                         <tr>
                             <td>

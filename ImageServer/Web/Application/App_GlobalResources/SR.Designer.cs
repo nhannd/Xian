@@ -556,6 +556,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This study is being processed..
+        /// </summary>
+        internal static string StudyBeingProcessed {
+            get {
+                return ResourceManager.GetString("StudyBeingProcessed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This study is not online..
+        /// </summary>
+        internal static string StudyIsNearline {
+            get {
+                return ResourceManager.GetString("StudyIsNearline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This study needs to be reconciled..
+        /// </summary>
+        internal static string StudyRequiresReconcilie {
+            get {
+                return ResourceManager.GetString("StudyRequiresReconcilie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This study has been scheduled for deletion..
         /// </summary>
         internal static string StudyScheduledForDeletion {

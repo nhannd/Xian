@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private Unit _width;
 
-        private IList<Study> _studies = new List<Model.Study>();
+        private IList<StudySummary> _studies = new List<StudySummary>();
 
         #endregion Private members
 
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// <summary>
         /// Sets or gets the list of studies whose information are displayed
         /// </summary>
-        public IList<Study> Studies
+        public IList<StudySummary> Studies
         {
             get { return _studies; }
             set { _studies = value; }

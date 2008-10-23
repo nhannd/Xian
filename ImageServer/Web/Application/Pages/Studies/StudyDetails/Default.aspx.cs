@@ -136,10 +136,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 			{
 			    StudyNotFoundException exception = new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");		        
 			    ExceptionHandler.ThrowException(exception);
-			} 
-                
+			}
 
-            StudyDetailsPanel.Study = _study;
+            StudyDetailsPanel.Study = StudySummaryAssembler.CreateStudySummary(study);
             StudyDetailsPanel.DataBind();
         }
 

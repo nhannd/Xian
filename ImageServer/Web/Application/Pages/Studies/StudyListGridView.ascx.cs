@@ -223,14 +223,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 						row.Attributes.Add("instanceuid", study.TheStudy.StudyInstanceUid);
 						row.Attributes.Add("serverae", study.ThePartition.AeTitle);
 
-					    StudyController controller = new StudyController();
-                        if (controller.CanScheduleDelete(study))
+					    string reason;
+					    if (study.CanScheduleDelete(out reason))
 							row.Attributes.Add("candelete", "true");
 
-                        if (controller.CanScheduleMove(study))
+                        if (study.CanScheduleMove(out reason))
                             row.Attributes.Add("canmove", "true");
 
-                        if (controller.CanScheduleRestore(study))
+                        if (study.CanScheduleRestore(out reason))
                             row.Attributes.Add("canrestore", "true");
 					}
                 }

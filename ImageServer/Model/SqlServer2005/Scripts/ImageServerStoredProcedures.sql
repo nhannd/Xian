@@ -201,9 +201,9 @@ BEGIN
 		ELSE
 		BEGIN
 			UPDATE StudyStorage
-			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
+			SET	QueueStudyStateEnum = @QueueStudyStateEnum,
 				LastAccessedTime = getdate()
-			WHERE GUID = @StudyStorageGUID AND @QueueStudyStateEnum = @IdleQueueStudyStateEnum
+			WHERE GUID = @StudyStorageGUID AND QueueStudyStateEnum = @IdleQueueStudyStateEnum
 
 			IF (@@ROWCOUNT=0)
 				SET @Successful=0

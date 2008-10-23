@@ -30,11 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Web.UI;
-using AjaxControlToolkit;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
@@ -48,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     public partial class StudyDetailsPanel : UserControl
     {
         #region Private Members
-        private Study _study;
+        private StudySummary _study;
         private Default _enclosingPage;
         #endregion Private Members
 
@@ -57,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// <summary>
         /// Sets or gets the displayed study
         /// </summary>
-        public Study Study
+        public StudySummary Study
         {
             get { return _study; }
             set { _study = value; }
@@ -84,13 +80,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             // setup the data for the child controls
             if (Study != null)
             {
-                ServerPartitionDataAdapter adaptor = new ServerPartitionDataAdapter();
-                ServerPartition partition = adaptor.Get(Study.ServerPartitionKey);
+                PatientSummaryPanel.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(Study.TheStudy);
 
-                PatientSummaryPanel.PatientSummary = PatientSummaryAssembler.CreatePatientSummary(Study);
-          
-                StudyDetailsTabs.Partition = partition;
-                StudyDetailsTabs.Study = Study;                
+                StudyDetailsTabs.Partition = Study.ThePartition;
+                StudyDetailsTabs.Study = Study;
+                StudyStateAlertPanel.Study = Study;
             } 
             
             base.DataBind();
@@ -108,65 +102,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (Study!=null)
             {
-                StudyController controller = new StudyController();
-            	StudyStorage storage = controller.GetStudyStorage(Study);
-            	bool deleteEnabled = true;
-            	String deleteToolTip = String.Empty;
-            	bool editEnabled = true;
-				String editToolTip = String.Empty;
-            	bool lossyCompressed = false;
-				if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-				{
-					deleteEnabled = false;
-					editEnabled = false;
-					editToolTip = "The study is nearline";
-					deleteToolTip = "The study is nearline";
-				}
-				else if (!storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
-				{
-					deleteEnabled = false;
-					editEnabled = false;
-					editToolTip = storage.QueueStudyStateEnum.Description;
-					deleteToolTip = storage.QueueStudyStateEnum.Description;
-				}
-				else if (!storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-				{
-					ArchiveStudyStorage archiveStorage = CollectionUtils.FirstElement(controller.GetArchiveStudyStorage(Study));
-					StudyStorageLocation studyStorage = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(Study));
+                string reason;
+                DeleteStudyButton.Enabled = Study.CanScheduleDelete(out reason);
+                if (!DeleteStudyButton.Enabled)
+                    DeleteStudyButton.ToolTip = reason;
 
-					if (archiveStorage != null && studyStorage != null)
-					{
-						if (archiveStorage.ServerTransferSyntax.Lossless &&
-							TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
-						{
-							lossyCompressed = true;
-							editToolTip = "The study is lossy compressed";
-						}
-					}
-				}
-            	DeleteStudyButton.Enabled = deleteEnabled && !storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline);
-				if (!DeleteStudyButton.Enabled)
-					DeleteStudyButton.ToolTip = deleteToolTip;
-				EditStudyButton.Enabled = editEnabled && !lossyCompressed && !storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline);
-				if (!EditStudyButton.Enabled)
-					EditStudyButton.ToolTip = editToolTip;
-				
-                if (storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled))
-                {
-                    ShowAlert(App_GlobalResources.SR.StudyScheduledForDeletion);
-                }
-                else if (storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled))
-                {
-                    ShowAlert(App_GlobalResources.SR.StudyScheduledForEdit);
-                }
-                else if(storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileRequired))
-                {
-                    ShowAlert(App_GlobalResources.SR.StudyScheduledForReconcile);
-                }
-                else
-                {
-                    MessagePanel.Visible = false;
-                }
+                EditStudyButton.Enabled = Study.CanScheduleEdit(out reason);
+                if (!EditStudyButton.Enabled)
+                    EditStudyButton.ToolTip = reason;
+
             }
            
         }
@@ -175,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             ConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
             ConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
-            ConfirmDialog.Data = Study;
+            ConfirmDialog.Data = Study.TheStudy;
 
             ConfirmDialog.Show();
         }
@@ -198,9 +142,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 DeleteStudyButton.Enabled = false;
                 EditStudyButton.Enabled = false;
-
-                ShowAlert(App_GlobalResources.SR.StudyScheduledForDeletion);
-                
             }
             else
             {
@@ -208,14 +149,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             } 
         }
-
-        private void ShowAlert(string message)
-        {
-            MessagePanel.Visible = true;
-            ConfirmationMessage.Text = message;
-            UpdatePanel1.Update();
-        }
-        
         #endregion Private Methods
     }
 }

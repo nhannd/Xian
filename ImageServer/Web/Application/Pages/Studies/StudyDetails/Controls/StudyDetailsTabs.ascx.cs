@@ -33,6 +33,7 @@ using System;
 using System.Web.UI;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Scripts.StudyDetailsTabs.js", "application/x-javascript")]
 
@@ -45,8 +46,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     {
 
         #region Private Members
-        
-        private Study _study;
+
+        private StudySummary _study;
         private ServerPartition _partition;
         
         #endregion Private Members
@@ -77,7 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// <summary>
         /// Sets or gets the displayed study
         /// </summary>
-        public Study Study
+        public StudySummary Study
         {
             get { return _study; }
             set { _study = value; }
@@ -118,10 +119,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 SeriesGridView.Partition = Partition;
                 SeriesGridView.Study = Study;
 
-                WorkQueueGridView.Study = Study;
-                FSQueueGridView.Study = Study;
-                StudyStorageView.Study = Study;
-                ArchivePanel.Study = Study;
+                WorkQueueGridView.Study = Study.TheStudy;
+                FSQueueGridView.Study = Study.TheStudy;
+                StudyStorageView.Study = Study.TheStudy;
+                ArchivePanel.Study = Study.TheStudy;
             }
 
             base.DataBind();

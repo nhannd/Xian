@@ -47,22 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteStudyButton;
         
         /// <summary>
-        /// MessagePanel control.
+        /// StudyStateAlertPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel MessagePanel;
-        
-        /// <summary>
-        /// ConfirmationMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConfirmationMessage;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyStateAlertPanel StudyStateAlertPanel;
         
         /// <summary>
         /// PatientSummaryPanel control.

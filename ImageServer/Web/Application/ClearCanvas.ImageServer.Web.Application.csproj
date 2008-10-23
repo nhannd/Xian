@@ -586,8 +586,6 @@
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\PatientSummary.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\PatientSummaryAssembler.cs" />
-    <Compile Include="Pages\Studies\StudyDetails\Code\StudyDetails.cs" />
-    <Compile Include="Pages\Studies\StudyDetails\Code\StudyDetailsAssembler.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx.cs">
       <DependentUpon>ArchivePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -643,6 +641,13 @@
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyDetailsView.ascx.designer.cs">
       <DependentUpon>StudyDetailsView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyStateAlertPanel.ascx.cs">
+      <DependentUpon>StudyStateAlertPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\StudyStateAlertPanel.ascx.designer.cs">
+      <DependentUpon>StudyStateAlertPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx.cs">
       <DependentUpon>StudyStorageView.ascx</DependentUpon>
@@ -1003,6 +1008,7 @@
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyDetailsPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyDetailsTabs.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyDetailsView.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\StudyStateAlertPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyStorageView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\WorkQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Default.aspx" />

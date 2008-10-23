@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         #region Private members
 
         private ServerPartition _serverPartition = null;
-        private Study _study = null;
+        private StudySummary _study = null;
         private IList<Series> _series;
         #endregion Private members
 
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// <summary>
         /// Gets or sets the list of series to be displayed
         /// </summary>
-        public Study Study
+        public StudySummary Study
         {
             get { return _study; }
             set { _study = value; }
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
                 SeriesSelectCriteria criteria = new SeriesSelectCriteria();
-                criteria.StudyKey.EqualTo(Study.GetKey());
+                criteria.StudyKey.EqualTo(Study.TheStudy.GetKey());
                 criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 
                 Series = seriesAdaptor.Get(criteria);

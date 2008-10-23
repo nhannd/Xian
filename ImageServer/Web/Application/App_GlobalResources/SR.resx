@@ -345,4 +345,13 @@
   <data name="StudyScheduledForReconcile" xml:space="preserve">
     <value>This study has been scheduled for reconciliation.</value>
   </data>
+  <data name="StudyBeingProcessed" xml:space="preserve">
+    <value>This study is being processed.</value>
+  </data>
+  <data name="StudyIsNearline" xml:space="preserve">
+    <value>This study is not online.</value>
+  </data>
+  <data name="StudyRequiresReconcilie" xml:space="preserve">
+    <value>This study needs to be reconciled.</value>
+  </data>
 </root>

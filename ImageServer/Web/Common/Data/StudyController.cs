@@ -107,11 +107,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				LockStudyParameters lockParms = new LockStudyParameters();
 				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.WebDeleteScheduled;
 				lockParms.StudyStorageKey = storage.Key;
-
 				ILockStudy broker = ctx.GetBroker<ILockStudy>();
 				broker.Execute(lockParms);
 				if (!lockParms.Successful)
-					return false;
+				{
+				    return false;
+				}
 				
 				WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
 				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
@@ -391,51 +392,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			return studyStorageAdaptor.GetFirst(criteria);
 		}
 
-		public bool CanScheduleDelete(StudySummary study)
-		{
-			return !study.IsLocked && !study.IsReconcileRequired;
-		}
-
-		public bool CanScheduleEdit(StudySummary study)
-		{
-			if (study.IsLocked || study.IsProcessing)
-				return false;
-
-			if (study.IsNearline)
-			{
-				Platform.CheckTrue(study.IsArchived, "study.IsArchived");
-
-				StudyStorageLocation studyStorage = CollectionUtils.FirstElement(GetStudyStorageLocation(study.TheStudy));
-
-				if (study.TheArchiveLocation != null && studyStorage != null)
-				{
-					if (study.TheArchiveLocation.ServerTransferSyntax.Lossless &&
-						TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
-					{
-						// archive is lossless but current copy is lossy. can't edit until the lossless is restored.
-						return false;
-					}
-
-				}
-			}
-
-			return true;
-		}
-
-		public bool CanScheduleMove(StudySummary study)
-		{
-			return !study.IsLocked && !study.IsReconcileRequired;
-		}
-
-		public bool CanScheduleRestore(StudySummary study)
-		{
-			return study.IsArchived && !study.IsLocked && !study.IsReconcileRequired;
-		}
-
-		public bool CanScheduleReconcile(StudySummary study)
-		{
-			return !study.IsLocked && !study.IsReconcileRequired;
-		}
         #endregion
     }
 }

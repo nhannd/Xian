@@ -31,7 +31,9 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -52,6 +54,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private string _patientName;
 		private string _studyDate;
 		private string _accessionNumber;
+	    private string _studyInstanceUid;
 		private string _studyDescription;
 		private int _numberOfRelatedSeries;
 		private int _numberOfRelatedInstances;
@@ -64,9 +67,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private QueueStudyStateEnum _queueStudyStateEnum;
 		private ArchiveStudyStorage _theArchiveLocation;
 	    private bool _isLocked;
-		private StudyStorage _theStudyStorage;
+		private StudyStorageLocation _theStudyStorageLocation;
+	    private string _referringPhysiciansName;
+	    private string _studyTime;
+	    private string _studyId;
 
-		#endregion Private members
+	    #endregion Private members
+
 
 		#region Public Properties
 
@@ -100,19 +107,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _accessionNumber = value; }
 		}
 
+
+
 		public string StudyDescription
 		{
 			get { return _studyDescription; }
 			set { _studyDescription = value; }
 		}
 
-		public int NumberOfRelatedSeries
+		public int NumberOfStudyRelatedSeries
 		{
 			get { return _numberOfRelatedSeries; }
 			set { _numberOfRelatedSeries = value; }
 		}
 
-		public int NumberOfRelatedInstances
+		public int NumberOfStudyRelatedInstances
 		{
 			get { return _numberOfRelatedInstances; }
 			set { _numberOfRelatedInstances = value; }
@@ -152,6 +161,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _theStudy; }
 			set { _theStudy = value; }
 		}
+
 		public ServerPartition ThePartition
 		{
 			get { return _thePartition; }
@@ -164,11 +174,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _theArchiveLocation = value; }
 		}
 
-		public StudyStorage TheStudyStorage
-		{
-			get { return _theStudyStorage; }
-			set { _theStudyStorage = value; }
-		}
 	    public bool IsArchived
 	    {
 	        get
@@ -206,7 +211,149 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             get { return _studyStatusEnum == Model.StudyStatusEnum.Nearline; }
 	    }
 
+	    public string StudyInstanceUid
+	    {
+	        get { return _studyInstanceUid; }
+	        set { _studyInstanceUid = value; }
+	    }
+
+	    public string ReferringPhysiciansName
+	    {
+	        get { return _referringPhysiciansName; }
+	        set { _referringPhysiciansName = value; }
+	    }
+
+	    public string StudyTime
+	    {
+	        get { return _studyTime; }
+	        set { _studyTime = value; }
+	    }
+
+	    public string StudyId
+	    {
+            get { return _studyId; }
+            set { _studyId = value;}
+	    }
+
+	    public StudyStorageLocation TheStorageLocation
+	    {
+            get { return _theStudyStorageLocation; }
+            set { _theStudyStorageLocation = value; }
+	    }
+
 	    #endregion Public Properties
+
+
+
+        public bool CanScheduleDelete(out string reason)
+        {
+            if (IsLocked)
+            {
+                reason = "Study is being locked";
+                return false;
+            }
+            else if (IsReconcileRequired)
+            {
+                reason = "There are images to be reconciled for this study";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+        }
+
+        public bool CanScheduleEdit(out string reason)
+        {
+            if (IsLocked || IsProcessing)
+            {
+                reason = "Study is being locked or processed";
+                return false;
+            }
+
+
+            if (IsNearline)
+            {
+                Platform.CheckTrue(IsArchived, "study.IsArchived");
+
+                if (_theArchiveLocation != null && _theStudyStorageLocation != null)
+                {
+
+                    if (_theArchiveLocation.ServerTransferSyntax.Lossless &&
+                        TransferSyntax.GetTransferSyntax(_theStudyStorageLocation.TransferSyntaxUid).LossyCompressed)
+                    {
+                        // archive is lossless but current copy is lossy. can't edit until the lossless is restored.
+                        reason = "Study was received as lossless but compressed lossy";
+                        return false;
+                    }
+
+                }
+            }
+
+            if (IsReconcileRequired)
+            {
+                reason = "There are images to be reconciled for this study";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+        }
+
+        public bool CanScheduleMove(out string reason)
+        {
+            if (IsLocked)
+            {
+                reason = "Study is being locked";
+                return false;
+            }
+            else if (IsReconcileRequired)
+            {
+                reason = "There are images to be reconciled for this study";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+        }
+
+        public bool CanScheduleRestore(out string reason)
+        {
+            if (!IsArchived)
+            {
+                reason = "Study has not been archived.";
+                return false;
+            }
+            else if (IsLocked)
+            {
+                reason = "Study is being locked";
+                return false;
+            }
+            else if (IsReconcileRequired)
+            {
+                reason = "There are images to be reconciled for this study";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+        }
+
+        public bool CanScheduleReconcile(out string reason)
+        {
+            if (IsLocked)
+            {
+                reason = "Study is being locked";
+                return false;
+            }
+            else if (IsReconcileRequired)
+            {
+                reason = "There are images to be reconciled for this study";
+                return false;
+            }
+
+            reason = String.Empty;
+            return true;
+        }
 	}
 
 	/// <summary>
@@ -345,10 +492,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			_list = new List<StudySummary>();
 
-		    StudySummaryAssembler assembler = new StudySummaryAssembler();
-
+		    
 			foreach (Study study in studyList)
-                _list.Add(assembler.CreateStudySummary(study));
+                _list.Add(StudySummaryAssembler.CreateStudySummary(study));
 
 			if (StudyFoundSet != null)
 				StudyFoundSet(_list);
@@ -366,6 +512,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			return ResultCount;
 		}
+
+
 		#endregion
 
 	}
@@ -381,38 +529,43 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <remark>
         /// 
         /// </remark>
-        public StudySummary CreateStudySummary(Study study)
+        static public StudySummary CreateStudySummary(Study study)
         {
             StudySummary studySummary = new StudySummary();
             StudyController controller = new StudyController();
 
             studySummary.Key = study.GetKey();
             studySummary.AccessionNumber = study.AccessionNumber;
-            studySummary.NumberOfRelatedInstances = study.NumberOfStudyRelatedInstances;
-            studySummary.NumberOfRelatedSeries = study.NumberOfStudyRelatedSeries;
+            studySummary.NumberOfStudyRelatedInstances = study.NumberOfStudyRelatedInstances;
+            studySummary.NumberOfStudyRelatedSeries = study.NumberOfStudyRelatedSeries;
             studySummary.PatientId = study.PatientId;
             studySummary.PatientsName = study.PatientsName;
             studySummary.StudyDate = study.StudyDate;
+            studySummary.StudyInstanceUid = study.StudyInstanceUid;
             studySummary.StudyDescription = study.StudyDescription;
             studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
+            studySummary.StudyTime = study.StudyTime;
+            studySummary.StudyId = study.StudyId;
             studySummary.TheStudy = study;
             studySummary.ThePartition = ServerPartition.Load(study.ServerPartitionKey);
-            
-        	studySummary.TheStudyStorage = StudyStorage.Load(study.ServerPartitionKey, study.StudyInstanceUid);
-			studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
-			studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
+            studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
+        	//studySummary.TheStudyStorage = StudyStorage.Load(study.ServerPartitionKey, study.StudyInstanceUid);
+            studySummary.TheStorageLocation = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(study));
+            studySummary.StudyStatusEnum = studySummary.TheStorageLocation.StudyStatusEnum;
+            studySummary.QueueStudyStateEnum = studySummary.TheStorageLocation.QueueStudyStateEnum;
 
             IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
             if (archiveList.Count > 0)
                 studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
 
-			studySummary.IsProcessing = studySummary.TheStudyStorage.Lock;
+
+            studySummary.IsProcessing = studySummary.TheStorageLocation.Lock;
 
             // the study is considered "locked" if it's being processed or some action which requires the lock has been scheduled
             // No additional action should be allowed on the study until everything is completed.
-			studySummary.IsLocked = studySummary.IsProcessing || (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
-            
-            IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
+            studySummary.IsLocked = studySummary.IsProcessing || (studySummary.TheStorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
+
+            IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(studySummary.TheStorageLocation.Key);
 
             if (integrityQueueItems != null && integrityQueueItems.Count > 0)
             {
