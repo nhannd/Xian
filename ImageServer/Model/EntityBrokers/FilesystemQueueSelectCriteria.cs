@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         /// and <see cref="WorkQueue"/> tables is automatically added into the <see cref="WorkQueueSelectCriteria"/>
         /// instance by the broker.
         /// </remarks>
-        public IRelatedEntityCondition<WorkQueueSelectCriteria> WorkQueue
+		public IRelatedEntityCondition<EntitySelectCriteria> WorkQueue
         {
             get
             {
@@ -53,14 +53,14 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                 {
                     SubCriteria["WorkQueueCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("WorkQueueCondition", "StudyStorageKey", "StudyStorageKey");
                 }
-				return (IRelatedEntityCondition<WorkQueueSelectCriteria>)SubCriteria["WorkQueueCondition"];
+				return (IRelatedEntityCondition<EntitySelectCriteria>)SubCriteria["WorkQueueCondition"];
             }
         }
 
 		/// <summary>
 		/// Used for EXISTS or NOT EXISTS subselects against the FilesystemQueue table
 		/// </summary>
-		public IRelatedEntityCondition<StudyStorageSelectCriteria> StudyStorage
+		public IRelatedEntityCondition<EntitySelectCriteria> StudyStorage
 		{
 			get
 			{
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
 				{
 					SubCriteria["StudyStorageCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("WorkQueueCondition", "StudyStorageKey", "StudyStorageKey");
 				}
-				return (IRelatedEntityCondition<StudyStorageSelectCriteria>)SubCriteria["StudyStorageCondition"];
+				return (IRelatedEntityCondition<EntitySelectCriteria>)SubCriteria["StudyStorageCondition"];
 			}
 		}
 

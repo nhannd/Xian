@@ -232,6 +232,10 @@ BEGIN
 				SET @Successful=0
 		END
 	END
+	ELSE
+	BEGIN
+		SET @Successful=0
+	END
 END
 '
 END
@@ -952,7 +956,7 @@ BEGIN
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
-	select @StudyProcessQueueStateEnum = Enum from QueueStudyStateEnum where Lookup = ''StudyProcess''
+	select @StudyProcessQueueStateEnum = Enum from QueueStudyStateEnum where Lookup = ''ProcessingScheduled''
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here

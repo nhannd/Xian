@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             StringBuilder sb = new StringBuilder();
             String sqlColumnName;
             String sqlParmName;
-            object[] values = null;
+            object[] values;
 
              
 
@@ -258,6 +258,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                             relatedTableColumn = relatedTableColumn.Replace("Key", "GUID");
 
                         string sql;
+						if (String.Format("{0}GUID", notExistsSubCriteria.GetKey()).Equals(relatedTableColumn))
+							sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria, null, null,
+											   String.Format("{0}.{2} = {1}.GUID", variable, notExistsSubCriteria.GetKey(), baseTableColumn));
+						else
                         sql = GetSelectSql(notExistsSubCriteria.GetKey(), command, notExistsSubCriteria, null, null,
                                            String.Format("{0}.{2} = {1}.{3}", variable, notExistsSubCriteria.GetKey(), baseTableColumn, relatedTableColumn));
 
@@ -279,8 +283,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                             relatedTableColumn = relatedTableColumn.Replace("Key", "GUID");
 
                         string existsSql;
-
-                        existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null, null,
+						if (String.Format("{0}GUID",existsSubCriteria.GetKey()).Equals(relatedTableColumn))
+							existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null, null,
+													 String.Format("{0}.{2} = {1}.GUID", variable, existsSubCriteria.GetKey(),
+																   baseTableColumn));
+						else
+							existsSql = GetSelectSql(existsSubCriteria.GetKey(), command, existsSubCriteria, null, null,
                                                  String.Format("{0}.{2} = {1}.{3}", variable, existsSubCriteria.GetKey(),
                                                                baseTableColumn, relatedTableColumn));
                         sb.AppendFormat("EXISTS ({0})", existsSql);
