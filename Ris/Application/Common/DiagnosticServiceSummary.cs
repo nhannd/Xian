@@ -49,6 +49,10 @@ namespace ClearCanvas.Ris.Application.Common
         	this.Deactivated = deactivated;
         }
 
+		public DiagnosticServiceSummary()
+		{
+		}
+
         [DataMember]
         public EntityRef DiagnosticServiceRef;
 

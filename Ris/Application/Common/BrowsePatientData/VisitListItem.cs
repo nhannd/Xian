@@ -9,6 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
 	[DataContract]
 	public class VisitListItem : DataContractBase
 	{
+		public VisitListItem()
+		{
+		}
+
 		#region Visit
 
 		[DataMember]

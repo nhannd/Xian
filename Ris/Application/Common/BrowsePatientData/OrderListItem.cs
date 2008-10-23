@@ -41,6 +41,10 @@ namespace ClearCanvas.Ris.Application.Common.BrowsePatientData
     [DataContract]
     public class OrderListItem : VisitListItem
     {
+		public OrderListItem()
+		{
+		}
+
         #region Order
 
         [DataMember]
