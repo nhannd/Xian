@@ -138,11 +138,16 @@ if(window.external)
 			return staffSummaryOrDetail ? window.external.FormatStaffNameAndRole(JSML.create(staffSummaryOrDetail, "Staff")) :"";
 		},
 		
-		formatProcedureName: function(procedureRelatedDataContract)
+		formatProcedureName: function(procedureSummaryOrDetail)
 		{
-			return procedureRelatedDataContract ? window.external.FormatProcedureName(JSML.create(procedureRelatedDataContract, "Procedure")) :"";
+			return procedureSummaryOrDetail ? window.external.FormatProcedureName(JSML.create(procedureSummaryOrDetail, "Procedure")) :"";
 		},
 
+		formatOrderListItemProcedureName: function(orderListItem)
+		{
+			return orderListItem ? window.external.FormatOrderListItemProcedureName(JSML.create(orderListItem, "Procedure")) :"";
+		},
+		
 		// formats the specified telephone object
 		formatTelephone: function(telephone)
 		{

@@ -197,42 +197,22 @@ namespace ClearCanvas.Ris.Client
 
 			public string FormatProcedureName(string jsml)
 			{
-				DataContractBase item = null;
-
-				item = TryCast<ProcedureSummary>(jsml);
-				if (item != null)
-					return ProcedureFormat.Format((ProcedureSummary)item);
-
-				item = TryCast<ProcedureDetail>(jsml);
-				if (item != null)
-					return ProcedureFormat.Format((ProcedureDetail)item);
-
-				item = TryCast<OrderListItem>(jsml);
-				if (item != null)
-					return ProcedureFormat.Format((OrderListItem)item);
-
-				item = TryCast<WorklistItemSummaryBase>(jsml);
-				if (item != null)
-					return ProcedureFormat.Format((WorklistItemSummaryBase)item);
-
-				item = TryCast<PriorProcedureSummary>(jsml);
-				if (item != null)
-					return ProcedureFormat.Format((PriorProcedureSummary)item);
-
-				return null;
-			}
-
-			private static T TryCast<T>(string jsml)
-				where T : new()
-			{
 				try
 				{
-					return JsmlSerializer.Deserialize<T>(jsml);
+					ProcedureSummary summary = JsmlSerializer.Deserialize<ProcedureSummary>(jsml);
+					return summary == null ? "" : ProcedureFormat.Format(summary);
 				}
 				catch (InvalidCastException)
 				{
-					return default(T);
+					ProcedureDetail detail = JsmlSerializer.Deserialize<ProcedureDetail>(jsml);
+					return detail == null ? "" : ProcedureFormat.Format(detail);
 				}
+			}
+
+			public string FormatOrderListItemProcedureName(string jsml)
+			{
+				OrderListItem item = JsmlSerializer.Deserialize<OrderListItem>(jsml);
+				return item == null ? "" : ProcedureFormat.Format(item);
 			}
 
             public string FormatTelephone(string jsml)

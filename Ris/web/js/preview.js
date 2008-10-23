@@ -407,7 +407,7 @@ Preview.ImagingServiceTable = function () {
 			 [
 				{   label: "Procedure",
 					cellType: "text",
-					getValue: function(item) { return Ris.formatProcedureName(item); }
+					getValue: function(item) { return Ris.formatOrderListItemProcedureName(item); }
 				},
 				{   label: "Schedule",
 					cellType: "text",

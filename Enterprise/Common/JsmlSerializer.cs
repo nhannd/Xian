@@ -262,14 +262,8 @@ namespace ClearCanvas.Enterprise.Common
                     {
                         object memberObject = DeserializeHelper(context.MemberType, memberElement);
                         context.MemberValue = memberObject;
-                    	xmlElement.RemoveChild(memberElement);
                     }
                 }
-
-				// If there are more child nodes left, it means the Xml describe a larger data contract 
-				// than the current data type.  Hence this is not the right data type.
-				if (xmlElement.HasChildNodes)
-					return null;
             }
             else if (typeof(IDictionary).IsAssignableFrom(dataType))
             {
