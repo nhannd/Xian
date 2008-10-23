@@ -75,7 +75,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         protected void SetupEventHandlers()
         {
-            EditStudyDialog.OKClicked += delegate() { EditStudyDialog.study = _study; };
+            EditStudyDialog.OKClicked += delegate()
+                                             {
+                                                 Refresh();
+                                             };
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -117,6 +120,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             base.OnInit(e);
         }
 
+
+        
         protected void LoadStudy()
         {
             if (String.IsNullOrEmpty(_studyInstanceUid))
@@ -173,6 +178,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         #region Public Methods
 
+        
         public void EditStudy()
         {
             EditStudyDialog.study = _study;
@@ -180,5 +186,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         }
 
         #endregion
+
+        public void Refresh()
+        {
+            LoadStudy();
+
+        }
     }
 }

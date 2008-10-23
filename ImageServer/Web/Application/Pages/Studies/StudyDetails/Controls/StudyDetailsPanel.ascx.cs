@@ -112,7 +112,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     EditStudyButton.ToolTip = reason;
 
             }
-           
+
+            UpdatePanel1.Update();// force update
         }
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
@@ -140,8 +141,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             Study study = ConfirmDialog.Data as Study;
             if (controller.DeleteStudy(study))
             {
-                DeleteStudyButton.Enabled = false;
-                EditStudyButton.Enabled = false;
+                EnclosingPage.Refresh();
             }
             else
             {

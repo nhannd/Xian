@@ -14,7 +14,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 {
     public partial class EditStudyDetailsDialog : System.Web.UI.UserControl
     {
-        private Study _study;
 
         #region Public Properties
 
@@ -25,11 +24,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             set
             {
-                _study = value;
                 // put into viewstate to retrieve later
-                ViewState[ClientID + "_loadedStudy"] = _study;
+                ViewState[ClientID + "_loadedStudy"] = value;
             }
-            get { return _study; }
+            get
+            { 
+                // put into viewstate to retrieve later
+                return ViewState[ClientID + "_loadedStudy"] as Study;
+            }
         }
 
         #endregion
@@ -94,7 +96,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             setNode.SetAttribute("TagPath", "");
             setNode.SetAttribute("Value","");
 
-            PersonName oldPatientName = new PersonName(_study.PatientsName);
+            PersonName oldPatientName = new PersonName(study.PatientsName);
             PersonName newPatientName = PatientNamePanel.PersonName;
 
             if (!oldPatientName.AreSame(newPatientName, PersonNameComparisonOptions.CaseInsensitive))
@@ -138,7 +140,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.AccessionNumber, AccessionNumber.Text));
             }
 
-            PersonName oldPhysicianName = new PersonName(_study.ReferringPhysiciansName);
+            PersonName oldPhysicianName = new PersonName(study.ReferringPhysiciansName);
             PersonName newPhysicianName = ReferringPhysicianNamePanel.PersonName;
 
             if (!newPhysicianName.AreSame(oldPhysicianName, PersonNameComparisonOptions.CaseInsensitive))
@@ -291,8 +293,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyTimeAmPm.SelectedValue = "AM";
             }
 
-            PersonName patientName = new PersonName(_study.PatientsName);
-            PersonName physicianName = new PersonName(_study.ReferringPhysiciansName);
+            PersonName patientName = new PersonName(study.PatientsName);
+            PersonName physicianName = new PersonName(study.ReferringPhysiciansName);
             PatientNamePanel.PersonName = patientName;
             ReferringPhysicianNamePanel.PersonName = physicianName;
             DataBind();
@@ -317,8 +319,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 if (OKClicked != null)
                 {
-                    OKClicked();
-
+                    
                     XmlDocument modifiedFields = getChanges();
 
                     if (modifiedFields.HasChildNodes)
@@ -326,6 +327,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         StudyController studyController = new StudyController();
                         studyController.EditStudy(study, modifiedFields);                        
                     }
+
+                    OKClicked();
                 }
 
                 Close();
