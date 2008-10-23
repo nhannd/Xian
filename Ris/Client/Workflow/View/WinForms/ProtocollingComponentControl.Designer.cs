@@ -50,6 +50,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._priorReportsTabPage = new System.Windows.Forms.TabPage();
 			this._orderSummaryPanel = new System.Windows.Forms.Panel();
 			this._statusText = new System.Windows.Forms.Label();
+			this._protocolledProcedures = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -106,14 +107,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._tableLayouOuter.ColumnCount = 2;
 			this._tableLayouOuter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayouOuter.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-			this._tableLayouOuter.Controls.Add(this._protocolEditorPanel, 0, 0);
-			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel2, 0, 1);
-			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel3, 1, 1);
+			this._tableLayouOuter.Controls.Add(this._protocolledProcedures, 0, 0);
+			this._tableLayouOuter.Controls.Add(this._protocolEditorPanel, 0, 1);
+			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel2, 0, 2);
+			this._tableLayouOuter.Controls.Add(this.flowLayoutPanel3, 1, 2);
 			this._tableLayouOuter.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tableLayouOuter.Location = new System.Drawing.Point(0, 0);
 			this._tableLayouOuter.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayouOuter.Name = "_tableLayouOuter";
-			this._tableLayouOuter.RowCount = 2;
+			this._tableLayouOuter.RowCount = 3;
+			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -126,10 +129,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolEditorPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._tableLayouOuter.SetColumnSpan(this._protocolEditorPanel, 2);
 			this._protocolEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 0);
+			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 20);
 			this._protocolEditorPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._protocolEditorPanel.Name = "_protocolEditorPanel";
-			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 555);
+			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 535);
 			this._protocolEditorPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel2
@@ -334,6 +337,21 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusText.TabIndex = 1;
 			this._statusText.Text = "Protocolling from X worklist - Y items available - Z items completed";
 			// 
+			// _protocollededProcedures
+			// 
+			this._protocolledProcedures.AutoSize = true;
+			this._protocolledProcedures.BackColor = System.Drawing.SystemColors.Control;
+			this._tableLayouOuter.SetColumnSpan(this._protocolledProcedures, 2);
+			this._protocolledProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._protocolledProcedures.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._protocolledProcedures.ForeColor = System.Drawing.SystemColors.ControlText;
+			this._protocolledProcedures.Location = new System.Drawing.Point(3, 0);
+			this._protocolledProcedures.Name = "_protocolledProcedures";
+			this._protocolledProcedures.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
+			this._protocolledProcedures.Size = new System.Drawing.Size(556, 20);
+			this._protocolledProcedures.TabIndex = 5;
+			this._protocolledProcedures.Text = "Protocolled Procedure(s): ";
+			// 
 			// ProtocollingComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -387,5 +405,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.CheckBox _protocolNextItem;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
 		private System.Windows.Forms.Button _btnClose;
+		private System.Windows.Forms.Label _protocolledProcedures;
     }
 }

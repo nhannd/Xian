@@ -85,6 +85,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_saveButton.DataBindings.Add("Enabled", _component, "SaveReportEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_component.PropertyChanged += _component_PropertyChanged;
+
+			_reportedProcedures.DataBindings.Add("Text", _component, "ProceduresText", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)

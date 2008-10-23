@@ -31,6 +31,7 @@
 
 using System;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -356,6 +357,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ChildComponentHost _rightHandComponentContainerHost;
 		private TabComponentContainer _rightHandComponentContainer;
 
+		private string _proceduresText;
+
 		private bool _canCompleteInterpretationAndVerify;
 		private bool _canCompleteVerification;
 		private bool _canCompleteInterpretationForVerification;
@@ -517,6 +520,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool StatusTextVisible
 		{
 			get { return _worklistItemManager.StatusTextVisible; }
+		}
+
+		public string ProceduresText
+		{
+			get { return "Reported Procedure(s): " + _proceduresText; }
 		}
 
 		public bool ReportNextItem
@@ -1005,6 +1013,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 					_activeReportPartIndex = response.ReportPartIndex;
 					_orderDetail = response.Order;
 
+					StringBuilder sb = new StringBuilder();
+					foreach (ProcedureDetail detail in _report.Procedures)
+					{
+						sb.Append(ProcedureFormat.Format(detail) + ", ");
+					}
+					_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
+
 					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
 					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
 					if (activePart != null && activePart.Supervisor != null)
@@ -1042,6 +1057,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
+			NotifyPropertyChanged("ProceduresText");
 		}
 
 		private void OpenImages()
@@ -1149,6 +1165,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_canCompleteInterpretationForVerification = false;
 			_canCompleteInterpretationForTranscription = false;
 			_canSaveReport = false;
+
+			_proceduresText = "";
 
 			UpdateChildComponents(false);
 

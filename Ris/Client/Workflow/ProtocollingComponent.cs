@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -39,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -69,6 +71,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ChildComponentHost _orderDetailViewComponentHost;
 		private ChildComponentHost _priorReportsComponentHost;
 		private ChildComponentHost _orderNotesComponentHost;
+
+		private string _proceduresText;
 
 		private bool _acceptEnabled;
 		private bool _submitForApprovalEnabled;
@@ -170,6 +174,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool ShowStatusText
 		{
 			get { return _worklistItemManager.ShowStatusText; }
+		}
+
+		public string ProceduresText
+		{
+			get { return "Protocolled Procedure(s): " + _proceduresText; }
 		}
 
 		public bool ProtocolNextItem
@@ -486,6 +495,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 					_notes = response.ProtocolNotes;
 
+					StringBuilder sb = new StringBuilder();
+					sb.Append(ProcedureFormat.Format(this.WorklistItem));
+					foreach (ReportingWorklistItem linkedProtocol in linkedProtocols)
+					{
+						sb.Append(", " + ProcedureFormat.Format(linkedProtocol));
+					}
+
+					_proceduresText = sb.ToString();
+
 					if (response.ProtocolClaimed == shouldClaim)
 					{
 						GetOperationEnablementResponse enablementResponse =
@@ -557,6 +575,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_submitForApprovalEnabled = false;
 			_saveEnabled = false;
 
+			_proceduresText = "";
+
 			UpdateChildComponents();
 		}
 
@@ -575,6 +595,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Host.Title = ProtocollingComponentDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
+			NotifyPropertyChanged("ProceduresText");
 		}
 
 		private bool GetSuspendReason(string title, out EnumValueInfo reason, out string additionalComments)
