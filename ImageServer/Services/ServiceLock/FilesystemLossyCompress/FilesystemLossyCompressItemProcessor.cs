@@ -88,7 +88,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 					insertParms.Data = queueItem.QueueXml;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
 					insertParms.FilesystemQueueTypeEnum = type;
-
+					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.CompressScheduled;
+					
 					try
 					{
 						WorkQueue entry = workQueueInsert.FindOne(insertParms);

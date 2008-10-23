@@ -159,6 +159,84 @@ DROP PROCEDURE [dbo].[LockStudy]
 GO
 
 
+/****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 16:45:14 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LockStudy]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 15, 2008
+-- Description:	Lock/Unlock a study
+-- =============================================
+CREATE PROCEDURE [dbo].[LockStudy] 
+	@StudyStorageGUID uniqueidentifier,
+	@Lock bit = null,
+	@QueueStudyStateEnum smallint = null,
+	@Successful bit output
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	SET @Successful= 1
+
+	if @QueueStudyStateEnum is not null
+	BEGIN
+		declare @IdleQueueStudyStateEnum smallint
+		SELECT @IdleQueueStudyStateEnum = Enum from QueueStudyStateEnum where Lookup = ''Idle''
+
+		if @QueueStudyStateEnum = @IdleQueueStudyStateEnum
+		BEGIN
+			UPDATE StudyStorage
+			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
+				LastAccessedTime = getdate()
+			WHERE GUID = @StudyStorageGUID
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+		END
+		ELSE
+		BEGIN
+			UPDATE StudyStorage
+			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
+				LastAccessedTime = getdate()
+			WHERE GUID = @StudyStorageGUID AND @QueueStudyStateEnum = @IdleQueueStudyStateEnum
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+		END
+	END
+	ELSE if @Lock is not null
+	BEGIN
+		IF @Lock=1
+		BEGIN
+			UPDATE StudyStorage 
+			SET Lock=1, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND Lock=0
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+			
+		END
+		ELSE
+		BEGIN
+			-- unlock if the study is being locked
+			UPDATE StudyStorage 
+			SET Lock=0, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND Lock=1
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+		END
+	END
+END
+'
+END
+GO
+
 
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
@@ -574,6 +652,7 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueFromFilesystemQueue]
 	@DeleteFilesystemQueue bit, 
 	@WorkQueueTypeEnum smallint,
 	@FilesystemQueueTypeEnum smallint,
+	@QueueStudyStateEnum smallint,
 	@Data xml = null
 AS
 BEGIN
@@ -883,6 +962,19 @@ BEGIN
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
+
+		-- Lock the study in the StudyStorage table
+		DECLARE @Successful bit
+		EXECUTE [ImageServer].[dbo].[LockStudy] 
+				@StudyStorageGUID  ,null  ,@StudyProcessQueueStateEnum  ,@Successful OUTPUT
+
+		IF @Successful = 0
+		BEGIN
+			DECLARE @errorMessage nvarchar(128)
+			SET @errorMessage = ''[dbo.InsertWorkQueueStudyProcess] failed to lock study '' + CAST(@StudyStorageGUID as nvarchar(32))
+			RAISERROR (@errorMessage, 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
+			RETURN 50000			
+		END
 
 		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
 			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
@@ -2774,8 +2866,11 @@ BEGIN
 	DECLARE @PendingRestoreQueueStatus smallint
 	DECLARE @RestoreQueueGUID uniqueidentifier
 	DECLARE	@NewArchiveStudyStorageGUID uniqueidentifier
-
+	DECLARE @RestoreQueueStudyStateEnum smallint
+	DECLARE @Successful bit
+	
 	SELECT @PendingRestoreQueueStatus = Enum from RestoreQueueStatusEnum where Lookup = ''Pending''
+	SELECT @RestoreQueueStudyStateEnum = Enum from QueueStudyStateEnum where Lookup = ''RestoreScheduled''
 
 	BEGIN TRANSACTION
 
@@ -2796,9 +2891,20 @@ BEGIN
 			WHERE ArchiveStudyStorageGUID = @NewArchiveStudyStorageGUID
 			IF @@ROWCOUNT = 0
 			BEGIN
-				SET @RestoreQueueGUID = newid()
-				INSERT INTO RestoreQueue (GUID, ArchiveStudyStorageGUID, StudyStorageGUID, ScheduledTime, RestoreQueueStatusEnum, ProcessorId)
-				VALUES	(@RestoreQueueGUID, @NewArchiveStudyStorageGUID, @StudyStorageGUID, getdate(), @PendingRestoreQueueStatus, null)
+				EXECUTE [ImageServer].[dbo].[LockStudy] 
+						@StudyStorageGUID  ,null  ,@RestoreQueueStudyStateEnum  ,@Successful OUTPUT
+
+				IF @Successful = 0
+				BEGIN
+					-- Couldn''t lock the study, just return no rows.
+					SET @RestoreQueueGUID = newid()
+				END
+				ELSE
+				BEGIN
+					SET @RestoreQueueGUID = newid()
+					INSERT INTO RestoreQueue (GUID, ArchiveStudyStorageGUID, StudyStorageGUID, ScheduledTime, RestoreQueueStatusEnum, ProcessorId)
+					VALUES	(@RestoreQueueGUID, @NewArchiveStudyStorageGUID, @StudyStorageGUID, getdate(), @PendingRestoreQueueStatus, null)
+				END
 			END
 		END
 	END
@@ -2808,9 +2914,21 @@ BEGIN
 		WHERE ArchiveStudyStorageGUID = @ArchiveStudyStorageGUID
 		IF @@ROWCOUNT = 0
 		BEGIN
-			SET @RestoreQueueGUID = newid()
-			INSERT INTO RestoreQueue (GUID, ArchiveStudyStorageGUID, StudyStorageGUID, ScheduledTime, RestoreQueueStatusEnum, ProcessorId)
-			VALUES	(@RestoreQueueGUID, @ArchiveStudyStorageGUID, @StudyStorageGUID, getdate(), @PendingRestoreQueueStatus, null)
+			EXECUTE [ImageServer].[dbo].[LockStudy] 
+					@StudyStorageGUID  ,null  ,@RestoreQueueStudyStateEnum  ,@Successful OUTPUT
+
+			IF @Successful = 0
+			BEGIN
+				-- Couldn''t lock the study, just return no rows.
+				SET @RestoreQueueGUID = newid()
+			END
+			ELSE
+			BEGIN
+
+				SET @RestoreQueueGUID = newid()
+				INSERT INTO RestoreQueue (GUID, ArchiveStudyStorageGUID, StudyStorageGUID, ScheduledTime, RestoreQueueStatusEnum, ProcessorId)
+				VALUES	(@RestoreQueueGUID, @ArchiveStudyStorageGUID, @StudyStorageGUID, getdate(), @PendingRestoreQueueStatus, null)
+			END
 		END
 	END
 
@@ -3377,82 +3495,6 @@ BEGIN
 
 	SELECT * FROM Patient WHERE GUID=@PatientGUID
 	
-END
-'
-END
-GO
-
-GO
-/****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 16:45:14 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LockStudy]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- =============================================
--- Author:		Thanh Huynh
--- Create date: Oct 15, 2008
--- Description:	Lock/Unlock a study
--- =============================================
-CREATE PROCEDURE [dbo].[LockStudy] 
-	@StudyStorageGUID uniqueidentifier,
-	@Lock bit = null,
-	@QueueStudyStateEnum smallint = null,
-	@Successful bit output
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-	SET @Successful= 1;
-
-	if @QueueStudyStateEnum is not null
-	BEGIN
-		declare @IdleQueueStudyStateEnum smallint
-		SELECT @IdleQueueStudyStateEnum = Enum from QueueStudyStateEnum where Lookup = ''Idle''
-
-		if @QueueStudyStateEnum = @IdleQueueStudyStateEnum
-		BEGIN
-			UPDATE StudyStorage
-			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
-				LastAccessedTime = getdate()
-			WHERE GUID = @StudyStorageGUID
-		END
-		ELSE
-		BEGIN
-			UPDATE StudyStorage
-			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
-				LastAccessedTime = getdate()
-			WHERE GUID = @StudyStorageGUID AND @QueueStudyStateEnum = @IdleQueueStudyStateEnum
-
-			IF (@@ROWCOUNT=0)
-				SET @Successful=0
-		END
-	END
-	ELSE if @Lock is not null
-	BEGIN
-		IF @Lock=1
-		BEGIN
-			UPDATE StudyStorage 
-			SET Lock=1, LastAccessedTime = getdate()
-			WHERE GUID=@StudyStorageGUID AND Lock=0
-
-			IF (@@ROWCOUNT=0)
-				SET @Successful=0
-			
-		END
-		ELSE
-		BEGIN
-			-- unlock if the study is being locked
-			UPDATE StudyStorage 
-			SET Lock=0, LastAccessedTime = getdate()
-			WHERE GUID=@StudyStorageGUID AND Lock=1
-
-			IF (@@ROWCOUNT=0)
-				SET @Successful=0
-		END
-	END
 END
 '
 END

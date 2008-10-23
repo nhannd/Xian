@@ -84,10 +84,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             fsQueueCriteria.ScheduledTime.LessThanOrEqualTo(scheduledTime);
             fsQueueCriteria.FilesystemQueueTypeEnum.EqualTo(type);
 
-            WorkQueueSelectCriteria workQueueSearchCriteria = new WorkQueueSelectCriteria();
-			if (statusCheck)
-				workQueueSearchCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
-            fsQueueCriteria.WorkQueue.NotExists(workQueueSearchCriteria); // no work queue item exists for the same studies
+			// Do the select based on the QueueStudyState (used to be based on a link to the WorkQueue table)
+			StudyStorageSelectCriteria studyStorageSearchCriteria = new StudyStorageSelectCriteria();
+			studyStorageSearchCriteria.QueueStudyStateEnum.EqualTo(QueueStudyStateEnum.Idle);
+			fsQueueCriteria.StudyStorage.Exists(studyStorageSearchCriteria);
+
             fsQueueCriteria.ScheduledTime.SortAsc(0);
 
             IList<FilesystemQueue> list = broker.Find(fsQueueCriteria, 0, ServiceLockSettings.Default.FilesystemQueueResultCount);

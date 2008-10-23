@@ -197,6 +197,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     insertParms.DeleteFilesystemQueue = true;
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
+					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.DeleteScheduled;
 
                     WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
@@ -250,6 +251,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
+					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.PurgeScheduled;
 
                     WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
@@ -309,6 +311,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         			insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.MigrateStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
+					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.MigrationScheduled;
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
         			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledTime);

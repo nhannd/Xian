@@ -78,6 +78,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 parms.Extension = _extension;
             }
             insert.Execute(parms);
+
+
         }
     }
 }

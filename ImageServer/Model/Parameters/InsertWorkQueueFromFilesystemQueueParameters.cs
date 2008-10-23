@@ -75,7 +75,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
         }
-
+		public QueueStudyStateEnum QueueStudyStateEnum
+		{
+			set { SubCriteria["QueueStudyStateEnum"] = new ProcedureParameter<ServerEnum>("QueueStudyStateEnum", value); }
+		}
 		public XmlDocument Data
 		{
 			set { SubCriteria["Data"] = new ProcedureParameter<XmlDocument>("Data", value); }

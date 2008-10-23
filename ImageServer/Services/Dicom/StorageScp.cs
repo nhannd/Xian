@@ -154,12 +154,23 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             DicomStatus returnStatus = DicomStatuses.Success;
             try
             {
+                String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
                 String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
                 String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 
                 StudyStorageLocation studyLocation = GetStudyStorageLocation(message);
                 if (studyLocation == null)
                 {
+					StudyStorage storage = StudyStorage.Load(Partition.Key,studyInstanceUid);
+					if (storage != null)
+					{
+						returnStatus = DicomStatuses.ResourceLimitation;
+						string failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, Partition.Description);
+						Platform.Log(LogLevel.Error, failureMessage);
+						InsertRestore(storage.Key);
+						throw new ApplicationException(failureMessage);
+					}
+
                     returnStatus = DicomStatuses.ResourceLimitation;
                     Platform.Log(LogLevel.Error, "Unable to process image, no writeable storage location: {0}", sopInstanceUid);
 
@@ -167,6 +178,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                     throw new ApplicationException("No writeable storage location.");
                 }
+
+				if (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle)
+					&& (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled)))
+				{
+					returnStatus = DicomStatuses.ResourceLimitation;
+					string failureMessage =
+						String.Format("Study {0} on partition {1} is being processed: {2}, can't accept new images.",
+						              studyLocation.StudyInstanceUid, Partition.Description, studyLocation.QueueStudyStateEnum.Description);
+					Platform.Log(LogLevel.Error, failureMessage);
+					throw new ApplicationException(failureMessage);
+				}
+				else if (studyLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
+				{
+					//TODO:  check if the study is lossy compressed
+				}
 
                 String path = studyLocation.FilesystemPath;
                 String dupPath = null;
