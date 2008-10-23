@@ -282,23 +282,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         					studyStorageUpdate.StudyStatusEnum = theStatus;
         					studyStorageUpdate.LastAccessedTime = Platform.Time;
 
-							// Setup the Study Status Update
-        					IStudyEntityBroker broker = updateContext.GetBroker<IStudyEntityBroker>();
-
-							StudySelectCriteria criteria = new StudySelectCriteria();
-							criteria.ServerPartitionKey.EqualTo(theStudyStorage.ServerPartitionKey);
-							criteria.StudyInstanceUid.EqualTo(theStudyStorage.StudyInstanceUid);
-
-							StudyUpdateColumns updateColumns = new StudyUpdateColumns();
-        					updateColumns.StudyStatusEnum = theStatus;
-
-
-							if (!broker.Update(criteria, updateColumns))
-							{
-								Platform.Log(LogLevel.Error, "Unable to update Study row: Study {0}, Server Entity {1}",
-											 theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);
-							}
-							else if (!filesystemQueueBroker.Update(filesystemQueueCriteria,filesystemQueueUpdate))
+							if (!filesystemQueueBroker.Update(filesystemQueueCriteria,filesystemQueueUpdate))
 							{
 								Platform.Log(LogLevel.Error, "Unable to update FilesystemQueue row: Study {0}, Server Entity {1}",
 											 theStudyStorage.StudyInstanceUid, theStudyStorage.ServerPartitionKey);

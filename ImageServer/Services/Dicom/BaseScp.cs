@@ -237,11 +237,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 
                     IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
-                    StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
+                    InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
                     insertParms.ServerPartitionKey = Partition.GetKey();
                     insertParms.StudyInstanceUid = studyInstanceUid;
                     insertParms.Folder = studyDate;
                     insertParms.FilesystemKey = filesystem.GetKey();
+                	insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 					if (message.TransferSyntax.LosslessCompressed)
 					{

@@ -34,7 +34,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertStudyStorage : IProcedureQueryBroker<StudyStorageInsertParameters, StudyStorageLocation>
+    public interface IInsertStudyStorage : IProcedureQueryBroker<InsertStudyStorageParameters, StudyStorageLocation>
     {
     }
 }

@@ -78,11 +78,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         public override void DataBind()
         {           
             StudyStorageViewControl.DataSource = null;
-            if(_study.StudyStatusEnum != StudyStatusEnum.Nearline)
-            {
-                StudyController studyController = new StudyController();
-                StudyStorageViewControl.DataSource = studyController.GetStudyStorageLocation(_study);    
-            }
+            StudyController studyController = new StudyController();
+            StudyStorageViewControl.DataSource = studyController.GetStudyStorageLocation(_study);    
             
             base.DataBind();
         }

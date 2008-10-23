@@ -80,11 +80,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		protected override void OnExecute(IUpdateContext updateContext)
 		{
 			IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
-			StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
+			InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
 			insertParms.ServerPartitionKey = _serverPartitionKey;
 			insertParms.StudyInstanceUid = _studyInstanceUid;
 			insertParms.Folder = _folder;
 			insertParms.FilesystemKey = _filesystemKey;
+			insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 			if (_transfersyntax.LosslessCompressed)
 			{

@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -45,12 +46,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         private Unit _width;
 
-        private IList<Model.Study> _studies = new List<Model.Study>();
-
-        
+        private IList<Study> _studies = new List<Model.Study>();
 
         #endregion Private members
-
 
         #region Public Properties
 
@@ -91,13 +89,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 Label statusLabel = StudyDetailView.FindControl("Status") as Label;
                 if (statusLabel != null)
                 {
-                    statusLabel.Text = study.StudyStatusEnum.Description;
+					StudyController studyController = new StudyController();
+					StudyStorage storage = studyController.GetStudyStorage(study);
+					statusLabel.Text = storage.StudyStatusEnum.Description;
                 }
-
             }
         }
 
         #endregion Protected Methods
-
     }
 }

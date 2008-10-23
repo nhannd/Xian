@@ -140,17 +140,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientsSex"];
             } 
         }
-        public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("QueueStudyStateEnum"))
-              {
-                 SubCriteria["QueueStudyStateEnum"] = new SearchCondition<QueueStudyStateEnum>("QueueStudyStateEnum");
-              }
-              return (ISearchCondition<QueueStudyStateEnum>)SubCriteria["QueueStudyStateEnum"];
-            } 
-        }
         public ISearchCondition<System.String> ReferringPhysiciansName
         {
             get
@@ -226,17 +215,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyInstanceUid"] = new SearchCondition<System.String>("StudyInstanceUid");
               }
               return (ISearchCondition<System.String>)SubCriteria["StudyInstanceUid"];
-            } 
-        }
-        public ISearchCondition<StudyStatusEnum> StudyStatusEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyStatusEnum"))
-              {
-                 SubCriteria["StudyStatusEnum"] = new SearchCondition<StudyStatusEnum>("StudyStatusEnum");
-              }
-              return (ISearchCondition<StudyStatusEnum>)SubCriteria["StudyStatusEnum"];
             } 
         }
         public ISearchCondition<System.String> StudyTime

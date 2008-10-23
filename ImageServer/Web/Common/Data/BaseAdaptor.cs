@@ -62,56 +62,75 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<TServerEntity> Get()
         {
-            using (IReadContext ctx = PersistentStore.OpenReadContext())
+			using (IReadContext context = PersistentStore.OpenReadContext())
             {
-                TIEntity find = ctx.GetBroker<TIEntity>();
-                TCriteria criteria = new TCriteria();
-                IList<TServerEntity> list = find.Find(criteria);
-
-                return list;
+				return Get(context);
             }
         }
-
-        public TServerEntity Get(ServerEntityKey key)
-        {
-            using (IReadContext ctx = PersistentStore.OpenReadContext())
-            {
-                TIEntity select = ctx.GetBroker<TIEntity>();
-                return select.Load(key);
-            }
-        }
-
-        public IList<TServerEntity> Get(TCriteria criteria)
-        {
-            using (IReadContext ctx = PersistentStore.OpenReadContext())
-            {
-                TIEntity select = ctx.GetBroker<TIEntity>();
-                return select.Find(criteria);
-            }
-        }
-		public IList<TServerEntity> GetRange(TCriteria criteria, int startIndex, int maxRows)
+		public IList<TServerEntity> Get(IPersistenceContext context)
 		{
-			using (IReadContext ctx = PersistentStore.OpenReadContext())
+			TIEntity find = context.GetBroker<TIEntity>();
+			TCriteria criteria = new TCriteria();
+			IList<TServerEntity> list = find.Find(criteria);
+
+			return list;		
+		}
+
+		public TServerEntity Get(ServerEntityKey key)
+		{
+			using (IReadContext context = PersistentStore.OpenReadContext())
 			{
-				TIEntity select = ctx.GetBroker<TIEntity>();
-				return select.Find(criteria, startIndex, maxRows);
+				return Get(context, key);
 			}
 		}
 
-		public int GetCount(TCriteria criteria)
+		public TServerEntity Get(IPersistenceContext context, ServerEntityKey key)
 		{
-			using (IReadContext ctx = PersistentStore.OpenReadContext())
+			TIEntity select = context.GetBroker<TIEntity>();
+			return select.Load(key);
+		}
+
+    	public IList<TServerEntity> Get(TCriteria criteria)
+        {
+			using (IReadContext context = PersistentStore.OpenReadContext())
+            {
+				return Get(context, criteria);
+            }
+        }
+		public IList<TServerEntity> Get(IPersistenceContext context, TCriteria criteria)
+		{
+
+			TIEntity select = context.GetBroker<TIEntity>();
+				return select.Find(criteria);
+
+		}
+		public IList<TServerEntity> GetRange(TCriteria criteria, int startIndex, int maxRows)
+		{
+			using (IReadContext context = PersistentStore.OpenReadContext())
 			{
-				TIEntity select = ctx.GetBroker<TIEntity>();
+				return GetRange(context, criteria, startIndex, maxRows);
+			}
+		}
+		public IList<TServerEntity> GetRange(IPersistenceContext context, TCriteria criteria, int startIndex, int maxRows)
+		{
+			TIEntity select = context.GetBroker<TIEntity>();
+			return select.Find(criteria, startIndex, maxRows);
+		}
+
+    	public int GetCount(TCriteria criteria)
+		{
+			using (IReadContext context = PersistentStore.OpenReadContext())
+			{
+				TIEntity select = context.GetBroker<TIEntity>();
 				return select.Count(criteria);
 			}
 		}
 
 		public TServerEntity GetFirst(TCriteria criteria)
 		{
-			using (IReadContext ctx = PersistentStore.OpenReadContext())
+			using (IReadContext context = PersistentStore.OpenReadContext())
 			{
-				TIEntity select = ctx.GetBroker<TIEntity>();
+				TIEntity select = context.GetBroker<TIEntity>();
 				return select.FindOne(criteria);
 			}
 		}
@@ -167,7 +186,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
-        public bool Delete(ServerEntityKey key)
+		public bool Delete(IUpdateContext context, ServerEntityKey key)
+		{
+			TIEntity update = context.GetBroker<TIEntity>();
+
+			if (!update.Delete(key))
+				return false;
+
+			context.Commit();
+
+			return true;
+		}
+
+    	public bool Delete(ServerEntityKey key)
         {
             try
             {
@@ -189,7 +220,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
         }
 
-        public bool Delete(TCriteria criteria)
+		public bool Delete(IUpdateContext context, TCriteria criteria)
+		{
+			TIEntity update = context.GetBroker<TIEntity>();
+
+			if (update.Delete(criteria) < 0)
+				return false;
+
+			return true;
+		}
+
+    	public bool Delete(TCriteria criteria)
         {
             try
             {

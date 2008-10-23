@@ -495,7 +495,6 @@ CREATE TABLE [dbo].[Series](
 	[PerformedProcedureStepStartDate] [varchar](8) NULL,
 	[PerformedProcedureStepStartTime] [varchar](16) NULL,
 	[SourceApplicationEntityTitle] [varchar](16) NULL,
-	[StudyStatusEnum] [smallint] NOT NULL,
  CONSTRAINT [PK_Series] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -546,8 +545,6 @@ CREATE TABLE [dbo].[Study](
 	[ReferringPhysiciansName] [nvarchar](64) NULL,
 	[NumberOfStudyRelatedSeries] [int] NOT NULL,
 	[NumberOfStudyRelatedInstances] [int] NOT NULL,
-	[StudyStatusEnum] [smallint] NOT NULL,
-	[QueueStudyStateEnum] [smallint] NOT NULL CONSTRAINT [DF_Study_QueueStudyStateEnum]  DEFAULT ((101)),
  CONSTRAINT [PK_Study] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -636,6 +633,7 @@ CREATE TABLE [dbo].[StudyStorage](
 	[LastAccessedTime] [datetime] NOT NULL CONSTRAINT [DF_StudyStorage_LastAccessedTime]  DEFAULT (getdate()),
 	[Lock] [bit] NOT NULL CONSTRAINT [DF_StudyStorage_Lock]  DEFAULT ((0)),
 	[StudyStatusEnum] [smallint] NOT NULL,
+	[QueueStudyStateEnum] [smallint] NOT NULL,
  CONSTRAINT [PK_StudyStorage] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -1281,23 +1279,6 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[WorkQueueTypeQueueStudyState]    Script Date: 10/01/2008 23:19:08 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dbo].[WorkQueueTypeQueueStudyState](
-	[GUID] [uniqueidentifier] NOT NULL,
-	[WorkQueueTypeEnum] [smallint] NOT NULL,
-	[QueueStudyStateEnum] [smallint] NOT NULL,
- CONSTRAINT [PK_WorkQueueTypeQueueStudyState] PRIMARY KEY CLUSTERED 
-(
-	[GUID] ASC
-)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
@@ -1502,13 +1483,6 @@ REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 ALTER TABLE [dbo].[Series] CHECK CONSTRAINT [FK_Series_ServerPartition]
 GO
-/****** Object:  ForeignKey [FK_Series_StatusEnum]    Script Date: 07/17/2008 00:49:51 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Series_StatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Series]'))
-ALTER TABLE [dbo].[Series]  WITH CHECK ADD  CONSTRAINT [FK_Series_StatusEnum] FOREIGN KEY([StudyStatusEnum])
-REFERENCES [dbo].[StudyStatusEnum] ([Enum])
-GO
-ALTER TABLE [dbo].[Series] CHECK CONSTRAINT [FK_Series_StatusEnum]
-GO
 /****** Object:  ForeignKey [FK_Series_Study]    Script Date: 07/17/2008 00:49:51 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Series_Study]') AND parent_object_id = OBJECT_ID(N'[dbo].[Series]'))
 ALTER TABLE [dbo].[Series]  WITH CHECK ADD  CONSTRAINT [FK_Series_Study] FOREIGN KEY([StudyGUID])
@@ -1572,28 +1546,21 @@ REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_ServerPartition]
 GO
-/****** Object:  ForeignKey [FK_Study_StatusEnum]    Script Date: 07/17/2008 00:50:12 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Study_StatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Study]'))
-ALTER TABLE [dbo].[Study]  WITH CHECK ADD  CONSTRAINT [FK_Study_StatusEnum] FOREIGN KEY([StudyStatusEnum])
-REFERENCES [dbo].[StudyStatusEnum] ([Enum])
-GO
-ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_StatusEnum]
-GO
-/****** Object:  ForeignKey [FK_Study_QueueStudyStateEnum]    Script Date: 08/26/2008 15:22:17 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Study_QueueStudyStateEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[Study]'))
-ALTER TABLE [dbo].[Study]  WITH CHECK ADD  CONSTRAINT [FK_Study_QueueStudyStateEnum] FOREIGN KEY([QueueStudyStateEnum])
+/****** Object:  ForeignKey [FK_StudyStorage_QueueStudyStateEnum]    Script Date: 10/22/2008 16:46:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyStorage_QueueStudyStateEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
+ALTER TABLE [dbo].[StudyStorage]  WITH CHECK ADD  CONSTRAINT [FK_StudyStorage_QueueStudyStateEnum] FOREIGN KEY([QueueStudyStateEnum])
 REFERENCES [dbo].[QueueStudyStateEnum] ([Enum])
 GO
-ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_QueueStudyStateEnum]
+ALTER TABLE [dbo].[StudyStorage] CHECK CONSTRAINT [FK_StudyStorage_QueueStudyStateEnum]
 GO
-/****** Object:  ForeignKey [FK_StudyStorage_ServerPartition]    Script Date: 07/17/2008 00:50:16 ******/
+/****** Object:  ForeignKey [FK_StudyStorage_ServerPartition]    Script Date: 10/22/2008 16:46:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyStorage_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
 ALTER TABLE [dbo].[StudyStorage]  WITH CHECK ADD  CONSTRAINT [FK_StudyStorage_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
 REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 ALTER TABLE [dbo].[StudyStorage] CHECK CONSTRAINT [FK_StudyStorage_ServerPartition]
 GO
-/****** Object:  ForeignKey [FK_StudyStorage_StudyStatusEnum]    Script Date: 07/17/2008 00:50:16 ******/
+/****** Object:  ForeignKey [FK_StudyStorage_StudyStatusEnum]    Script Date: 10/22/2008 16:46:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyStorage_StudyStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
 ALTER TABLE [dbo].[StudyStorage]  WITH CHECK ADD  CONSTRAINT [FK_StudyStorage_StudyStatusEnum] FOREIGN KEY([StudyStatusEnum])
 REFERENCES [dbo].[StudyStatusEnum] ([Enum])
@@ -1709,23 +1676,7 @@ REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
 
 /****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistory]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
-ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyHistory] FOREIGN KEY([GUID])
-REFERENCES [dbo].[StudyHistory] ([GUID])
-GO
-
-/****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistoryTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
 ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyHistoryTypeEnum] FOREIGN KEY([StudyHistoryTypeEnum])
 REFERENCES [dbo].[StudyHistoryTypeEnum] ([Enum])
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeQueueStudyState_QueueStudyStateEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeQueueStudyState]'))
-ALTER TABLE [dbo].[WorkQueueTypeQueueStudyState]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeQueueStudyState_QueueStudyStateEnum] FOREIGN KEY([QueueStudyStateEnum])
-REFERENCES [dbo].[QueueStudyStateEnum] ([Enum])
-GO
-
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_WorkQueueTypeQueueStudyState_WorkQueueTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[WorkQueueTypeQueueStudyState]'))
-ALTER TABLE [dbo].[WorkQueueTypeQueueStudyState]  WITH CHECK ADD  CONSTRAINT [FK_WorkQueueTypeQueueStudyState_WorkQueueTypeEnum] FOREIGN KEY([WorkQueueTypeEnum])
-REFERENCES [dbo].[WorkQueueTypeEnum] ([Enum])
 GO

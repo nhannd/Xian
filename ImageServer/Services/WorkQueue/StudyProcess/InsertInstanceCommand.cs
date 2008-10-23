@@ -75,16 +75,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             _file.LoadDicomFields(parms);
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
 
-        	TransferSyntax syntax = _file.TransferSyntax;
-			if (syntax.LossyCompressed)
-				parms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-			else if (syntax.LosslessCompressed)
-				parms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-			else
-				parms.StudyStatusEnum = StudyStatusEnum.Online;
-
-        	parms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
-
             // Get the Insert Instance broker and do the insert
             IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();
 

@@ -302,12 +302,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
             // create new study storage
             IInsertStudyStorage insertBroker = context.GetBroker<IInsertStudyStorage>();
-            StudyStorageInsertParameters insertParams = new StudyStorageInsertParameters();
+            InsertStudyStorageParameters insertParams = new InsertStudyStorageParameters();
             insertParams.FilesystemKey = StorageLocation.FilesystemKey;
             insertParams.Folder = StorageLocation.StudyFolder;
             insertParams.ServerPartitionKey = StorageLocation.ServerPartitionKey;
             insertParams.StudyInstanceUid = StorageLocation.StudyInstanceUid;
             insertParams.StudyStatusEnum = StorageLocation.StudyStatusEnum;
+			insertParams.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
             insertParams.TransferSyntaxUid = StorageLocation.TransferSyntaxUid;
 
             _newStorage = insertBroker.FindOne(insertParams);

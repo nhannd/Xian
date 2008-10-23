@@ -34,36 +34,40 @@ using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class StudyStorageInsertParameters : ProcedureParameters
+    public class InsertStudyStorageParameters : ProcedureParameters
     {
-        public StudyStorageInsertParameters()
+        public InsertStudyStorageParameters()
             : base("InsertStudyStorage")
         {
         }
 
         public ServerEntityKey ServerPartitionKey
         {
-            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
         public String StudyInstanceUid
         {
-            set { this.SubCriteria["StudyInstanceUid"] = new ProcedureParameter<String>("StudyInstanceUid", value); }
+            set { SubCriteria["StudyInstanceUid"] = new ProcedureParameter<String>("StudyInstanceUid", value); }
         }
         public ServerEntityKey FilesystemKey
         {
-            set { this.SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
+            set { SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
         }
         public String Folder
         {
-            set { this.SubCriteria["Folder"] = new ProcedureParameter<String>("Folder", value); }
+            set { SubCriteria["Folder"] = new ProcedureParameter<String>("Folder", value); }
         }
 		public String TransferSyntaxUid
 		{
-			set { this.SubCriteria["TransferSyntaxUid"] = new ProcedureParameter<String>("TransferSyntaxUid", value); }
+			set { SubCriteria["TransferSyntaxUid"] = new ProcedureParameter<String>("TransferSyntaxUid", value); }
 		}
 		public StudyStatusEnum StudyStatusEnum
 		{
 			set { SubCriteria["StudyStatusEnum"] = new ProcedureParameter<ServerEnum>("StudyStatusEnum", value); }
+		}
+		public QueueStudyStateEnum QueueStudyStateEnum
+		{
+			set { SubCriteria["QueueStudyStateEnum"] = new ProcedureParameter<ServerEnum>("QueueStudyStateEnum", value); }
 		}
 	}
 }

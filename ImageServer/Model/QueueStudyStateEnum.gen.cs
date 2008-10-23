@@ -45,11 +45,18 @@ public partial class QueueStudyStateEnum : ServerEnum
       #region Private Static Members
       private static readonly QueueStudyStateEnum _Idle = GetEnum("Idle");
       private static readonly QueueStudyStateEnum _DeleteScheduled = GetEnum("DeleteScheduled");
+      private static readonly QueueStudyStateEnum _WebDeleteScheduled = GetEnum("WebDeleteScheduled");
       private static readonly QueueStudyStateEnum _EditScheduled = GetEnum("EditScheduled");
       private static readonly QueueStudyStateEnum _ProcessingScheduled = GetEnum("ProcessingScheduled");
       private static readonly QueueStudyStateEnum _PurgeScheduled = GetEnum("PurgeScheduled");
       private static readonly QueueStudyStateEnum _ReconcileScheduled = GetEnum("ReconcileScheduled");
       private static readonly QueueStudyStateEnum _ReconcileRequired = GetEnum("ReconcileRequired");
+      private static readonly QueueStudyStateEnum _CleanupScheduled = GetEnum("CleanupScheduled");
+      private static readonly QueueStudyStateEnum _CompressScheduled = GetEnum("CompressScheduled");
+      private static readonly QueueStudyStateEnum _MigrationScheduled = GetEnum("MigrationScheduled");
+      private static readonly QueueStudyStateEnum _ReprocessScheduled = GetEnum("ReprocessScheduled");
+      private static readonly QueueStudyStateEnum _RestoreScheduled = GetEnum("RestoreScheduled");
+      private static readonly QueueStudyStateEnum _ArchiveScheduled = GetEnum("ArchiveScheduled");
       #endregion
 
       #region Public Static Properties
@@ -66,6 +73,13 @@ public partial class QueueStudyStateEnum : ServerEnum
       public static QueueStudyStateEnum DeleteScheduled
       {
           get { return _DeleteScheduled; }
+      }
+      /// <summary>
+      /// A web request is scheduled for deletion
+      /// </summary>
+      public static QueueStudyStateEnum WebDeleteScheduled
+      {
+          get { return _WebDeleteScheduled; }
       }
       /// <summary>
       /// The study is scheduled for editing
@@ -101,6 +115,48 @@ public partial class QueueStudyStateEnum : ServerEnum
       public static QueueStudyStateEnum ReconcileRequired
       {
           get { return _ReconcileRequired; }
+      }
+      /// <summary>
+      /// A WorkQueue entry for the study needs to be cleaned up
+      /// </summary>
+      public static QueueStudyStateEnum CleanupScheduled
+      {
+          get { return _CleanupScheduled; }
+      }
+      /// <summary>
+      /// The study is scheduled for compression
+      /// </summary>
+      public static QueueStudyStateEnum CompressScheduled
+      {
+          get { return _CompressScheduled; }
+      }
+      /// <summary>
+      /// The study is scheduled for migration to a new tier of storage
+      /// </summary>
+      public static QueueStudyStateEnum MigrationScheduled
+      {
+          get { return _MigrationScheduled; }
+      }
+      /// <summary>
+      /// The study is scheduled for reprocessing
+      /// </summary>
+      public static QueueStudyStateEnum ReprocessScheduled
+      {
+          get { return _ReprocessScheduled; }
+      }
+      /// <summary>
+      /// The study is scheduled for restoring
+      /// </summary>
+      public static QueueStudyStateEnum RestoreScheduled
+      {
+          get { return _RestoreScheduled; }
+      }
+      /// <summary>
+      /// The study is scheduled for archiving
+      /// </summary>
+      public static QueueStudyStateEnum ArchiveScheduled
+      {
+          get { return _ArchiveScheduled; }
       }
 
       #endregion

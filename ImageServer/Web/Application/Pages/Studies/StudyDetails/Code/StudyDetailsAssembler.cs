@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             details.NumberOfStudyRelatedSeries = study.NumberOfStudyRelatedSeries;
             details.ReferringPhysicianName = study.ReferringPhysiciansName;
 
-            details.Status = study.StudyStatusEnum.ToString();
             details.StudyDate = study.StudyDate;
             details.StudyDescription = study.StudyDescription;
             details.StudyId = study.StudyId;
@@ -70,7 +69,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             details.StudyTime = study.StudyTime;
 
             StudyController studyController = new StudyController();
-            details.ScheduledForDelete = studyController.IsScheduledForDelete(study);
+        	StudyStorage storage = studyController.GetStudyStorage(study);
+        	details.ScheduledForDelete = storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled);
+        	details.Status = storage.StudyStatusEnum.ToString();
 
             return details;
         }

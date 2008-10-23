@@ -143,22 +143,15 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Inser
 DROP PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 GO
 
-/****** Object:  StoredProcedure [dbo].[InsertStudyIntegrityQueue]    Script Date: 10/01/2008 17:35:56 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateQueueStudyState]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[UpdateQueueStudyState]
-GO
-
 /****** Object:  StoredProcedure [dbo].[AttachStudyToPatient]    Script Date: 10/09/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[AttachStudyToPatient]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[AttachStudyToPatient]
 GO
 
-
 /****** Object:  StoredProcedure [dbo].[CreatePatientForStudy]    Script Date: 10/09/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[CreatePatientForStudy]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[CreatePatientForStudy]
 GO
-
 
 /****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[LockStudy]') AND type in (N'P', N'PC'))
@@ -166,76 +159,6 @@ DROP PROCEDURE [dbo].[LockStudy]
 GO
 
 
-/****** Object:  StoredProcedure [dbo].[UpdateQueueStudyState]    Script Date: 10/01/2008 11:53:24 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[UpdateQueueStudyState]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'
--- =============================================
--- Author:		Thanh Huynh
--- Create date: Oct 1, 2008
--- Description:	Update study state base on the work queue and study integrity queue
---
--- Oct 03, 2008:  Used SELECT WITH(NOLOCK) to avoid deadlock with QueryWorkQueue
--- =============================================
-CREATE PROCEDURE [dbo].[UpdateQueueStudyState]
-	@StudyStorageGUID uniqueidentifier
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	DECLARE @WorkQueueStatusIdle smallint
-	DECLARE @WorkQueueStatusPending smallint
-	DECLARE @StudyState smallint
-	DECLARE @StudyInstanceUid varchar(64)
-	DECLARE @ServerPartitionGUID uniqueidentifier
-
-	SELECT @WorkQueueStatusIdle=Enum FROM dbo.WorkQueueStatusEnum WHERE Lookup=''Idle''
-	SELECT @WorkQueueStatusPending=Enum FROM dbo.WorkQueueStatusEnum WHERE Lookup=''Pending''
-	
-	SELECT @ServerPartitionGUID=ServerPartitionGUID, @StudyInstanceUid=StudyInstanceUid
-	FROM StudyStorage WHERE GUID=@StudyStorageGUID
-	
-    SELECT TOP 1 @StudyState=WorkQueueTypeQueueStudyState.QueueStudyStateEnum
-	FROM WorkQueue WITH (NOLOCK)
-	JOIN  WorkQueueTypeQueueStudyState ON WorkQueue.WorkQueueTypeEnum=WorkQueueTypeQueueStudyState.WorkQueueTypeEnum
-	JOIN	QueueStudyStateEnum  ON WorkQueueTypeQueueStudyState.QueueStudyStateEnum=QueueStudyStateEnum.Enum
-	WHERE WorkQueue.StudyStorageGUID=@StudyStorageGUID
-	AND WorkQueue.WorkQueueStatusEnum IN (@WorkQueueStatusIdle, @WorkQueueStatusPending)
-	ORDER BY WorkQueue.ScheduledTime ASC
-
-	IF @@ROWCOUNT <> 0
-	BEGIN
-		UPDATE Study
-		SET  QueueStudyStateEnum=@StudyState
-		WHERE ServerPartitionGUID=@ServerPartitionGUID AND StudyInstanceUID=@StudyInstanceUid
-	END
-	ELSE
-	BEGIN
-		IF EXISTS(SELECT * FROM StudyIntegrityQueue WHERE StudyStorageGUID=@StudyStorageGUID)
-		BEGIN
-			SELECT @StudyState=Enum FROM QueueStudyStateEnum WHERE Lookup=''ReconcileRequired''
-			UPDATE Study SET QueueStudyStateEnum=@StudyState
-			WHERE ServerPartitionGUID=@ServerPartitionGUID and StudyInstanceUid=@StudyInstanceUid
-		END
-		ELSE
-		BEGIN
-			SELECT @StudyState=Enum FROM QueueStudyStateEnum WHERE Lookup=''Idle''
-			UPDATE Study SET QueueStudyStateEnum=@StudyState
-			WHERE ServerPartitionGUID=@ServerPartitionGUID and StudyInstanceUid=@StudyInstanceUid
-		END
-	END
-END
-
-'
-END
-
-GO
 
 /****** Object:  StoredProcedure [dbo].[WebQueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
@@ -401,7 +324,8 @@ BEGIN
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
+				StudyStorage.QueueStudyStateEnum
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -413,7 +337,8 @@ BEGIN
 	BEGIN
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
+				StudyStorage.QueueStudyStateEnum
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -425,7 +350,8 @@ BEGIN
 	BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
-				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID
+				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
+				StudyStorage.QueueStudyStateEnum
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -711,6 +637,7 @@ EXEC dbo.sp_executesql @statement = N'
 --	Oct 29, 2007: Add @ProcessorID
 --  May 14, 2008, Changed order so StudyLocks are released after updates
 --  Oct 01, 2008, Added UpdateQueueStudyState
+--  Oct 23, 2008, Removed UpdateQueueStudyState
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -755,17 +682,19 @@ BEGIN
 		SELECT @ServerPartitionGUID=ServerPartitionGUID, @StudyInstanceUid=StudyInstanceUid
 		FROM StudyStorage WHERE GUID = @StudyStorageGUID 
 
-		if @QueueStudyStateEnum is not NULL
-		BEGIN
-			UPDATE Study SET QueueStudyStateEnum=@QueueStudyStateEnum 
-			WHERE ServerPartitionGUID=@ServerPartitionGUID AND StudyInstanceUid=@StudyInstanceUid
-		END
-
 		-- Completed
 		DELETE FROM WorkQueue where GUID = @WorkQueueGUID
-		
-		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-		WHERE GUID = @StudyStorageGUID AND Lock = 1
+
+		if @QueueStudyStateEnum is not NULL
+		BEGIN
+			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate(), QueueStudyStateEnum=@QueueStudyStateEnum  
+			WHERE GUID = @StudyStorageGUID AND Lock = 1
+		END
+		ELSE
+		BEGIN		
+			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+			WHERE GUID = @StudyStorageGUID AND Lock = 1
+		END
 
 		
 	END
@@ -833,9 +762,6 @@ BEGIN
 
 
 	COMMIT TRANSACTION
-
-	EXEC UpdateQueueStudyState @StudyStorageGUID
-
 END
 ' 
 END
@@ -939,14 +865,15 @@ BEGIN
 
 	declare @WorkQueueGUID as uniqueidentifier
 
-	declare @PendingStatusEnum as int
-	declare @IdleStatusEnum as int
-	declare @StudyProcessTypeEnum as int
+	declare @PendingStatusEnum as smallint
+	declare @IdleStatusEnum as smallint
+	declare @StudyProcessTypeEnum as smallint
+	declare @StudyProcessQueueStateEnum as smallint
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
-
+	select @StudyProcessQueueStateEnum = Enum from QueueStudyStateEnum where Lookup = ''StudyProcess''
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
@@ -981,7 +908,7 @@ BEGIN
 
 	COMMIT TRANSACTION
 
-	EXEC UpdateQueueStudyState @StudyStorageGUID
+	--EXEC UpdateQueueStudyState @StudyStorageGUID
 
 END
 ' 
@@ -1900,8 +1827,6 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 CREATE PROCEDURE [dbo].[InsertInstance] 
 	-- Add the parameters for the stored procedure here
 	@ServerPartitionGUID uniqueidentifier, 
-	@StudyStatusEnum smallint,
-	@QueueStudyStateEnum smallint,
 	@PatientId nvarchar(64) = null,
 	@PatientsName nvarchar(64) = null,
 	@IssuerOfPatientId nvarchar(64) = null,
@@ -1993,12 +1918,12 @@ BEGIN
 				StudyInstanceUid, PatientsName, PatientId, IssuerOfPatientId, PatientsBirthDate,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
-				NumberOfStudyRelatedInstances, StudyStatusEnum,SpecificCharacterSet,QueueStudyStateEnum)
+				NumberOfStudyRelatedInstances,SpecificCharacterSet)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
 				@StudyInstanceUid, @PatientsName, @PatientId, @IssuerOfPatientId, @PatientsBirthDate,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
-				@StudyDescription, @ReferringPhysiciansName, 0, 1, @StudyStatusEnum,@SpecificCharacterSet,@QueueStudyStateEnum)
+				@StudyDescription, @ReferringPhysiciansName, 0, 1,@SpecificCharacterSet)
 
 		UPDATE dbo.ServerPartition SET StudyCount=StudyCount+1
 		WHERE GUID=@ServerPartitionGUID
@@ -2038,12 +1963,12 @@ BEGIN
 		INSERT into Series (GUID, ServerPartitionGUID, StudyGUID,
 				SeriesInstanceUid, Modality, SeriesNumber, SeriesDescription,
 				NumberOfSeriesRelatedInstances, PerformedProcedureStepStartDate,
-				PerformedProcedureStepStartTime, SourceApplicationEntityTitle, StudyStatusEnum)
+				PerformedProcedureStepStartTime, SourceApplicationEntityTitle)
 		VALUES
 				(@SeriesGUID, @ServerPartitionGUID, @StudyGUID, 
 				@SeriesInstanceUid, @Modality, @SeriesNumber, @SeriesDescription,
 				1,@PerformedProcedureStepStartDate, @PerformedProcedureStepStartTime, 
-				@SourceApplicationEntityTitle,	@StudyStatusEnum)
+				@SourceApplicationEntityTitle)
 
 		UPDATE Study
 			SET NumberOfStudyRelatedSeries = NumberOfStudyRelatedSeries + 1
@@ -2093,7 +2018,8 @@ CREATE PROCEDURE [dbo].[InsertStudyStorage]
 	@Folder varchar(8),
 	@FilesystemGUID uniqueidentifier,
 	@TransferSyntaxUid varchar(64),
-	@StudyStatusEnum smallint
+	@StudyStatusEnum smallint,
+	@QueueStudyStateEnum smallint
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -2111,16 +2037,14 @@ BEGIN
 	BEGIN
 		set @StudyStorageGUID = NEWID()
 	
-		INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum) 
-			values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @StudyStatusEnum)
+		INSERT into StudyStorage(GUID, ServerPartitionGUID, StudyInstanceUid, Lock, StudyStatusEnum, QueueStudyStateEnum) 
+			values (@StudyStorageGUID, @ServerPartitionGUID, @StudyInstanceUid, 0, @StudyStatusEnum, @QueueStudyStateEnum)
 	END
 	ELSE
 	BEGIN
 		declare @StudyGUID as uniqueidentifier
 
 		SELECT @StudyGUID = GUID FROM Study WHERE ServerPartitionGUID = @ServerPartitionGUID AND StudyInstanceUid = @StudyInstanceUid
-		UPDATE Study SET StudyStatusEnum = @StudyStatusEnum WHERE GUID = @StudyGUID
-		UPDATE Series SET StudyStatusEnum = @StudyStatusEnum WHERE StudyGUID = @StudyGUID
 		UPDATE StudyStorage SET StudyStatusEnum = @StudyStatusEnum WHERE ServerPartitionGUID = @ServerPartitionGUID AND StudyInstanceUid = @StudyInstanceUid
 
 	END
@@ -2257,6 +2181,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Description:	Stored procedure for deleting WorkQueue entries
 --
 -- Oct 14, 2008: Call UpdateQueueStudyState to update the study status
+-- Oct 23, 2008: Removed UpdateQueueStudyState
 -- =============================================
 CREATE PROCEDURE [dbo].[DeleteWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2360,7 +2285,7 @@ BEGIN
 		RETURN 50000
 	END
 
-	EXEC UpdateQueueStudyState @StudyStorageGUID
+	--EXEC UpdateQueueStudyState @StudyStorageGUID
 
 END
 ' 
@@ -2797,12 +2722,6 @@ BEGIN
 	-- Begin the transaction, keep all the deletes/updates in a single transaction
 	BEGIN TRANSACTION
 
-	UPDATE Series SET StudyStatusEnum = @StudyStatusEnum
-	WHERE StudyGUID = @StudyGUID
-
-	UPDATE Study SET StudyStatusEnum = @StudyStatusEnum, QueueStudyStateEnum=@IdleQueueStudyStateEnum
-	WHERE GUID = @StudyGUID
-
 	UPDATE StudyStorage SET StudyStatusEnum = @StudyStatusEnum
 	WHERE GUID = @StudyStorageGUID
 	
@@ -3193,7 +3112,7 @@ BEGIN
 
 	COMMIT TRANSACTION
 	
-	EXEC UpdateQueueStudyState @StudyStorageGUID
+	--EXEC UpdateQueueStudyState @StudyStorageGUID
 
 	SELECT * FROM [dbo].[StudyIntegrityQueue] WHERE GUID=@Guid
 
@@ -3241,38 +3160,48 @@ BEGIN
 	declare @IdleStatusEnum as int
 	declare @StudyIntegrityTypeEnum as int
 	declare @QueueStudyStateTypeEnumReconcileScheduled as int
+	declare @QueueStudyStateTypeEnumIdle as int
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @StudyIntegrityTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
 	select @QueueStudyStateTypeEnumReconcileScheduled = Enum from QueueStudyStateEnum where Lookup = ''ReconcileScheduled''
+	select @QueueStudyStateTypeEnumIdle = Enum from QueueStudyStateEnum where Lookup = ''Idle''
 
 	BEGIN TRANSACTION
 
-    -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND StudyHistoryGUID = @StudyHistoryGUID
-		AND WorkQueueTypeEnum = @StudyIntegrityTypeEnum
-	if @@ROWCOUNT = 0
+	UPDATE StudyStorage
+	SET QueueStudyStateEnum = @QueueStudyStateTypeEnumReconcileScheduled 
+	WHERE GUID = @StudyStorageGUID AND QueueStudyStateEnum = @QueueStudyStateTypeEnumIdle
+	IF @@ROWCOUNT = 0
 	BEGIN
+		-- We didnt lock the study, just return no rows
 		set @WorkQueueGUID = NEWID();
-
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyHistoryGUID, @Data, @StudyIntegrityTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
 	END
 	ELSE
 	BEGIN
-		UPDATE WorkQueue 
-			set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
+		-- Insert statements for procedure here
+		SELECT @WorkQueueGUID = GUID from WorkQueue 
+			where StudyStorageGUID = @StudyStorageGUID
+			AND StudyHistoryGUID = @StudyHistoryGUID
+			AND WorkQueueTypeEnum = @StudyIntegrityTypeEnum
+		if @@ROWCOUNT = 0
+		BEGIN
+			set @WorkQueueGUID = NEWID();
+
+			INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
+				values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyHistoryGUID, @Data, @StudyIntegrityTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
+		END
+		ELSE
+		BEGIN
+			UPDATE WorkQueue 
+				set ExpirationTime = @ExpirationTime
+				where GUID = @WorkQueueGUID
+		END
+
+		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
+				values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
 	END
-
-	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
-	
-
-	EXEC UpdateQueueStudyState @StudyStorageGUID
 
 	COMMIT TRANSACTION
 
@@ -3468,7 +3397,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- =============================================
 CREATE PROCEDURE [dbo].[LockStudy] 
 	@StudyStorageGUID uniqueidentifier,
-	@Lock bit = 1,
+	@Lock bit = null,
+	@QueueStudyStateEnum smallint = null,
 	@Successful bit output
 AS
 BEGIN
@@ -3477,29 +3407,52 @@ BEGIN
 	SET NOCOUNT ON;
 	SET @Successful= 1;
 
-	IF @Lock=1
+	if @QueueStudyStateEnum is not null
 	BEGIN
-		UPDATE StudyStorage 
-		SET Lock=1, LastAccessedTime = getdate()
-		WHERE GUID=@StudyStorageGUID AND Lock=0
+		declare @IdleQueueStudyStateEnum smallint
+		SELECT @IdleQueueStudyStateEnum = Enum from QueueStudyStateEnum where Lookup = ''Idle''
 
-		IF (@@ROWCOUNT=0)
-			SET @Successful=0
-		
+		if @QueueStudyStateEnum = @IdleQueueStudyStateEnum
+		BEGIN
+			UPDATE StudyStorage
+			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
+				LastAccessedTime = getdate()
+			WHERE GUID = @StudyStorageGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE StudyStorage
+			SET	QueueStudyStateEnum = @IdleQueueStudyStateEnum,
+				LastAccessedTime = getdate()
+			WHERE GUID = @StudyStorageGUID AND @QueueStudyStateEnum = @IdleQueueStudyStateEnum
+
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+		END
 	END
-	ELSE
+	ELSE if @Lock is not null
 	BEGIN
-		-- unlock if the study is being locked
-		UPDATE StudyStorage 
-		SET Lock=0, LastAccessedTime = getdate()
-		WHERE GUID=@StudyStorageGUID AND Lock=1
+		IF @Lock=1
+		BEGIN
+			UPDATE StudyStorage 
+			SET Lock=1, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND Lock=0
 
-		IF (@@ROWCOUNT=0)
-			SET @Successful=0
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+			
+		END
+		ELSE
+		BEGIN
+			-- unlock if the study is being locked
+			UPDATE StudyStorage 
+			SET Lock=0, LastAccessedTime = getdate()
+			WHERE GUID=@StudyStorageGUID AND Lock=1
 
+			IF (@@ROWCOUNT=0)
+				SET @Successful=0
+		END
 	END
-	
-
 END
 '
 END

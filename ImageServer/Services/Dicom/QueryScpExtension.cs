@@ -246,7 +246,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
 
-			if (row.StudyStatusEnum == StudyStatusEnum.Nearline)
+        	StudyStorage storage = StudyStorage.Load(read, Partition.Key, row.StudyInstanceUid);
+			if (storage.StudyStatusEnum == StudyStatusEnum.Nearline)
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
 			else
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
@@ -335,8 +336,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
+        	Study theStudy = Study.Load(read, row.StudyKey);
+        	StudyStorage storage = StudyStorage.Load(read, theStudy.ServerPartitionKey, theStudy.StudyInstanceUid);
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
-			if (row.StudyStatusEnum == StudyStatusEnum.Nearline)
+			if (storage.StudyStatusEnum == StudyStatusEnum.Nearline)
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
 			else
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
@@ -675,8 +678,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     {
                         find.Find(criteria, delegate(Study row)
                                                 {
-													if (row.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled)
-													 || row.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled))
+                                                	StudyStorage storage =
+                                                		StudyStorage.Load(subRead, row.ServerPartitionKey,
+                                                		                  row.StudyInstanceUid);
+													if (storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled)
+													 || storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled))
 														return;
 
                                                     DicomMessage response = new DicomMessage();

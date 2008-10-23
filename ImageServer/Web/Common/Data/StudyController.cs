@@ -78,6 +78,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _seriesAdaptor.Get(criteria);
         }
 
+		public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(ServerEntityKey studyStorageKey)
+        {
+			Platform.CheckForNullReference(studyStorageKey, "storageKey");
+
+            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+            {
+                IStudyIntegrityQueueEntityBroker integrityQueueBroker = ctx.GetBroker<IStudyIntegrityQueueEntityBroker>();
+                StudyIntegrityQueueSelectCriteria parms = new StudyIntegrityQueueSelectCriteria();
+
+				parms.StudyStorageKey.EqualTo(studyStorageKey);
+
+                return integrityQueueBroker.Find(parms);
+            }
+        }
+
 		/// <summary>
 		/// Delete a Study.
 		/// </summary>
@@ -85,37 +100,35 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// <returns>true on success, false on failure.</returns>
         public bool DeleteStudy(Study study)
         {
-            WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-            columns.ServerPartitionKey = study.ServerPartitionKey;
+			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
+				
+				LockStudyParameters lockParms = new LockStudyParameters();
+				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.WebDeleteScheduled;
+				lockParms.StudyStorageKey = storage.Key;
 
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+				ILockStudy broker = ctx.GetBroker<ILockStudy>();
+				broker.Execute(lockParms);
+				if (!lockParms.Successful)
+					return false;
+				
+				WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
+				columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+				columns.ServerPartitionKey = study.ServerPartitionKey;
+				columns.StudyStorageKey = storage.Key;
+				columns.ScheduledTime = DateTime.Now; // spread by 15 seconds
+				columns.ExpirationTime = DateTime.Now.AddMinutes(1);
+				columns.FailureCount = 0;
 
-            IList<StudyStorage> storages = studyStorageAdaptor.Get(criteria);
-            int counter = 0;
-            foreach(StudyStorage storage in storages)
-            {
-                counter++;
-                columns.StudyStorageKey = storage.Key;
-                columns.ScheduledTime = DateTime.Now.AddSeconds(counter*15); // spread by 15 seconds
-                columns.ExpirationTime = DateTime.Now.AddDays(1);
-                columns.FailureCount = 0;
+				WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+				workqueueAdaptor.Add(ctx, columns);
 
-                workqueueAdaptor.Add(columns);
-            }
+				ctx.Commit();
 
-			StudyUpdateColumns studyColumns = new StudyUpdateColumns();
-			studyColumns.QueueStudyStateEnum = QueueStudyStateEnum.DeleteScheduled;
-
-			StudyController studyController = new StudyController();
-			studyController.UpdateStudy(study, studyColumns);
-
-            return true;
+				return true;
+			}
         }
 
 		/// <summary>
@@ -157,35 +170,36 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool EditStudy(Study study, XmlDocument modifiedFields)
         {
-            WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
-            WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-            columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
-            columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-            columns.ServerPartitionKey = study.ServerPartitionKey;
-        	columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
 
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
+				LockStudyParameters lockParms = new LockStudyParameters();
+				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
+				lockParms.StudyStorageKey = storage.Key;
 
-            StudyStorage storage = studyStorageAdaptor.GetFirst(criteria);
+				ILockStudy broker = ctx.GetBroker<ILockStudy>();
+				broker.Execute(lockParms);
+				if (!lockParms.Successful)
+					return false;
 
-            columns.StudyStorageKey = storage.Key;
-            DateTime time = Platform.Time;
-            columns.ScheduledTime = time;
-            columns.ExpirationTime = time;
-            columns.FailureCount = 0;
-            columns.Data = modifiedFields;
-            
-            workqueueAdaptor.Add(columns);
+				WorkQueueAdaptor workqueueAdaptor = new WorkQueueAdaptor();
+				WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
+				columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+				columns.ServerPartitionKey = study.ServerPartitionKey;
+				columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+				columns.StudyStorageKey = storage.Key;
+				DateTime time = Platform.Time;
+				columns.ScheduledTime = time;
+				columns.ExpirationTime = time;
+				columns.FailureCount = 0;
+				columns.Data = modifiedFields;
 
-			StudyUpdateColumns studyColumns = new StudyUpdateColumns();
-			studyColumns.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
-
-			StudyController studyController = new StudyController();
-			studyController.UpdateStudy(study, studyColumns);
-            return true;
+				workqueueAdaptor.Add(columns);
+				ctx.Commit();
+				return true;
+			}
         }
 
 		public bool UpdateStudy(Study study, StudyUpdateColumns columns)
@@ -205,12 +219,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private ServerEntityKey GetStudyStorageGUID(Study study)
         {
-            StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
-            StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-            criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
-            criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
-
-            return studyStorageAdaptor.GetFirst(criteria).GetKey();
+            
+            return GetStudyStorage(study).Key;
         }
 
         /// <summary>
@@ -369,89 +379,63 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 return storage;
             }
         }
+		public StudyStorage GetStudyStorage(Study study)
+		{
+			Platform.CheckForNullReference(study, "Study");
 
-        public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyStorageLocation storage)
-        {
-            Platform.CheckForNullReference(storage, "storage");
+			StudyStorageAdaptor studyStorageAdaptor = new StudyStorageAdaptor();
+			StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
+			criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
+			criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
-            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IStudyIntegrityQueueEntityBroker integrityQueueBroker = ctx.GetBroker<IStudyIntegrityQueueEntityBroker>();
-                StudyIntegrityQueueSelectCriteria parms = new StudyIntegrityQueueSelectCriteria();
+			return studyStorageAdaptor.GetFirst(criteria);
+		}
 
-                parms.ServerPartitionKey.EqualTo(storage.ServerPartitionKey);
-                parms.StudyStorageKey.EqualTo(storage.GetKey());
+		public bool CanScheduleDelete(StudySummary study)
+		{
+			return !study.IsLocked && !study.IsReconcileRequired;
+		}
 
-                return integrityQueueBroker.Find(parms);
-            }
-        }
+		public bool CanScheduleEdit(StudySummary study)
+		{
+			if (study.IsLocked || study.IsProcessing)
+				return false;
 
+			if (study.IsNearline)
+			{
+				Platform.CheckTrue(study.IsArchived, "study.IsArchived");
 
-        public bool UpdateStudyState(StudyStorage studyStorage)
-        {
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            using(IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IUpdateQueueStudyState updateBroker = ctx.GetBroker<IUpdateQueueStudyState>();
-                UpdateQueueStudyStateParameters parameters = new UpdateQueueStudyStateParameters();
-                parameters.StudyStorageKey = studyStorage.GetKey();
+				StudyStorageLocation studyStorage = CollectionUtils.FirstElement(GetStudyStorageLocation(study.TheStudy));
 
-                if (updateBroker.Execute(parameters))
-                {
-                    ctx.Commit();
-                    return true;
-                }
-            }
+				if (study.TheArchiveLocation != null && studyStorage != null)
+				{
+					if (study.TheArchiveLocation.ServerTransferSyntax.Lossless &&
+						TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
+					{
+						// archive is lossless but current copy is lossy. can't edit until the lossless is restored.
+						return false;
+					}
 
-            return false;
-        }
+				}
+			}
 
-        public bool CanScheduleDelete(StudySummary study)
-        {
-            return !study.IsLocked && !study.IsReconcileRequired;
-        }
+			return true;
+		}
 
-        public bool CanScheduleEdit(StudySummary study)
-        {
-            if (study.IsLocked || study.IsProcessing)
-                return false;
+		public bool CanScheduleMove(StudySummary study)
+		{
+			return !study.IsLocked && !study.IsReconcileRequired;
+		}
 
-            if (study.IsNearline)
-            {
-                Platform.CheckTrue(study.IsArchived, "study.IsArchived");
+		public bool CanScheduleRestore(StudySummary study)
+		{
+			return study.IsArchived && !study.IsLocked && !study.IsReconcileRequired;
+		}
 
-                ArchiveStudyStorage archiveStorage = CollectionUtils.FirstElement(GetArchiveStudyStorage(study.TheStudy));
-                StudyStorageLocation studyStorage = CollectionUtils.FirstElement(GetStudyStorageLocation(study.TheStudy));
-
-                if (archiveStorage != null && studyStorage != null)
-                {
-                    if (archiveStorage.ServerTransferSyntax.Lossless &&
-                        TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
-                    {
-                        // archive is lossless but current copy is lossy. can't edit until the lossless is restored.
-                        return false; 
-                    }
-                        
-                }
-            }
-
-            return true;
-        }
-
-        public bool CanScheduleMove(StudySummary study)
-        {
-            return !study.IsLocked && !study.IsReconcileRequired;
-        }
-
-        public bool CanScheduleRestore(StudySummary study)
-        {
-            return study.IsArchived && !study.IsLocked && !study.IsReconcileRequired;
-        }
-
-        public bool CanScheduleReconcile(StudySummary study)
-        {
-            return !study.IsLocked && !study.IsReconcileRequired;
-        }
+		public bool CanScheduleReconcile(StudySummary study)
+		{
+			return !study.IsLocked && !study.IsReconcileRequired;
+		}
         #endregion
     }
 }

@@ -50,7 +50,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             StudyDetails details = new StudyDetails();
             details.StudyInstanceUID = study.StudyInstanceUid;
-            details.Status = study.StudyStatusEnum.ToString();
             details.PatientName = study.PatientsName;
             details.AccessionNumber = study.AccessionNumber;
             details.PatientID = study.PatientId;
@@ -66,8 +65,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 criteria.StudyInstanceUid.EqualTo(study.StudyInstanceUid);
 
                 StudyStorage storages = adaptor.GetFirst(criteria);
-                if (storages != null)
-                    details.Lock = storages.Lock;
+				if (storages != null)
+				{
+					details.Lock = storages.Lock;
+					details.Status = storages.StudyStatusEnum.ToString();
+				}
             }
 
 

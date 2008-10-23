@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private QueueStudyStateEnum _queueStudyStateEnum;
 		private ArchiveStudyStorage _theArchiveLocation;
 	    private bool _isLocked;
+		private StudyStorage _theStudyStorage;
 
 		#endregion Private members
 
@@ -163,6 +164,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _theArchiveLocation = value; }
 		}
 
+		public StudyStorage TheStudyStorage
+		{
+			get { return _theStudyStorage; }
+			set { _theStudyStorage = value; }
+		}
 	    public bool IsArchived
 	    {
 	        get
@@ -388,38 +394,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             studySummary.PatientsName = study.PatientsName;
             studySummary.StudyDate = study.StudyDate;
             studySummary.StudyDescription = study.StudyDescription;
-            studySummary.StudyStatusEnum = study.StudyStatusEnum;
             studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
             studySummary.TheStudy = study;
             studySummary.ThePartition = ServerPartition.Load(study.ServerPartitionKey);
-            studySummary.QueueStudyStateEnum = study.QueueStudyStateEnum;
+            
+        	studySummary.TheStudyStorage = StudyStorage.Load(study.ServerPartitionKey, study.StudyInstanceUid);
+			studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
+			studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
 
             IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
             if (archiveList.Count > 0)
                 studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
 
-            IList<StudyStorageLocation> locations = controller.GetStudyStorageLocation(study);
-
-            studySummary.IsProcessing = locations != null && locations.Count>0 && locations[0].Lock;
+			studySummary.IsProcessing = studySummary.TheStudyStorage.Lock;
 
             // the study is considered "locked" if it's being processed or some action which requires the lock has been scheduled
             // No additional action should be allowed on the study until everything is completed.
-            studySummary.IsLocked = studySummary.IsProcessing || (study.QueueStudyStateEnum != Model.QueueStudyStateEnum.Idle);
+			studySummary.IsLocked = studySummary.IsProcessing || (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
             
-            if (locations!=null)
+            IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
+
+            if (integrityQueueItems != null && integrityQueueItems.Count > 0)
             {
-                foreach (StudyStorageLocation loc in locations)
-                {
-                    IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(loc);
-
-                    if (integrityQueueItems != null && integrityQueueItems.Count > 0)
-                    {
-                        studySummary.IsReconcileRequired = true;
-                        break;
-                    }
-
-                }
-
+                studySummary.IsReconcileRequired = true;
             }
             
             return studySummary;

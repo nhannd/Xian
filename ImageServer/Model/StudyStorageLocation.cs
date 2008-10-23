@@ -67,6 +67,7 @@ namespace ClearCanvas.ImageServer.Model
         private FilesystemTierEnum _filesystemTierEnum;
     	private String _transferSyntaxUid;
     	private ServerEntityKey _filesystemStudyStorageKey;
+    	private QueueStudyStateEnum _queueStudyState;
 
     	#endregion
 
@@ -156,7 +157,14 @@ namespace ClearCanvas.ImageServer.Model
 			get { return _filesystemStudyStorageKey; }
 			set { _filesystemStudyStorageKey = value; }
     	}
-		#endregion
+
+    	public QueueStudyStateEnum QueueStudyStateEnum
+    	{
+    		get { return _queueStudyState; }
+    		set { _queueStudyState = value; }
+    	}
+
+    	#endregion
 
         #region Public Methods
         public string GetStudyPath()

@@ -780,19 +780,40 @@ INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[De
      VALUES(newid(),102,'DeleteScheduled','Delete Scheduled','The study is scheduled for deletion')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),103,'EditScheduled','Edit Scheduled','The study is scheduled for editing')
+     VALUES(newid(),103,'WebDeleteScheduled','Web Delete Scheduled','A web request is scheduled for deletion')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),104,'ProcessingScheduled','Processing','The study is being processed')
+     VALUES(newid(),104,'EditScheduled','Edit Scheduled','The study is scheduled for editing')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),105,'PurgeScheduled','Purge Scheduled','The study has been scheduled for purging')
+     VALUES(newid(),105,'ProcessingScheduled','Processing','The study is being processed')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),106,'ReconcileScheduled','Reconcile Scheduled','The study has been scheduled for reconciliation')
+     VALUES(newid(),106,'PurgeScheduled','Purge Scheduled','The study has been scheduled for purging')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),107,'ReconcileRequired','Reconcile Required','The study needs to be reconciled')
+     VALUES(newid(),107,'ReconcileScheduled','Reconcile Scheduled','The study has been scheduled for reconciliation')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),108,'ReconcileRequired','Reconcile Required','The study needs to be reconciled')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),109,'CleanupScheduled','Cleanup Scheduled','A WorkQueue entry for the study needs to be cleaned up')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),110,'CompressScheduled','Compress Scheduled','The study is scheduled for compression')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),111,'MigrationScheduled','Migration Scheduled','The study is scheduled for migration to a new tier of storage')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),112,'ReprocessScheduled','Reprocess Scheduled','The study is scheduled for reprocessing')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),113,'RestoreScheduled','Restore Scheduled','The study is scheduled for restoring')
+GO
+INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES(newid(),114,'ArchiveScheduled','Archive Scheduled','The study is scheduled for archiving')
 GO
 
 
@@ -804,49 +825,10 @@ INSERT INTO [ImageServer].[dbo].[StudyIntegrityReasonEnum]
 GO
 
 
-
 -- StudyHistoryTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
            (newid(),100,'StudyReconciled','Study was reconciled','Demographics in the orginal images were modified to match against another study on the server.')
 GO
-
--- WorkQueueTypeQueueStudyState inserts
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='StudyProcess' and QueueStudyStateEnum.Lookup='ProcessingScheduled'
-
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='DeleteStudy' and QueueStudyStateEnum.Lookup='DeleteScheduled'
-
-
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='WebDeleteStudy' and QueueStudyStateEnum.Lookup='DeleteScheduled'
-
-
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='WebEditStudy' and QueueStudyStateEnum.Lookup='EditScheduled'
-
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='PurgeStudy' and QueueStudyStateEnum.Lookup='PurgeScheduled'
-
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='ReprocessStudy' and QueueStudyStateEnum.Lookup='ProcessingScheduled'
-
-INSERT [ImageServer].[dbo].[WorkQueueTypeQueueStudyState]([GUID],[WorkQueueTypeEnum],[QueueStudyStateEnum])
-SELECT newid(), WorkQueueTypeEnum.Enum, QueueStudyStateEnum.Enum
-FROM WorkQueueTypeEnum, QueueStudyStateEnum
-WHERE WorkQueueTypeEnum.Lookup='ReconcileStudy' and QueueStudyStateEnum.Lookup='ReconcileScheduled'
 

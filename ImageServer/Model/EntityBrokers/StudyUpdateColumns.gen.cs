@@ -85,10 +85,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["PatientsSex"] = new EntityUpdateColumn<System.String>("PatientsSex", value); }
         }
-        public QueueStudyStateEnum QueueStudyStateEnum
-        {
-            set { SubParameters["QueueStudyStateEnum"] = new EntityUpdateColumn<QueueStudyStateEnum>("QueueStudyStateEnum", value); }
-        }
        [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
         public System.String ReferringPhysiciansName
         {
@@ -122,10 +118,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public System.String StudyInstanceUid
         {
             set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<System.String>("StudyInstanceUid", value); }
-        }
-        public StudyStatusEnum StudyStatusEnum
-        {
-            set { SubParameters["StudyStatusEnum"] = new EntityUpdateColumn<StudyStatusEnum>("StudyStatusEnum", value); }
         }
        [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         public System.String StudyTime

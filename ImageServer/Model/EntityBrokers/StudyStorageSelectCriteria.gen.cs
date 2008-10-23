@@ -74,6 +74,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Lock"];
             } 
         }
+        public ISearchCondition<QueueStudyStateEnum> QueueStudyStateEnum
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("QueueStudyStateEnum"))
+              {
+                 SubCriteria["QueueStudyStateEnum"] = new SearchCondition<QueueStudyStateEnum>("QueueStudyStateEnum");
+              }
+              return (ISearchCondition<QueueStudyStateEnum>)SubCriteria["QueueStudyStateEnum"];
+            } 
+        }
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
         {
             get

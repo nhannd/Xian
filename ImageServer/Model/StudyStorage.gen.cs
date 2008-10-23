@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.DateTime _insertTime;
         private System.DateTime _lastAccessedTime;
         private System.Boolean _lock;
+        private QueueStudyStateEnum _queueStudyStateEnum;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private System.String _studyInstanceUid;
         private StudyStatusEnum _studyStatusEnum;
@@ -74,6 +75,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _lock; }
         set { _lock = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
+        public QueueStudyStateEnum QueueStudyStateEnum
+        {
+        get { return _queueStudyStateEnum; }
+        set { _queueStudyStateEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey

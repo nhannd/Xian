@@ -62,12 +62,13 @@ namespace ClearCanvas.ImageServer.TestApp
                 {
                     IInsertStudyStorage insert = read.GetBroker<IInsertStudyStorage>();
 
-                    StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
+                    InsertStudyStorageParameters criteria = new InsertStudyStorageParameters();
 
                     criteria.StudyInstanceUid = "1.2.3.4";
 					criteria.FilesystemKey = FilesystemMonitor.Instance.GetFilesystems().GetEnumerator().Current.Filesystem.GetKey();
                     criteria.Folder = "20070101";
-
+                	criteria.StudyStatusEnum = StudyStatusEnum.Online;
+                	criteria.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
                     IList<StudyStorageLocation> storage = insert.Find(criteria);
 
                     StudyStorageLocation storageEntry = storage[0];

@@ -51,15 +51,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 		protected override void OnExecute(IUpdateContext updateContext)
 		{
-			// Update StudyStatusEnum in the Study table
-			IStudyEntityBroker studyUpdate = updateContext.GetBroker<IStudyEntityBroker>();
-			StudyUpdateColumns studyUpdateColumns = new StudyUpdateColumns();
-			studyUpdateColumns.StudyStatusEnum = _newStatus;
-			StudySelectCriteria studyCriteria = new StudySelectCriteria();
-			studyCriteria.ServerPartitionKey.EqualTo(_location.ServerPartitionKey);
-			studyCriteria.StudyInstanceUid.EqualTo(_location.StudyInstanceUid);
-			studyUpdate.Update(studyCriteria, studyUpdateColumns);
-
 			// Update StudyStatusEnum in the StudyStorageTable
 			IStudyStorageEntityBroker studyStorageUpdate = updateContext.GetBroker<IStudyStorageEntityBroker>();
 			StudyStorageUpdateColumns studyStorageUpdateColumns = new StudyStorageUpdateColumns();

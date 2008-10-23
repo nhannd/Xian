@@ -134,11 +134,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 								using (IUpdateContext update = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
 								{
 									IInsertStudyStorage studyInsert = update.GetBroker<IInsertStudyStorage>();
-									StudyStorageInsertParameters insertParms = new StudyStorageInsertParameters();
+									InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
 									insertParms.ServerPartitionKey = partition.GetKey();
 									insertParms.StudyInstanceUid = studyInstanceUid;
 									insertParms.Folder = dateDir.Name;
 									insertParms.FilesystemKey = filesystem.GetKey();
+									insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 									if (file.TransferSyntax.LosslessCompressed)
 									{
 										insertParms.TransferSyntaxUid = file.TransferSyntax.UidString;

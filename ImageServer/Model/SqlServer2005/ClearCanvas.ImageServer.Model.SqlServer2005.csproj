@@ -41,7 +41,6 @@
     <Compile Include="Brokers\CreatePatientForStudy.cs" />
     <Compile Include="Brokers\AttachStudyToPatient.cs" />
     <Compile Include="Brokers\LockStudy.cs" />
-    <Compile Include="Brokers\UpdateQueueStudyState.cs" />
     <Compile Include="Brokers\WebQueryStudyIntegrityQueue.cs" />
     <Compile Include="Brokers\InsertReconcileQueue.cs" />
     <Compile Include="Brokers\InsertWorkQueueReconcileStudy.cs" />

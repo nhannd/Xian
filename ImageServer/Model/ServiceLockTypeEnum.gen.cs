@@ -59,7 +59,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
           get { return _FilesystemDelete; }
       }
       /// <summary>
-      /// Re-inventory Data within a Filesystem
+      /// Re-inventory data within a Filesystem
       /// </summary>
       public static ServiceLockTypeEnum FilesystemReinventory
       {

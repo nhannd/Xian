@@ -74,69 +74,66 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private void ReconcileStudy(string command, ServerEntityKey itemKey)
         {
-            StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
-            Model.StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
+			// Preload the change description so its not done during the DB transaction
+			XmlDocument changeDescription = new XmlDocument();
+			changeDescription.LoadXml(command);
 
-            //Add to Study History
-            StudyHistoryeAdaptor historyAdaptor = new StudyHistoryeAdaptor();
-            StudyHistoryUpdateColumns parameters = new StudyHistoryUpdateColumns();
+			using (IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
+				Model.StudyIntegrityQueue item = queueAdaptor.Get(context,itemKey);
 
-            XmlDocument changeDescription = new XmlDocument();
-            changeDescription.LoadXml(command);
+				//Add to Study History
+				StudyHistoryeAdaptor historyAdaptor = new StudyHistoryeAdaptor();
+				StudyHistoryUpdateColumns parameters = new StudyHistoryUpdateColumns();
 
-            parameters.StudyData = item.StudyData;
-            parameters.ChangeDescription = changeDescription;
-            parameters.StudyStorageKey = item.StudyStorageKey;
-            parameters.StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled;
+				parameters.StudyData = item.StudyData;
+				parameters.ChangeDescription = changeDescription;
+				parameters.StudyStorageKey = item.StudyStorageKey;
+				parameters.StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled;
 
-            StudyHistory history = historyAdaptor.Add(parameters);
+				StudyHistory history = historyAdaptor.Add(context, parameters);
 
-            //Create WorkQueue Entry
-            WorkQueueAdaptor workQueueAdaptor = new WorkQueueAdaptor();
-            WorkQueueUpdateColumns row = new WorkQueueUpdateColumns();
-            row.Data = item.QueueData;
-            row.ServerPartitionKey = item.ServerPartitionKey;
-            row.StudyStorageKey = item.StudyStorageKey;
-            row.StudyHistoryKey = history.GetKey();
-            row.WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy;
-            row.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-            row.ScheduledTime = DateTime.Now;
-            row.ExpirationTime = DateTime.Now.AddHours(1);
-            WorkQueue newWorkQueueItem = workQueueAdaptor.Add(row);
+				//Create WorkQueue Entry
+				WorkQueueAdaptor workQueueAdaptor = new WorkQueueAdaptor();
+				WorkQueueUpdateColumns row = new WorkQueueUpdateColumns();
+				row.Data = item.QueueData;
+				row.ServerPartitionKey = item.ServerPartitionKey;
+				row.StudyStorageKey = item.StudyStorageKey;
+				row.StudyHistoryKey = history.GetKey();
+				row.WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy;
+				row.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+				row.ScheduledTime = DateTime.Now;
+				row.ExpirationTime = DateTime.Now.AddHours(1);
+				WorkQueue newWorkQueueItem = workQueueAdaptor.Add(context, row);
 
-            StudyIntegrityQueueUidAdaptor studyIntegrityQueueUidAdaptor = new StudyIntegrityQueueUidAdaptor();
-            StudyIntegrityQueueUidSelectCriteria crit = new StudyIntegrityQueueUidSelectCriteria();
-            crit.StudyIntegrityQueueKey.EqualTo(item.GetKey());
-            IList<StudyIntegrityQueueUid> uidList = studyIntegrityQueueUidAdaptor.Get(crit);
+				StudyIntegrityQueueUidAdaptor studyIntegrityQueueUidAdaptor = new StudyIntegrityQueueUidAdaptor();
+				StudyIntegrityQueueUidSelectCriteria crit = new StudyIntegrityQueueUidSelectCriteria();
+				crit.StudyIntegrityQueueKey.EqualTo(item.GetKey());
+				IList<StudyIntegrityQueueUid> uidList = studyIntegrityQueueUidAdaptor.Get(context, crit);
 
-            WorkQueueUidAdaptor workQueueUidAdaptor = new WorkQueueUidAdaptor();
-            WorkQueueUidUpdateColumns update = new WorkQueueUidUpdateColumns();
-            foreach (StudyIntegrityQueueUid uid in uidList)
-            {
-                update.WorkQueueKey = newWorkQueueItem.GetKey();
-                update.SeriesInstanceUid = uid.SeriesInstanceUid;
-                update.SopInstanceUid = uid.SopInstanceUid;
-                workQueueUidAdaptor.Add(update);
-            }
+				WorkQueueUidAdaptor workQueueUidAdaptor = new WorkQueueUidAdaptor();
+				WorkQueueUidUpdateColumns update = new WorkQueueUidUpdateColumns();
+				foreach (StudyIntegrityQueueUid uid in uidList)
+				{
+					update.WorkQueueKey = newWorkQueueItem.GetKey();
+					update.SeriesInstanceUid = uid.SeriesInstanceUid;
+					update.SopInstanceUid = uid.SopInstanceUid;
+					workQueueUidAdaptor.Add(context, update);
+				}
 
-            //DeleteStudyIntegrityQueue Item
-            StudyIntegrityQueueUidSelectCriteria criteria = new StudyIntegrityQueueUidSelectCriteria();
-            criteria.StudyIntegrityQueueKey.EqualTo(item.GetKey());
-            studyIntegrityQueueUidAdaptor.Delete(criteria);
+				//DeleteStudyIntegrityQueue Item
+				StudyIntegrityQueueUidSelectCriteria criteria = new StudyIntegrityQueueUidSelectCriteria();
+				criteria.StudyIntegrityQueueKey.EqualTo(item.GetKey());
+				studyIntegrityQueueUidAdaptor.Delete(context, criteria);
 
-            StudyIntegrityQueueAdaptor studyIntegrityQueueAdaptor = new StudyIntegrityQueueAdaptor();
-            studyIntegrityQueueAdaptor.Delete(item.GetKey());
+				StudyIntegrityQueueAdaptor studyIntegrityQueueAdaptor = new StudyIntegrityQueueAdaptor();
+				studyIntegrityQueueAdaptor.Delete(context, item.GetKey());
 
-            UpdateStudyState(item.StudyStorageKey);
-        }
+				context.Commit();
+			}
 
-	    private void UpdateStudyState(ServerEntityKey key)
-	    {
-	        StudyController studyController = new StudyController();
-            if (!studyController.UpdateStudyState(StudyStorage.Load(key)))
-                throw new ApplicationException("An error occurred while updating the study state");
-	    }
-
+		}
 
 	    public void CreateNewStudy(ServerEntityKey itemKey)
         {

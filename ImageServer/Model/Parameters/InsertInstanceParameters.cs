@@ -46,16 +46,6 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
-        public StudyStatusEnum StudyStatusEnum
-        {
-            set { SubCriteria["StudyStatusEnum"] = new ProcedureParameter<ServerEnum>("StudyStatusEnum", value); }
-        }
-
-		public QueueStudyStateEnum QueueStudyStateEnum
-		{
-			set { SubCriteria["QueueStudyStateEnum"] = new ProcedureParameter<ServerEnum>("QueueStudyStateEnum", value); }
-		}
-
         [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public string PatientId
         {

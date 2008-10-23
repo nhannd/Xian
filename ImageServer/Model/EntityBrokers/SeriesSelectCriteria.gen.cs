@@ -151,16 +151,5 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyKey"];
             } 
         }
-        public ISearchCondition<StudyStatusEnum> StudyStatusEnum
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("StudyStatusEnum"))
-              {
-                 SubCriteria["StudyStatusEnum"] = new SearchCondition<StudyStatusEnum>("StudyStatusEnum");
-              }
-              return (ISearchCondition<StudyStatusEnum>)SubCriteria["StudyStatusEnum"];
-            } 
-        }
     }
 }

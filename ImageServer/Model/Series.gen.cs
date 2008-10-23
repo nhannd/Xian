@@ -58,7 +58,6 @@ namespace ClearCanvas.ImageServer.Model
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
         private System.String _sourceApplicationEntityTitle;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyKey;
-        private StudyStatusEnum _studyStatusEnum;
         #endregion
 
         #region Public Properties
@@ -129,12 +128,6 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _studyKey; }
         set { _studyKey = value; }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyStatusEnum")]
-        public StudyStatusEnum StudyStatusEnum
-        {
-        get { return _studyStatusEnum; }
-        set { _studyStatusEnum = value; }
         }
         #endregion
 

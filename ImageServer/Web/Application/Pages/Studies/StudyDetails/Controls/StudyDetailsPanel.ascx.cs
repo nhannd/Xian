@@ -109,24 +109,57 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (Study!=null)
             {
                 StudyController controller = new StudyController();
-                bool scheduledForDelete = controller.IsScheduledForDelete(Study);
-                bool scheduledForEdit = controller.IsScheduledForEdit(Study);
-                bool scheduledForReconcile = Study.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileScheduled);
+            	StudyStorage storage = controller.GetStudyStorage(Study);
+            	bool deleteEnabled = true;
+            	String deleteToolTip = String.Empty;
+            	bool editEnabled = true;
+				String editToolTip = String.Empty;
+            	bool lossyCompressed = false;
+				if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+				{
+					deleteEnabled = false;
+					editEnabled = false;
+					editToolTip = "The study is nearline";
+					deleteToolTip = "The study is nearline";
+				}
+				else if (!storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
+				{
+					deleteEnabled = false;
+					editEnabled = false;
+					editToolTip = storage.QueueStudyStateEnum.Description;
+					deleteToolTip = storage.QueueStudyStateEnum.Description;
+				}
+				else if (!storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+				{
+					ArchiveStudyStorage archiveStorage = CollectionUtils.FirstElement(controller.GetArchiveStudyStorage(Study));
+					StudyStorageLocation studyStorage = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(Study));
 
-                StudySummaryAssembler assembler = new StudySummaryAssembler();
-                StudySummary studySummary = assembler.CreateStudySummary(Study);
-                DeleteStudyButton.Enabled = controller.CanScheduleDelete(studySummary);
-                EditStudyButton.Enabled = controller.CanScheduleEdit(studySummary);
-
-                if (scheduledForDelete)
+					if (archiveStorage != null && studyStorage != null)
+					{
+						if (archiveStorage.ServerTransferSyntax.Lossless &&
+							TransferSyntax.GetTransferSyntax(studyStorage.TransferSyntaxUid).LossyCompressed)
+						{
+							lossyCompressed = true;
+							editToolTip = "The study is lossy compressed";
+						}
+					}
+				}
+            	DeleteStudyButton.Enabled = deleteEnabled && !storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline);
+				if (!DeleteStudyButton.Enabled)
+					DeleteStudyButton.ToolTip = deleteToolTip;
+				EditStudyButton.Enabled = editEnabled && !lossyCompressed && !storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline);
+				if (!EditStudyButton.Enabled)
+					EditStudyButton.ToolTip = editToolTip;
+				
+                if (storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled))
                 {
                     ShowAlert(App_GlobalResources.SR.StudyScheduledForDeletion);
                 }
-                else if (scheduledForEdit)
+                else if (storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled))
                 {
                     ShowAlert(App_GlobalResources.SR.StudyScheduledForEdit);
                 }
-                else if(scheduledForReconcile)
+                else if(storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ReconcileRequired))
                 {
                     ShowAlert(App_GlobalResources.SR.StudyScheduledForReconcile);
                 }
