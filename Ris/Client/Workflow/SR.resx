@@ -321,26 +321,26 @@
   <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
     <value>Cannot determine enablement for operation: {0}</value>
   </data>
-  <data name="ExceptionReconcilePatientProfiles" xml:space="preserve">
-    <value>Unable to reconcile patient profiles</value>
-  </data>
-  <data name="ExceptionTechnologistWorkflowCancelTool" xml:space="preserve">
+  <data name="ExceptionPerformingWorkflowCancelTool" xml:space="preserve">
     <value>Cannot cancel procedure</value>
   </data>
-  <data name="ExceptionTechnologistWorkflowCompleteTool" xml:space="preserve">
+  <data name="ExceptionPerformingWorkflowCompleteTool" xml:space="preserve">
     <value>Cannot complete procedure</value>
   </data>
-  <data name="ExceptionTechnologistWorkflowReplaceOrderTool" xml:space="preserve">
+  <data name="ExceptionPerformingWorkflowReplaceOrderTool" xml:space="preserve">
     <value>Cannot replace order</value>
   </data>
-  <data name="ExceptionTechnologistWorkflowResumeTool" xml:space="preserve">
+  <data name="ExceptionPerformingWorkflowResumeTool" xml:space="preserve">
     <value>Cannot resume procedure</value>
   </data>
-  <data name="ExceptionTechnologistWorkflowStartTool" xml:space="preserve">
+  <data name="ExceptionPerformingWorkflowStartTool" xml:space="preserve">
     <value>Cannot start procedure</value>
   </data>
-  <data name="ExceptionTechnologistWorkflowSuspendTool" xml:space="preserve">
+  <data name="ExceptionPerformingWorkflowSuspendTool" xml:space="preserve">
     <value>Cannot suspend procedure</value>
+  </data>
+  <data name="ExceptionReconcilePatientProfiles" xml:space="preserve">
+    <value>Unable to reconcile patient profiles</value>
   </data>
   <data name="FormatProtocolFolderName" xml:space="preserve">
     <value>Protocolling from the "{0}" worklist</value>
@@ -540,6 +540,9 @@
   <data name="TitlePerformingFolderSystem" xml:space="preserve">
     <value>Performing</value>
   </data>
+  <data name="TitlePerformingHome" xml:space="preserve">
+    <value>Performing Home</value>
+  </data>
   <data name="TitlePhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
   </data>
@@ -590,9 +593,6 @@
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Performed</value>
-  </data>
-  <data name="TitleTechnologistHome" xml:space="preserve">
-    <value>Technologist Home</value>
   </data>
   <data name="TitleUpdateVisit" xml:space="preserve">
     <value>Update Visit...</value>

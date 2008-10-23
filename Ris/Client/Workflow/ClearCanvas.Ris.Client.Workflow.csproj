@@ -75,8 +75,8 @@
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
-    <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
-    <Compile Include="ITechnologistDocumentationPage.cs" />
+    <Compile Include="Folders\PerformingWorkflowFolders.cs" />
+    <Compile Include="IPerformingDocumentationPage.cs" />
     <Compile Include="LinkedInterpretationComponent.cs" />
     <Compile Include="ModifyOrderTool.cs" />
     <Compile Include="NewOrderTool.cs" />
@@ -141,22 +141,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="TechnologistDocumentationComponent.cs" />
-    <Compile Include="TechnologistDocumentationComponentSettings.cs" />
-    <Compile Include="TechnologistDocumentationComponentSettings.Designer.cs">
-      <DependentUpon>TechnologistDocumentationComponentSettings.settings</DependentUpon>
+    <Compile Include="PerformingDocumentationComponent.cs" />
+    <Compile Include="PerformingDocumentationComponentSettings.cs" />
+    <Compile Include="PerformingDocumentationComponentSettings.Designer.cs">
+      <DependentUpon>PerformingDocumentationComponentSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="TechnologistDocumentationDocument.cs" />
-    <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
-    <Compile Include="TechnologistDocumentationOrderDetailsComponent.cs" />
-    <Compile Include="TechnologistDocumentationTool.cs" />
-    <Compile Include="TechnologistWorkflowFolder.cs" />
-    <Compile Include="TechnologistWorkflowFolderSystem.cs" />
-    <Compile Include="TechnologistWorkflowFolderSystemBase.cs" />
-    <Compile Include="TechnologistWorkflowTool.cs" />
-    <Compile Include="TechnologistWorklistTable.cs" />
+    <Compile Include="PerformingDocumentationDocument.cs" />
+    <Compile Include="PerformingDocumentationMppsSummaryTable.cs" />
+    <Compile Include="PerformingDocumentationOrderDetailsComponent.cs" />
+    <Compile Include="PerformingDocumentationTool.cs" />
+    <Compile Include="PerformingWorkflowFolder.cs" />
+    <Compile Include="PerformingWorkflowFolderSystem.cs" />
+    <Compile Include="PerformingWorkflowFolderSystemBase.cs" />
+    <Compile Include="PerformingWorklistTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -202,9 +201,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="TechnologistDocumentationComponentSettings.settings">
+    <None Include="PerformingDocumentationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>TechnologistDocumentationComponentSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>PerformingDocumentationComponentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -346,13 +345,13 @@
     <EmbeddedResource Include="Icons\SuspendToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\TechnologistHomeToolLarge.png" />
+    <EmbeddedResource Include="Icons\PerformingHomeToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\TechnologistHomeToolMedium.png" />
+    <EmbeddedResource Include="Icons\PerformingHomeToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\TechnologistHomeToolSmall.png" />
+    <EmbeddedResource Include="Icons\PerformingHomeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\VisitSummaryToolLarge.png" />
@@ -394,9 +393,9 @@
     <EmbeddedResource Include="Icons\ResubmitOrderLarge.png" />
     <EmbeddedResource Include="Icons\ResubmitOrderMedium.png" />
     <EmbeddedResource Include="Icons\ResubmitOrderSmall.png" />
-    <EmbeddedResource Include="Icons\TechnologistOpenDocumentationLarge.png" />
-    <EmbeddedResource Include="Icons\TechnologistOpenDocumentationMedium.png" />
-    <EmbeddedResource Include="Icons\TechnologistOpenDocumentationSmall.png" />
+    <EmbeddedResource Include="Icons\PerformingOpenDocumentationLarge.png" />
+    <EmbeddedResource Include="Icons\PerformingOpenDocumentationMedium.png" />
+    <EmbeddedResource Include="Icons\PerformingOpenDocumentationSmall.png" />
     <EmbeddedResource Include="Icons\ModifyOrderLarge.png" />
     <EmbeddedResource Include="Icons\ModifyOrderMedium.png" />
     <EmbeddedResource Include="Icons\ModifyOrderSmall.png" />

@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <folder-systems>
-  <folder-system id="ClearCanvas.Ris.Client.Workflow.TechnologistWorkflowFolderSystem">
-    <folder id="CheckedInTechnologistWorkflowFolder" />	
-    <folder id="InProgressTechnologistWorkflowFolder" />
-	<folder id="UndocumentedTechnologistWorkflowFolder" />
-    <folder id="CompletedTechnologistWorkflowFolder" />
-    <folder id="ScheduledTechnologistWorkflowFolder" />
-	<folder id="CancelledTechnologistWorkflowFolder" />    
-    <folder id="TechnologistSearchFolder" />
+  <folder-system id="ClearCanvas.Ris.Client.Workflow.PerformingWorkflowFolderSystem">
+    <folder id="CheckedInPerformingWorkflowFolder" />	
+    <folder id="InProgressPerformingWorkflowFolder" />
+	<folder id="UndocumentedPerformingWorkflowFolder" />
+    <folder id="CompletedPerformingWorkflowFolder" />
+    <folder id="ScheduledPerformingWorkflowFolder" />
+	<folder id="CancelledPerformingWorkflowFolder" />    
+    <folder id="PerformingSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RegistrationWorkflowFolderSystem">
     <folder id="ScheduledFolder" />

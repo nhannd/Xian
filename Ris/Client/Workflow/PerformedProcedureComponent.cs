@@ -190,7 +190,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		private EntityRef _orderRef;
-		private readonly TechnologistDocumentationMppsSummaryTable _mppsTable = new TechnologistDocumentationMppsSummaryTable();
+		private readonly PerformingDocumentationMppsSummaryTable _mppsTable = new PerformingDocumentationMppsSummaryTable();
 		private ModalityPerformedProcedureStepDetail _selectedMpps;
 		private event EventHandler _selectedMppsChanged;
 
@@ -201,14 +201,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ChildComponentHost _detailsPagesHost;
 		private List<IPerformedStepEditorPage> _editorPages = new List<IPerformedStepEditorPage>();
 
-		private TechnologistDocumentationComponent _owner;
+		private PerformingDocumentationComponent _owner;
 
 		private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public PerformedProcedureComponent(EntityRef orderRef, TechnologistDocumentationComponent owner)
+		public PerformedProcedureComponent(EntityRef orderRef, PerformingDocumentationComponent owner)
 		{
 			_orderRef = orderRef;
 			_owner = owner;

@@ -178,8 +178,8 @@
     <Compile Include="IWorklistService.cs" />
     <Compile Include="ListWorklistsForUserRequest.cs" />
     <Compile Include="ListWorklistsForUserResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\LoadDataResponse.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\LoadDataRequest.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\LoadDataResponse.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndPostRequest.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndPostResponse.cs" />
     <Compile Include="OrderNotes\GetConversationEditorFormDataRequest.cs" />
@@ -290,8 +290,8 @@
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolCodeResponse.cs" />
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupRequest.cs" />
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CanCompleteOrderDocumentationRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CanCompleteOrderDocumentationResponse.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\CanCompleteOrderDocumentationRequest.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\CanCompleteOrderDocumentationResponse.cs" />
     <Compile Include="PatientAttachmentSummary.cs" />
     <Compile Include="OrderAttachmentSummary.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
@@ -483,8 +483,8 @@
     <Compile Include="Jsml\InvokeOperationRequest.cs" />
     <Compile Include="Jsml\InvokeOperationResponse.cs" />
     <Compile Include="Jsml\JsmlBlob.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteOrderDocumentationRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteOrderDocumentationResponse.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\CompleteOrderDocumentationRequest.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\CompleteOrderDocumentationResponse.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityProcedureStepsRequest.cs" />
@@ -499,8 +499,8 @@
     <Compile Include="ProcedureDetail.cs" />
     <Compile Include="ModalityWorkflow\StartModalityProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\StartModalityProcedureStepsResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataResponse.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\SaveDataRequest.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\SaveDataResponse.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ProtocolCodeDetail.cs" />
@@ -654,7 +654,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\IPerformingDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
     <Compile Include="WorklistItemTextQueryRequest.cs" />
     <Compile Include="WorklistTokenAttribute.cs" />

@@ -122,8 +122,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-	public class TechnologistReplaceOrderTool : ReplaceOrderToolBase<ModalityWorklistItem, ITechnologistWorkflowItemToolContext>
+	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
+	public class PerformingReplaceOrderTool : ReplaceOrderToolBase<ModalityWorklistItem, IPerformingWorkflowItemToolContext>
 	{
 		protected override bool Execute(ModalityWorklistItem item)
 		{
@@ -132,8 +132,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override void InvalidateFolders()
 		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Technologist.ScheduledTechnologistWorkflowFolder));
-			DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CancelledTechnologistWorkflowFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Performing.ScheduledPerformingWorkflowFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledPerformingWorkflowFolder));
 		}
 	}
 }

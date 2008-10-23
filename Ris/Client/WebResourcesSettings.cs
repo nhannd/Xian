@@ -135,11 +135,11 @@ namespace ClearCanvas.Ris.Client
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/performing.htm")]
-		public string TechnologistFolderSystemUrl
+		public string PerformingFolderSystemUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["TechnologistFolderSystemUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["PerformingFolderSystemUrl"]));
 			}
 		}
 
@@ -340,7 +340,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("forms/technologist/mpps.htm")]
+		[global::System.Configuration.DefaultSettingValueAttribute("forms/performing/mpps.htm")]
 		public string DetailsPageUrl
 		{
 			get

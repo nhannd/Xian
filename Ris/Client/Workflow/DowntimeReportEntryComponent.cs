@@ -49,12 +49,12 @@ namespace ClearCanvas.Ris.Client.Workflow
     [MenuAction("apply", "folderexplorer-items-contextmenu/Complete Downtime Recovery...", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Complete Downtime Recovery...", "Apply")]
 	//TODO: need icon
-	//[IconSet("apply", IconScheme.Colour, "TechnologistOpenDocumentationSmall.png", "TechnologistOpenDocumentationMedium.png", "TechnologistOpenDocumentationLarge.png")]
+	//[IconSet("apply", IconScheme.Colour, "PerformingOpenDocumentationSmall.png", "PerformingOpenDocumentationMedium.png", "PerformingOpenDocumentationLarge.png")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Downtime.RecoveryOperations)]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[VisibleStateObserver("apply", "Visible", "VisibleChanged")]
-	[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-	public class DowntimeReportEntryTool : Tool<ITechnologistWorkflowItemToolContext>
+	[ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
+	public class DowntimeReportEntryTool : Tool<IPerformingWorkflowItemToolContext>
     {
     	public bool Visible
     	{
@@ -74,7 +74,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return this.Context.SelectedItems.Count == 1
 					// this is a blatant HACK!  we only want this tool enabled from Completed, and there is no
 					// easy way to do this (cannot use server-side enablement because operation is on the reporting workflow service)
-					 && this.Context.SelectedFolder is Folders.Technologist.CompletedTechnologistWorkflowFolder
+					 && this.Context.SelectedFolder is Folders.Performing.CompletedPerformingWorkflowFolder
 					   && CollectionUtils.FirstElement(this.Context.SelectedItems).ProcedureRef != null;
 			}
 		}
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
-					DocumentManager.InvalidateFolder(typeof(Folders.Technologist.CompletedTechnologistWorkflowFolder));
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.CompletedPerformingWorkflowFolder));
 				}
 
 			}

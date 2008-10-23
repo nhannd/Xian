@@ -139,7 +139,7 @@
     <Compile Include="ContactPersonAssembler.cs" />
     <Compile Include="PatientNoteCategoryAssembler.cs" />
     <Compile Include="Login\LoginService.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationService.cs" />
+    <Compile Include="ModalityWorkflow\PerformingDocumentation\PerformingDocumentationService.cs" />
     <Compile Include="PatientNoteAssembler.cs" />
     <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />

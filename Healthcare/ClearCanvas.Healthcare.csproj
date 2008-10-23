@@ -138,7 +138,7 @@
     <Compile Include="StaffGroup.cs" />
     <Compile Include="Imex\StaffGroupImex.cs" />
     <Compile Include="StaffNotePosting.cs" />
-    <Compile Include="TechnologistWorklists.cs" />
+    <Compile Include="PerformingWorklists.cs" />
     <Compile Include="Tests\ReportTests.cs" />
     <Compile Include="Tests\TestExtensionFactory.cs" />
     <Compile Include="Tests\TestLocationFactory.cs" />

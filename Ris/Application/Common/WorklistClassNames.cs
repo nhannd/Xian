@@ -67,28 +67,28 @@ namespace ClearCanvas.Ris.Application.Common
 
 		#endregion
 
-		#region Technologist Worklist Class Names
+		#region Performing Worklist Class Names
 
 		[WorklistClassName]
-		public const string TechnologistScheduledWorklist = "TechnologistScheduledWorklist";
+		public const string PerformingScheduledWorklist = "PerformingScheduledWorklist";
 
 		[WorklistClassName]
-		public const string TechnologistCheckedInWorklist = "TechnologistCheckedInWorklist";
+		public const string PerformingCheckedInWorklist = "PerformingCheckedInWorklist";
 
 		[WorklistClassName]
-		public const string TechnologistCancelledWorklist = "TechnologistCancelledWorklist";
+		public const string PerformingCancelledWorklist = "PerformingCancelledWorklist";
 
 		[WorklistClassName]
-		public const string TechnologistCompletedWorklist = "TechnologistCompletedWorklist";
+		public const string PerformingCompletedWorklist = "PerformingCompletedWorklist";
 
 		[WorklistClassName]
-		public const string TechnologistInProgressWorklist = "TechnologistInProgressWorklist";
+		public const string PerformingInProgressWorklist = "PerformingInProgressWorklist";
 
 		[WorklistClassName]
-		public const string TechnologistSuspendedWorklist = "TechnologistSuspendedWorklist";
+		public const string PerformingSuspendedWorklist = "PerformingSuspendedWorklist";
 
 		[WorklistClassName]
-		public const string TechnologistUndocumentedWorklist = "TechnologistUndocumentedWorklist";
+		public const string PerformingUndocumentedWorklist = "PerformingUndocumentedWorklist";
 
 		#endregion
 

@@ -270,8 +270,44 @@
   <data name="PatientProfile" xml:space="preserve">
     <value>Patient Profile</value>
   </data>
+  <data name="PerformingCancelledWorklist" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="PerformingCancelledWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that have been cancelled or discontinued.</value>
+  </data>
+  <data name="PerformingCheckedInWorklist" xml:space="preserve">
+    <value>Checked In</value>
+  </data>
+  <data name="PerformingCheckedInWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps where the patient has checked in.</value>
+  </data>
+  <data name="PerformingCompletedWorklist" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="PerformingCompletedWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that have been completed.</value>
+  </data>
   <data name="PerformingGroup" xml:space="preserve">
     <value>Performing Group</value>
+  </data>
+  <data name="PerformingInProgressWorklist" xml:space="preserve">
+    <value>In Progress</value>
+  </data>
+  <data name="PerformingInProgressWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that are in progress.</value>
+  </data>
+  <data name="PerformingScheduledWorklist" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="PerformingScheduledWorklistDescription" xml:space="preserve">
+    <value>Lists scheduled modality procedure steps.</value>
+  </data>
+  <data name="PerformingUndocumentedWorklist" xml:space="preserve">
+    <value>Undocumented</value>
+  </data>
+  <data name="PerformingUndocumentedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures where the performing documentation is incomplete.</value>
   </data>
   <data name="PersonName" xml:space="preserve">
     <value>Name</value>
@@ -405,42 +441,6 @@
   <data name="Staff" xml:space="preserve">
     <value>Staff</value>
   </data>
-  <data name="TechnologistCancelledWorklist" xml:space="preserve">
-    <value>Cancelled</value>
-  </data>
-  <data name="TechnologistCancelledWorklistDescription" xml:space="preserve">
-    <value>Lists modality procedure steps that have been cancelled or discontinued.</value>
-  </data>
-  <data name="TechnologistCheckedInWorklist" xml:space="preserve">
-    <value>Checked In</value>
-  </data>
-  <data name="TechnologistCheckedInWorklistDescription" xml:space="preserve">
-    <value>Lists modality procedure steps where the patient has checked in.</value>
-  </data>
-  <data name="TechnologistCompletedWorklist" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="TechnologistCompletedWorklistDescription" xml:space="preserve">
-    <value>Lists modality procedure steps that have been completed.</value>
-  </data>
-  <data name="TechnologistInProgressWorklist" xml:space="preserve">
-    <value>In Progress</value>
-  </data>
-  <data name="TechnologistInProgressWorklistDescription" xml:space="preserve">
-    <value>Lists modality procedure steps that are in progress.</value>
-  </data>
-  <data name="TechnologistScheduledWorklist" xml:space="preserve">
-    <value>Scheduled</value>
-  </data>
-  <data name="TechnologistScheduledWorklistDescription" xml:space="preserve">
-    <value>Lists scheduled modality procedure steps.</value>
-  </data>
-  <data name="TechnologistUndocumentedWorklist" xml:space="preserve">
-    <value>Undocumented</value>
-  </data>
-  <data name="TechnologistUndocumentedWorklistDescription" xml:space="preserve">
-    <value>Lists procedures where the technologist documentation is incomplete.</value>
-  </data>
   <data name="TelephoneNumber" xml:space="preserve">
     <value>Telephone Number</value>
   </data>
@@ -456,6 +456,9 @@
   <data name="WorklistCategoryEmergency" xml:space="preserve">
     <value>Emergency</value>
   </data>
+  <data name="WorklistCategoryPerforming" xml:space="preserve">
+    <value>Performing</value>
+  </data>
   <data name="WorklistCategoryProtocoling" xml:space="preserve">
     <value>Protocoling</value>
   </data>
@@ -467,9 +470,6 @@
   </data>
   <data name="WorklistCategoryReporting" xml:space="preserve">
     <value>Reporting</value>
-  </data>
-  <data name="WorklistCategoryTechnologist" xml:space="preserve">
-    <value>Performing</value>
   </data>
   <data name="WorklistClassAndName" xml:space="preserve">
     <value>Worklist Name/Class</value>

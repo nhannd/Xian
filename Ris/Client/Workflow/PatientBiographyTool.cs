@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Workflow
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(PreviewToolExtensionPoint))]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    [ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
@@ -69,9 +69,9 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-            if (this.ContextBase is ITechnologistWorkflowItemToolContext)
+            if (this.ContextBase is IPerformingWorkflowItemToolContext)
             {
-                ((ITechnologistWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
+                ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
                 {
                     this.Enabled = DetermineEnablement();
                 };
@@ -105,10 +105,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         private bool DetermineEnablement()
         {
-            if (this.ContextBase is ITechnologistWorkflowItemToolContext)
+            if (this.ContextBase is IPerformingWorkflowItemToolContext)
             {
-                return (((ITechnologistWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                    && ((ITechnologistWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+                return (((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+                    && ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
             }
             else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
@@ -159,9 +159,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public void View()
         {
-            if (this.ContextBase is ITechnologistWorkflowItemToolContext)
+            if (this.ContextBase is IPerformingWorkflowItemToolContext)
             {
-                ITechnologistWorkflowItemToolContext context = (ITechnologistWorkflowItemToolContext)this.ContextBase;
+                IPerformingWorkflowItemToolContext context = (IPerformingWorkflowItemToolContext)this.ContextBase;
                 ModalityWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
                 OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
             }

@@ -167,20 +167,20 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="TechnologistDocumentationComponentControl.cs">
+    <Compile Include="PerformingDocumentationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TechnologistDocumentationComponentControl.Designer.cs">
-      <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+    <Compile Include="PerformingDocumentationComponentControl.Designer.cs">
+      <DependentUpon>PerformingDocumentationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="TechnologistDocumentationComponentView.cs" />
-    <Compile Include="TechnologistDocumentationOrderDetailsComponentControl.cs">
+    <Compile Include="PerformingDocumentationComponentView.cs" />
+    <Compile Include="PerformingDocumentationOrderDetailsComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TechnologistDocumentationOrderDetailsComponentControl.Designer.cs">
-      <DependentUpon>TechnologistDocumentationOrderDetailsComponentControl.cs</DependentUpon>
+    <Compile Include="PerformingDocumentationOrderDetailsComponentControl.Designer.cs">
+      <DependentUpon>PerformingDocumentationOrderDetailsComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="TechnologistDocumentationOrderDetailsComponentView.cs" />
+    <Compile Include="PerformingDocumentationOrderDetailsComponentView.cs" />
     <Compile Include="VisitDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -263,12 +263,12 @@
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TechnologistDocumentationComponentControl.resx">
-      <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="PerformingDocumentationComponentControl.resx">
+      <DependentUpon>PerformingDocumentationComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TechnologistDocumentationOrderDetailsComponentControl.resx">
-      <DependentUpon>TechnologistDocumentationOrderDetailsComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="PerformingDocumentationOrderDetailsComponentControl.resx">
+      <DependentUpon>PerformingDocumentationOrderDetailsComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="VisitDetailsEditorComponentControl.resx">

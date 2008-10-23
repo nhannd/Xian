@@ -183,7 +183,7 @@
     <EmbeddedResource Include="Mappings\Worklist.hbm.xml" />
     <EmbeddedResource Include="Mappings\RegistrationWorklists.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportingWorklists.hbm.xml" />
-    <EmbeddedResource Include="Mappings\TechnologistWorklists.hbm.xml" />
+    <EmbeddedResource Include="Mappings\PerformingWorklists.hbm.xml" />
     <EmbeddedResource Include="Mappings\StaffTypeEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportPartStatusEnum.hbm.xml" />
