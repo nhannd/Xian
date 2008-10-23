@@ -6,12 +6,12 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <set name="Procedures" lazy="true" inverse="true" access="nosetter.camelcase-underscore">
+    <set name="Procedures" table="ProcedureProtocol_" lazy="true">
       <key column="ProtocolOID_"/>
-      <one-to-many class="Procedure"/>
+      <many-to-many column="ProcedureOID_" class="Procedure" fetch="join"/>
     </set>
 
-		<many-to-one name="Author" class="Staff" column="AuthorOID_"/>
+    <many-to-one name="Author" class="Staff" column="AuthorOID_"/>
     <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
     <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ProtocolStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <many-to-one name="Urgency" class="ProtocolUrgencyEnum" column="Urgency_" />

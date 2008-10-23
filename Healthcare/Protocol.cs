@@ -42,7 +42,7 @@ namespace ClearCanvas.Healthcare
 			: this()
 		{
 			_procedures.Add(procedure);
-			procedure.Protocol = this;
+			procedure.Protocols.Add(this);
 		}
 
 		/// <summary>
@@ -75,6 +75,11 @@ namespace ClearCanvas.Healthcare
 			_status = ProtocolStatus.AA;
 		}
 
+		public virtual void Cancel()
+		{
+			_status = ProtocolStatus.X;
+		}
+
 		/// <summary>
 		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
 		/// </summary>
@@ -99,12 +104,12 @@ namespace ClearCanvas.Healthcare
 				throw new WorkflowException("The procedure is already associated with this protocol.");
 
 			// does the procedure already have a non-new protocol?
-			Protocol otherProtocol = procedure.Protocol;
+			Protocol otherProtocol = procedure.ActiveProtocol;
 			if (otherProtocol.IsNew() == false && !this.Equals(otherProtocol))
 				throw new WorkflowException("Cannot link this procedure because it already has an active protocol.");
 
 			_procedures.Add(procedure);
-			procedure.Protocol = this;
+			procedure.Protocols.Add(this);
 		}
 
 		protected internal virtual bool IsNew()

@@ -35,7 +35,10 @@
       <many-to-many column="ReportOID_" class="Report" fetch="join"/>
     </set>
 
-    <many-to-one name="Protocol" class="Protocol" column="ProtocolOID_"/>
+    <set name="Protocols" table="ProcedureProtocol_" inverse="true" lazy="true">
+      <key column="ProcedureOID_"/>
+      <many-to-many column="ProtocolOID_" class="Protocol" fetch="join"/>
+    </set>
 
   </class>
 </hibernate-mapping>

@@ -31,14 +31,14 @@
 
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare {
-
+namespace ClearCanvas.Healthcare
+{
     /// <summary>
     /// ProtocolStatus enumeration
     /// </summary>
     [EnumValueClass(typeof(ProtocolStatusEnum))]
-	public enum ProtocolStatus
-	{
+    public enum ProtocolStatus
+    {
         /// <summary>
         /// Pending
         /// </summary>
@@ -61,6 +61,12 @@ namespace ClearCanvas.Healthcare {
         /// Awaiting Approval
         /// </summary>
         [EnumValue("Awaiting Approval", Description = "Protocol submitted for approval by resident")]
-        AA
+        AA,
+
+        /// <summary>
+        /// Cancelled
+        /// </summary>
+        [EnumValue("Cancelled", Description = "Protocol is cancelled")]
+        X
     }
 }

@@ -38,18 +38,18 @@ using System;
 
 namespace ClearCanvas.Ris.Application.Services
 {
-    public class ProcedureAssembler
-    {
+	public class ProcedureAssembler
+	{
 		/// <summary>
 		/// Creates the most verbose possible procedure detail.
 		/// </summary>
 		/// <param name="rp"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-        public ProcedureDetail CreateProcedureDetail(Procedure rp, IPersistenceContext context)
-        {
+		public ProcedureDetail CreateProcedureDetail(Procedure rp, IPersistenceContext context)
+		{
 			return CreateProcedureDetail(rp, delegate { return true; }, true, context);
-        }
+		}
 
 		/// <summary>
 		/// Creates procedure detail optionally including specified data.
@@ -59,28 +59,28 @@ namespace ClearCanvas.Ris.Application.Services
 		/// <param name="includeProtocol"></param>
 		/// <param name="context"></param>
 		/// <returns></returns>
-        public ProcedureDetail CreateProcedureDetail(
+		public ProcedureDetail CreateProcedureDetail(
 			Procedure rp,
 			Predicate<ProcedureStep> procedureStepFilter,
 			bool includeProtocol,
 			IPersistenceContext context)
-        {
-            ProcedureDetail detail = new ProcedureDetail();
+		{
+			ProcedureDetail detail = new ProcedureDetail();
 
-            detail.ProcedureRef = rp.GetRef();
-            detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
-            detail.Type = new ProcedureTypeAssembler().CreateSummary(rp.Type);
-        	detail.ScheduledStartTime = rp.ScheduledStartTime;
-        	detail.StartTime = rp.StartTime;
-        	detail.EndTime = rp.EndTime;
-        	detail.CheckInTime = rp.ProcedureCheckIn.CheckInTime;
-        	detail.CheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
-        	detail.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
+			detail.ProcedureRef = rp.GetRef();
+			detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
+			detail.Type = new ProcedureTypeAssembler().CreateSummary(rp.Type);
+			detail.ScheduledStartTime = rp.ScheduledStartTime;
+			detail.StartTime = rp.StartTime;
+			detail.EndTime = rp.EndTime;
+			detail.CheckInTime = rp.ProcedureCheckIn.CheckInTime;
+			detail.CheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
+			detail.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
 			detail.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
-        	detail.Portable = rp.Portable;
+			detail.Portable = rp.Portable;
 
-        	List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.ProcedureSteps, procedureStepFilter);
-			if(includedSteps.Count > 0)
+			List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.ProcedureSteps, procedureStepFilter);
+			if (includedSteps.Count > 0)
 			{
 				ProcedureStepAssembler procedureStepAssembler = new ProcedureStepAssembler();
 				detail.ProcedureSteps = CollectionUtils.Map<ProcedureStep, ProcedureStepDetail>(
@@ -91,31 +91,31 @@ namespace ClearCanvas.Ris.Application.Services
 					});
 			}
 
-            // the Protocol may be null, if this procedure has not been protocolled
-            if(includeProtocol && rp.Protocol != null)
-            {
-                ProtocolAssembler protocolAssembler = new ProtocolAssembler();
-                detail.Protocol = protocolAssembler.CreateProtocolDetail(rp.Protocol, context);
-            }
+			// the Protocol may be null, if this procedure has not been protocolled
+			if (includeProtocol && rp.ActiveProtocol != null)
+			{
+				ProtocolAssembler protocolAssembler = new ProtocolAssembler();
+				detail.Protocol = protocolAssembler.CreateProtocolDetail(rp.ActiveProtocol, context);
+			}
 
-            return detail;
-        }
+			return detail;
+		}
 
-        public ProcedureSummary CreateProcedureSummary(Procedure rp, IPersistenceContext context)
-        {
-            ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
-            ProcedureSummary summary = new ProcedureSummary();
+		public ProcedureSummary CreateProcedureSummary(Procedure rp, IPersistenceContext context)
+		{
+			ProcedureTypeAssembler rptAssembler = new ProcedureTypeAssembler();
+			ProcedureSummary summary = new ProcedureSummary();
 
-            summary.OrderRef = rp.Order.GetRef();
-            summary.ProcedureRef = rp.GetRef();
-            summary.Index = rp.Index;
-            summary.ScheduledStartTime = rp.ScheduledStartTime;
-            summary.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
-            summary.Type = rptAssembler.CreateSummary(rp.Type);
-            summary.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
-            summary.Portable = rp.Portable;
+			summary.OrderRef = rp.Order.GetRef();
+			summary.ProcedureRef = rp.GetRef();
+			summary.Index = rp.Index;
+			summary.ScheduledStartTime = rp.ScheduledStartTime;
+			summary.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
+			summary.Type = rptAssembler.CreateSummary(rp.Type);
+			summary.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
+			summary.Portable = rp.Portable;
 
-            return summary;
-        }
-    }
+			return summary;
+		}
+	}
 }

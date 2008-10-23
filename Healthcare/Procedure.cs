@@ -36,22 +36,24 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using Iesi.Collections.Generic;
 
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Healthcare
+{
 
 
     /// <summary>
     /// Procedure entity
     /// </summary>
-	public partial class Procedure : Entity
-	{
+    public partial class Procedure : Entity
+    {
         public Procedure(ProcedureType type)
         {
             _type = type;
             _procedureSteps = new HashedSet<ProcedureStep>();
             _procedureCheckIn = new ProcedureCheckIn();
-        	_reports = new HashedSet<Report>();
+            _reports = new HashedSet<Report>();
+            _protocols = new HashedSet<Protocol>();
         }
-	
+
         #region Public Properties
 
         /// <summary>
@@ -85,7 +87,7 @@ namespace ClearCanvas.Healthcare {
                         }), delegate(ProcedureStep ps) { return ps.As<ReportingProcedureStep>(); });
             }
         }
-        
+
         /// <summary>
         /// Gets a value indicating whether this procedure is in a terminal state.
         /// </summary>
@@ -126,47 +128,59 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-		/// <summary>
-		/// Gets the time at which the procedure can be considered "performed", which corresponds to the maximum
-		/// completed modality procedure step end-time.
-		/// </summary>
-		/// <remarks>
-		/// This is a computed property and hence should not be used in summaries.
-		/// </remarks>
-    	public virtual DateTime? PerformedTime
-    	{
-    		get
-    		{
-    			List<ModalityProcedureStep> completedSteps = CollectionUtils.Select(this.ModalityProcedureSteps,
-					delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
+        /// <summary>
+        /// Gets the active <see cref="Protocol"/> for this procedure, or returns null if there is no active protocol.
+        /// </summary>
+        public virtual Protocol ActiveProtocol
+        {
+            get
+            {
+                return CollectionUtils.SelectFirst(_protocols,
+                    delegate(Protocol p) { return p.Status != ProtocolStatus.X; });
+            }
+        }
 
-				// return the max end-time over all completed MPS
-				return CollectionUtils.Max(completedSteps, null,
-					delegate(ModalityProcedureStep mps1, ModalityProcedureStep mps2)
-					{
-						return Nullable.Compare(mps1.EndTime, mps2.EndTime);
-					}).EndTime;
-    		}
-    	}
+        /// <summary>
+        /// Gets the time at which the procedure can be considered "performed", which corresponds to the maximum
+        /// completed modality procedure step end-time.
+        /// </summary>
+        /// <remarks>
+        /// This is a computed property and hence should not be used in summaries.
+        /// </remarks>
+        public virtual DateTime? PerformedTime
+        {
+            get
+            {
+                List<ModalityProcedureStep> completedSteps = CollectionUtils.Select(this.ModalityProcedureSteps,
+                    delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
 
-		/// <summary>
-		/// Gets a value indicating whether this procedure can be considered "performed", meaning all modality procedure
-		/// steps have been terminated, and at least one has been completed.
-		/// </summary>
-		/// <remarks>
-		/// This is a computed property and hence should not be used in summaries.
-		/// </remarks>
-		public virtual bool IsPerformed
-    	{
-    		get
-    		{
-				// return true if all MPS are terminated and at least one is completed
-				return this.ModalityProcedureSteps.TrueForAll(
-						delegate(ModalityProcedureStep mps) { return mps.IsTerminated; })
-					&& this.ModalityProcedureSteps.Exists(
-						delegate(ModalityProcedureStep ps) { return ps.State == ActivityStatus.CM; });
-			}
-    	}
+                // return the max end-time over all completed MPS
+                return CollectionUtils.Max(completedSteps, null,
+                    delegate(ModalityProcedureStep mps1, ModalityProcedureStep mps2)
+                    {
+                        return Nullable.Compare(mps1.EndTime, mps2.EndTime);
+                    }).EndTime;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this procedure can be considered "performed", meaning all modality procedure
+        /// steps have been terminated, and at least one has been completed.
+        /// </summary>
+        /// <remarks>
+        /// This is a computed property and hence should not be used in summaries.
+        /// </remarks>
+        public virtual bool IsPerformed
+        {
+            get
+            {
+                // return true if all MPS are terminated and at least one is completed
+                return this.ModalityProcedureSteps.TrueForAll(
+                        delegate(ModalityProcedureStep mps) { return mps.IsTerminated; })
+                    && this.ModalityProcedureSteps.Exists(
+                        delegate(ModalityProcedureStep ps) { return ps.State == ActivityStatus.CM; });
+            }
+        }
 
         #endregion
 
@@ -199,7 +213,7 @@ namespace ClearCanvas.Healthcare {
         public virtual void CreateProcedureSteps()
         {
             // TODO: is this the right way to check this condition?  do we need a dedicated flag?
-            if(_procedureSteps.Count > 0)
+            if (_procedureSteps.Count > 0)
                 throw new WorkflowException("Procedure steps have already been created for this Procedure.");
 
             ProcedureBuilder builder = new ProcedureBuilder();
@@ -227,11 +241,11 @@ namespace ClearCanvas.Healthcare {
         /// <param name="startTime"></param>
         public virtual void Schedule(DateTime? startTime)
         {
-            if(_status != ProcedureStatus.SC)
+            if (_status != ProcedureStatus.SC)
                 throw new WorkflowException("Only procedures in the SC status may be scheduled or re-scheduled.");
 
             // if the procedure steps have not been created, create them now
-            if(_procedureSteps.Count == 0)
+            if (_procedureSteps.Count == 0)
             {
                 this.CreateProcedureSteps();
             }
@@ -256,7 +270,7 @@ namespace ClearCanvas.Healthcare {
             // update the status prior to cancelling the procedure steps
             // (otherwise cancelling the steps will cause them to try and update the procedure status)
             SetStatus(ProcedureStatus.DC);
-            
+
             // discontinue any procedure steps in the scheduled status
             foreach (ProcedureStep ps in _procedureSteps)
             {
@@ -283,13 +297,13 @@ namespace ClearCanvas.Healthcare {
             // discontinue all procedure steps (they should all be in the SC status)
             foreach (ProcedureStep ps in _procedureSteps)
             {
-				// except PreSteps, which may already be in a terminal state, so ignore them if that's the case.
-				// Bug: #1525
-				if (ps.IsPreStep && ps.IsTerminated)
-					continue;
-				
-				ps.Discontinue();
-			}
+                // except PreSteps, which may already be in a terminal state, so ignore them if that's the case.
+                // Bug: #1525
+                if (ps.IsPreStep && ps.IsTerminated)
+                    continue;
+
+                ps.Discontinue();
+            }
 
             // need to update the end-time again, after discontinuing procedure steps
             UpdateEndTime();
@@ -321,7 +335,7 @@ namespace ClearCanvas.Healthcare {
                 delegate(ProcedureStep ps) { return ps.Scheduling == null ? null : ps.Scheduling.StartTime; }, null);
 
             // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
-            if(_order != null)
+            if (_order != null)
                 _order.UpdateScheduling();
         }
 
@@ -336,7 +350,7 @@ namespace ClearCanvas.Healthcare {
             if (_status == ProcedureStatus.SC || _status == ProcedureStatus.IP)
             {
                 // if all steps are discontinued, this procedure is automatically discontinued
-				// Bug: #2471 only consider Modality Procedure Steps for now, although in the long run this is not a good solution
+                // Bug: #2471 only consider Modality Procedure Steps for now, although in the long run this is not a good solution
                 if (CollectionUtils.TrueForAll(this.ModalityProcedureSteps,
                     delegate(ModalityProcedureStep step) { return step.State == ActivityStatus.DC; }))
                 {
@@ -362,7 +376,7 @@ namespace ClearCanvas.Healthcare {
             }
 
             // check if the procedure should auto-completed
-            if(_status == ProcedureStatus.IP)
+            if (_status == ProcedureStatus.IP)
             {
                 bool anyPublicationStepsCompleted = CollectionUtils.Contains(_procedureSteps,
                     delegate(ProcedureStep step)
@@ -370,47 +384,47 @@ namespace ClearCanvas.Healthcare {
                         return step.Is<PublicationStep>() && step.State == ActivityStatus.CM;
                     });
 
-                if(anyPublicationStepsCompleted)
+                if (anyPublicationStepsCompleted)
                 {
                     SetStatus(ProcedureStatus.CM);
                 }
             }
         }
 
-		/// <summary>
-		/// Shifts the object in time by the specified number of minutes, which may be negative or positive.
-		/// </summary>
-		/// <remarks>
-		/// The method is not intended for production use, but is provided for the purpose
-		/// of generating back-dated data for demos and load-testing.
-		/// </remarks>
-		/// <param name="minutes"></param>
-		protected internal virtual void TimeShift(int minutes)
-		{
-			_scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddMinutes(minutes) : _scheduledStartTime;
-			_startTime = _startTime.HasValue ? _startTime.Value.AddMinutes(minutes) : _startTime;
-			_endTime = _endTime.HasValue ? _endTime.Value.AddMinutes(minutes) : _endTime;
+        /// <summary>
+        /// Shifts the object in time by the specified number of minutes, which may be negative or positive.
+        /// </summary>
+        /// <remarks>
+        /// The method is not intended for production use, but is provided for the purpose
+        /// of generating back-dated data for demos and load-testing.
+        /// </remarks>
+        /// <param name="minutes"></param>
+        protected internal virtual void TimeShift(int minutes)
+        {
+            _scheduledStartTime = _scheduledStartTime.HasValue ? _scheduledStartTime.Value.AddMinutes(minutes) : _scheduledStartTime;
+            _startTime = _startTime.HasValue ? _startTime.Value.AddMinutes(minutes) : _startTime;
+            _endTime = _endTime.HasValue ? _endTime.Value.AddMinutes(minutes) : _endTime;
 
-			if(_procedureCheckIn != null)
-			{
-				_procedureCheckIn.TimeShift(minutes);
-			}
+            if (_procedureCheckIn != null)
+            {
+                _procedureCheckIn.TimeShift(minutes);
+            }
 
-			if(_protocol != null)
-			{
-				_protocol.TimeShift(minutes);
-			}
+            foreach (Protocol protocol in _protocols)
+            {
+                protocol.TimeShift(minutes);
+            }
 
-			foreach (ProcedureStep step in _procedureSteps)
-			{
-				step.TimeShift(minutes);
-			}
+            foreach (ProcedureStep step in _procedureSteps)
+            {
+                step.TimeShift(minutes);
+            }
 
-			foreach (Report report in _reports)
-			{
-				report.TimeShift(minutes);
-			}
-		}
+            foreach (Report report in _reports)
+            {
+                report.TimeShift(minutes);
+            }
+        }
 
         /// <summary>
         /// Helper method to change the status and also notify the parent order to change its status
@@ -423,10 +437,10 @@ namespace ClearCanvas.Healthcare {
             {
                 _status = status;
 
-                if(_status == ProcedureStatus.IP)
+                if (_status == ProcedureStatus.IP)
                     UpdateStartTime();
 
-                if(this.IsTerminated)
+                if (this.IsTerminated)
                     UpdateEndTime();
 
                 // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
@@ -461,5 +475,5 @@ namespace ClearCanvas.Healthcare {
 
         #endregion
 
-	}
+    }
 }

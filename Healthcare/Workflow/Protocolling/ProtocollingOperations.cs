@@ -165,6 +165,8 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 				// other wise, create a new assignment step with its own new protocol for each procedure in the old protocol
 				else
 				{
+					assignmentStep.Protocol.Cancel();
+
 					List<Procedure> procedures = new List<Procedure>(assignmentStep.Protocol.Procedures);
 					foreach (Procedure procedure in procedures)
 					{
