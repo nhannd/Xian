@@ -1,8 +1,6 @@
 <%@ Register assembly="ClearCanvas.ImageServer.Web.Common" namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" tagPrefix="ccUI" %>
 <%@ Register src="~/Controls/InvalidInputIndicator.ascx" tagPrefix="ccASP" tagName="InvalidInputIndicator" %>
 
-<asp:Image runat="server" SkinID="Spacer" ImageUrl="images/blank.gif" />
-
 <%-- Header and Menu Images --%>
 
 <asp:ImageButton runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="68" Width="199" />
@@ -56,7 +54,12 @@
 <asp:Image runat="server" SkinID="Unchecked" ImageUrl="images/Indicators/unchecked.png" />
 <asp:Image runat="server" SkinID="Checked" ImageUrl="images/Indicators/checked.png" />
 <asp:Image runat="server" SkinID="Watermark" ImageUrl="images/Indicators/Watermark.gif" />
+<asp:Image runat="server" SkinID="Searching" ImageUrl="images/Indicators/Searching.gif" />
+<asp:Image runat="server" SkinID="Loading" ImageUrl="images/MainContent/Loading.gif" />
+<asp:Image runat="server" SkinID="Spacer" ImageUrl="images/blank.gif" />
 
+
+<%-- GridView --%>
 <asp:GridView runat="server" SkinID="GlobalGridView" AutoGenerateColumns="False" CssClass="GlobalGridView" Width="100%" EmptyDataText="" CellPadding="0" PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px" />
 
 <%-- Custom Controls --%>

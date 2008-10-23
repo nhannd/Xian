@@ -5,18 +5,18 @@
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
-
             <asp:Table runat="server">
                 <asp:TableRow>
-                    <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >
-                    
+                    <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >                    
                        <table cellpadding="0" cellspacing="0"  width="100%">
-                            <!-- need this table so that the filter panel container is fit to the content -->
                             <tr>
                                 <td align="left">
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
-                                    <table cellpadding="0" cellspacing="0">
+                                    <table width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
+                                        <td>
+                                            <table cellpadding="0" cellspacing="0">
+                                            <tr>
 
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
@@ -46,16 +46,26 @@
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
-                                        </tr>
+                                            </tr>
+                                            </table>
+                                        </td>
+                                         <td align="right" valign="bottom">
+                                            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel"  >
+                                                <ProgressTemplate>
+                                                    <asp:Image ID="Image1" runat="server" SkinID="Searching" />
+                                                </ProgressTemplate>
+                                            </asp:UpdateProgress>
+                                         </td>
+                                     </tr>
                                     </table>
                                 </asp:Panel>
                                 </td>
                             </tr>
                         </table>
+
                         <ccUI:CalendarExtender ID="StudyDateCalendarExtender" runat="server" TargetControlID="StudyDate"
                             CssClass="Calendar">
                         </ccUI:CalendarExtender>
-
                     </asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
@@ -92,4 +102,9 @@
         <ccAsp:MessageBox ID="DeleteMessageBox" runat="server" />    
         <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
     </ContentTemplate>
+    <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="SearchButton" EventName="Click" />
+    </Triggers>
+
 </asp:UpdatePanel>
+

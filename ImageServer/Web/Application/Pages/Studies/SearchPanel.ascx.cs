@@ -32,7 +32,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
@@ -248,7 +250,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 			if (StudyListGridView.IsPostBack)
 			{
 				DataBind();
-			} 
+			}
         }
         
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
