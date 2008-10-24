@@ -43,6 +43,7 @@ namespace ClearCanvas.ImageViewer
 	/// linked <see cref="IPresentationImage"/> objects.
 	/// </summary>
 	/// <remarks>
+	/// <para>This interface may be deprecated in a future release. Consider using the <see cref="CompositeUndoableCommand"/> instead.</para>
 	/// <para>
 	/// It is often desirable to apply an operation across all linked 
 	/// <see cref="IPresentationImage"/> objects.  For

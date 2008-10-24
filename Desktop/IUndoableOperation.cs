@@ -6,9 +6,11 @@ namespace ClearCanvas.Desktop
 	/// be used in conjuction with the <see cref="UndoableOperationApplicator{T}"/>.
 	/// </summary>
 	/// <remarks>
+	/// <para>This interface may be deprecated in a future release. Consider using the <see cref="CompositeUndoableCommand"/> instead.</para>
+	/// <para>
 	/// The item type <typeparam name="T"/> need not implement <see cref="IMemorable"/> itself,
 	/// but must be able to provide the originator object (from the <see cref="GetOriginator"/> method) for
-	/// the operation being performed.
+	/// the operation being performed.</para>
 	/// </remarks>
 	public interface IUndoableOperation<T> where T : class
 	{

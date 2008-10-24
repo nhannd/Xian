@@ -10,10 +10,11 @@ namespace ClearCanvas.Desktop
 	/// and can capture and restore the state of each item affected by the operation.
 	/// </summary>
 	/// <remarks>
-	/// It is often desirable to apply the same operation to a collection of objects
+	/// <para>This interface may be deprecated in a future release. Consider using the <see cref="CompositeUndoableCommand"/> instead.</para>
+	/// <para>It is often desirable to apply the same operation to a collection of objects
 	/// with similar properties and later undo that operation.  This class encapsulates
 	/// the functionality to apply an operation to a set of objects, as well as to capture
-	/// and restore the state of each object affected by the operation.
+	/// and restore the state of each object affected by the operation.</para>
 	/// </remarks>
 	public class UndoableOperationApplicator<T> : IMemorable where T : class
 	{
