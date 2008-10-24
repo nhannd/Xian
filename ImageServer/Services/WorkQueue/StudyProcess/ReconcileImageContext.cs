@@ -77,19 +77,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { _history = value; }
         }
 
-        /// <summary>
-        /// The location on the filesystem where the images will be stored
-        /// </summary>
-        public string TempStoragePath
-        {
-            get { return _storagePath; }
-            set { _storagePath = value; }
-        }
-
         public StudyStorageLocation DestinationStudyLocation
         {
             get { return _destinationStudyLocation; }
             set { _destinationStudyLocation = value; }
+        }
+
+        public string StoragePath
+        {
+            get { return _storagePath; }
+            set { _storagePath = value; }
         }
 
         #endregion

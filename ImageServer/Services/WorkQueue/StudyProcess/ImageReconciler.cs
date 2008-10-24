@@ -168,7 +168,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             reconcileContext.Partition = _partition;
             reconcileContext.CurrentStudyLocation = ExistingStudyLocation;
             reconcileContext.File = file;
-            reconcileContext.TempStoragePath = GetSuggestedTemporaryReconcileFolderPath();
             reconcileContext.CurrentStudy = ExistingStudy;
 
             IList<StudyHistory> historyList = FindHistory(file, StudyHistoryTypeEnum.StudyReconciled);
@@ -176,8 +175,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (historyList == null || historyList.Count==0 )
             {
                 ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation");
-                InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
                 MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
+                InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
                 processor.AddCommand(updateQueueCommand);
                 processor.AddCommand(moveFileCommand);
                 Platform.Log(LogLevel.Info, "Scheduling manual reconciliation. Image contents: Patient={0}, Study={1} ({2})", patientsName, studyDescription, modality);
@@ -211,10 +210,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 }
 
-
                 // Insert 'ReconcileStudy' in the work queue
+                reconcileContext.StoragePath = GetSuggestedTemporaryReconcileFolderPath(); // since we no longer have the record in the Study Integrity Queue
                 ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request based on histrory");
                 InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(reconcileContext);
+                
                 MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
                 processor.AddCommand(insertCommand);
                 processor.AddCommand(moveFileCommand);
@@ -223,6 +223,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 {
                     throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
                 }
+
+                Debug.Assert(insertCommand.ReconcileStudyWorkQueueItem != null);
             }
         }
 

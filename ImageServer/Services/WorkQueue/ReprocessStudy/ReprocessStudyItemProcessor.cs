@@ -346,7 +346,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 					parms.SopInstanceUid = sop.SopInstanceUid;
 					parms.StudyStorageKey = _newStorage.Key;
 					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
-					broker.Execute(parms);
+					broker.FindOne(parms);
 				}
 			}
 		}

@@ -1,9 +1,11 @@
 using System;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -17,6 +19,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     {
         #region Private Members
         private readonly ReconcileImageContext _context;
+        private Model.WorkQueue _workqueue; 
         #endregion
 
         #region Constructors
@@ -26,6 +29,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(context, "context");
             _context = context;
         }
+
+        public Model.WorkQueue ReconcileStudyWorkQueueItem
+        {
+            get { return _workqueue; }
+        }
+
         #endregion
 
         #region Overridden Protected Methods
@@ -37,7 +46,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             WorkQueueSettings settings = WorkQueueSettings.Instance;
 			IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
 			InsertWorkQueueParameters parameters = new InsertWorkQueueParameters();
-        	parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
+        	parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy;
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.DestinationStudyLocation!=null? _context.DestinationStudyLocation.GetKey():_context.CurrentStudyLocation.GetKey();
             parameters.StudyHistoryKey = _context.History != null ? _context.History.GetKey() : null;
@@ -46,7 +55,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
             ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
-            data.StoragePath = _context.TempStoragePath; 
+            data.StoragePath = _context.StoragePath;
             XmlDocument xmlData = new XmlDocument();
             XmlNode node = xmlData.ImportNode(XmlUtils.Serialize(data), true);
             xmlData.AppendChild(node);
@@ -55,12 +64,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             DateTime now = Platform.Time;
             parameters.ScheduledTime = now;
             parameters.ExpirationTime = now.AddSeconds(settings.WorkQueueExpireDelaySeconds);
-            if (!broker.Execute(parameters))
+
+            _workqueue = broker.FindOne(parameters);
+            if (_workqueue== null)
                 throw new ApplicationException("Unable to insert ReconcileStudy work queue entry");
 
-			_context.TempStoragePath = _context.TempStoragePath;
-
+            data = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(_workqueue.Data);
+            _context.StoragePath = data.StoragePath;
         }
+
 
         #endregion
 

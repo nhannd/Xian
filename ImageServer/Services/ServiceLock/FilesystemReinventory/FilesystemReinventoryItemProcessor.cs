@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 									queueInsertParms.ExpirationTime = Platform.Time.AddMinutes(5.0);
 									queueInsertParms.WorkQueuePriorityEnum = priority;
 
-									if (!workQueueInsert.Execute(queueInsertParms))
+									if (workQueueInsert.FindOne(queueInsertParms)==null)
 										Platform.Log(LogLevel.Error,
 													 "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
 								}

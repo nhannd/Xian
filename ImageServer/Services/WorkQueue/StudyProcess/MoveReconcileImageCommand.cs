@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         private string GetReconcileImageTempPath(DicomFile file)
         {
-            string path = Path.Combine(_context.TempStoragePath, file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty) + ".dcm");
+            string path = Path.Combine(_context.StoragePath, file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty) + ".dcm");
             return path;
         }
 
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected override void OnExecute()
         {
             Platform.CheckForNullReference(_context, "_context");
-            Platform.CheckForNullReference(_context.TempStoragePath, "_context.TempStoragePath");
+            Platform.CheckForNullReference(_context.StoragePath, "_context.StoragePath");
 
             _processor = new ServerCommandProcessor("Move Reconcile Image Processor");
 

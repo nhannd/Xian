@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -72,7 +73,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
             parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
-            insert.Execute(parms);
+            if (insert.FindOne(parms) == null)
+                throw new ApplicationException("UpdateWorkQueueCommand failed");
         }
     }
 }

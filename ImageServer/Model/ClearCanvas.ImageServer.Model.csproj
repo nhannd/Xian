@@ -224,6 +224,7 @@
     <Compile Include="Patient.gen.cs" />
     <Compile Include="QueueStudyStateEnum.gen.cs" />
     <Compile Include="ReconcileStudyQueueDescription.cs" />
+    <Compile Include="ReconcileStudyWorkQueue.cs" />
     <Compile Include="RequestAttributes.gen.cs" />
     <Compile Include="RestoreQueue.gen.cs" />
     <Compile Include="RestoreQueueStatusEnum.gen.cs" />

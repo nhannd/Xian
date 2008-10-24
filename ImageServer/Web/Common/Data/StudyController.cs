@@ -127,7 +127,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				insertParms.ExpirationTime = DateTime.Now.AddMinutes(1);
 
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
-				insertWorkQueue.Execute(insertParms);
+				
+                if (insertWorkQueue.FindOne(insertParms)==null)
+                {
+                    throw new ApplicationException("DeleteStudy failed");
+                }
 
 
 				ctx.Commit();
@@ -200,7 +204,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				columns.ExpirationTime = time;
 				columns.WorkQueueData = modifiedFields;
 
-                workQueueBroker.Execute(columns);
+                if (workQueueBroker.FindOne(columns) == null)
+                    throw new ApplicationException("EditStudy failed");
+
 				ctx.Commit();
 			}
         }

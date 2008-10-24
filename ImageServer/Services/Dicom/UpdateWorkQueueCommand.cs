@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #region Private Members
         private readonly DicomMessageBase _message;
         private readonly StudyStorageLocation _storageLocation;
+        private WorkQueue _insertedWorkQueue;
         private readonly bool _duplicate;
         private readonly string _extension;
         #endregion
@@ -58,6 +60,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             _storageLocation = location;
             _duplicate = duplicate;
             _extension = extension;
+        }
+
+        public WorkQueue InsertedWorkQueue
+        {
+            get { return _insertedWorkQueue; }
         }
 
         protected override void OnExecute(IUpdateContext updateContext)
@@ -78,7 +85,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 parms.Duplicate = _duplicate;
                 parms.Extension = _extension;
             }
-            insert.Execute(parms);
+            
+            _insertedWorkQueue = insert.FindOne(parms);
+
+            if (_insertedWorkQueue == null)
+                throw new ApplicationException("UpdateWorkQueueCommand failed");
         }
     }
 }

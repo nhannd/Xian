@@ -114,7 +114,10 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
         	parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
 			IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
 
-            broker.Execute(parms);
+            if (broker.FindOne(parms)==null)
+            {
+                throw new ApplicationException("InsertAutoRouteCommand failed");    
+            }
         }
     }
 }

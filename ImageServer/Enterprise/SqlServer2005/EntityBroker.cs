@@ -680,9 +680,28 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         value = ((ServerEntity)value).GetKey().Key;
                     }
+                    else if (value is XmlDocument)
+                    {
+                        XmlDocument xml = (XmlDocument) value;
+                        StringWriter sw = new StringWriter();
+                        XmlWriterSettings xmlSettings = new XmlWriterSettings();
+                        xmlSettings.Encoding = Encoding.UTF8;
+                        xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+                        xmlSettings.Indent = false;
+                        xmlSettings.NewLineOnAttributes = false;
+                        xmlSettings.CheckCharacters = true;
+                        xmlSettings.IndentChars = "";
+
+                        XmlWriter xmlWriter = XmlWriter.Create(sw, xmlSettings);
+                        xml.WriteTo(xmlWriter);
+                        xmlWriter.Close();
+
+                        value = sw.ToString();
+                    }
 
                     if (fieldUpdated == 0)
                     {
+                       
                         set.AppendFormat("{0}= @{1}", map.ColumnName, prop.Name);
                         command.Parameters.AddWithValue("@" + prop.Name, value==null? System.DBNull.Value: value);
                     }

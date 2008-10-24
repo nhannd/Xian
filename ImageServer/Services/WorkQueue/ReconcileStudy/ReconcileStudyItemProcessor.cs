@@ -33,12 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -80,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 }
                 else
                 {
-                    Platform.Log(LogLevel.Info, "Reconcililation started. GUID={0}. StudyStorage={1}", WorkQueueItem.GetKey(), WorkQueueItem.StudyStorageKey);
+                    Platform.Log(LogLevel.Info, "Reconcililation started. GUID={0}. StudyStorage={1}. {2} instances to be processed", WorkQueueItem.GetKey(), WorkQueueItem.StudyStorageKey, WorkQueueUidList.Count);
 
 					if (!LoadStorageLocation(item))
 					{
@@ -116,7 +113,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                     }
                     else
                     {
-                        Complete();
+                        // Must go to Idle and come back again because more uid may have been added to this entry since it started.
+                        BatchComplete();
                     }
                 }
                 
@@ -154,6 +152,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             Platform.Log(LogLevel.Info, "Reconciliation completed");
         }
 
+        private void BatchComplete()
+        {
+            PostProcessing(WorkQueueItem, true, false, true);
+            Platform.Log(LogLevel.Info, "StudyReconcile processed.");
+        }
+
         
         private void SetupProcessor()
         {
@@ -180,8 +184,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             {
                 // if the destination in the history has been set, 
                 // the work queue should refer to the same study so that the correct study will be locked
-                Debug.Assert(_context.History.DestStudyStorageKey == null ||
-                             _context.History.DestStudyStorageKey.Equals(WorkQueueItem.StudyStorageKey));
+                if (_context.History.DestStudyStorageKey!=null)
+                    Debug.Assert(_context.History.DestStudyStorageKey.Equals(WorkQueueItem.StudyStorageKey));
             }
         }
 

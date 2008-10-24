@@ -1202,7 +1202,7 @@ CREATE TABLE [dbo].[StudyIntegrityQueue](
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_StudyIntegrityQueue_InsertTime]  DEFAULT (getdate()),
 	[Description] [nvarchar](1024),
 	[StudyData] [xml] NOT NULL,
-	[QueueData] [xml] NOT NULL,
+	[QueueData] [xml] NULL,
 	[StudyIntegrityReasonEnum] [smallint] NOT NULL,
  CONSTRAINT [PK_StudyIntegrityQueue] PRIMARY KEY CLUSTERED 
 (

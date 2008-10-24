@@ -392,7 +392,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 						columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
 						columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
 						IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
-						if (insertBroker.Execute(columns))
+						if (insertBroker.FindOne(columns)!=null)
 						{
 							ctx.Commit();
 							return true;

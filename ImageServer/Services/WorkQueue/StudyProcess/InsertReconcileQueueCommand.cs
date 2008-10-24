@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -6,6 +7,7 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -51,12 +53,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             parameters.StudyData = descXml;
 
-            ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
-            data.StoragePath = _context.TempStoragePath;
-            XmlDocument xmlQueueData = new XmlDocument();
-            xmlQueueData.AppendChild(xmlQueueData.ImportNode(XmlUtils.Serialize(data), true));
-            parameters.QueueData = xmlQueueData;
-
             StudyIntegrityQueue item = broker.FindOne(parameters);
             if (item==null)
             {
@@ -64,10 +60,36 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
 
             _context.ReconcileQueue = item;
+            if (item.QueueData == null)
+            {
+                // this is new entry, need to assign the path and update the entry
+                _context.StoragePath = GetInitialReconcileStoragePath();
+                
+                ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
+                data.StoragePath = _context.StoragePath;
+                XmlDocument xmlQueueData = new XmlDocument();
+                xmlQueueData.AppendChild(xmlQueueData.ImportNode(XmlUtils.Serialize(data), true));
 
-            data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
-            _context.TempStoragePath = data.StoragePath; // if a record already exists, use its storagefolder instead
-            
+                item.QueueData = xmlQueueData;
+
+                IStudyIntegrityQueueEntityBroker updateBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+                updateBroker.Update(item);
+            }
+            else
+            {
+            	// Need to re-use the path that's already assigned for this entry
+                ReconcileStudyWorkQueueData data = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(item.QueueData);
+                _context.StoragePath = data.StoragePath;
+            }
+        }
+
+        private string GetInitialReconcileStoragePath()
+        {
+            String path =
+                Path.Combine(_context.CurrentStudyLocation.FilesystemPath, _context.CurrentStudyLocation.PartitionFolder);
+            path = Path.Combine(path, "Reconcile");
+            path = Path.Combine(path, Guid.NewGuid().ToString());
+            return path;
         }
 
         private ReconcileStudyQueueDescription GetQueueEntryDescription()
