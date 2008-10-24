@@ -80,6 +80,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 
 				using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
+					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
+					LockStudyParameters lockParms = new LockStudyParameters();
+					lockParms.StudyStorageKey = location.Key;
+					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.CompressScheduled;
+					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
+					{
+						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Lossless Compress, skipping study ({0}",
+									 location.StudyInstanceUid);
+						continue;
+					}
+
 					scheduledTime = scheduledTime.AddSeconds(3);
 
 					IInsertWorkQueueFromFilesystemQueue workQueueInsert = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
@@ -96,8 +107,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					insertParms.Data = queueItem.QueueXml;
 					insertParms.FilesystemQueueTypeEnum = type;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.CompressStudy;
-					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.CompressScheduled;
-
+				
 					try
 					{
 						WorkQueue entry  = workQueueInsert.FindOne(insertParms);

@@ -24,6 +24,12 @@
                 <asp:Label ID="Status" runat="server" />
             </ItemTemplate>
         </asp:TemplateField>
+        <asp:TemplateField HeaderText="Queue Status: ">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
+            <ItemTemplate>
+                <asp:Label ID="QueueState" runat="server" />
+            </ItemTemplate>
+        </asp:TemplateField>
         <asp:TemplateField HeaderText="Transfer Syntax: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>

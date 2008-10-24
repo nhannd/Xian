@@ -187,6 +187,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
+					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
+					LockStudyParameters lockParms = new LockStudyParameters();
+					lockParms.StudyStorageKey = location.Key;
+					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.DeleteScheduled;
+					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
+					{
+						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Delete, skipping study ({0}",
+									 location.StudyInstanceUid);
+						continue;
+					}
+
 					IInsertWorkQueueFromFilesystemQueue insertBroker = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
                     InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
@@ -197,8 +208,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     insertParms.DeleteFilesystemQueue = true;
                 	insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.DeleteStudy;
                 	insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.DeleteStudy;
-					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.DeleteScheduled;
-
+				
                     WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
                     {
@@ -241,6 +251,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				using (
 					IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 				{
+					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
+					LockStudyParameters lockParms = new LockStudyParameters();
+					lockParms.StudyStorageKey = location.Key;
+					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.PurgeScheduled;
+					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
+					{
+						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Study Purge, skipping study ({0}",
+						             location.StudyInstanceUid);
+						continue;
+					}
+
                     IInsertWorkQueueFromFilesystemQueue insertBroker = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
 					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
@@ -251,8 +272,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.PurgeStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.PurgeStudy;
-					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.PurgeScheduled;
-
+					
                     WorkQueue insertItem = insertBroker.FindOne(insertParms);
 					if (insertItem == null)
 					{
@@ -301,6 +321,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         			IUpdateContext update =
         				PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
         		{
+					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
+					LockStudyParameters lockParms = new LockStudyParameters();
+					lockParms.StudyStorageKey = location.Key;
+					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.MigrationScheduled;
+					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
+					{
+						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Tier Migration, skipping study ({0}",
+									 location.StudyInstanceUid);
+						continue;
+					}
+
 					IInsertWorkQueueFromFilesystemQueue broker = update.GetBroker<IInsertWorkQueueFromFilesystemQueue>();
 
 					InsertWorkQueueFromFilesystemQueueParameters insertParms = new InsertWorkQueueFromFilesystemQueueParameters();
@@ -311,7 +342,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         			insertParms.DeleteFilesystemQueue = true;
 					insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.MigrateStudy;
 					insertParms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
-					insertParms.QueueStudyStateEnum = QueueStudyStateEnum.MigrationScheduled;
 
         			Platform.Log(LogLevel.Debug, "Scheduling tier-migration for study {0} from {1} at {2}...",
         			             location.StudyInstanceUid, location.FilesystemTierEnum, _scheduledTime);

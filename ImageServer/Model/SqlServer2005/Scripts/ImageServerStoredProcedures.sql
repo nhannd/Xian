@@ -411,7 +411,7 @@ BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
-				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired as 'IsReconcileRequired'
+				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired as ''IsReconcileRequired''
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -428,7 +428,7 @@ BEGIN
 	    SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
-				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired  as 'IsReconcileRequired'
+				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired  as ''IsReconcileRequired''
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID
@@ -441,7 +441,7 @@ BEGIN
 		SELECT  StudyStorage.GUID, StudyStorage.StudyInstanceUid, StudyStorage.ServerPartitionGUID, StudyStorage.LastAccessedTime, StudyStorage.InsertTime, StudyStorage.StudyStatusEnum,
 				Filesystem.FilesystemPath, ServerPartition.PartitionFolder, FilesystemStudyStorage.StudyFolder, FilesystemStudyStorage.FilesystemGUID, Filesystem.Enabled, Filesystem.ReadOnly, Filesystem.WriteOnly,
 				Filesystem.FilesystemTierEnum, StudyStorage.Lock, FilesystemStudyStorage.ServerTransferSyntaxGUID, ServerTransferSyntax.Uid as TransferSyntaxUid, FilesystemStudyStorage.GUID as FilesystemStudyStorageGUID,
-				StudyStorage.QueueStudyStateEnum
+				StudyStorage.QueueStudyStateEnum, @IsReconcileRequired  as ''IsReconcileRequired''
 		FROM StudyStorage
 			JOIN ServerPartition on StudyStorage.ServerPartitionGUID = ServerPartition.GUID
 			JOIN FilesystemStudyStorage on StudyStorage.GUID = FilesystemStudyStorage.StudyStorageGUID

@@ -94,7 +94,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 {
                     statusLabel.Text = ssl.StudyStatusEnum.Description;
                 }
-                Label studyFolder = StudyStorageViewControl.FindControl("StudyFolder") as Label;
+				Label queueStateLable = StudyStorageViewControl.FindControl("QueueState") as Label;
+				if (queueStateLable != null)
+				{
+					queueStateLable.Text = ssl.QueueStudyStateEnum.Description;
+				}
+				Label studyFolder = StudyStorageViewControl.FindControl("StudyFolder") as Label;
                 if (studyFolder != null)
                 {
                     studyFolder.Text = ssl.GetStudyPath();
