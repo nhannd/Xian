@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 									}
 									catch (Exception e)
 									{
-										Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.");
+										Platform.Log(LogLevel.Warn, e, "Unexpected failure loading file: {0}.  Continuing to next file.", fInfo.FullName);
 										file = null;
 									}
 
