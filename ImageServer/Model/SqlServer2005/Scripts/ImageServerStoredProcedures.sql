@@ -587,7 +587,18 @@ BEGIN
 					<action><tier1-retention time="3" unit="weeks"/></action>
 				</rule>'' )
 
-	-- Insert a default Online Retention Rule
+	-- Insert a default Tier1Retention rule for restores
+	INSERT INTO [ImageServer].[dbo].[ServerRule]
+			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
+		 VALUES
+			   (newid(),''Default Restore Tier1 Retention'',@ServerPartitionGUID, @StudyRestoreServerRuleApplyTimeEnum, @Tier1RetentionServerRuleTypeEnum, 1, 1,
+				''<rule id="Default Tier1 Retention">
+					<condition>
+					</condition>
+					<action><tier1-retention time="1" unit="weeks"/></action>
+				</rule>'' )
+
+	-- Insert a default Online Retention Rule for study processed
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
 			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
@@ -598,7 +609,7 @@ BEGIN
 					<action><online-retention time="4" unit="weeks"/></action>
 				</rule>'' )
 
-	-- Insert a default Online Retention Rule
+	-- Insert a default Online Retention Rule for restores
 	INSERT INTO [ImageServer].[dbo].[ServerRule]
 			   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
 		 VALUES
@@ -606,7 +617,7 @@ BEGIN
 				''<rule id="Default Restore Online Retention">
 					<condition>
 					</condition>
-					<action><online-retention time="4" unit="weeks"/></action>
+					<action><online-retention time="1" unit="weeks"/></action>
 				</rule>'' )
 
 	-- Insert an exempt rule for Compression
@@ -1507,6 +1518,11 @@ BEGIN
 		IF @Lock = 1
 		BEGIN
 			UPDATE ServiceLock SET Lock = 0, ScheduledTime = getdate()
+			WHERE GUID = @ServiceLockGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE ServiceLock SET ProcessorId = null
 			WHERE GUID = @ServiceLockGUID
 		END
 

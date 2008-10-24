@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
@@ -67,17 +68,29 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			{
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
 				{
-					ArchiveQueue queueItem = _hsmArchive.GetArchiveCandidate();
+					try
+					{
+						ArchiveQueue queueItem = _hsmArchive.GetArchiveCandidate();
 
-					if (queueItem != null)
-					{
-						HsmStudyArchive archiver = new HsmStudyArchive(_hsmArchive);
-						_threadPool.Enqueue(queueItem, archiver.Run);
+						if (queueItem != null)
+						{
+							HsmStudyArchive archiver = new HsmStudyArchive(_hsmArchive);
+							_threadPool.Enqueue(queueItem, archiver.Run);
+						}
+						else if (CheckStop(5000))
+						{
+							Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
+							return;
+						}
 					}
-					else if (CheckStop(5000))
+					catch (Exception e)
 					{
-						Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
-						return;
+						Platform.Log(LogLevel.Error,e,"Unexpected exception when querying for archive candidates, rescheduling.");
+						if (CheckStop(5000))
+						{
+							Platform.Log(LogLevel.Info, "Shutting down {0} archiving service.", _hsmArchive.PartitionArchive.Description);
+							return;
+						}
 					}
 				}
 				else

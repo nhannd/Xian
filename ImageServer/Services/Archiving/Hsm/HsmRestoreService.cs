@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
@@ -73,21 +74,34 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// </summary>
 		protected override void Run()
 		{
+
 			while (true)
 			{
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
 				{
-					RestoreQueue queueItem = _hsmArchive.GetRestoreCandidate();
+					try
+					{
+						RestoreQueue queueItem = _hsmArchive.GetRestoreCandidate();
 
-					if (queueItem != null)
-					{
-						HsmStudyRestore archiver = new HsmStudyRestore(_hsmArchive);
-						_threadPool.Enqueue(queueItem, archiver.Run);
+						if (queueItem != null)
+						{
+							HsmStudyRestore archiver = new HsmStudyRestore(_hsmArchive);
+							_threadPool.Enqueue(queueItem, archiver.Run);
+						}
+						else if (CheckStop(5000))
+						{
+							Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
+							return;
+						}
 					}
-					else if (CheckStop(5000))
+					catch (Exception e)
 					{
-						Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
-						return;
+						Platform.Log(LogLevel.Error, e, "Unexpected exception when querying for restore candidates.  Rescheduling.");
+						if (CheckStop(5000))
+						{
+							Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
+							return;
+						}
 					}
 				}
 				else
