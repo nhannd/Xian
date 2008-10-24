@@ -39,7 +39,8 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             : base("LockStudy")
         {
             // This is output from the stored procedure
-            SubCriteria["Successful"] = new ProcedureParameter<bool>("Successful");             
+            SubCriteria["Successful"] = new ProcedureParameter<bool>("Successful");
+            SubCriteria["FailureReason"] = new ProcedureParameter<string>("FailureReason");  
         }
 
         public ServerEntityKey StudyStorageKey
@@ -62,6 +63,14 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             get
             {
                 return (this.SubCriteria["Successful"] as ProcedureParameter<bool>).Value;
+            }
+        }
+
+        public string FailureReason
+        {
+            get
+            {
+                return (this.SubCriteria["FailureReason"] as ProcedureParameter<string>).Value;
             }
         }
     }

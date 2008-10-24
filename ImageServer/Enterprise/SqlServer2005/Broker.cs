@@ -130,8 +130,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
 					if (!parm2.Output)
 						command.Parameters.AddWithValue(sqlParmName, parm2.Value);
-					else
-						throw new PersistenceException("Unsupported output parameter type: string",null);
+                    else
+                    {
+                        SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.NVarChar, 1024);
+                        sqlParm.Direction = ParameterDirection.Output;
+                    }
 				}
                 else if (parm is ProcedureParameter<ServerEnum>)
                 {
@@ -260,6 +263,19 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 						parm2.Value = (Decimal)sqlParm.Value;
 					}
 				}
+                else if (parm is ProcedureParameter<string>)
+                {
+                    ProcedureParameter<string> parm2 = (ProcedureParameter<string>)parm;
+
+                    if (!parm2.Output)
+                        continue;
+                    else
+                    {
+                        SqlParameter sqlParm = command.Parameters[sqlParmName];
+                        if (sqlParm.Value != DBNull.Value)
+                            parm2.Value = (string)sqlParm.Value;
+                    }
+                }
 			}
 		}
         protected static void PopulateEntity(SqlDataReader reader, ServerEntity entity, Type entityType)

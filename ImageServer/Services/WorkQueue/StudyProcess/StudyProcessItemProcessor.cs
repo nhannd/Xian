@@ -351,7 +351,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
             String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
-
             
             try
             {
@@ -663,15 +662,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
 
             
-
-#if DEBUG_TEST
-        // Simulate slow processing so that we can stop the service
-        // and test that it reset workqueue item when restarted
-            Console.WriteLine("WorkQueue Item has been locked for processing...");
-            Console.WriteLine("Press <Ctrl-C> to stop the service now\n");
-            Thread.Sleep(10000);
-            Console.WriteLine("WorkQueue Item is being processed...");
-#endif
             bool successful = false;
         	bool batchProcessed = true;
             _statistics.TotalProcessTime.Add(
@@ -703,8 +693,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 								}
 
                                 _context.StorageLocation = StorageLocation;
-                                
 
+                                // If the study is not in processing state, attempt to push it into this state
+                                if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ProcessingScheduled)
+                                    LockStudyState(item, QueueStudyStateEnum.ProcessingScheduled);
+                                
                                 // Process the images in the list
                                 successful = ProcessUidList(item);
 
@@ -740,6 +733,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			}
 				
         }
+
 
         protected override bool CanStart()
         {

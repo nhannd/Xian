@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
@@ -96,6 +97,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                                          AlertTypeCodes.LowResources,
                                          SR.AlertHeaderMaxConnectionsReached, _maxConnections);
                 }
+
+                Platform.Log(LogLevel.Info, "# concurrent connections: {0}. Max={1}", _contexts.Count, _maxConnections);
             }
         }
 
@@ -134,7 +137,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                         _contexts.Remove(ctx);
                     }
                 }
-                
+
+                Platform.Log(LogLevel.Info, "Context closed detected: # concurrent connections: {0}", _contexts.Count);
             }
         }
         #endregion

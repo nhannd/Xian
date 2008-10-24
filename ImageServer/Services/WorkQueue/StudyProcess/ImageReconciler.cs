@@ -175,7 +175,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (historyList == null || historyList.Count==0 )
             {
-                
                 ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation");
                 InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
                 MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);

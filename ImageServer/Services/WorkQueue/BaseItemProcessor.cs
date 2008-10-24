@@ -695,6 +695,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                     });
         }
 
+
+        protected void LockStudyState(Model.WorkQueue item, QueueStudyStateEnum state)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
+                LockStudyParameters lockStudyParams = new LockStudyParameters();
+                lockStudyParams.StudyStorageKey = item.StudyStorageKey;
+                lockStudyParams.QueueStudyStateEnum = state;
+
+                if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
+                    throw new ApplicationException(
+                        String.Format("Unable to lock study : {0}", lockStudyParams.FailureReason));
+
+                updateContext.Commit();
+            }
+        }
+
         /// <summary>
         /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 
         /// if the process can begin.

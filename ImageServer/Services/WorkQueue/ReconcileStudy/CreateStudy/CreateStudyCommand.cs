@@ -179,6 +179,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                 StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
                 parms.DestStudyStorageKey =DestStudyStorage.GetKey();
                 historyUpdateBroker.Update(_context.History.GetKey(), parms);
+
+                ILockStudy lockStudyBroker = ctx.GetBroker<ILockStudy>();
+                LockStudyParameters lockParms = new LockStudyParameters();
+                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+                lockParms.StudyStorageKey = _context.WorkQueueItem.StudyHistoryKey;
+                lockStudyBroker.Execute(lockParms);
+
                 ctx.Commit();
             }
         }
@@ -357,7 +364,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
             SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
             processor.AddCommand(saveCommand);
-            processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, dupImage, extension));
+            processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension));
             
             if (!processor.Execute())
             {

@@ -75,7 +75,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public Model.StudyIntegrityQueue StudyIntegrityQueueItem
         {
-            get { return _item; }
+            get
+            {
+                return _item;
+            }
             set
             {
                 _item = value;

@@ -33,9 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -91,7 +94,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                     SetupProcessor();
                     
                     ExecuteCommands();
-                    
+
                 }
             }
             
@@ -113,8 +116,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                     }
                     else
                     {
-                        PostProcessing(WorkQueueItem, true, false, false);
-                        Platform.Log(LogLevel.Info, "Reconciliation is completed.");
+                        Complete();
                     }
                 }
                 

@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 				parms.ServerPartitionKey = item.ServerPartitionKey;
 				parms.StudyStorageKey = item.StudyStorageKey;
-				parms.StudyStatusEnum = StudyStatusEnum.Nearline;
+				parms.StudyStatusEnum = StudyStatusEnum.Nearline; // TODO: Don't we set Nearline only if all the storage location are purged?
 
 				// Get the Insert Instance broker and do the insert
 				IDeleteFilesystemStudyStorage delete = updateContext.GetBroker<IDeleteFilesystemStudyStorage>();

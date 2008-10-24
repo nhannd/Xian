@@ -173,18 +173,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-                Platform.Log(LogLevel.Info, "loading storage");
-				StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
-
-                Platform.Log(LogLevel.Info, "Editing study");
-				
-				LockStudyParameters lockParms = new LockStudyParameters();
+                StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
+                LockStudyParameters lockParms = new LockStudyParameters();
 				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
 				lockParms.StudyStorageKey = storage.Key;
-
 			    ILockStudy broker = ctx.GetBroker<ILockStudy>();
 				broker.Execute(lockParms);
-                Platform.Log(LogLevel.Info, "study edit");
+                
 				if (!lockParms.Successful)
 					return false;
 

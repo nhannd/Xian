@@ -175,7 +175,8 @@ CREATE PROCEDURE [dbo].[LockStudy]
 	@StudyStorageGUID uniqueidentifier,
 	@Lock bit = null,
 	@QueueStudyStateEnum smallint = null,
-	@Successful bit output
+	@Successful bit output,
+	@FailureReason nvarchar(1024)=null output
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -235,6 +236,14 @@ BEGIN
 	ELSE
 	BEGIN
 		SET @Successful=0
+	END
+
+	IF @Successful=0
+	BEGIN
+		SELECT @FailureReason=QueueStudyStateEnum.LongDescription 
+		FROM QueueStudyStateEnum 
+		JOIN StudyStorage ON StudyStorage.QueueStudyStateEnum = QueueStudyStateEnum.Enum
+		WHERE StudyStorage.GUID = @StudyStorageGUID
 	END
 END
 '
@@ -966,20 +975,6 @@ BEGIN
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
-
-		-- Lock the study in the StudyStorage table
-		DECLARE @Successful bit
-		EXECUTE [ImageServer].[dbo].[LockStudy] 
-				@StudyStorageGUID  ,null  ,@StudyProcessQueueStateEnum  ,@Successful OUTPUT
-
-		IF @Successful = 0
-		BEGIN
-			DECLARE @errorMessage nvarchar(128)
-			SET @errorMessage = ''[dbo.InsertWorkQueueStudyProcess] failed to lock study '' + CAST(@StudyStorageGUID as nvarchar(32))
-			RAISERROR (@errorMessage, 18 /* severity.. >=20 means fatal but needs sysadmin role*/, 1 /*state*/)
-			RETURN 50000			
-		END
-
 		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
 			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
 	END
@@ -2895,6 +2890,7 @@ BEGIN
 			WHERE ArchiveStudyStorageGUID = @NewArchiveStudyStorageGUID
 			IF @@ROWCOUNT = 0
 			BEGIN
+				
 				EXECUTE [ImageServer].[dbo].[LockStudy] 
 						@StudyStorageGUID  ,null  ,@RestoreQueueStudyStateEnum  ,@Successful OUTPUT
 
@@ -3269,7 +3265,8 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueReconcileStudy]
 	@Data xml,
 	@ExpirationTime datetime,
 	@ScheduledTime datetime,
-	@WorkQueuePriorityEnum smallint
+	@WorkQueuePriorityEnum smallint,
+	@FailureReason nvarchar(1024) output
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -3298,7 +3295,12 @@ BEGIN
 	IF @@ROWCOUNT = 0
 	BEGIN
 		-- We didnt lock the study, just return no rows
-		set @WorkQueueGUID = NEWID();
+		SELECT @FailureReason=QueueStudyStateEnum.LongDescription 
+		FROM QueueStudyStateEnum 
+		JOIN StudyStorage ON StudyStorage.QueueStudyStateEnum = QueueStudyStateEnum.Enum
+		WHERE StudyStorage.GUID = @StudyStorageGUID
+
+		set @FailureReason=''Could not lock study: '' + @FailureReason;
 	END
 	ELSE
 	BEGIN

@@ -100,6 +100,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 
 				//Random r = new Random();
 				//Thread.Sleep(r.Next(2000));
+                Platform.Log(LogLevel.Debug, "Response sent to {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
+
 				return stream;
 			}
 			catch (ArgumentException e)

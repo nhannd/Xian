@@ -14,7 +14,9 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Services.Dicom;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
@@ -148,6 +150,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                 StudyHistoryUpdateColumns parms = new StudyHistoryUpdateColumns();
                 parms.DestStudyStorageKey = DestStudyStorage.GetKey();
                 historyUpdateBroker.Update(_reconcileContext.History.GetKey(), parms);
+
+
+                ILockStudy lockStudyBroker = ctx.GetBroker<ILockStudy>();
+                LockStudyParameters lockParms = new LockStudyParameters();
+                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+                lockParms.StudyStorageKey = _reconcileContext.WorkQueueItem.StudyHistoryKey;
+
+                lockStudyBroker.Execute(lockParms);
+
                 ctx.Commit();
             }
         }
@@ -257,7 +268,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             processor.AddCommand(saveCommand);
             if (uid!=null)
             {
-                processor.AddCommand(new UpdateWorkQueueCommand(file, _destStudyStorage, dupImage, extension));
+                processor.AddCommand(new UpdateWorkQueueCommand(file, _destStudyStorage, extension));
             }
 
             if (!processor.Execute())

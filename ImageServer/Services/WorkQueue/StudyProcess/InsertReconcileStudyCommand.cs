@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Model.WorkQueue workqueue = broker.FindOne(parameters);
             if (workqueue==null)
             {
-                throw new ApplicationException("Unable to insert ReconcileStudy work queue entry");
+                throw new ApplicationException(String.Format("Unable to insert ReconcileStudy work queue entry: {0}", parameters.FailureReason));
             }
 
             data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(workqueue.Data);

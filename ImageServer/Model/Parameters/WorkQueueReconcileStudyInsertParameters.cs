@@ -10,7 +10,14 @@ namespace ClearCanvas.ImageServer.Model.Parameters
     {
         public WorkQueueReconcileStudyInsertParameters()
             : base("InsertWorkQueueReconcileStudy")
-        { }
+        {
+            SubCriteria["FailureReason"] = new ProcedureParameter<string>("FailureReason");
+        }
+
+        public string FailureReason
+        {
+            get { return (this.SubCriteria["FailureReason"] as ProcedureParameter<string>).Value; }
+        }
 
         public string StudyInstanceUid
         {

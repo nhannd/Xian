@@ -74,15 +74,26 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private void ReconcileStudy(string command, ServerEntityKey itemKey)
         {
+            Model.StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
+
 			// Preload the change description so its not done during the DB transaction
 			XmlDocument changeDescription = new XmlDocument();
 			changeDescription.LoadXml(command);
 
 			using (IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
-				Model.StudyIntegrityQueue item = queueAdaptor.Get(context,itemKey);
+                
+                LockStudyParameters lockParms = new LockStudyParameters();
+                lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReconcileScheduled;
+                lockParms.StudyStorageKey = item.StudyStorageKey;
+                ILockStudy broker = context.GetBroker<ILockStudy>();
+                broker.Execute(lockParms);
+                if (!lockParms.Successful)
+                {
+                    throw new ApplicationException(lockParms.FailureReason);
+                }
 
+                
 				//Add to Study History
 				StudyHistoryeAdaptor historyAdaptor = new StudyHistoryeAdaptor();
 				StudyHistoryUpdateColumns parameters = new StudyHistoryUpdateColumns();
