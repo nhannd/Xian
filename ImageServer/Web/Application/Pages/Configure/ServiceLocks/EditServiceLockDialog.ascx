@@ -71,5 +71,3 @@
                 </table>
     </ContentTemplate>
 </ccAsp:ModalDialog>
-
-<ccAsp:MessageBox ID="MessageBox" runat="server" />

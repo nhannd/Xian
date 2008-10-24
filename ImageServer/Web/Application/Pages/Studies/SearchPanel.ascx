@@ -98,13 +98,13 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
-
-        <ccAsp:MessageBox ID="DeleteMessageBox" runat="server" />    
-        <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
     </ContentTemplate>
     <Triggers>
         <asp:AsyncPostBackTrigger ControlID="SearchButton" EventName="Click" />
     </Triggers>
 
 </asp:UpdatePanel>
+
+        <ccAsp:MessageBox ID="DeleteMessageBox" runat="server" />    
+        <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
 

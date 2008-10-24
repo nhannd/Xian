@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
@@ -40,14 +41,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+            
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
-                                                               SearchPanel panel =
-                                                                   LoadControl("SearchPanel.ascx") as SearchPanel;
-                                                               panel.ServerPartition = partition;
-                                                               panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                                   SearchPanel panel =
+                                                                       LoadControl("SearchPanel.ascx") as SearchPanel;
+                                                                   panel.ServerPartition = partition;
+                                                                   panel.ID = "SearchPanel_" + partition.AeTitle;
+                                                                   return panel;
 
-                                                               return panel;
                                                            });
         }
     }

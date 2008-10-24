@@ -3,6 +3,7 @@
     Title="Configure Service Scheduling" %>
 
 <%@ Register Src="ServiceLockPanel.ascx" TagName="ServiceLockPanel" TagPrefix="localAsp" %>
+<%@ Register Src="EditServiceLockDialog.ascx" TagName="EditServiceLockDialog" TagPrefix="localAsp" %>
 
 <asp:Content ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">Configure Service Scheduling</asp:Content>
 
@@ -10,9 +11,9 @@
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <localAsp:ServiceLockPanel ID="ServiceLockPanel" runat="server" />
-            <ccAsp:MessageBox ID="MessageBox1" runat="server" />
         </ContentTemplate>
     </asp:UpdatePanel>
     
-    
+    <ccAsp:MessageBox ID="ConfirmEditDialog" runat="server" />
+    <localAsp:EditServiceLockDialog ID="EditServiceLockDialog" runat="server" />
 </asp:Content>

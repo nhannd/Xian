@@ -12,11 +12,14 @@
         <ContentTemplate>
             <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel" >
                 <uc1:ServerPartitionPanel ID="ServerPartitionPanel" runat="server"></uc1:ServerPartitionPanel>
-            </asp:Panel>
+            </asp:Panel>      
+        </ContentTemplate>
+    </asp:UpdatePanel>
+
             <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
             <ccAsp:MessageBox ID="deleteConfirmBox" runat="server" />       
             <ccAsp:MessageBox ID="MessageBox" runat="server" />     
-            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />        
-        </ContentTemplate>
-    </asp:UpdatePanel>
+            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" /> 
 </asp:Content>
+
+

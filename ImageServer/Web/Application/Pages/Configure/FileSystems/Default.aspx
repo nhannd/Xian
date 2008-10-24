@@ -14,7 +14,10 @@
             <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel">
                 <localAsp:FileSystemsPanel ID="FileSystemsPanel1" runat="server"></localAsp:FileSystemsPanel>
             </asp:Panel>
-            <localAsp:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
         </ContentTemplate>
     </asp:UpdatePanel>
+    
+    <localAsp:AddEditFileSystemDialog ID="AddEditFileSystemDialog1" runat="server" />
 </asp:Content>
+
+  

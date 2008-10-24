@@ -76,5 +76,3 @@
         
     </ContentTemplate>
 </asp:UpdatePanel>
-
-        <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />

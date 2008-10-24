@@ -11,9 +11,10 @@
         <asp:UpdatePanel ID="ServerRulePageUpdatePanel" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
-                <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
-                <localAsp:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
             </ContentTemplate>
         </asp:UpdatePanel>
     </asp:Panel>
+    
+                    <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
+                <localAsp:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
 </asp:Content>

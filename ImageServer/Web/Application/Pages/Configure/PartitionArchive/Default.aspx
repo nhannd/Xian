@@ -11,10 +11,11 @@
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
-            <localAsp:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
-            <ccAsp:MessageBox ID="DeleteConfirmDialog" runat="server" />       
-            <ccAsp:MessageBox ID="MessageBox" runat="server" />     
-            <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />        
         </ContentTemplate>
     </asp:UpdatePanel>
+    
+    <localAsp:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 
+    <ccAsp:MessageBox ID="DeleteConfirmDialog" runat="server" />       
+    <ccAsp:MessageBox ID="MessageBox" runat="server" />     
+    <ccAsp:TimedDialog ID="TimedDialog" runat="server" Timeout="3500" />        
 </asp:Content>

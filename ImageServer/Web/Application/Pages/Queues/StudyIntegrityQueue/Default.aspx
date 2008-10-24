@@ -11,8 +11,9 @@
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
                 <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" Visible="true" />
-                <localAsp:ReconcileDialog ID="ReconcileDialog" runat="server" /> 
             </ContentTemplate>
         </asp:UpdatePanel>
     </asp:Panel>    
+    
+    <localAsp:ReconcileDialog ID="ReconcileDialog" runat="server" /> 
 </asp:Content>
