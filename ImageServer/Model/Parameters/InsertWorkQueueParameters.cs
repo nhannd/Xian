@@ -30,37 +30,42 @@
 #endregion
 
 using System;
+using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueStudyProcessInsertParameters : ProcedureParameters
+    public class InsertWorkQueueParameters : ProcedureParameters
     {
-        public WorkQueueStudyProcessInsertParameters()
-            : base("InsertWorkQueueStudyProcess")
+        public InsertWorkQueueParameters()
+            : base("InsertWorkQueue")
         { }
 
         public ServerEntityKey ServerPartitionKey
         {
             set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
-
         public ServerEntityKey StudyStorageKey
         {
             set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
-
-        public DateTime ExpirationTime
+		public WorkQueueTypeEnum WorkQueueTypeEnum
+		{
+			set { SubCriteria["WorkQueueTypeEnum"] = new ProcedureParameter<ServerEnum>("WorkQueueTypeEnum", value); }
+		}
+        public WorkQueuePriorityEnum WorkQueuePriorityEnum
+		{
+			set { SubCriteria["WorkQueuePriorityEnum"] = new ProcedureParameter<ServerEnum>("WorkQueuePriorityEnum", value); }
+		}
+		public DateTime ExpirationTime
         {
             set { SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
         }
-
         public DateTime ScheduledTime
         {
             set { SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
-
-        public string SeriesInstanceUid
+		public string SeriesInstanceUid
         {
             set { SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
         }
@@ -79,9 +84,20 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["Extension"] = new ProcedureParameter<string>("Extension", value); }           
         }
-		public WorkQueuePriorityEnum WorkQueuePriorityEnum
+		public ServerEntityKey StudyHistoryKey
 		{
-			set { SubCriteria["WorkQueuePriorityEnum"] = new ProcedureParameter<ServerEnum>("WorkQueuePriorityEnum", value); }
+			set { SubCriteria["StudyHistoryKey"] = new ProcedureParameter<ServerEntityKey>("StudyHistoryKey", value); }
+		}
+		public ServerEntityKey DeviceKey
+		{
+			set { SubCriteria["DeviceKey"] = new ProcedureParameter<ServerEntityKey>("DeviceKey", value); }
+		}
+		public XmlDocument WorkQueueData
+		{
+			set
+			{
+				SubCriteria["Data"] = new ProcedureParameter<XmlDocument>("Data", value);
+			}
 		}
 	}
 }

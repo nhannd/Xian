@@ -62,9 +62,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         protected override void OnExecute(IUpdateContext updateContext)
         {
-            IInsertWorkQueueStudyProcess insert = updateContext.GetBroker<IInsertWorkQueueStudyProcess>();
-            WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
-            parms.StudyStorageKey = _storageLocation.GetKey();
+            IInsertWorkQueue insert = updateContext.GetBroker<IInsertWorkQueue>();
+            InsertWorkQueueParameters parms = new InsertWorkQueueParameters();
+			parms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
+			parms.StudyStorageKey = _storageLocation.GetKey();
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
             parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
             parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
@@ -78,8 +79,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 parms.Extension = _extension;
             }
             insert.Execute(parms);
-
-
         }
     }
 }

@@ -34,7 +34,7 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertWorkQueueStudyProcess : IProcedureUpdateBroker<WorkQueueStudyProcessInsertParameters>
+    public interface IInsertWorkQueue : IProcedureUpdateBroker<InsertWorkQueueParameters>
     {
     }
 }

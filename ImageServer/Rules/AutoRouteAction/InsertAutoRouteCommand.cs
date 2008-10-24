@@ -101,9 +101,9 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
                 
                 return;
             }
-                
-            WorkQueueAutoRouteInsertParameters parms = new WorkQueueAutoRouteInsertParameters();
 
+			InsertWorkQueueParameters parms = new InsertWorkQueueParameters();
+			parms.WorkQueueTypeEnum = WorkQueueTypeEnum.AutoRoute;
             parms.ScheduledTime = Platform.Time.AddSeconds(30);
             parms.ExpirationTime = Platform.Time.AddMinutes(4);
             parms.StudyStorageKey = _context.StudyLocationKey;
@@ -111,8 +111,8 @@ namespace ClearCanvas.ImageServer.Rules.AutoRouteAction
             parms.DeviceKey = dev.GetKey();
             parms.SeriesInstanceUid = _context.Message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
             parms.SopInstanceUid = _context.Message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
-
-            IInsertWorkQueueAutoRoute broker = updateContext.GetBroker<IInsertWorkQueueAutoRoute>();
+        	parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+			IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
 
             broker.Execute(parms);
         }

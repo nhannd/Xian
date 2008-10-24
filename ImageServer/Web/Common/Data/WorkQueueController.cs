@@ -356,43 +356,55 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         }
 
 
-        public bool ReprocessWorkQueueItem(WorkQueue item)
-        {
-            WorkQueue newItem = null;
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
+		public bool ReprocessWorkQueueItem(WorkQueue item)
+		{
+			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+			using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				// delete current workqueue
+				IWorkQueueUidEntityBroker uidBroker = ctx.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidSelectCriteria criteria = new WorkQueueUidSelectCriteria();
+				criteria.WorkQueueKey.EqualTo(item.GetKey());
 
-                // delete current workqueue
-                IWorkQueueUidEntityBroker uidBroker = ctx.GetBroker<IWorkQueueUidEntityBroker>();
-                WorkQueueUidSelectCriteria criteria = new WorkQueueUidSelectCriteria();
-                criteria.WorkQueueKey.EqualTo(item.GetKey());
-                
-                if (uidBroker.Delete(criteria)>=0)
-                {
-                    IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
-                    if (workQueueBroker.Delete(item.GetKey()))
-                    {
-                        WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-                        columns.InsertTime = Platform.Time;
-                        columns.ScheduledTime = Platform.Time;
-                        columns.ServerPartitionKey = item.ServerPartitionKey;
-                        columns.StudyStorageKey = item.StudyStorageKey;
-                        columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-                        columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                        columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
-                        columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
-                        newItem = workQueueBroker.Insert(columns);
+				if (uidBroker.Delete(criteria) >= 0)
+				{
+					IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
+					if (workQueueBroker.Delete(item.GetKey()))
+					{
+						// Unlock first
+						ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
+						LockStudyParameters lockParms = new LockStudyParameters();
+						lockParms.StudyStorageKey = item.StudyStorageKey;
+						lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+						if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+							return false;
 
-                        if (newItem!=null)
-                            ctx.Commit();
-                    }
+						// Now relock
+						lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ReprocessScheduled;
+						if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+							return false;
 
-                }
-            }
+						InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
+						columns.ScheduledTime = Platform.Time;
+						columns.ServerPartitionKey = item.ServerPartitionKey;
+						columns.StudyStorageKey = item.StudyStorageKey;
+						columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+						columns.WorkQueueTypeEnum = WorkQueueTypeEnum.ReprocessStudy;
+						columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(5));
+						IInsertWorkQueue insertBroker = ctx.GetBroker<IInsertWorkQueue>();
+						if (insertBroker.Execute(columns))
+						{
+							ctx.Commit();
+							return true;
+						}
 
-            return newItem != null;
-        }
-        #endregion
+						return false;
+					}
+				}
+			}
+			return false;
+		}
+
+    	#endregion
     }
 }

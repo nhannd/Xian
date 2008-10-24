@@ -158,6 +158,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
 									location = studyInsert.FindOne(insertParms);
 
+									// Lock the new study storage for study processing
+									ILockStudy lockStudy = update.GetBroker<ILockStudy>();
+									LockStudyParameters lockParms = new LockStudyParameters();
+									lockParms.StudyStorageKey = location.Key;
+									lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+									if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+										Platform.Log(LogLevel.Error, "Unable to lock study {0} for Study Processing", location.StudyInstanceUid);
+									
 									update.Commit();
 								}
 
@@ -173,11 +181,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 									// Just use a read context here, in hopes of improving 
 									// performance.  Every other place in the code should use
 									// Update contexts when doing transactions.
-									IInsertWorkQueueStudyProcess workQueueInsert =
-										ReadContext.GetBroker<IInsertWorkQueueStudyProcess>();
+									IInsertWorkQueue workQueueInsert =
+										ReadContext.GetBroker<IInsertWorkQueue>();
 
-									WorkQueueStudyProcessInsertParameters queueInsertParms =
-										new WorkQueueStudyProcessInsertParameters();
+									InsertWorkQueueParameters queueInsertParms =
+										new InsertWorkQueueParameters();
+									queueInsertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
 									queueInsertParms.StudyStorageKey = location.GetKey();
 									queueInsertParms.ServerPartitionKey = partition.GetKey();
 									queueInsertParms.SeriesInstanceUid = sopFile.Directory.Name;
@@ -189,7 +198,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 									if (!workQueueInsert.Execute(queueInsertParms))
 										Platform.Log(LogLevel.Error,
 													 "Failure attempting to insert SOP Instance into WorkQueue during Reinventory.");
-
 								}
 							}
                         }

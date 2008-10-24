@@ -8,6 +8,10 @@ GO
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueFromFilesystemQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertWorkQueueFromFilesystemQueue]
 GO
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertWorkQueue]
+GO
 /****** Object:  StoredProcedure [dbo].[InsertFilesystemQueue]    Script Date: 01/08/2008 16:04:33 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertFilesystemQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[InsertFilesystemQueue]
@@ -43,14 +47,6 @@ GO
 /****** Object:  StoredProcedure [dbo].[QueryWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[QueryWorkQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[QueryWorkQueue]
-GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueAutoRoute]    Script Date: 01/08/2008 16:04:34 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueAutoRoute]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[InsertWorkQueueAutoRoute]
-GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueStudyProcess]    Script Date: 01/08/2008 16:04:34 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueStudyProcess]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[InsertWorkQueueStudyProcess]
 GO
 /****** Object:  StoredProcedure [dbo].[ResetWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ResetWorkQueue]') AND type in (N'P', N'PC'))
@@ -131,11 +127,6 @@ GO
 /****** Object:  StoredProcedure [dbo].[WebQueryRestoreQueue]    Script Date: 08/21/2008 17:35:56 ******/
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[WebQueryRestoreQueue]') AND type in (N'P', N'PC'))
 DROP PROCEDURE [dbo].[WebQueryRestoreQueue]
-GO
-
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueReconcileStudy]    Script Date: 09/17/2008 17:35:56 ******/
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueReconcileStudy]') AND type in (N'P', N'PC'))
-DROP PROCEDURE [dbo].[InsertWorkQueueReconcileStudy]
 GO
 
 /****** Object:  StoredProcedure [dbo].[InsertStudyIntegrityQueue]    Script Date: 09/17/2008 17:35:56 ******/
@@ -665,7 +656,6 @@ CREATE PROCEDURE [dbo].[InsertWorkQueueFromFilesystemQueue]
 	@DeleteFilesystemQueue bit, 
 	@WorkQueueTypeEnum smallint,
 	@FilesystemQueueTypeEnum smallint,
-	@QueueStudyStateEnum smallint,
 	@Data xml = null
 AS
 BEGIN
@@ -787,8 +777,6 @@ BEGIN
 			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 			WHERE GUID = @StudyStorageGUID AND Lock = 1
 		END
-
-		
 	END
 	ELSE if  @WorkQueueStatusEnum = @FailedStatusEnum
 	BEGIN
@@ -848,10 +836,7 @@ BEGIN
 			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 			WHERE GUID = @StudyStorageGUID AND Lock = 1
 		END
-
-
 	END
-
 
 	COMMIT TRANSACTION
 END
@@ -868,17 +853,23 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Steve Wranovsky
 -- Create date: October 30, 2007
--- Description:	Stored procedure for inserting AutoRoute WorkQueue entries
+-- Description:	Stored procedure for inserting General WorkQueue entries
 -- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueAutoRoute] 
+CREATE PROCEDURE [dbo].[InsertWorkQueue] 
 	-- Add the parameters for the stored procedure here
 	@StudyStorageGUID uniqueidentifier, 
 	@ServerPartitionGUID uniqueidentifier,
-	@DeviceGUID uniqueidentifier,
-	@SeriesInstanceUid varchar(64),
-	@SopInstanceUid varchar(64),
+	@WorkQueueTypeEnum smallint,
+	@WorkQueuePriorityEnum smallint,
+	@ScheduledTime datetime, 
 	@ExpirationTime datetime,
-	@ScheduledTime datetime 
+	@DeviceGUID uniqueidentifier = null,
+	@StudyHistoryGUID uniqueidentifier = null,
+	@Data xml = null,
+	@SeriesInstanceUid varchar(64) = null,
+	@SopInstanceUid varchar(64) = null,
+	@Duplicate bit = 0,
+	@Extension varchar(10) = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -893,21 +884,21 @@ BEGIN
 
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
-	select @AutoRouteTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''AutoRoute''
 
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
 	SELECT @WorkQueueGUID = GUID from WorkQueue 
 		where StudyStorageGUID = @StudyStorageGUID
-		AND WorkQueueTypeEnum = @AutoRouteTypeEnum
+		AND WorkQueueTypeEnum = @WorkQueueTypeEnum
 		AND DeviceGUID = @DeviceGUID
+		AND StudyHistoryGUID = @StudyHistoryGUID
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @AutoRouteTypeEnum, @PendingStatusEnum, @ExpirationTime, @ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @StudyHistoryGUID, @Data, @WorkQueueTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
 	END
 	ELSE
 	BEGIN
@@ -917,90 +908,15 @@ BEGIN
 		WHERE GUID = @WorkQueueGUID
 	END
 
-	INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-		values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
-
-	COMMIT TRANSACTION
-END
-' 
-END
-GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueStudyProcess]    Script Date: 01/08/2008 16:04:34 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueStudyProcess]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'
--- =============================================
--- Author:		Steve Wranovsky
--- Create date: August 14, 2007
--- Description:	
--- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueStudyProcess] 
-	-- Add the parameters for the stored procedure here
-	@ServerPartitionGUID uniqueidentifier,
-	@StudyStorageGUID uniqueidentifier,
-	@SeriesInstanceUid varchar(64),
-	@SopInstanceUid varchar(64),
-	@ExpirationTime datetime,
-	@ScheduledTime datetime,
-	@Duplicate bit = 0,
-	@Extension varchar(10) = null, 
-	@WorkQueuePriorityEnum smallint
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	declare @WorkQueueGUID as uniqueidentifier
-
-	declare @PendingStatusEnum as smallint
-	declare @IdleStatusEnum as smallint
-	declare @StudyProcessTypeEnum as smallint
-	declare @StudyProcessQueueStateEnum as smallint
-
-	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
-	select @StudyProcessTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''StudyProcess''
-	select @StudyProcessQueueStateEnum = Enum from QueueStudyStateEnum where Lookup = ''ProcessingScheduled''
-	BEGIN TRANSACTION
-
-    -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND WorkQueueTypeEnum = @StudyProcessTypeEnum
-	if @@ROWCOUNT = 0
-	BEGIN
-		set @WorkQueueGUID = NEWID();
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyProcessTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
-	END
-	ELSE
-	BEGIN
-		UPDATE WorkQueue 
-			set ExpirationTime = @ExpirationTime
-			where GUID = @WorkQueueGUID
-	END
-
-	IF @Duplicate = 1
+	if @SeriesInstanceUid is not null or @SopInstanceUid is not null
 	BEGIN
 		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid, Duplicate, Extension)
 			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid, @Duplicate, @Extension)
 	END
-	ELSE
-	BEGIN
-		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
-	END
-
 
 	COMMIT TRANSACTION
 
-	--EXEC UpdateQueueStudyState @StudyStorageGUID
-
+	SELECT * from WorkQueue where GUID = @WorkQueueGUID
 END
 ' 
 END
@@ -1565,12 +1481,7 @@ BEGIN
 	FETCH NEXT FROM cur_servicelock INTO @ServiceLockGUID, @Lock;
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		IF @Lock = 0
-		BEGIN
-			UPDATE ServiceLock SET ProcessorId = null, ScheduledTime = getdate() 
-			WHERE GUID = @ServiceLockGUID
-		END
-		ELSE
+		IF @Lock = 1
 		BEGIN
 			UPDATE ServiceLock SET Lock = 0, ScheduledTime = getdate()
 			WHERE GUID = @ServiceLockGUID
@@ -3170,8 +3081,6 @@ END
 END
 GO
 
-
-
 /****** Object:  StoredProcedure [dbo].[InsertStudyIntegrityQueue]    Script Date: 09/05/2008 15:21:03 ******/
 SET ANSI_NULLS ON
 GO
@@ -3227,115 +3136,14 @@ BEGIN
 	INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
 	VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
 	
-
 	COMMIT TRANSACTION
 	
-	--EXEC UpdateQueueStudyState @StudyStorageGUID
-
 	SELECT * FROM [dbo].[StudyIntegrityQueue] WHERE GUID=@Guid
 
 END
 '
 END
 GO
-
-
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueReconcileStudy]    Script Date: 09/08/2008 11:53:24 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertWorkQueueReconcileStudy]') AND type in (N'P', N'PC'))
-BEGIN
-EXEC dbo.sp_executesql @statement = N'-- 
--- 
--- =============================================
--- Author:		Thanh Huynh
--- Create date: September 08, 2008
--- Description:	
--- =============================================
-CREATE PROCEDURE [dbo].[InsertWorkQueueReconcileStudy] 
-	-- Add the parameters for the stored procedure here
-	@ServerPartitionGUID uniqueidentifier,
-	@StudyStorageGUID uniqueidentifier,
-	@StudyHistoryGUID uniqueidentifier=NULL,
-	@StudyInstanceUid varchar(64),
-	@SeriesInstanceUid varchar(64),
-	@SopInstanceUid varchar(64),
-	@Data xml,
-	@ExpirationTime datetime,
-	@ScheduledTime datetime,
-	@WorkQueuePriorityEnum smallint,
-	@FailureReason nvarchar(1024) output
-AS
-BEGIN
-	-- SET NOCOUNT ON added to prevent extra result sets from
-	-- interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	declare @WorkQueueGUID as uniqueidentifier
-
-	declare @PendingStatusEnum as int
-	declare @IdleStatusEnum as int
-	declare @StudyIntegrityTypeEnum as int
-	declare @QueueStudyStateTypeEnumReconcileScheduled as int
-	declare @QueueStudyStateTypeEnumIdle as int
-
-	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
-	select @StudyIntegrityTypeEnum = Enum from WorkQueueTypeEnum where Lookup = ''ReconcileStudy''
-	select @QueueStudyStateTypeEnumReconcileScheduled = Enum from QueueStudyStateEnum where Lookup = ''ReconcileScheduled''
-	select @QueueStudyStateTypeEnumIdle = Enum from QueueStudyStateEnum where Lookup = ''Idle''
-
-	BEGIN TRANSACTION
-
-	UPDATE StudyStorage
-	SET QueueStudyStateEnum = @QueueStudyStateTypeEnumReconcileScheduled 
-	WHERE GUID = @StudyStorageGUID AND QueueStudyStateEnum = @QueueStudyStateTypeEnumIdle
-	IF @@ROWCOUNT = 0
-	BEGIN
-		-- We didnt lock the study, just return no rows
-		SELECT @FailureReason=QueueStudyStateEnum.LongDescription 
-		FROM QueueStudyStateEnum 
-		JOIN StudyStorage ON StudyStorage.QueueStudyStateEnum = QueueStudyStateEnum.Enum
-		WHERE StudyStorage.GUID = @StudyStorageGUID
-
-		set @FailureReason=''Could not lock study: '' + @FailureReason;
-	END
-	ELSE
-	BEGIN
-		-- Insert statements for procedure here
-		SELECT @WorkQueueGUID = GUID from WorkQueue 
-			where StudyStorageGUID = @StudyStorageGUID
-			AND StudyHistoryGUID = @StudyHistoryGUID
-			AND WorkQueueTypeEnum = @StudyIntegrityTypeEnum
-		if @@ROWCOUNT = 0
-		BEGIN
-			set @WorkQueueGUID = NEWID();
-
-			INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
-				values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @StudyHistoryGUID, @Data, @StudyIntegrityTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
-		END
-		ELSE
-		BEGIN
-			UPDATE WorkQueue 
-				set ExpirationTime = @ExpirationTime
-				where GUID = @WorkQueueGUID
-		END
-
-		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid)
-				values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid)
-	END
-
-	COMMIT TRANSACTION
-
-	SELECT * FROM WorkQueue Where GUID=@WorkQueueGUID
-END
-
-'
-END
-GO
-
 
 
 /****** Object:  StoredProcedure [dbo].[AttachStudyToPatient]    Script Date: 10/09/2008 11:53:24 ******/

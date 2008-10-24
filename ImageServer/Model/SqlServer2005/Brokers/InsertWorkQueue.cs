@@ -29,52 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Model.Parameters
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
-    public class WorkQueueAutoRouteInsertParameters : ProcedureParameters
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+    public class InsertWorkQueue : ProcedureUpdateBroker<InsertWorkQueueParameters>, IInsertWorkQueue
     {
-        public WorkQueueAutoRouteInsertParameters()
-            : base("InsertWorkQueueAutoRoute")
-        { }
-
-        public ServerEntityKey ServerPartitionKey
+        public InsertWorkQueue()
+            : base("InsertWorkQueue")
         {
-            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
-        }
-
-        public ServerEntityKey StudyStorageKey
-        {
-            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
-        }
-
-        public ServerEntityKey DeviceKey
-        {
-            set { this.SubCriteria["DeviceKey"] = new ProcedureParameter<ServerEntityKey>("DeviceKey", value); }
-        }
-
-        public DateTime ExpirationTime
-        {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
-
-        public DateTime ScheduledTime
-        {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
-        public string SeriesInstanceUid
-        {
-            set { this.SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
-        }
-
-        public string SopInstanceUid
-        {
-            set { this.SubCriteria["SopInstanceUid"] = new ProcedureParameter<string>("SopInstanceUid", value); }
         }
     }
 }

@@ -112,17 +112,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				    return false;
 				}
 				
-				WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
-				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
-				columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-				columns.ServerPartitionKey = study.ServerPartitionKey;
-				columns.StudyStorageKey = storage.Key;
-				columns.ScheduledTime = DateTime.Now; // spread by 15 seconds
-				columns.ExpirationTime = DateTime.Now.AddMinutes(1);
-				columns.FailureCount = 0;
+				InsertWorkQueueParameters insertParms = new InsertWorkQueueParameters();
+				insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
+				insertParms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
+				insertParms.ServerPartitionKey = study.ServerPartitionKey;
+				insertParms.StudyStorageKey = storage.Key;
+				insertParms.ScheduledTime = DateTime.Now; // spread by 15 seconds
+				insertParms.ExpirationTime = DateTime.Now.AddMinutes(1);
 
-                IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
-                workQueueBroker.Insert(columns);
+				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
+				insertWorkQueue.Execute(insertParms);
 
 				ctx.Commit();
 
@@ -183,20 +182,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				if (!lockParms.Successful)
 					return false;
 
-				IWorkQueueEntityBroker workQueueBroker = ctx.GetBroker<IWorkQueueEntityBroker>();
-				WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
+				IInsertWorkQueue workQueueBroker = ctx.GetBroker<IInsertWorkQueue>();
+				InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
 				columns.WorkQueueTypeEnum = WorkQueueTypeEnum.WebEditStudy;
-				columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-				columns.ServerPartitionKey = study.ServerPartitionKey;
 				columns.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+				columns.ServerPartitionKey = study.ServerPartitionKey;
 				columns.StudyStorageKey = storage.Key;
 				DateTime time = Platform.Time;
 				columns.ScheduledTime = time;
 				columns.ExpirationTime = time;
-				columns.FailureCount = 0;
-				columns.Data = modifiedFields;
+				columns.WorkQueueData = modifiedFields;
 
-                workQueueBroker.Insert(columns);
+                workQueueBroker.Execute(columns);
 				ctx.Commit();
 				return true;
 			}

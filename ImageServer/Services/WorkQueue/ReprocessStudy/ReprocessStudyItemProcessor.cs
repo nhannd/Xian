@@ -319,13 +319,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 
 		private void ScheduleReprocess(IUpdateContext ctx)
 		{
+			ILockStudy lockStudy = ctx.GetBroker<ILockStudy>();
+			LockStudyParameters lockParms = new LockStudyParameters();
+			lockParms.StudyStorageKey = _newStorage.Key;
+			lockParms.QueueStudyStateEnum = QueueStudyStateEnum.ProcessingScheduled;
+			if (!lockStudy.Execute(lockParms) || !lockParms.Successful)
+			{
+				Platform.Log(LogLevel.Error, "Unable to lock StudyProcess entry for study {0}", _newStorage.StudyInstanceUid);
+			}
+
 			foreach (SeriesInfo series in _studyInfo.Series)
 			{
-				IInsertWorkQueueStudyProcess broker = ctx.GetBroker<IInsertWorkQueueStudyProcess>();
+				IInsertWorkQueue broker = ctx.GetBroker<IInsertWorkQueue>();
 
 				foreach (SopInfo sop in series.Instances)
 				{
-					WorkQueueStudyProcessInsertParameters parms = new WorkQueueStudyProcessInsertParameters();
+					InsertWorkQueueParameters parms = new InsertWorkQueueParameters();
+					parms.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
 					parms.Duplicate = false;
 					parms.ExpirationTime =
 						Platform.Time.Add(TimeSpan.FromSeconds(WorkQueueSettings.Instance.WorkQueueExpireDelaySeconds));
@@ -334,7 +344,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 					parms.SeriesInstanceUid = series.SeriesUid;
 					parms.ServerPartitionKey = _newStorage.ServerPartitionKey;
 					parms.SopInstanceUid = sop.SopInstanceUid;
-					parms.StudyStorageKey = _newStorage.GetKey();
+					parms.StudyStorageKey = _newStorage.Key;
 					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 					broker.Execute(parms);
 				}

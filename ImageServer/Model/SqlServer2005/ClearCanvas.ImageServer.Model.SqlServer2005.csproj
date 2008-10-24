@@ -43,7 +43,6 @@
     <Compile Include="Brokers\LockStudy.cs" />
     <Compile Include="Brokers\WebQueryStudyIntegrityQueue.cs" />
     <Compile Include="Brokers\InsertReconcileQueue.cs" />
-    <Compile Include="Brokers\InsertWorkQueueReconcileStudy.cs" />
     <Compile Include="Brokers\WebQueryRestoreQueue.cs" />
     <Compile Include="Brokers\DeleteFilesystemStudyStorage.cs" />
     <Compile Include="Brokers\InsertArchiveQueue.cs" />
@@ -60,7 +59,6 @@
     <Compile Include="Brokers\DeleteStudyStorage.cs" />
     <Compile Include="Brokers\InsertFilesystem.cs" />
     <Compile Include="Brokers\InsertFilesystemQueue.cs" />
-    <Compile Include="Brokers\InsertWorkQueueAutoRoute.cs" />
     <Compile Include="Brokers\InsertWorkQueueFromFilesystemQueue.cs" />
     <Compile Include="Brokers\QueryFilesystemQueue.cs" />
     <Compile Include="Brokers\QueryServiceLock.cs" />
@@ -70,7 +68,7 @@
     <Compile Include="Brokers\InsertRequestAttributes.cs" />
     <Compile Include="Brokers\InsertServerPartition.cs" />
     <Compile Include="Brokers\InsertStudyStorage.cs" />
-    <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
+    <Compile Include="Brokers\InsertWorkQueue.cs" />
     <Compile Include="Brokers\UpdateServiceLock.cs" />
     <Compile Include="EntityBrokers\AlertCategoryEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\AlertEntityBroker.gen.cs" />

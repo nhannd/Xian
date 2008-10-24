@@ -35,14 +35,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(_context, "_context");
             
             WorkQueueSettings settings = WorkQueueSettings.Instance;
-            IInsertWorkQueueReconcileStudy broker = updateContext.GetBroker<IInsertWorkQueueReconcileStudy>();
-            WorkQueueReconcileStudyInsertParameters parameters = new WorkQueueReconcileStudyInsertParameters();
-            parameters.StudyInstanceUid = _context.DestinationStudyLocation != null ? _context.DestinationStudyLocation.StudyInstanceUid : _context.CurrentStudyLocation.StudyInstanceUid;
+			IInsertWorkQueue broker = updateContext.GetBroker<IInsertWorkQueue>();
+			InsertWorkQueueParameters parameters = new InsertWorkQueueParameters();
+        	parameters.WorkQueueTypeEnum = WorkQueueTypeEnum.StudyProcess;
             parameters.ServerPartitionKey = _context.Partition.GetKey();
             parameters.StudyStorageKey = _context.DestinationStudyLocation!=null? _context.DestinationStudyLocation.GetKey():_context.CurrentStudyLocation.GetKey();
             parameters.StudyHistoryKey = _context.History != null ? _context.History.GetKey() : null;
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+			parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
             ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
             data.StoragePath = _context.TempStoragePath; 
@@ -54,15 +55,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             DateTime now = Platform.Time;
             parameters.ScheduledTime = now;
             parameters.ExpirationTime = now.AddSeconds(settings.WorkQueueExpireDelaySeconds);
-            parameters.Priority = WorkQueuePriorityEnum.High;
-            Model.WorkQueue workqueue = broker.FindOne(parameters);
-            if (workqueue==null)
-            {
-                throw new ApplicationException(String.Format("Unable to insert ReconcileStudy work queue entry: {0}", parameters.FailureReason));
-            }
+            if (!broker.Execute(parameters))
+                throw new ApplicationException("Unable to insert ReconcileStudy work queue entry");
 
-            data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(workqueue.Data);
-            _context.TempStoragePath = data.StoragePath;
+			_context.TempStoragePath = _context.TempStoragePath;
 
         }
 
