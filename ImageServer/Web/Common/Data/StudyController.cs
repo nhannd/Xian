@@ -94,38 +94,43 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// <summary>
 		/// Delete a Study.
 		/// </summary>
-		/// <param name="study">The <see cref="Study"/> to delete.</param>
-		/// <returns>true on success, false on failure.</returns>
-        public bool DeleteStudy(Study study)
+		public void DeleteStudy(ServerEntityKey studyKey)
         {
+            StudySummary study = StudySummaryAssembler.CreateStudySummary(Study.Load(studyKey));
+            if (study.IsReconcileRequired)
+            {
+                throw new ApplicationException(String.Format("Deleting the study is not allowed at this time : there are items to be reconciled."));
+
+                // NOTE: another check will occur when the delete is actually processed
+            }
+
+				
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				StudyStorage storage = StudyStorage.Load(ctx, study.ServerPartitionKey, study.StudyInstanceUid);
-				
-				LockStudyParameters lockParms = new LockStudyParameters();
+                LockStudyParameters lockParms = new LockStudyParameters();
 				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.WebDeleteScheduled;
-				lockParms.StudyStorageKey = storage.Key;
+                lockParms.StudyStorageKey = study.TheStorageLocation.Key;
 				ILockStudy broker = ctx.GetBroker<ILockStudy>();
 				broker.Execute(lockParms);
 				if (!lockParms.Successful)
 				{
-				    return false;
+				    throw new ApplicationException(String.Format("Unable to lock the study : {0}", lockParms.FailureReason));
 				}
 				
+
 				InsertWorkQueueParameters insertParms = new InsertWorkQueueParameters();
 				insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
 				insertParms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-				insertParms.ServerPartitionKey = study.ServerPartitionKey;
-				insertParms.StudyStorageKey = storage.Key;
+			    insertParms.ServerPartitionKey = study.ThePartition.GetKey();
+				insertParms.StudyStorageKey = study.TheStorageLocation.GetKey();
 				insertParms.ScheduledTime = DateTime.Now; // spread by 15 seconds
 				insertParms.ExpirationTime = DateTime.Now.AddMinutes(1);
 
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
 				insertWorkQueue.Execute(insertParms);
 
-				ctx.Commit();
 
-				return true;
+				ctx.Commit();
 			}
         }
 
@@ -166,7 +171,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return true;
         }
 
-        public bool EditStudy(Study study, XmlDocument modifiedFields)
+        public void EditStudy(Study study, XmlDocument modifiedFields)
         {
             Platform.Log(LogLevel.Info, "editing study");
 				
@@ -177,10 +182,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.EditScheduled;
 				lockParms.StudyStorageKey = storage.Key;
 			    ILockStudy broker = ctx.GetBroker<ILockStudy>();
-				broker.Execute(lockParms);
+				bool retVal = broker.Execute(lockParms);
                 
-				if (!lockParms.Successful)
-					return false;
+				if (!retVal || !lockParms.Successful)
+				{
+				    throw new ApplicationException(String.Format("Unable to lock the study: {0}", lockParms.FailureReason));
+				}
 
 				IInsertWorkQueue workQueueBroker = ctx.GetBroker<IInsertWorkQueue>();
 				InsertWorkQueueParameters columns = new InsertWorkQueueParameters();
@@ -195,7 +202,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
                 workQueueBroker.Execute(columns);
 				ctx.Commit();
-				return true;
 			}
         }
 

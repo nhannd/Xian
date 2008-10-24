@@ -41,6 +41,4 @@
     </ContentTemplate>
 </asp:UpdatePanel>
 
-<!-- Message Box should be placed outside the UpdatePanel because AJAX will attempt to add another message box if the page is partially refresh 
-and cause duplicate control id error in IE -->
-<ccAsp:MessageBox ID="ConfirmDialog" runat="server" />    
+

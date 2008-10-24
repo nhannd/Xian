@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         private string _studyInstanceUid;
         private string _serverae;
         private ServerPartition _partition;
-        private Study _study;
+        private StudySummary _study;
         
         #endregion Private members
 
@@ -75,12 +76,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         protected void SetupEventHandlers()
         {
-            EditStudyDialog.OKClicked += delegate()
-                                             {
-                                                 Refresh();
-                                             };
+            EditStudyDialog.StudyEdited += EditStudyDialog_StudyEdited;
+            DeleteConfirmDialog.Confirmed += DeleteConfirmDialog_Confirmed;
         }
 
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             _studyInstanceUid = Request.QueryString[QUERY_KEY_STUDY_INSTANCE_UID];
@@ -136,14 +136,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
 			Study study = studyAdaptor.GetFirst(criteria);
 
-			if (study != null) _study = study;
+			if (study != null)
+                _study = StudySummaryAssembler.CreateStudySummary(study);
             else
 			{
 			    StudyNotFoundException exception = new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");		        
 			    ExceptionHandler.ThrowException(exception);
 			}
 
-            StudyDetailsPanel.Study = StudySummaryAssembler.CreateStudySummary(study);
+            StudyDetailsPanel.Study = _study;
             StudyDetailsPanel.DataBind();
         }
 
@@ -174,6 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         }
 
+
         #endregion Protected Methods
 
         #region Public Methods
@@ -181,16 +183,71 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
         
         public void EditStudy()
         {
-            EditStudyDialog.study = _study;
-            EditStudyDialog.Show(true);
+            if (_study!=null)
+            {
+                string reason;
+                if (!_study.CanScheduleEdit(out reason))
+                {
+                    MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                    MessageDialog.Message = reason;
+                    MessageDialog.Show();
+                }
+                else
+                {
+                    EditStudyDialog.study = _study.TheStudy;
+                    EditStudyDialog.Show(true);
+                }
+            }
+            
+        }
+
+        public void DeleteStudy()
+        {
+            string reason;
+            if (!_study.CanScheduleEdit(out reason))
+            {
+                MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                MessageDialog.Message = reason;
+                MessageDialog.Show();
+            }
+            else
+            {
+                DeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                DeleteConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
+                DeleteConfirmDialog.Data = _study.TheStudy;
+
+                DeleteConfirmDialog.Show();
+            }
+        }
+
+
+        void DeleteConfirmDialog_Confirmed(object data)
+        {
+            try
+            {
+                StudyController controller = new StudyController();
+                Study study = DeleteConfirmDialog.Data as Study;
+                controller.DeleteStudy(study.GetKey());
+            }
+            finally
+            {
+                Refresh();
+            }
+        }
+
+
+        void EditStudyDialog_StudyEdited()
+        {
+            Refresh();
         }
 
         #endregion
 
+
+
         public void Refresh()
         {
             LoadStudy();
-
         }
     }
 }

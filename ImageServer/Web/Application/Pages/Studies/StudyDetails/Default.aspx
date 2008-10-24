@@ -17,4 +17,8 @@
                     <localAsp:EditStudyDetailsDialog ID="EditStudyDialog" runat="server" />
                 </ContentTemplate>
             </asp:UpdatePanel>
+            <ccAsp:MessageBox ID="MessageDialog" runat="server" />
+            <ccAsp:MessageBox ID="DeleteConfirmDialog" runat="server" />    
 </asp:Content>
+
+   

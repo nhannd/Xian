@@ -264,12 +264,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool CanScheduleEdit(out string reason)
         {
-            if (IsLocked || IsProcessing)
+            if (IsLocked)
             {
-                reason = "Study is being locked or processed";
+                reason = "Study has been locked by another process.";
                 return false;
             }
 
+            if (IsProcessing)
+            {
+                reason = "Study is being processed.";
+                return false;
+            }
 
             if (IsNearline)
             {
@@ -282,7 +287,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                         TransferSyntax.GetTransferSyntax(_theStudyStorageLocation.TransferSyntaxUid).LossyCompressed)
                     {
                         // archive is lossless but current copy is lossy. can't edit until the lossless is restored.
-                        reason = "Study was received as lossless but compressed lossy";
+                        reason = "Study was received as lossless but is compressed lossy.";
                         return false;
                     }
 
@@ -291,7 +296,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             if (IsReconcileRequired)
             {
-                reason = "There are images to be reconciled for this study";
+                reason = "There are images to be reconciled for this study.";
                 return false;
             }
 

@@ -31,8 +31,6 @@
 
 using System;
 using System.Web.UI;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
@@ -68,12 +66,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         #endregion Public Properties
 
         #region Protected Methods
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            ConfirmDialog.Confirmed += ConfirmDialog_Confirmed;
-        }
 
         public override void DataBind()
         {
@@ -118,11 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
-            ConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
-            ConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
-            ConfirmDialog.Data = Study.TheStudy;
-
-            ConfirmDialog.Show();
+            EnclosingPage.DeleteStudy();
         }
 
         protected void EditStudyButton_Click(object sender, EventArgs e)
@@ -132,23 +120,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         #endregion Protected Methods
 
-        #region Private Methods
-
-        private void ConfirmDialog_Confirmed(object data)
-        {
-            StudyController controller = new StudyController();
-
-            Study study = ConfirmDialog.Data as Study;
-            if (controller.DeleteStudy(study))
-            {
-                EnclosingPage.Refresh();
-            }
-            else
-            {
-                throw new Exception(App_GlobalResources.ErrorMessages.DeleteStudyError);
-
-            } 
-        }
-        #endregion Private Methods
     }
 }

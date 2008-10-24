@@ -32,9 +32,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model
@@ -68,6 +70,9 @@ namespace ClearCanvas.ImageServer.Model
     	private String _transferSyntaxUid;
     	private ServerEntityKey _filesystemStudyStorageKey;
     	private QueueStudyStateEnum _queueStudyState;
+        private bool _reconcileRequired;
+        private Object _integrityQueueItemsLock = new Object();
+        private IList<StudyIntegrityQueue> _integrityQueueItems;
 
     	#endregion
 
@@ -164,6 +169,11 @@ namespace ClearCanvas.ImageServer.Model
     		set { _queueStudyState = value; }
     	}
 
+        public bool IsReconcileRequired
+        {
+            get { return _reconcileRequired; }
+            set { _reconcileRequired = value; }
+        }
     	#endregion
 
         #region Public Methods
@@ -235,6 +245,33 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
+
+        /// <summary>
+        /// Return snapshot of all related items in the Study Integrity Queue.
+        /// </summary>
+        /// <returns></returns>
+        public IList<StudyIntegrityQueue> GetRelatedStudyIntegrityQueueItems()
+        {
+            lock (_integrityQueueItemsLock) // make this thread-safe
+            {
+                if (_integrityQueueItems == null)
+                {
+                    using (IReadContext ctx = _store.OpenReadContext())
+                    {
+                        IStudyIntegrityQueueEntityBroker integrityQueueBroker =
+                            ctx.GetBroker<IStudyIntegrityQueueEntityBroker>();
+                        StudyIntegrityQueueSelectCriteria parms = new StudyIntegrityQueueSelectCriteria();
+
+                        parms.StudyStorageKey.EqualTo(GetKey());
+
+                        _integrityQueueItems = integrityQueueBroker.Find(parms);
+                    }
+                }
+            }
+            return _integrityQueueItems;
+        }
+
+
         #endregion
 
         /// <summary>
@@ -244,17 +281,18 @@ namespace ClearCanvas.ImageServer.Model
         /// <returns></returns>
         static public IList<StudyStorageLocation> FindStorageLocations(StudyStorage storage)
         {
-            IReadContext readContext = _store.OpenReadContext();
-            IQueryStudyStorageLocation locQuery = readContext.GetBroker<IQueryStudyStorageLocation>();
-            StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-            locParms.StudyInstanceUid = storage.StudyInstanceUid;
-            locParms.ServerPartitionKey = storage.ServerPartitionKey;
-            IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
-            return studyLocationList;
+            using(IReadContext readContext = _store.OpenReadContext())
+            {
+                IQueryStudyStorageLocation locQuery = readContext.GetBroker<IQueryStudyStorageLocation>();
+                StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
+                locParms.StudyInstanceUid = storage.StudyInstanceUid;
+                locParms.ServerPartitionKey = storage.ServerPartitionKey;
+                IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
+                return studyLocationList;
+            }
         }
 
-
-
+        
         
     }
 }

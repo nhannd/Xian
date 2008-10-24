@@ -38,14 +38,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         #region Events
 
         /// <summary>
-        /// Defines the event handler for <seealso cref="OKClicked"/>.
+        /// Defines the event handler for <seealso cref="EditStudyDetailsDialog.StudyEdited"/>.
         /// </summary>
         public delegate void OnOKClickedEventHandler();
 
         /// <summary>
         /// Occurs when users click on "OK".
         /// </summary>
-        public event OnOKClickedEventHandler OKClicked;
+        public event OnOKClickedEventHandler StudyEdited;
 
         #endregion Events
         #region Private Methods
@@ -317,7 +317,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             if (Page.IsValid)
             {
-                if (OKClicked != null)
+                if (StudyEdited != null)
                 {
                     
                     XmlDocument modifiedFields = getChanges();
@@ -328,7 +328,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         studyController.EditStudy(study, modifiedFields);                        
                     }
 
-                    OKClicked();
+                    StudyEdited();
                 }
 
                 Close();

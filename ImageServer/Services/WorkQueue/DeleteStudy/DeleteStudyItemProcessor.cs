@@ -99,16 +99,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 			}
             else
             {
-                _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
+                if (StorageLocation.IsReconcileRequired)
+                {
+                    // fail immediately
+                    FailQueueItem(item, "Study needs to be reconciled first");
+                }
+                else
+                {
+                    _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
-                Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
-                             Partition.Description);
+                    Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
+                                 Partition.Description);
 
-                RemoveFilesystem();
+                    RemoveFilesystem();
 
-                RemoveDatabase(item);
+                    RemoveDatabase(item);
 
-                // No need to remove / update the Queue entry, it was deleted as part of the delete process.
+                    // No need to remove / update the Queue entry, it was deleted as part of the delete process.
+                }
+                
             }
             
         }

@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                     IList<Study> studies = data as IList<Study>;
                                     foreach (Study study in studies)
                                     {
-                                        _controller.DeleteStudy(study);
+                                        _controller.DeleteStudy(study.GetKey());
                                     }
                                 }
 								if (data is IList<StudySummary>)
@@ -146,13 +146,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 									IList<StudySummary> studies = data as IList<StudySummary>;
 									foreach (StudySummary study in studies)
 									{
-										_controller.DeleteStudy(study.TheStudy);
+										_controller.DeleteStudy(study.TheStudy.GetKey());
 									}
 								}
 								else if (data is Study)
                                 {
                                     Study study = data as Study;
-                                    _controller.DeleteStudy(study);
+                                    _controller.DeleteStudy(study.GetKey());
                                 }
 
                                 DataBind();

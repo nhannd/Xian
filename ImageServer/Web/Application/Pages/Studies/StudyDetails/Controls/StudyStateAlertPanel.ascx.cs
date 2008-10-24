@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected override void OnInit(EventArgs e)
         {
             Visible = false;
+            Message.Text = String.Empty;
             base.OnInit(e);
         }
 
