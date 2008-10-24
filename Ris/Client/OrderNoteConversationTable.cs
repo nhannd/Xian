@@ -13,6 +13,8 @@ namespace ClearCanvas.Ris.Client
 	{
 		private event EventHandler _checkedItemsChanged;
 
+		private const string _itemSeparator = ";  ";
+
 		public OrderNoteConversationTable()
 		{
 			IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
@@ -78,12 +80,25 @@ namespace ClearCanvas.Ris.Client
 				delegate(Checkable<OrderNoteDetail> item) { return RecipientsList(item.Item.StaffRecipients, item.Item.GroupRecipients); },
 				1.0f));
 
+			TableColumn<Checkable<OrderNoteDetail>, string> acknowledgeColumn =
+				new TableColumn<Checkable<OrderNoteDetail>, string>(
+					SR.ColumnNoteAcknowledged,
+					delegate(Checkable<OrderNoteDetail> item) { return FormatAcknowledged(item.Item.StaffRecipients, item.Item.GroupRecipients, true); },
+					1.5f);
+			this.Columns.Add(acknowledgeColumn);
+
+			TableColumn<Checkable<OrderNoteDetail>, string> notAcknowledgeColumn =
+				new TableColumn<Checkable<OrderNoteDetail>, string>(
+					SR.ColumnNoteNotAcknowledged,
+					delegate(Checkable<OrderNoteDetail> item) { return FormatAcknowledged(item.Item.StaffRecipients, item.Item.GroupRecipients, false); },
+					1.0f);
+			this.Columns.Add(notAcknowledgeColumn);
+
 			this.Columns.Add(new TableColumn<Checkable<OrderNoteDetail>, string>(
 				SR.ColumnNoteBody,
 				delegate(Checkable<OrderNoteDetail> item) { return item.Item.NoteBody; },
 				5.0f));
-
-}
+		}
 
 		public event EventHandler CheckedItemsChanged
 		{
@@ -120,28 +135,130 @@ namespace ClearCanvas.Ris.Client
 			IEnumerable<OrderNoteDetail.GroupRecipientDetail> groupRecipients)
 		{
 			StringBuilder sb = new StringBuilder();
-			const string itemSeparator = ";  ";
 
 			foreach (OrderNoteDetail.StaffRecipientDetail staffRecipientDetail in staffRecipients)
 			{
-				if (String.Equals(PersonNameFormat.Format(staffRecipientDetail.Staff.Name), PersonNameFormat.Format(LoginSession.Current.FullName)))
+				if (IsStaffMe(staffRecipientDetail.Staff))
 				{
-					sb.Insert(0, "me; ");
+					sb.Insert(0, "me" + _itemSeparator);
 				}
 				else
 				{
 					sb.Append(StaffNameAndRoleFormat.Format(staffRecipientDetail.Staff));
-					sb.Append(itemSeparator);
+					sb.Append(_itemSeparator);
 				}
 			}
 
 			foreach (OrderNoteDetail.GroupRecipientDetail groupRecipientDetail in groupRecipients)
 			{
 				sb.Append(groupRecipientDetail.Group.Name);
-				sb.Append(itemSeparator);
+				sb.Append(_itemSeparator);
 			}
 
-			return sb.ToString().TrimEnd(itemSeparator.ToCharArray());
+			return sb.ToString().TrimEnd(_itemSeparator.ToCharArray());
+		}
+
+		private static string FormatAcknowledged(
+			IEnumerable<OrderNoteDetail.StaffRecipientDetail> staffRecipients,
+			IEnumerable<OrderNoteDetail.GroupRecipientDetail> groupRecipients,
+			bool acknowledged)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if (acknowledged)
+			{
+				List<string> acknowledgedStaffId = new List<string>();
+				List<OrderNoteDetail.GroupRecipientDetail> acknowledgedGroupRecipients = CollectionUtils.Select(groupRecipients,
+					delegate(OrderNoteDetail.GroupRecipientDetail detail) { return detail.IsAcknowledged; });
+				List<OrderNoteDetail.StaffRecipientDetail> acknowledgedStaffRecipients = CollectionUtils.Select(staffRecipients,
+					delegate(OrderNoteDetail.StaffRecipientDetail detail) { return detail.IsAcknowledged; });
+
+				foreach (OrderNoteDetail.GroupRecipientDetail recipient in acknowledgedGroupRecipients)
+				{
+					sb.Append(FormatAcknowledgedRecipient(recipient));
+
+					if (!acknowledgedStaffId.Contains(recipient.AcknowledgedByStaff.StaffId))
+						acknowledgedStaffId.Add(recipient.AcknowledgedByStaff.StaffId);
+				}
+
+				foreach (OrderNoteDetail.StaffRecipientDetail recipient in acknowledgedStaffRecipients)
+				{
+					// this staff already acknowledged on behalf of a group
+					if (acknowledgedStaffId.Contains(recipient.Staff.StaffId))
+						continue;
+
+					sb.Append(FormatAcknowledgedRecipient(recipient));
+
+					if (!acknowledgedStaffId.Contains(recipient.Staff.StaffId))
+						acknowledgedStaffId.Add(recipient.Staff.StaffId);
+				}
+			}
+			else
+			{
+				List<OrderNoteDetail.GroupRecipientDetail> notAcknowledgedGroupRecipients = CollectionUtils.Select(groupRecipients,
+					delegate(OrderNoteDetail.GroupRecipientDetail detail) { return !detail.IsAcknowledged; });
+				List<OrderNoteDetail.StaffRecipientDetail> notAcknowledgedStaffRecipients = CollectionUtils.Select(staffRecipients,
+					delegate(OrderNoteDetail.StaffRecipientDetail detail) { return !detail.IsAcknowledged; });
+
+				if (notAcknowledgedGroupRecipients.Count > 0 || notAcknowledgedStaffRecipients.Count > 0)
+				{
+					foreach (OrderNoteDetail.GroupRecipientDetail recipient in notAcknowledgedGroupRecipients)
+					{
+						sb.Append(FormatAcknowledgedRecipient(recipient));
+					}
+
+					foreach (OrderNoteDetail.StaffRecipientDetail recipient in notAcknowledgedStaffRecipients)
+					{
+						sb.Append(FormatAcknowledgedRecipient(recipient));
+					}
+				}
+			}
+
+			return sb.ToString().TrimEnd(_itemSeparator.ToCharArray());
+		}
+
+		private static string FormatAcknowledgedRecipient(OrderNoteDetail.RecipientDetail recipient)
+		{
+			StringBuilder sb = new StringBuilder();
+
+			if (recipient is OrderNoteDetail.StaffRecipientDetail)
+			{
+				OrderNoteDetail.StaffRecipientDetail staffRecipient = (OrderNoteDetail.StaffRecipientDetail) recipient;
+				string identity = IsStaffMe(staffRecipient.Staff) ? "me" : StaffNameAndRoleFormat.Format(staffRecipient.Staff);
+
+				if (recipient.IsAcknowledged)
+				{
+					sb.AppendFormat(identity);
+					sb.AppendFormat(" on {0}", Format.DateTime(recipient.AcknowledgedTime));
+				}
+				else
+				{
+					sb.Append(identity);
+				}
+			}
+			else // is GroupRecipient
+			{
+				OrderNoteDetail.GroupRecipientDetail groupRecipient = (OrderNoteDetail.GroupRecipientDetail)recipient;
+
+				if (recipient.IsAcknowledged)
+				{
+					sb.Append(StaffNameAndRoleFormat.Format(groupRecipient.AcknowledgedByStaff));
+					sb.AppendFormat(SR.FormatOnBehalfOf, groupRecipient.Group.Name);
+					sb.AppendFormat(" on {0}", recipient.AcknowledgedTime);
+				}
+				else
+				{
+					sb.Append(groupRecipient.Group.Name);	
+				}
+			}
+
+			sb.Append(_itemSeparator);
+			return sb.ToString();
+		}
+
+		private static bool IsStaffMe(StaffSummary staff)
+		{
+			return String.Equals(PersonNameFormat.Format(staff.Name), PersonNameFormat.Format(LoginSession.Current.FullName));			
 		}
 	}
 }

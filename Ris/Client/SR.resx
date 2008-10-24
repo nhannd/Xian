@@ -240,8 +240,14 @@
   <data name="ColumnName" xml:space="preserve">
     <value>Name</value>
   </data>
+  <data name="ColumnNoteAcknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
   <data name="ColumnNoteBody" xml:space="preserve">
     <value>Message</value>
+  </data>
+  <data name="ColumnNoteNotAcknowledged" xml:space="preserve">
+    <value>Not Acknowledged</value>
   </data>
   <data name="ColumnNotePostTime" xml:space="preserve">
     <value>Posted</value>

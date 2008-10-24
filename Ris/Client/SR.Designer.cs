@@ -430,11 +430,29 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acknowledged.
+        /// </summary>
+        internal static string ColumnNoteAcknowledged {
+            get {
+                return ResourceManager.GetString("ColumnNoteAcknowledged", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Message.
         /// </summary>
         internal static string ColumnNoteBody {
             get {
                 return ResourceManager.GetString("ColumnNoteBody", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not Acknowledged.
+        /// </summary>
+        internal static string ColumnNoteNotAcknowledged {
+            get {
+                return ResourceManager.GetString("ColumnNoteNotAcknowledged", resourceCulture);
             }
         }
         
