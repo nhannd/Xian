@@ -201,10 +201,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks
                 }
                 else
                 {
-                    MessageBox.Message = App_GlobalResources.SR.ServiceLockUpdateFailed_ContactAdmin;
-                    MessageBox.MessageType =
+                    ErrorMessageBox.Message = App_GlobalResources.SR.ServiceLockUpdateFailed_ContactAdmin;
+                    ErrorMessageBox.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
-                    MessageBox.Show();
+                    ErrorMessageBox.Show();
                 }
             }
 

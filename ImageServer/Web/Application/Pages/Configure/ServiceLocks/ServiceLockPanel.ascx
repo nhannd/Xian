@@ -1,6 +1,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServiceLockPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks.ServiceLockPanel" %>
 <%@ Register Src="ServiceLockGridView.ascx" TagName="ServiceLockGridView" TagPrefix="localAsp" %>
+<%@ Register Src="EditServiceLockDialog.ascx" TagName="EditServiceLockDialog" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
@@ -58,3 +59,6 @@
             </asp:Table>
     </ContentTemplate>
 </asp:UpdatePanel>
+
+<ccAsp:MessageBox ID="ConfirmEditDialog" runat="server" />
+<localAsp:EditServiceLockDialog ID="EditServiceLockDialog" runat="server" />

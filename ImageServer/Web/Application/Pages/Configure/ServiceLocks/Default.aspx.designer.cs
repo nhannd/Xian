@@ -36,23 +36,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks.ServiceLockPanel ServiceLockPanel;
-        
-        /// <summary>
-        /// ConfirmEditDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox ConfirmEditDialog;
-        
-        /// <summary>
-        /// EditServiceLockDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks.EditServiceLockDialog EditServiceLockDialog;
     }
 }

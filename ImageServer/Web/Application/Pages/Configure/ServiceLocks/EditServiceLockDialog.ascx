@@ -71,3 +71,5 @@
                 </table>
     </ContentTemplate>
 </ccAsp:ModalDialog>
+
+<ccAsp:MessageBox ID="ErrorMessageBox" runat="server" />

@@ -135,5 +135,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServiceLocks {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
+
+        protected Web.Application.Controls.MessageBox ErrorMessageBox;
     }
 }
