@@ -39,6 +39,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
@@ -100,6 +102,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			try
 			{
+
 				_rulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, _hsmArchive.ServerPartition.GetKey());
 				_rulesEngine.Load();
 
@@ -110,6 +113,30 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					             queueItem.Key);
 					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
 					return;
+				}
+
+				// First, check to see if we can lock the study, if not just reschedule the queue entry.
+				if (!_storageLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
+				{
+					Platform.Log(LogLevel.Info,"Study {0} on partition {1} is currently locked, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
+					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
+					return;
+				}
+
+				using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					ILockStudy studyLock = update.GetBroker<ILockStudy>();
+					LockStudyParameters parms = new LockStudyParameters();
+					parms.StudyStorageKey = queueItem.StudyStorageKey;
+					parms.QueueStudyStateEnum = QueueStudyStateEnum.ArchiveScheduled;
+					bool retVal = studyLock.Execute(parms);
+					if (!parms.Successful || !retVal)
+					{
+						Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to lock, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
+						_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
+						return;						
+					}
+					update.Commit();
 				}
 
 				string studyFolder = _storageLocation.GetStudyPath();
@@ -186,6 +213,23 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			    Platform.Log(LogLevel.Error, e, msg);
 
 				_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
+			}
+			finally
+			{
+				// Unlock the Queue Entry
+				using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					ILockStudy studyLock = update.GetBroker<ILockStudy>();
+					LockStudyParameters parms = new LockStudyParameters();
+					parms.StudyStorageKey = queueItem.StudyStorageKey;
+					parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+					bool retVal = studyLock.Execute(parms);
+					if (!parms.Successful || !retVal)
+					{
+						Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to unlock.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
+					}
+					update.Commit();
+				}
 			}
 		}
 

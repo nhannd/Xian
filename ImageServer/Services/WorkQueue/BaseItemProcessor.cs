@@ -317,7 +317,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
 		/// <param name="complete">Indicates if complete.</param>
 		/// <param name="processedBatch">Processed a batch request of uids</param>
-		protected virtual void PostProcessing(Model.WorkQueue item, bool processedBatch, bool complete)
+		/// <param name="resetQueueStudyState">Reset the queue study state back to Idle</param>
+		protected virtual void PostProcessing(Model.WorkQueue item, bool processedBatch, bool complete, bool resetQueueStudyState)
 		{
 			DBUpdateTime.Add(
 				delegate
@@ -331,13 +332,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						parms.WorkQueueKey = item.GetKey();
 						parms.StudyStorageKey = item.StudyStorageKey;
 						parms.ProcessorID = item.ProcessorID;
-						if (complete)
-						{
-						    QueueStudyStateEnum state = GetQueryStudyState(WorkQueueStatusEnum.Completed);
-                            if (state != null)
-                                parms.QueueStudyStateEnum = state;
-						}
-                            
 
 						WorkQueueSettings settings = WorkQueueSettings.Instance;
 
@@ -367,9 +361,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (complete || !processedBatch && item.ExpirationTime < Platform.Time)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
-							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 							parms.FailureCount = item.FailureCount;
 							parms.ScheduledTime = scheduledTime;
+							if (resetQueueStudyState)
+								parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 							parms.ExpirationTime = item.ExpirationTime; // Keep the same
 						}

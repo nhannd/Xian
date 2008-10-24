@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				if (WorkQueueUidList.Count == 0)
 				{
 					// No UIDs associated with the WorkQueue item.  Set the status back to idle
-					PostProcessing(item, false, false);
+					PostProcessing(item, false, false, true);
 					return;
 				}
 				XmlElement element = item.Data.DocumentElement;
@@ -286,7 +286,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					else
 						UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
 
-					PostProcessing(item, true, false); // batch processed, not complete
+					PostProcessing(item, true, false, false); // batch processed, not complete
 				}
 			}
 		}

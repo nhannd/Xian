@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                         parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
                         parms.ScheduledTime = Platform.Time;
                         parms.ExpirationTime = Platform.Time.AddDays(1);
-
+						
                         if (false == update.Execute(parms))
                         {
                             Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 try
                 {
                     DoMigrateStudy(StorageLocation);
-                    PostProcessing(item, false, true);
+                    PostProcessing(item, false, true, true);
                 }
                 catch (Exception e)
                 {

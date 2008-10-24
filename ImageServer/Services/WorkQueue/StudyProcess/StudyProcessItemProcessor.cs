@@ -713,7 +713,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 );
 
 			if (successful)
-				PostProcessing(item, batchProcessed, false);
+				PostProcessing(item, batchProcessed, false, true);
 			else
 			{
                 bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, delegate(WorkQueueUid uid)

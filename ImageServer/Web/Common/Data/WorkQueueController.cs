@@ -231,6 +231,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     
                 foreach (WorkQueue item in items)
                 {
+					// NOTE!!! Must update if we ever change what WorkQueue types lock, this
+					// probably should be in a lookup table somehow!!!!
+					if (!item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute)
+					 && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.WebMoveStudy)
+					 && !item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReconcileStudy))
+					{
+							ILockStudy lockStudy = uctx.GetBroker<ILockStudy>();
+							LockStudyParameters lockParms = new LockStudyParameters();
+							lockParms.StudyStorageKey = item.StudyStorageKey;
+							lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+							lockStudy.Execute(lockParms);
+							if (!lockParms.Successful)
+								Platform.Log(LogLevel.Error, "Unable to unlock study storage key: ", item.StudyStorageKey);
+					}
+
                     WorkQueueDeleteParameters parms = new WorkQueueDeleteParameters();
                     parms.ServerPartitionKey = item.ServerPartitionKey;
                     parms.StudyStorageKey = item.StudyStorageKey;

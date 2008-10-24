@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                     }
                     else
                     {
-                        PostProcessing(WorkQueueItem, true, false);
+                        PostProcessing(WorkQueueItem, true, false, false);
                         Platform.Log(LogLevel.Info, "Reconciliation is completed.");
                     }
                 }
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private void Complete()
         {
             DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
-            PostProcessing(WorkQueueItem, false, true);
+            PostProcessing(WorkQueueItem, false, true, true);
             Platform.Log(LogLevel.Info, "Reconciliation completed");
         }
 

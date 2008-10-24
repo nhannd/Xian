@@ -33,8 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -226,7 +224,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private ServerEntityKey GetStudyStorageGUID(Study study)
         {
-            
             return GetStudyStorage(study).Key;
         }
 

@@ -60,13 +60,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
         private void BatchComplete()
         {
             Platform.Log(LogLevel.Info, "Successfully complete Reconcile Cleanup. GUID={0}. {0} uids processed.", WorkQueueItem.GetKey(), WorkQueueUidList.Count);
-            PostProcessing(WorkQueueItem, true, false);
+            PostProcessing(WorkQueueItem, true, false, false);
         }
 
         private void Complete()
         {
             Platform.Log(LogLevel.Info, "Reconcile Cleanup is completed. GUID={0}.", WorkQueueItem.GetKey(), WorkQueueUidList.Count);
-            PostProcessing(WorkQueueItem, false, true);
+            PostProcessing(WorkQueueItem, false, true, true);
         }
 
         private void ProcessUidList()

@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             if (WorkQueueUidList.Count == 0 
                 && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
             {
-                PostProcessing(item, false, false);
+                PostProcessing(item, false, false, false);
                 return;
             }
 
@@ -190,9 +190,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed || scu.Status == ScuOperationStatus.ConnectFailed)
                 PostProcessingFailure(item, false); // failures occurred
             else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
-                PostProcessing(item, true, false); // no failures
+                PostProcessing(item, true, false, false); // no failures
 			else 
-				PostProcessing(item, true, true); // no failures, complete
+				PostProcessing(item, true, true, false); // no failures, complete
         }
         #endregion
 

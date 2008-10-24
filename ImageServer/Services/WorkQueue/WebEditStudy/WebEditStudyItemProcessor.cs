@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private void Complete()
         {
-            PostProcessing(WorkQueueItem, true, true);
+            PostProcessing(WorkQueueItem, true, true, true);
             Platform.Log(LogLevel.Info, "Study Edit completed. GUID={0}", WorkQueueItem.GetKey());
         }
 
