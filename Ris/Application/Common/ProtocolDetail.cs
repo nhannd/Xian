@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public ProtocolDetail()
 		{
 			Codes = new List<ProtocolCodeSummary>();
+			Procedures = new List<ProcedureDetail>();
 		}
 
 		[DataMember]
@@ -63,5 +64,8 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public List<ProtocolCodeSummary> Codes;
+
+		[DataMember]
+		public List<ProcedureDetail> Procedures;
 	}
 }

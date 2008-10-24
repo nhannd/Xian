@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -95,10 +96,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private List<EnumValueInfo> _protocolUrgencyChoices;
 
-		//private readonly ProtocolEditorProcedurePlanSummaryTable _procedurePlanSummaryTable;
-		//private ProtocolEditorProcedurePlanSummaryTableItem _selectedProcodurePlanSummaryTableItem;
-		//private event EventHandler _selectedProcedurePlanSummaryTableItemChanged;
 		private ProtocolDetail _protocolDetail;
+		private string _proceduresText;
 
 		private List<ProtocolGroupSummary> _protocolGroupChoices;
 		private ProtocolGroupSummary _protocolGroup;
@@ -174,39 +173,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void LoadWorklistItem(IProtocollingWorkflowService service)
 		{
-			//if (_worklistItem == null)
-			//    return;
-
-			//GetProcedurePlanForProtocollingWorklistItemRequest procedurePlanRequest = 
-			//    new GetProcedurePlanForProtocollingWorklistItemRequest(_worklistItem.OrderRef);
-
-			//GetProcedurePlanForProtocollingWorklistItemResponse procedurePlanResponse = 
-			//    service.GetProcedurePlanForProtocollingWorklistItem(procedurePlanRequest);
-
-			//if (procedurePlanResponse.ProcedurePlan != null)
-			//{
-			//    _procedurePlanSummaryTable.Items.Clear();
-
-			//    foreach (ProcedureDetail rp in procedurePlanResponse.ProcedurePlan.Procedures)
-			//    {
-			//        GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(rp.ProcedureRef);
-			//        GetProcedureProtocolResponse protocolResponse = service.GetProcedureProtocol(protocolRequest);
-
-			//        if (protocolResponse.ProtocolDetail != null)
-			//        {
-			//            _procedurePlanSummaryTable.Items.Add(
-			//                new ProtocolEditorProcedurePlanSummaryTableItem(rp, protocolResponse.ProtocolDetail));
-			//        }
-			//    }
-			//    _procedurePlanSummaryTable.Sort();
-			//}
-
 			if (_worklistItem != null)
 			{
 				GetProcedureProtocolRequest protocolRequest = new GetProcedureProtocolRequest(_worklistItem.ProcedureRef);
 				GetProcedureProtocolResponse protocolResponse = service.GetProcedureProtocol(protocolRequest);
 
 				_protocolDetail = protocolResponse.ProtocolDetail;
+
+				StringBuilder sb = new StringBuilder();
+				foreach (ProcedureDetail procedure in _protocolDetail.Procedures)
+				{
+					sb.Append(ProcedureFormat.Format(procedure) + ", ");
+				}
+
+				_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
 
 				// Load available protocol groups
 				ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(_worklistItem.ProcedureRef);
@@ -286,7 +266,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 
 		#endregion
-
 
 		public string Author
 		{
@@ -404,33 +383,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-		//public ITable ProcedurePlanSummaryTable
-		//{
-		//    get { return _procedurePlanSummaryTable; }
-		//}
-
-		//public ISelection SelectedProcedure
-		//{
-		//    get { return new Selection(_selectedProcodurePlanSummaryTableItem); }
-		//    set
-		//    {
-		//        ProtocolEditorProcedurePlanSummaryTableItem item = (ProtocolEditorProcedurePlanSummaryTableItem)value.Item;
-		//        ProcedureSelectionChanged(item);
-		//    }
-		//}
-
-		//public event EventHandler SelectedProcedureChanged
-		//{
-		//    add { _selectedProcedurePlanSummaryTableItemChanged += value; }
-		//    remove { _selectedProcedurePlanSummaryTableItemChanged -= value; }
-		//}
-
 		public bool CanEdit
 		{
 			get { return _canEdit; }
 			internal set { _canEdit = value; }
 		}
 
+		public string ProceduresText
+		{
+			get { return _proceduresText; }
+		}
 
 		#endregion
 

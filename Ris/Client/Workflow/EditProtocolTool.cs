@@ -26,10 +26,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Initialize();
 
 			this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftProtocolFolder), this);
-            this.Context.RegisterDoubleClickHandler(
-                (IClickAction)CollectionUtils.SelectFirst(this.Actions,
-                    delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
-        }
+			this.Context.RegisterDoubleClickHandler(
+				(IClickAction)CollectionUtils.SelectFirst(this.Actions,
+					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
+		}
 
 		public override bool Enabled
 		{
@@ -38,9 +38,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (this.Context.SelectedItems.Count != 1)
 					return false;
 
-                ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
-                if (item.OrderRef == null)
-                    return false;
+				ReportingWorklistItem item = CollectionUtils.FirstElement(this.Context.SelectedItems);
+				if (item.OrderRef == null)
+					return false;
+
+				if (item.ProcedureStepRef == null)
+					return false;
 
 				return true;
 			}

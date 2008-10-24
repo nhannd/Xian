@@ -72,8 +72,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ChildComponentHost _priorReportsComponentHost;
 		private ChildComponentHost _orderNotesComponentHost;
 
-		private string _proceduresText;
-
 		private bool _acceptEnabled;
 		private bool _submitForApprovalEnabled;
 		private bool _rejectEnabled;
@@ -178,7 +176,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public string ProceduresText
 		{
-			get { return "Protocolled Procedure(s): " + _proceduresText; }
+			get { return "Protocolled Procedure(s): " + ((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProceduresText; }
 		}
 
 		public bool ProtocolNextItem
@@ -495,15 +493,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 					_notes = response.ProtocolNotes;
 
-					StringBuilder sb = new StringBuilder();
-					sb.Append(ProcedureFormat.Format(this.WorklistItem));
-					foreach (ReportingWorklistItem linkedProtocol in linkedProtocols)
-					{
-						sb.Append(", " + ProcedureFormat.Format(linkedProtocol));
-					}
-
-					_proceduresText = sb.ToString();
-
 					if (response.ProtocolClaimed == shouldClaim)
 					{
 						GetOperationEnablementResponse enablementResponse =
@@ -574,8 +563,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_rejectEnabled = false;
 			_submitForApprovalEnabled = false;
 			_saveEnabled = false;
-
-			_proceduresText = "";
 
 			UpdateChildComponents();
 		}

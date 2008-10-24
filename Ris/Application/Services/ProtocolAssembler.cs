@@ -56,6 +56,15 @@ namespace ClearCanvas.Ris.Application.Services
 				: CollectionUtils.Map<ProtocolCode, ProtocolCodeSummary>(protocol.Codes,
 					delegate(ProtocolCode code) { return CreateProtocolCodeSummary(code); });
 
+			ProcedureAssembler procedureAssembler = new ProcedureAssembler();
+			detail.Procedures = protocol.Procedures == null
+				? new List<ProcedureDetail>()
+				: CollectionUtils.Map<Procedure, ProcedureDetail>(protocol.Procedures,
+					delegate(Procedure procedure)
+					{
+						return procedureAssembler.CreateProcedureDetail(procedure, delegate { return false; }, false, context);
+					});
+
 			return detail;
 		}
 

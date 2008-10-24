@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this._tableLayouOuter = new System.Windows.Forms.TableLayoutPanel();
+			this._protocolledProcedures = new System.Windows.Forms.Label();
 			this._protocolEditorPanel = new System.Windows.Forms.Panel();
 			this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
 			this._btnAccept = new System.Windows.Forms.Button();
@@ -50,7 +51,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._priorReportsTabPage = new System.Windows.Forms.TabPage();
 			this._orderSummaryPanel = new System.Windows.Forms.Panel();
 			this._statusText = new System.Windows.Forms.Label();
-			this._protocolledProcedures = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -116,12 +116,26 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._tableLayouOuter.Margin = new System.Windows.Forms.Padding(0);
 			this._tableLayouOuter.Name = "_tableLayouOuter";
 			this._tableLayouOuter.RowCount = 3;
-			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayouOuter.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableLayouOuter.Size = new System.Drawing.Size(562, 613);
 			this._tableLayouOuter.TabIndex = 1;
+			// 
+			// _protocolledProcedures
+			// 
+			this._protocolledProcedures.AutoSize = true;
+			this._protocolledProcedures.BackColor = System.Drawing.SystemColors.Control;
+			this._tableLayouOuter.SetColumnSpan(this._protocolledProcedures, 2);
+			this._protocolledProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._protocolledProcedures.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._protocolledProcedures.ForeColor = System.Drawing.SystemColors.ControlText;
+			this._protocolledProcedures.Location = new System.Drawing.Point(3, 0);
+			this._protocolledProcedures.Name = "_protocolledProcedures";
+			this._protocolledProcedures.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
+			this._protocolledProcedures.Size = new System.Drawing.Size(556, 19);
+			this._protocolledProcedures.TabIndex = 5;
+			this._protocolledProcedures.Text = "Protocolled Procedure(s): ";
 			// 
 			// _protocolEditorPanel
 			// 
@@ -129,10 +143,10 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolEditorPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this._tableLayouOuter.SetColumnSpan(this._protocolEditorPanel, 2);
 			this._protocolEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 20);
+			this._protocolEditorPanel.Location = new System.Drawing.Point(0, 19);
 			this._protocolEditorPanel.Margin = new System.Windows.Forms.Padding(0);
 			this._protocolEditorPanel.Name = "_protocolEditorPanel";
-			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 535);
+			this._protocolEditorPanel.Size = new System.Drawing.Size(562, 536);
 			this._protocolEditorPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel2
@@ -336,21 +350,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusText.Size = new System.Drawing.Size(1122, 19);
 			this._statusText.TabIndex = 1;
 			this._statusText.Text = "Protocolling from X worklist - Y items available - Z items completed";
-			// 
-			// _protocollededProcedures
-			// 
-			this._protocolledProcedures.AutoSize = true;
-			this._protocolledProcedures.BackColor = System.Drawing.SystemColors.Control;
-			this._tableLayouOuter.SetColumnSpan(this._protocolledProcedures, 2);
-			this._protocolledProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._protocolledProcedures.Font = new System.Drawing.Font("Arial", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._protocolledProcedures.ForeColor = System.Drawing.SystemColors.ControlText;
-			this._protocolledProcedures.Location = new System.Drawing.Point(3, 0);
-			this._protocolledProcedures.Name = "_protocolledProcedures";
-			this._protocolledProcedures.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
-			this._protocolledProcedures.Size = new System.Drawing.Size(556, 20);
-			this._protocolledProcedures.TabIndex = 5;
-			this._protocolledProcedures.Text = "Protocolled Procedure(s): ";
 			// 
 			// ProtocollingComponentControl
 			// 
