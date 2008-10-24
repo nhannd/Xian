@@ -92,7 +92,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 								 StorageLocation.StudyInstanceUid, _partition.Description);
 				}
 				else
+				{
+					// Unlock the study, too
+					ILockStudy studyLock = updateContext.GetBroker<ILockStudy>();
+					LockStudyParameters lockParms = new LockStudyParameters();
+					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+					lockParms.StudyStorageKey = item.StudyStorageKey;
+					studyLock.Execute(lockParms);
+
 					updateContext.Commit();
+				}
 			}
 		}
 		#endregion

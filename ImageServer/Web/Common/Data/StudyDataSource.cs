@@ -67,8 +67,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private QueueStudyStateEnum _queueStudyStateEnum;
 		private ArchiveStudyStorage _theArchiveLocation;
 	    private bool _isLocked;
+		private StudyStorage _theStudyStorage;
 		private StudyStorageLocation _theStudyStorageLocation;
-	    private string _referringPhysiciansName;
+		private string _referringPhysiciansName;
 	    private string _studyTime;
 	    private string _studyId;
 
@@ -235,10 +236,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             set { _studyId = value;}
 	    }
 
-	    public StudyStorageLocation TheStorageLocation
+	    public StudyStorage TheStudyStorage
 	    {
-            get { return _theStudyStorageLocation; }
-            set { _theStudyStorageLocation = value; }
+            get { return _theStudyStorage; }
+            set { _theStudyStorage = value; }
 	    }
 
 	    #endregion Public Properties
@@ -280,17 +281,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 Platform.CheckTrue(IsArchived, "study.IsArchived");
 
-                if (_theArchiveLocation != null && _theStudyStorageLocation != null)
+
+				if (_theArchiveLocation != null) 
                 {
+					if (_theStudyStorageLocation == null)
+					{
+						StudyController controller = new StudyController();
+						_theStudyStorageLocation = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(TheStudy));
+					}
 
-                    if (_theArchiveLocation.ServerTransferSyntax.Lossless &&
-                        TransferSyntax.GetTransferSyntax(_theStudyStorageLocation.TransferSyntaxUid).LossyCompressed)
-                    {
-                        // archive is lossless but current copy is lossy. can't edit until the lossless is restored.
-                        reason = "Study was received as lossless but is compressed lossy.";
-                        return false;
-                    }
-
+					if (_theStudyStorageLocation != null)
+					{
+						if (_theArchiveLocation.ServerTransferSyntax.Lossless &&
+						    TransferSyntax.GetTransferSyntax(_theStudyStorageLocation.TransferSyntaxUid).LossyCompressed)
+						{
+							// archive is lossless but current copy is lossy. can't edit until the lossless is restored.
+							reason = "Study was received as lossless but is compressed lossy.";
+							return false;
+						}
+					}
                 }
             }
 
@@ -554,23 +563,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             studySummary.TheStudy = study;
             studySummary.ThePartition = ServerPartition.Load(study.ServerPartitionKey);
             studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
-        	//studySummary.TheStudyStorage = StudyStorage.Load(study.ServerPartitionKey, study.StudyInstanceUid);
-            studySummary.TheStorageLocation = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(study));
-            studySummary.StudyStatusEnum = studySummary.TheStorageLocation.StudyStatusEnum;
-            studySummary.QueueStudyStateEnum = studySummary.TheStorageLocation.QueueStudyStateEnum;
+        	studySummary.TheStudyStorage = StudyStorage.Load(study.ServerPartitionKey, study.StudyInstanceUid);
+            studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
+            studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
 
             IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
             if (archiveList.Count > 0)
                 studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
 
 
-            studySummary.IsProcessing = studySummary.TheStorageLocation.Lock;
+            studySummary.IsProcessing = studySummary.TheStudyStorage.Lock;
 
             // the study is considered "locked" if it's being processed or some action which requires the lock has been scheduled
             // No additional action should be allowed on the study until everything is completed.
-            studySummary.IsLocked = studySummary.IsProcessing || (studySummary.TheStorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
+            studySummary.IsLocked = studySummary.IsProcessing || (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
 
-            IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(studySummary.TheStorageLocation.Key);
+            IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
 
             if (integrityQueueItems != null && integrityQueueItems.Count > 0)
             {

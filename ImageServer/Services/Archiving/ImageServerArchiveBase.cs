@@ -194,7 +194,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		{
 			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				UpdateRestoreQueue(updateContext, item, status, scheduledTime);
+				if (UpdateRestoreQueue(updateContext, item, status, scheduledTime))
+					updateContext.Commit();
 			}
 		}
 
@@ -205,7 +206,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		/// <param name="status">The status to set the entry to.</param>
 		/// <param name="scheduledTime">The scheduled time to set the entry to.</param>
 		/// <param name="updateContext">The update context</param>
-		public void UpdateRestoreQueue(IUpdateContext updateContext, RestoreQueue item, RestoreQueueStatusEnum status, DateTime scheduledTime)
+		public bool UpdateRestoreQueue(IUpdateContext updateContext, RestoreQueue item, RestoreQueueStatusEnum status, DateTime scheduledTime)
 		{
 			UpdateRestoreQueueParameters parms = new UpdateRestoreQueueParameters();
 			parms.RestoreQueueKey = item.GetKey();
@@ -217,10 +218,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 
 			if (broker.Execute(parms))
 			{
-				updateContext.Commit();
+				return true;
 			}
-			else
-				Platform.Log(LogLevel.Error, "Unexpected failure updating RestoreQueue entry {0}", item.GetKey());
+			
+			Platform.Log(LogLevel.Error, "Unexpected failure updating RestoreQueue entry {0}", item.GetKey());
+			return false;
 		}
 
 		/// <summary>

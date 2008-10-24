@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			{
                 LockStudyParameters lockParms = new LockStudyParameters();
 				lockParms.QueueStudyStateEnum = QueueStudyStateEnum.WebDeleteScheduled;
-                lockParms.StudyStorageKey = study.TheStorageLocation.Key;
+                lockParms.StudyStorageKey = study.TheStudyStorage.Key;
 				ILockStudy broker = ctx.GetBroker<ILockStudy>();
 				broker.Execute(lockParms);
 				if (!lockParms.Successful)
@@ -121,8 +121,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				InsertWorkQueueParameters insertParms = new InsertWorkQueueParameters();
 				insertParms.WorkQueueTypeEnum = WorkQueueTypeEnum.WebDeleteStudy;
 				insertParms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
-			    insertParms.ServerPartitionKey = study.ThePartition.GetKey();
-				insertParms.StudyStorageKey = study.TheStorageLocation.GetKey();
+			    insertParms.ServerPartitionKey = study.ThePartition.Key;
+				insertParms.StudyStorageKey = study.TheStudyStorage.Key;
 				insertParms.ScheduledTime = DateTime.Now; // spread by 15 seconds
 				insertParms.ExpirationTime = DateTime.Now.AddMinutes(1);
 
