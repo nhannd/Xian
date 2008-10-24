@@ -194,21 +194,33 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		{
 			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				UpdateRestoreQueueParameters parms = new UpdateRestoreQueueParameters();
-				parms.RestoreQueueKey = item.GetKey();
-				parms.RestoreQueueStatusEnum = status;
-				parms.ScheduledTime = scheduledTime;
-				parms.StudyStorageKey = item.StudyStorageKey;
-
-				IUpdateRestoreQueue broker = updateContext.GetBroker<IUpdateRestoreQueue>();
-
-				if (broker.Execute(parms))
-				{
-					updateContext.Commit();
-				}
-				else
-					Platform.Log(LogLevel.Error, "Unexpected failure updating RestoreQueue entry {0}", item.GetKey());
+				UpdateRestoreQueue(updateContext, item, status, scheduledTime);
 			}
+		}
+
+		/// <summary>
+		/// Update a <see cref="RestoreQueue"/> entry.
+		/// </summary>
+		/// <param name="item">The item to update.</param>
+		/// <param name="status">The status to set the entry to.</param>
+		/// <param name="scheduledTime">The scheduled time to set the entry to.</param>
+		/// <param name="updateContext">The update context</param>
+		public void UpdateRestoreQueue(IUpdateContext updateContext, RestoreQueue item, RestoreQueueStatusEnum status, DateTime scheduledTime)
+		{
+			UpdateRestoreQueueParameters parms = new UpdateRestoreQueueParameters();
+			parms.RestoreQueueKey = item.GetKey();
+			parms.RestoreQueueStatusEnum = status;
+			parms.ScheduledTime = scheduledTime;
+			parms.StudyStorageKey = item.StudyStorageKey;
+
+			IUpdateRestoreQueue broker = updateContext.GetBroker<IUpdateRestoreQueue>();
+
+			if (broker.Execute(parms))
+			{
+				updateContext.Commit();
+			}
+			else
+				Platform.Log(LogLevel.Error, "Unexpected failure updating RestoreQueue entry {0}", item.GetKey());
 		}
 
 		/// <summary>

@@ -843,7 +843,7 @@ END
 ' 
 END
 GO
-/****** Object:  StoredProcedure [dbo].[InsertWorkQueueAutoRoute]    Script Date: 01/08/2008 16:04:34 ******/
+/****** Object:  StoredProcedure [dbo].[InsertWorkQueue]    Script Date: 01/08/2008 16:04:34 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -888,11 +888,26 @@ BEGIN
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
-	SELECT @WorkQueueGUID = GUID from WorkQueue 
-		where StudyStorageGUID = @StudyStorageGUID
-		AND WorkQueueTypeEnum = @WorkQueueTypeEnum
-		AND DeviceGUID = @DeviceGUID
-		AND StudyHistoryGUID = @StudyHistoryGUID
+	IF @DeviceGUID is not null
+	BEGIN
+		SELECT @WorkQueueGUID = GUID from WorkQueue 
+			where StudyStorageGUID = @StudyStorageGUID
+			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
+			AND DeviceGUID = @DeviceGUID
+	END
+	ELSE IF @StudyHistoryGUID is not null
+	BEGIN
+		SELECT @WorkQueueGUID = GUID from WorkQueue 
+			where StudyStorageGUID = @StudyStorageGUID
+			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
+			AND StudyHistoryGUID = @StudyHistoryGUID
+	END
+	ELSE
+	BEGIN
+		SELECT @WorkQueueGUID = GUID from WorkQueue 
+			where StudyStorageGUID = @StudyStorageGUID
+			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
+	END
 	if @@ROWCOUNT = 0
 	BEGIN
 		set @WorkQueueGUID = NEWID();

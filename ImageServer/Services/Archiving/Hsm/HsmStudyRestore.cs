@@ -194,21 +194,38 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 					// Do the actual insert into the DB
 					processor.AddCommand(
-						new InsertFilesystemStudyStorageCommand(_hsmArchive.PartitionArchive.ServerPartitionKey, _studyStorage.StudyInstanceUid,
+						new InsertFilesystemStudyStorageCommand(_hsmArchive.PartitionArchive.ServerPartitionKey,
+						                                        _studyStorage.StudyInstanceUid,
 						                                        studyFolder,
 						                                        fs.GetKey(), _syntax));
 
 					if (!processor.Execute())
 					{
 						Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
-									 _studyStorage.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+						             _studyStorage.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
 						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 					}
 					else
 					{
-						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
-						Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
-						             _hsmArchive.PartitionArchive.Description);
+						// Unlock the Queue Entry
+						using (
+							IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+						{
+							_hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
+							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
+										 _hsmArchive.PartitionArchive.Description);
+							ILockStudy studyLock = update.GetBroker<ILockStudy>();
+							LockStudyParameters parms = new LockStudyParameters();
+							parms.StudyStorageKey = queueItem.StudyStorageKey;
+							parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+							bool retVal = studyLock.Execute(parms);
+							if (!parms.Successful || !retVal)
+							{
+								Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to unlock.", _studyStorage.StudyInstanceUid,
+								             _hsmArchive.ServerPartition.Description);
+							}
+							update.Commit();
+						}
 					}
 				}
 			}
