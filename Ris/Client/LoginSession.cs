@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client
                     delegate(ILoginService service)
                     {
                         LoginResponse response = service.Login(
-                            new LoginRequest(userName, password, facility == null ? null : facility.FacilityRef, GetIPAddress(), GetCpuID()));
+							new LoginRequest(userName, password, facility == null ? null : facility.FacilityRef, GetIPAddress(), GetMachineID()));
 
                         // if the call succeeded, construct a generic principal object on this thread, containing
                         // the set of authority tokens for this user
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        service.ChangePassword(new ChangePasswordRequest(userName, oldPassword, newPassword, GetIPAddress(), GetCpuID()));
+                        service.ChangePassword(new ChangePasswordRequest(userName, oldPassword, newPassword, GetIPAddress(), GetMachineID()));
                     });
 
             }
@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<ILoginService>(
                     delegate(ILoginService service)
                     {
-                        service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress(), GetCpuID()));
+						service.Logout(new LogoutRequest(_userName, _sessionToken, GetIPAddress(), GetMachineID()));
                     });
             }
             finally
@@ -220,24 +220,22 @@ namespace ClearCanvas.Ris.Client
             return addresses.Length > 0 ? addresses[0].ToString() : null;
         }
 
-        /// <summary>
-        /// Return processorId of the first CPU
-        /// </summary>
-        private static string GetCpuID()
+        private static string GetMachineID()
         {
             try
             {
-                string cpuInfo = null;
-                ManagementClass mc = new ManagementClass("Win32_Processor");
+				// Use the serial number of the mother board
+                string id = null;
+                ManagementClass mc = new ManagementClass("Win32_Baseboard");
                 ManagementObjectCollection moc = mc.GetInstances();
                 foreach (ManagementObject mo in moc)
                 {
-                    cpuInfo = mo.Properties["ProcessorId"].Value.ToString();
-                    if (!string.IsNullOrEmpty(cpuInfo))
+					id = mo.Properties["SerialNumber"].Value.ToString();
+					if (!string.IsNullOrEmpty(id))
                         break;
                 }
 
-                return cpuInfo;
+				return id;
             }
             catch (Exception e)
             {

@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
             writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
             writer.WriteAttributeString("user", StringUtilities.EmptyIfNull(request.UserName));
             writer.WriteAttributeString("clientIP", StringUtilities.EmptyIfNull(request.ClientIP));
-            writer.WriteAttributeString("cpuID", StringUtilities.EmptyIfNull(request.ClientCpuID));
+            writer.WriteAttributeString("machineID", StringUtilities.EmptyIfNull(request.ClientMachineID));
             writer.WriteEndElement();
             writer.WriteEndDocument();
 

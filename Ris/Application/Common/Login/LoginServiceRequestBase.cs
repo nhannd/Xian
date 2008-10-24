@@ -6,11 +6,11 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public abstract class LoginServiceRequestBase : DataContractBase
     {
-        protected LoginServiceRequestBase(string userName, string clientIP, string clientCpuID)
+        protected LoginServiceRequestBase(string userName, string clientIP, string clientMachineID)
         {
             this.UserName = userName;
             this.ClientIP = clientIP;
-            this.ClientCpuID = clientCpuID;
+			this.ClientMachineID = clientMachineID;
         }
 
         /// <summary>
@@ -26,9 +26,9 @@ namespace ClearCanvas.Ris.Application.Common.Login
         public string ClientIP;
 
         /// <summary>
-        /// CPU Id of the client workstation for auditing purposes. Optional.
+        /// Machine Id of the client workstation for auditing purposes. Optional.
         /// </summary>
         [DataMember]
-        public string ClientCpuID;
+		public string ClientMachineID;
     }
 }

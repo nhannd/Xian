@@ -36,8 +36,8 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LogoutRequest : LoginServiceRequestBase
     {
-        public LogoutRequest(string user, string sessionToken, string clientIP, string clientCpuID)
-            : base(user, clientIP, clientCpuID)
+        public LogoutRequest(string user, string sessionToken, string clientIP, string clientMachineID)
+			: base(user, clientIP, clientMachineID)
         {
             this.SessionToken = sessionToken;
         }

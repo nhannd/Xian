@@ -37,8 +37,8 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LoginRequest : LoginServiceRequestBase
     {
-        public LoginRequest(string user, string password, EntityRef workingFacility, string clientIP, string clientCpuID)
-            : base(user, clientIP, clientCpuID)
+		public LoginRequest(string user, string password, EntityRef workingFacility, string clientIP, string clientMachineID)
+			: base(user, clientIP, clientMachineID)
         {
             this.Password = password;
             this.WorkingFacility = workingFacility;
