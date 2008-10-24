@@ -793,7 +793,7 @@ Preview.ReportListTable = function () {
 			[
 				{   label: "Procedure",
 					cellType: "text",
-					getValue: function(item) { return Ris.formatProcedureName(item); }
+					getValue: function(item) { return Ris.formatOrderListItemProcedureName(item); }
 				},
 				{   label: "Status",
 					cellType: "text",
