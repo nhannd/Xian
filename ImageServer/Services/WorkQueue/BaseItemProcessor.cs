@@ -696,7 +696,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
 
-        protected void LockStudyState(Model.WorkQueue item, QueueStudyStateEnum state)
+        protected bool LockStudyState(Model.WorkQueue item, QueueStudyStateEnum state)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -706,12 +706,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 lockStudyParams.QueueStudyStateEnum = state;
 
                 if (!lockStudyBroker.Execute(lockStudyParams) || !lockStudyParams.Successful)
-                    throw new ApplicationException(
-                        String.Format("Unable to lock study : {0}", lockStudyParams.FailureReason));
+                    return false;
 
-                updateContext.Commit();
+                else
+                {
+                    updateContext.Commit();
+                    return true;
+                }
             }
         }
+
+        
 
         /// <summary>
         /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 
@@ -721,6 +726,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <remarks>
         /// </remarks>
         protected abstract bool CanStart();
+
+        /// <summary>
+        /// Called by the base to initialize the processor.
+        /// </summary>
+        protected virtual void Initialize(Model.WorkQueue item)
+        {
+        }
+
 
         /// <summary>
         /// Called before the <see cref="WorkQueue"/> item is processed
@@ -763,6 +776,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         public void Process(Model.WorkQueue item)
         {
             _workQueueItem = item;
+
+            Initialize(item);
 
             if (!CanStart())
             {

@@ -632,6 +632,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Overridden Protected Method
 
+        protected override void Initialize(ClearCanvas.ImageServer.Model.WorkQueue item)
+        {
+            base.Initialize(item);
+
+            //Load the storage location.
+            LoadStorageLocation(item);
+        }
+
 
         protected override void OnProcessItemEnd(Model.WorkQueue item)
         {
@@ -660,7 +668,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
-
+            Platform.CheckForNullReference(StorageLocation, "StorageLocation");
             
             bool successful = false;
         	bool batchProcessed = true;
@@ -684,19 +692,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _sopProcessedRulesEngine.Load();
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
             
-                                //Load the storage location.
-								if (!LoadStorageLocation(item))
-								{
-									Platform.Log(LogLevel.Warn, "Unable to find readable location when processing StudyProcess WorkQueue item, rescheduling");
-									PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-									return;
-								}
-
                                 _context.StorageLocation = StorageLocation;
-
-                                // If the study is not in processing state, attempt to push it into this state
-                                if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ProcessingScheduled)
-                                    LockStudyState(item, QueueStudyStateEnum.ProcessingScheduled);
                                 
                                 // Process the images in the list
                                 successful = ProcessUidList(item);
@@ -737,7 +733,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected override bool CanStart()
         {
-            return true; // can start anytime
+            if (StorageLocation==null)
+            {
+                Platform.Log(LogLevel.Warn, "Unable to find readable location when processing StudyProcess WorkQueue item, rescheduling");
+                return false;
+            }
+
+            // If the study is not in processing state, attempt to push it into this state
+            // If it fails, postpone the processing instead of failing
+            if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ProcessingScheduled)
+            {
+                if (!LockStudyState(WorkQueueItem, QueueStudyStateEnum.ProcessingScheduled))
+                {
+                    Platform.Log(LogLevel.Debug,
+                                 "StudyProcess cannot start at this point. Study is being locked by another processor. Current state={0}",
+                                 StorageLocation.QueueStudyStateEnum);
+
+                    return false;
+                }
+            }
+
+            return true;
+
         }
         #endregion
 
