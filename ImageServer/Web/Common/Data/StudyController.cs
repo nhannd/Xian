@@ -319,7 +319,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
-
+            workQueueCriteria.ScheduledTime.SortAsc(0);
             return adaptor.Get(workQueueCriteria);
         }
 
@@ -330,7 +330,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             FileSystemQueueAdaptor adaptor = new FileSystemQueueAdaptor();
             FilesystemQueueSelectCriteria fileSystemQueueCriteria = new FilesystemQueueSelectCriteria();
             fileSystemQueueCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
-
+            fileSystemQueueCriteria.ScheduledTime.SortAsc(0);
             return adaptor.Get(fileSystemQueueCriteria);
         }
 
