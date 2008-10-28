@@ -332,7 +332,6 @@ function writeToStream(rows, out)
 	rows.map(function(row) { return row.join(","); }).each(
 			function(line)
 			{
-				LogInfo(line);
 				out.WriteLine(line);
 			});
 }

@@ -1,18 +1,17 @@
 function main()
 {
-	// expects a CSV file of the form:
-	// OriginalAccessionNumber,PatientId,PatientsName,PatientsSex,PatientsBirthDate,AcessionNumber
-	
+	// expects a CSV file
 	var rows = readData("D:\\junk\\foo.txt").map(
 		function(row)
 		{
 			return {
-				OriginalAccession : row[0],
-				PatientId: row[1],
-				PatientsName: row[2],
-				PatientsSex: row[3],
-				PatientsBirthDate: DateTime.Parse(row[4]),
-				AccessionNumber: row[5]
+				OriginalPatientId : row[0],
+				OriginalAccession : row[1],
+				PatientId: row[2],
+				PatientsName: row[3] + "^" + row[4],
+				PatientsSex: row[5],
+				PatientsBirthDate: DateTime.Parse(row[6]),
+				AccessionNumber: row[7]
 				};
 		});
 	
@@ -42,15 +41,20 @@ function processRow(row)
 	
 	LogInfo(String.Format("Anonymizing A# {0}...", row.OriginalAccession));
 	
+	// set the UID of the study to anonymize
 	row.StudyInstanceUID = study.StudyInstanceUID;
-	row.OutputDirectory = "D:\\junk\\" + row.OriginalAccession;
+	
+	// place into output folder named after the new accession number
+	row.OutputDirectory = "D:\\junk\\" + row.AccessionNumber;
+	
+	// this information is passed to the anonymizer unchanged
 	row.StudyDate = study.StudyDate;
-	row.StudyDescription =study.StudyDescription;
+	row.StudyDescription = study.StudyDescription;
 	
 	var anonService = CreateService("DicomAnonymizationService");
 	anonService.AnonymizeStudy(row);
 		
-	LogInfo("Finished A# " + row.OriginalAccession);
+	LogInfo("Finished A# " + row.OriginalAccession + ", new A# " + row.AccessionNumber);
 }
 
 function readData(filePath)
