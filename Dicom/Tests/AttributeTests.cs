@@ -6825,6 +6825,13 @@ namespace ClearCanvas.Dicom.Tests
 		}
 
 		[Test]
+		public void DicomAttributeSetWhenNullTest()
+		{
+			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
+			test.TestSetWhenNull();
+		}
+
+		[Test]
 		public void TestEmptyAttributesEqual()
 		{
 			DicomAttributeEmptyNullTestSuite test = new DicomAttributeEmptyNullTestSuite();
@@ -6879,9 +6886,22 @@ namespace ClearCanvas.Dicom.Tests
 			public void TestNotEmptyOrNull() {
 				DicomAttributeCollection collection = new DicomAttributeCollection();
 				foreach (DicomTag tag in _tags) {
-					TrySetValue(collection[tag]);
+					TrySetValue(0, collection[tag]);
 					Assert.IsFalse(collection[tag].IsNull, "tag with values should not be null: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
 					Assert.IsFalse(collection[tag].IsEmpty, "tag with values should not be empty: {0} has value \"{1}\"", tag.Name, collection[tag].ToString());
+				}
+			}
+
+			public void TestSetWhenNull() {
+				int index = 0;
+				DicomAttributeCollection collection = new DicomAttributeCollection();
+				foreach (DicomTag tag in _tags) {
+					collection[tag].SetNullValue();
+					try {
+						TrySetValue(index, collection[tag]);
+					} catch(IndexOutOfRangeException) {
+						Assert.Fail("Bug #1411: tag with null value could not be set at position {1}: {0}", tag.Name, index);
+					}
 				}
 			}
 
@@ -6923,7 +6943,7 @@ namespace ClearCanvas.Dicom.Tests
 			{
 				DicomAttributeCollection collection = new DicomAttributeCollection();
 				foreach (DicomTag tag in _tags)
-					TrySetValue(collection[tag]);
+					TrySetValue(0, collection[tag]);
 
 				DicomAttributeCollection copy = collection.Copy(true);
 				foreach(DicomAttribute attribute in collection)
@@ -6935,50 +6955,50 @@ namespace ClearCanvas.Dicom.Tests
 				Assert.AreEqual(collection, copy);
 			}
 
-			private static void TrySetValue(DicomAttribute attrib)
+			private static void TrySetValue(int index, DicomAttribute attrib)
 			{
 				// one of these statements should be able to put a non-null value on the attribute
 				try {
-					attrib.SetDateTime(0, DateTime.Now);
-				} catch(Exception) {
+					attrib.SetDateTime(index, DateTime.Now);
+				} catch(DicomException) {
 					try {
-						attrib.SetFloat32(0, 0f);
-					}catch(Exception) {
+						attrib.SetFloat32(index, 0f);
+					} catch (DicomException) {
 						try {
-							attrib.SetInt16(0, 0);
-						} catch (Exception) {
+							attrib.SetInt16(index, 0);
+						} catch (DicomException) {
 							try {
-								attrib.SetUInt16(0, 0);
-							} catch (Exception) {
+								attrib.SetUInt16(index, 0);
+							} catch (DicomException) {
 								try {
-									attrib.SetUid(0, DicomUid.GenerateUid());
-								} catch (Exception) {
+									attrib.SetUid(index, DicomUid.GenerateUid());
+								} catch (DicomException) {
 									try {
-										attrib.SetString(0, "fdsa");
-									} catch (Exception) {
+										attrib.SetString(index, "fdsa");
+									} catch (DicomException) {
 										try {
-											attrib.SetString(0, "1");
-										} catch (Exception) {
+											attrib.SetString(index, "1");
+										} catch (DicomException) {
 											try {
-												attrib.SetString(0, "11");
-											} catch (Exception) {
+												attrib.SetString(index, "11");
+											} catch (DicomException) {
 												try {
-													attrib.SetString(0, "1111");
-												} catch (Exception) {
+													attrib.SetString(index, "1111");
+												} catch (DicomException) {
 													try {
-														attrib.SetString(0, "111111");
-													} catch (Exception) {
+														attrib.SetString(index, "111111");
+													} catch (DicomException) {
 														try {
-															attrib.SetString(0, "11111111");
-														} catch (Exception) {
+															attrib.SetString(index, "11111111");
+														} catch (DicomException) {
 															try {
 																attrib.SetStringValue("asdf");
-															} catch (Exception) {
+															} catch (DicomException) {
 																try {
 																	DicomSequenceItem item = new DicomSequenceItem();
 																	attrib.AddSequenceItem(item);
-																	item[DicomTags.InstanceNumber].SetString(0, "1");
-																} catch (Exception) {
+																	item[DicomTags.InstanceNumber].SetString(index, "1");
+																} catch (DicomException) {
 																	Assert.Fail("Test case deficiency: doesn't know how to set an attribute of VR {0}", attrib.Tag.VR.Name);
 																}
 															}
