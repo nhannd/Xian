@@ -71,6 +71,8 @@ namespace ClearCanvas.Desktop.Tables
 
         private SetColumnClickLinkDelegate<TItem> _linkActionDelegate;
 
+		private Converter<TItem, string> _tooltipTextProvider;
+
         /// <summary>
         /// Constructs a multi-cellrow table column.
         /// </summary>
@@ -244,6 +246,23 @@ namespace ClearCanvas.Desktop.Tables
         {
             get { return _linkActionDelegate != null; }
         }
+
+		/// <summary>
+		/// Gets or sets the tooltip text provider for this binding.
+		/// </summary>
+		public Converter<TItem, string> TooltipTextProvider
+		{
+			get { return _tooltipTextProvider; }
+			set { _tooltipTextProvider = value; }
+		}
+
+		/// <summary>
+		/// Gets the tooltip of this column for the specified item.
+		/// </summary>
+		public override string GetTooltipText(object item)
+		{
+			return _tooltipTextProvider == null ? null : _tooltipTextProvider((TItem)item);
+		}
 
     	///<summary>
     	/// Gets the value of this column for the specified item.

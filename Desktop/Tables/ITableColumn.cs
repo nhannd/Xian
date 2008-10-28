@@ -88,6 +88,11 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         bool HasClickableLink { get; }
 
+		/// <summary>
+		/// Gets the tooltip of this column for the specified item.
+		/// </summary>
+		string GetTooltipText(object item);
+
         /// <summary>
         /// Gets the value of this column for the specified item.
         /// </summary>

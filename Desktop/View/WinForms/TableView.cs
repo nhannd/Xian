@@ -1054,5 +1054,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                 throw new NotImplementedException();
             }
         }
+
+		private void _dataGridView_CellToolTipTextNeeded(object sender, DataGridViewCellToolTipTextNeededEventArgs e)
+		{
+            // Ignore header cells
+            if (e.RowIndex == -1)
+                return;
+
+			ITableColumn column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
+			e.ToolTipText = column.GetTooltipText(_table.Items[e.RowIndex]);
+		}
     }
 }
