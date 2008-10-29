@@ -1,6 +1,10 @@
 <Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<!-- ImageViewerSamples specific postbuild step -->
 
+  <PropertyGroup>
+    <TrunkDirectory>$(SolutionDir)\..</TrunkDirectory>
+  </PropertyGroup>
+  
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
     <DesktopBuild>true</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
@@ -21,14 +25,26 @@
     <ImageViewerPluginFiles Include="$(SolutionDir)\..\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
     <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Oto\bin\$(Configuration)\ClearCanvas.ImageViewer.Oto.dll" />
   </ItemGroup>
-  
-	<Target Name="Copy Files" Condition="$(DesktopBuild) Or $(ShredHostBuild)">
+
+  <ItemGroup Condition="$(DesktopBuild)">
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer32.dll" />
+    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer64.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(DesktopBuild)">
+    <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
+    <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
+  </ItemGroup>
+
+  <Target Name="Copy Files" Condition="$(DesktopBuild) Or $(ShredHostBuild)">
     <!-- Run the image viewer build file -->
     <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
 
 		<!-- Copy ImageViewer plugins -->
 		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-
-	</Target>
+    <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(PluginsDirectory)\..\Oto\scripts" ContinueOnError="true" />
+    <Copy SourceFiles="@(CommonFiles)" DestinationFolder="$(PluginsDirectory)\..\common" ContinueOnError="true" />
+  </Target>
 </Project>
 
