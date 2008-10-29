@@ -47,9 +47,6 @@ namespace ClearCanvas.Ris.Application.Common
 			{
 				[AuthorityToken(Description = "Allow administration of User-Interface validation rules.")]
 				public const string UIValidationRules = "Admin/System/UI Validation Rules";
-
-				[AuthorityToken(Description = "Allow administration of the work queue.")]
-				public const string WorkQueue = "Admin/System/Work Queue";
 			}
 
 			public static class Security
@@ -114,6 +111,9 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow access to the HL7 Interface Queue Monitor.")]
 				public const string QueueMonitor = "Management/HL7/Queue Monitor";
 			}
+
+			[AuthorityToken(Description = "Allow administration of the work queue.")]
+			public const string WorkQueue = "Management/Work Queue";
 		}
 
 		/// <summary>
@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow creation of radiology reports without specifying a supervisor.")]
 				public const string OmitSupervisor = "Workflow/Report/Omit Supervisor";
 
-				[AuthorityToken(Description = "Allow re-assignment of a radiology report that is owned by another radiologist.")]
+				[AuthorityToken(Description = "Allow re-assignment of a radiology report that is owned by one radiologist to another radiologist.")]
 				public const string Reassign = "Workflow/Report/Reassign";
 
 				[AuthorityToken(Description = "Allow cancellation of a radiology report that is owned by another radiologist.")]
@@ -179,11 +179,11 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow access to the Protocol Editor and creation of procedure protocols.")]
 				public const string Create = "Workflow/Protocol/Create";
 
-				[AuthorityToken(Description = "Allow acceptance of procedure protocols.")]
-				public const string Accept = "Workflow/Protocol/Accept";
+				[AuthorityToken(Description = "Allow verification of procedure protocols.")]
+				public const string Accept = "Workflow/Protocol/Verify";
 
-				[AuthorityToken(Description = "Allow orders that were rejected by the radiologist to be cancelled or re-submitted for protocoling.")]
-				public const string Resubmit = "Workflow/Protocol/Resolve";
+				[AuthorityToken(Description = "Allow orders that were rejected by the radiologist to be re-submitted for protocoling.")]
+				public const string Resubmit = "Workflow/Protocol/Resubmit";
 
 				[AuthorityToken(Description = "Allow procedure protocols to be submitted for review by another radiologist.")]
 				public const string SubmitForReview = "Workflow/Protocol/Submit for Review";
@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow creation of procedure protocols without specifying a supervisor.")]
 				public const string OmitSupervisor = "Workflow/Protocol/Omit Supervisor";
 
-				[AuthorityToken(Description = "Allow re-assignment of a procedure protocol that is currently owned by another radiologist.")]
+				[AuthorityToken(Description = "Allow re-assignment of a procedure protocol that is owned by one radiologist to another radiologist.")]
 				public const string Reassign = "Workflow/Protocol/Reassign";
 
 				[AuthorityToken(Description = "Allow cancellation of a procedure protocol that is currently owned by another radiologist.")]
