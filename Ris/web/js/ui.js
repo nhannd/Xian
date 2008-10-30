@@ -195,6 +195,88 @@ var Table = {
 				this._checkBoxes[rowIndex].checked = checked;
 			}
 		},
+		
+		initAddDeleteButtons: function(canEdit, deleteConfirmationMessage, addedItemFunction)
+		{
+			if(!this._options.checkBoxes)
+				return;
+
+			if(!canEdit)
+			{
+				return;
+			}
+
+			var oThis = this;
+
+			var addButtonCallback = function()
+			{
+				if(addedItemFunction)
+				{
+					oThis.items.add( addedItemFunction() );
+				}
+				else
+				{
+					oThis.items.add( {} );   // add an empty item
+				}
+			}
+
+			var deleteButtonCallback = function()
+			{
+				var checkedItems = oThis.getCheckedItems();
+				if(checkedItems.length > 0)
+				{
+					if(confirm(deleteConfirmationMessage))
+					{
+						checkedItems.each(function(item) { oThis.items.remove(item); });
+						$(oThis.id + "_checkAllNone").checked = false;
+					}
+				}
+				else
+				{
+					alert("Nothing selected");
+				}
+			}
+
+			var selectAllNoneCallback = function()
+			{
+				oThis.items.each(function(item) { oThis.setItemCheckState(item, $(oThis.id + "_checkAllNone").checked); });
+			}
+
+			// Create Add and Delete buttons.
+			var addDeleteDiv = document.createElement("div");
+			addDeleteDiv.className = "addDeleteButtons";
+			this.parentElement.insertBefore(addDeleteDiv, this);
+			
+			var addButton = document.createElement("input");
+			addButton.value = "Add";
+			addButton.type = "button";
+			addButton.onclick = addButtonCallback;
+			
+			var deleteButton = document.createElement("input");
+			deleteButton.value = "Delete";
+			deleteButton.type = "button";
+			deleteButton.onclick = deleteButtonCallback;
+			
+			addDeleteDiv.appendChild(addButton);
+			addDeleteDiv.appendChild(deleteButton);
+
+			// Create "Select All/None" checkbox
+			var firstRowCell = this.rows[0].firstChild;
+			// if flowed, span check cell and the single "flow" cell, otherwise span all columns plus check column
+			firstRowCell.colSpan = this._options.flow ? 2 : this._columns.length + 1;
+
+			var label = document.createElement("label");
+			firstRowCell.appendChild(label);
+
+			var input = document.createElement("input");
+			input.type = "checkbox";
+			input.id = this.id + "_checkAllNone";
+			input.onclick = selectAllNoneCallback;
+			label.appendChild(input);
+			
+			var labelText = document.createTextNode("Select All/None");
+			label.appendChild(labelText);
+		},
 
 		updateValidation: function()
 		{
@@ -353,26 +435,102 @@ var Table = {
 			// by default, set cell content to the value of the specified property of the object
 			var column = this._columns[col];
 			var value = this._getColumnValue(column, obj);
-			if (column.cellType == "html")
+			
+			var field;
+			if(this._options.flow)
 			{
-				td.innerHTML = value;
-			}
-			else if (column.cellType == "readonly")
-			{
-				Field.setPreFormattedValue(td, value);
-			}
-			else if (column.cellType == "link" && column.clickLink)
-			{
-				Field.setLink(td, value, function() { column.clickLink(obj); });
+				field = document.createElement("div");
+				field.className = "readonlyField";
+				td.appendChild(field);
+				
+				if(column.getVisible && column.getVisible(obj) === false)
+				{
+					td.style.display = "none";
+					return;
+				}
 			}
 			else
 			{
-				Field.setValue(td, value);
+				field = td;
+			}
+			
+			if (column.cellType == "html")
+			{
+				field.innerHTML = value;
+			}
+			else if (column.cellType == "newline" && this._options.flow)
+			{
+				var parent = td.parentNode;
+				parent.removeChild(td);
+
+				var right  = document.createElement("div");
+				right.style.clear = 'both';
+				right._setCellDisplayValue = function() {};
+				parent.appendChild(right);
+			}
+			else if (column.cellType == "readonly")
+			{
+				Field.setPreFormattedValue(field, value);
+			}
+			else if (column.cellType == "textarea")
+			{
+				field.className = "readonlyTextareaField";
+				Field.setPreFormattedValue(field, value);
+			}
+			else if (column.cellType == "link" && column.clickLink)
+			{
+				Field.setLink(field, value, function() { column.clickLink(obj); });
+			}
+			else if (column.cellType == "datetime")
+			{
+				Field.setValue(field, Ris.formatDateTime(value));
+			}
+			else if (column.cellType == "date")
+			{
+				Field.setValue(field, Ris.formatDate(value));
+			}
+			else if (column.cellType == "time")
+			{
+				Field.setValue(field, Ris.formatTime(value));
+			}
+			else if (["check", "checkbox", "bool", "boolean"].indexOf(column.cellType) > -1)
+			{
+				if(this._options.flow)
+				{
+					td.removeChild(field);
+				}
+				td.className = "checkedDivCell";
+
+				// Replace top-level label text with an actual label element
+				// This allows the check-box to be activated while clicking on the text in addition to the box
+				// <div>label text<br></div> will ultimately become <div><label><input type="checkbox">label text</label></div>
+
+				var label = document.createElement("label");
+				td.appendChild(label);
+
+				var input = document.createElement("input");
+				input.type = "checkbox";
+				input.disabled = "disabled";
+				label.appendChild(input);
+
+				//alert(value):
+				input.checked = value;
+
+				// move the "label text" from the div/cell to the label element
+				var text = td.removeChild(td.firstChild);
+				label.appendChild(text);
+
+				// get rid of useless <br>
+				if(td.firstChild) td.removeChild(td.firstChild);  // get rid of <br>
+			}
+			else
+			{
+				Field.setValue(field, value);
 			}
 
 			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
 			if(this.renderCell)
-				this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
+				this.renderCell(this, { htmlCell: field, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
 		},
 
 		// returns the HTML DOM element that represents the "cell" of the table

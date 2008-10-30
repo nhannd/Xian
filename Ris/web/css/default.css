@@ -219,11 +219,18 @@ a.collapsibleHeading {
 	white-space: wrap;
 }
 
-.readonlyField {
+.readonlyField, .readonlyTextareaField {
 	font-style: italic;
 	padding-top:0.3em;
     padding-bottom:0.18em;
 	white-space: normal;
+}
+
+.readonlyTextareaField {
+	text-align: justify;
+	border: 1px solid #dddddd;
+	padding-left: 0.5em;
+	padding-right: 0.5em;
 }
 
 #patientNotesTable .checkedDivCell {
