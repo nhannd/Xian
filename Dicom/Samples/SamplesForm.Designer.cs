@@ -84,22 +84,22 @@ namespace ClearCanvas.Dicom.Samples
 			this._buttonStorageScpStartStop = new System.Windows.Forms.Button();
 			this._textBoxStorageScpPort = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
+			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.label11 = new System.Windows.Forms.Label();
+			this.label10 = new System.Windows.Forms.Label();
+			this.label9 = new System.Windows.Forms.Label();
+			this.label8 = new System.Windows.Forms.Label();
+			this._sourceTransferSyntaxCombo = new System.Windows.Forms.ComboBox();
+			this._destinationSyntaxCombo = new System.Windows.Forms.ComboBox();
+			this._destinationPathTextBox = new System.Windows.Forms.TextBox();
+			this._sourcePathTextBox = new System.Windows.Forms.TextBox();
+			this._saveFileButton = new System.Windows.Forms.Button();
+			this._openFileButton = new System.Windows.Forms.Button();
 			this._buttonOutputClearLog = new System.Windows.Forms.Button();
 			this.OutputTextBox = new System.Windows.Forms.TextBox();
 			this.openFileDialogStorageScu = new System.Windows.Forms.OpenFileDialog();
 			this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
 			this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this._openFileButton = new System.Windows.Forms.Button();
-			this._saveFileButton = new System.Windows.Forms.Button();
-			this._sourcePathTextBox = new System.Windows.Forms.TextBox();
-			this._destinationPathTextBox = new System.Windows.Forms.TextBox();
-			this._destinationSyntaxCombo = new System.Windows.Forms.ComboBox();
-			this._sourceTransferSyntaxCombo = new System.Windows.Forms.ComboBox();
-			this.label8 = new System.Windows.Forms.Label();
-			this.label9 = new System.Windows.Forms.Label();
-			this.label10 = new System.Windows.Forms.Label();
-			this.label11 = new System.Windows.Forms.Label();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
 			this.SamplesSplitContainer.Panel1.SuspendLayout();
 			this.SamplesSplitContainer.Panel2.SuspendLayout();
@@ -382,6 +382,112 @@ namespace ClearCanvas.Dicom.Samples
 			this.label4.TabIndex = 0;
 			this.label4.Text = "Port";
 			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.label11);
+			this.tabPage1.Controls.Add(this.label10);
+			this.tabPage1.Controls.Add(this.label9);
+			this.tabPage1.Controls.Add(this.label8);
+			this.tabPage1.Controls.Add(this._sourceTransferSyntaxCombo);
+			this.tabPage1.Controls.Add(this._destinationSyntaxCombo);
+			this.tabPage1.Controls.Add(this._destinationPathTextBox);
+			this.tabPage1.Controls.Add(this._sourcePathTextBox);
+			this.tabPage1.Controls.Add(this._saveFileButton);
+			this.tabPage1.Controls.Add(this._openFileButton);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
+			this.tabPage1.Name = "tabPage1";
+			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage1.Size = new System.Drawing.Size(910, 126);
+			this.tabPage1.TabIndex = 2;
+			this.tabPage1.Text = "Compression";
+			this.tabPage1.UseVisualStyleBackColor = true;
+			// 
+			// label11
+			// 
+			this.label11.AutoSize = true;
+			this.label11.Location = new System.Drawing.Point(517, 58);
+			this.label11.Name = "label11";
+			this.label11.Size = new System.Drawing.Size(137, 13);
+			this.label11.TabIndex = 9;
+			this.label11.Text = "Destination Transfer Syntax";
+			// 
+			// label10
+			// 
+			this.label10.AutoSize = true;
+			this.label10.Location = new System.Drawing.Point(514, 13);
+			this.label10.Name = "label10";
+			this.label10.Size = new System.Drawing.Size(118, 13);
+			this.label10.TabIndex = 8;
+			this.label10.Text = "Source Transfer Syntax";
+			// 
+			// label9
+			// 
+			this.label9.AutoSize = true;
+			this.label9.Location = new System.Drawing.Point(6, 14);
+			this.label9.Name = "label9";
+			this.label9.Size = new System.Drawing.Size(85, 13);
+			this.label9.TabIndex = 7;
+			this.label9.Text = "Source File Path";
+			// 
+			// label8
+			// 
+			this.label8.AutoSize = true;
+			this.label8.Location = new System.Drawing.Point(6, 59);
+			this.label8.Name = "label8";
+			this.label8.Size = new System.Drawing.Size(104, 13);
+			this.label8.TabIndex = 6;
+			this.label8.Text = "Destination File Path";
+			// 
+			// _sourceTransferSyntaxCombo
+			// 
+			this._sourceTransferSyntaxCombo.FormattingEnabled = true;
+			this._sourceTransferSyntaxCombo.Location = new System.Drawing.Point(514, 30);
+			this._sourceTransferSyntaxCombo.Name = "_sourceTransferSyntaxCombo";
+			this._sourceTransferSyntaxCombo.Size = new System.Drawing.Size(298, 21);
+			this._sourceTransferSyntaxCombo.TabIndex = 5;
+			// 
+			// _destinationSyntaxCombo
+			// 
+			this._destinationSyntaxCombo.FormattingEnabled = true;
+			this._destinationSyntaxCombo.Location = new System.Drawing.Point(514, 73);
+			this._destinationSyntaxCombo.Name = "_destinationSyntaxCombo";
+			this._destinationSyntaxCombo.Size = new System.Drawing.Size(298, 21);
+			this._destinationSyntaxCombo.TabIndex = 4;
+			// 
+			// _destinationPathTextBox
+			// 
+			this._destinationPathTextBox.Location = new System.Drawing.Point(9, 75);
+			this._destinationPathTextBox.Name = "_destinationPathTextBox";
+			this._destinationPathTextBox.Size = new System.Drawing.Size(358, 20);
+			this._destinationPathTextBox.TabIndex = 3;
+			// 
+			// _sourcePathTextBox
+			// 
+			this._sourcePathTextBox.Location = new System.Drawing.Point(9, 30);
+			this._sourcePathTextBox.Name = "_sourcePathTextBox";
+			this._sourcePathTextBox.Size = new System.Drawing.Size(358, 20);
+			this._sourcePathTextBox.TabIndex = 2;
+			// 
+			// _saveFileButton
+			// 
+			this._saveFileButton.Location = new System.Drawing.Point(373, 73);
+			this._saveFileButton.Name = "_saveFileButton";
+			this._saveFileButton.Size = new System.Drawing.Size(75, 23);
+			this._saveFileButton.TabIndex = 1;
+			this._saveFileButton.Text = "Save File";
+			this._saveFileButton.UseVisualStyleBackColor = true;
+			this._saveFileButton.Click += new System.EventHandler(this._saveFileButton_Click);
+			// 
+			// _openFileButton
+			// 
+			this._openFileButton.Location = new System.Drawing.Point(373, 28);
+			this._openFileButton.Name = "_openFileButton";
+			this._openFileButton.Size = new System.Drawing.Size(75, 23);
+			this._openFileButton.TabIndex = 0;
+			this._openFileButton.Text = "Open File";
+			this._openFileButton.UseVisualStyleBackColor = true;
+			this._openFileButton.Click += new System.EventHandler(this._openFileButton_Click);
+			// 
 			// _buttonOutputClearLog
 			// 
 			this._buttonOutputClearLog.Location = new System.Drawing.Point(16, 3);
@@ -411,112 +517,6 @@ namespace ClearCanvas.Dicom.Samples
 			this.openFileDialogStorageScu.FileName = "openFileDialogStorageScu";
 			this.openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
 			this.openFileDialogStorageScu.Title = "Open DICOM File";
-			// 
-			// tabPage1
-			// 
-			this.tabPage1.Controls.Add(this.label11);
-			this.tabPage1.Controls.Add(this.label10);
-			this.tabPage1.Controls.Add(this.label9);
-			this.tabPage1.Controls.Add(this.label8);
-			this.tabPage1.Controls.Add(this._sourceTransferSyntaxCombo);
-			this.tabPage1.Controls.Add(this._destinationSyntaxCombo);
-			this.tabPage1.Controls.Add(this._destinationPathTextBox);
-			this.tabPage1.Controls.Add(this._sourcePathTextBox);
-			this.tabPage1.Controls.Add(this._saveFileButton);
-			this.tabPage1.Controls.Add(this._openFileButton);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(910, 126);
-			this.tabPage1.TabIndex = 2;
-			this.tabPage1.Text = "Compression";
-			this.tabPage1.UseVisualStyleBackColor = true;
-			// 
-			// _openFileButton
-			// 
-			this._openFileButton.Location = new System.Drawing.Point(373, 28);
-			this._openFileButton.Name = "_openFileButton";
-			this._openFileButton.Size = new System.Drawing.Size(75, 23);
-			this._openFileButton.TabIndex = 0;
-			this._openFileButton.Text = "Open File";
-			this._openFileButton.UseVisualStyleBackColor = true;
-			this._openFileButton.Click += new System.EventHandler(this._openFileButton_Click);
-			// 
-			// _saveFileButton
-			// 
-			this._saveFileButton.Location = new System.Drawing.Point(373, 73);
-			this._saveFileButton.Name = "_saveFileButton";
-			this._saveFileButton.Size = new System.Drawing.Size(75, 23);
-			this._saveFileButton.TabIndex = 1;
-			this._saveFileButton.Text = "Save File";
-			this._saveFileButton.UseVisualStyleBackColor = true;
-			this._saveFileButton.Click += new System.EventHandler(this._saveFileButton_Click);
-			// 
-			// _sourcePathTextBox
-			// 
-			this._sourcePathTextBox.Location = new System.Drawing.Point(9, 30);
-			this._sourcePathTextBox.Name = "_sourcePathTextBox";
-			this._sourcePathTextBox.Size = new System.Drawing.Size(358, 20);
-			this._sourcePathTextBox.TabIndex = 2;
-			// 
-			// _destinationPathTextBox
-			// 
-			this._destinationPathTextBox.Location = new System.Drawing.Point(9, 75);
-			this._destinationPathTextBox.Name = "_destinationPathTextBox";
-			this._destinationPathTextBox.Size = new System.Drawing.Size(358, 20);
-			this._destinationPathTextBox.TabIndex = 3;
-			// 
-			// _destinationSyntaxCombo
-			// 
-			this._destinationSyntaxCombo.FormattingEnabled = true;
-			this._destinationSyntaxCombo.Location = new System.Drawing.Point(514, 73);
-			this._destinationSyntaxCombo.Name = "_destinationSyntaxCombo";
-			this._destinationSyntaxCombo.Size = new System.Drawing.Size(182, 21);
-			this._destinationSyntaxCombo.TabIndex = 4;
-			// 
-			// _sourceTransferSyntaxCombo
-			// 
-			this._sourceTransferSyntaxCombo.FormattingEnabled = true;
-			this._sourceTransferSyntaxCombo.Location = new System.Drawing.Point(514, 30);
-			this._sourceTransferSyntaxCombo.Name = "_sourceTransferSyntaxCombo";
-			this._sourceTransferSyntaxCombo.Size = new System.Drawing.Size(182, 21);
-			this._sourceTransferSyntaxCombo.TabIndex = 5;
-			// 
-			// label8
-			// 
-			this.label8.AutoSize = true;
-			this.label8.Location = new System.Drawing.Point(6, 59);
-			this.label8.Name = "label8";
-			this.label8.Size = new System.Drawing.Size(104, 13);
-			this.label8.TabIndex = 6;
-			this.label8.Text = "Destination File Path";
-			// 
-			// label9
-			// 
-			this.label9.AutoSize = true;
-			this.label9.Location = new System.Drawing.Point(6, 14);
-			this.label9.Name = "label9";
-			this.label9.Size = new System.Drawing.Size(85, 13);
-			this.label9.TabIndex = 7;
-			this.label9.Text = "Source File Path";
-			// 
-			// label10
-			// 
-			this.label10.AutoSize = true;
-			this.label10.Location = new System.Drawing.Point(514, 13);
-			this.label10.Name = "label10";
-			this.label10.Size = new System.Drawing.Size(118, 13);
-			this.label10.TabIndex = 8;
-			this.label10.Text = "Source Transfer Syntax";
-			// 
-			// label11
-			// 
-			this.label11.AutoSize = true;
-			this.label11.Location = new System.Drawing.Point(517, 58);
-			this.label11.Name = "label11";
-			this.label11.Size = new System.Drawing.Size(137, 13);
-			this.label11.TabIndex = 9;
-			this.label11.Text = "Destination Transfer Syntax";
 			// 
 			// saveFileDialog
 			// 

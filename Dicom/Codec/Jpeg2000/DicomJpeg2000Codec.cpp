@@ -188,11 +188,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 				if (oldPixelData->BytesAllocated == 1) {
 					if (oldPixelData->IsSigned) {
 						for (int p = 0; p < pixelCount; p++) {
-							unsigned char b = frameData[pos];
-							if (b & 0x80)
-								comp->data[p] = -((int)(b & 0x7F));
-							else
-								comp->data[p] = b;
+							comp->data[p] = (int)((char)frameData[pos]);
 							pos += offset;
 						}
 					}
@@ -204,18 +200,28 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 					}
 				}
 				else if (oldPixelData->BytesAllocated == 2) {
-					unsigned short* frameData16 = (unsigned short*)frameData;
 					if (oldPixelData->IsSigned) {
-						for (int p = 0; p < pixelCount; p++) {
-							unsigned short s = frameData16[pos];
-							if (s & 0x8000)
-								comp->data[p] = -((int)(s & 0x7FFF));
-							else
-								comp->data[p] = s;
-							pos += offset;
+						if (oldPixelData->BitsStored < 16)
+						{
+							int shiftBits = 16 - oldPixelData->BitsStored;
+							unsigned short* frameData16 = (unsigned short*)frameData;
+							for (int p = 0; p < pixelCount; p++) {
+								short pixel = ((short)(frameData16[pos] << shiftBits)) >> shiftBits;
+								comp->data[p] = (int)pixel;
+								pos += offset;
+							}
+						}
+						else
+						{
+							short* frameData16 = (short*)frameData;
+							for (int p = 0; p < pixelCount; p++) {
+								comp->data[p] = (int)frameData16[pos];
+								pos += offset;
+							}
 						}
 					}
 					else {
+						unsigned short* frameData16 = (unsigned short*)frameData;
 						for (int p = 0; p < pixelCount; p++) {
 							comp->data[p] = frameData16[pos];
 							pos += offset;
