@@ -1,7 +1,10 @@
+var inputFile = "D:\\junk\\foo.txt";
+var outputDir = "D:\\junk";
+
 function main()
 {
 	// expects a CSV file
-	var rows = readData("D:\\junk\\foo.txt").map(
+	var rows = readData(inputFile).map(
 		function(row)
 		{
 			return {
@@ -10,7 +13,6 @@ function main()
 				PatientId: row[2],
 				PatientsName: row[3] + "^" + row[4],
 				PatientsSex: row[5],
-				PatientsBirthDate: DateTime.Parse(row[6]),
 				AccessionNumber: row[7]
 				};
 		});
@@ -45,7 +47,7 @@ function processRow(row)
 	row.StudyInstanceUID = study.StudyInstanceUID;
 	
 	// place into output folder named after the new accession number
-	row.OutputDirectory = "D:\\junk\\" + row.AccessionNumber;
+	row.OutputDirectory = String.Format("{0}\\{1}", outputDir, row.AccessionNumber);
 	
 	// this information is passed to the anonymizer unchanged
 	row.StudyDate = study.StudyDate;
