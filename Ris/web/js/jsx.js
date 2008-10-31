@@ -148,6 +148,20 @@ if(!Array.prototype.firstElement)
 	};
 }
 
+// transforms this array into an object that is a hash representation of the same data,
+// mapping each element of the array to the corresponding key
+if(!Array.prototype.toHash)
+{
+	// keys is an array of strings, e.g. ["Name", "Age", ...] that name the elements in this array
+	Array.prototype.toHash = function(keys)
+	{
+		var obj = {};
+		for(var i=0; i < keys.length; i++)
+			obj[keys[i]] = this[i];
+		return obj;
+	};
+}
+
 if(!String.prototype.escapeHTML)
 {
     // from Prototype.js library (www.prototypejs.org)
