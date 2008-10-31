@@ -198,11 +198,10 @@ var Table = {
 		
 		initAddDeleteButtons: function(canEdit, deleteConfirmationMessage, addedItemFunction)
 		{
-			if(!this._options.checkBoxes)
-				return;
-
-			if(!canEdit)
+			if(!canEdit || !this._options.checkBoxes)
 			{
+				this.rows[0].style.display = "none";
+				this.rows[0].firstChild.style.display = "none";
 				return;
 			}
 
@@ -442,7 +441,7 @@ var Table = {
 				field = document.createElement("div");
 				field.className = "readonlyField";
 				td.appendChild(field);
-				
+
 				if(column.getVisible && column.getVisible(obj) === false)
 				{
 					td.style.display = "none";
@@ -470,12 +469,12 @@ var Table = {
 			}
 			else if (column.cellType == "readonly")
 			{
-				Field.setPreFormattedValue(field, value);
+				Field.setPreFormattedValue(field, value || "Not Entered");
 			}
 			else if (column.cellType == "textarea")
 			{
 				field.className = "readonlyTextareaField";
-				Field.setPreFormattedValue(field, value);
+				Field.setPreFormattedValue(field, value || "Not Entered");
 			}
 			else if (column.cellType == "link" && column.clickLink)
 			{
@@ -483,15 +482,15 @@ var Table = {
 			}
 			else if (column.cellType == "datetime")
 			{
-				Field.setValue(field, Ris.formatDateTime(value));
+				Field.setValue(field, Ris.formatDateTime(value) || "Not Entered");
 			}
 			else if (column.cellType == "date")
 			{
-				Field.setValue(field, Ris.formatDate(value));
+				Field.setValue(field, Ris.formatDate(value) || "Not Entered");
 			}
 			else if (column.cellType == "time")
 			{
-				Field.setValue(field, Ris.formatTime(value));
+				Field.setValue(field, Ris.formatTime(value) || "Not Entered");
 			}
 			else if (["check", "checkbox", "bool", "boolean"].indexOf(column.cellType) > -1)
 			{
@@ -525,7 +524,7 @@ var Table = {
 			}
 			else
 			{
-				Field.setValue(field, value);
+				Field.setValue(field, value || "Not Entered");
 			}
 
 			// fire custom formatting event, which may itself set the innerHTML property to override default cell content

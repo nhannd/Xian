@@ -228,9 +228,6 @@ a.collapsibleHeading {
 
 .readonlyTextareaField {
 	text-align: justify;
-	border: 1px solid #dddddd;
-	padding-left: 0.5em;
-	padding-right: 0.5em;
 }
 
 #patientNotesTable .checkedDivCell {
