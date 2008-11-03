@@ -21,7 +21,7 @@
   <Choose>
     <When Condition="'$(OptionsFlags)' == ''">
       <PropertyGroup>
-        <PluginOptions>IncludeUhn!IncludeEFilmAutomation!IncludeOto</PluginOptions>
+        <PluginOptions>IncludeUhn+IncludeEFilmAutomation+IncludeOto</PluginOptions>
       </PropertyGroup>
     </When>
     <Otherwise>
