@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
 					DicomMessage errorResponse = new DicomMessage();
 					server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-												 DicomStatuses.ProcessingFailure);
+												 DicomStatuses.QueryRetrieveUnableToProcess);
 
 					return true;
 				}

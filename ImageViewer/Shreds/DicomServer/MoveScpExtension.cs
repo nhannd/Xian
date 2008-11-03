@@ -239,7 +239,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				try
 				{
 					server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
-											 DicomStatuses.ProcessingFailure);
+											 DicomStatuses.QueryRetrieveUnableToProcess);
 				}
 				catch (Exception ex)
 				{
