@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop.Actions
 	/// <remarks>
 	/// This attribute causes the <see cref="IconSet"/> value of the action specified by the action ID to be
 	/// bound to the state of the specified property on the class to which this attribute applies.
-	/// The property name must refer to a public string property on the target class that has get access.
+	/// The property name must refer to a public <see cref="IconSet"/> property on the target class that has get access.
 	/// The change event name must refer to a public event on the class that will fire whenever the value of the property
 	/// changes.
 	/// </remarks>

@@ -40,13 +40,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public interface ISpatialTransform : IMemorable
 	{
 		/// <summary>
-		/// Gets or sets a value indicating whether the object if flipped vertically
+		/// Gets or sets a value indicating whether the object is flipped vertically
 		/// (i.e., mirrored on the x-axis)
 		/// </summary>
 		bool FlipX { get; set; }
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the object if flipped horizontally
+		/// Gets or sets a value indicating whether the object is flipped horizontally
 		/// (i.e., mirrored on the y-axis)
 		/// </summary>
 		bool FlipY { get; set; }

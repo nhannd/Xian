@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets the name of the display set.
+		/// Gets the name of the display set.
 		/// </summary>
 		public string Name
 		{
@@ -212,7 +212,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether the <see cref="DisplaySet"/> is visible.
+		/// Gets a value indicating whether the <see cref="DisplaySet"/> is visible.
 		/// </summary>
 		public bool Visible
 		{
