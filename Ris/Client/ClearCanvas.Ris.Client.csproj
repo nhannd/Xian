@@ -121,8 +121,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>OrderNoteConversationComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="OrderNoteConversationTable.cs" />
     <Compile Include="OrderNoteEditorComponent.cs" />
+    <Compile Include="OrderNoteViewComponent.cs" />
     <Compile Include="OrderNoteSummaryComponent.cs" />
     <Compile Include="OrderNoteTable.cs" />
     <Compile Include="HtmlActionModelRenderer.cs" />

@@ -111,6 +111,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("order-note-preview.htm")]
+		public string OrderNotePreviewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderNotePreviewPageUrl"]));
+			}
+		}
+
 		#region Home Page Preview settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]

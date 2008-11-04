@@ -55,6 +55,13 @@ namespace ClearCanvas.Ris.Application.Common
             }
 
             /// <summary>
+            /// Constructor for deserialization
+            /// </summary>
+            public RecipientDetail()
+            {
+            }
+
+            /// <summary>
             /// Gets a value indicating whether the note has been acknowledged by the recipient.
             /// (For a group recipient, indicates whether a member of the group has acknowledged the note on behalf of the group).
             /// This field is ignored when creating a new note.
@@ -87,6 +94,13 @@ namespace ClearCanvas.Ris.Application.Common
             }
 
             /// <summary>
+            /// Constructor for deserialization
+            /// </summary>
+            public StaffRecipientDetail()
+            {
+            }
+
+            /// <summary>
             /// Gets the staff recipient.
             /// </summary>
             [DataMember]
@@ -108,6 +122,13 @@ namespace ClearCanvas.Ris.Application.Common
             {
                 Group = group;
                 AcknowledgedByStaff = acknowledgedBy;
+            }
+
+            /// <summary>
+            /// Constructor for deserialization
+            /// </summary>
+            public GroupRecipientDetail()
+            {
             }
 
             /// <summary>
@@ -185,6 +206,13 @@ namespace ClearCanvas.Ris.Application.Common
                     {
                         return new GroupRecipientDetail(group, false, null, null);
                     });
+        }
+
+        /// <summary>
+        /// Constructor for deserialization
+        /// </summary>
+        public OrderNoteDetail()
+        {
         }
 
         /// <summary>

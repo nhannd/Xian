@@ -18,6 +18,13 @@ namespace ClearCanvas.Ris.Application.Common
         	this.Deactivated = deactivated;
         }
 
+        /// <summary>
+        /// Constructor for deserialization
+        /// </summary>
+        public StaffGroupSummary()
+        {
+        }
+
         [DataMember]
         public EntityRef StaffGroupRef;
 

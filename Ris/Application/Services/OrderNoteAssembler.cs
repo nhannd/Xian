@@ -165,6 +165,7 @@ namespace ClearCanvas.Ris.Application.Services
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
 				orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
 				orderNote.IsFullyAcknowledged,
+				orderNote.Urgent,
                 orderNote.Body);
         }
 

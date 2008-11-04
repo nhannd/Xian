@@ -340,7 +340,7 @@ Preview.ImagingServiceTable = function () {
 						_isProcedureStatusActive(item.ProcedureStatus);
 			}).sort(_orderRequestScheduledDateComparison);
 			
-		return presentScheduledProcedures .concat(presentNotScheduledProceduress);
+		return presentScheduledProcedures.concat(presentNotScheduledProceduress);
 	};
 
 	var _getNonActiveProcedures = function(patientOrderData)
@@ -815,76 +815,83 @@ Preview.ReportListTable = function () {
 }();
 
 /*
- *	Create one or more tables of notes with the following columns:
- *		- Comment
- *		- Time
- *		- Author
+ *	Create one or more tables of notes with a preformatted HTML column:
  *	The notes can be split into tables for specific note categories if desired.
  * 	
- *	Exposes one method: create(parentElement, notes, subsections)
+ *	Exposes one method: create(parentElement, notes, subsections, hideHeading, canAcknowledge)
  * 		parentElement - parent node for table(s)
  *		notes - the list of note objects
  *		subsections - optional - a list of objects of form { category: "SomeNoteCategory", subsectionHeading: "SomeHeading" }.  
  *			If no subsections are specified, all notes are shown in a single table.
+ *		hideHeading - optional - hide heading and category headings
+ *		acknowledgeCallback(item, checked) - optional - callback executed when the acknowledge checkbox is toggled.
  *  Also exposes defaultSubsections array which can be used as the subsections parameter in create(...)
  */
 Preview.OrderNotesTable = function () {
-	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading)
+	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading, hideHeading, acknowledgeCallback)
 	{
 		var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
 
 		if (filteredNotes.length == 0)
 			return;
 
-		if(subsectionHeading)
+		if(subsectionHeading && !hideHeading)
 		{
 			Preview.ProceduresTableHelper.addHeading(parentElement, subsectionHeading, 'subsectionheading');
 		}
 
+		var hasNotesToAcknowledge = filteredNotes.find(function(note) { return note.CanAcknowledge; });
+
 		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
-		htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
+		htmlTable = Table.createTable(htmlTable, { checkBoxes: hasNotesToAcknowledge && acknowledgeCallback, editInPlace: false, flow: false, addColumnHeadings: false },
 		[
-			{   label: "Comment",
-				cellType: "readonly",
-				getValue: function(item) { return item.NoteBody; }
-			},
-			{   label: "Time",
-				cellType: "text",
-				getValue: function(item) { return Ris.formatDateTime(item.CreationTime); }
-			},
-			{   label: "Author",
-				cellType: "text",
+			{   label: "Order Note",
+				cellType: "html",
 				getValue: function(item) 
-				{ 
-					var from = Ris.formatStaffNameAndRole(item.Author);
+				{
+					var divTag = document.createElement("div");
+					Preview.OrderNoteSection.create(divTag, item);
 					
-					if(item.OnBehalfOfGroup != null)
-						from = from + " on behalf of " + item.OnBehalfOfGroup.Name;
-					
-					return from;
+					// retrieve the innerHTML of the template table
+					return Field.getValue(divTag);
 				}
 			}
 		]);
+
+		if (acknowledgeCallback)
+		{
+			htmlTable.onItemChecked = acknowledgeCallback;
+
+			htmlTable.renderRow = function(sender, args)
+			{
+				if(args.item.CanAcknowledge)
+					args.htmlRow.className = "highlight";
+			};
+		}
 
 		htmlTable.rowCycleClassNames = ["row1", "row0"];
 		htmlTable.bindItems(filteredNotes);
 	};
 
 	return {
-		create: function(parentElement, notes, subsections)
+		create: function(parentElement, notes, subsections, hideHeading, canAcknowledge)
 		{
 			if(notes.length == 0)
 				return;
 
-			Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
+			if (!hideHeading)
+				Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
 
+			// put the most recent note on top
+			notes.reverse();
+			
 			if(subsections)
 			{
 				for(var i = 0; i < subsections.length; i++)
 				{
 					if(subsections[i])
 					{
-						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading);
+						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading, hideHeading, canAcknowledge);
 					}
 				}
 			}
@@ -1177,6 +1184,153 @@ Preview.BannerSection = function() {
 			var alertHtml = "";
 			alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
 			$("alerts").innerHTML = alertHtml;
+		}
+	};
+}();
+
+/*
+ *	Create a order note view shoing author, post date, urgency, receipients and note body.
+ *	Exposes:
+ *		create(element, note)
+ *			element - parent node for the order note
+ *			note - the order note object
+ */
+Preview.OrderNoteSection = function() {
+	var _html =
+		'<table width="100%" border="0">'+
+		'	<tr>'+
+		'		<td class="propertyname">from:</td>'+
+		'		<td width="500"><span id="author"></td>'+
+		'		<td width="25"><div id="urgency"></td>'+
+		'		<td width="150"><span id="postDateTime"></td>'+
+		'	</tr>'+
+		'	<tr id="acknowledgedRow">'+
+		'		<td class="propertyname" valign="top">acknowledged:</td>'+
+		'		<td colspan="3"><div id="acknowledged"></td>'+
+		'	</tr>'+
+		'	<tr id="notAcknowledgedRow">'+
+		'		<td class="propertyname" valign="top">awaiting response:</td>'+
+		'		<td colspan="3"><div id="notAcknowledged"></td>'+
+		'	</tr>'+
+		'	<tr>'+
+		'		<td colspan="4"><I><div id="noteBody"></I></td>'+
+		'	</tr>'+
+		'</table>';
+
+	// recursively travese the subtree to get the element with the specify id
+	var _getChildElement = function(parent, id)
+		{
+			if (!parent)
+				return null;
+
+			var child = parent.firstChild;
+			while (child) 
+			{
+				if(child.id == id)
+					return child;
+
+				var grandChild = _getChildElement(child, id);
+				if (grandChild)
+					return grandChild;
+
+				child = child.nextSibling;
+			}
+			
+			return null;
+		};
+
+	var _formatStaffNameAndRoleAndOnBehalf = function(author, onBehalfOfGroup)
+		{
+			var from = Ris.formatStaffNameAndRole(author);
+			
+			if(onBehalfOfGroup != null)
+				from = from + " on behalf of " + onBehalfOfGroup.Name;
+
+			return from;
+		};
+
+	var _formatAcknowledgedTime = function(acknowledgedTime)
+		{
+			if (!acknowledgedTime)
+				return "";
+				
+			return " at " + Ris.formatDateTime(acknowledgedTime);
+		};
+		
+	var _formatAcknowledged = function(groups, staffs)
+		{
+			var recipientSeparator = "<br>";
+			var formats = [];
+			var alreadyAcknowledgedStaffId = [];
+
+			formats.add(String.combine(
+				groups.map(function(recipient) 
+					{
+						var staffIdAlreadyExist = alreadyAcknowledgedStaffId.find(function(id) { return id == recipient.AcknowledgedByStaff.Id; });
+						if (!staffIdAlreadyExist)
+							alreadyAcknowledgedStaffId.add(recipient.AcknowledgedByStaff.StaffId);
+							
+						return _formatStaffNameAndRoleAndOnBehalf(recipient.AcknowledgedByStaff, recipient.Group) + _formatAcknowledgedTime(recipient.AcknowledgedTime); 
+					}), 
+				recipientSeparator));
+
+			// if staff already acknowledged for a group, no need to list it the second time in the staff recipients
+			formats.add(String.combine(
+				staffs.map(function(recipient) 
+					{ 
+						var staffIdAlreadyExist = alreadyAcknowledgedStaffId.find(function(id) { return id == recipient.Staff.StaffId; });
+						return staffIdAlreadyExist ? "" : Ris.formatStaffNameAndRole(recipient.Staff) + _formatAcknowledgedTime(recipient.AcknowledgedTime); 
+					}), 
+				recipientSeparator));
+
+			return String.combine(formats, recipientSeparator);
+		};
+	
+	var _formatNotAcknowledged = function(groups, staffs)
+		{
+			var recipientSeparator = "; ";
+			var formats = [];
+			formats.add(String.combine(
+				groups.map(function(recipient) { return recipient.Group.Name; }), 
+				recipientSeparator));
+
+			formats.add(String.combine(
+				staffs.map(function(recipient) { return Ris.formatStaffNameAndRole(recipient.Staff); }), 
+				recipientSeparator));
+
+			return String.combine(formats, recipientSeparator);
+		};
+	
+	return {
+		create: function(element, note)
+		{
+
+			if(note == null)
+				return;
+
+			element.innerHTML = _html;
+
+			Field.setValue(_getChildElement(element, "author"), _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup));
+			Field.setPreFormattedValue(_getChildElement(element, "urgency"), note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "");
+			Field.setValue(_getChildElement(element, "postDateTime"), Ris.formatDateTime(note.PostTime));
+			Field.setValue(_getChildElement(element, "noteBody"), note.NoteBody);
+
+			note.GroupRecipients = note.GroupRecipients || [];
+			note.StaffRecipients = note.StaffRecipients || [];
+			var acknowledgedGroups = note.GroupRecipients.select(function(recipient) { return recipient.IsAcknowledged; });
+			var acknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return recipient.IsAcknowledged; });
+			var notAcknowledgedGroups = note.GroupRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
+			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
+
+			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
+				Field.setPreFormattedValue(_getChildElement(element, "acknowledged"), _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs));
+			else
+				Field.show(_getChildElement(element, "acknowledgedRow"), false);
+		
+			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0)
+				Field.setPreFormattedValue(_getChildElement(element, "notAcknowledged"), _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs));
+			else
+				Field.show(_getChildElement(element, "notAcknowledgedRow"), false);
 		}
 	};
 }();

@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client
 
 		private class RecipientTable : Table<Checkable<RecipientTableItem>>
 		{
-			private OrderNoteConversationComponent _owner;
+			private readonly OrderNoteConversationComponent _owner;
 			public RecipientTable(OrderNoteConversationComponent owner)
 			{
 				_owner = owner;
@@ -218,8 +218,6 @@ namespace ClearCanvas.Ris.Client
 		private EntityRef _orderRef;
 
 		private readonly List<string> _orderNoteCategories;
-		private readonly OrderNoteConversationTable _notes;
-		private Checkable<OrderNoteDetail> _selectedNote;
 
 		private string _body;
 
@@ -243,6 +241,9 @@ namespace ClearCanvas.Ris.Client
 
 		private bool _usingDefaultRecipients;
 
+		private OrderNoteViewComponent _orderNoteViewComponent;
+		private ChildComponentHost _orderNotesComponentHost;
+
 		#endregion
 
 		#region Constructors
@@ -255,12 +256,7 @@ namespace ClearCanvas.Ris.Client
 		public OrderNoteConversationComponent(EntityRef orderRef, IEnumerable<string> orderNoteCategories)
 		{
 			_orderRef = orderRef;
-
 			_orderNoteCategories = orderNoteCategories != null ? new List<string>(orderNoteCategories) : new List<string>();
-
-			_notes = new OrderNoteConversationTable();
-			_notes.CheckedItemsChanged += delegate { NotifyPropertyChanged("AcknowledgeEnabled"); };
-
 			_recipients = new RecipientTable(this);
 		}
 
@@ -278,6 +274,7 @@ namespace ClearCanvas.Ris.Client
 			_cannedTextLookupHandler = new CannedTextLookupHandler(this.Host.DesktopWindow);
 
 			List<Checkable<RecipientTableItem>> defaultRecipients = new List<Checkable<RecipientTableItem>>();
+			List<OrderNoteDetail> orderNotes = new List<OrderNoteDetail>();
 
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
@@ -307,24 +304,13 @@ namespace ClearCanvas.Ris.Client
 
 					_orderRef = response.OrderRef;
 
-					List<Checkable<OrderNoteDetail>> checkableOrderNoteDetails =
-						CollectionUtils.Map<OrderNoteDetail, Checkable<OrderNoteDetail>>(
-							response.OrderNotes,
-							delegate(OrderNoteDetail detail)
-							{
-								return new Checkable<OrderNoteDetail>(detail);
-							});
-					checkableOrderNoteDetails.Reverse();
-					_notes.Items.AddRange(checkableOrderNoteDetails);
-
-					// Set default recipients list
-					InitializeRecipients(response.OrderNotes, defaultRecipients);
+					orderNotes = response.OrderNotes;
 				});
 
 			this.Validation.Add(new ValidationRule("SelectedRecipient",
 				delegate
 				{
-					bool atLeastOneRecipient = CollectionUtils.Contains<Checkable<RecipientTableItem>>(_recipients.Items,
+					bool atLeastOneRecipient = CollectionUtils.Contains(_recipients.Items,
 						delegate(Checkable<RecipientTableItem> checkable)
 						{
 							return checkable.IsChecked;
@@ -335,45 +321,42 @@ namespace ClearCanvas.Ris.Client
 					return new ValidationResult(atLeastOneRecipient || notPosting, SR.MessageNoRecipientsSelected);
 				}));
 
-			_reply = this.IsCreatingNewNote;
+			// Set default recipients list
+			InitializeRecipients(orderNotes, defaultRecipients);
 
 			// build the action model
 			_recipientsActionModel = new CrudActionModel(false, false, true, new ResourceResolver(this.GetType(), true));
 			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
+			_orderNoteViewComponent = new OrderNoteViewComponent(orderNotes);
+			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("AcknowledgeEnabled"); };
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteViewComponent);
+			_orderNotesComponentHost.StartComponent();
+
+			_reply = this.IsCreatingNewNote;
+
 			base.Start();
+		}
+
+		public override void Stop()
+		{
+			if (_orderNotesComponentHost != null)
+			{
+				_orderNotesComponentHost.StopComponent();
+				_orderNotesComponentHost = null;
+			}
+
+			base.Stop();
 		}
 
 		#endregion
 
 		#region Presentation Model
 
-		#region Conversation Preview
-
-		public ITable Notes
+		public ApplicationComponentHost OrderNotesHost
 		{
-			get { return _notes; }
+			get { return _orderNotesComponentHost; }
 		}
-
-		public ISelection SelectedNote
-		{
-			get { return new Selection(_selectedNote); }
-			set
-			{
-				Checkable<OrderNoteDetail> detail = (Checkable<OrderNoteDetail>)value.Item;
-				if (_selectedNote != detail)
-				{
-					_selectedNote = detail;
-				}
-			}
-		}
-
-		public string SelectedNoteBody
-		{
-			get { return _selectedNote != null ? _selectedNote.Item.NoteBody : ""; }
-		}
-
-		#endregion
 
 		public string Body
 		{
@@ -518,21 +501,21 @@ namespace ClearCanvas.Ris.Client
 
 		public bool HasExistingNotes
 		{
-			get { return _notes.Items.Count > 0; }
+			get { return _orderNoteViewComponent.HasExistingNotes; }
 		}
 
 		public bool IsCreatingNewNote
 		{
-			get { return !this.HasExistingNotes || !_notes.HasUnacknowledgedNotes(); }
+			get { return !this.HasExistingNotes || !_orderNoteViewComponent.HasUnacknowledgedNotes; }
 		}
 
 		public string CompleteLabel
 		{
 			get
 			{
-				return _notes.HasUnacknowledgedNotes()
+				return _orderNoteViewComponent.HasUnacknowledgedNotes
 					? string.IsNullOrEmpty(_body) ? "Acknowledge" : "Acknowledge and Post"
-					: string.IsNullOrEmpty(_body) && _notes.Items.Count != 0 ? "OK" : "Post";
+					: string.IsNullOrEmpty(_body) && _orderNoteViewComponent.HasExistingNotes ? "OK" : "Post";
 			}
 		}
 
@@ -543,7 +526,7 @@ namespace ClearCanvas.Ris.Client
 				if (!this.HasExistingNotes)
 					return !string.IsNullOrEmpty(_body);
 				else if (this.HasExistingNotes)
-					return !_notes.HasUncheckedUnacknowledgedNotes();
+					return !_orderNoteViewComponent.HasUncheckedUnacknowledgedNotes;
 				else
 					return false;
 			}
@@ -566,7 +549,7 @@ namespace ClearCanvas.Ris.Client
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
-					delegate()
+					delegate
 					{
 						this.ExitCode = ApplicationComponentExitCode.Error;
 						this.Host.Exit();
@@ -629,7 +612,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, GetOrderNotesToAcknowledge(), GetReply());
+					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, _orderNoteViewComponent.GetOrderNotesToAcknowledge(), GetReply());
 					service.AcknowledgeAndPost(request);
 				});
 
@@ -651,17 +634,6 @@ namespace ClearCanvas.Ris.Client
 
 				OrderNoteConversationRecipientsSettingsHelper.Instance.Save();
 			}
-		}
-
-		private List<EntityRef> GetOrderNotesToAcknowledge()
-		{
-			List<Checkable<OrderNoteDetail>> selectedOrderNotes = CollectionUtils.Select<Checkable<OrderNoteDetail>>(
-				_notes.Items,
-				delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail) { return checkableOrderNoteDetail.IsChecked; });
-
-			return CollectionUtils.Map<Checkable<OrderNoteDetail>, EntityRef>(
-				selectedOrderNotes,
-				delegate(Checkable<OrderNoteDetail> checkableOrderNoteDetail) { return checkableOrderNoteDetail.Item.OrderNoteRef; });
 		}
 
 		private OrderNoteDetail GetReply()

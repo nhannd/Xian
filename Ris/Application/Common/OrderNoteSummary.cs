@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common
 {
@@ -19,9 +17,10 @@ namespace ClearCanvas.Ris.Application.Common
         /// <param name="author"></param>
         /// <param name="onBehalfOfGroup"></param>
         /// <param name="isAcknowledged"></param>
-        /// <param name="noteBody"></param>
+		/// <param name="urgent"></param>
+		/// <param name="noteBody"></param>
         public OrderNoteSummary(EntityRef orderNoteRef, string category, DateTime? creationTime, DateTime? postTime,
-			StaffSummary author, StaffGroupSummary onBehalfOfGroup, bool isAcknowledged, string noteBody)
+			StaffSummary author, StaffGroupSummary onBehalfOfGroup, bool isAcknowledged, bool urgent, string noteBody)
         {
             OrderNoteRef = orderNoteRef;
             Category = category;
@@ -30,6 +29,7 @@ namespace ClearCanvas.Ris.Application.Common
             Author = author;
         	OnBehalfOfGroup = onBehalfOfGroup;
             IsAcknowledged = isAcknowledged;
+        	Urgent = urgent;
             NoteBody = noteBody;
         }
 
@@ -56,6 +56,9 @@ namespace ClearCanvas.Ris.Application.Common
         /// </summary>
         [DataMember]
         public bool IsAcknowledged;
+
+        [DataMember]
+        public bool Urgent;
 
         [DataMember]
         public string NoteBody;

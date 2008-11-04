@@ -71,6 +71,10 @@ var _IE = document.all;
 				item - the item whose check state to set
 				checked - boolean check state
 				
+			onItemChecked(item, checked)
+				item - the item whose check state has changed
+				checked - boolean check state
+				
 			updateValidation()
 				refreshes the validation state of the table - typically this only needs to be called from a custom
 				rendering event handler
@@ -193,6 +197,9 @@ var Table = {
 			if(rowIndex > 0)
 			{
 				this._checkBoxes[rowIndex].checked = checked;
+
+				if (this.onItemChecked)
+					this.onItemChecked(item, checked);
 			}
 		},
 		
@@ -298,7 +305,12 @@ var Table = {
 		{
 			var index = this._indexOfRow(r);
 			if (this.rowCycleClassNames && this.rowCycleClassNames.length > 0)
-				r.className = this.rowCycleClassNames[(index-1)%(this.rowCycleClassNames.length)];
+			{
+				if (this._options.addColumnHeadings && !this._options.flow)
+					r.className = this.rowCycleClassNames[(index-1)%(this.rowCycleClassNames.length)];
+				else
+					r.className = this.rowCycleClassNames[(index)%(this.rowCycleClassNames.length)];
+			}
 		},
 
 		_selectRow: function(r)
@@ -359,16 +371,16 @@ var Table = {
 			var tr = this.insertRow(index);
 
 			// apply row cyclic css class to row
-			if(this.rowCycleClassNames && this.rowCycleClassNames.length > 0)
-				tr.className = this.rowCycleClassNames[(index-1)%(this.rowCycleClassNames.length)];
+			this._resetRowClassName(tr);
 
 			// fire custom formatting event	
 			if(this.renderRow)
 				this.renderRow(this, { htmlRow: tr, rowIndex: index-1, item: obj });
 
+			var htmlTable = this;
+
 			if (this.onRowClick)
 			{
-				var htmlTable = this;
 				tr.onmouseover = function() { htmlTable._mouseOverRow(tr); };
 				tr.onmouseout = function() { htmlTable._mouseOutRow(tr); };
 				tr.onclick = function() { htmlTable._selectRow(tr); };
@@ -380,6 +392,10 @@ var Table = {
 				var td = tr.insertCell(0);
 				var checkBox = document.createElement("input");
 				checkBox.type = "checkbox";
+
+				if (this.onItemChecked)
+					checkBox.onclick = function() { htmlTable.onItemChecked(obj, checkBox.checked); };
+
 				td.className = "rowCheckCell";
 				td.appendChild(checkBox);
 				this._checkBoxes[index] = checkBox;

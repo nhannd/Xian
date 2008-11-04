@@ -56,8 +56,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_component = component;
 
-			_notes.Table = _component.Notes;
-			_notes.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
+			Control orderNotes = (Control)_component.OrderNotesHost.ComponentView.GuiElement;
+			orderNotes.Dock = DockStyle.Fill;
+			_orderNotesPanel.Controls.Add(orderNotes);
 
 			_replyBody.DataBindings.Add("Text", _component, "Body", true, DataSourceUpdateMode.OnPropertyChanged);
 			_cannedTextSupport = new CannedTextSupport(_replyBody, _component.CannedTextLookupHandler);
