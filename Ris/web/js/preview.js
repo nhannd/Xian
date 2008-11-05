@@ -824,11 +824,11 @@ Preview.ReportListTable = function () {
  *		subsections - optional - a list of objects of form { category: "SomeNoteCategory", subsectionHeading: "SomeHeading" }.  
  *			If no subsections are specified, all notes are shown in a single table.
  *		hideHeading - optional - hide heading and category headings
- *		acknowledgeCallback(item, checked) - optional - callback executed when the acknowledge checkbox is toggled.
+ *		checkBoxesProperties - optional - customize the checkbox behaviour, including callback when a checkbox is toggled and override when a checkbox is visible
  *  Also exposes defaultSubsections array which can be used as the subsections parameter in create(...)
  */
 Preview.OrderNotesTable = function () {
-	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading, hideHeading, acknowledgeCallback)
+	var _createSubsection = function(parentElement, notes, categoryFilter, subsectionHeading, hideHeading, checkBoxesProperties)
 	{
 		var filteredNotes = categoryFilter ? notes.select(function(note) { return note.Category == categoryFilter; }) : notes;
 
@@ -840,10 +840,10 @@ Preview.OrderNotesTable = function () {
 			Preview.ProceduresTableHelper.addHeading(parentElement, subsectionHeading, 'subsectionheading');
 		}
 
-		var hasNotesToAcknowledge = filteredNotes.find(function(note) { return note.CanAcknowledge; });
+		var canAcknowledge = checkBoxesProperties && checkBoxesProperties.onItemChecked && filteredNotes.find(function(note) { return note.CanAcknowledge; });
 
 		var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
-		htmlTable = Table.createTable(htmlTable, { checkBoxes: hasNotesToAcknowledge && acknowledgeCallback, editInPlace: false, flow: false, addColumnHeadings: false },
+		htmlTable = Table.createTable(htmlTable, { checkBoxes: canAcknowledge, checkBoxesProperties: checkBoxesProperties, editInPlace: false, flow: false, addColumnHeadings: false },
 		[
 			{   label: "Order Note",
 				cellType: "html",
@@ -858,10 +858,9 @@ Preview.OrderNotesTable = function () {
 			}
 		]);
 
-		if (acknowledgeCallback)
+		if (canAcknowledge)
 		{
-			htmlTable.onItemChecked = acknowledgeCallback;
-
+			// highlight the row that need to be acknowledged
 			htmlTable.renderRow = function(sender, args)
 			{
 				if(args.item.CanAcknowledge)
@@ -874,7 +873,7 @@ Preview.OrderNotesTable = function () {
 	};
 
 	return {
-		create: function(parentElement, notes, subsections, hideHeading, canAcknowledge)
+		create: function(parentElement, notes, subsections, hideHeading, checkBoxesProperties)
 		{
 			if(notes.length == 0)
 				return;
@@ -891,7 +890,7 @@ Preview.OrderNotesTable = function () {
 				{
 					if(subsections[i])
 					{
-						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading, hideHeading, canAcknowledge);
+						_createSubsection(parentElement, notes, subsections[i].category, subsections[i].subsectionHeading, hideHeading, checkBoxesProperties);
 					}
 				}
 			}
@@ -1199,18 +1198,18 @@ Preview.OrderNoteSection = function() {
 	var _html =
 		'<table width="100%" border="0">'+
 		'	<tr>'+
-		'		<td class="propertyname">from:</td>'+
-		'		<td width="500"><span id="author"></td>'+
+		'		<td>From:</td>'+
+		'		<td width="500"><div id="author"></td>'+
 		'		<td width="25"><div id="urgency"></td>'+
-		'		<td width="150"><span id="postDateTime"></td>'+
+		'		<td width="150"><div id="postDateTime"></td>'+
 		'	</tr>'+
 		'	<tr id="acknowledgedRow">'+
-		'		<td class="propertyname" valign="top">acknowledged:</td>'+
+		'		<td valign="top">Acknowledged:</td>'+
 		'		<td colspan="3"><div id="acknowledged"></td>'+
 		'	</tr>'+
 		'	<tr id="notAcknowledgedRow">'+
-		'		<td class="propertyname" valign="top">awaiting response:</td>'+
-		'		<td colspan="3"><div id="notAcknowledged"></td>'+
+		'		<td class="propertyname" valign="top">Awaiting response:</td>'+
+		'		<td colspan="3"><B><div id="notAcknowledged"></B></td>'+
 		'	</tr>'+
 		'	<tr>'+
 		'		<td colspan="4"><I><div id="noteBody"></I></td>'+
@@ -1290,6 +1289,7 @@ Preview.OrderNoteSection = function() {
 		{
 			var recipientSeparator = "; ";
 			var formats = [];
+
 			formats.add(String.combine(
 				groups.map(function(recipient) { return recipient.Group.Name; }), 
 				recipientSeparator));

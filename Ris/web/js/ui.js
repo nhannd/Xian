@@ -22,8 +22,15 @@ var _IE = document.all;
 					editInPlace (bool) - indicates whether to create an edit-in-place style table, vs a read-only table.
 					flow (bool) - true: the logical columns will be flowed inside of a single TD. false: each logical column given its own TD.
 					checkBoxes (bool) - inidicates whether the first column of the table should be a checkbox column.
+					checkBoxesProperties (object) - customize checkBoxes behaviour
+						onItemChecked(item, checked) - executed when a checkbox is toggled
+							item - the item whose check state has changed
+							checked - boolean check state
+						showItemCheckBoxes(item) - override the checkbox visibility for each item
+							returns - the visibility of the checkbox for this item
+							item - the item whose check visibility to set
 					autoSelectFirstElement (bool)  - indicates whether the first row of the table should automatically be selected.  Only applicable when onRowClick is implemented
-					
+
 			columns - an array of column objects that maps properties of an item to columns of the table. 
 				For an non edit-in-place table, this may simply be an array of strings. Each string will be treated as a property
 				of an item, and the cell will be populated with the value of that property.
@@ -59,7 +66,7 @@ var _IE = document.all;
 			highlightClassName - a CSS class name that will be applied when a clickable row is selected
 			errorProvider - the ErrorProvider object used by the table. You may set this property to your own ErrorProvider instance
 				(e.g. so that the table shares the same ErrorProvider object as the rest of the page)
-				  
+
 		Methods:	  
 			bindItems(items)
 				items - an array of items that this table will bind to
@@ -69,10 +76,6 @@ var _IE = document.all;
 				
 			setItemCheckState(item, checked)
 				item - the item whose check state to set
-				checked - boolean check state
-				
-			onItemChecked(item, checked)
-				item - the item whose check state has changed
 				checked - boolean check state
 				
 			updateValidation()
@@ -198,8 +201,8 @@ var Table = {
 			{
 				this._checkBoxes[rowIndex].checked = checked;
 
-				if (this.onItemChecked)
-					this.onItemChecked(item, checked);
+				if (this._options.checkBoxesProperties && this._options.checkBoxesProperties.onItemChecked)
+					this._options.checkBoxesProperties.onItemChecked(item, checked);
 			}
 		},
 		
@@ -393,8 +396,14 @@ var Table = {
 				var checkBox = document.createElement("input");
 				checkBox.type = "checkbox";
 
-				if (this.onItemChecked)
-					checkBox.onclick = function() { htmlTable.onItemChecked(obj, checkBox.checked); };
+				if (this._options.checkBoxesProperties)
+				{
+					if (this._options.checkBoxesProperties.onItemChecked)
+						checkBox.onclick = function() { htmlTable._options.checkBoxesProperties.onItemChecked(obj, checkBox.checked); };
+
+					if (this._options.checkBoxesProperties.showItemCheckBox)
+						checkBox.style.display = this._options.checkBoxesProperties.showItemCheckBox(obj) ? "" : "none";
+				} 
 
 				td.className = "rowCheckCell";
 				td.appendChild(checkBox);
