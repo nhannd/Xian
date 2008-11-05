@@ -1196,7 +1196,7 @@ Preview.BannerSection = function() {
  */
 Preview.OrderNoteSection = function() {
 	var _html =
-		'<table width="100%" border="0">'+
+		'<table width="100%" style="{margin:0px}" border="0">'+
 		'	<tr>'+
 		'		<td>From:</td>'+
 		'		<td width="500"><div id="author"></td>'+
