@@ -1,4 +1,4 @@
-﻿ <Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿ <Project DefaultTargets="BuildSolutions" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
    <Choose>
      <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
@@ -42,41 +42,8 @@
     <DistributionBuild>false</DistributionBuild>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition="$(DistributionBuild)">
-      <PropertyGroup>
-        <ClientDistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\RisClient\$(PlatformSubFolder)\$(Configuration)</ClientDistributionDir>
-        <ServerDistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\RisServer\$(PlatformSubFolder)\$(Configuration)</ServerDistributionDir>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <ClientDistributionDir></ClientDistributionDir>
-        <ServerDistributionDir></ServerDistributionDir>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-
-  <Choose>
-    <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
-      <PropertyGroup>
-        <ClientProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(ClientDistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ClientProperties>
-        <ServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(ServerDistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ServerProperties>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <ClientProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(ClientDistributionDir)</ClientProperties>
-        <ServerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(ServerDistributionDir)</ServerProperties>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
-
-  <Target Name="BuildSolution" >
-    <RemoveDir Condition="$(DistributionBuild)" Directories="$(ClientDistributionDir);$(ServerDistributionDir)" />
-    
-    <MSBuild Projects=".\Client\RisClient.proj" Properties="$(ClientProperties)" />
-    <MSBuild Projects="..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
-    <MSBuild Projects=".\Server\RisServer.proj" Properties="$(ServerProperties)" />
+  <Target Name="BuildSolutions" >
+    <MSBuild Projects=".\Client\RisClient.proj" Properties="Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);KeyFile=$(KeyFile)" />
+    <MSBuild Projects=".\Server\RisServer.proj" Properties="Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionBuild=$(DistributionBuild);KeyFile=$(KeyFile)" />
   </Target>
 </Project>

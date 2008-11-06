@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyClientFiles;AppConfigs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="CopyClientFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
@@ -8,8 +8,18 @@
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	</PropertyGroup>
-	
-	<PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
+    <RisClientBuild>false</RisClientBuild>
+    <OtoBuild>true</OtoBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
+    <RisClientBuild>true</RisClientBuild>
+    <OtoBuild>false</OtoBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
 		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
@@ -19,14 +29,14 @@
   </PropertyGroup>
 
   <Choose>
-    <When Condition="'$(OptionsFlags)' == ''">
+    <When Condition=" '$(Options)' == '' ">
       <PropertyGroup>
-        <PluginOptions>IncludeUhn+IncludeEFilmAutomation+IncludeOto</PluginOptions>
+        <OptionsFlags>None</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <PluginOptions>$(OptionsFlags)</PluginOptions>
+        <OptionsFlags>$(Options)</OptionsFlags>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -44,17 +54,26 @@
   </ItemGroup>
   <ItemGroup>
     <EFilmAutomationClientModuleFiles Include="$(SolutionDir)\Uhn\EFilmViewerIntegration\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.EFilmViewerIntegration.dll" />
-  </ItemGroup>  
+  </ItemGroup>
+
+  <ItemGroup Condition="$(OtoBuild)">
+    <OtoCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DotNetMagic2005.DLL" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$(OtoBuild)">
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
+    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
     <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\Ide\bin\$(Configuration)\ClearCanvas.Oto.Ide.dll" />
     <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <OtoExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe" />
-    <OtoExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -99,7 +118,11 @@
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
   </ItemGroup>
 
-  <Target Name="AppConfigs">
+  <Target Name="Build JScript">
+    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
+  </Target>
+
+  <Target Condition="$(RisClientBuild)" Name="AppConfigs">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
   </Target>
 
@@ -109,31 +132,29 @@
   </Target>
 
   <Target Name="Copy Oto Files" >
+    <Copy SourceFiles="@(OtoCommonFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(OtoSharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-    <Copy SourceFiles="@(OtoExecutableFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="Copy EFilm Automation Files" >
+    <Copy SourceFiles="@(EFilmAutomationClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
   <Target Name="Copy Optional Files">
 
-    <RegexIsMatch Pattern="IncludeUhn" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeUhn" />
+    <RegexIsMatch Pattern="ExcludeUhn" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeUhn" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeOto" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeOto" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeEFilmAutomation" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeEFilmAutomation" />
+    <RegexIsMatch Pattern="ExcludeEFilmAutomation" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeEFilmAutomation" />
     </RegexIsMatch>
 
-    <CallTarget Condition="$(IncludeOto)" Targets="Copy Oto Files" />
-    <CallTarget Condition="$(IncludeUhn)" Targets="Copy Uhn Files" />
-
-    <Copy Condition="$(IncludeEFilmAutomation)" SourceFiles="@(EFilmAutomationClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" />
-    
+    <CallTarget Condition="!$(ExcludeUhn)" Targets="Copy Uhn Files" />
+    <CallTarget Condition="!$(ExcludeEFilmAutomation)" Targets="Copy EFilm Automation Files" />
   </Target>
   
-    <Target Name="CopyClientFiles" DependsOnTargets="Copy Optional Files">
+    <Target Name="CopyClientFiles" DependsOnTargets="Build JScript;AppConfigs;Copy Oto Files;Copy Optional Files">
 		<!-- Copy Client files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		
@@ -142,7 +163,6 @@
     <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-    <Copy SourceFiles="@(ExecutableFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
     <Copy SourceFiles="@(Templates)" DestinationFolder="$(TemplateDirectory)" ContinueOnError="true" />
   </Target>
 	

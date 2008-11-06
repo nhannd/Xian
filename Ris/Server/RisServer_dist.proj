@@ -1,10 +1,33 @@
 <Project DefaultTargets="CopyServerFiles;AppConfigs;ShredHostAppConfigs" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- RisClient specific postbuild step -->
+
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+
+  <!-- RisClient specific postbuild step -->
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	</PropertyGroup>
-	
-	<PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
+    <RisServerBuild>false</RisServerBuild>
+    <OtoBuild>true</OtoBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Ris.Server.Executable'">
+    <RisServerBuild>true</RisServerBuild>
+    <OtoBuild>false</OtoBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
+    <RisServerBuild>false</RisServerBuild>
+    <OtoBuild>false</OtoBuild>
+    <ShredHostBuild>true</ShredHostBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
 		<OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
 		<JscriptDirectory>$(SolutionDir)..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
@@ -36,25 +59,28 @@
 		<SetupFiles Include="$(SetupDirectory)\import-authority-groups.bat" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<EnterprisePluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
-		
-		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
-	    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Iesi.Collections.dll" />
+  <ItemGroup>
+    <EnterprisePluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
 
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\DdlWriter\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" />
-	    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Castle.DynamicProxy.dll" />
-	    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\NHibernate.dll" />
-	    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\NHibernate.Caches.SysCache.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Iesi.Collections.dll" />
 
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.Hibernate.dll" />
-	    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Enterprise.Oto.dll" />
-	</ItemGroup>	
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\DdlWriter\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Castle.DynamicProxy.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\NHibernate.dll" />
+    <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\NHibernate.Caches.SysCache.dll" />
+
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.Hibernate.dll" />
+  </ItemGroup>
+
+  <ItemGroup Condition="!$(ShredHostBuild)">
+    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Enterprise.Oto.dll" />
+  </ItemGroup>	
 	
 	<ItemGroup>
 		<ModelFiles Include="$(WorkflowDirectory)\bin\$(Configuration)\ClearCanvas.Workflow.dll" />
@@ -79,21 +105,19 @@
 		<RisFiles Include="$(UhnApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Services.dll" />
 		<RisFiles Include="$(FaxApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
 		<RisFiles Include="$(FaxApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Services.dll" />
-		<RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
-		<RisFiles Include="$(PublicationShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.dll" />
-		<RisFiles Include="$(PublicationShredDirectory)\MailFaxProcessor\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor.dll" />
-	</ItemGroup>
+  </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="!$(ShredHostBuild)">
     <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
   </ItemGroup>
 
   <ItemGroup>
-    <OtoExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe" />
-    <OtoExecutableFiles Include="$(TrunkDirectory)\Oto\Executable\bin\$(Configuration)\ClearCanvas.Oto.Executable.exe.config" />
+    <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
+    <RisFiles Include="$(PublicationShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.dll" />
+    <RisFiles Include="$(PublicationShredDirectory)\MailFaxProcessor\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor.dll" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="!$(ShredHostBuild)">
     <OtoScripts Include="$(EnterpriseDirectory)\Oto\scripts\*.js" />
     <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
   </ItemGroup>
@@ -110,22 +134,20 @@
     <AppConfigSourceFiles Include="$(SolutionDir)\Executable\app.config" />
   </ItemGroup>
 
-  <Target Name="Build BuildTasks">
-    <MSBuild Projects="$(TrunkDirectory)\Utilities\BuildTasks\ClearCanvas.Utilities.BuildTasks.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)"/>
+  <Target Name="Build JScript">
+    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
   </Target>
-  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
-  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\Utilities\BuildTasks\bin\$(Configuration)\ClearCanvas.Utilities.BuildTasks.dll"/>
-
-  <Target Name="AppConfigs" DependsOnTargets="Build BuildTasks">
+  
+  <Target Name="AppConfigs" Condition="!$(ShredHostBuild)">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Ris.Server.Executable.exe.config" />
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Oto.Executable.exe.config" />
   </Target>
 
-  <Target Name="ShredHostAppConfigs" DependsOnTargets="Build BuildTasks">
-	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(ShredHostServiceDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHostService.exe.config" />
+  <Target Name="ShredHostAppConfigs" Condition="$(ShredHostBuild)">
+	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
   </Target>
 
-  <Target Name="CopyServerFiles">
+  <Target Name="CopyServerFiles" DependsOnTargets="Build JScript">
 		<!-- Copy Server Distribution files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />

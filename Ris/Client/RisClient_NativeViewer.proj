@@ -45,7 +45,7 @@
   <Choose>
     <When Condition="$(DistributionBuild)">
       <PropertyGroup>
-        <DistributionDir>$(MSBuildProjectDirectory)\..\..\Distribution\Build\RisClient\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\..\Distribution\Build\RisClient_NativeViewer\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -71,6 +71,6 @@
   <Target Name="BuildSolution" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
-    <MSBuild Projects="RisClient.sln" Properties="$(RisClientProperties)" />
+    <MSBuild Projects="RisClient_NativeViewer.sln" Properties="$(RisClientProperties)" />
   </Target>
 </Project>

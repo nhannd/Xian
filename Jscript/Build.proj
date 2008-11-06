@@ -14,6 +14,5 @@
 	<Target Name="Build" Inputs="ClearCanvas.Jscript.js; ..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" Outputs="bin\$(Configuration)\ClearCanvas.Jscript.dll">
 		<MakeDir Directories="bin\$(Configuration)" Condition="!Exists('bin\$(Configuration)')" />
 		<Exec Command="jsc $(EmitDebugInformation) /t:library /lib:..\Common\bin\$(Configuration) /out:bin\$(Configuration)\ClearCanvas.Jscript.dll ClearCanvas.Jscript.js"/>
-    <Copy SourceFiles=".\bin\$(Configuration)\ClearCanvas.Jscript.dll" DestinationFolder="..\Desktop\Executable\bin\$(Configuration)\plugins" />
 	</Target>
 </Project>

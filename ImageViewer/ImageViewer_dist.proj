@@ -7,6 +7,7 @@
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\</TrunkDirectory>
+    <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
   </PropertyGroup>
@@ -45,14 +46,14 @@
   </Choose>
 
   <Choose>
-    <When Condition="'$(OptionsFlags)' == ''">
+    <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <PluginOptions>IncludeStudyBrowser+IncludeDesktopServices+IncludeDicomEditor+IncludeServiceConfiguration</PluginOptions>
+        <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <PluginOptions>$(OptionsFlags)</PluginOptions>
+        <OptionsFlags>$(Options)</OptionsFlags>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -80,10 +81,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <DatabaseFiles Include="$(DatabaseFileEmptySource)" />
-  </ItemGroup>
- 
-  <ItemGroup>
     <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\sqlce*.dll" />
     <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\System.Data.SqlServerCe.dll" />
   </ItemGroup>
@@ -94,8 +91,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DicomAssemblyFiles Include="$(TrunkDirectory)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
-    <DicomAssemblyFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
+    <DicomDataStoreFiles Include="$(TrunkDirectory)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DicomToolkitFiles Include="$(TrunkDirectory)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -159,15 +159,29 @@
     <ServiceConfigurationFiles Include="$(TrunkDirectory)\ImageViewer\Services\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Configuration.View.WinForms.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <HelpUpdateFiles Include="$(TrunkDirectory)\Desktop\Help\UpdateTools\bin\$(Configuration)\ClearCanvas.Desktop.Help.UpdateTools.dll" />
+  </ItemGroup>
+
+  <!-- Study Finders and Loaders -->
+  <ItemGroup>
+    <DicomRemoteClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
+    <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <StreamingClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
+  </ItemGroup>
+  
   <ItemGroup Condition="$(DesktopBuild)">
     <!-- Core Viewer -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\bin\$(Configuration)\ClearCanvas.ImageViewer.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.View.WinForms.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\AnnotationProviders\bin\$(Configuration)\ClearCanvas.ImageViewer.AnnotationProviders.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Interpolators\$(PlatformSubFolder)\BilinearInterpolation.dll" />
-
-    <!-- Help -->
-    <PluginFiles Include="$(TrunkDirectory)\Desktop\Help\UpdateTools\bin\$(Configuration)\ClearCanvas.Desktop.Help.UpdateTools.dll" />
 
     <!-- Configuration -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Configuration\bin\$(Configuration)\ClearCanvas.ImageViewer.Configuration.dll" />
@@ -184,12 +198,6 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Layout\Basic\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Layout.Basic.View.WinForms.dll" />
 
-    <!-- Study Finders and Loaders -->
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\Remote\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.Remote.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
-
     <!-- Clipboard -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Clipboard\bin\$(Configuration)\ClearCanvas.ImageViewer.Clipboard.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Clipboard\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Clipboard.View.WinForms.dll" />
@@ -204,6 +212,14 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\StudyLocator\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLocator.dll" />
   </ItemGroup>
 
+  <Target Name="Copy License Files">
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+  </Target>
+
+  <Target Name="Copy Help Files">
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+  </Target>
+
   <Target Name="Copy ImageViewer App Config">
     <CombineAppConfigs SourceFiles="@(ImageViewerAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
   </Target>
@@ -214,35 +230,92 @@
   </Target>
 
   <Target Name="Copy Database Files">
+
+    <!-- Copy Hibernate and sql ce files -->
+    <Copy SourceFiles="@(SqlCEFiles)" DestinationFolder="$(CommonDirectory)" />
+    <Copy SourceFiles="@(HibernateFiles)" DestinationFolder="$(CommonDirectory)" />
+    <Copy SourceFiles="@(DicomDataStoreFiles)" DestinationFolder="$(CommonDirectory)" />
+    
+    <!-- Copy Hibernate configuration file -->
+    <Copy SourceFiles="$(HibernateConfigurationFileSource)" DestinationFolder="$(DistributionDirectory)" />
+    <!-- Run the replace text task-->
+    <FileReplaceText FilePath="$(DistributionDirectory)\$(HibernateConfigurationFileName)" TextToReplace="!datasource!" ReplacementText="$(HibernateConfigurationFileDataSource)"/>
+
     <!-- Copy database file -->
     <MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(DatabaseFiles)" DestinationFolder="$(DatabaseDirectory)" />
-    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf" DestinationFiles="$(DatabaseFile)" />
+    <Copy SkipUnchangedFiles="true" SourceFiles="$(EmptyViewerDatabaseFile)" DestinationFolder="$(DatabaseDirectory)" />
+    <Copy Condition="!Exists('$(DatabaseFile)')" SourceFiles="$(EmptyViewerDatabaseFile)" DestinationFiles="$(DatabaseFile)" />
+  
+  </Target>
+
+  <Target Name="Copy Study Browser">
+    <Copy SourceFiles="@(StudyBrowserFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Desktop Services">
+    <Copy SourceFiles="@(DesktopServiceFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Study Composer">
+    <Copy SourceFiles="@(StudyComposerFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Dicom Editor">
+    <Copy SourceFiles="@(DicomEditorFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Service Configuration">
+    <Copy SourceFiles="@(ServiceConfigurationFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Help Update">
+    <Copy SourceFiles="@(HelpUpdateFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Local DataStore Client Files">
+    <Copy SourceFiles="@(LocalDataStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Dicom Remote Client Files">
+    <Copy SourceFiles="@(DicomRemoteClientFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
+  <Target Name="Copy Streaming Client Files">
+    <Copy SourceFiles="@(StreamingClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
   <Target Name="Copy Optional Viewer Plugins" Condition="$(DesktopBuild)">
-    
-    <RegexIsMatch Pattern="IncludeStudyBrowser" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeStudyBrowser" />
+
+    <RegexIsMatch Pattern="ExcludeStudyBrowser" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyBrowser" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeDesktopServices" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeDesktopServices" />
+    <RegexIsMatch Pattern="ExcludeDesktopServices" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDesktopServices" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeStudyComposer" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeStudyComposer" />
+    <RegexIsMatch Pattern="ExcludeStudyComposer" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStudyComposer" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeDicomEditor" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeDicomEditor" />
+    <RegexIsMatch Pattern="ExcludeDicomEditor" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDicomEditor" />
     </RegexIsMatch>
-    <RegexIsMatch Pattern="IncludeServiceConfiguration" Input="$(PluginOptions)" >
-      <Output TaskParameter="IsMatch" PropertyName="IncludeServiceConfiguration" />
+    <RegexIsMatch Pattern="ExcludeServiceConfiguration" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeServiceConfiguration" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeHelpUpdate" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeHelpUpdate" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeDicomRemote" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDicomRemote" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeStreaming" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeStreaming" />
     </RegexIsMatch>
 
-    <Copy SourceFiles="@(StudyBrowserFiles)" Condition="$(IncludeStudyBrowser)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(DesktopServiceFiles)" Condition="$(IncludeDesktopServices)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(StudyComposerFiles)" Condition="$(IncludeStudyComposer)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(DicomEditorFiles)" Condition="$(IncludeDicomEditor)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(ServiceConfigurationFiles)" Condition="$(IncludeServiceConfiguration)" DestinationFolder="$(PluginsDirectory)" />
+    <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
+    <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
+    <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
+    <CallTarget Condition="!$(ExcludeDicomEditor)" Targets="Copy Dicom Editor" />
+    <CallTarget Condition="!$(ExcludeServiceConfiguration)" Targets="Copy Service Configuration" />
+    <CallTarget Condition="!$(ExcludeHelpUpdate)" Targets="Copy Help Update" />
+    <CallTarget Condition="!$(ExcludeDicomRemote)" Targets="Copy Dicom Remote Client Files" />
+    <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
+    <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
+
   </Target>
 
   <Target Name="Copy Plugin Files" DependsOnTargets="Copy Optional Viewer Plugins">
@@ -253,28 +326,18 @@
 
   </Target>
 
-  <Target Name="Copy Project Files" DependsOnTargets="Copy Database Files;Copy Plugin Files">
+  <Target Name="Copy Project Files" DependsOnTargets="Copy Plugin Files">
 
-    <!-- Copy Common files -->
-    <CreateItem Include="@(HibernateFiles);@(SqlCEFiles);@(DicomAssemblyFiles);@(ImageViewerServicesFiles)">
-      <Output ItemName="AllCommonFiles" TaskParameter="Include" />
-    </CreateItem>
-    <Copy SourceFiles="@(AllCommonFiles)" DestinationFolder="$(CommonDirectory)" />
+    <RegexIsMatch Pattern="ExcludeDatabase" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeDatabase" />
+    </RegexIsMatch>
 
-    <!-- Copy Hibernate configuration file -->
-    <Copy SourceFiles="$(HibernateConfigurationFileSource)" DestinationFolder="$(DistributionDirectory)" />
+    <Copy SourceFiles="@(DicomToolkitFiles)" DestinationFolder="$(CommonDirectory)" />
+    <Copy SourceFiles="@(ImageViewerServicesFiles)" DestinationFolder="$(CommonDirectory)" />
 
-    <!-- Run the replace text task-->
-    <FileReplaceText FilePath="$(DistributionDirectory)\$(HibernateConfigurationFileName)" TextToReplace="!datasource!" ReplacementText="$(HibernateConfigurationFileDataSource)"/>
-    
-  </Target>
+    <!-- Always copy database for shred host -->
+    <CallTarget Condition="$(ShredHostBuild) Or !$(ExcludeDatabase)" Targets="Copy Database Files" />
 
-  <Target Name="Copy License Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
-  </Target>
-
-  <Target Name="Copy Help Files">
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(HelpFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
   </Target>
 
   <Target Name ="Copy Files" >

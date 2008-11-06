@@ -149,7 +149,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\..\ImageViewer\ImageViewer_dist.proj = ..\..\ImageViewer\ImageViewer_dist.proj
 		RisClient_dist.proj = RisClient_dist.proj
-		RisClientIntegrated_dist.proj = RisClientIntegrated_dist.proj
+		RisClient_NativeViewer_dist.config = RisClient_NativeViewer_dist.config
+		RisClient_NativeViewer_dist.proj = RisClient_NativeViewer_dist.proj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Application.Fax.Common", "..\Application\Fax\Common\ClearCanvas.Ris.Application.Fax.Common.csproj", "{AED104F7-3ADA-4376-A8EB-D39BA7A5F707}"
