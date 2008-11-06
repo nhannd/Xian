@@ -57,30 +57,6 @@
     </Otherwise>
   </Choose>
 
-  <PropertyGroup>
-    <IncludeStudyBrowser>true</IncludeStudyBrowser>
-    <IncludeDesktopServices>true</IncludeDesktopServices>
-    <IncludeStudyComposer>false</IncludeStudyComposer>
-    <IncludeDicomEditor>true</IncludeDicomEditor>
-    <IncludeServiceConfiguration>true</IncludeServiceConfiguration>
-  </PropertyGroup>
-
-  <ItemGroup Condition="$(IncludeStudyBrowser)">
-    <Options Include="IncludeStudyBrowser"/>
-  </ItemGroup>
-  <ItemGroup Condition="$(IncludeDesktopServices)">
-    <Options Include="IncludeDesktopServices"/>
-  </ItemGroup>
-  <ItemGroup Condition="$(IncludeStudyComposer)">
-    <Options Include="IncludeStudyComposer"/>
-  </ItemGroup>
-  <ItemGroup Condition="$(IncludeDicomEditor)">
-    <Options Include="IncludeDicomEditor"/>
-  </ItemGroup>
-  <ItemGroup Condition="$(IncludeServiceConfiguration)">
-    <Options Include="IncludeServiceConfiguration"/>
-  </ItemGroup>
-
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
@@ -97,15 +73,7 @@
   <Target Name="BuildSolution" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
-    <CombineStrings InputStrings="@(Options)" Delimiter="+" >
-      <Output TaskParameter="CombinedString" PropertyName="OptionsString" />
-    </CombineStrings>
-
-    <CreateProperty Value="$(ImageViewerProperties);OptionsFlags=$(OptionsString)" >
-      <Output TaskParameter="Value" PropertyName="BuildProperties" />
-    </CreateProperty>
-
-    <MSBuild Projects="ImageViewer.sln" Properties="$(BuildProperties)" />
+    <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
 	</Target>
 
 </Project>
