@@ -1212,7 +1212,7 @@ Preview.OrderNoteSection = function() {
 		'		<td colspan="3"><B><div id="notAcknowledged"></B></td>'+
 		'	</tr>'+
 		'	<tr>'+
-		'		<td colspan="4"><I><div id="noteBody"></I></td>'+
+		'		<td colspan="4"><div id="noteBody"></td>'+
 		'	</tr>'+
 		'</table>';
 
@@ -1313,7 +1313,10 @@ Preview.OrderNoteSection = function() {
 			Field.setValue(_getChildElement(element, "author"), _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup));
 			Field.setPreFormattedValue(_getChildElement(element, "urgency"), note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "");
 			Field.setValue(_getChildElement(element, "postDateTime"), Ris.formatDateTime(note.PostTime));
-			Field.setValue(_getChildElement(element, "noteBody"), note.NoteBody);
+
+			var noteBody = _getChildElement(element, "noteBody");
+			noteBody.style.textAlign = "justify";
+			Field.setPreFormattedValue(noteBody, note.NoteBody);
 
 			note.GroupRecipients = note.GroupRecipients || [];
 			note.StaffRecipients = note.StaffRecipients || [];
