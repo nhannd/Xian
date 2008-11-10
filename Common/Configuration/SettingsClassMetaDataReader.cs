@@ -163,6 +163,10 @@ namespace ClearCanvas.Common.Configuration
 		/// </remarks>
         public static string TranslateDefaultValue(Type settingsClass, string rawValue)
         {
+			// short circuit if nothing translatable
+			if (string.IsNullOrEmpty(rawValue))
+				return rawValue;
+
             // does the raw value look like it could be an embedded resource?
             if (Regex.IsMatch(rawValue, @"^([\w]+\.)+\w+$"))
             {
