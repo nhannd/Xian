@@ -76,7 +76,7 @@ namespace ClearCanvas.Dicom
         {
             IDicomCodec codec = inputCodec;
             DicomCodecParameters parameters = inputParameters;
-            if (newTransferSyntax.Encapsulated && this.TransferSyntax.Encapsulated)
+            if (newTransferSyntax.Encapsulated && TransferSyntax.Encapsulated)
                 throw new DicomCodecException("Source and destination transfer syntaxes encapsulated");
 
             if (newTransferSyntax.Encapsulated)
@@ -106,7 +106,7 @@ namespace ClearCanvas.Dicom
                     fragments.UpdateMessage(this);
                 }
                 else
-                    this.TransferSyntax = newTransferSyntax;
+                    TransferSyntax = newTransferSyntax;
             }
             else
             {
@@ -136,7 +136,7 @@ namespace ClearCanvas.Dicom
                     pd.UpdateMessage(this);
                 }
                 else
-                    this.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+                    TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
             }
         }
 
@@ -200,5 +200,39 @@ namespace ClearCanvas.Dicom
         }
         #endregion
 
+		public override bool Equals(object obj)
+		{
+			string failureReason;
+			return Equals(obj, out failureReason);
+		}
+
+		/// <summary>
+		/// Check if the contents of the DicomAttributeCollection is identical to another DicomAttributeCollection instance.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This method compares the contents of two attribute collections to see if they are equal.  The method
+		/// will step through each of the tags within the collection, and compare them to see if they are equal.  The
+		/// method will also recurse into sequence attributes to be sure they are equal.</para>
+		/// </remarks>
+		/// <param name="obj">The objec to compare to.</param>
+		/// <param name="comparisonFailure">An output string describing why the objects are not equal.</param>
+		/// <returns>true if the collections are equal.</returns>
+		public bool Equals(object obj, out string comparisonFailure)
+		{
+			DicomFile a = obj as DicomFile;
+			if (a == null)
+			{
+				comparisonFailure = String.Format("Comparison object is invalid type: {0}", obj.GetType());
+				return false;
+			}
+
+			if (!MetaInfo.Equals(a.MetaInfo, out comparisonFailure))
+				return false;
+			if (!DataSet.Equals(a.DataSet, out comparisonFailure))
+				return false;
+
+			return true;
+		}
     }
 }
