@@ -38,6 +38,7 @@ var _IE = document.all;
 				For an edit-in-place table, the column object must be a complex object with the following properties:
 					getValue: function(item) - a function that returns the value of the cell for the specified item
 					setValue: function(item, value) - a function that sets the value of the item from the cell value
+					getTooltip: function(item) - a function that returns the value of the cell tooltip for the specified item
 					getError: function(item) - a function that returns a validation error message to display in the cell,
 						or null if the item is valid
 					getVisible: function(item) - a function that returns a boolean indicating whether the cell contents
@@ -552,6 +553,9 @@ var Table = {
 				Field.setValue(field, value || "Not Entered");
 			}
 
+			var tooltip = this._getColumnTooltip(column, obj);
+			Field.setTooltip(field, tooltip);
+
 			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
 			if(this.renderCell)
 				this.renderCell(this, { htmlCell: field, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
@@ -586,6 +590,13 @@ var Table = {
 			// if column is a string, treat it as an immediate property of the object
 			// otherwise, assume column is a complex object, and look for a getValue function
 			return (typeof(column) == "string") ? obj[column] : ((column.getValue) ? column.getValue(obj) : null);
+		},
+
+		_getColumnTooltip: function(column, obj)
+		{
+			// if column is a string, treat it as an immediate property of the object
+			// otherwise, assume column is a complex object, and look for a getValue function
+			return (typeof(column) == "string") ? obj[column] : ((column.getTooltip) ? column.getTooltip(obj) : null);
 		},
 
 		_removeRow: function(index)
@@ -1146,6 +1157,14 @@ var Field =
 	setValue: function(element, value)
 	{
 		element.innerHTML = (value === undefined || value === null) ? "" : (value + "").escapeHTML();
+	},
+
+	setTooltip: function(element, tooltip)
+	{
+		if (tooltip === undefined || tooltip === null)
+			return;
+
+		element.title = (tooltip + "").escapeHTML();
 	},
 
 	setLink: function(element, value, clickLink)

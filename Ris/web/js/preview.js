@@ -176,56 +176,13 @@ var Preview = function () {
  *	Provides helper functions used by ProceduresTable, ProtocolProceduresTable and ReportingProceduresTable
  */
 Preview.ProceduresTableHelper = function () {
-
-	var _getDescriptiveTime = function(dateTime)
-	{
-		if (dateTime == null)
-			return "";
-		
-		var today = Date.today();
-		var yesterday = today.addDays(-1);
-		var tomorrow = today.addDays(1);
-		var afterTomorrow = tomorrow.addDays(1);
-
-		if (Date.compare(dateTime, yesterday) < 0)
-		{
-			var dayDiff = Math.ceil((Date.parse(today) - Date.parse(dateTime))/(1000*60*60*24));
-
-			if (dayDiff < 31)
-			{
-				return dayDiff + " days ago";
-			}
-			else 
-			{
-				return Ris.formatDate(dateTime);
-			}
-			
-		}
-		else if (Date.compare(dateTime, yesterday) >= 0 && Date.compare(dateTime, today) < 0)
-		{
-			return "Yesterday " + Ris.formatTime(dateTime);
-		}
-		else if (Date.compare(dateTime, today) >= 0 && Date.compare(dateTime, tomorrow) < 0)
-		{
-			return "Today " + Ris.formatTime(dateTime);				
-		}
-		else if (Date.compare(dateTime, tomorrow) >= 0 && Date.compare(dateTime, afterTomorrow) < 0)
-		{
-			return "Tomorrow " + Ris.formatTime(dateTime);
-		}
-		else
-		{
-			return Ris.formatDateTime(dateTime);				
-		}
-	}
-
 	return {
-		formatProcedureSchedule: function(scheduledStartTime, schedulingRequestTime)
+		formatProcedureSchedule: function(scheduledStartTime, schedulingRequestTime, showDescriptiveTime)
 		{
 			if (scheduledStartTime)
-				return _getDescriptiveTime(scheduledStartTime); 
+				return showDescriptiveTime ? Ris.formatDescriptiveDateTime(scheduledStartTime) : Ris.formatDateTime(scheduledStartTime); 
 			else if (schedulingRequestTime)
-				return "Requested for " + _getDescriptiveTime(schedulingRequestTime);
+				return "Requested for " + showDescriptiveTime ? Ris.formatDescriptiveDateTime(schedulingRequestTime) : Ris.formatDateTime(schedulingRequestTime);
 			else
 				return "Not scheduled";
 		},
@@ -383,9 +340,9 @@ Preview.ImagingServiceTable = function () {
 				pastScheduledProcedures.concat(pastNotScheduledProceduress)));
 	};
 
-	var _formatPerformingFacility = function(item)
+	var _formatPerformingFacility = function(item, memberName)
 	{
-		 return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility.Code : "";
+		return item.ProcedurePerformingFacility ? item.ProcedurePerformingFacility[memberName] : "";
 	};
 	
 	var _createHelper = function(parentElement, ordersList, sectionHeading)
@@ -411,7 +368,8 @@ Preview.ImagingServiceTable = function () {
 				},
 				{   label: "Schedule",
 					cellType: "text",
-					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime); }
+					getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, true); },
+					getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ProcedureScheduledStartTime, item.SchedulingRequestTime, false); }
 				},
 				{   label: "Status",
 					cellType: "text",
@@ -419,7 +377,8 @@ Preview.ImagingServiceTable = function () {
 				},
 				{   label: "Performing Facility",
 					cellType: "text",
-					getValue: function(item) { return _formatPerformingFacility(item); }
+					getValue: function(item) { return _formatPerformingFacility(item, 'Code'); },
+					getTooltip: function(item) { return _formatPerformingFacility(item, 'Name'); }
 				},
 				{   label: "Ordering Physician",
 					cellType: "link",
@@ -489,7 +448,8 @@ Preview.ProceduresTable = function () {
 					},
 					{   label: "Schedule",
 						cellType: "text",
-						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null); }
+						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, true); },
+						getTooltip: function(item) { return Preview.ProceduresTableHelper.formatProcedureSchedule(item.ScheduledStartTime, null, false); }
 					},
 					{   label: "Start/End Time",
 						cellType: "text",
@@ -619,7 +579,6 @@ Preview.ReportingProceduresTable = function () {
 		var reportingStepNames = ["InterpretationStep", "TranscriptionStep", "VerificationStep", "PublicationStep"];
 		var activeStatusCode = ["SC", "IP"];
 		var isActiveReportingStep = function(step) { return reportingStepNames.indexOf(step.StepClassName) >= 0 && activeStatusCode.indexOf(step.State.Code) >= 0; };
-
 		return procedure.ProcedureSteps.select(isActiveReportingStep).firstElement();
 	}
 	
@@ -632,6 +591,7 @@ Preview.ReportingProceduresTable = function () {
 		 
 	var _formatProcedureReportingStatus = function(procedure)
 	{
+		alert(String.combine(procedure.ProcedureSteps.map(function(step) { return step.StepClassName + " " + step.State.Code; }), "\r\n"));
 		var activeReportingStep = _getActiveReportingStep(procedure);
 		var lastCompletedPublicationStep = _getLastCompletedPublicationStep(procedure);
 
@@ -640,7 +600,7 @@ Preview.ReportingProceduresTable = function () {
 
 		var stepName = lastStep.ProcedureStepName;
 		var addendumPrefix = isAddendum ? "Addendum " : "";
-		
+
 		var formattedStatus;
 		switch(lastStep.State.Code)
 		{
@@ -667,7 +627,7 @@ Preview.ReportingProceduresTable = function () {
 			case "DC": formattedStatus = stepName + " Cancelled"; break;
 			default: break;
 		}
-		
+
 		return addendumPrefix + formattedStatus;
 	}
 	
@@ -1312,7 +1272,8 @@ Preview.OrderNoteSection = function() {
 
 			Field.setValue(_getChildElement(element, "author"), _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup));
 			Field.setPreFormattedValue(_getChildElement(element, "urgency"), note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "");
-			Field.setValue(_getChildElement(element, "postDateTime"), Ris.formatDateTime(note.PostTime));
+			Field.setValue(_getChildElement(element, "postDateTime"), Ris.formatDescriptiveDateTime(note.PostTime));
+			Field.setTooltip(_getChildElement(element, "postDateTime"), Ris.formatDateTime(note.PostTime));
 
 			var noteBody = _getChildElement(element, "noteBody");
 			noteBody.style.textAlign = "justify";
