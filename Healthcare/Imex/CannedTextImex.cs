@@ -98,12 +98,11 @@ namespace ClearCanvas.Healthcare.Imex
 				Staff staff = FindStaff(staffId, context);
 				StaffGroup staffGroup = FindStaffGroup(staffGroupName, context);
 
-				// At least one of these should be populated
-				if (staff == null && staffGroup == null)
-					throw new Exception("staff and staff group cannot both be empty");
-				
-				if (staff != null && staffGroup != null)
-					throw new Exception("staff and staff group cannot both be populated");
+				if (!string.IsNullOrEmpty(staffId) && staff == null)
+					throw new Exception("The requested staff does not exist.");
+
+				if (!string.IsNullOrEmpty(staffGroupName) && staffGroup == null)
+					throw new Exception("The requested staff group does not exist.");
 
 				CannedText cannedText = new CannedText();
 				cannedText.Name = name;
