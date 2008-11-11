@@ -16,14 +16,28 @@ namespace ClearCanvas.Ris.Client
 			public OrderNoteContext(List<OrderNoteDetail> orderNotes)
 			{
 				this.OrderNotes = orderNotes;
+				this.NotesAcknowledged = CollectionUtils.Map<OrderNoteDetail, bool>(
+					orderNotes,
+					delegate(OrderNoteDetail note)
+						{
+							return !note.CanAcknowledge;
+						});
 			}
 
 			[DataMember]
 			public List<OrderNoteDetail> OrderNotes;
+
+			[DataMember]
+			public List<bool> NotesAcknowledged;
+
+			public bool IsNoteAcknowledged(OrderNoteDetail note)
+			{
+				int index = this.OrderNotes.IndexOf(note);
+				return this.NotesAcknowledged[index];
+			}
 		}
 
 		private event EventHandler _checkedItemsChanged;
-		private readonly IDictionary<OrderNoteDetail, bool> _checkedProperties;
 
 		private readonly OrderNoteContext _context;
 
@@ -35,7 +49,6 @@ namespace ClearCanvas.Ris.Client
 		public OrderNoteViewComponent(List<OrderNoteDetail> orderNotes)
 		{
 			_context = orderNotes == null ? null : new OrderNoteContext(orderNotes);
-			_checkedProperties = new Dictionary<OrderNoteDetail, bool>();
 		}
 
 		public override void Start()
@@ -49,19 +62,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _context.OrderNotes.Count > 0; }
 		}
 
-		public bool HasUncheckedUnacknowledgedNotes
-		{
-			get
-			{
-				return CollectionUtils.Contains(_context.OrderNotes,
-							delegate(OrderNoteDetail note)
-							{
-								return !IsChecked(note) && note.CanAcknowledge;
-							});
-			}
-		}
-
-		public bool HasUnacknowledgedNotes
+		public bool HasNotesToBeAcknowledged
 		{
 			get
 			{
@@ -73,18 +74,28 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public List<EntityRef> GetOrderNotesToAcknowledge()
+		public bool HasUnacknowledgedNotes
 		{
-			List<EntityRef> orderNotesToAcknowledge = new List<EntityRef>();
+			get
+			{
+				return CollectionUtils.Contains(_context.NotesAcknowledged,
+							delegate(bool noteAcknowledged)
+							{
+								return !noteAcknowledged;
+							});
+			}
+		}
 
-			CollectionUtils.ForEach(_checkedProperties.Keys,
-				delegate(OrderNoteDetail note)
-				{
-					if (_checkedProperties[note] && note.CanAcknowledge)
-						orderNotesToAcknowledge.Add(note.OrderNoteRef);
-				});
-
-			return orderNotesToAcknowledge;
+		public List<OrderNoteDetail> NotesToBeAcknowledged
+		{
+			get
+			{
+				return CollectionUtils.Select(_context.OrderNotes,
+					delegate(OrderNoteDetail note)
+					{
+						return note.CanAcknowledge;
+					});
+			}
 		}
 
 		public event EventHandler CheckedItemsChanged
@@ -101,27 +112,9 @@ namespace ClearCanvas.Ris.Client
 		protected override void SetTag(string tag, string data)
 		{
 			// the page uses SetTag to indicate that the check state has changed
-			OrderNoteDetail noteMatch = CollectionUtils.SelectFirst(_context.OrderNotes,
-				delegate(OrderNoteDetail note)
-					{
-						OrderNoteDetail n = JsmlSerializer.Deserialize<OrderNoteDetail>(tag);
-						return note.OrderNoteRef.Equals(n.OrderNoteRef, true);
-					});
-
-			if (noteMatch != null)
-			{
-				bool isChecked;
-				_checkedProperties[noteMatch] = bool.TryParse(data, out isChecked) && isChecked;
-				EventsHelper.Fire(_checkedItemsChanged, this, EventArgs.Empty);
-			}
+			_context.NotesAcknowledged = JsmlSerializer.Deserialize<List<bool>>(data);
+			EventsHelper.Fire(_checkedItemsChanged, this, EventArgs.Empty);
 		}
 
-		private bool IsChecked(OrderNoteDetail note)
-		{
-			if (_checkedProperties.ContainsKey(note))
-				return _checkedProperties[note];				
-
-			return false;
-		}
 	}
 }

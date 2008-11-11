@@ -329,7 +329,7 @@ namespace ClearCanvas.Ris.Client
 			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
 			_orderNoteViewComponent = new OrderNoteViewComponent(orderNotes);
-			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("AcknowledgeEnabled"); };
+			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteEnabled"); };
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteViewComponent);
 			_orderNotesComponentHost.StartComponent();
 
@@ -506,16 +506,26 @@ namespace ClearCanvas.Ris.Client
 
 		public bool IsCreatingNewNote
 		{
-			get { return !this.HasExistingNotes || !_orderNoteViewComponent.HasUnacknowledgedNotes; }
+			get { return !this.HasExistingNotes || !_orderNoteViewComponent.HasNotesToBeAcknowledged; }
+		}
+
+		public string OrderNotesLabel
+		{
+			get
+			{
+				return _orderNoteViewComponent.HasNotesToBeAcknowledged
+					? SR.TitleConversationHistoryWithCheckBoxes
+					: SR.TitleConversationHistory;
+			}
 		}
 
 		public string CompleteLabel
 		{
 			get
 			{
-				return _orderNoteViewComponent.HasUnacknowledgedNotes
-					? string.IsNullOrEmpty(_body) ? "Acknowledge" : "Acknowledge and Post"
-					: string.IsNullOrEmpty(_body) && _orderNoteViewComponent.HasExistingNotes ? "OK" : "Post";
+				return _orderNoteViewComponent.HasNotesToBeAcknowledged
+					? string.IsNullOrEmpty(_body) ? SR.TitleAcknowledge : SR.TitleAcknowledgeAndPost
+					: SR.TitlePost;
 			}
 		}
 
@@ -523,12 +533,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				if (!this.HasExistingNotes)
-					return !string.IsNullOrEmpty(_body);
-				else if (this.HasExistingNotes)
-					return !_orderNoteViewComponent.HasUncheckedUnacknowledgedNotes;
-				else
-					return false;
+				return _orderNoteViewComponent.HasNotesToBeAcknowledged
+					? _orderNoteViewComponent.HasUnacknowledgedNotes ? false : true
+					: string.IsNullOrEmpty(_body) ? false : true;
 			}
 		}
 
@@ -609,10 +616,17 @@ namespace ClearCanvas.Ris.Client
 
 		private void SaveChanges()
 		{
+			List<EntityRef> orderNoteRefToBeAcknowledged = CollectionUtils.Map<OrderNoteDetail, EntityRef>(
+				_orderNoteViewComponent.NotesToBeAcknowledged,
+				delegate(OrderNoteDetail note)
+					{
+						return note.OrderNoteRef;
+					});
+
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, _orderNoteViewComponent.GetOrderNotesToAcknowledge(), GetReply());
+					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, orderNoteRefToBeAcknowledged, GetReply());
 					service.AcknowledgeAndPost(request);
 				});
 

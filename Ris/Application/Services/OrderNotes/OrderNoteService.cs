@@ -177,6 +177,9 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
                            || request.CategoryFilters.Contains(n.Category));
                 });
 
+			// put most recent notes first
+        	notes.Reverse();
+
             OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
 			if (request.CountOnly)
 				return new GetConversationResponse(order.GetRef(), null, notes.Count);

@@ -136,6 +136,10 @@ tr.highlight {
 	color: #FFFFFF;
 }
 
+tr.attention {
+	background-color: #ffffb0;
+}
+
 tr.mouseover {
 	background-color: #3d98d1;
 	color: #FFFFFF;

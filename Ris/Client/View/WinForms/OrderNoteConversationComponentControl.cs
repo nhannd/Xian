@@ -86,6 +86,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_replyCheckBox.Visible = !_component.IsCreatingNewNote;
 			_replyCheckBox.DataBindings.Add("Checked", _component, "Reply", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			_notesGroupBox.Text = _component.OrderNotesLabel;
+
 			int reducedHeight = this.Height - _componentSplitContainer.Panel1.Height;
 
 			_componentSplitContainer.Panel1Collapsed = !_component.HasExistingNotes;

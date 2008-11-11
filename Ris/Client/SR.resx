@@ -558,6 +558,12 @@
   <data name="PhoneNumberWork" xml:space="preserve">
     <value>Work</value>
   </data>
+  <data name="TitleAcknowledge" xml:space="preserve">
+    <value>Acknowledge</value>
+  </data>
+  <data name="TitleAcknowledgeAndPost" xml:space="preserve">
+    <value>Acknowledge and Post</value>
+  </data>
   <data name="TitleAdd" xml:space="preserve">
     <value>Add</value>
   </data>
@@ -605,6 +611,12 @@
   </data>
   <data name="TitleContactPoints" xml:space="preserve">
     <value>Contact Points</value>
+  </data>
+  <data name="TitleConversationHistory" xml:space="preserve">
+    <value>Conversation History</value>
+  </data>
+  <data name="TitleConversationHistoryWithCheckBoxes" xml:space="preserve">
+    <value>Conversation History: select all checkboxes to indicate that you have read and acknowledged the notes</value>
   </data>
   <data name="TitleCopy" xml:space="preserve">
     <value>Copy</value>
@@ -668,6 +680,9 @@
   </data>
   <data name="TitlePhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
+  </data>
+  <data name="TitlePost" xml:space="preserve">
+    <value>Post</value>
   </data>
   <data name="TitlePractitioner" xml:space="preserve">
     <value>Practitioner</value>

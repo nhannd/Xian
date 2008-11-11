@@ -34,11 +34,15 @@
 
 				var checkBoxesProperties =
 					{
-	 					onItemChecked: function(item, checked) { Ris.setTag(JSML.create(item, "OrderNoteDetail"), checked ? "true": "false"); },
+	 					onItemChecked: function(item, checked) 
+							{
+								var originalIndex = context.OrderNotes.indexOf(item);
+								context.NotesAcknowledged[originalIndex] = checked;
+								Ris.setTag("NotesAcknowledged", JSML.create(context.NotesAcknowledged, "NotesAcknowledged")); 
+							},
 						showItemCheckBox: function(item) { return item.CanAcknowledge; }
 					};
 
-				// reverse the note so the last note appear first
 				Preview.OrderNotesTable.create($("orderNoteSection"), context.OrderNotes, orderNotesSubsections, true, checkBoxesProperties);
 			}
 			catch(e)

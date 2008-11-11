@@ -127,6 +127,9 @@ namespace ClearCanvas.Ris.Application.Services
                 // sort notes by post-time (guaranteed non-null because only "posted" notes are in this collection)
                 notes.Sort(delegate(OrderNote x, OrderNote y) { return x.PostTime.Value.CompareTo(y.PostTime.Value); });
 
+				// Put most recent notes first
+            	notes.Reverse();
+
                 detail.Notes = CollectionUtils.Map<OrderNote, OrderNoteSummary>(notes,
                     delegate(OrderNote note)
                     {

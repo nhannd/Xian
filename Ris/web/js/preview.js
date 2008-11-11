@@ -591,7 +591,6 @@ Preview.ReportingProceduresTable = function () {
 		 
 	var _formatProcedureReportingStatus = function(procedure)
 	{
-		alert(String.combine(procedure.ProcedureSteps.map(function(step) { return step.StepClassName + " " + step.State.Code; }), "\r\n"));
 		var activeReportingStep = _getActiveReportingStep(procedure);
 		var lastCompletedPublicationStep = _getLastCompletedPublicationStep(procedure);
 
@@ -824,7 +823,7 @@ Preview.OrderNotesTable = function () {
 			htmlTable.renderRow = function(sender, args)
 			{
 				if(args.item.CanAcknowledge)
-					args.htmlRow.className = "highlight";
+					args.htmlRow.className = "attention";
 			};
 		}
 
@@ -841,9 +840,6 @@ Preview.OrderNotesTable = function () {
 			if (!hideHeading)
 				Preview.ProceduresTableHelper.addHeading(parentElement, 'Order Notes');
 
-			// put the most recent note on top
-			notes.reverse();
-			
 			if(subsections)
 			{
 				for(var i = 0; i < subsections.length; i++)
@@ -1159,17 +1155,17 @@ Preview.OrderNoteSection = function() {
 		'<table width="100%" style="{margin:0px}" border="0">'+
 		'	<tr>'+
 		'		<td>From:</td>'+
-		'		<td width="500"><div id="author"></td>'+
-		'		<td width="25"><div id="urgency"></td>'+
-		'		<td width="150"><div id="postDateTime"></td>'+
+		'		<td width="100%"><div id="author"></td>'+
+		'		<td><div id="urgency"></td>'+
+		'		<td NOWRAP><div id="postDateTime"></td>'+
 		'	</tr>'+
 		'	<tr id="acknowledgedRow">'+
-		'		<td valign="top">Acknowledged:</td>'+
-		'		<td colspan="3"><div id="acknowledged"></td>'+
+		'		<td NOWRAP valign="top">Acknowledged By:</td>'+
+		'		<td width="100%" colspan="3"><div id="acknowledged"></td>'+
 		'	</tr>'+
 		'	<tr id="notAcknowledgedRow">'+
-		'		<td class="propertyname" valign="top">Awaiting response:</td>'+
-		'		<td colspan="3"><B><div id="notAcknowledged"></B></td>'+
+		'		<td class="propertyname" valign="top">Waiting For Acknowledgement:</td>'+
+		'		<td width="100%" colspan="3"><B><div id="notAcknowledged"></B></td>'+
 		'	</tr>'+
 		'	<tr>'+
 		'		<td colspan="4"><div id="noteBody"></td>'+

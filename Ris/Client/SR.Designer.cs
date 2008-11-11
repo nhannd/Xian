@@ -1384,6 +1384,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Acknowledge.
+        /// </summary>
+        internal static string TitleAcknowledge {
+            get {
+                return ResourceManager.GetString("TitleAcknowledge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Acknowledge and Post.
+        /// </summary>
+        internal static string TitleAcknowledgeAndPost {
+            get {
+                return ResourceManager.GetString("TitleAcknowledgeAndPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         internal static string TitleAdd {
@@ -1524,6 +1542,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleContactPoints {
             get {
                 return ResourceManager.GetString("TitleContactPoints", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conversation History.
+        /// </summary>
+        internal static string TitleConversationHistory {
+            get {
+                return ResourceManager.GetString("TitleConversationHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Conversation History: select all checkboxes to indicate that you have read and acknowledged the notes.
+        /// </summary>
+        internal static string TitleConversationHistoryWithCheckBoxes {
+            get {
+                return ResourceManager.GetString("TitleConversationHistoryWithCheckBoxes", resourceCulture);
             }
         }
         
@@ -1713,6 +1749,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitlePhoneNumbers {
             get {
                 return ResourceManager.GetString("TitlePhoneNumbers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Post.
+        /// </summary>
+        internal static string TitlePost {
+            get {
+                return ResourceManager.GetString("TitlePost", resourceCulture);
             }
         }
         
