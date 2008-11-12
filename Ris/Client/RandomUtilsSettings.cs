@@ -35,7 +35,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-    [SettingsGroupDescription("Settings that control behaviour of random order utilities.")]
+    [SettingsGroupDescription("Configures behaviour of random order utilities.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class RandomUtilsSettings
     {

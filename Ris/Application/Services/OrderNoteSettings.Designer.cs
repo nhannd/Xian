@@ -24,10 +24,10 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        /// Number of order-note items per page
+        /// For Order Notebox queries, controls number of order-note items per page
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("Number of order-note items per page")]
+        [global::System.Configuration.SettingsDescriptionAttribute("For Order Notebox queries, controls number of order-note items per page")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]
         public int ItemsPerPage {

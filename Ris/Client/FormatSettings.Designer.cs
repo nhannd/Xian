@@ -140,7 +140,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for MRN
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for MRN")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%A %N")]
         public string MrnDefaultFormat {
@@ -149,16 +153,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for Visit Number
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("%A %N")]
-        public string LicenseNumberDefaultFormat {
-            get {
-                return ((string)(this["LicenseNumberDefaultFormat"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for Visit Number")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%A %N")]
         public string VisitNumberDefaultFormat {
@@ -167,7 +166,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for external practitioner contact point
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for external practitioner contact point")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%N (%A ph:%T fx:%F)")]
         public string ExternalPractitionerContactPointDefaultFormat {
@@ -216,7 +219,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for procedures
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for procedures")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%P/%L")]
         public string ProcedurePortableLateralityDefaultFormat {

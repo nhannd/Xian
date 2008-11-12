@@ -2,16 +2,16 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Workflow" GeneratedClassName="ReportingSettings">
   <Profiles />
   <Settings>
-    <Setting Name="AllowMultipleReportingWorkspaces" Type="System.Boolean" Scope="Application">
+    <Setting Name="AllowMultipleReportingWorkspaces" Description="Indicates whether the application allow multiple reporting workspaces to be open at the same time.  This may cause problems if the Report Editor in use depends on singleton resources such as an audio input device." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="EnableTranscriptionWorkflow" Type="System.Boolean" Scope="Application">
+    <Setting Name="EnableTranscriptionWorkflow" Description="Indicates whether Transcription workflow is enabled." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SupervisorStaffTypeFilters" Description="A comma separated list of staff type codes used to determine which staff can be used as a Supervisor" Type="System.String" Scope="Application">
+    <Setting Name="SupervisorStaffTypeFilters" Description="A comma separated list of staff types used to filter the Supervisor lookup field." Type="System.String" Scope="Application">
       <Value Profile="(Default)">PRAD</Value>
     </Setting>
-    <Setting Name="SupervisorID" Type="System.String" Scope="User">
+    <Setting Name="SupervisorID" Description="Stores user default supervisor." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

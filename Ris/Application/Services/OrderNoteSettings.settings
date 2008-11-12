@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Application.Services" GeneratedClassName="OrderNoteSettings">
   <Profiles />
   <Settings>
-    <Setting Name="ItemsPerPage" Description="Number of order-note items per page" Type="System.Int32" Scope="Application">
+    <Setting Name="ItemsPerPage" Description="For Order Notebox queries, controls number of order-note items per page" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">100</Value>
     </Setting>
   </Settings>

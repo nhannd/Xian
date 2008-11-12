@@ -37,10 +37,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// TODO this stuff should be moved into dictionaries, not settings
-    /// </summary>
-    [SettingsGroupDescriptionAttribute("Provides lists of countries and provinces")]
+    [SettingsGroupDescriptionAttribute("Configures the Address Editor component.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class AddressEditorComponentSettings
     {

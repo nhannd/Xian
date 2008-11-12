@@ -36,7 +36,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Ris.Client
 {
 
-    [SettingsGroupDescription("Settings that affect the behaviour of home-pages")]
+    [SettingsGroupDescription("Configures the behaviour of the homepage.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class HomePageSettings
     {

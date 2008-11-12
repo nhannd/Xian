@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Application.Services" GeneratedClassName="WorkingFacilitySettings">
   <Profiles />
   <Settings>
-    <Setting Name="WorkingFacilityCode" Description="The facility code of the facility at which the user is currenlty working" Type="System.String" Scope="User">
+    <Setting Name="WorkingFacilityCode" Description="Stores the facility code of the facility at which the user is currenlty working" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

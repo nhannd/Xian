@@ -34,7 +34,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
-	[SettingsGroupDescription("Stores setting that control which order note folders are visible.")]
+	[SettingsGroupDescription("Configures behaviour of Order Note Conversation component.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class OrderNoteConversationComponentSettings
 	{

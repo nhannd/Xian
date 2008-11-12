@@ -35,8 +35,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Ris.Client
 {
 
-	// TODO add a description of the purpose of the settings group here
-	[SettingsGroupDescription("")]
+	[SettingsGroupDescription("Configures the behaviour of Diagnostic Service lookup fields.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class DiagnosticServiceLookupSettings
 	{

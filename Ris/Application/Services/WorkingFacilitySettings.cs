@@ -36,7 +36,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Ris.Application.Services
 {
 
-    [SettingsGroupDescription("Maintains information about a user's current working facility.")]
+    [SettingsGroupDescription("Stores information about a user's current working facility.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class WorkingFacilitySettings
     {
@@ -46,7 +46,6 @@ namespace ClearCanvas.Ris.Application.Services
         ///</summary>
         public WorkingFacilitySettings()
         {
-            // Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
         }
     }
 }

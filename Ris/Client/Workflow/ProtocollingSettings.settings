@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Workflow" GeneratedClassName="ProtocollingSettings">
   <Profiles />
   <Settings>
-    <Setting Name="DefaultProtocolGroupsXml" Type="System.String" Scope="User">
+    <Setting Name="DefaultProtocolGroupsXml" Description="Stores user default protocol groups." Type="System.String" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-8" ?&gt;&lt;procedure-protocolgroup-defaults&gt;&lt;/procedure-protocolgroup-defaults&gt;</Value>
     </Setting>
-    <Setting Name="SupervisorID" Type="System.String" Scope="User">
+    <Setting Name="SupervisorID" Description="Stores user default supervisor." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

@@ -36,7 +36,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Ris.Application.Services
 {
 
-    [SettingsGroupDescription("Settings that control the behaviour of worklists.")]
+    [SettingsGroupDescription("Configures the behaviour of worklists.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class WorklistSettings
     {

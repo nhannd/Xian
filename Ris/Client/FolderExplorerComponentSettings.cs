@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client
     /// Provides services for storing the folder and folder system structure 
     /// to an XML document, and rebuilding that folder structure from the document.
     /// </summary>
-    [SettingsGroupDescription("Stores the folder structure settings")]
+    [SettingsGroupDescription("Configures folder systems.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class FolderExplorerComponentSettings
     {

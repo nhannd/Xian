@@ -24,10 +24,10 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        /// The facility code of the facility at which the user is currenlty working
+        /// Stores the facility code of the facility at which the user is currenlty working
         /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("The facility code of the facility at which the user is currenlty working")]
+        [global::System.Configuration.SettingsDescriptionAttribute("Stores the facility code of the facility at which the user is currenlty working")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string WorkingFacilityCode {

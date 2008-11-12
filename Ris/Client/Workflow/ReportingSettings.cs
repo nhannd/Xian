@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-    [SettingsGroupDescription("Settings that affect the behaviour of reporting components.")]
+    [SettingsGroupDescription("Configures behaviour of the Reporting component.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class ReportingSettings
     {

@@ -40,7 +40,7 @@ using System.Collections.Generic;
 namespace ClearCanvas.Ris.Client
 {
 
-	[SettingsGroupDescription("Settings that affect behaviour of the order notebox folder system.")]
+	[SettingsGroupDescription("Configures behaviour of the Order Notes folder system.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class OrderNoteboxFolderSystemSettings
 	{

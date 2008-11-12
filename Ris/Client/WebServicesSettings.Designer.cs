@@ -63,7 +63,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Specifies X509 certification validation mode
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies X509 certification validation mode")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PeerOrChainTrust")]
         public global::System.ServiceModel.Security.X509CertificateValidationMode CertificateValidationMode {
@@ -72,7 +76,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Specifies X509 certificate revocation mode
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specifies X509 certificate revocation mode")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("NoCheck")]
         public global::System.Security.Cryptography.X509Certificates.X509RevocationMode RevocationMode {

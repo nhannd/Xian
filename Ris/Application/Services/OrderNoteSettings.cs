@@ -5,7 +5,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Ris.Application.Services
 {
 
-    [SettingsGroupDescription("Settings that control the behaviour of order notes and note-boxes.")]
+    [SettingsGroupDescription("Configures behaviour of order notes and note-boxes.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class OrderNoteSettings
     {

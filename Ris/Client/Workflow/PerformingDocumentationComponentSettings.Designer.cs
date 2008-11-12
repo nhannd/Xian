@@ -38,11 +38,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        /// A comma separated list of staff type codes, used to filter the Assigned Radiolgoist lookup field
+        /// A comma separated list of staff type codes, used to filter the Assigned Radiolgist lookup field
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of staff type codes, used to filter the Assigned Radiolgoi" +
-            "st lookup field")]
+        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of staff type codes, used to filter the Assigned Radiolgis" +
+            "t lookup field")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PRAD, PRAR")]
         public string RadiologistStaffTypeFilters {

@@ -23,7 +23,13 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// Indicates whether the application allow multiple reporting workspaces to be open at the same time.  This may cause problems if the Report Editor in use depends on singleton resources such as an audio input device.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Indicates whether the application allow multiple reporting workspaces to be open " +
+            "at the same time.  This may cause problems if the Report Editor in use depends o" +
+            "n singleton resources such as an audio input device.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool AllowMultipleReportingWorkspaces {
@@ -32,7 +38,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// Indicates whether Transcription workflow is enabled.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Indicates whether Transcription workflow is enabled.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool EnableTranscriptionWorkflow {
@@ -42,11 +52,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
-        /// A comma separated list of staff type codes used to determine which staff can be used as a Supervisor
+        /// A comma separated list of staff types used to filter the Supervisor lookup field.
         /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of staff type codes used to determine which staff can be u" +
-            "sed as a Supervisor")]
+        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of staff types used to filter the Supervisor lookup field." +
+            "")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PRAD")]
         public string SupervisorStaffTypeFilters {
@@ -55,7 +65,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// Stores user default supervisor.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Stores user default supervisor.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string SupervisorID {

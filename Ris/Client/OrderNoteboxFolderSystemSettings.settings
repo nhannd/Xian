@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="OrderNoteboxFolderSystemSettings">
   <Profiles />
   <Settings>
-    <Setting Name="GroupFoldersXml" Description="Stores which group inbox folders are visible" Type="System.String" Scope="User">
+    <Setting Name="GroupFoldersXml" Description="Stores which group inbox folders are visible for each user" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="RefreshTime" Description="Folder refresh time (millisecon" Type="System.Int32" Scope="Application">
+    <Setting Name="RefreshTime" Description="Folder auto-refresh interval (milliseconds)" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">120000</Value>
     </Setting>
   </Settings>

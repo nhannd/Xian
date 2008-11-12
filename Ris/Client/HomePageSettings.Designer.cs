@@ -36,7 +36,12 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Indicates whether homepage will appear automatically when desktop application is started.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Indicates whether homepage will appear automatically when desktop application is " +
+            "started.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool ShowHomepageOnStartUp {
@@ -48,7 +53,12 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Indicates whether user is prevented from closing homepage.  Ignored if ShowHomepageOnStartUp is false.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Indicates whether user is prevented from closing homepage.  Ignored if ShowHomepa" +
+            "geOnStartUp is false.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool PreventHomepageFromClosing {

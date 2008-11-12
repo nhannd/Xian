@@ -23,7 +23,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// Comma separated list of staff types to filter transcriptionist lookup.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Comma separated list of staff types to filter transcriptionist lookup.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("STRA")]
         public string ReportEntryTranscriptionistStaffTypeFilters {
@@ -32,7 +36,11 @@ namespace ClearCanvas.Ris.Client.Workflow {
             }
         }
         
+        /// <summary>
+        /// Comma separated list of staff types to filter Interpreter lookup.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Comma separated list of staff types to filter Interpreter lookup.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("PRAD, PRAR")]
         public string ReportEntryRadiologistStaffTypeFilters {

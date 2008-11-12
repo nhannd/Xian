@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client
 	/// This code is adapted from the Visual Studio generated template code;  the generated code has been removed from the project.  Additional 
 	/// settings need to be manually added to this class.
 	/// </remarks>
-	[SettingsGroupDescription("Provides application settings for all core RIS web content URLs.")]
+	[SettingsGroupDescription("Configures web content URLs.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	public sealed class WebResourcesSettings : global::System.Configuration.ApplicationSettingsBase
 	{
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS")]
-		[global::System.Configuration.SettingsDescription(" Provides base URL for HtmlApplicationComponent web resources.  URL should specify protocol (i.e. http://server, file:///C:/directory, etc.)")]
+		[global::System.Configuration.SettingsDescription("Provides base URL for HtmlApplicationComponent web resources.  URL should specify protocol (i.e. http://server, file:///C:/directory, etc.)")]
 		public string BaseUrl
 		{
 			get
