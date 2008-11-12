@@ -23,7 +23,12 @@ namespace ClearCanvas.Desktop {
             }
         }
         
+        /// <summary>
+        /// Indicates whether exception stack trace is shown in a dialog box.  For security reasons, this should not be enabled in production.
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Indicates whether exception stack trace is shown in a dialog box.  For security r" +
+            "easons, this should not be enabled in production.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool ShowStackTraceInDialog {

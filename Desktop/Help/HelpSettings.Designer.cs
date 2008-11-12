@@ -23,8 +23,13 @@ namespace ClearCanvas.Desktop.Help {
             }
         }
         
+        /// <summary>
+        /// Path to user guide
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Path to user guide")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string UserGuidePath {
             get {
                 return ((string)(this["UserGuidePath"]));

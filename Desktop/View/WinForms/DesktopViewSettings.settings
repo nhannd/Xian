@@ -14,7 +14,7 @@
     <Setting Name="EnableNonPermissibleActions" Description="Controls whether protected actions are enabled in the desktop - this should neve be enabled in a production environment" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="DesktopViewSettingsXml" Type="System.Xml.XmlDocument" Scope="User">
+    <Setting Name="DesktopViewSettingsXml" Description="XML document that stores information about window locations" Type="System.Xml.XmlDocument" Scope="User">
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;desktops /&gt;</Value>
     </Setting>

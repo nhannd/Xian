@@ -5,7 +5,7 @@ using System.Text;
 using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Desktop.Help {
-	[SettingsGroupDescription("Stores the action model settings for each user")]
+	[SettingsGroupDescription("Configures the behaviour of application Help.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	partial class HelpSettings {
 		public HelpSettings()

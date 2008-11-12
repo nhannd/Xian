@@ -33,7 +33,7 @@ using System.Configuration;
 
 namespace ClearCanvas.Desktop
 {
-    [SettingsGroupDescription("Allows configuration of display format of common items such as dates, times, etc.")]
+    [SettingsGroupDescription("Configures display format of common items such as dates, times, etc.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class FormatSettings
     {

@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.Actions
 	/// <summary>
     /// Provides services for storing an action model to an XML document, and rebuilding that action model from the document.
     /// </summary>
-	[SettingsGroupDescription("Stores the action model settings for each user")]
+	[SettingsGroupDescription("Stores the action model document that controls ordering and naming of menus and toolbar items.")]
 	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class ActionModelSettings : IDisposable
     {

@@ -23,7 +23,11 @@ namespace ClearCanvas.Desktop.Actions {
             }
         }
         
+        /// <summary>
+        /// Action model XML document.
+        /// </summary>
         [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Action model XML document.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<action-models />")]
         public global::System.Xml.XmlDocument ActionModelsXml {
