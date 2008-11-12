@@ -78,6 +78,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._text.Size = new System.Drawing.Size(286, 160);
 			this._text.TabIndex = 4;
 			this._text.Value = null;
+			this._text.Enter += new System.EventHandler(this._text_Enter);
+			this._text.Leave += new System.EventHandler(this._text_Leave);
 			// 
 			// _name
 			// 

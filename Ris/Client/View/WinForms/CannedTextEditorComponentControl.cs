@@ -50,5 +50,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			_component.Cancel();
 		}
+
+		private void _text_Enter(object sender, EventArgs e)
+		{
+			this.AcceptButton = null;
+		}
+
+		private void _text_Leave(object sender, EventArgs e)
+		{
+			this.AcceptButton = _acceptButton;
+		}
     }
 }
