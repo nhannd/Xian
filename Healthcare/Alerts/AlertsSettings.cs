@@ -36,8 +36,7 @@ using ClearCanvas.Common.Configuration;
 namespace ClearCanvas.Healthcare.Alerts
 {
 
-    // TODO add a description of the purpose of the settings group here
-    [SettingsGroupDescription("")]
+    [SettingsGroupDescription("Configures the behaviour of Healthcare alerts.")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class AlertsSettings
     {
@@ -50,7 +49,6 @@ namespace ClearCanvas.Healthcare.Alerts
         /// </remarks>
         public AlertsSettings()
         {
-            // Note: server-side settings classes do not register in the ApplicationSettingsRegistry
         }
     }
 }

@@ -23,14 +23,17 @@ namespace ClearCanvas.Healthcare.Alerts {
             }
         }
         
+        /// <summary>
+        /// Comma separated list of language codes that are considered commonly spoken and understood, and hence do not generate a language alert
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Comma separated list of language codes that are considered commonly spoken and un" +
+            "derstood, and hence do not generate a language alert")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("en")]
-        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of spoken language codes used to determine whether the language alert is generated.")]
-        public string DefaultLanguages
-        {
+        public string CommonSpokenLanguages {
             get {
-                return ((string)(this["DefaultLanguages"]));
+                return ((string)(this["CommonSpokenLanguages"]));
             }
         }
     }

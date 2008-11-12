@@ -42,9 +42,9 @@ namespace ClearCanvas.Healthcare.Alerts
         public override AlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
 			AlertsSettings settings = new AlertsSettings();
-            List<string> defaultLanguages = string.IsNullOrEmpty(settings.DefaultLanguages)
+            List<string> defaultLanguages = string.IsNullOrEmpty(settings.CommonSpokenLanguages)
                 ? new List<string>()
-                : new List<string>(settings.DefaultLanguages.Replace(" ", "").Split(','));
+                : new List<string>(settings.CommonSpokenLanguages.Replace(" ", "").Split(','));
 
             if (profile.PrimaryLanguage != null && !defaultLanguages.Contains(profile.PrimaryLanguage.Code))
             {

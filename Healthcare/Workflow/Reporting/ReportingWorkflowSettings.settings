@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Healthcare.Workflow.Reporting" GeneratedClassName="ReportingWorkflowSettings">
   <Profiles />
   <Settings>
-    <Setting Name="PublicationDelay" Description="Scheduling delay (in seconds) applied to report publication following verification." Type="System.UInt32" Scope="Application">
+    <Setting Name="PublicationDelay" Description="Scheduling delay (in seconds) before a report is published following verification." Type="System.UInt32" Scope="Application">
       <Value Profile="(Default)">600</Value>
     </Setting>
   </Settings>

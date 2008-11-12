@@ -2,7 +2,7 @@ using System.Configuration;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
-	[SettingsGroupDescription("Maintains settings related to reporting workflow.")]
+	[SettingsGroupDescription("Configures behaviour of reporting workflow.")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class ReportingWorkflowSettings
 	{
@@ -12,7 +12,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 		///</summary>
 		public ReportingWorkflowSettings()
 		{
-			// Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
 		}
 	}
 }
