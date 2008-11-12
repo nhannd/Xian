@@ -65,6 +65,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _textBox
 			// 
+			this._textBox.AcceptsReturn = true;
 			this._textBox.AllowDrop = true;
 			this._textBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
