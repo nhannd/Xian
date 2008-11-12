@@ -7,15 +7,17 @@ namespace ClearCanvas.Ris.Client
 	{
 		private IDictionary<string, string> _orderExtendedProperties;
 		private DataContractBase _healthcareContext;
-
-		public OrderAdditionalInfoComponent(IDictionary<string, string> orderExtendedProperties)
-		{
-			_orderExtendedProperties = orderExtendedProperties;
-		}
+		private readonly bool _readOnly;
 
 		public OrderAdditionalInfoComponent()
+			: this(false)
+		{
+		}
+
+		public OrderAdditionalInfoComponent(bool readOnly)
 		{
 			_orderExtendedProperties = new Dictionary<string, string>();
+			_readOnly = readOnly;
 		}
 
 		/// <summary>
@@ -53,6 +55,18 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_healthcareContext = value;
+			}
+		}
+
+		protected override string GetTag(string tag)
+		{
+			if (string.Equals("ReadOnly", tag))
+			{
+				return _readOnly ? "true" : "false";
+			}
+			else
+			{
+				return base.GetTag(tag);
 			}
 		}
 	}

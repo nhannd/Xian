@@ -19,7 +19,8 @@
 		<script type="text/javascript" >
 			var data = {};
 			var errorProvider = new ErrorProvider();
-			
+			var canEdit = false;
+
 			function onBodyLoad()
 			{
 				try
@@ -28,6 +29,8 @@
 
 					if(Ris)
 					{
+						canEdit = Ris.getTag("ReadOnly") !== "true";
+
 						var worklistItem = Ris.getHealthcareContext();
 						if (worklistItem == null)
 						{
@@ -82,7 +85,7 @@
 
 			function initVitalsTable()
 			{
-				var weightTable = Table.createTable($("weightTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var weightTable = Table.createTable($("weightTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Weight",
 							cellType: "text",
@@ -104,7 +107,7 @@
 				weightTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				weightTable.bindItems([data.vitals]);
 
-				var heightTable = Table.createTable($("heightTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var heightTable = Table.createTable($("heightTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Height",
 							cellType: "text",
@@ -123,7 +126,7 @@
 				heightTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				heightTable.bindItems([data.vitals]);
 
-				var bloodGlucosLevelTable = Table.createTable($("bloodGlucoseLevelTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var bloodGlucosLevelTable = Table.createTable($("bloodGlucoseLevelTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Blood Glucose Level",
 							cellType: "text",
@@ -142,7 +145,7 @@
 				bloodGlucosLevelTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				bloodGlucosLevelTable.bindItems([data.vitals]);
 
-				var otherVitalsTable = Table.createTable($("otherVitalsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var otherVitalsTable = Table.createTable($("otherVitalsTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Blood Pressure (BP)",
 							cellType: "text",
@@ -175,7 +178,7 @@
 
 			function initPatientScreeningTable()
 			{
-				var drugAllergiesStatusTable = Table.createTable($("drugAllergiesStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var drugAllergiesStatusTable = Table.createTable($("drugAllergiesStatusTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Has allergies?",
 							cellType: "choice",
@@ -189,7 +192,7 @@
 				drugAllergiesStatusTable.bindItems([data.patientScreening]);
 				Field.show($("drugAllergiesSection"), data.patientScreening.allergyStatus == "Yes");
 
-				var drugAllergiesTable = Table.createTable($("drugAllergiesTable"), { editInPlace: true, flow: true, checkBoxes: true },
+				var drugAllergiesTable = Table.createTable($("drugAllergiesTable"), { editInPlace: canEdit, flow: true, checkBoxes: canEdit, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Allergy",
 							cellType: "text",
@@ -198,10 +201,11 @@
 							getError: function(item) { return null; }
 						}
 					]);
+				drugAllergiesTable.initAddDeleteButtons(canEdit, "Delete selected drug allergy?");
 				drugAllergiesTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				drugAllergiesTable.bindItems(data.patientScreening.drugAllergies);
 
-				var renalDiseaseTable = Table.createTable($("renalDiseaseTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var renalDiseaseTable = Table.createTable($("renalDiseaseTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Has renal disease?",
 							cellType: "choice",
@@ -221,7 +225,7 @@
 				renalDiseaseTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				renalDiseaseTable.bindItems([data.patientScreening]);
 
-				var renalDialysisTable = Table.createTable($("renalDialysisTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var renalDialysisTable = Table.createTable($("renalDialysisTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Has renal dialysis?",
 							cellType: "choice",
@@ -242,7 +246,7 @@
 				renalDialysisTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				renalDialysisTable.bindItems([data.patientScreening]);
 
-				var medicationsTable = Table.createTable($("medicationsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var medicationsTable = Table.createTable($("medicationsTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "On ASA or Aspirin x1 week",
 							cellType: "bool",
@@ -273,7 +277,7 @@
 				medicationsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				medicationsTable.bindItems([data.patientScreening]);
 
-				var pregnancyTable = Table.createTable($("pregnancyTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var pregnancyTable = Table.createTable($("pregnancyTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Is patient pregnant?",
 							cellType: "choice",
@@ -315,7 +319,7 @@
 				pregnancyTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				pregnancyTable.bindItems([data.patientScreening]);
 
-				var breastFeedingTable = Table.createTable($("breastFeedingTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var breastFeedingTable = Table.createTable($("breastFeedingTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Breast feeding?",
 							cellType: "choice",
@@ -343,7 +347,7 @@
 				breastFeedingTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				breastFeedingTable.bindItems([data.patientScreening]);
 
-				var sedationTable = Table.createTable($("sedationTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var sedationTable = Table.createTable($("sedationTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Sedation",
 							cellType: "choice",
@@ -385,7 +389,7 @@
 				sedationTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				sedationTable.bindItems([data.patientScreening]);
 
-				var cardiacConditionTable = Table.createTable($("cardiacConditionTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var cardiacConditionTable = Table.createTable($("cardiacConditionTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Has cardiac condition?",
 							cellType: "choice",
@@ -408,7 +412,7 @@
 
 			function initLabResultsTable()
 			{
-				var psaStatusTable = Table.createTable($("psaStatusTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var psaStatusTable = Table.createTable($("psaStatusTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Has psa results?",
 							cellType: "choice",
@@ -422,7 +426,7 @@
 				psaStatusTable.bindItems([data.patientScreening]);
 				Field.show($("psaSection"), data.patientScreening.psaStatus == "Yes");
 
-				var psaTable = Table.createTable($("psaTable"), { editInPlace: true, flow: true, checkBoxes: true },
+				var psaTable = Table.createTable($("psaTable"), { editInPlace: canEdit, flow: true, checkBoxes: canEdit, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Level",
 							cellType: "text",
@@ -443,10 +447,11 @@
 							 getError: function(item) { return null; }
 						}
 					]);
+				psaTable.initAddDeleteButtons(canEdit, "Delete selected PSA level(s)?");
 				psaTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				psaTable.bindItems(data.labResults.psa);
 
-				var otherResultsTable = Table.createTable($("otherResultsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var otherResultsTable = Table.createTable($("otherResultsTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "PT",
 							cellType: "text",
@@ -497,7 +502,7 @@
 
 			function initTranslationTable()
 			{
-				var table = Table.createTable($("translationTable"), { editInPlace: true, flow: true, checkBoxes: false },
+				var table = Table.createTable($("translationTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
 					[
 						{	label: "Translation required?",
 							cellType: "choice",
@@ -531,63 +536,6 @@
 				table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				table.bindItems([data.translation]);
 			}
-
-			//////////////////////////////////////////////////////////////////////////
-			// Button Events Methods
-			function onAddDrugAllergies()
-			{
-				data.patientScreening.drugAllergies.add( {} );   // add an empty item
-			}
-
-			function onDeleteDrugAllergies()
-			{
-				var checkedItems = $("drugAllergiesTable").getCheckedItems();
-				if(checkedItems.length > 0)
-				{
-					if(confirm("Delete selected drug allergies?"))
-					{
-						checkedItems.each(function(item) { data.patientScreening.drugAllergies.remove(item); });
-						$("drugAllergiesCheckAllNone").checked = false;
-					}
-				}
-				else
-				{
-					alert("Nothing selected");
-				}
-			}
-
-			function onDrugAllergiesCheckAllNone()
-			{
-				data.patientScreening.drugAllergies.each(function(item) { $("drugAllergiesTable").setItemCheckState(item, $("drugAllergiesCheckAllNone").checked); });
-			}
-
-			function onAddPSA()
-			{
-				data.labResults.psa.add( {} );   // add an empty item
-			}
-
-			function onDeletePSA()
-			{
-				var checkedItems = $("psaTable").getCheckedItems();
-				if(checkedItems.length > 0)
-				{
-					if(confirm("Delete selected PSA(s)?"))
-					{
-						checkedItems.each(function(item) { data.labResults.psa.remove(item); });
-						$("psaCheckAllNone").checked = false;
-					}
-				}
-				else
-				{
-					alert("Nothing selected");
-				}
-			}
-
-			function onPSACheckAllNone()
-			{
-				data.labResults.psa.each(function(item) { $("psaTable").setItemCheckState(item, $("psaCheckAllNone").checked); });
-			}
-			//////////////////////////////////////////////////////////////////////////
 
 			//////////////////////////////////////////////////////////////////////////
 			// RIS integration API
@@ -650,12 +598,8 @@
 					<tr><td class="tableheading"></td></tr>
 				</table>
 				<div id="drugAllergiesSection">
-					<div class="addDeleteButtons">
-						<input type="button" value="Add" onclick="javascript: onAddDrugAllergies()" />
-						<input type="button" value="Delete" onclick="javascript: onDeleteDrugAllergies()" />
-					</div>
 					<table id="drugAllergiesTable" border="1" width="100%">
-						<tr><td colspan="2"><label><input id="drugAllergiesCheckAllNone" type="checkbox" onclick="javascript: onDrugAllergiesCheckAllNone()" />Select All/None</label></td></tr>
+						<tr><td></td></tr>
 					</table>
 				</div>
 
@@ -697,15 +641,11 @@
 			<div id="LabResults" class="TabPage">
 				<p class="sectionheading">PSA</p>
 				<table id="psaStatusTable"  width="100%">
-				<tr><td class="tableheading"></td></tr>
+					<tr><td class="tableheading"></td></tr>
 				</table>
 				<div id="psaSection">
-					<div class="addDeleteButtons">
-						<input type="button" value="Add" onclick="javascript: onAddPSA()" />
-						<input type="button" value="Delete" onclick="javascript: onDeletePSA()" />
-					</div>
 					<table id="psaTable" border="1" width="100%">
-						<tr><td colspan="2"><label><input id="psaCheckAllNone" type="checkbox" onclick="javascript: onPSACheckAllNone()" />Select All/None</label></td></tr>
+						<tr><td></td></tr>
 					</table>
 				</div>
 

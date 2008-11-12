@@ -223,11 +223,16 @@ a.collapsibleHeading {
 	white-space: wrap;
 }
 
-.readonlyField, .readonlyTextareaField {
+.readonlyField, .readonlyTextareaField, .readonlyFieldEmpty {
 	font-style: italic;
 	padding-top:0.3em;
     padding-bottom:0.18em;
 	white-space: normal;
+}
+
+.readonlyFieldEmpty
+{
+	color: #cccccc;
 }
 
 .readonlyTextareaField {

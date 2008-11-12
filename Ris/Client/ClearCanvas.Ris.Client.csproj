@@ -82,7 +82,6 @@
     <Compile Include="OrderNoteConversationRecipientsSettingsHelper.cs" />
     <Compile Include="MergeComponentBase.cs" />
     <Compile Include="FolderExplorerGroupComponent.cs" />
-    <Compile Include="OrderAdditionalInfoSummaryComponent.cs" />
     <Compile Include="OrderEditorComponent.cs" />
     <Compile Include="OrderListTable.cs" />
     <Compile Include="OrderNoteboxConfigurationComponent.cs" />

@@ -301,16 +301,6 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("reporting/order-additional-info-readonly.htm")]
-		public string OrderAdditionalInfoReadonlyPageUrl
-		{
-			get
-			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["OrderAdditionalInfoReadonlyPageUrl"]));
-			}
-		}
-
 		#endregion
 
 		#region Protocolling Settings

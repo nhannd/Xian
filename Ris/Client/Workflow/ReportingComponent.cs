@@ -375,7 +375,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private PriorReportComponent _priorReportComponent;
 		private ReportingOrderDetailViewComponent _orderComponent;
-		private OrderAdditionalInfoSummaryComponent _additionalInfoComponent;
+		private OrderAdditionalInfoComponent _additionalInfoComponent;
 
 		private List<IReportingPage> _extensionPages;
 		private event EventHandler _worklistItemChanged;
@@ -414,8 +414,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_priorReportComponent = new PriorReportComponent(this.WorklistItem);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
 
-			_additionalInfoComponent = new OrderAdditionalInfoSummaryComponent();
+			_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
 			_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+			_additionalInfoComponent.HealthcareContext = this.WorklistItem;
 			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
 
 			// instantiate all extension pages
@@ -1050,9 +1051,15 @@ namespace ClearCanvas.Ris.Client.Workflow
             _orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 
 			if (orderDetailIsCurrent)
+			{
 				_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+				_additionalInfoComponent.HealthcareContext = this.WorklistItem;
+			}
 			else
+			{
 				_additionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
+				_additionalInfoComponent.HealthcareContext = null;
+			}
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 

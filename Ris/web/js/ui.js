@@ -157,6 +157,8 @@ var Table = {
 		return htmlTable;
 	},
 
+	defaultEmptyOption: { className: "readonlyFieldEmpty", text: "N/A" },
+	
 	// defines the methods that will mix-in to the DOM table object
 	_tableMixIn : {
 
@@ -478,7 +480,14 @@ var Table = {
 			{
 				field = td;
 			}
-			
+
+			if(!value && ["newline", "check", "checkbox", "bool", "boolean"].indexOf(column.cellType) === -1 && this._options.empty)
+			{
+				field.className = this._options.empty.className;
+				Field.setValue(field, this._options.empty.text);
+				return;
+			}
+
 			if (column.cellType == "html")
 			{
 				field.innerHTML = value;
@@ -495,12 +504,12 @@ var Table = {
 			}
 			else if (column.cellType == "readonly")
 			{
-				Field.setPreFormattedValue(field, value || "Not Entered");
+				Field.setPreFormattedValue(field, value);
 			}
 			else if (column.cellType == "textarea")
 			{
 				field.className = "readonlyTextareaField";
-				Field.setPreFormattedValue(field, value || "Not Entered");
+				Field.setPreFormattedValue(field, value);
 			}
 			else if (column.cellType == "link" && column.clickLink)
 			{
@@ -508,15 +517,15 @@ var Table = {
 			}
 			else if (column.cellType == "datetime")
 			{
-				Field.setValue(field, Ris.formatDateTime(value) || "Not Entered");
+				Field.setValue(field, Ris.formatDateTime(value));
 			}
 			else if (column.cellType == "date")
 			{
-				Field.setValue(field, Ris.formatDate(value) || "Not Entered");
+				Field.setValue(field, Ris.formatDate(value));
 			}
 			else if (column.cellType == "time")
 			{
-				Field.setValue(field, Ris.formatTime(value) || "Not Entered");
+				Field.setValue(field, Ris.formatTime(value));
 			}
 			else if (["check", "checkbox", "bool", "boolean"].indexOf(column.cellType) > -1)
 			{
@@ -550,7 +559,7 @@ var Table = {
 			}
 			else
 			{
-				Field.setValue(field, value || "Not Entered");
+				Field.setValue(field, value);
 			}
 
 			var tooltip = this._getColumnTooltip(column, obj);
