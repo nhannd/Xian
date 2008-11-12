@@ -1,7 +1,3 @@
-<!-- This batch file is executed as a postbuild step of the ClearCanvas.Ris.Server.Executable -->
-<!-- project.  It copies all common ClearCanvas files into the appropriate directories, -->
-<!-- then runs a solution specific msbuild proj to copy files specific to that solution. -->
-
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Choose>
@@ -23,52 +19,97 @@
   </Choose>
 
   <PropertyGroup>
-		<TrunkDirectory>$(ProjectDir)\..\..\..</TrunkDirectory>
-		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>
-		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
-		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
-	</PropertyGroup>
+    <!-- The 'ProjectOutDir' property is the default output folder of the project and should not be overridden. -->
+    <ProjectOutDir>$(ProjectDir)\$(OutDir)</ProjectOutDir>
+    <DeletePlugins>true</DeletePlugins>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<DestinationDirectories Include="$(CommonDirectory)" />
-		<DestinationDirectories Include="$(PluginsDirectory)" />
-		<DestinationDirectories Include="$(LogsDirectory)" />
-	</ItemGroup>
-	
-	<!-- Config files, to be placed in distribution directory -->
-	<ItemGroup>
-		<ConfigFiles Include="$(ProjectDir)\Logging.config" />
-	</ItemGroup>
+  <!-- If DistributionDirectory were set directly on the command line, we would be unable to override it.-->
+  <!-- Therefore, DistributionDir is the command line variable, and we set DistributionDirectory based on its value. -->
+  <Choose>
+    <When Condition=" '$(DistributionDir)' == ''">
+      <PropertyGroup>
+        <DistributionDirectory>$(ProjectOutDir)</DistributionDirectory>
+        <DeletePlugins>true</DeletePlugins>
+      </PropertyGroup>
+    </When>
+    <When Condition=" '$(DistributionDir)' != '$(ProjectOutDir)' ">
+      <PropertyGroup>
+        <DistributionDirectory>$(DistributionDir)</DistributionDirectory>
+        <DeletePlugins>false</DeletePlugins>
+      </PropertyGroup>
+    </When>
+  </Choose>
 
-	<!-- Shared library files, to be placed in common directory -->
-	<ItemGroup>
-		<SharedLibraryFiles Include="$(TrunkDirectory)\Common\bin\$(Configuration)\*.*" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\nunit.framework.dll" /> 
-		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\log4net.dll" />
-	</ItemGroup>	
+  <PropertyGroup>
+    <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
+    <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+    <LogDirectory>$(DistributionDirectory)\logs</LogDirectory>
+  </PropertyGroup>
 
-	<Target Name="Copy files">
-		<Message Text="Executing ClearCanvas post-build step" />
+  <ItemGroup>
+    <DestinationDirectories Include="$(DistributionDirectory)" />
+    <DestinationDirectories Include="$(CommonDirectory)" />
+    <DestinationDirectories Include="$(PluginsDirectory)" />
+    <DestinationDirectories Include="$(LogDirectory)" />
+  </ItemGroup>
 
-		<!-- Delete contents of plugin directory -->
-		<Delete Files=".\plugins\*.*" ContinueOnError="true"/>
+  <!-- Config files, to be placed in distribution directory -->
+  <ItemGroup>
+    <ConfigFiles Include="$(ProjectDir)\Logging.config" />
+    <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Ris.Server.Executable.exe.config" />
+  </ItemGroup>
 
-		<!-- Make required directories -->
-		<MakeDir Directories="@(DestinatonDirectories)" ContinueOnError="true"/>
+  <!-- Shared library files, to be placed in common directory -->
+  <ItemGroup>
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\log4net.dll" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <SharedLibraryFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\nunit.framework.dll" />
+  </ItemGroup>
 
-		<!-- Copy shared config files -->
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+  <!-- License files -->
+  <ItemGroup>
+    <LicenseFiles Include="$(ProjectDir)\..\..\..\License.rtf" />
+  </ItemGroup>
 
-		<!-- Copy shared libraries -->
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true"/>
+  <!-- Execution files -->
+  <ItemGroup>
+    <ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Ris.Server.Executable.exe" />
+  </ItemGroup>
+
+  <!-- Plugin files -->
+  <ItemGroup>
+    <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
+  </ItemGroup>
+
+  <Target Name="Copy files">
+
+    <!-- Make required directories -->
+    <MakeDir Directories="@(DestinationDirectories)" ContinueOnError="true" />
+
+    <!-- Delete contents of plugin directory -->
+    <Delete Condition="$(DeletePlugins)" Files="@(PluginDeleteFiles)" ContinueOnError="true" />
+
+    <!-- Copy shared config files -->
+    <Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+
+    <!-- Copy shared libraries -->
+    <Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />
+
+    <!-- Copy license file -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+
+    <!-- Copy execution files -->
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />
 
     <!-- Override the value of TargetPlatform for this task. -->
     <CreateProperty Value="$(BuildPlatform)" Condition=" '$(TargetPlatform)' == '' ">
       <Output TaskParameter="Value" PropertyName="TargetPlatform" />
     </CreateProperty>
 
-		<!-- Run the solution specific build file -->
-		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
-	</Target>
+    <!-- Run the solution specific build file -->
+    <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)" />
+  </Target>
 </Project>

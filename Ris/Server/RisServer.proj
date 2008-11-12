@@ -68,12 +68,15 @@
     </Otherwise>
   </Choose>
 
-  <Target Name="BuildSolution" >
+  <Target Name="Build JScript">
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\..\JScript\Build.proj" Properties="Configuration=$(Configuration);KeyFile=$(KeyFile)"/>
+  </Target>
+
+  <Target Name="BuildSolution" DependsOnTargets="Build JScript" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
     <MSBuild Projects=".\RisServerCodeGen.proj" />
     <MSBuild Projects=".\RisServer.sln" Properties="$(RisServerProperties)" />
-    <MSBuild Projects="..\..\HL7\Server\HL7Server.sln" Properties="$(RisServerProperties)" />
 
   </Target>
 </Project>

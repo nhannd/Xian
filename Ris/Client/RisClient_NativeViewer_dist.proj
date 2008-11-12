@@ -1,20 +1,29 @@
 <Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.FileReplaceText" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\</TrunkDirectory>
-    <RisClientOptions>ExcludeOto+ExcludeEFilmAutomation</RisClientOptions>
-    <ImageViewerOptions>ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</ImageViewerOptions>
+    <DefaultOptions>ExcludeEFilmAutomation+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
   </PropertyGroup>
     
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
     <RisClientBuild>false</RisClientBuild>
+    <ShredHostBuild>false</ShredHostBuild>
     <OtoBuild>true</OtoBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
     <RisClientBuild>true</RisClientBuild>
+    <ShredHostBuild>false</ShredHostBuild>
+    <OtoBuild>false</OtoBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
+    <RisClientBuild>false</RisClientBuild>
+    <ShredHostBuild>true</ShredHostBuild>
     <OtoBuild>false</OtoBuild>
   </PropertyGroup>
 
@@ -29,16 +38,28 @@
   </ItemGroup>
 
   <Target Name="Copy Files">
-    <!-- Run the image viewer build file -->
-    <MSBuild Projects="$(TrunkDirectory)\Ris\Client\RisClient_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(RisClientOptions)" />
 
-    <MSBuild Projects="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(ImageViewerOptions)" />
+    <!-- Override the value of Options for this task. -->
+    <CreateProperty Condition=" '$(Options)' == '' " Value="$(DefaultOptions)" >
+      <Output TaskParameter="Value" PropertyName="Options" />
+    </CreateProperty>
     
-    <!-- Copy ImageViewer plugins -->
-    <Copy SourceFiles="@(ViewerIntegrationFiles)" DestinationFolder="$(PluginsDirectory)" />
+    <!-- Run the image viewer build file -->
+    <MSBuild Condition="!$(ShredHostBuild)"  Projects="$(TrunkDirectory)\Ris\Client\RisClient_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)" />
+
+    <MSBuild Condition="!$(OtoBuild)" Projects="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)" />
+    
+    <!-- Copy integration plugin -->
+    <Copy Condition="!$(ShredHostBuild)"  SourceFiles="@(ViewerIntegrationFiles)" DestinationFolder="$(PluginsDirectory)" />
 
     <!-- Completely replace the app.config because this one is significantly different from the viewer's. -->
     <CombineAppConfigs Condition="$(RisClientBuild)" SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+
+    <RegexIsMatch Pattern="CopyDefaultAEServers" Input="$(Options)" >
+      <Output TaskParameter="IsMatch" PropertyName="CopyDefaultAEServers" />
+    </RegexIsMatch>
+
+    <Copy Condition="$(CopyDefaultAEServers) And !$(OtoBuild)"  SourceFiles="$(MSBuildProjectDirectory)\RisClient_NativeViewer_DicomAEServers.xml" DestinationFiles="$(DistributionDirectory)\DicomAEServers.xml" />
 
   </Target>
   

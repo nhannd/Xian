@@ -125,7 +125,6 @@
   <ItemGroup>
 	<ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
 	<ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
-	<ShredHostAppConfigSourceFiles  Include="$(HL7Directory)\Server\app.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -134,10 +133,6 @@
     <AppConfigSourceFiles Include="$(SolutionDir)\Executable\app.config" />
   </ItemGroup>
 
-  <Target Name="Build JScript">
-    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
-  </Target>
-  
   <Target Name="AppConfigs" Condition="!$(ShredHostBuild)">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Ris.Server.Executable.exe.config" />
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Oto.Executable.exe.config" />
@@ -147,7 +142,7 @@
 	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
   </Target>
 
-  <Target Name="CopyServerFiles" DependsOnTargets="Build JScript">
+  <Target Name="CopyServerFiles" >
 		<!-- Copy Server Distribution files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />

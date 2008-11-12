@@ -38,9 +38,28 @@
 
   <!-- set out some defaults -->
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration>Debug</Configuration>
     <DistributionBuild>false</DistributionBuild>
+    <FullViewer>false</FullViewer>
+    <!-- Default, triceratops options -->
+    <DefaultOptions>CopyDefaultAEServers+ExcludeEFilmAutomation+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
+    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeStudyComposer+ExcludeHelpUpdate</FullViewerOptions>
   </PropertyGroup>
+
+  <Choose>
+    <When Condition="$(FullViewer)">
+      <PropertyGroup>
+        <SolutionConfiguration>$(Configuration) Full Viewer</SolutionConfiguration>
+        <Options>$(FullViewerOptions)</Options>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <SolutionConfiguration>$(Configuration)</SolutionConfiguration>
+        <Options>$(DefaultOptions)</Options>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
 
   <Choose>
     <When Condition="$(DistributionBuild)">
@@ -58,17 +77,21 @@
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <RisClientProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</RisClientProperties>
+        <RisClientProperties>Configuration=$(SolutionConfiguration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(Options);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</RisClientProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <RisClientProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir)</RisClientProperties>
+        <RisClientProperties>Configuration=$(SolutionConfiguration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(Options)</RisClientProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>
 
-  <Target Name="BuildSolution" >
+  <Target Name="Build JScript">
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\..\JScript\Build.proj" Properties="Configuration=$(Configuration);KeyFile=$(KeyFile)"/>
+  </Target>
+
+  <Target Name="BuildSolution" DependsOnTargets="Build JScript">
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
     <MSBuild Projects="RisClient_NativeViewer.sln" Properties="$(RisClientProperties)" />

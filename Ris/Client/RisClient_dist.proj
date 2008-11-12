@@ -118,10 +118,6 @@
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
   </ItemGroup>
 
-  <Target Name="Build JScript">
-    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
-  </Target>
-
   <Target Condition="$(RisClientBuild)" Name="AppConfigs">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
   </Target>
@@ -154,7 +150,7 @@
     <CallTarget Condition="!$(ExcludeEFilmAutomation)" Targets="Copy EFilm Automation Files" />
   </Target>
   
-    <Target Name="CopyClientFiles" DependsOnTargets="Build JScript;AppConfigs;Copy Oto Files;Copy Optional Files">
+    <Target Name="CopyClientFiles" DependsOnTargets="AppConfigs;Copy Oto Files;Copy Optional Files">
 		<!-- Copy Client files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		

@@ -1,5 +1,23 @@
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<Choose>
+  <PropertyGroup>
+    <DistributionBuild>false</DistributionBuild>
+    <Configuration>Debug</Configuration>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
+      <PropertyGroup>
+        <CommonProperties>Configuration=$(Configuration);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</CommonProperties>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <CommonProperties>Configuration=$(Configuration)</CommonProperties>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <Choose>
 		<When Condition=" '$(Configuration)' == 'Debug' ">
 			<PropertyGroup>
 				<EmitDebugInformation>/debug+</EmitDebugInformation>
@@ -13,6 +31,7 @@
 	</Choose>
 	<Target Name="Build" Inputs="ClearCanvas.Jscript.js; ..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" Outputs="bin\$(Configuration)\ClearCanvas.Jscript.dll">
 		<MakeDir Directories="bin\$(Configuration)" Condition="!Exists('bin\$(Configuration)')" />
-		<Exec Command="jsc $(EmitDebugInformation) /t:library /lib:..\Common\bin\$(Configuration) /out:bin\$(Configuration)\ClearCanvas.Jscript.dll ClearCanvas.Jscript.js"/>
+    <MSBuild Projects="..\Common\ClearCanvas.Common.csproj" Properties="$(CommonProperties)" />
+    <Exec Command="jsc $(EmitDebugInformation) /t:library /lib:..\Common\bin\$(Configuration) /out:bin\$(Configuration)\ClearCanvas.Jscript.dll ClearCanvas.Jscript.js"/>
 	</Target>
 </Project>
