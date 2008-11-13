@@ -407,7 +407,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private readonly object _uriLocksSync = new object();
 			private readonly List<UriLock> _uriLocks;
 
-			[ThreadStatic] private IDicomPersistentStoreValidator _persistentStoreValidator;
+			[ThreadStatic]
+			private static IDicomPersistentStoreValidator _persistentStoreValidator;
 
 			#endregion
 
