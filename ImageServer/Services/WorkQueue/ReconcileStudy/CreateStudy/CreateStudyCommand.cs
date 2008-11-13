@@ -44,7 +44,6 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 {
@@ -324,7 +323,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                       
             String destPath = destStudyStorage.FilesystemPath;
             String extension = ".dcm";
-            bool dupImage = false;
 
             ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor");
             processor.AddCommand(new CreateDirectoryCommand(destPath));

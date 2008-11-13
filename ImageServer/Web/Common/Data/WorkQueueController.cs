@@ -332,6 +332,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             columns.ScheduledTime = newScheduledTime;
             columns.ExpirationTime = expirationTime;
 
+
             bool result = true;
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -343,9 +344,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     if (!workQueueBroker.Update(item.Key, columns))
                     {
                         result = false;
-                        break;
-                        
+                        break;                        
                     }
+
+                	WorkQueueUidSelectCriteria uidCritiera = new WorkQueueUidSelectCriteria();
+                	uidCritiera.WorkQueueKey.EqualTo(item.Key);
+
+					WorkQueueUidUpdateColumns uidColumns = new WorkQueueUidUpdateColumns();
+					uidColumns.Failed = false;
+
+                	IWorkQueueUidEntityBroker workQueueUidBroker = ctx.GetBroker<IWorkQueueUidEntityBroker>();
+                	workQueueUidBroker.Update(uidCritiera, uidColumns);
                 }
 
                 if (result)
