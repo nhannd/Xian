@@ -277,7 +277,7 @@
     <Compile Include="ServiceModel\Streaming\IHeaderStreamingService.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingClient.cs" />
     <Compile Include="ServiceModel\Streaming\StreamingResultMetaData.cs" />
-    <Compile Include="Utilities\Anonymization\DicomAnonymizerOptions.cs" />
+    <Compile Include="Utilities\Anonymization\ValidationStrategy.cs" />
     <Compile Include="Utilities\StudyBuilder\DicomConverter.cs" />
     <Compile Include="Utilities\StudyBuilder\IUidCollection.cs" />
     <Compile Include="Utilities\StudyBuilder\PatientNode.cs" />

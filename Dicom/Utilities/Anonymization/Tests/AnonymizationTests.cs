@@ -123,12 +123,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestStrict()
 		{
 			DicomFile file = CreateTestFile();
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = DicomAnonymizerOptions.RelaxAllChecks;
+			anonymizer.ValidationOptions = ValidationOptions.RelaxAllChecks;
 
 			try
 			{
@@ -141,7 +141,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			}
 
 			anonymizer = new DicomAnonymizer();
-			Assert.IsTrue(anonymizer.Options == DicomAnonymizerOptions.Default); //strict by default
+			Assert.IsTrue(anonymizer.ValidationOptions == ValidationOptions.Default); //strict by default
 
 			//should throw.
 			anonymizer.Anonymize(CreateTestFile());
@@ -153,7 +153,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			Initialize();
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = DicomAnonymizerOptions.RelaxAllChecks;
+			anonymizer.ValidationOptions = ValidationOptions.RelaxAllChecks;
 			anonymizer.Anonymize(_file);
 
 			AfterAnonymize(new StudyData(), new SeriesData());
@@ -196,7 +196,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidatePatientIdNotEqual()
 		{
 			Initialize();
@@ -211,7 +211,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidatePatientIdNotEmpty() {
 			Initialize();
 
@@ -233,13 +233,13 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			studyPrototype.PatientId = "";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = DicomAnonymizerOptions.AllowEmptyPatientId;
+			anonymizer.ValidationOptions = ValidationOptions.AllowEmptyPatientId;
 			anonymizer.StudyDataPrototype = studyPrototype;
 			anonymizer.Anonymize(_file);
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidatePatientsNameNotEqual()
 		{
 			Initialize();
@@ -254,7 +254,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidatePatientsNameNotEmpty() {
 			Initialize();
 
@@ -276,13 +276,13 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			studyPrototype.PatientsNameRaw = "";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = DicomAnonymizerOptions.AllowEmptyPatientName;
+			anonymizer.ValidationOptions = ValidationOptions.AllowEmptyPatientName;
 			anonymizer.StudyDataPrototype = studyPrototype;
 			anonymizer.Anonymize(_file);
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidateAccessionNotEqual()
 		{
 			Initialize();
@@ -297,7 +297,7 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidatePatientsBirthDateNotEqual()
 		{
 			Initialize();
@@ -320,13 +320,13 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization.Tests
 			studyPrototype.PatientsBirthDateRaw = "19760810";
 
 			DicomAnonymizer anonymizer = new DicomAnonymizer();
-			anonymizer.Options = DicomAnonymizerOptions.AllowEqualBirthDate;
+			anonymizer.ValidationOptions = ValidationOptions.AllowEqualBirthDate;
 			anonymizer.StudyDataPrototype = studyPrototype;
 			anonymizer.Anonymize(_file);
 		}
 
 		[Test]
-		[ExpectedException(typeof(DicomAnonymizerException))]
+		[ExpectedException(typeof(DicomAnonymizerValidationException))]
 		public void TestValidateStudyIdNotEqual()
 		{
 			Initialize();

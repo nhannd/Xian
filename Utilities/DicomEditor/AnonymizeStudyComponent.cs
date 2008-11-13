@@ -30,11 +30,15 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Dicom.Utilities.Anonymization;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -52,73 +56,152 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[AssociateView(typeof(AnonymizeStudyComponentViewExtensionPoint))]
 	public class AnonymizeStudyComponent : ApplicationComponent
 	{
-		private readonly StudyItem _studyItem;
+		private class ValidateAnonymizationRule : IValidationRule
+		{
+			private readonly AnonymizeStudyComponent _parent;
+			private readonly string _property;
+			private readonly ValidationFailureReason _validationReason;
 
-		private string _patientsName;
-		private string _patientId;
-		private string _accessionNumber;
-		private string _studyDescription;
-		private DateTime? _dateOfBirth;
-		private DateTime? _studyDate;
+			public ValidateAnonymizationRule(AnonymizeStudyComponent parent, string property, ValidationFailureReason validationReason)
+			{
+				_parent = parent;
+				_property = property;
+				_validationReason = validationReason;
+			}
+
+			#region IValidationRule Members
+
+			public string PropertyName
+			{
+				get { return _property; }
+			}
+
+			public ValidationResult GetResult(IApplicationComponent component)
+			{
+				ReadOnlyCollection<ValidationFailureDescription> failures = _parent.GetValidationFailures();
+				foreach (ValidationFailureDescription failure in failures)
+				{
+					if (failure.PropertyName == _property && _validationReason == failure.Reason)
+					{
+						if (failure.Reason == ValidationFailureReason.EmptyValue)
+							return new ValidationResult(false, "The value cannot be empty.");
+						else
+							return new ValidationResult(false, "The value conflicts with the original value.");
+					}
+				}
+
+				return new ValidationResult(true, "");
+			}
+
+			#endregion
+		}
+
+		private readonly StudyData _original;
+		private readonly StudyData _anonymized;
+		private readonly DicomAnonymizer.ValidationStrategy _validator;
+
 		private bool _preserveSeriesData;
 
 		internal AnonymizeStudyComponent(StudyItem studyItem)
 		{
-			_studyItem = studyItem;
+			_original = new StudyData();
+			_original.AccessionNumber = studyItem.AccessionNumber;
+			_original.PatientsName = studyItem.PatientsName;
+			_original.PatientId = studyItem.PatientId;
+			_original.StudyDescription = studyItem.StudyDescription;
+			_original.PatientsBirthDateRaw = studyItem.PatientsBirthDate;
+			_original.StudyDateRaw = studyItem.StudyDate;
+
+			_anonymized = _original.Clone();
+
+			_validator = new DicomAnonymizer.ValidationStrategy();
 		}
 
-		[ValidateNotNull(Message = "MessagePatientsNameCannotBeEmpty")]
+		internal StudyData OriginalData
+		{
+			get { return _original; }	
+		}
+
+		internal StudyData AnonymizedData
+		{
+			get { return _anonymized; }
+		}
+
 		public string PatientsName
 		{
-			get { return _patientsName; }
+			get { return _anonymized.PatientsNameRaw; }
 			set
 			{
-				if (_patientsName == value)
+				if (_anonymized.PatientsNameRaw == value)
 					return;
-				
-				_patientsName = value;
+
+				_anonymized.PatientsNameRaw = value;
 				NotifyPropertyChanged("PatientsName");
 			}
 		}
 
-		[ValidateNotNull(Message = "MessagePatientIdCannotBeEmpty")]
 		public string PatientId
 		{
-			get { return _patientId; }
+			get { return _anonymized.PatientId; }
 			set
 			{
-				if (_patientId == value)
+				if (_anonymized.PatientId == value)
 					return;
 
-				_patientId = value;
+				_anonymized.PatientId = value;
 				NotifyPropertyChanged("PatientId");
 			}
 		}
 
-		//[ValidateNotNull(Message = "MessageAccessionNumberCannotBeEmpty")]
 		public string AccessionNumber
 		{
-			get { return _accessionNumber; }
+			get { return _anonymized.AccessionNumber; }
 			set
 			{
-				if (_accessionNumber == value)
+				if (_anonymized.AccessionNumber == value)
 					return;
 
-				_accessionNumber = value;
+				_anonymized.AccessionNumber = value;
 				NotifyPropertyChanged("AccessionNumber");
 			}
 		}
 
 		public string StudyDescription
 		{
-			get { return _studyDescription; }
+			get { return _anonymized.StudyDescription; }
 			set
 			{
-				if (_studyDescription == value)
+				if (_anonymized.StudyDescription == value)
 					return;
 
-				_studyDescription = value;
+				_anonymized.StudyDescription = value;
 				NotifyPropertyChanged("StudyDescription");
+			}
+		}
+
+		public DateTime? StudyDate
+		{
+			get { return _anonymized.StudyDate; }
+			set
+			{
+				if (_anonymized.StudyDate == value)
+					return;
+
+				_anonymized.StudyDate = value;
+				NotifyPropertyChanged("StudyDate");
+			}
+		}
+
+		public DateTime? PatientsBirthDate
+		{
+			get { return _anonymized.PatientsBirthDate; }
+			set
+			{
+				if (_anonymized.PatientsBirthDate == value)
+					return;
+
+				_anonymized.PatientsBirthDate = value;
+				NotifyPropertyChanged("PatientsBirthDate");
 			}
 		}
 
@@ -135,50 +218,35 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 		}
 
-		public DateTime? StudyDate
-		{
-			get { return _studyDate; }
-			set
-			{
-				if (_studyDate == value)
-					return;
-
-				_studyDate = value;
-				NotifyPropertyChanged("StudyDate");
-			}
-		}
-	
-		public DateTime? DateOfBirth
-		{
-			get { return _dateOfBirth; }
-			set
-			{
-				if (_dateOfBirth == value)
-					return;
-
-				_dateOfBirth = value;
-				NotifyPropertyChanged("DateOfBirth");
-			}
-		}
-
 		public override void Start()
 		{
-			_patientsName = "Patient^Anonymous";
-			_patientId = "PatientId";
-			_patientId = "12345";
-			_studyDate = Platform.Time;
-			_accessionNumber = "A12345";
-			_studyDescription = _studyItem.StudyDescription;
+			_anonymized.PatientsNameRaw = "Patient^Anonymous";
+			_anonymized.PatientId = "12345";
+			_anonymized.StudyDate = Platform.Time;
+			_anonymized.AccessionNumber = "A12345";
 			_preserveSeriesData = true;
 
-			_dateOfBirth = DateParser.Parse(_studyItem.PatientsBirthDate);
-			if (_dateOfBirth != null)
+			if (_anonymized.PatientsBirthDate != null)
 			{
-				_dateOfBirth = new DateTime(_dateOfBirth.Value.Year, 1, 1, 0, 0, 0);
-				_dateOfBirth = _dateOfBirth.Value.AddDays(TimeSpan.FromDays(new Random().Next(0, 364)).Days);
+				_anonymized.PatientsBirthDate = new DateTime(_anonymized.PatientsBirthDate.Value.Year, 1, 1, 0, 0, 0);
+				_anonymized.PatientsBirthDate = _anonymized.PatientsBirthDate.Value.AddDays(TimeSpan.FromDays(new Random().Next(0, 364)).Days);
 			}
 
 			base.Start();
+
+			base.Validation.Add(new ValidateAnonymizationRule(this, "PatientId", ValidationFailureReason.EmptyValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "PatientsName", ValidationFailureReason.EmptyValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "AccessionNumber", ValidationFailureReason.EmptyValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "StudyDescription", ValidationFailureReason.EmptyValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "StudyDate", ValidationFailureReason.EmptyValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "PatientsBirthDate", ValidationFailureReason.EmptyValue));
+
+			base.Validation.Add(new ValidateAnonymizationRule(this, "PatientId", ValidationFailureReason.ConflictingValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "PatientsName", ValidationFailureReason.ConflictingValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "AccessionNumber", ValidationFailureReason.ConflictingValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "StudyDescription", ValidationFailureReason.ConflictingValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "StudyDate", ValidationFailureReason.ConflictingValue));
+			base.Validation.Add(new ValidateAnonymizationRule(this, "PatientsBirthDate", ValidationFailureReason.ConflictingValue));
 		}
 
 		public void Accept()
@@ -199,5 +267,10 @@ namespace ClearCanvas.Utilities.DicomEditor
 			this.ExitCode = ApplicationComponentExitCode.None;
 			this.Host.Exit();
 		}
-	}
+
+		private ReadOnlyCollection<ValidationFailureDescription> GetValidationFailures()
+		{
+			return _validator.GetValidationFailures(_original, _anonymized);
+		}
+	}	
 }

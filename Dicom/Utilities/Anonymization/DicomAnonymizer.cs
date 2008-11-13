@@ -31,22 +31,42 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.Dicom.Utilities.Anonymization
 {
 	/// <summary>
 	/// Exception thrown by <see cref="DicomAnonymizer"/>.
 	/// </summary>
-	public sealed class DicomAnonymizerException : DicomException
+	public class DicomAnonymizerException : DicomException
 	{
 		internal DicomAnonymizerException(string message, Exception innerException)
 			: base(message, innerException) {}
 
 		internal DicomAnonymizerException(string message)
 			: base(message) {}
+	}
+
+	/// <summary>
+	/// Exception thrown when validation failures occur in <see cref="DicomAnonymizer"/>.
+	/// </summary>
+	public class DicomAnonymizerValidationException : DicomAnonymizerException
+	{
+		internal DicomAnonymizerValidationException(string message, Exception innerException, ReadOnlyCollection<ValidationFailureDescription> validationFailures)
+			: base(message, innerException)
+		{
+			ValidationFailures = validationFailures;
+		}
+
+		internal DicomAnonymizerValidationException(string message, ReadOnlyCollection<ValidationFailureDescription> validationFailures)
+			: base(message)
+		{
+			ValidationFailures = validationFailures;
+		}
+
+		public readonly ReadOnlyCollection<ValidationFailureDescription> ValidationFailures;
 	}
 
 	/// <summary>
@@ -94,13 +114,13 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		private readonly Dictionary<string, SeriesData> _anonymizedSeriesDataMap = new Dictionary<string, SeriesData>();
 		private readonly Dictionary<string, string> _uidMap = new Dictionary<string, string>();
 
+		private readonly ValidationStrategy _validationStrategy;
+
 		private StudyData _studyDataPrototype;
 		private SeriesData _seriesDataPrototype;
 
 		private AnonymizeStudyDataDelegate _anonymizeStudyDataDelegate;
 		private AnonymizeSeriesDataDelegate _anonymizeSeriesDataDelegate;
-
-		private DicomAnonymizerOptions _options = DicomAnonymizerOptions.Default;
 
 		private DicomFile _currentFile;
 		private DateTime? _oldStudyDate;
@@ -116,17 +136,20 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public DicomAnonymizer() {}
+		public DicomAnonymizer()
+		{
+			_validationStrategy = new ValidationStrategy();
+		}
 
 		#region Public Properties
 
 		/// <summary>
-		/// Gets or sets the option flags in use by this DicomAnonymizer.
+		/// Gets or sets the validation options.
 		/// </summary>
-		public DicomAnonymizerOptions Options
+		public ValidationOptions ValidationOptions
 		{
-			get { return _options; }
-			set { _options = value; }
+			get { return _validationStrategy.Options; }
+			set { _validationStrategy.Options = value; }
 		}
 
 		/// <summary>
@@ -252,11 +275,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				anonymizedSeriesData.SaveTo(_currentFile);
 				anonymizedStudyData.SaveTo(_currentFile);
 			}
+			catch(DicomAnonymizerException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
-				if (e is DicomAnonymizerException)
-					throw;
-
 				throw new DicomAnonymizerException("An unexpected error has occurred.", e);
 			}
 			finally
@@ -293,8 +317,12 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 
 				// generate the new study uid
 				anonymizedData.StudyInstanceUid = DicomUid.GenerateUid().UID;
+				if (String.IsNullOrEmpty(anonymizedData.StudyInstanceUid) || anonymizedData.StudyInstanceUid == originalData.StudyInstanceUid)
+					throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
 
-				ValidateAnonymizedStudyData(originalData, anonymizedData, _options);
+				ReadOnlyCollection<ValidationFailureDescription> failures = _validationStrategy.GetValidationFailures(originalData, anonymizedData);
+				if (failures.Count > 0)
+					throw new DicomAnonymizerValidationException("At least one validation failure has occurred.", failures);
 
 				_uidMap[originalData.StudyInstanceUid] = anonymizedData.StudyInstanceUid;
 
@@ -313,38 +341,6 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				return _anonymizeStudyDataDelegate(original.Clone());
 			else
 				return StudyDataPrototype.Clone();
-		}
-
-		private void ValidateAnonymizedStudyData(StudyData originalData, StudyData anonymizedData, DicomAnonymizerOptions options)
-		{
-			ValidateNotEmpty(anonymizedData.StudyInstanceUid, "StudyInstanceUid");
-			ValidateNotEqual(originalData.StudyInstanceUid, anonymizedData.StudyInstanceUid, "StudyInstanceUid");
-			ValidatePatientNamesNotEqual(originalData.PatientsName, anonymizedData.PatientsName);
-			ValidateNotEqual(originalData.PatientId, anonymizedData.PatientId, "PatientId");
-			ValidateNotEqual(originalData.AccessionNumber, anonymizedData.AccessionNumber, "AccessionNumber");
-			ValidateNotEqual(originalData.StudyId, anonymizedData.StudyId, "StudyId");
-
-			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEqualBirthDate))
-				ValidateNotEqual(originalData.PatientsBirthDateRaw, anonymizedData.PatientsBirthDateRaw, "PatientsBirthDateRaw");
-			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyPatientId))
-				ValidateNotEmpty(anonymizedData.PatientId, "PatientId");
-			if (!IsOptionSet(options, DicomAnonymizerOptions.AllowEmptyPatientName))
-				ValidateNotEmpty(anonymizedData.PatientsName, "PatientsName");
-		}
-
-		private static void ValidatePatientNamesNotEqual(PersonName original, PersonName anonymized)
-		{
-			ValidatePatientNamesNotEqual(original.SingleByte, anonymized.SingleByte, "SingleByte");
-			ValidatePatientNamesNotEqual(original.Ideographic, anonymized.Ideographic, "Ideographic");
-			ValidatePatientNamesNotEqual(original.Phonetic, anonymized.Phonetic, "Phonetic");
-		}
-
-		private static void ValidatePatientNamesNotEqual(ComponentGroup original, ComponentGroup anonymized, string description)
-		{
-			//may not have the same family, given, or middle name
-			ValidateNotEqual(original.FamilyName, anonymized.FamilyName, description + "FamilyName");
-			ValidateNotEqual(original.GivenName, anonymized.GivenName, description + "GivenName");
-			ValidateNotEqual(original.MiddleName, anonymized.MiddleName, description + "MiddleName");
 		}
 
 		private SeriesData GetAnonymizedSeriesData()
@@ -366,9 +362,13 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				anonymizedData = GetAnonymizedSeriesData(originalData);
 
 				anonymizedData.SeriesInstanceUid = DicomUid.GenerateUid().UID; // generate the series uid
+				if (String.IsNullOrEmpty(anonymizedData.SeriesInstanceUid) || anonymizedData.SeriesInstanceUid == originalData.SeriesInstanceUid)
+					throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
 
-				ValidateAnonymizedSeriesData(originalData, anonymizedData, _options);
-
+				ReadOnlyCollection<ValidationFailureDescription> failures = _validationStrategy.GetValidationFailures(originalData, anonymizedData);
+				if (failures.Count > 0)
+					throw new DicomAnonymizerValidationException("At least one validation failure has occurred.", failures);
+					
 				_uidMap[originalData.SeriesInstanceUid] = anonymizedData.SeriesInstanceUid;
 
 				_anonymizedSeriesDataMap[originalSeriesInstanceUid] = anonymizedData;
@@ -385,19 +385,16 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 				return SeriesDataPrototype.Clone();
 		}
 
-		private static void ValidateAnonymizedSeriesData(SeriesData originalData, SeriesData anonymizedData, DicomAnonymizerOptions options)
-		{
-			ValidateNotEmpty(anonymizedData.SeriesInstanceUid, "SeriesInstanceUid");
-			ValidateNotEqual(originalData.SeriesInstanceUid, anonymizedData.SeriesInstanceUid, "SeriesInstanceUid");
-		}
-
 		private void Anonymize()
 		{
 			string oldUid = _currentFile.DataSet[DicomTags.SopInstanceUid].ToString();
+			if (string.IsNullOrEmpty(oldUid))
+				throw new DicomAnonymizerException("The SopInstanceUid of the source file cannot be empty.");
+
 			string newUid = DicomUid.GenerateUid().UID;
 
-			ValidateNotEmpty(newUid, "SopInstanceUid");
-			ValidateNotEqual(oldUid, newUid, "SopInstanceUid");
+			if (String.IsNullOrEmpty(newUid) || newUid == oldUid)
+				throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
 
 			if (_newStudyDate != null)
 			{
@@ -489,8 +486,8 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 					else
 					{
 						newUid = DicomUid.GenerateUid().UID;
-						ValidateNotEmpty(newUid, "RemappedUid");
-						ValidateNotEqual(oldUid, newUid, "RemappedUid");
+						if (String.IsNullOrEmpty(newUid) || newUid == oldUid)
+							throw new DicomAnonymizerException("An error occurred while generating a new Uid.");
 
 						_uidMap[oldUid] = newUid;
 					}
@@ -561,21 +558,6 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 			return originalDate.Value.ToString(DateParser.DicomDateFormat);
 		}
 
-		private static void ValidateNotEmpty(string value, string name)
-		{
-			if (String.IsNullOrEmpty(value))
-				throw new DicomAnonymizerException(String.Format("The value cannot be empty: {0}", name));
-		}
-
-		private static void ValidateNotEqual(string original, string anonymized, string name)
-		{
-			if (String.IsNullOrEmpty(original) && String.IsNullOrEmpty(anonymized))
-				return;
-
-			if (String.Compare(original ?? "", anonymized ?? "", true) == 0)
-				throw new DicomAnonymizerException(String.Format("The anonymized value cannot be unchanged from the original: {0}", name));
-		}
-
 		private static bool IsAttributeToRemove(DicomAttribute attribute)
 		{
 			return IsPrivateAttribute(attribute) || TagsToRemove.Contains(attribute.Tag.TagValue);
@@ -599,11 +581,6 @@ namespace ClearCanvas.Dicom.Utilities.Anonymization
 		private static bool IsDateTimeAttributeToAdjust(DicomAttribute attribute)
 		{
 			return DateTimeTagsToAdjust.Contains(attribute.Tag.TagValue);
-		}
-
-		private static bool IsOptionSet(DicomAnonymizerOptions options, DicomAnonymizerOptions flag)
-		{
-			return (options & flag) == flag;
 		}
 
 		private static IEnumerable<DicomAttributeCollection> GetSubCollections(DicomAttribute attribute)

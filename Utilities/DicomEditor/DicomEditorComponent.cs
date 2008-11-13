@@ -351,7 +351,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             _dirtyFlags = new List<bool>();
 
 			_anonymizer = new DicomAnonymizer();
-        	_anonymizer.Options = DicomAnonymizerOptions.RelaxAllChecks;
+        	_anonymizer.ValidationOptions = ValidationOptions.RelaxAllChecks;
         }
 
         public ActionModelRoot ToolbarModel

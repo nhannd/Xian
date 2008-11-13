@@ -315,7 +315,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 			if (doAnonymize)
 			{
 				DicomAnonymizer anonymizer = new DicomAnonymizer();
-				anonymizer.Options = DicomAnonymizerOptions.RelaxAllChecks;
+				anonymizer.ValidationOptions = ValidationOptions.RelaxAllChecks;
 
 				count = sops.Count;
 				now = 0;

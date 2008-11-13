@@ -135,16 +135,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 				if (numberOfSops <= 0)
 					return;
 
-				StudyData studyData = new StudyData();
-				studyData.PatientId = _component.PatientId;
-				studyData.PatientsNameRaw = _component.PatientsName;
-				studyData.PatientsBirthDate = _component.DateOfBirth;
-				studyData.AccessionNumber = _component.AccessionNumber;
-				studyData.StudyDescription = _component.StudyDescription;
-				studyData.StudyDate = _component.StudyDate;
-
 				DicomAnonymizer anonymizer = new DicomAnonymizer();
-				anonymizer.StudyDataPrototype = studyData;
+				anonymizer.StudyDataPrototype = _component.AnonymizedData;
 
 				if (_component.PreserveSeriesData)
 				{
