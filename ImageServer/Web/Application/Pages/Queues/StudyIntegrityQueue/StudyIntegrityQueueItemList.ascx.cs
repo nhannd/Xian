@@ -120,7 +120,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 				IList<Model.StudyIntegrityQueue> queueItems = new List<Model.StudyIntegrityQueue>();
                 for(int i=0; i<rows.Length; i++)
                 {
-                    queueItems.Add(Items[rows[i]].TheStudyIntegrityQueueItem);
+                    if (rows[i] < Items.Count)
+                    {
+                        queueItems.Add(Items[rows[i]].TheStudyIntegrityQueueItem);
+                    }
                 }
 
                 return queueItems;

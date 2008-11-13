@@ -75,21 +75,20 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientAge" runat="server" ReadOnly="true" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox"></ccUI:TextBox>
+                                        <ccUI:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox"></ccUI:TextBox>
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientAgeHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientAgeHelp"
-                                                        ValidationExpression="^[^-]" Text="Patient Age may not be negative" IgnoreEmptyValue="true" Display="None">
+                                                        ValidationExpression="^[^-][0-9]+" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
                                     </table>
                                 </td>
                             </tr>
                         </table>
-                        <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" OnClientDateSelectionChanged="changeAge" 
-                            CssClass="Calendar">
+                        <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" CssClass="Calendar">
                         </ccUI:CalendarExtender>
                     </ContentTemplate>
                     <HeaderTemplate>

@@ -76,6 +76,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             Model.StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
 
+            //Ignore the reconcile command if the item is null.
+            if (item == null) return;
+
 			// Preload the change description so its not done during the DB transaction
 			XmlDocument changeDescription = new XmlDocument();
 			changeDescription.LoadXml(command);

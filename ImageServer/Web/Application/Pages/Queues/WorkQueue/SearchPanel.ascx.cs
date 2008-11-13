@@ -83,7 +83,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             base.OnInit(e);
 
-
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
 
             // setup child controls
@@ -147,12 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected void Page_Load(object sender, EventArgs e)
         {
             // Setup the calendar for schedule date
-            if (!Page.IsPostBack)
-            {
-                // first time load
-                ScheduleCalendarExtender.SelectedDate = DateTime.Today;
-            }
-            else
+            if (Page.IsPostBack)
             {
                 ScheduleDate.Text = Request[ScheduleDate.UniqueID];
                 if (!String.IsNullOrEmpty(ScheduleDate.Text))

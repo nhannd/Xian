@@ -59,23 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                          " return false;";
 
             ClearPatientBirthDateButton.OnClientClick = "document.getElementById('" + PatientBirthDate.ClientID +
-                                                        "').value='';" +
-                                                        "document.getElementById('" + PatientAge.ClientID +
                                                         "').value=''; return false;";
-
-            Page.ClientScript.RegisterStartupScript(GetType(), "changeAge", @"function changeAge() {" +
-                                                                            "var today=new Date();" +
-                                                                            "var birthDate=new Date(document.getElementById('" + PatientBirthDate.ClientID + "').value);" +
-                                                                            "var diff=today-birthDate;" +
-                                                                            "diff=Math.round(diff/1000/60/60/24);" +
-                                                                            "if(diff < 365) { " +
-                                                                            "var iMonths = Math.round(diff/30);" +
-                                                                            "if(iMonths < 12 && iMonths > 0) { " +
-                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=iMonths + ' Month(s)'; " +
-                                                                            "} else { " +
-                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=diff + ' Day(s)'; " +
-                                                                            "} } else { var iYear = Math.floor(diff/365);" +
-                                                                            "document.getElementById('" + PatientAge.ClientID + "').value=iYear + ' Year(s)';} }", true);
 
         }
 
