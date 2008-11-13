@@ -115,8 +115,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					}
 					else if (base.Status == ScuOperationStatus.TimeoutExpired)
 					{
-						OnRetrieveError(String.Format("The connection timeout has expired ({0}: {1}).",
-							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+						//When the scu hasn't received a progress update for the period of the timeout,
+						//we end up showing this message.  Some SCPs won't even send progress, so you
+						//would see this message constantly.
+
+						//OnRetrieveError(String.Format("The connection timeout has expired ({0}: {1}).",
+						//    RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 				}
 				catch (Exception e)
