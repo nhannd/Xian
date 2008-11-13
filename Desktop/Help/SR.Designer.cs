@@ -122,5 +122,14 @@ namespace ClearCanvas.Desktop.Help {
                 return ResourceManager.GetString("URLNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find user&apos;s guide..
+        /// </summary>
+        public static string UsersGuideNotFound {
+            get {
+                return ResourceManager.GetString("UsersGuideNotFound", resourceCulture);
+            }
+        }
     }
 }

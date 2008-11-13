@@ -33,6 +33,7 @@ using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using System;
 
 namespace ClearCanvas.Desktop.Help
 {
@@ -68,9 +69,7 @@ namespace ClearCanvas.Desktop.Help
 
 		public void ShowUsersGuide()
 		{
-			string guideFile = HelpSettings.Default.UserGuidePath;
-			if (!string.IsNullOrEmpty(guideFile))
-				Execute(guideFile, SR.HelpNotFound);
+			Execute(HelpSettings.Default.UserGuidePath, SR.UsersGuideNotFound);
 		}
 
 		public void ShowLicense()
@@ -78,19 +77,28 @@ namespace ClearCanvas.Desktop.Help
 			Execute("EULA.rtf", SR.LicenseNotFound);
 		}
 
-		private void Execute(string filename, string errorMessage) {
-			ProcessStartInfo nfo = new ProcessStartInfo();
-			nfo.WorkingDirectory = Platform.InstallDirectory;
-			nfo.FileName = filename;
+		private void Execute(string filename, string errorMessage)
+		{
+			bool showMessageBox = String.IsNullOrEmpty(filename);
+			if (!showMessageBox)
+			{
+				try
+				{
+					ProcessStartInfo info = new ProcessStartInfo();
+					info.WorkingDirectory = Platform.InstallDirectory;
+					info.FileName = filename;
 
-			try 
-			{
-				Process.Start(nfo);
+					Process.Start(info);
+				}
+				catch (Exception e)
+				{
+					showMessageBox = true;
+					Platform.Log(LogLevel.Warn, e, "Failed to launch '{0}'.", filename);
+				}
 			}
-			catch
-			{
+
+			if (showMessageBox)
 				this.Context.DesktopWindow.ShowMessageBox(errorMessage, MessageBoxActions.Ok);
-			}
 		}
 	}
 }

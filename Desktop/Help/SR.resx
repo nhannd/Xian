@@ -138,4 +138,7 @@
   <data name="URLNotFound" xml:space="preserve">
     <value>Could not reach URL</value>
   </data>
+  <data name="UsersGuideNotFound" xml:space="preserve">
+    <value>Could not find user's guide.</value>
+  </data>
 </root>
