@@ -151,8 +151,8 @@ namespace ClearCanvas.Dicom.Network
             _socket.ReceiveTimeout = parameters.ReadTimeout;
             _socket.SendTimeout = parameters.WriteTimeout;
             _socket.LingerState = new LingerOption(false, 0);
-            // Nagle option
-            _socket.NoDelay = false;
+			// Nagle option
+        	_socket.NoDelay = false;
         }
 
         private static bool NegotiateAssociation(AssociationParameters cp, ServerAssociationParameters sp)
@@ -262,7 +262,7 @@ namespace ClearCanvas.Dicom.Network
             {
 				List<Socket> readSockets = new List<Socket>();
 				readSockets.Add(_socket);
-            	Socket.Select(readSockets, null, null, 500);
+            	Socket.Select(readSockets, null, null, 100000);
 				if (readSockets.Count == 1)
 				{
 					if (_socket.Available > 0)

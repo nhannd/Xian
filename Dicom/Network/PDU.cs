@@ -74,6 +74,20 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Constructors
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// It is assumed that this contructor must be used when writing / creating a new PDU.  This constructor
+		/// will not work when reading a PDU.
+		/// </para>
+		/// <para>
+		/// NOTE:  It might make sense in the future to split this class into one that writes PDUs and 
+		/// a second class that reads PDUs.
+		/// </para>
+		/// </remarks>
+		/// <param name="type">The PDU type being created.</param>
         public RawPDU(byte type)
         {
             _type = type;
@@ -81,20 +95,27 @@ namespace ClearCanvas.Dicom.Network
             _bw = EndianBinaryWriter.Create(_ms, Endian.Big);
             _m16 = new Stack<long>();
             _m32 = new Stack<long>();
+
+			// Write the PDU header now
+			_bw.Write(_type);
+			_bw.Write((byte)0);
+			MarkLength32("PDU Length");
         }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <remarks>
+		/// It is assumed that this constructor must be used when reading a PDU.  This constructor
+		/// will not work when writing a PDU.
+		/// </remarks>
+		/// <param name="s">The Stream to read from.</param>
         public RawPDU(Stream s)
         {
             BinaryReader br = EndianBinaryReader.Create(s, Endian.Big);
 
             _type = br.ReadByte();	// PDU-Type
             _is = s;
-        }
-        public RawPDU(byte[] d)
-        {
-            _is = new MemoryStream(d);
-
-            BinaryReader br = EndianBinaryReader.Create(_is, Endian.Big);
-            _type = br.ReadByte();
         }
         #endregion
 
@@ -125,20 +146,10 @@ namespace ClearCanvas.Dicom.Network
 
         public void WritePDU(Stream s)
         {
-            // Ran into a problem when the BinaryWriter was writing
-            // directly to the stream where we would send just the "type" of the
-            // PDU in its own packet, and an implementation was aborting the connection
-            // after receiving this one packet w/ one byte.  Buffering up the data
-            // caused it to be written at least in 6 bytes and it eliminated the problems.
-            MemoryStream ms = new MemoryStream();
+			WriteLength32();
 
-            BinaryWriter bw = EndianBinaryWriter.Create(ms, Endian.Big);
-            bw.Write(_type);
-            bw.Write((byte)0);
-            bw.Write((uint)_ms.Length);
-
-            ms.WriteTo(s);
-            _ms.WriteTo(s);
+			_ms.WriteTo(s);
+			
             s.Flush();
         }
         #endregion
@@ -164,18 +175,13 @@ namespace ClearCanvas.Dicom.Network
             return String.Format("Pdu[type={0:X2}, length={1}]", Type, Length);
         }
 
-        public void Reset()
-        {
-            _ms.Seek(0, SeekOrigin.Begin);
-        }
-
         #region Read Methods
         private void CheckOffset(int bytes, String name)
         {
             if ((_ms.Position + bytes) > _ms.Length)
             {
                 String msg = String.Format("{0} (offset={1}, bytes={2}, field=\"{3}\") Requested offset out of range!", ToString(),
-                    _ms.Position + 6, bytes, name);
+                    _ms.Position , bytes, name);
                 throw new NetworkException(msg);
             }
         }
@@ -325,7 +331,7 @@ namespace ClearCanvas.Dicom.Network
         #region Write
         public RawPDU Write()
         {
-            RawPDU pdu = new RawPDU((byte)0x01);
+            RawPDU pdu = new RawPDU(0x01);
 
             pdu.Write("Version", (ushort)0x0001);
             pdu.Write("Reserved", 0x00, 2);
