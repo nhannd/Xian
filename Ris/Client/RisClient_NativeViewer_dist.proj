@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ShredHostAppConfigFiles Include="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+    <ShredHostAppConfigFiles Include="$(TrunkDirectory)\Ris\Client\RisClient_NativeViewer_Shreds_dist.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ViewerIntegrationFiles Include="$(TrunkDirectory)\Ris\Client\ViewerIntegration\bin\$(Configuration)\ClearCanvas.Ris.Client.ViewerIntegration.dll" />
   </ItemGroup>
 
@@ -54,6 +59,8 @@
 
     <!-- Completely replace the app.config because this one is significantly different from the viewer's. -->
     <CombineAppConfigs Condition="$(RisClientBuild)" SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+
+    <CombineAppConfigs Condition="$(ShredHostBuild)" SourceFiles="@(ShredHostAppConfigFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
 
     <RegexIsMatch Pattern="CopyDefaultAEServers" Input="$(Options)" >
       <Output TaskParameter="IsMatch" PropertyName="CopyDefaultAEServers" />
