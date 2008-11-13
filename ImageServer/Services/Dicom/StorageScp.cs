@@ -179,6 +179,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     throw new ApplicationException("No writeable storage location.");
                 }
 
+
 				if (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle)
 					&& (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled)))
 				{
@@ -191,7 +192,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				}
 				else if (studyLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
 				{
-					//TODO:  check if the study is lossy compressed
+					ArchiveStudyStorage archiveLocation = StudyStorageLocation.GetArchiveLocation(studyLocation.Key);
+					if (archiveLocation.ServerTransferSyntax.Lossless)
+					{
+						returnStatus = DicomStatuses.ResourceLimitation;
+						string failureMessage =
+							String.Format("Study {0} on partition {1} can't accept new images due to lossy compression of the study.  Restoring study.",
+							              studyLocation.StudyInstanceUid, Partition.Description);
+						Platform.Log(LogLevel.Error, failureMessage);
+						InsertRestore(studyLocation.Key);
+						throw new ApplicationException(failureMessage);
+					}
 				}
 
                 String path = studyLocation.FilesystemPath;
@@ -238,10 +249,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
                     else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.AcceptLatest))
                     {
-                        Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, replacing previous file {0}", sopInstanceUid);
-                        dupPath = path + "_dup_old";
-                        processor.AddCommand(new RenameFileCommand(path, dupPath));
-                        dupImage = true;
+						if (!studyLocation.TransferSyntaxUid.Equals(message.TransferSyntax.DicomUid.UID))
+						{
+							returnStatus = DicomStatuses.Success;
+							Platform.Log(LogLevel.Error,
+							             "Duplicate SOP recived, but transfer syntax has changed, db syntax: {0}, message syntax: {1}",
+							             studyLocation.TransferSyntaxUid, message.TransferSyntax.Name);
+							throw new ApplicationException("Transfer syntax has changed for study.");
+						}
+						else
+						{
+							Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, replacing previous file {0}", sopInstanceUid);
+							dupPath = path + "_dup_old";
+							processor.AddCommand(new RenameFileCommand(path, dupPath));
+							dupImage = true;
+						}
                     }
                     else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
                     {

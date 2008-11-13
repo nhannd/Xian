@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// </summary>
         /// <param name="message">The Dicom message</param>
         /// <returns></returns>
-        private bool ShouldReconcile(DicomMessageBase message)
+		private bool ShouldReconcile(DicomMessageBase message)
         {
             Platform.CheckForNullReference(_context, "_context");
             Platform.CheckForNullReference(message, "message");
@@ -265,7 +265,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // Note: if this is the first image in the study, _study will still be null at point
             }
 
-            if (_context.Study == null)
+            if (_context.Study == null )
             {
                 // the study doesn't exist in the database
                 return false;
@@ -301,11 +301,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
         /// </summary>
-        /// <param name="item">The WorkQueue item to process</param>
         /// <param name="queueUid"></param>
         /// <param name="path">The path of the file to process.</param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
-        private void ProcessFile(Model.WorkQueue item, WorkQueueUid queueUid, string path, StudyXml stream)
+        private void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
         {
             DicomFile file;
 
@@ -325,7 +324,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (ShouldReconcile(file))
             {
-                ScheduleReconcile(file);
+                ScheduleReconcile(queueUid, file);
             }
             else
             {
@@ -379,8 +378,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // has one image, we could incorrectly insert an ArchiveQueue request, since the 
                 // study rules haven't been run.  We re-run the command when the study processed
                 // rules are run to remove out the archivequeue request again, if it isn't needed.
-                context.CommandProcessor.AddCommand(
-                    new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey()));
+				context.CommandProcessor.AddCommand(
+						new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey()));
 
                 // Do the actual processing
                 if (!processor.Execute())
@@ -441,12 +440,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Schedules a reconciliation for the specified <see cref="DicomFile"/>
         /// </summary>
         /// <param name="file"></param>
-        private void ScheduleReconcile(DicomFile file)
+        private void ScheduleReconcile(WorkQueueUid queueUid, DicomFile file)
         {
             ImageReconciler reconciler = new ImageReconciler();
             reconciler.ExistingStudy = _context.Study;
             reconciler.ExistingStudyLocation = StorageLocation;
             reconciler.Partition = _context.Partition;
+			reconciler.Duplicate = queueUid.Duplicate;
             reconciler.ReconcileImage(file);
         }
 
@@ -513,8 +513,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     ProcessDuplicate(basePath + ".dcm", path);
                 }
                 else
-
-                    ProcessFile(item, sop, path, studyXml);
+                    ProcessFile(sop, path, studyXml);
                 
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);
@@ -632,7 +631,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Overridden Protected Method
 
-        protected override void Initialize(ClearCanvas.ImageServer.Model.WorkQueue item)
+        protected override void Initialize(Model.WorkQueue item)
         {
             base.Initialize(item);
 

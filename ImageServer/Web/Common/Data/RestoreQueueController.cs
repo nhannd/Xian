@@ -74,7 +74,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public bool DeleteRestoreQueueItem(RestoreQueue item)
         {
-            return _adaptor.Delete(item.Key);
+        	bool retValue;
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				ILockStudy lockStudyBroker = updateContext.GetBroker<ILockStudy>();
+				LockStudyParameters parms = new LockStudyParameters();
+				parms.StudyStorageKey = item.StudyStorageKey;
+				parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+				if (!lockStudyBroker.Execute(parms))
+					return false;
+				if (!parms.Successful)
+					return false;
+
+				retValue = _adaptor.Delete(updateContext, item.Key);
+
+				updateContext.Commit();
+
+				return retValue;
+			}
         }
 
         

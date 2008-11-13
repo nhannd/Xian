@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -292,7 +293,23 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        
-        
+		/// <summary>
+		/// Query for the latest archival record for a study.
+		/// </summary>
+		/// <param name="studyStorageKey">The primary key of the StudyStorgae table.</param>
+		/// <returns>null if not found, else the value.</returns>
+        static public ArchiveStudyStorage GetArchiveLocation(ServerEntityKey studyStorageKey)
+        {
+			using (IReadContext readContext = _store.OpenReadContext())
+			{
+				ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
+				archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
+				archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
+
+				IArchiveStudyStorageEntityBroker broker = readContext.GetBroker<IArchiveStudyStorageEntityBroker>();
+
+				return broker.FindOne(archiveStudyStorageCriteria);
+			}
+        }        
     }
 }
