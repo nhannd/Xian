@@ -62,11 +62,13 @@ namespace ClearCanvas.Dicom.DataStore
 					if (criteria == null)
 						criteria = "";
 
+					bool isModalitiesInStudy = property.Path.Equals(DicomTags.ModalitiesInStudy);
+					bool containsWildcards = ContainsWildcardCharacters(criteria);
+
 					//special case, we post-filter modalities in study when it contains wildcards b/c the hql query won't 
 					//always produce exactly the right results.  This will never happen anyway.
-
-					bool query = !String.IsNullOrEmpty(criteria) && ((!property.IsHigherLevelUnique && property.PostFilterOnly) || 
-									(property.Path.Equals(DicomTags.ModalitiesInStudy) && ContainsWildCharacters(criteria)));
+					bool query = !String.IsNullOrEmpty(criteria) && ((!property.IsHigherLevelUnique && property.PostFilterOnly) ||
+									(isModalitiesInStudy && containsWildcards));
 
 					if (query)
 					{
@@ -126,13 +128,16 @@ namespace ClearCanvas.Dicom.DataStore
 							//We currently don't post-filter on this VR, so it's 'optional' according to Dicom and is a match.
 							return true;
 						}
-						else if (ContainsWildCharacters(criteria)) // wildcard matching.
+						else if (IsWildCardCriteria(criteria, property)) // wildcard matching.
 						{
 							//Note: wildcard matching is supposed to be case-sensitive (except for PN) according to Dicom.
 							//However, in practice, it's a pain for the user; for example, when searching by Study Description.
 
 							testsPerformed = true;
-							string criteriaTest = criteria.Replace("*", "[\x21-\x7E]").Replace("?", ".");
+							string criteriaTest = criteria.Replace("*", ".*"); //zero or more characters
+							criteriaTest = criteriaTest.Replace("?", "."); //single character
+							criteriaTest = String.Format("^{0}", criteriaTest); //match at beginning
+
 							//a match on any of the values is considered a match.
 							if (Regex.IsMatch(test, criteriaTest, RegexOptions.IgnoreCase))
 								return true;

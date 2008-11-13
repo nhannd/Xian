@@ -22,25 +22,6 @@ namespace ClearCanvas.Dicom.DataStore
 				return converter.ConvertToInvariantString(value);
 		}
 
-		public static string ToDicomStringArray(object value, TypeConverter converter)
-		{
-			if (value == null)
-				return null;
-
-			if (value.GetType().IsArray)
-			{
-				Array array = value as Array;
-				if (array == null)
-					return null;
-
-				return DicomStringHelper.GetDicomStringArray(ToStringArray(array, converter));
-			}
-			else
-			{
-				return ToString(value, converter);
-			}
-		}
-
 		public static string[] ToStringArray(object value, TypeConverter converter)
 		{
 			if (value == null)
@@ -58,6 +39,11 @@ namespace ClearCanvas.Dicom.DataStore
 					stringArray[i++] = ToString(arrayValue, converter);
 
 				return stringArray;
+			}
+			else if (value is string)
+			{
+				//Assume strings are (potentially) multi-valued.  If they're not, then this has no effect anyway.
+				return DicomStringHelper.GetStringArray(((string)value) ?? "");
 			}
 			else
 			{

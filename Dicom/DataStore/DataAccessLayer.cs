@@ -111,7 +111,21 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region Helper Methods
 
-		private static bool ContainsWildCharacters(string criteria)
+		private static readonly string[] WildcardExcludedVRs = 
+			{ "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
+
+		private static bool IsWildCardCriteria(string criteria, QueryablePropertyInfo column)
+		{
+			foreach (string excludeVR in WildcardExcludedVRs)
+			{
+				if (0 == String.Compare(excludeVR, column.Path.ValueRepresentation.Name, true))
+					return false;
+			}
+
+			return ContainsWildcardCharacters(criteria);
+		}
+
+		private static bool ContainsWildcardCharacters(string criteria)
 		{
 			return criteria.Contains("*") || criteria.Contains("?");
 		}

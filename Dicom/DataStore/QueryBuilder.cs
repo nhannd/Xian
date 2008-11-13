@@ -10,9 +10,6 @@ namespace ClearCanvas.Dicom.DataStore
 	{
 		internal static class QueryBuilder
 		{
-			private static readonly string[] WildcardExcludedVRs = 
-			{ "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
-
 			public static string BuildHqlQuery<T>(QueryCriteria queryCriteria)
 			{
 				StringBuilder hqlQuery = new StringBuilder(1024);
@@ -105,14 +102,19 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					criteria = criteriaValue;
 					string filter = "";
-					if (!ContainsWildCharacters(criteria))
+					if (!ContainsWildcardCharacters(criteria))
+					{
 						filter = String.Format("{0} = '{1}' OR ", columnName, criteria);
+					}
 					else
+					{
 						ReplaceWildcardCharacters(ref criteria);
+						filter = String.Format("{0} LIKE '{1}' OR ", columnName, criteria);
+					}
 
-					filter += String.Format(@"{0} LIKE '{1}\*' " +
-											@" OR {0} LIKE '*\{1}' " +
-											@" OR {0} LIKE '*\{1}\*' ", columnName, criteria);
+					filter += String.Format(@"{0} LIKE '{1}\%' " +
+											@" OR {0} LIKE '%\{1}' " +
+											@" OR {0} LIKE '%\{1}\%' ", columnName, criteria);
 
 					if (i++ > 0)
 						builder.Append(" OR ");
@@ -181,17 +183,6 @@ namespace ClearCanvas.Dicom.DataStore
 			private static string ConvertSingleValueCriteria(string singleValueCriteria, string columnName)
 			{
 				return String.Format("{0} = '{1}'", columnName, singleValueCriteria);
-			}
-
-			private static bool IsWildCardCriteria(string criteria, QueryablePropertyInfo column)
-			{
-				foreach (string excludeVR in WildcardExcludedVRs)
-				{
-					if (0 == String.Compare(excludeVR, column.Path.ValueRepresentation.Name, true))
-						return false;
-				}
-
-				return ContainsWildCharacters(criteria);
 			}
 
 			private static void ReplaceWildcardCharacters(ref string criteria)
