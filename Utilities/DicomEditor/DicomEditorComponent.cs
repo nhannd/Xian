@@ -426,6 +426,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			else
 			{
 				dicomFile = new DicomFile(file.Filename, file.MetaInfo.Copy(true), file.DataSet.Copy(true));
+				dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(file.TransferSyntaxUid);
 			}
 
 			_loadedFiles.Add(dicomFile);
@@ -467,6 +468,9 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             foreach (DicomAttribute attribute in set)
             {
+				if (attribute.IsEmpty)
+					continue;
+
                 if (attribute is DicomAttributeSQ)
                 {
                     DicomEditorTag editorSq = new DicomEditorTag(attribute, parent, nestingLevel);
