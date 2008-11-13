@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 			             "Starting check for studies to lossless compress on filesystem '{0}'.",
 			             fs.Filesystem.Description);
 
-			int delayMinutes = 24*60;
+			int delayMinutes = ServiceLockSettings.Default.FilesystemLosslessCompressRecheckDelay;
 
 			try
 			{
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected exception when processing LosslessCompress records.");
-				delayMinutes = 1;
+				delayMinutes = 5;
 			}
 
 			DateTime scheduledTime = Platform.Time.AddMinutes(delayMinutes);
