@@ -227,31 +227,42 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 			}
 
+			private void OnFileSent(StorageInstance storageInstance)
+			{
+				StoreScuSentFileInformation info = new StoreScuSentFileInformation();
+				info.ToAETitle = RemoteAE;
+				info.FileName = storageInstance.Filename;
+				LocalDataStoreEventPublisher.Instance.FileSent(info);
+			}
+
 			protected override void OnImageStoreCompleted(StorageInstance storageInstance)
 			{
 				base.OnImageStoreCompleted(storageInstance);
 
-				if (storageInstance.SendStatus == DicomStatuses.Success)
+				if (storageInstance.SendStatus.Status == DicomState.Success)
 				{
-					StoreScuSentFileInformation info = new StoreScuSentFileInformation();
-					info.ToAETitle = RemoteAE;
-					info.FileName = storageInstance.Filename;
-
-					LocalDataStoreEventPublisher.Instance.FileSent(info);
+					OnFileSent(storageInstance);
 				}
-				else
+				else if (storageInstance.SendStatus.Status != DicomState.Pending)
 				{
+					string severity = "Error";
+					if (storageInstance.SendStatus.Status == DicomState.Warning)
+					{
+						severity = "Warning";
+						OnFileSent(storageInstance);
+					}
+
 					string description = storageInstance.ExtendedFailureDescription;
 					if (String.IsNullOrEmpty(description))
 						description = storageInstance.SendStatus.ToString();
 
-					string msg = String.Format("Error sending file {0} ({1}: {2}).",
-						storageInstance.Filename, RemoteAE, description);
+					string msg = String.Format("{0} encountered while sending file {1} ({2}: {3}).",
+						severity, storageInstance.Filename, RemoteAE, description);
 
 					Platform.Log(LogLevel.Error, msg);
 
-					OnSendError(String.Format("Error sending file ({0}: {1}).",
-					                          RemoteAE, description));
+					OnSendError(String.Format("{0} encountered while sending file ({1}: {2}).",
+											  severity, RemoteAE, description));
 				}
 
 				if (_callback != null)
