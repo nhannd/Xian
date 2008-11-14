@@ -22,14 +22,21 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class GlobalHomeTool : WorklistPreviewHomeTool<FolderSystemExtensionPoint>
 	{
+        private static DesktopWindow _risWindow;
+
 		public override void Initialize()
 		{
 			base.Initialize();
 
 			// automatically launch home page on startup, only if current user is a Staff
-			if (LoginSession.Current.IsStaff && HomePageSettings.Default.ShowHomepageOnStartUp)
+			if (LoginSession.Current.IsStaff && HomePageSettings.Default.ShowHomepageOnStartUp
+                && _risWindow == null)
 			{
 				Launch();
+
+                // bug 3087: remember which window is the RIS window, so that we don't launch this
+                // in the viewer window
+                _risWindow = this.Context.DesktopWindow;
 			}
 		}
 
@@ -62,7 +69,12 @@ namespace ClearCanvas.Ris.Client
 
 		public bool Visible
 		{
-			get { return LoginSession.Current.IsStaff; }
+			get
+            {
+                // bug 3087: only visible in the RIS window
+                return LoginSession.Current.IsStaff && 
+                    (_risWindow == null || _risWindow == this.Context.DesktopWindow);
+            }
 		}
 
 		public event EventHandler VisibleChanged

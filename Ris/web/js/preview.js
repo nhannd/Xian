@@ -604,14 +604,8 @@ Preview.ReportingProceduresTable = function () {
 		switch(lastStep.State.Code)
 		{
 			case "SC": formattedStatus = "Pending " + stepName;
-				if (stepName == "Verification")
-					formattedStatus = "To Be Revised";
-					
 				break;
 			case "IP": formattedStatus = stepName + " In Progress"; 
-				if (stepName == "Verification")
-					formattedStatus = "Revising";
-
 				break;
 			case "SU": formattedStatus = stepName + " Suspended"; break;
 			case "CM": formattedStatus = stepName + " Completed";

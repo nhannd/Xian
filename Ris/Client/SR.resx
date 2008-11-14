@@ -507,6 +507,9 @@
   <data name="MessageExternalPractitionerContactPointNotUnique" xml:space="preserve">
     <value>A contact point with the name '{0}' already exists.  Please enter a different name.</value>
   </data>
+  <data name="MessageInvalidDateFormat" xml:space="preserve">
+    <value>The value entered is not a valid date</value>
+  </data>
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login</value>
   </data>

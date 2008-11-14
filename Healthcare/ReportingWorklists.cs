@@ -101,7 +101,7 @@ namespace ClearCanvas.Healthcare
 			ReportingWorklistItemSearchCriteria bySupervisor = BaseCriteria();
 			bySupervisor.ReportPart.Supervisor.EqualTo(wqc.Staff);
 
-			ApplyTimeCriteria(assignedToMe, WorklistTimeField.ProcedureStepScheduledStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+            ApplyTimeCriteria(assignedToMe, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 
 			return new ReportingWorklistItemSearchCriteria[] { assignedToMe, bySupervisor };
 		}

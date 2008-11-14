@@ -40,6 +40,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client;
 using System.Collections;
 using ClearCanvas.Desktop.Validation;
+using System.Globalization;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -174,7 +175,12 @@ namespace ClearCanvas.Ris.Client
                 if (string.IsNullOrEmpty(_dateOfBirth) || _dateOfBirth == this.DateOfBirthMask)
                     _profile.DateOfBirth = null;
                 else
-                    _profile.DateOfBirth = DateTime.ParseExact(_dateOfBirth, this.DateOfBirthFormat, null);
+                {
+                    DateTime dt;
+                    if (!DateTime.TryParseExact(_dateOfBirth, this.DateOfBirthFormat, null, DateTimeStyles.None, out dt))
+                        throw new Exception(SR.MessageInvalidDateFormat);
+                    _profile.DateOfBirth = dt;
+                }
             }
         }
 

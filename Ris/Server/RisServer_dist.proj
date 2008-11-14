@@ -53,12 +53,6 @@
 		<ConfigFiles Include="$(HealthcareDirectory)\Hibernate\hibernate.cfg.xml" />
 	</ItemGroup>
 	
-	<ItemGroup>
-		<SetupFiles Include="$(SetupDirectory)\ddl-writer.bat" />
-		<SetupFiles Include="$(SetupDirectory)\import-authority-tokens.bat" />
-		<SetupFiles Include="$(SetupDirectory)\import-authority-groups.bat" />
-	</ItemGroup>
-
   <ItemGroup>
     <EnterprisePluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
 
@@ -145,7 +139,6 @@
   <Target Name="CopyServerFiles" >
 		<!-- Copy Server Distribution files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		
 		<!-- Copy Server Plugin files -->
 		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
