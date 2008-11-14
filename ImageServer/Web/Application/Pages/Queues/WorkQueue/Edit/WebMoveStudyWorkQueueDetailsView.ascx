@@ -74,6 +74,7 @@
         <asp:BoundField HeaderText="Filesystem Storage Location" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="StorageLocationPath" />
 
     </Fields>
+    <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
     <RowStyle CssClass="GlobalGridViewRow"/>
     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 </asp:DetailsView>

@@ -3,7 +3,7 @@
 <ccAsp:SectionPanel ID="AutoRouteInfoSectionPanel" runat="server" HeadingText="Auto-Route" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
     <asp:DetailsView ID="AutoRouteDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"
-    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
+    GridLines="Horizontal" CssClass="GlobalGridView" Width="100%">
     <Fields>
         <asp:TemplateField HeaderText="Type">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
@@ -34,7 +34,7 @@
 <ccAsp:SectionPanel ID="GeneralInfoSectionPanel" runat="server" HeadingText="General Information" HeadingCSS="CSSDefaultSectionHeading">
 <SectionContentTemplate>
     <asp:DetailsView ID="GeneralInfoDetailsView" runat="server" AutoGenerateRows="False" CellPadding="4"
-    GridLines="Horizontal" CssClass="CSSStudyDetailsView" Width="100%">
+    GridLines="Horizontal" CssClass="GlobalGridView" Width="100%">
     <Fields>
     
         <asp:TemplateField HeaderText="Scheduled Date/Time">
@@ -87,6 +87,7 @@
         <asp:BoundField HeaderText="Filesystem Storage Location" HeaderStyle-CssClass="StudyDetailsViewHeader" DataField="StorageLocationPath" />
         
     </Fields>
+    <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
     <RowStyle CssClass="GlobalGridViewRow"/>
     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
 </asp:DetailsView>

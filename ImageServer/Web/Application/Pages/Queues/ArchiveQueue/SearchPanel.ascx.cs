@@ -156,7 +156,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 											source.Partition = ServerPartition;
                                             source.DateFormats = ScheduleDateCalendarExtender.Format;
 
-											if (!String.IsNullOrEmpty(PatientId.Text))
+                                            if (!String.IsNullOrEmpty(StatusFilter.SelectedValue) && StatusFilter.SelectedIndex > 0)
+                                                source.StatusEnum = ArchiveQueueStatusEnum.GetEnum(StatusFilter.SelectedValue);
+                                            if (!String.IsNullOrEmpty(PatientId.Text))
 												source.PatientId = PatientId.Text;
 											if (!String.IsNullOrEmpty(PatientName.Text))
 												source.PatientName = PatientName.Text;

@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AJAXError" xml:space="preserve">
+    <value>The ImageServer encountered and error trying to update part of the web page you were just viewing.</value>
+  </data>
+  <data name="AJAXErrorDescription" xml:space="preserve">
+    <value>This message is being displayed because in some cases the ImageServer refreshes part of the pages using a technology called "AJAX". Something happened on the server that prevented the page from updating properly.</value>
+  </data>
   <data name="EmptyLogMessage" xml:space="preserve">
     <value>No Message Provided.</value>
   </data>

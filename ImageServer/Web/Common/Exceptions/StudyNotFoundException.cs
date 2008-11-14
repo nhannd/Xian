@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
         {
             ErrorMessage = string.Format(ExceptionMessages.StudyNotFound, studyInstanceUID);
             ErrorDescription = ExceptionMessages.StudyNotFoundDescription;
-            LogMessage = string.Empty;
+            LogMessage = ExceptionMessages.EmptyLogMessage;
         }
     }
 }

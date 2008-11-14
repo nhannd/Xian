@@ -33,6 +33,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Threading;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -40,6 +41,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Reflection;
+using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 public partial class GlobalMasterPage : System.Web.UI.MasterPage
 {
@@ -57,6 +59,8 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         }
 
         AddIE6PngBugFixCSS(); 
+
+        //GlobalScriptManager.Scripts.Add(new ScriptReference("~/Scripts/ErrorHandling.js"));
     }
 
     private void AddIE6PngBugFixCSS()
@@ -83,4 +87,8 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         Response.Redirect("~/");
     }
 
+    protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)
+    {
+        GlobalScriptManager.AsyncPostBackErrorMessage = ExceptionHandler.ThrowAJAXException(e.Exception);
+    }
 }

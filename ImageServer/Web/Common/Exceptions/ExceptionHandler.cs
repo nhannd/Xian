@@ -63,5 +63,28 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
                 context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);   
             }
         }
+
+        public static string ThrowAJAXException(Exception e)
+        {
+            Exception baseException = e.GetBaseException();
+
+            string message = baseException.Message;
+            string source = baseException.Source;
+            string stackTrace = baseException.StackTrace;
+
+            if (e.Data["ExtraInfo"] != null)
+            {
+                message += "\nExtra Info: " + e.Data["ExtraInfo"].ToString();
+            }
+            else
+            {
+                message += "\nExtra Info: " + "An unspecified error occurred.";
+            }
+
+            string logMessage = string.Format("Message: {0}\nSource:{1}\nStack Trace:{2}", message, source, stackTrace);
+            Platform.Log(LogLevel.Error, logMessage);
+
+            return logMessage;
+        }
     }
 }

@@ -118,18 +118,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
         protected void Page_Load(object sender, EventArgs e)
         {
-        }
+            int archiveSelectedIndex = ArchiveTypeFilter.SelectedIndex;
 
-        /// <summary>
-        /// Determines if filters are being specified.
-        /// </summary>
-        /// <returns></returns>
-        protected bool HasFilters()
-        {
-            if (ArchiveTypeFilter.SelectedIndex > 0 || DescriptionFilter.Text.Length > 0 || StatusFilter.SelectedIndex > 0)
-                return true;
-            else
-                return false;
+            ArchiveTypeFilter.Items.Clear();
+            ArchiveTypeFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
+            foreach (ArchiveTypeEnum archiveTypeEnum in ArchiveTypeEnum.GetAll())
+            {
+                ArchiveTypeFilter.Items.Add(
+                    new ListItem(archiveTypeEnum.Description, archiveTypeEnum.Lookup));
+            }
+            ArchiveTypeFilter.SelectedIndex = archiveSelectedIndex;
+
+            int statusSelectedIndex = StatusFilter.SelectedIndex;
+            StatusFilter.Items.Clear();
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All, App_GlobalResources.SR.All));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled, App_GlobalResources.SR.Enabled));
+            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled, App_GlobalResources.SR.Disabled));
+            StatusFilter.SelectedIndex = statusSelectedIndex;
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -156,23 +161,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
 
             GridPagerBottom.Target = PartitionArchiveGridPanel.TheGrid;
 
-            int prevSelectIndex = ArchiveTypeFilter.SelectedIndex;
-            ArchiveTypeFilter.Items.Clear();
-            ArchiveTypeFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
-            foreach (ArchiveTypeEnum archiveTypeEnum in ArchiveTypeEnum.GetAll())
-            {
-                ArchiveTypeFilter.Items.Add(
-                    new ListItem(archiveTypeEnum.Description, archiveTypeEnum.Lookup));
-            }
-            ArchiveTypeFilter.SelectedIndex = prevSelectIndex;
-
-            int prevSelectedIndex = StatusFilter.SelectedIndex;
-            StatusFilter.Items.Clear();
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All, string.Empty));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled, string.Empty));
-            StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled, string.Empty));
-            StatusFilter.SelectedIndex = prevSelectedIndex;
-
             SetupEventHandlers();
         }
 
@@ -188,15 +176,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             base.DataBind();
         }
 
-
-        protected void Clear()
-        {
-            AETitleFilter.Text = string.Empty;
-            DescriptionFilter.Text = string.Empty;
-            StatusFilter.SelectedIndex = 0;
-            FolderFilter.Text = string.Empty;
-        }
-
         protected void LoadData()
         {
             PartitionArchiveSelectCriteria criteria = new PartitionArchiveSelectCriteria();
@@ -207,7 +186,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
                 criteria.Description.Like(key + "%");
             }
 
-            if (StatusFilter.SelectedIndex != 0)
+            if (StatusFilter.SelectedIndex > 0)
             {
                 if (StatusFilter.SelectedIndex == 1)
                     criteria.Enabled.EqualTo(true);
@@ -251,14 +230,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.PartitionArchi
             {
                 ((Default)Page).DeletePartition(selectedPartition);
             }
-        }
-
-        protected void RefreshButton_Click(object sender, ImageClickEventArgs e)
-        {
-            // refresh the list
-            Clear();
-            LoadData();
-            UpdateUI();
         }
 
         #endregion Protected Methods

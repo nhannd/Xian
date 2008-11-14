@@ -65,15 +65,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.WebControls.GridView WorkQueueListView;
         
         /// <summary>
-        /// MessageBox control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
-        
-        /// <summary>
         /// RefreshTimer control.
         /// </summary>
         /// <remarks>
@@ -81,5 +72,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.Timer RefreshTimer;
+        
+        /// <summary>
+        /// MessageBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
     }
 }

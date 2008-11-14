@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The ImageServer encountered and error trying to update part of the web page you were just viewing..
+        /// </summary>
+        internal static string AJAXError {
+            get {
+                return ResourceManager.GetString("AJAXError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This message is being displayed because in some cases the ImageServer refreshes part of the pages using a technology called &quot;AJAX&quot;. Something happened on the server that prevented the page from updating properly..
+        /// </summary>
+        internal static string AJAXErrorDescription {
+            get {
+                return ResourceManager.GetString("AJAXErrorDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Message Provided..
         /// </summary>
         internal static string EmptyLogMessage {

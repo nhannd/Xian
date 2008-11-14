@@ -5,7 +5,6 @@
 <head runat="server">
     <title>ClearCanvas ImageServer</title>
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
-
 </head>
 <body id="MasterBody" class="GlobalBody">
 
@@ -16,8 +15,11 @@
     <!-- this is special code that web service validation needs -->
     <form id="MasterForm" runat="server" submitdisabledcontrols="true">
         <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/JavascriptRequired.aspx" />   
-        <asp:ScriptManager ID="MainScriptManager" runat="server" EnableScriptGlobalization="true"
-            EnableScriptLocalization="true" />
+       
+        <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
+            EnableScriptLocalization="true" OnAsyncPostBackError="GlobalScriptManager_AsyncPostBackError" >
+        </asp:ScriptManager>            
+            
         <asp:Panel runat="server" CssClass="GlobalContentPanel">
             <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                 <asp:TableRow>
@@ -54,6 +56,7 @@
                                 <asp:TableCell Width="100%">
                                     <asp:UpdatePanel ID="MainContentUpdatePanel" runat="server" UpdateMode="Conditional">
                                         <ContentTemplate>
+                                                                                
                                             <asp:Panel ID="PageContentPanel" CssClass="MainContentPanel" runat="server">
                                                 <div>
                                                     <b class="MainContentCorners"><b class="MainContentCorners1"><b></b></b><b class="MainContentCorners2">
