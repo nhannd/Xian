@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				else if (studyLocation.StudyStatusEnum.Equals(StudyStatusEnum.OnlineLossy))
 				{
 					ArchiveStudyStorage archiveLocation = StudyStorageLocation.GetArchiveLocation(studyLocation.Key);
-					if (archiveLocation.ServerTransferSyntax.Lossless)
+					if (archiveLocation != null && archiveLocation.ServerTransferSyntax.Lossless)
 					{
 						returnStatus = DicomStatuses.ResourceLimitation;
 						string failureMessage =
