@@ -1445,18 +1445,24 @@ BEGIN
 	END
 
 	-- We have a record, now do the updates
-
-	UPDATE ServiceLock
-		SET Lock = 1, ProcessorId = @ProcessorId
-	WHERE 
-		Lock = 0 
-		AND GUID = @ServiceLockGUID
-
-	if (@@ROWCOUNT = 0)
+	IF @@ROWCOUNT != 0
 	BEGIN
+		UPDATE ServiceLock
+			SET Lock = 1, ProcessorId = @ProcessorId
+		WHERE 
+			Lock = 0 
+			AND GUID = @ServiceLockGUID
+
+		if @@ROWCOUNT = 0
+		BEGIN
+			set @ServiceLockGUID = newid()
+		END
+	END
+	ELSE
+	BEGIN
+		-- No valid records
 		set @ServiceLockGUID = newid()
 	END
-
 
 	-- If the first update failed, this should select 0 records
 	SELECT * 
@@ -2534,33 +2540,40 @@ BEGIN
 		AND ArchiveQueue.ArchiveQueueStatusEnum = @PendingStatusEnum
 	ORDER BY ArchiveQueue.ScheduledTime
 
-	-- We have a record, now do the updates
-	BEGIN TRANSACTION
-
-	UPDATE StudyStorage
-		SET Lock = 1, LastAccessedTime = getdate()
-	WHERE 
-		Lock = 0 
-		AND GUID = @StudyStorageGUID
-
-	if (@@ROWCOUNT = 1)
+	if @@ROWCOUNT != 0
 	BEGIN
-		UPDATE ArchiveQueue
-			SET ArchiveQueueStatusEnum  = @InProgressStatusEnum,
-				ProcessorID = @ProcessorID
+		-- We have a record, now do the updates
+		BEGIN TRANSACTION
+
+		UPDATE StudyStorage
+			SET Lock = 1, LastAccessedTime = getdate()
 		WHERE 
-			GUID = @ArchiveQueueGUID
+			Lock = 0 
+			AND GUID = @StudyStorageGUID
+
+		if (@@ROWCOUNT = 1)
+		BEGIN
+			UPDATE ArchiveQueue
+				SET ArchiveQueueStatusEnum  = @InProgressStatusEnum,
+					ProcessorID = @ProcessorID
+			WHERE 
+				GUID = @ArchiveQueueGUID
+				
+			COMMIT TRANSACTION
+		END
+		ELSE
+		BEGIN
+			-- In case the lock failed, reset GUID
+			SET @ArchiveQueueGUID = newid()
 			
-		COMMIT TRANSACTION
+			ROLLBACK TRANSACTION
+		END
 	END
 	ELSE
 	BEGIN
-		-- In case the lock failed, reset GUID
+		-- No matching rows, just create a GUID that will not find any rows.
 		SET @ArchiveQueueGUID = newid()
-		
-		ROLLBACK TRANSACTION
-	END
-	
+	END	
 
 	-- If the first update failed, this should select 0 records
 	SELECT * 
@@ -2619,34 +2632,41 @@ BEGIN
 		AND ArchiveStudyStorage.PartitionArchiveGUID = @PartitionArchiveGUID
 		AND RestoreQueue.RestoreQueueStatusEnum = @RestoreQueueStatusEnum
 	ORDER BY RestoreQueue.ScheduledTime
-
-	-- We have a record, now do the updates
-	BEGIN TRANSACTION
-
-	UPDATE StudyStorage
-		SET Lock = 1, LastAccessedTime = getdate()
-	WHERE 
-		Lock = 0 
-		AND GUID = @StudyStorageGUID
-
-	if (@@ROWCOUNT = 1)
+	
+	IF @@ROWCOUNT != 0
 	BEGIN
-		UPDATE RestoreQueue
-			SET RestoreQueueStatusEnum  = @InProgressStatusEnum,
-				ProcessorID = @ProcessorID
+		-- We have a record, now do the updates
+		BEGIN TRANSACTION
+
+		UPDATE StudyStorage
+			SET Lock = 1, LastAccessedTime = getdate()
 		WHERE 
-			GUID = @RestoreQueueGUID
+			Lock = 0 
+			AND GUID = @StudyStorageGUID
+
+		if (@@ROWCOUNT = 1)
+		BEGIN
+			UPDATE RestoreQueue
+				SET RestoreQueueStatusEnum  = @InProgressStatusEnum,
+					ProcessorID = @ProcessorID
+			WHERE 
+				GUID = @RestoreQueueGUID
+				
+			COMMIT TRANSACTION
+		END
+		ELSE
+		BEGIN
+			-- In case the lock failed, reset GUID
+			SET @RestoreQueueGUID = newid()
 			
-		COMMIT TRANSACTION
+			ROLLBACK TRANSACTION
+		END
 	END
 	ELSE
-	BEGIN
-		-- In case the lock failed, reset GUID
+	BEGIN	
+		-- No eligible rows, just reset the GUID
 		SET @RestoreQueueGUID = newid()
-		
-		ROLLBACK TRANSACTION
-	END
-	
+	END	
 
 	-- If the first update failed, this should select 0 records
 	SELECT * 
