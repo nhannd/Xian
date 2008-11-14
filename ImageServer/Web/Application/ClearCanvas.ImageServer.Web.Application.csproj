@@ -489,6 +489,13 @@
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDeleted.aspx.cs">
+      <DependentUpon>WorkQueueItemDeleted.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDeleted.aspx.designer.cs">
+      <DependentUpon>WorkQueueItemDeleted.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WebEditStudyWorkQueueDetailsView.ascx.cs">
       <DependentUpon>WebEditStudyWorkQueueDetailsView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -911,6 +918,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
+    <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
     <Content Include="Controls\MessageBox.ascx" />
@@ -986,6 +994,7 @@
     <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />
     <Content Include="Pages\Queues\RestoreQueue\SearchPanel.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDeleted.aspx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\WebEditStudyWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Studies\Default.aspx" />

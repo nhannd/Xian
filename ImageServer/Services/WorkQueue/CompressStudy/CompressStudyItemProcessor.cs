@@ -150,9 +150,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				// Get the Patients Name for processing purposes.
 				String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
-				// Update the StudyStream object
-				UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
-				processor.AddCommand(insertStudyXmlCommand);
 
 				// Create a context for applying actions from the rules engine
 				ServerActionContext context =
@@ -168,20 +165,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					Platform.Log(LogLevel.Error, "Incorrect Codec for ImageServer, unable to access IImageSeverXmlCodecParameters interface for codec {0}!", theCodecFactory.GetType().ToString());
 					throw new ApplicationException("Incorect codec type for ImageServer: " + theCodecFactory.GetType());
 				}
-				DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
 
+				DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
 				DicomCompressCommand compressCommand =
 					new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
-				context.CommandProcessor.AddCommand(compressCommand);
+				processor.AddCommand(compressCommand);
 
-
-				if (processor.CommandCount == 1)
-				{
-					Platform.Log(LogLevel.Info, "No compression defined for object.");
-					_instanceStats.ProcessTime.End();
-					_studyStats.AddSubStats(_instanceStats);
-					return;
-				}
+				// Update the StudyStream object, must be done after compression
+				UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
+				processor.AddCommand(insertStudyXmlCommand);
 
 				file.Filename = path + "_saveNew";
 				SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file);

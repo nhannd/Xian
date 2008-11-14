@@ -118,7 +118,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 				IList<Model.RestoreQueue> queueItems = new List<Model.RestoreQueue>();
                 for(int i=0; i<rows.Length; i++)
                 {
-                    queueItems.Add(Items[rows[i]].TheRestoreQueueItem);
+                    if (rows[i] < Items.Count)
+                    {
+                        queueItems.Add(Items[rows[i]].TheRestoreQueueItem);
+                    }
                 }
 
                 return queueItems;

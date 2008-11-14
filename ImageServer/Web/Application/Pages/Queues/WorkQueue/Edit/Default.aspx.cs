@@ -36,6 +36,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -150,7 +151,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         void DeleteWorkQueueDialog_WorkQueueItemDeleted(Model.WorkQueue item)
         {
             DataBind();
-            WorkQueueItemDetailsPanel.Refresh();
+            Response.Redirect(ImageServerConstants.PageURLs.WorkQueueItemDeletedPage);
         }
 
         
@@ -224,12 +225,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             if (WorkQueueItemKey != null)
             {
+                DeleteWorkQueueDialog.WorkQueueItemKey = WorkQueueItemKey;
                 DeleteWorkQueueDialog.Show();
             }
         }
 
         private void ResetWorkQueueItem(Model.WorkQueue item)
         {
+            ResetWorkQueueDialog.WorkQueueItemKey = WorkQueueItemKey;
             ResetWorkQueueDialog.Show();
         }
 
@@ -290,6 +293,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     }
 
                 }
+            } else
+            {
+                ExceptionHandler.ThrowException(new WorkQueueItemNotFoundException());
             }
 
             base.DataBind();

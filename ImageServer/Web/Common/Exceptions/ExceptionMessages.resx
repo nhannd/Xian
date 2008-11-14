@@ -124,7 +124,7 @@
     <value>The ImageServer can't find a partition with the name "{0}".</value>
   </data>
   <data name="PartitonNotFoundDescription" xml:space="preserve">
-    <value>This message is being displayed because the ImageServe can't find the requested partition. This usually occurs because the name provided is incorrect. </value>
+    <value>This message is being displayed because the ImageServer can't find the requested partition. This usually occurs because the name provided is incorrect. </value>
   </data>
   <data name="StudyInstanceUIDNotFound" xml:space="preserve">
     <value>The ImageServer can't find a study with Study Instance UID "{0}".</value>
@@ -137,5 +137,11 @@
   </data>
   <data name="StudyNotFoundDescription" xml:space="preserve">
     <value>This message is being displayed because the ImageServer can't find the study that has been requested. This usually occurs because the Study Instance UID is invalid and not contained within the ImageServer.</value>
+  </data>
+  <data name="WorkQueueItemNotFound" xml:space="preserve">
+    <value>The ImageServer can't find the work queue item requested.</value>
+  </data>
+  <data name="WorkQueueItemNotFoundDescription" xml:space="preserve">
+    <value>This message is being displayed because the work queue item can't be found. This usually occurs when the work queue item no longer exists because it has been processed or deleted.</value>
   </data>
 </root>

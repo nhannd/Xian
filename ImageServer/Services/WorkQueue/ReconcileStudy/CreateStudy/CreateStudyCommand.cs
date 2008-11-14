@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     }
 
                     FilesystemSelector selector = new FilesystemSelector(FilesystemMonitor.Instance);
-                    Filesystem filesystem = selector.SelectFilesystem(file);
+                    ServerFilesystemInfo filesystem = selector.SelectFilesystem(file);
                     if (filesystem == null)
                     {
                         Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
@@ -258,7 +258,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     insertParms.ServerPartitionKey = _context.Partition.GetKey();
                     insertParms.StudyInstanceUid = studyInstanceUid;
                     insertParms.Folder = studyDate;
-                    insertParms.FilesystemKey = filesystem.GetKey();
+                    insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
                 	insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
                     if (file.TransferSyntax.LosslessCompressed)

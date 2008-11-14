@@ -703,12 +703,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                        
                         set.AppendFormat("{0}= @{1}", map.ColumnName, prop.Name);
-                        command.Parameters.AddWithValue("@" + prop.Name, value==null? System.DBNull.Value: value);
+                        command.Parameters.AddWithValue("@" + prop.Name, value ?? DBNull.Value);
                     }
                     else
                     {
                         set.AppendFormat(", {0}=@{1}", map.ColumnName, prop.Name);
-                        command.Parameters.AddWithValue("@" + prop.Name, value == null ? System.DBNull.Value : value);
+                        command.Parameters.AddWithValue("@" + prop.Name, value ?? DBNull.Value);
                     }
 
                     fieldUpdated++;
@@ -947,6 +947,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     command.Transaction = update.Transaction;
 
                 command.CommandText = sql = GetSelectCountSql(_entityName, command, criteria, null);
+            	
+				Platform.Log(LogLevel.Debug, sql);
 
                 object result = command.ExecuteScalar();
 
@@ -1029,6 +1031,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
 				command.CommandText = GetUpdateSql(_entityName, command, key, parameters);
 
+				Platform.Log(LogLevel.Debug, command.CommandText);
+
 				int rows = command.ExecuteNonQuery();
 
 				return rows > 0;
@@ -1068,6 +1072,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     command.Transaction = update.Transaction;
 
                 command.CommandText = GetUpdateSql(entity, command);
+
+				Platform.Log(LogLevel.Debug, command.CommandText);
 
                 if (command.CommandText == null)
                     return true; //ok. nothign to update
@@ -1113,6 +1119,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 command.CommandText = GetUpdateSql(_entityName, command, criteria, parameters);
 
+				Platform.Log(LogLevel.Debug, command.CommandText);
+
                 int rows = command.ExecuteNonQuery();
 
                 return rows > 0;
@@ -1154,6 +1162,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     command.Transaction = update.Transaction;
 
                 command.CommandText = GetInsertSql(command, _entityName, parameters);
+
+				Platform.Log(LogLevel.Debug, command.CommandText);
 
                 TServerEntity entity = null;
 
@@ -1234,6 +1244,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 command.CommandText = sql = GetSelectSql(_entityName, command, criteria, startIndex, maxRows, null);
 
+				Platform.Log(LogLevel.Debug, command.CommandText);
+
                 myReader = command.ExecuteReader();
                 if (myReader == null)
                 {
@@ -1301,6 +1313,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     command.Transaction = update.Transaction;
 
                 command.CommandText = String.Format("DELETE FROM {0} WHERE {1}", _entityName, GetDeleteWhereClause(_entityName, command, criteria, null));
+
+				Platform.Log(LogLevel.Debug, command.CommandText);
 
                 int rows = command.ExecuteNonQuery();
 

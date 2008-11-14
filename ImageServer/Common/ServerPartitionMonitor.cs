@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
@@ -167,12 +168,20 @@ namespace ClearCanvas.ImageServer.Common
 		/// Timer method for synchronizing with the database.
 		/// </summary>
 		/// <param name="state"></param>
-        private void SynchDB(object state)
-        {
-            LoadPartitions();
-        }
+		private void SynchDB(object state)
+		{
+			try
+			{
+				LoadPartitions();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e,
+				             "Unexpected exception when loading partitions, possible database error.  Operation will be reried later");
+			}
+		}
 
-        private bool IsChanged(ServerPartition p2)
+		private bool IsChanged(ServerPartition p2)
         {
             if (_partitions.ContainsKey(p2.AeTitle))
             {

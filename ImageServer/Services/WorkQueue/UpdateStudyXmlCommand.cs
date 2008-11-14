@@ -86,8 +86,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             // Write it back out.  We flush it out with every added image so that if a failure happens,
             // we can recover properly.
             WriteStudyStream(
-                Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
-                _stream);
+				Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
+				Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml.gz"),
+				_stream);
         }
 
         protected override void OnUndo()
@@ -96,10 +97,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
             WriteStudyStream(
                 Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
+				Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml.gz"),
                 _stream);
         }
 
-        private static void WriteStudyStream(string streamFile, StudyXml theStream)
+        private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
         {
             XmlDocument doc = theStream.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings);
 
@@ -111,13 +113,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     if (File.Exists(streamFile))
                         File.Delete(streamFile);
+					if (File.Exists(gzStreamFile))
+						File.Delete(gzStreamFile);
 
-                    using (Stream fs = new FileStream(streamFile, FileMode.CreateNew))
-                    {
-                        StudyXmlIo.Write(doc, fs);
-                    	fs.Close();
-                    }
-                    return;
+					using (FileStream xmlStream = new FileStream(streamFile, FileMode.CreateNew),
+									  gzipStream = new FileStream(gzStreamFile, FileMode.CreateNew))
+					{
+						StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
+						xmlStream.Close();
+						gzipStream.Close();
+					}
+                	return;
                 }
                 catch (IOException)
                 {

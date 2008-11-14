@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This message is being displayed because the ImageServe can&apos;t find the requested partition. This usually occurs because the name provided is incorrect. .
+        ///   Looks up a localized string similar to This message is being displayed because the ImageServer can&apos;t find the requested partition. This usually occurs because the name provided is incorrect. .
         /// </summary>
         internal static string PartitonNotFoundDescription {
             get {
@@ -120,6 +120,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions {
         internal static string StudyNotFoundDescription {
             get {
                 return ResourceManager.GetString("StudyNotFoundDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The ImageServer can&apos;t find the work queue item requested..
+        /// </summary>
+        internal static string WorkQueueItemNotFound {
+            get {
+                return ResourceManager.GetString("WorkQueueItemNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This message is being displayed because the work queue item can&apos;t be found. This usually occurs when the work queue item no longer exists because it has been processed or deleted..
+        /// </summary>
+        internal static string WorkQueueItemNotFoundDescription {
+            get {
+                return ResourceManager.GetString("WorkQueueItemNotFoundDescription", resourceCulture);
             }
         }
     }

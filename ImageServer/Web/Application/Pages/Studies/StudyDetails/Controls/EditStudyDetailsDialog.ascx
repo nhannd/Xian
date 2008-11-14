@@ -81,7 +81,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientAgeHelp"
-                                                        ValidationExpression="^[^-][0-9]+" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
+                                                        ValidationExpression="(^[^-][0-9]*)*" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
                                     </table>

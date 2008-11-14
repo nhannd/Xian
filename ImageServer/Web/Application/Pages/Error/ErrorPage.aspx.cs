@@ -16,18 +16,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            if(Context.Items["ERROR_MESSAGE"] != null) {
-                ErrorMessageLabel.Text = Context.Items["ERROR_MESSAGE"].ToString();
+            if(Context.Items[ImageServerConstants.ContextKeys.ErrorMessage] != null) {
+                ErrorMessageLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorMessage].ToString();
             } 
-            if (Context.Items["STACK_TRACE"] != null)
+            if (Context.Items[ImageServerConstants.ContextKeys.StackTrace] != null)
             {
-                StackTraceTextBox.Text = Context.Items["STACK_TRACE"].ToString();
+                StackTraceTextBox.Text = Context.Items[ImageServerConstants.ContextKeys.StackTrace].ToString();
                 StackTraceTextBox.Visible = true;
                 StackTraceMessage.Visible = true;
             }
-            if (Context.Items["ERROR_DESCRIPTION"] != null)
+            if (Context.Items[ImageServerConstants.ContextKeys.ErrorDescription] != null)
             {
-                DescriptionLabel.Text = Context.Items["ERROR_DESCRIPTION"].ToString();
+                DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
         }
     }

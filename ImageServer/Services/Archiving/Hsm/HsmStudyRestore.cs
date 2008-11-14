@@ -35,6 +35,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -97,7 +98,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				string destinationFolder;
 				if (_location == null)
 				{
-					Filesystem fs = _hsmArchive.Selector.SelectFilesystem();
+					ServerFilesystemInfo fs = _hsmArchive.Selector.SelectFilesystem();
 					if (fs == null)
 					{
 						DateTime scheduleTime = Platform.Time.AddMinutes(5);
@@ -106,7 +107,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
 						return;
 					}
-					destinationFolder = Path.Combine(fs.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
+					destinationFolder = Path.Combine(fs.Filesystem.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
 				}
 				else
 					destinationFolder = _location.GetStudyPath();
@@ -162,7 +163,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 		public void RestoreNearlineStudy(RestoreQueue queueItem, string zipFile, string destinationFolder, string studyFolder)
 		{
-			Filesystem fs = _hsmArchive.Selector.SelectFilesystem();
+            ServerFilesystemInfo fs = _hsmArchive.Selector.SelectFilesystem();
 			if (fs == null)
 			{
 				DateTime scheduleTime = Platform.Time.AddMinutes(5);
@@ -186,7 +187,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 					// Apply the rules engine.
 					ServerActionContext context =
-						new ServerActionContext(null, fs.GetKey(), _hsmArchive.PartitionArchive.ServerPartitionKey,
+						new ServerActionContext(null, fs.Filesystem.GetKey(), _hsmArchive.PartitionArchive.ServerPartitionKey,
 						                        queueItem.StudyStorageKey);
 					context.CommandProcessor = processor;
 					processor.AddCommand(
@@ -197,7 +198,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						new InsertFilesystemStudyStorageCommand(_hsmArchive.PartitionArchive.ServerPartitionKey,
 						                                        _studyStorage.StudyInstanceUid,
 						                                        studyFolder,
-						                                        fs.GetKey(), _syntax));
+						                                        fs.Filesystem.GetKey(), _syntax));
 
 					if (!processor.Execute())
 					{

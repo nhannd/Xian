@@ -33,6 +33,7 @@ public class ImageServerConstants
         public const string StudyDetailsPage = "~/Pages/Studies/StudyDetails/Default.aspx";
 		public const string SearchPage = "~/Pages/Studies/Default.aspx";
         public const string WorkQueueItemDetailsPage = "~/Pages/Queues/WorkQueue/Edit/Default.aspx";
+        public const string WorkQueueItemDeletedPage = "~/Pages/Queues/WorkQueue/Edit/WorkQueueItemDeleted.aspx";
         public const string WebServices = "~/Services/webservice.htc";
         public const string NumberFormatScript = "~/Scripts/NumberFormat154.js";
         public const string ErrorPage = "~/Pages/Error/ErrorPage.aspx";

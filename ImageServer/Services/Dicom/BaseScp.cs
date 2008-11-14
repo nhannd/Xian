@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, ImageServerCommonConfiguration.DefaultStudyRootFolder);
 
-            Filesystem filesystem = Selector.SelectFilesystem(message);
+            ServerFilesystemInfo filesystem = Selector.SelectFilesystem(message);
             if (filesystem == null)
             {
                 Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
@@ -267,7 +267,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     insertParms.ServerPartitionKey = Partition.GetKey();
                     insertParms.StudyInstanceUid = studyInstanceUid;
                     insertParms.Folder = studyDate;
-                    insertParms.FilesystemKey = filesystem.GetKey();
+                    insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
                 	insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 					if (message.TransferSyntax.LosslessCompressed)

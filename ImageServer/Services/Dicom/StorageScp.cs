@@ -249,13 +249,17 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
                     else if (Partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.AcceptLatest))
                     {
-						if (!studyLocation.TransferSyntaxUid.Equals(message.TransferSyntax.DicomUid.UID))
+                    	TransferSyntax studyStorageSyntax =
+                    		TransferSyntax.GetTransferSyntax(studyLocation.TransferSyntaxUid);
+						if (!studyStorageSyntax.UidString.Equals(message.TransferSyntax.UidString)
+							&& (message.TransferSyntax.Encapsulated || studyStorageSyntax.Encapsulated))
 						{
 							returnStatus = DicomStatuses.Success;
 							Platform.Log(LogLevel.Error,
 							             "Duplicate SOP recived, but transfer syntax has changed, db syntax: {0}, message syntax: {1}",
 							             studyLocation.TransferSyntaxUid, message.TransferSyntax.Name);
-							throw new ApplicationException("Transfer syntax has changed for study.");
+							server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, returnStatus);
+							return true;
 						}
 						else
 						{

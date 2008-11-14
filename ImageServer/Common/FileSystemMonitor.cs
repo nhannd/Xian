@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -60,6 +61,35 @@ namespace ClearCanvas.ImageServer.Common
 		}
 	}
 
+    /// <summary>
+    /// Represents a lookup table mapping a <see cref="FilesystemTierEnum"/> to a list of <see cref="ServerFilesystemInfo"/> on that tier.
+    /// </summary>
+    class TierInfo : Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>
+    {
+    }
+
+    /// <summary>
+    /// Represents a collection of <See cref="ServerFilesystemInfo"/>
+    /// </summary>
+    class FilesystemInfoCollection : Collection<ServerFilesystemInfo>
+    {
+        /// <summary>
+        /// Create a new <see cref="FilesystemInfoCollection"/> with copies of the items in another list
+        /// </summary>
+        /// <param name="anotherList"></param>
+        public FilesystemInfoCollection(IEnumerable<ServerFilesystemInfo> anotherList)
+        {
+            if (anotherList!=null)
+            {
+                foreach (ServerFilesystemInfo fs in anotherList)
+                {
+                    Add(new ServerFilesystemInfo(fs));
+                }
+            }
+            
+        }
+    }
+
 	/// <summary>
 	/// Class for monitoring the status of filesystems.
 	/// </summary>
@@ -76,10 +106,8 @@ namespace ClearCanvas.ImageServer.Common
 		#endregion
 
 		#region Private Members
-		private List<FilesystemTierEnum> _tiers = new List<FilesystemTierEnum>();
 		private readonly Dictionary<ServerEntityKey, ServerFilesystemInfo> _filesystemList = new Dictionary<ServerEntityKey, ServerFilesystemInfo>();
-		// tier mapping table, sorted by tier order
-		private Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> _tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
+		private TierInfo _tierInfo = new TierInfo();
 		private readonly IPersistentStore _store;
 		private Timer _dbTimer;
 		private Timer _fsTimer;
@@ -127,44 +155,35 @@ namespace ClearCanvas.ImageServer.Common
 
 		#region Public Methods
 		/// <summary>
-		/// Return a collection of the currently configured filesystems.
+		/// Return a snapshot the current filesystems.
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerable<ServerFilesystemInfo> GetFilesystems()
 		{
 			lock (_lock)
 			{
-				return _filesystemList.Values;
+                // Return a list with copies of the current <see cref="ServerFilesystemInfo"/>
+			    return new FilesystemInfoCollection(_filesystemList.Values);
 			}
 		}
 
-		/// <summary>
-		/// Returns a collection of the currently configured filesystems associated with a tier.
-		/// </summary>
-		/// <param name="tier"></param>
-		/// <returns></returns>
-		public IEnumerable<ServerFilesystemInfo> GetFilesystems(FilesystemTierEnum tier)
-		{
-			lock (_lock)
-			{
-				return _tierMap[tier];
-			}
-		}
+        /// <summary>
+        /// Return a snapshot the current filesystems.
+        /// </summary>
+        /// <returns></returns>
+        public IList<ServerFilesystemInfo> GetFilesystems(Predicate<ServerFilesystemInfo> filter)
+        {
+            lock (_lock)
+            {
+                FilesystemInfoCollection copy = new FilesystemInfoCollection(_filesystemList.Values);
+                CollectionUtils.Remove(copy, filter);
+                return copy;
+            }
+        }
+
 
 		/// <summary>
-		/// Map of filesystems per tier.
-		/// </summary>
-		/// <returns></returns>
-		public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> GetTierMap()
-		{
-			lock (_lock)
-			{
-				return _tierMap;
-			}
-		}
-
-		/// <summary>
-		/// Get Information regarding a specific filesystem.
+		/// Get the snapshot of the specific filesystem.
 		/// </summary>
 		/// <param name="filesystemKey">The primary key of a filesystem to get info for.</param>
 		/// <returns>A <see cref="ServerFilesystemInfo"/> structure for the filesystem, or null if the filesystem ahs not been found.</returns>
@@ -178,50 +197,12 @@ namespace ClearCanvas.ImageServer.Common
 					LoadFilesystems();
 					_filesystemList.TryGetValue(filesystemKey, out info);
 				}
-				return info;
-			}
-		}
+				
+				if (info==null)
+					return null;
 
-		/// <summary>
-		/// Check if a filesystem is above the configured low watermark.
-		/// </summary>
-		/// <param name="filesystemKey"></param>
-		/// <returns></returns>
-		public bool CheckFilesystemAboveLowWatermark(ServerEntityKey filesystemKey)
-		{
-			lock (_lock)
-			{
-				ServerFilesystemInfo info;
-				if (!_filesystemList.TryGetValue(filesystemKey, out info))
-				{
-					LoadFilesystems();
-					_filesystemList.TryGetValue(filesystemKey, out info);
-				}
-				if (info != null)
-					return info.AboveLowWatermark;
+				return new ServerFilesystemInfo(info); // return a copy 
 			}
-			return false;
-		}
-
-		/// <summary>
-		/// Check if a filesystem is above the configured high watermark.
-		/// </summary>
-		/// <param name="filesystemKey"></param>
-		/// <returns></returns>
-		public bool CheckFilesystemAboveHighWatermark(ServerEntityKey filesystemKey)
-		{
-			lock (_lock)
-			{
-				ServerFilesystemInfo info;
-				if (!_filesystemList.TryGetValue(filesystemKey, out info))
-				{
-					LoadFilesystems();
-					_filesystemList.TryGetValue(filesystemKey, out info);
-				}
-				if (info != null)
-					return info.AboveHighWatermark;
-			}
-			return false;
 		}
 
 		/// <summary>
@@ -243,28 +224,6 @@ namespace ClearCanvas.ImageServer.Common
 					return info.BytesToRemove;
 			}
 			return 0.0f;
-		}
-
-		/// <summary>
-		/// Get the Percent Full for a filesystem.
-		/// </summary>
-		/// <param name="filesystemKey"></param>
-		/// <returns></returns>
-		public Decimal CheckFilesystemPercentFull(ServerEntityKey filesystemKey)
-		{
-			lock (_lock)
-			{
-				ServerFilesystemInfo info;
-				if (!_filesystemList.TryGetValue(filesystemKey, out info))
-				{
-					LoadFilesystems();
-					_filesystemList.TryGetValue(filesystemKey, out info);
-				}
-				if (info != null)
-					return (Decimal)info.UsedSpacePercentage;
-			}
-
-			return 0.00M;
 		}
 
 		/// <summary>
@@ -309,23 +268,19 @@ namespace ClearCanvas.ImageServer.Common
 			return false;
 		}
 
-		public Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
+		private List<FilesystemTierEnum> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
 		{
-			lock (_lock)
+		    List<FilesystemTierEnum> lowerTiers = new List<FilesystemTierEnum>();
+
+			foreach (FilesystemTierEnum tier in _tierInfo.Keys)
 			{
-
-				Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> map =
-					new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
-
-				foreach (FilesystemTierEnum tier in _tiers)
-				{
-					if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
-						map.Add(tier, _tierMap[tier]);
-				}
-
-				return map;
+				if (tier.Enum > filesystem.Filesystem.FilesystemTierEnum.Enum)
+                    lowerTiers.Add(tier);
 			}
+
+            return lowerTiers;
 		}
+
 
 		/// <summary>
 		/// Gets the first filesystem in lower tier for storage purpose.
@@ -334,44 +289,24 @@ namespace ClearCanvas.ImageServer.Common
 		/// <returns></returns>
 		public ServerFilesystemInfo GetLowerTierFilesystemForStorage(ServerFilesystemInfo filesystem)
 		{
-			Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>> lowerTier = FindLowerTierFilesystems(filesystem);
-			if (lowerTier == null || lowerTier.Count == 0)
-				return null;
+            lock(_lock)
+            {
+                List<FilesystemTierEnum> lowerTiers = FindLowerTierFilesystems(filesystem);
+                if (lowerTiers == null || lowerTiers.Count == 0)
+                    return null;
 
-			foreach (List<ServerFilesystemInfo> listFS in lowerTier.Values)
-			{
-				// sort by free space size (descending)
-				listFS.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
-							   {
-								   if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
-								   {
-									   if (fs1.HighwaterMarkMargin < fs2.HighwaterMarkMargin)
-										   return 1;
-									   else if (fs1.HighwaterMarkMargin > fs2.HighwaterMarkMargin)
-										   return -1;
-									   else
-										   return 0;
+                List<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>();
+                foreach (FilesystemTierEnum tier in lowerTiers)
+                {
+                    list.AddRange(_tierInfo[tier]);
+                }
+                CollectionUtils.Remove(list, delegate(ServerFilesystemInfo fs) { return !fs.Writeable; });
+                list = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
+                ServerFilesystemInfo lowtierFilesystem= CollectionUtils.FirstElement(list);
 
-								   }
-								   else
-								   {
-									   return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
-								   }
-							   });
-
-				// first one that's writable
-				ServerFilesystemInfo newFilesystem = listFS.Find(delegate(ServerFilesystemInfo fs)
-											  {
-												  return fs.Writeable;
-											  });
-
-				if (newFilesystem != null)
-				{
-					return newFilesystem;
-				}
-			}
-
-			return null;
+                return new ServerFilesystemInfo(lowtierFilesystem);//return a copy
+            }
+			
 		}
 
 		/// <summary>
@@ -477,7 +412,14 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="state"></param>
 		private void ReLoadFilesystems(object state)
 		{
-			LoadFilesystems();
+			try
+			{
+				LoadFilesystems();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when monitoring filesystem.");
+			}
 		}
 
 		/// <summary>
@@ -489,18 +431,19 @@ namespace ClearCanvas.ImageServer.Common
 
 			lock (_lock)
 			{
-				_tiers = FilesystemTierEnum.GetAll();
+                List < FilesystemTierEnum> tiers = FilesystemTierEnum.GetAll();
 
 				// sorted by enum values
-				_tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
+				tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
 						   {
 							   return tier1.Enum.CompareTo(tier2.Enum);
 						   });
 
-				_tierMap = new Dictionary<FilesystemTierEnum, List<ServerFilesystemInfo>>();
-				foreach (FilesystemTierEnum tier in _tiers)
+			    _tierInfo = new TierInfo();
+
+                foreach (FilesystemTierEnum tier in tiers)
 				{
-					_tierMap.Add(tier, new List<ServerFilesystemInfo>());
+					_tierInfo.Add(tier, new List<ServerFilesystemInfo>());
 				}
 
 				using (IReadContext read = _store.OpenReadContext())
@@ -518,13 +461,13 @@ namespace ClearCanvas.ImageServer.Common
 								Platform.Log(LogLevel.Info, "Watermarks have changed for filesystem {0}, Low: {1}, High: {2}",
 								             filesystem.Description, filesystem.LowWatermark, filesystem.HighWatermark);
 							_filesystemList[filesystem.Key].Filesystem = filesystem;
-							_tierMap[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.Key]);
+							_tierInfo[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.Key]);
 						}
 						else
 						{
 							ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
 							_filesystemList.Add(filesystem.Key, info);
-							_tierMap[filesystem.FilesystemTierEnum].Add(info);
+							_tierInfo[filesystem.FilesystemTierEnum].Add(info);
 							info.LoadFreeSpace();
 							changed = true;
 						}

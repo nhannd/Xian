@@ -72,6 +72,10 @@ namespace ClearCanvas.ImageServer.Common
             {
                 if (!_online || _filesystem.ReadOnly || !_filesystem.Enabled)
                     return false;
+
+                if (FreeBytes < 1024.0 * 1024.0 * 1024.0)
+                    return false;
+
                 return true;
             }
         }
@@ -141,6 +145,15 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
         #endregion
+
+
+        public ServerFilesystemInfo(ServerFilesystemInfo copy)
+        {
+            _filesystem = copy.Filesystem;
+            _online = copy.Online;
+            _freeBytes = copy.FreeBytes;
+            _totalBytes = copy.TotalBytes;
+        }
 
         internal ServerFilesystemInfo(Filesystem filesystem)
         {

@@ -30,11 +30,39 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
-
 namespace ClearCanvas.ImageServer.Common
 {
+    /// <summary>
+    /// Provide sorting function on <see cref="ServerFilesystemInfo"/>
+    /// </summary>
+    public static class FilesystemSorter
+    {
+        public static int SortByFreeSpace(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
+        {
+            Platform.CheckForNullReference(fs1, "fs1");
+            Platform.CheckForNullReference(fs2, "fs2");
+            Platform.CheckForNullReference(fs1.Filesystem, "fs1.Filesystem");
+            Platform.CheckForNullReference(fs2.Filesystem, "fs2.Filesystem");
+
+            if (fs1 == fs2)
+                return 0;
+
+            if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
+            {
+                // descending order on available size.. smaller margin means less available space
+                return fs2.HighwaterMarkMargin.CompareTo(fs1.HighwaterMarkMargin);
+            }
+            else
+            {
+                // ascending order on tier
+                return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
+            }
+        }
+    }
+
     /// <summary>
     /// Class used for incoming studies to select which filesystem the study should be 
     /// stored to.
@@ -45,60 +73,26 @@ namespace ClearCanvas.ImageServer.Common
 
         public FilesystemSelector(FilesystemMonitor monitor)
         {
-            _monitor = monitor;    
+            _monitor = monitor;
         }
 
-        public Filesystem SelectFilesystem(DicomMessageBase msg)
+        public ServerFilesystemInfo SelectFilesystem(DicomMessageBase msg)
         {
-        	return SelectFilesystem();
+            return SelectFilesystem();
         }
 
-        public Filesystem SelectFilesystem()
+        public ServerFilesystemInfo SelectFilesystem()
         {
-            ServerFilesystemInfo selectedFilesystem = null;
+            IList<ServerFilesystemInfo> list =
+                _monitor.GetFilesystems(delegate(ServerFilesystemInfo fs) { return !fs.Writeable; });
 
-            List<ServerFilesystemInfo> list = new List<ServerFilesystemInfo>();
-            list.AddRange(_monitor.GetFilesystems());
-
-            // sort, descending in freespace
-            list.Sort(delegate(ServerFilesystemInfo fs1, ServerFilesystemInfo fs2)
-                           {
-                               if (fs1.Filesystem.FilesystemTierEnum.Enum.Equals(fs2.Filesystem.FilesystemTierEnum.Enum))
-                               {
-                                   if (fs1.HighwaterMarkMargin < fs2.HighwaterMarkMargin)
-                                       return 1;
-                                   else if (fs1.HighwaterMarkMargin > fs2.HighwaterMarkMargin)
-                                       return -1;
-                                   else
-                                       return 0;
-
-                               }
-                               else
-                               {
-                                   return fs1.Filesystem.FilesystemTierEnum.Enum.CompareTo(fs2.Filesystem.FilesystemTierEnum.Enum);
-                               }
-
-                           }
-            );
-
-
-            // find the first filesystem that can be written to
-            foreach (ServerFilesystemInfo info in list)
-            {
-                if (info.Online && info.Filesystem.Enabled && !info.Filesystem.ReadOnly)
-                {
-                    selectedFilesystem = info;
-                    break;
-                }
-            }
-
-            if (selectedFilesystem == null)
+            if (list == null || list.Count == 0)
                 return null;
 
-            if (selectedFilesystem.FreeBytes < 1024.0 * 1024.0 * 1024.0)
-                return null;
-
-            return selectedFilesystem.Filesystem;
+            list = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
+            ServerFilesystemInfo selectedFS = CollectionUtils.FirstElement(list);
+            Platform.CheckForNullReference(selectedFS, "selectedFS");
+            return selectedFS;
         }
     }
 }

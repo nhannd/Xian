@@ -118,7 +118,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 				IList<Model.ArchiveQueue> queueItems = new List<Model.ArchiveQueue>();
                 for(int i=0; i<rows.Length; i++)
                 {
-                    queueItems.Add(Items[rows[i]].TheArchiveQueueItem);
+                    if (rows[i] < Items.Count)
+                    {
+                        queueItems.Add(Items[rows[i]].TheArchiveQueueItem);
+                    }
                 }
 
                 return queueItems;

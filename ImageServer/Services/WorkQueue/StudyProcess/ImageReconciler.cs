@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                         return false;
                 });
 
-            CollectionUtils.Sort(historyList,
+            historyList = CollectionUtils.Sort(historyList,
                                  delegate(StudyHistory history1, StudyHistory history2)
                                      {
                                          return history1.InsertTime.CompareTo(history2.InsertTime);
