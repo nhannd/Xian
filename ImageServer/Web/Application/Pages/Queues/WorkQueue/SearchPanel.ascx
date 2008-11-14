@@ -19,14 +19,9 @@
                                                 <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
                                             </td>
                                             <td align="left" valign="bottom">
-                                                <asp:Label ID="Label3" runat="server" Text="Accession#" CssClass="SearchTextBoxLabel"
+                                                <asp:Label ID="Label3" runat="server" Text="Patient Name" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:TextBox ID="AccessionNumber" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Accession Number" />
-                                            </td>
-                                            <td align="left" valign="bottom">
-                                                <asp:Label ID="Label4" runat="server" Text="Description" CssClass="SearchTextBoxLabel"
-                                                    EnableViewState="False" /><br />
-                                                <asp:TextBox ID="StudyDescription" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Study Description"/>
+                                                <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Name" />
                                             </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label1" runat="server" Text="Schedule" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;

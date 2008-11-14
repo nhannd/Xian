@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             workQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
                                                             {
-                                                                source.AccessionNumber = AccessionNumber.Text;
+                                                                source.PatientsName = PatientName.Text;
                                                                 source.Partition = ServerPartition;
                                                                 source.PatientId = PatientId.Text;
 
@@ -117,7 +117,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                     source.ScheduledDate = string.Empty;
                                                                 }                                   
 
-                                                                source.StudyDescription = StudyDescription.Text;
                                                                 source.DateFormats = ScheduleCalendarExtender.Format;
                                                                 if (TypeDropDownList.SelectedValue != string.Empty)
                                                                     source.TypeEnum = WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);

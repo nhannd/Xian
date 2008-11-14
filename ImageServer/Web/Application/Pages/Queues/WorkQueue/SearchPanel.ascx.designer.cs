@@ -74,31 +74,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// AccessionNumber control.
+        /// PatientName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox AccessionNumber;
-        
-        /// <summary>
-        /// Label4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label4;
-        
-        /// <summary>
-        /// StudyDescription control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox StudyDescription;
+        protected global::System.Web.UI.WebControls.TextBox PatientName;
         
         /// <summary>
         /// Label1 control.

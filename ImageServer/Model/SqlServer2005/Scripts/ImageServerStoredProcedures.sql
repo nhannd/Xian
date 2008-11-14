@@ -258,8 +258,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 CREATE PROCEDURE [dbo].[WebQueryWorkQueue] 
 	@ServerPartitionGUID uniqueidentifier = null,
 	@PatientID nvarchar(64) = null,
-	@Accession nvarchar(16) = null,
-	@StudyDescription nvarchar(64) = null,
+	@PatientsName nvarchar(64) = null,
 	@ScheduledTime datetime = null,
 	@Type smallint = null,
 	@Status smallint = null,
@@ -332,22 +331,13 @@ BEGIN
 		SET @where = @where + ''Study.PatientID Like ''''%'' + @PatientID + ''%'''' ''
 	END
 
-	IF (@Accession IS NOT NULL and @Accession<>'''')
+	IF (@PatientsName IS NOT NULL and @PatientsName<>'''')
 	BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''Study.AccessionNumber Like ''''%'' + @Accession + ''%'''' ''
+		SET @where = @where + ''Study.PatientsName Like ''''%'' + @PatientsName + ''%'''' ''
 	END
-
-	IF (@StudyDescription IS NOT NULL and @StudyDescription<>'''')
-	BEGIN
-		IF (@where<>'''')
-			SET @where = @where + '' AND ''
-
-		SET @where = @where + ''Study.StudyDescription Like ''''%'' + @StudyDescription + ''%'''' ''
-	END
-
 
 	if (@where<>'''')
 		SET @stmt = @stmt + '' WHERE '' + @where

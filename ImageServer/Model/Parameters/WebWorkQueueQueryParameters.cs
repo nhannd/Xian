@@ -53,14 +53,9 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["PatientID"] = new ProcedureParameter<string>("PatientID", value); }
         }
 
-        public string Accession
+        public string PatientsName
         {
-            set { SubCriteria["Accession"] = new ProcedureParameter<string>("Accession", value); }
-        }
-
-        public string StudyDescription
-        {
-            set { SubCriteria["StudyDescription"] = new ProcedureParameter<string>("StudyDescription", value); }
+			set { SubCriteria["PatientsName"] = new ProcedureParameter<string>("PatientsName", value); }
         }
 
         public DateTime? ScheduledTime

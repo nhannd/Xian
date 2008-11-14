@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private string _accessionNumber;
 		private string _patientId;
 		private string _scheduledDate;
-		private string _studyDescription;
+		private string _patientName;
 		private int _resultCount;
 		private ServerPartition _partition;
 		private WorkQueueTypeEnum _typeEnum;
@@ -146,12 +146,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		#region Public Properties
-		public string AccessionNumber
-		{
-			get { return _accessionNumber; }
-			set { _accessionNumber = value; }
-		}
-
 		public string PatientId
 		{
 			get { return _patientId; }
@@ -162,10 +156,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _scheduledDate; }
 			set { _scheduledDate = value; }
 		}
-		public string StudyDescription
+		public string PatientsName
 		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
+			get { return _patientName; }
+			set { _patientName = value; }
 		}
 
 		public ServerPartition Partition
@@ -241,13 +235,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			if (Partition != null)
 				parameters.ServerPartitionKey = Partition.Key;
 
-			if (AccessionNumber != null)
-				parameters.Accession = AccessionNumber.Replace("*","%");
+			if (PatientsName != null)
+				parameters.PatientsName = PatientsName.Replace("*", "%");
 			if (PatientId != null)
 				parameters.PatientID = PatientId.Replace("*", "%");
-			if (StudyDescription != null)
-				parameters.StudyDescription = StudyDescription.Replace("*", "%");	
-
+		
 			if (String.IsNullOrEmpty(ScheduledDate))
 				parameters.ScheduledTime = null;
 			else
