@@ -93,7 +93,7 @@ namespace ClearCanvas.Dicom
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
             _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
-
+			_metaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
         }
 
         /// <summary>
@@ -108,6 +108,7 @@ namespace ClearCanvas.Dicom
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
             _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+			_metaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
 
             _filename = filename;
         }
@@ -123,6 +124,7 @@ namespace ClearCanvas.Dicom
             ImplementationVersionName = DicomImplementation.Version;
             ImplementationClassUid = DicomImplementation.ClassUID.UID;
             _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+			_metaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
 
             _filename = String.Empty;
         }
@@ -156,6 +158,7 @@ namespace ClearCanvas.Dicom
                 _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(msg.TransferSyntax.UidString);
             else
                 _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(TransferSyntax.ExplicitVrLittleEndian.UidString);
+			_metaInfo[DicomTags.FileMetaInformationVersion].Values = new byte[] { 0x00, 0x01 }; 
 
             _filename = filename;
         }
