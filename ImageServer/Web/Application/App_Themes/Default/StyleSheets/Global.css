@@ -42,21 +42,21 @@ Global.css - Defines the global styles for the entire web application relating
 
 .MainContentLeftEdge
 {
-	background: white url(../images/MainContent/MainContentLeftEdge.png) repeat-y;
+	background: white url(/PersistantImage.ashx?key=MainContentLeftEdge) repeat-y;
 	width: 7px;
 	height: 1px;
 }
 
 .MainContentRightEdge
 {
-	background: white url(../images/MainContent/MainContentRightEdge.png) repeat-y;
+	background: white url(/PersistantImage.ashx?key=MainContentRightEdge) repeat-y;
 	width: 7px;
 	height: 1px;
 }
 
 .MainContentBottom
 {
-	background: url(../images/MainContent/MainContentBottom.png) repeat-x;
+	background: url(/PersistantImage.ashx?key=MainContentBottom) repeat-x;
 	height: 14px;   
 }
 
@@ -68,7 +68,7 @@ Global.css - Defines the global styles for the entire web application relating
     font-size: 20px;
     padding-left: 8px;
     padding-bottom: 2px;
-    background: #3d98d1 url(../images/MainContent/MainContentTitleBackground.png) repeat-x;
+    background: #3d98d1 url(/PersistantImage.ashx?key=MainContentTitleBackground) repeat-x;
 }
 
 .MainContentSubTitle
@@ -83,7 +83,7 @@ Global.css - Defines the global styles for the entire web application relating
 .MainContentTitleButtonPanel
 {
     text-align: right;
-    background: url(../images/MainContent/MainContentTitleBackground.png) repeat-x;
+    background: url(/PersistantImage.ashx?key=MainContentTitleBackground) repeat-x;
     padding-right: 4px; 
 }
 

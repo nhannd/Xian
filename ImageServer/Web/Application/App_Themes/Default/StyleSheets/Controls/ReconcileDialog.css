@@ -10,7 +10,7 @@
     padding: 4px; 
     margin-left: 10px;
     margin-right: 10px;
-    background: #ffffcc url(../../images/Error/ErrorMessageBackground.png) repeat-x; 
+    background: #ffffcc url(/PersistantImage.ashx?key=ErrorMessageBackground) repeat-x; 
     color: red;
     border: solid 1px red; 
     font-family: Sans-Serif; 
@@ -24,7 +24,7 @@
     color: #205F87;
     text-align: center; 
     font-weight:bold;
-    background: #dddddd url(../../images/Controls/Dialog/HeadingBackground.png) repeat-x top;
+    background: #dddddd url(/PersistantImage.ashx?key=HeadingBackground) repeat-x top;
 }
 
 .ConflictingStudyTitle
@@ -37,7 +37,7 @@
     margin: 6px 10px 0px 10px; 
     padding: 4px;
     border: solid 1px #205F87; 
-    background: #CCCCCC url(../../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;
+    background: #CCCCCC url(/PersistantImage.ashx?key=DialogBodyBackground) repeat-x bottom;
 }
 
 .SeriesInformation
@@ -62,7 +62,7 @@
 .SeriesTitle
 {
     color: #16425D;
-    background: #B8D8EE url(../../images/Controls/Dialog/SubHeadingBackground.png) repeat-x;
+    background: #B8D8EE url(/PersistantImage.ashx?key=SubHeadingBackground) repeat-x;
     padding: 2px 0px 2px 6px;
     font-weight: bold;
     border-left: solid 1px #16425D;
@@ -114,7 +114,7 @@
 
 .ReconcileButtonsTable
 {
-    background: #B8D8EE url(../../images/Controls/Dialog/ReconcileButtonBackground.png) repeat-x bottom;
+    background: #B8D8EE url(/PersistantImage.ashx?key=ReconcileButtonBackground) repeat-x bottom;
     border-left: solid 1px #16425D;
     border-right: solid 1px #16425D;
     border-bottom: solid 1px #16425D;

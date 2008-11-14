@@ -207,7 +207,7 @@
 }
 .DialogTabControl .ajax__tab_tab
 {
-	background: url(../../images/Controls/Dialog/DialogInactiveTabMiddle.png) repeat-x;
+	background: url(/PersistantImage.ashx?key=DialogInactiveTabMiddle) repeat-x;
 	padding-left: 3px;
 	padding-right: 2px;
 	padding-top: 1px;
@@ -224,7 +224,7 @@
 }
 .DialogTabControl .ajax__tab_hover .ajax__tab_tab
 {
-	background: url(../../images/Controls/Dialog/DialogHoverTabMiddle.png) repeat-x;
+	background: url(/PersistantImage.ashx?key=DialogHoverTabMiddle) repeat-x;
     color: #16425D;
 }
 .DialogTabControl .ajax__tab_active .ajax__tab_outer
@@ -238,7 +238,7 @@
 }
 .DialogTabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: url(../../images/Controls/Dialog/DialogActiveTabMiddle.png) repeat-x;
+	background: url(/PersistantImage.ashx?key=DialogActiveTabMiddle) repeat-x;
 	color: #205F87;
     font-weight: bold;
     font-size: 14px;    
@@ -254,6 +254,6 @@
 {
 	margin: 0px;
 	padding: 6px;
-	background: #ffffff url(../../images/Controls/Dialog/DialogBodyBackground.png) repeat-x bottom;
+	background: #ffffff url(/PersistantImage.ashx?key=DialogBodyBackground) repeat-x bottom;
 	border: #618FAD 1px solid;
 }

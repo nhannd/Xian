@@ -20,7 +20,7 @@
 
 .TabControl .ajax__tab_header					
 {
-    background: #dddddd url(../../images/Controls/Tabs/TabHeaderBackgroundTop.png) repeat-x top;
+    background: #dddddd url(/PersistantImage.ashx?key=TabHeaderBackgroundTop) repeat-x top;
 	padding-bottom: 0px;
 }
 .TabControl .ajax__tab_outer
@@ -42,7 +42,7 @@
 	color: #3a74ae;
 	font-size: 12px;
 	font-weight:bold;
-	background: url(../../images/Controls/Tabs/TabInactiveMiddle.png) repeat-x;
+	background: url(/PersistantImage.ashx?key=TabInactiveMiddle) repeat-x;
 }
 .TabControl .ajax__tab_hover .ajax__tab_outer
 {
@@ -67,7 +67,7 @@
 }
 .TabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: url(../../images/Controls/Tabs/TabActiveMiddle.png) repeat-x;
+	background: url(/PersistantImage.ashx?key=TabActiveMiddle) repeat-x;
 	color: #3a74ae;
 	font-weight: bold;
 }

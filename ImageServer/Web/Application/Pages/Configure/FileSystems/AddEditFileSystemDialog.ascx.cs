@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
@@ -260,11 +261,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             FileSystem.Enabled = ReadCheckBox.Checked || WriteCheckBox.Checked;
 
             Decimal lowWatermark;
-            if (Decimal.TryParse(LowWatermarkTextBox.Text, out lowWatermark))
+            if (Decimal.TryParse(LowWatermarkTextBox.Text, NumberStyles.Number, null, out lowWatermark))
                 FileSystem.LowWatermark = lowWatermark;
 
             Decimal highWatermark;
-            if (Decimal.TryParse(HighWatermarkTextBox.Text, out highWatermark))
+			if (Decimal.TryParse(HighWatermarkTextBox.Text, NumberStyles.Number, null, out highWatermark))
                 FileSystem.HighWatermark = highWatermark;
 
             FileSystem.FilesystemTierEnum = FilesystemTiers[TiersDropDownList.SelectedIndex];

@@ -30,7 +30,7 @@ EXECUTE @RC = [ImageServer].[dbo].[InsertServerPartition]
    1
   ,'Primary Partition'
   ,@AeTitle
-  ,'104'
+  ,'105'
   ,'Primary'
   ,@DuplicateSopPolicy
 

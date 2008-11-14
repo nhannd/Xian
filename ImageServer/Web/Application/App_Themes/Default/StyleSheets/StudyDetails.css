@@ -4,7 +4,7 @@
     text-align:center; 
     font-size: 16px; 
     font-weight: bold; 
-    background: #FFFFCC url(../images/Error/ErrorMessageBackground.png) repeat-x;
+    background: #FFFFCC url(/PersistantImage.ashx?key=ErrorMessageBackground) repeat-x;
     padding: 3px;
     margin: 4px;
     color: #FF0000;
@@ -16,7 +16,7 @@
     text-align:center; 
     font-size: 12px; 
     font-weight: bold; 
-    background: #FFFFCC url(../images/Error/ErrorMessageBackground.png) repeat-x;
+    background: #FFFFCC url(/PersistantImage.ashx?key=ErrorMessageBackground) repeat-x;
     padding: 3px;
     margin: 4px;
     color: #FF0000;
@@ -39,7 +39,7 @@
 
 .PatientSummaryTable
 {
-    background: #eeeeee url(../images/MainContent/PatientSummaryBackground.png) repeat-x;
+    background: #eeeeee url(/PersistantImage.ashx?key=PatientSummaryBackground) repeat-x;
     padding: 2px 1px 2px 1px;
     border: solid 1px #999999;
 }

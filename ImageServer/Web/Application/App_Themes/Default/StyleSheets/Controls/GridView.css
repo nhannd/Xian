@@ -8,7 +8,7 @@
 
 .GlobalGridViewHeader
 {
-    background: #ffffff url(../../images/Controls/GridView/GridViewHeaderBackground.png) repeat-x;
+    background: #ffffff url(/PersistantImage.ashx?key=GridViewHeaderBackground) repeat-x;
     height: 23px;
 	text-align: left;
 	padding-left: 8px;
@@ -73,7 +73,7 @@
 
 .GlobalGridPager
 {
-    background: #e1eff7 url(../../images/Controls/GridView/GridViewPagerTopBackground.png) repeat-x bottom;
+    background: #e1eff7 url(/PersistantImage.ashx?key=GridViewPagerTopBackground.png) repeat-x bottom;
     height: 24px;
 }
 

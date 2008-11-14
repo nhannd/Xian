@@ -4,7 +4,7 @@
 
 .MainMenuPanel
 {
-	background: url("../images/Header/MenuBackground.png") repeat-x;
+	background: url(/PersistantImage.ashx?key=MenuBackground) repeat-x;
 	height: 40px;
 	text-align: left;
 	font-family: Sans-Serif;
@@ -41,7 +41,7 @@
 .StaticHover
 {
     color: white;
-    background: #3482b2 url(../images/Header/MenuHoverBackground.png) repeat-x;
+    background: #3482b2 url(/PersistantImage.ashx?key=MenuHoverBackground) repeat-x;
     margin: 0px 3px 0px 3px;
     padding: 0px 1px 0px 1px;
     font-family: Sans-Serif;
@@ -85,7 +85,7 @@
 .DynamicHover
 {
     color: white;
-    background:  url(../images/Header/MenuHoverBackground.png) repeat-x;
+    background:  url(/PersistantImage.ashx?key=MenuHoverBackground) repeat-x;
     padding: 1px 1px 1px 1px;
     border-top: solid 1px #2371a1;
     border-bottom: solid 1px #2371a1;

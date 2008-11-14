@@ -4,7 +4,7 @@
 }
 
 .Description {
-	background: #eeeeee url(../images/Error/ErrorDescriptionBackground.png) repeat-x top;
+	background: #eeeeee url(/PersistantImage.ashx?key=ErrorDescriptionBackground) repeat-x top;
 	border: 1px solid #618FAD;
 	padding: 10px 10px 0px 10px;
 	margin-top: 10px;
@@ -17,7 +17,7 @@
 .ErrorMessage
 {
     margin-top: 10px;
-    background: #ffffcc url(../images/Error/ErrorMessageBackground.png) repeat-x; 
+    background: #ffffcc url(/PersistantImage.ashx?key=ErrorMessageBackground) repeat-x; 
     border: solid 1px #ff0000; 
     font-family: Sans-Serif; 
     font-size: 18px; 
@@ -75,7 +75,7 @@ font-family: sans-serif;
     border-left: solid 1px #205F87; 
     border-right: solid 1px #205F87; 
     border-bottom: solid 1px #205F87; 
-    background: #eeeeee url(../images/Error/UserEscapeLinkBackground.png) repeat-x bottom;
+    background: #eeeeee url(/PersistantImage.ashx?key=UserEscapeLinkBackground) repeat-x bottom;
 }
 
 .UserEscapeCell

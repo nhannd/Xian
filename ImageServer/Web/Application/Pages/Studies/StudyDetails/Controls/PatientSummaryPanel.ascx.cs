@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
                 personName.PersonName = _patientSummary.PatientName;
                 PatientDOB.Value = _patientSummary.Birthdate;
-				if (_patientSummary.PatientsAge != null)
+				if (!String.IsNullOrEmpty(_patientSummary.PatientsAge))
 				{
                      string patientAge = _patientSummary.PatientsAge.Substring(0, 3).TrimStart('0');
 

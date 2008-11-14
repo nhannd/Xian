@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -97,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         protected override bool OnServerSideEvaluate()
         {
             Decimal value;
-            if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), out value))
+            if (Decimal.TryParse(GetControlValidationValue(ControlToValidate), NumberStyles.Number, null, out value))
             {
                 return value >= MinValue && value <= MaxValue;
             }

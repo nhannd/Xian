@@ -776,6 +776,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>WorkQueueSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PersistantImage.ashx.cs">
+      <DependentUpon>PersistantImage.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
@@ -1122,6 +1125,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
+    <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\.svn\entries" />
     <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
