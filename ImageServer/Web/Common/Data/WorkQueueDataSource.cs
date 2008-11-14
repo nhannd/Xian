@@ -240,15 +240,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			parameters.MaxRowCount = 25;
 			if (Partition != null)
 				parameters.ServerPartitionKey = Partition.Key;
-			parameters.Accession = AccessionNumber;
-			parameters.PatientID = PatientId;
+
+			if (AccessionNumber != null)
+				parameters.Accession = AccessionNumber.Replace("*","%");
+			if (PatientId != null)
+				parameters.PatientID = PatientId.Replace("*", "%");
+			if (StudyDescription != null)
+				parameters.StudyDescription = StudyDescription.Replace("*", "%");	
+
 			if (String.IsNullOrEmpty(ScheduledDate))
 				parameters.ScheduledTime = null;
 			else
 				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
-
-			parameters.Accession = AccessionNumber;
-			parameters.StudyDescription = StudyDescription;
 
 			if (TypeEnum != null)
 				parameters.Type = TypeEnum;

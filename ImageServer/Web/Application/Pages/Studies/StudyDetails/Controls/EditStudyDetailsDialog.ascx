@@ -75,13 +75,19 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox"></ccUI:TextBox>
+                                        <ccUI:TextBox ID="PatientAge" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" MaxLength="3"></ccUI:TextBox>
+                                        <asp:DropDownList ID="PatientAgePeriod" runat="server" CssClass="DialogDropDownList">
+                                            <asp:ListItem Value="Y">Years</asp:ListItem>
+                                            <asp:ListItem Value="M">Months</asp:ListItem>
+                                            <asp:ListItem Value="W">Weeks</asp:ListItem>
+                                            <asp:ListItem Value="D">Days</asp:ListItem>
+                                        </asp:DropDownList>
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientAgeHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:RegularExpressionFieldValidator
                                                         ID="PatientAgeValidator" runat="server" ControlToValidate="PatientAge"
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientAgeHelp"
-                                                        ValidationExpression="(^[^-][0-9]*)*" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
+                                                        ValidationExpression="^[^-][0-9]*$" Text="Patient Age must contain only digits and may not be negative" IgnoreEmptyValue="true" Display="None">
                                             </ccValidator:RegularExpressionFieldValidator>
                                         </td></tr>
                                     </table>

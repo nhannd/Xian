@@ -263,6 +263,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     switch (tag)
                     {
+						case DicomTags.SpecificCharacterSet:
+							// Skip it, if included, don't overwrite the value set above.
+                    		break;
                         case DicomTags.StudyInstanceUid:
                             dataSet[DicomTags.StudyInstanceUid].SetStringValue(row.StudyInstanceUid);
                             break;

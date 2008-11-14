@@ -158,6 +158,21 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
                 String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 
+				if (studyInstanceUid.Length > 64 || seriesInstanceUid.Length > 64 || sopInstanceUid.Length > 64)
+				{
+					returnStatus = DicomStatuses.AttributeValueOutOfRange;
+					string failureMessage;
+					if (studyInstanceUid.Length > 64)
+						failureMessage = string.Format("Study Instance UID is > 64 bytes in C-STORE Message: {0}",studyInstanceUid);
+					else if (seriesInstanceUid.Length > 64)
+						failureMessage = string.Format("Series Instance UID is > 64 bytes in C-STORE Message: {0}", seriesInstanceUid);
+					else
+						failureMessage = string.Format("SOP Instance UID is > 64 bytes in C-STORE Message: {0}", sopInstanceUid);
+						
+					Platform.Log(LogLevel.Error, failureMessage);
+					throw new ApplicationException(failureMessage);
+				}
+
                 StudyStorageLocation studyLocation = GetStudyStorageLocation(message);
                 if (studyLocation == null)
                 {

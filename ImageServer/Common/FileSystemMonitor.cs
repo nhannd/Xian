@@ -303,7 +303,8 @@ namespace ClearCanvas.ImageServer.Common
                 CollectionUtils.Remove(list, delegate(ServerFilesystemInfo fs) { return !fs.Writeable; });
                 list = CollectionUtils.Sort(list, FilesystemSorter.SortByFreeSpace);
                 ServerFilesystemInfo lowtierFilesystem= CollectionUtils.FirstElement(list);
-
+				if (lowtierFilesystem == null)
+					return null;
                 return new ServerFilesystemInfo(lowtierFilesystem);//return a copy
             }
 			

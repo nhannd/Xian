@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             patient.Birthdate = study.PatientsBirthDate;
             patient.PatientName = study.PatientsName;
             patient.Sex = study.PatientsSex;
+        	patient.PatientsAge = study.PatientsAge;
 
             PatientAdaptor adaptor = new PatientAdaptor();
             Patient pat = adaptor.Get(study.PatientKey);

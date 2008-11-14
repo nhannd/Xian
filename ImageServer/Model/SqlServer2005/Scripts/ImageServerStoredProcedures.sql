@@ -1887,7 +1887,8 @@ CREATE PROCEDURE [dbo].[InsertInstance]
 	@PerformedProcedureStepStartDate varchar(8) = null,
 	@PerformedProcedureStepStartTime varchar(16) = null,
 	@SourceApplicationEntityTitle varchar(16) = null,
-	@SpecificCharacterSet varchar(128) = null
+	@SpecificCharacterSet varchar(128) = null,
+	@PatientsAge varchar(4) = null
 	
 AS
 BEGIN
@@ -1956,13 +1957,13 @@ BEGIN
 		set @InsertStudy = 1
 
 		INSERT into Study (GUID, ServerPartitionGUID, PatientGUID,
-				StudyInstanceUid, PatientsName, PatientId, IssuerOfPatientId, PatientsBirthDate,
+				StudyInstanceUid, PatientsName, PatientId, IssuerOfPatientId, PatientsBirthDate, PatientsAge,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
 				NumberOfStudyRelatedInstances,SpecificCharacterSet)
 		VALUES
 				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
-				@StudyInstanceUid, @PatientsName, @PatientId, @IssuerOfPatientId, @PatientsBirthDate,
+				@StudyInstanceUid, @PatientsName, @PatientId, @IssuerOfPatientId, @PatientsBirthDate, @PatientsAge,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
 				@StudyDescription, @ReferringPhysiciansName, 0, 1,@SpecificCharacterSet)
 
@@ -3130,8 +3131,11 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Thanh Huynh
 -- Create date: September 05, 2008
+-- Last update: Nov 06, 2008
 -- Description:	Insert or update StudyIntegrity Queue based on supplied data
 --				
+-- Nov 06, 2008: Change to insert [StudyIntegrityQueueUid] record only if it doesn''t exist.
+--
 -- =============================================
 CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue] 
 	-- Add the parameters for the stored procedure here
@@ -3172,9 +3176,13 @@ BEGIN
 	END
 
 
-	INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
-	VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
-	
+	IF NOT EXISTS(SELECT GUID FROM [StudyIntegrityQueueUid] 
+				WHERE [StudyIntegrityQueueGUID]=@Guid AND [SeriesInstanceUid]=@SeriesInstanceUid AND [SopInstanceUid]=@SopInstanceUid)
+	BEGIN
+		INSERT INTO [dbo].[StudyIntegrityQueueUid]([GUID],[StudyIntegrityQueueGUID],[SeriesInstanceUid],[SeriesDescription],[SopInstanceUid])
+		VALUES (newid(),@Guid,@SeriesInstanceUid,@SeriesDescription,@SopInstanceUid)
+	END
+
 	COMMIT TRANSACTION
 	
 	SELECT * FROM [dbo].[StudyIntegrityQueue] WHERE GUID=@Guid

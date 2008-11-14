@@ -810,6 +810,8 @@ namespace ClearCanvas.Dicom
         public void AddFrameFragment(byte[] data)
         {
             DicomFragmentSequence sequence = _sq;
+			if ((data.Length % 2) == 1)
+				throw new DicomCodecException("Fragment being appended is incorrectly an odd length: " + data.Length);
 
             uint offset = 0;
             foreach (DicomFragment fragment in sequence.Fragments)

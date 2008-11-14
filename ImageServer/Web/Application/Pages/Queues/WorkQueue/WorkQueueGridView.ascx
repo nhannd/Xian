@@ -34,7 +34,7 @@
 									<asp:Label ID="Schedule" runat="server" Text='<%# DateTimeFormatter.Format((DateTime)Eval("ScheduledDateTime")) %>'></asp:Label>
 								</ItemTemplate>
 							</asp:TemplateField>
-						<asp:BoundField HeaderText="Type" DataField="PriorityString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
+						<asp:BoundField HeaderText="Priority" DataField="PriorityString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
 						<asp:BoundField HeaderText="Status" DataField="StatusString" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>
 							<asp:TemplateField HeaderText="Processing Server">
 								<HeaderStyle Wrap="false" HorizontalAlign="Center" />

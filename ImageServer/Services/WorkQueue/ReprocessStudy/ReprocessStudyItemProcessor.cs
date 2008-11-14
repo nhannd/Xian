@@ -339,7 +339,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
 					parms.Duplicate = false;
 					parms.ExpirationTime =
 						Platform.Time.Add(TimeSpan.FromSeconds(WorkQueueSettings.Instance.WorkQueueExpireDelaySeconds));
-					parms.Extension = ".dcm";
 					parms.ScheduledTime = Platform.Time;
 					parms.SeriesInstanceUid = series.SeriesUid;
 					parms.ServerPartitionKey = _newStorage.ServerPartitionKey;

@@ -162,11 +162,11 @@
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\DialogHelper.cs" />
+    <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\DialogHelper.cs" />
-    <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Pages\Common\BarChart.aspx.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -930,6 +930,8 @@
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Helpers\DialogHelper.cs" />
+    <Content Include="Helpers\ScriptHelper.cs" />
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
@@ -1052,6 +1054,7 @@
     <Content Include="Scripts\CodeMirror\js\undo.js" />
     <Content Include="Scripts\CodeMirror\js\util.js" />
     <Content Include="Scripts\CodeMirror\LICENSE.txt" />
+    <Content Include="Scripts\ErrorHandling.js" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\Default\Global.skin" />
@@ -1076,6 +1079,8 @@
     <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSettings.settings.svn-base" />
     <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSummary.cs.svn-base" />
     <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSummaryAssembler.cs.svn-base" />
+    <None Include="Helpers\.svn\text-base\DialogHelper.cs.svn-base" />
+    <None Include="Helpers\.svn\text-base\ScriptHelper.cs.svn-base" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\all-wcprops" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\entries" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\format" />
@@ -1205,7 +1210,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3783</DevelopmentServerPort>
+          <DevelopmentServerPort>2025</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

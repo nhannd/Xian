@@ -271,20 +271,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             destPath = Path.Combine(destPath, sopInstanceUid);
             destPath += extension;
 
-            if (File.Exists(destPath))
+            bool duplicate = File.Exists(destPath);
+
+            if (duplicate)
             {
                 if (uid!=null)
                 {
-                    #region Duplicate SOP
-
-                    // TODO: Add code to handle duplicate sop here
-                    Platform.Log(LogLevel.Warn, "Image {0} is discarded because of duplicate", file.Filename);
-                    DeleteUid(uid);
-                    File.Delete(GetUidPath(uid));
+                    Platform.Log(LogLevel.Warn, "Image {0} is a duplicate. Existing sop will be replaced.", file.Filename);
                     _duplicateList.Add(uid);
-                    return;
-
-                    #endregion
                 }
             }
 
@@ -294,7 +288,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             processor.AddCommand(saveCommand);
             if (uid!=null)
             {
-                processor.AddCommand(new UpdateWorkQueueCommand(file, _destStudyStorage, extension));
+                processor.AddCommand(new UpdateWorkQueueCommand(file, _destStudyStorage, extension, duplicate));
             }
 
             if (!processor.Execute())

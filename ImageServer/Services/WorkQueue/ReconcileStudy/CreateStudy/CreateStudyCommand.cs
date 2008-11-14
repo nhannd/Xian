@@ -362,7 +362,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
             SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
             processor.AddCommand(saveCommand);
-            processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension));
+            processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension, false));
             
             if (!processor.Execute())
             {

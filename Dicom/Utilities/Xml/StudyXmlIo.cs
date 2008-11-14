@@ -56,6 +56,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			theDoc.WriteTo(tw);
 
+			tw.Flush();
+
 			tw.Close();
 		}
 
@@ -74,7 +76,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			XmlWriter tw = XmlWriter.Create(ms, xmlSettings);
 
 			theDoc.WriteTo(tw);
-
+			tw.Flush();
 			tw.Close();
 
 			byte[] buffer = ms.GetBuffer();
@@ -82,7 +84,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			GZipStream compressedzipStream = new GZipStream(theStream, CompressionMode.Compress, true);
 			compressedzipStream.Write(buffer, 0, buffer.Length);
 			// Close the stream.
+			compressedzipStream.Flush();
 			compressedzipStream.Close();
+
+			// Force a flush
+			theStream.Flush();
 		}
 
 		public static void WriteXmlAndGzip(XmlDocument theDoc, Stream theXmlStream, Stream theGzipStream)
@@ -102,16 +108,23 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			theDoc.WriteTo(tw);
 
+			tw.Flush();
 			tw.Close();
 
 			byte[] buffer = ms.GetBuffer();
 			
 			GZipStream compressedzipStream = new GZipStream(theGzipStream, CompressionMode.Compress, true);
 			compressedzipStream.Write(buffer, 0, (int)ms.Length);
+
 			// Close the stream.
+			compressedzipStream.Flush();
 			compressedzipStream.Close();
 
 			theXmlStream.Write(buffer, 0, (int)ms.Length);
+
+			// Force a flush.
+			theXmlStream.Flush();
+			theGzipStream.Flush();
 		}
 
 		public static void ReadGzip(XmlDocument theDoc, Stream theStream)
@@ -120,6 +133,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			theDoc.Load(zipStream);
 
+			// Force a flush
+			theStream.Flush();
 			return;
 		}
 

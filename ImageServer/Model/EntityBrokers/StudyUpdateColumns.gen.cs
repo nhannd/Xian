@@ -70,6 +70,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["PatientId"] = new EntityUpdateColumn<System.String>("PatientId", value); }
         }
+       [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
+        public System.String PatientsAge
+        {
+            set { SubParameters["PatientsAge"] = new EntityUpdateColumn<System.String>("PatientsAge", value); }
+        }
        [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
         public System.String PatientsBirthDate
         {

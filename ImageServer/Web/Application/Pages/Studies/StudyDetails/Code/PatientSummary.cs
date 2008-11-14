@@ -42,6 +42,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
         private string _patientName;
         private string _birthdate;
         private string _sex;
+    	private string _patientsAge;
 
         #endregion Private members
 
@@ -76,6 +77,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             set { _issuerOfPatientId = value; }
         }
 
-        #endregion Public Properties
+    	public string PatientsAge
+    	{
+    		get { return _patientsAge; }
+    		set { _patientsAge = value; }
+    	}
+
+    	#endregion Public Properties
     }
 }

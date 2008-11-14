@@ -320,6 +320,9 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		jpeg_finish_compress(&cinfo);
 		jpeg_destroy_compress(&cinfo);
 
+		if ((MemoryBuffer->Length %2 ) == 1)
+			MemoryBuffer->WriteByte(0);
+			
 		newPixelData->AddFrameFragment(MemoryBuffer->ToArray());
 	} finally {
 		MemoryBuffer = nullptr;

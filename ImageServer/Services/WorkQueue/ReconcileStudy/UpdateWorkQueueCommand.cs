@@ -47,9 +47,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private readonly DicomMessageBase _message;
         private readonly StudyStorageLocation _storageLocation;
         private readonly string _extension;
+        private bool _isDuplicate;
         #endregion
 
-        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location, string extension)
+        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location, string extension, bool isDuplicate)
             : base("Update/Insert a WorkQueue Entry", true)
         {
             Platform.CheckForNullReference(message, "Dicom Message object");
@@ -58,6 +59,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             _message = message;
             _storageLocation = location;
             _extension = extension;
+            _isDuplicate = isDuplicate;
         }
 
         protected override void OnExecute(IUpdateContext updateContext)
@@ -69,10 +71,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
             parms.SeriesInstanceUid = _message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
             parms.SopInstanceUid = _message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+            parms.Duplicate = _isDuplicate; 
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
             parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
-
+            
             if (insert.FindOne(parms) == null)
                 throw new ApplicationException("UpdateWorkQueueCommand failed");
         }

@@ -96,6 +96,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsBirthDate, dicomBirthDate));
             }
 
+            if(study.PatientsAge == null || !PatientAge.Text.Equals(study.PatientsAge)) {
+                string patientAge = PatientAge.Text.PadLeft(3,'0');
+                patientAge += PatientAgePeriod.SelectedValue;
+
+                rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsAge, patientAge));
+            }
+
             if (!study.PatientsSex.Equals(PatientGender.Text))
             {
                 rootNode.AppendChild(createChildNode(setNode, DicomConstants.DicomTags.PatientsSex, PatientGender.Text));
@@ -195,28 +202,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 if (birthDate!=null)
                 {
                     PatientBirthDate.Text = birthDate.Value.ToString(DateTimeFormatter.DefaultDateFormat);
-
-                    TimeSpan age = DateTime.Now - birthDate.Value;
-                    if (age > TimeSpan.FromDays(365))
-                    {
-                        PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
-                    }
-                    else if (age > TimeSpan.FromDays(30))
-                    {
-                        PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
-                    }
-                    else
-                    {
-                        PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
-                    }
                 }
             }
             else
             {
                 PatientBirthDate.Text = string.Empty;
-                PatientAge.Text = string.Empty;
             }
-            
+
+
+            if (study.PatientsAge != null)
+            {
+                PatientAge.Text = study.PatientsAge.Substring(0, 3).TrimStart('0');
+                switch (study.PatientsAge.Substring(3))
+                {
+                    case "Y":
+                        PatientAgePeriod.SelectedIndex = 0;
+                        break;
+                    case "M":
+                        PatientAgePeriod.SelectedIndex = 1;
+                        break;
+                    case "W":
+                        PatientAgePeriod.SelectedIndex = 2;
+                        break;
+                    default:
+                        PatientAgePeriod.SelectedIndex = 3;
+                        break;
+                }
+            }
+            else
+            {
+                PatientAge.Text = string.Empty;
+                PatientAgePeriod.SelectedIndex = 0;
+            }
+
             // Study Information
 
             StudyDescription.Text = study.StudyDescription;            

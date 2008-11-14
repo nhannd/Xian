@@ -82,6 +82,12 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["PatientsSex"] = new ProcedureParameter<string>("PatientsSex", value); }
         }
 
+		[DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
+		public string PatientsAge
+		{
+			set { SubCriteria["PatientsAge"] = new ProcedureParameter<string>("PatientsAge", value); }
+		}
+
         [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         public string StudyDate
         {

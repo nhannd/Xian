@@ -176,16 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         {
             // Update the title and OK button text. Changing the image is the only way to do this, since the 
             // SkinID cannot be set dynamically after Page_PreInit.
-            if (EditMode)
-            {
-                ModalDialog.Title = App_GlobalResources.SR.DialogEditPartitionTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
-            }
-            else
-            {
-                ModalDialog.Title = App_GlobalResources.SR.DialogAddPartitionTitle;
-                OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
-            }
+    
 
             // update the dropdown list
             DuplicateSopDropDownList.Items.Clear();
@@ -291,6 +282,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         /// </summary>
         public void Show(bool updateUI)
         {
+			if (EditMode)
+			{
+				ModalDialog.Title = App_GlobalResources.SR.DialogEditPartitionTitle;
+				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
+			}
+			else
+			{
+				ModalDialog.Title = App_GlobalResources.SR.DialogAddPartitionTitle;
+				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
+			}
+
             if (updateUI)
                 UpdateUI();
 
@@ -298,7 +300,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
             {
                 ServerPartitionTabContainer.ActiveTabIndex = 0;
             }
-
 
             ModalDialog.Show();
         }

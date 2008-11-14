@@ -398,7 +398,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                     instance.Attributes.Append(sopClassAttribute);
                 }
 
-                if (_transferSyntax != null)
+				if (_transferSyntax != null && !(this is BaseInstanceXml))
                 {
                     XmlAttribute transferSyntaxAttribute = theDocument.CreateAttribute("TransferSyntaxUID");
                     transferSyntaxAttribute.Value = _transferSyntax.UidString;

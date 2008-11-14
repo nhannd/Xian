@@ -572,6 +572,7 @@ namespace ClearCanvas.Dicom
             using (FileStream fs = File.Create(Filename))
             {
 				bool b = Save(fs, options);
+            	fs.Flush();
 				fs.Close();
             	return b;
             }
@@ -602,6 +603,7 @@ namespace ClearCanvas.Dicom
             using (FileStream fs = File.Create(Filename))
             {
                 bool b = Save(fs, options);
+            	fs.Flush();
 				fs.Close();
             	return b;
             }

@@ -305,7 +305,7 @@ namespace ClearCanvas.Dicom
         public override void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
         {
             sb.Append(prefix);
-            sb.AppendFormat("({0:x4},{1:x4}) {2} ", Tag.Group, Tag.Element, Tag.VR.Name);
+        	sb.AppendFormat("({0:x4},{1:x4}) {2} {3}", Tag.Group, Tag.Element, Tag.VR.Name, Tag.Name);
             if (_values == null)
             {
                 sb.AppendLine();

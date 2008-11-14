@@ -71,33 +71,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
                 personName.PersonName = _patientSummary.PatientName;
                 PatientDOB.Value = _patientSummary.Birthdate;
+				if (_patientSummary.PatientsAge != null)
+				{
+                     string patientAge = _patientSummary.PatientsAge.Substring(0, 3).TrimStart('0');
 
-                DateTime? bdate = DateParser.Parse(_patientSummary.Birthdate);
-                if (bdate!=null)
-                {
-
-                    TimeSpan age = DateTime.Now - bdate.Value;
-                    if (age > TimeSpan.FromDays(365))
+                    switch (_patientSummary.PatientsAge.Substring(3))
                     {
-                        PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);
+                        case "Y":
+                            patientAge += " Years";
+                            break;
+                        case "M":
+                            patientAge += " Months";
+                            break;
+                        case "W":
+                            patientAge += " Weeks";
+                            break;
+                        default:
+                            patientAge += " Days";
+                            break;
                     }
-                    else if (age > TimeSpan.FromDays(30))
-                    {
-                        PatientAge.Text = String.Format("{0:0} month(s)", age.TotalDays / 30);
-                    }
-                    else
-                    {
-                        PatientAge.Text = String.Format("{0:0} day(s)", age.TotalDays);
-                    }
-                }
-                else
-                {
-                    PatientAge.Text = "Unknown";
-                }
 
+                    if (_patientSummary.PatientsAge.Substring(0, 3).Equals("001"))
+                        patientAge = patientAge.TrimEnd('s');
 
+                    PatientAge.Text = patientAge;
+				}
+				else
+				{
+    				PatientAge.Text = "Unknown";
+				}
 
-                if (String.IsNullOrEmpty(_patientSummary.Sex))
+            	if (String.IsNullOrEmpty(_patientSummary.Sex))
                     PatientSex.Text = "Unknown";
                 else
                 {

@@ -107,6 +107,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientId"];
             } 
         }
+        public ISearchCondition<System.String> PatientsAge
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("PatientsAge"))
+              {
+                 SubCriteria["PatientsAge"] = new SearchCondition<System.String>("PatientsAge");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["PatientsAge"];
+            } 
+        }
         public ISearchCondition<System.String> PatientsBirthDate
         {
             get

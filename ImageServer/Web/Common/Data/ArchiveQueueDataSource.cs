@@ -189,17 +189,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			WebQueryArchiveQueueParameters parameters = new WebQueryArchiveQueueParameters();
 			parameters.StartIndex = startRowIndex;
 			parameters.MaxRowCount = 25;
+
 			if (Partition != null)
 				parameters.ServerPartitionKey = Partition.Key;
-			parameters.AccessionNumber = AccessionNumber;
-			parameters.PatientId = PatientId;
-			parameters.PatientsName = PatientName;
+			if (AccessionNumber != null)
+				parameters.AccessionNumber = AccessionNumber.Replace("*", "%");
+			if (PatientId != null)
+				parameters.PatientId = PatientId.Replace("*", "%");
+			if (PatientName != null)
+				parameters.PatientsName = PatientName.Replace("*", "%");
+
 			if (String.IsNullOrEmpty(ScheduledDate))
 				parameters.ScheduledTime = null;
 			else
 				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
-
-			parameters.AccessionNumber = AccessionNumber;
 
 			if (StatusEnum != null)
 				parameters.ArchiveQueueStatusEnum = StatusEnum;

@@ -187,9 +187,21 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 
 				if (oldPixelData->BytesAllocated == 1) {
 					if (oldPixelData->IsSigned) {
-						for (int p = 0; p < pixelCount; p++) {
-							comp->data[p] = (int)((char)frameData[pos]);
-							pos += offset;
+						if (oldPixelData->BitsStored < 8)
+						{
+							int shiftBits = 8 - oldPixelData->BitsStored;
+							for (int p = 0; p < pixelCount; p++) {
+								char pixel = ((char)(frameData[pos] << shiftBits)) >> shiftBits;
+								comp->data[p] = (int)pixel;
+								pos += offset;
+							}
+						}
+						else
+						{
+							for (int p = 0; p < pixelCount; p++) {
+								comp->data[p] = (int)((char)frameData[pos]);
+								pos += offset;
+							}
 						}
 					}
 					else {
@@ -238,7 +250,8 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 
 			if (opj_encode(cinfo, cio, image, eparams.index)) {
 				int clen = cio_tell(cio);
-				array<unsigned char>^ cbuf = gcnew array<unsigned char>(clen);
+				// Force the output fragment/frame to be even length
+				array<unsigned char>^ cbuf = gcnew array<unsigned char>(clen%2==1 ? clen+1 : clen);
 				Marshal::Copy((IntPtr)cio->buffer, cbuf, 0, clen);
 				newPixelData->AddFrameFragment(cbuf);
 			} else

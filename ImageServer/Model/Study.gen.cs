@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.Int32 _numberOfStudyRelatedSeries;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _patientKey;
         private System.String _patientId;
+        private System.String _patientsAge;
         private System.String _patientsBirthDate;
         private System.String _patientsName;
         private System.String _patientsSex;
@@ -108,6 +109,13 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _patientId; }
         set { _patientId = value; }
+        }
+        [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsAge")]
+        public System.String PatientsAge
+        {
+        get { return _patientsAge; }
+        set { _patientsAge = value; }
         }
         [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsBirthDate")]

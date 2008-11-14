@@ -536,6 +536,7 @@ CREATE TABLE [dbo].[Study](
 	[PatientId] [nvarchar](64) NULL,
 	[IssuerOfPatientId] [nvarchar](64) NULL,
 	[PatientsBirthDate] [varchar](8) NULL,
+	[PatientsAge] [varchar](4) NULL,
 	[PatientsSex] [varchar](2) NULL,
 	[StudyDate] [varchar](8) NULL,
 	[StudyTime] [varchar](16) NULL,
