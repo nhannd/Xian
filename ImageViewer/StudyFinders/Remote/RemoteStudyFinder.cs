@@ -128,9 +128,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
 			try
 			{
-				using (StudyRootFindScu scu = new StudyRootFindScu())
+				foreach (string modalityFilter in modalityFilters) 
 				{
-					foreach (string modalityFilter in modalityFilters)
+					using (StudyRootFindScu scu = new StudyRootFindScu())
 					{
 						requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(modalityFilter);
 
