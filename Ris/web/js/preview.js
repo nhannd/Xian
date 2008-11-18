@@ -883,7 +883,7 @@ Preview.ReportPreview = function () {
 		if (!reportObject)
 		{
 			// the Content was not JSML, but just plain text
-			return reportJsml || null;
+			return reportJsml || "";
 		}
 
 		// depending on how the report was captured, it may contain an Impression and Finding section (Default RIS report editor)
@@ -894,7 +894,7 @@ Preview.ReportPreview = function () {
 			reportText = reportObject.ReportText;
 
 		if (!reportText)
-			return null;
+			return "";
 
 		return reportText.replaceLineBreak();
 	}
