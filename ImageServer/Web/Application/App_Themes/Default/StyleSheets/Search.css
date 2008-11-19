@@ -5,7 +5,7 @@
 
 .SearchPanelContent
 {
-    background: #3D98D1 url(/PersistantImage.ashx?key=SearchPanelBackground) repeat-x top;
+    background: #3D98D1 url(../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x top;
     padding: 6px 4px 6px 4px;
 }
 
@@ -45,7 +45,7 @@
 	margin-left: 3px;
 	margin-right: 3px;
 	border: solid 1px #305ba6;
-    background: #ffffff url(/PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
+    background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
 }
 
 .SearchCheckBox
@@ -61,7 +61,7 @@
 	font-family: Sans-Serif;
 	font-size: 11px;
 	border: solid 1px #305ba6;
-	background: #ffffff url(/PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
+	background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
 }
 
 .SearchButtonPanel
@@ -78,7 +78,7 @@
     font-size: 12px;
     font-weight: bold;
     text-decoration: none;
-    background: #8FC3E4 url(/PersistantImage.ashx?key=ClearButtonBackground) repeat-x;
+    background: #8FC3E4 url(../../../PersistantImage.ashx?key=ClearButtonBackground) repeat-x;
     border: solid 1px #305ba6;
     padding: 0px 2px 0px 2px;
     margin-left: 18px;

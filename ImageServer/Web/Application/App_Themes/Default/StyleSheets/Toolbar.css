@@ -6,7 +6,7 @@
 
 .ToolbarButtonPanel
 {
-    background: #B8D9EE url(/PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
+    background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
     height: 28px;
     padding-top: 4px;
     margin-top: 1px;

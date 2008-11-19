@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
 
 
-            if (study.PatientsAge != null)
+            if (!String.IsNullOrEmpty(study.PatientsAge))
             {
                 PatientAge.Text = study.PatientsAge.Substring(0, 3).TrimStart('0');
                 switch (study.PatientsAge.Substring(3))
@@ -308,6 +308,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected override void OnInit(EventArgs e)
         {
             SetupJavascript();
+            EditStudyDetailsValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditStudyValidationError;
         }
 
         /// <summary>

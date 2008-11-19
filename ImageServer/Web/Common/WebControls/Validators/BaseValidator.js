@@ -27,6 +27,8 @@ function BaseClientValidator(
     inputID,
     inputNormalColor,
     inputInvalidColor,
+    inputNormalBorderColor,
+    inputInvalidBorderColor,
     errorIndicator,
     errorIndicatorTooltip,
     errorIndicatorTooltipPanel,
@@ -41,6 +43,12 @@ function BaseClientValidator(
     
     //alert('inputInvalidColor='+inputInvalidColor);
     this.inputInvalidColor = inputInvalidColor;
+    
+    //alert('inputNormalBorderColor='+inputNormalBorderColor);
+    this.inputNormalBorderColor = inputNormalBorderColor;
+    
+    //alert('inputInvalidBorderColor='+inputInvalidBorderColor);
+    this.inputInvalidBorderColor = inputInvalidBorderColor;
     
     //alert('errorIndicator='+errorIndicator);
     this.errorIndicator = errorIndicator;
@@ -85,6 +93,7 @@ BaseClientValidator.prototype.OnValidationPassed = function()
     {
         // only myself is attached to this input, it's ok to clear the background
         this.input.style.backgroundColor = this.inputNormalColor;
+        this.input.style.borderColor = this.inputNormalBorderColor;
     }
     else
     {
@@ -92,6 +101,7 @@ BaseClientValidator.prototype.OnValidationPassed = function()
         {
             // I am the first validator called to check the input, it's safe to clear the background
             this.input.style.backgroundColor = this.inputNormalColor;
+            this.input.style.borderColor = this.inputNormalBorderColor;
         }                    
     }
 
@@ -125,7 +135,8 @@ BaseClientValidator.prototype.OnValidationFailed = function(error)
 {
     //alert('Base validator: input is invalid');
     this.input.style.backgroundColor = this.inputInvalidColor;
-
+    this.input.style.borderColor = this.inputInvalidBorderColor;
+    
     if (this.errorIndicator!=null)
     {
         this.errorIndicator.style.visibility= 'visible';

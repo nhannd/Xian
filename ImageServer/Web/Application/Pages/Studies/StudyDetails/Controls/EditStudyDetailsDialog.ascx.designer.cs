@@ -29,13 +29,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog EditStudyModalDialog;
         
         /// <summary>
-        /// ValidationSummary1 control.
+        /// EditStudyDetailsValidationSummary control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ValidationSummary ValidationSummary1;
+        protected global::System.Web.UI.WebControls.ValidationSummary EditStudyDetailsValidationSummary;
         
         /// <summary>
         /// Panel3 control.
@@ -216,9 +216,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox PatientAge;
-
+        
         /// <summary>
-        /// PatientAge control.
+        /// PatientAgePeriod control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.

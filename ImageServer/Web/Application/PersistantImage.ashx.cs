@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         {
             get
             {
-                return (Url.Length > 0) ? "/App_Themes/" + ImageServerConstants.Theme + "/" + Url : "";
+                return (Url.Length > 0) ? HttpContext.Current.Server.MapPath("~/App_Themes/" + ImageServerConstants.Theme + "/" + Url) : "";
             }
         }
 

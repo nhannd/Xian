@@ -121,6 +121,6 @@
     <value>Unable to delete the study. See server log for more details.</value>
   </data>
   <data name="EditStudyValidationError" xml:space="preserve">
-    <value>Validation Error. Please correct indicated errors before submitting changes.</value>
+    <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
   </data>
 </root>

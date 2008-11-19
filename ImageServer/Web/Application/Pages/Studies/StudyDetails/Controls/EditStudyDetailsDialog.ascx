@@ -2,8 +2,7 @@
 
 <ccAsp:ModalDialog ID="EditStudyModalDialog" runat="server" Width="775px">
 <ContentTemplate>
-<asp:ValidationSummary ID="ValidationSummary1" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
-HeaderText="Input Validation Failed. Please correct the values for the indicated fields."
+<asp:ValidationSummary ID="EditStudyDetailsValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
 EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="EditStudyDetailsTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl" ForeColor="red">
@@ -150,7 +149,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 </td>
                             </tr>--%>
                             <tr>
-                                <td valign="bottom" class="DialogLabelBackground"><asp:Label ID="Label21" runat="server" Text="Referring Physician" CssClass="DialogTextBoxLabel" /></td>
+                                <td valign="top" class="DialogLabelBackground"><asp:Label ID="Label21" runat="server" Text="Referring Physician" CssClass="DialogTextBoxLabel" /></td>
                                 <td>
                                     <ccAsp:PersonNameInputPanel runat="server" ID="ReferringPhysicianNamePanel" Required="false"/>
                                 </td>

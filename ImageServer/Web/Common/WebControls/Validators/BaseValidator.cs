@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         private string _invalidInputIndicatorID = "";
         private Color _invalidInputColor;
+        private Color _invalidInputBorderColor;
         private bool _validateWhenDisabled = false;
         private bool _ignoreEmptyValue = false;
         private string _inputName;
@@ -111,6 +112,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             set { _invalidInputColor = value; }
         }
 
+        /// <summary>
+        /// Sets or retrieve the specified background color of the input control when the validation fails.
+        /// </summary>
+        public Color InvalidInputBorderColor
+        {
+            get { return _invalidInputBorderColor; }
+            set { _invalidInputBorderColor = value; }
+        }
+
 
         public bool ValidateWhenDisabled
         {
@@ -153,6 +163,21 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                     return (Color) ViewState[ClientID + "_ValidateCtrlBackColor"];
             }
             set { ViewState[ClientID + "_ValidateCtrlBackColor"] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the background color value for the input control when validation passes.
+        /// </summary>
+        public Color InputNormalBorderColor
+        {
+            get
+            {
+                if (ViewState[ClientID + "_ValidateCtrlBorderColor"] == null)
+                    return Color.Empty;
+                else
+                    return (Color)ViewState[ClientID + "_ValidateCtrlBorderColor"];
+            }
+            set { ViewState[ClientID + "_ValidateCtrlBorderColor"] = value; }
         }
 
         protected string ClientSideOnValidateFunctionName
@@ -230,11 +255,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             {
                 // save current background color
                 InputNormalColor = InputControl.BackColor;
+                InputNormalBorderColor = InputControl.BorderColor;
+                
             }
             else
             {
                 // Restore the input background color
                 InputControl.BackColor = InputNormalColor;
+                InputControl.BorderColor = InputNormalBorderColor;
             }
 
             if (EnableClientScript)
@@ -251,9 +279,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.BaseValidator.js");
             template.Replace("@@CLIENTID@@", ClientID);
             template.Replace("@@INPUT_CLIENTID@@", InputControl.ClientID);
-
             template.Replace("@@INPUT_NORMAL_BKCOLOR@@", ColorTranslator.ToHtml(InputNormalColor));
             template.Replace("@@INPUT_INVALID_BKCOLOR@@", ColorTranslator.ToHtml(InvalidInputColor));
+            template.Replace("@@INPUT_NORMAL_BORDERCOLOR@@", ColorTranslator.ToHtml(InputNormalBorderColor));
+            template.Replace("@@INPUT_INVALID_BORDERCOLOR@@", ColorTranslator.ToHtml(InvalidInputBorderColor));
             template.Replace("@@CLIENT_EVALUATION_CLASS@@", ClientSideOnValidateFunctionName);
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), "BaseValidationScripts", template.Script, true);
@@ -292,6 +321,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 {
                     if (InputControl.BackColor == InputNormalColor)
                         InputControl.BackColor = InvalidInputColor;
+                    if (InputControl.BorderColor == InputNormalBorderColor)
+                        InputControl.BorderColor = InvalidInputBorderColor;
 
                     if (InvalidInputIndicator != null)
                     {

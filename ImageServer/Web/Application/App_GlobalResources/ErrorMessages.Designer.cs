@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Validation Error. Please correct indicated errors before submitting changes..
+        ///   Looks up a localized string similar to Validation Error. Please check all tabs for indicated errors and correct before submitting changes..
         /// </summary>
         internal static string EditStudyValidationError {
             get {
