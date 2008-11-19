@@ -199,6 +199,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ClickAction _discontinueAction;
 
 		private ChildComponentHost _detailsPagesHost;
+
 		private List<IPerformedStepEditorPage> _editorPages = new List<IPerformedStepEditorPage>();
 
 		private PerformingDocumentationComponent _owner;
@@ -272,7 +273,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			// if no editor pages are available via extensions, create the default editor
 			if (_editorPages.Count == 0)
+			{
 				_editorPages.Add(new MppsDetailsComponent(new EditorContext(this)));
+				_editorPages.Add(new PerformedProcedureDicomSeriesComponent(new EditorContext(this)));
+			}
+
 
 			// if there are multiple pages, need to create a tab container
 			if (_editorPages.Count > 1)
@@ -292,7 +297,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			// start details pages host
 			_detailsPagesHost.StartComponent();
-
 
 			base.Start();
 		}
@@ -400,29 +404,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				SaveData();
 
+				CompleteModalityPerformedProcedureStepResponse response = null;
 				Platform.GetService<IModalityWorkflowService>(
 					delegate(IModalityWorkflowService service)
 					{
-						CompleteModalityPerformedProcedureStepRequest request = new CompleteModalityPerformedProcedureStepRequest(
-								_selectedMpps.ModalityPerformendProcedureStepRef,
-								_selectedMpps.ExtendedProperties);
+						CompleteModalityPerformedProcedureStepRequest request = new CompleteModalityPerformedProcedureStepRequest(_selectedMpps);
 						request.CompletedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
-						CompleteModalityPerformedProcedureStepResponse response = service.CompleteModalityPerformedProcedureStep(request);
-
-						RefreshProcedurePlanTree(response.ProcedurePlan);
-
-						_mppsTable.Items.Replace(
-							delegate(ModalityPerformedProcedureStepDetail mppsSummary)
-							{
-								return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
-							},
-							response.StoppedMpps);
-
-						// Refresh selection
-						_selectedMpps = response.StoppedMpps;
-						UpdateActionEnablement();
-						_mppsTable.Sort();
+						response = service.CompleteModalityPerformedProcedureStep(request);
 					});
+
+				RefreshProcedurePlanTree(response.ProcedurePlan);
+
+				_mppsTable.Items.Replace(
+					delegate(ModalityPerformedProcedureStepDetail mppsSummary)
+					{
+						return mppsSummary.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
+					},
+					response.StoppedMpps);
+
+				// Refresh selection
+				_selectedMpps = response.StoppedMpps;
+
+				UpdateActionEnablement();
+				_mppsTable.Sort();
 			}
 			catch (Exception e)
 			{
@@ -446,29 +450,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 							return;
 					}
 
+					DiscontinueModalityPerformedProcedureStepResponse response = null;
 					Platform.GetService<IModalityWorkflowService>(
 						delegate(IModalityWorkflowService service)
 						{
-							DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(
-								selectedMpps.ModalityPerformendProcedureStepRef,
-								selectedMpps.ExtendedProperties);
+							DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps);
 							request.DiscontinuedTime = DowntimeRecovery.InDowntimeRecoveryMode ? endTime : null;
-							
-							DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
-
-							RefreshProcedurePlanTree(response.ProcedurePlan);
-
-							_mppsTable.Items.Replace(
-								delegate(ModalityPerformedProcedureStepDetail mpps)
-								{
-									return mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
-								},
-								response.DiscontinuedMpps);
-
-							_selectedMpps = response.DiscontinuedMpps;
-							UpdateActionEnablement();
-							_mppsTable.Sort();
+							response = service.DiscontinueModalityPerformedProcedureStep(request);
 						});
+
+					RefreshProcedurePlanTree(response.ProcedurePlan);
+
+					_mppsTable.Items.Replace(
+						delegate(ModalityPerformedProcedureStepDetail mpps)
+						{
+							return mpps.ModalityPerformendProcedureStepRef.Equals(_selectedMpps.ModalityPerformendProcedureStepRef, true);
+						},
+						response.DiscontinuedMpps);
+
+					_selectedMpps = response.DiscontinuedMpps;
+
+					UpdateActionEnablement();
+					_mppsTable.Sort();
 				}
 			}
 			catch (Exception e)

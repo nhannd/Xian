@@ -42,7 +42,6 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -452,22 +451,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 _orderDetailsComponent.SaveData();
                 _ppsComponent.SaveData();
-				Platform.GetService<IPerformingDocumentationService>(
-					delegate(IPerformingDocumentationService service)
+				Platform.GetService<IModalityWorkflowService>(
+					delegate(IModalityWorkflowService service)
                         {
-                            // TODO clean this up - this is a bit ugly, not sure if there's a cleaner way
-                            Dictionary<EntityRef, Dictionary<string, string>> ppsExtendedProperties
-                                                 = new Dictionary<EntityRef, Dictionary<string, string>>();
-                            foreach (ModalityPerformedProcedureStepDetail step in _ppsComponent.PerformedProcedureSteps)
-                            {
-                                ppsExtendedProperties[step.ModalityPerformendProcedureStepRef] = step.ExtendedProperties;
-                            }
-
-
-                            SaveDataRequest saveRequest =
-                                new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, _orderNotes,
-                                        ppsExtendedProperties, _assignedRadiologist);
-                            SaveDataResponse saveResponse = service.SaveData(saveRequest);
+							List<ModalityPerformedProcedureStepDetail> mppsList = new List<ModalityPerformedProcedureStepDetail>(_ppsComponent.PerformedProcedureSteps);
+                            SaveOrderDocumentationDataRequest saveRequest =
+                                new SaveOrderDocumentationDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties, _orderNotes,
+										mppsList, _assignedRadiologist);
+							SaveOrderDocumentationDataResponse saveResponse = service.SaveOrderDocumentationData(saveRequest);
 
                             if (completeDocumentation)
                             {
@@ -509,10 +500,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
             RefreshProcedurePlanSummary(_procedurePlan);
 
-			Platform.GetService<IPerformingDocumentationService>(
-				delegate(IPerformingDocumentationService service)
+			Platform.GetService<IModalityWorkflowService>(
+				delegate(IModalityWorkflowService service)
                 {
-                    LoadDataResponse response = service.LoadData(new LoadDataRequest(_worklistItem.OrderRef));
+					LoadOrderDocumentationDataResponse response = service.LoadOrderDocumentationData(new LoadOrderDocumentationDataRequest(_worklistItem.OrderRef));
                     _orderExtendedProperties = response.OrderExtendedProperties;
                     _orderNotes = response.OrderNotes;
                     this.AssignedRadiologist = response.AssignedInterpreter;
@@ -609,8 +600,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
             try
             {
-				Platform.GetService<IPerformingDocumentationService>(
-					delegate(IPerformingDocumentationService service)
+				Platform.GetService<IModalityWorkflowService>(
+					delegate(IModalityWorkflowService service)
                         {
                             CanCompleteOrderDocumentationResponse response = 
                                 service.CanCompleteOrderDocumentation(new CanCompleteOrderDocumentationRequest(_procedurePlan.OrderRef));

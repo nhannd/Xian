@@ -30,7 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
@@ -42,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Services
 {
     public class ModalityPerformedProcedureStepAssembler
     {
-        public  ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
+        public ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
         {
             string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Name; });
 
@@ -53,14 +52,26 @@ namespace ClearCanvas.Ris.Application.Services
                 mpps.Activities,
                 delegate(ProcedureStep mps) { return assembler.CreateProcedureStepSummary(mps.As<ModalityProcedureStep>(), context); });
 
-            return new ModalityPerformedProcedureStepDetail(
-                mpps.GetRef(),
-                name,
-                EnumUtils.GetEnumValueInfo(mpps.State, context),
-                mpps.StartTime,
-                mpps.EndTime,
-                "Dummy Performer",
-                mpsDetails,
+			DicomSeriesAssembler dicomSeriesAssembler = new DicomSeriesAssembler();
+        	List<DicomSeriesDetail> dicomSeries = dicomSeriesAssembler.GetDicomSeriesDetails(mpps.DicomSeries);;
+
+        	StaffSummary mppsPerformer = null;
+        	ProcedureStepPerformer performer = mpps.Performer as ProcedureStepPerformer;
+			if (performer != null)
+			{
+				StaffAssembler staffAssembler = new StaffAssembler();
+				mppsPerformer = staffAssembler.CreateStaffSummary(performer.Staff, context);
+			}
+
+        	return new ModalityPerformedProcedureStepDetail(
+        		mpps.GetRef(),
+        		name,
+        		EnumUtils.GetEnumValueInfo(mpps.State, context),
+        		mpps.StartTime,
+        		mpps.EndTime,
+        		mppsPerformer,
+        		mpsDetails,
+				dicomSeries,
                 new Dictionary<string, string>(mpps.ExtendedProperties));
         }
     }

@@ -93,5 +93,41 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 		[FaultContract(typeof(ConcurrentModificationException))]
 		[FaultContract(typeof(RequestValidationException))]
 		DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request);
-    }
+
+		/// <summary>
+		/// Load performing documentation data for an order.
+		/// </summary>
+		/// <param name="request"><see cref="LoadOrderDocumentationDataRequest"/></param>
+		/// <returns><see cref="LoadOrderDocumentationDataResponse"/></returns>
+		[OperationContract]
+		LoadOrderDocumentationDataResponse LoadOrderDocumentationData(LoadOrderDocumentationDataRequest request);
+
+		/// <summary>
+		/// Save performing documentation data for an order.
+		/// </summary>
+		/// <param name="request"><see cref="SaveOrderDocumentationDataRequest"/></param>
+		/// <returns><see cref="SaveOrderDocumentationDataResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		SaveOrderDocumentationDataResponse SaveOrderDocumentationData(SaveOrderDocumentationDataRequest request);
+
+		/// <summary>
+		/// Verify if an order has documentation to complete.
+		/// </summary>
+		/// <param name="request"><see cref="CanCompleteOrderDocumentationRequest"/></param>
+		/// <returns><see cref="CanCompleteOrderDocumentationResponse"/></returns>
+		[OperationContract]
+		CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request);
+
+		/// <summary>
+		/// Complete documentation for an order.
+		/// </summary>
+		/// <param name="request"><see cref="CompleteOrderDocumentationRequest"/></param>
+		/// <returns><see cref="CompleteOrderDocumentationResponse"/></returns>
+		[OperationContract]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(RequestValidationException))]
+		CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request);
+	}
 }

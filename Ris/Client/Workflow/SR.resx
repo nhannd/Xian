@@ -432,6 +432,9 @@
   <data name="TextYesterday" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="TitleAddDicomSeries" xml:space="preserve">
+    <value>Add Dicom Series</value>
+  </data>
   <data name="TitleAddresses" xml:space="preserve">
     <value>Addresses</value>
   </data>
@@ -593,6 +596,9 @@
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Performed</value>
+  </data>
+  <data name="TitleUpdateDicomSeries" xml:space="preserve">
+    <value>Update Dicom Series</value>
   </data>
   <data name="TitleUpdateVisit" xml:space="preserve">
     <value>Update Visit...</value>

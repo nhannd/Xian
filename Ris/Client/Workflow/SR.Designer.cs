@@ -1006,6 +1006,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Dicom Series.
+        /// </summary>
+        internal static string TitleAddDicomSeries {
+            get {
+                return ResourceManager.GetString("TitleAddDicomSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Addresses.
         /// </summary>
         internal static string TitleAddresses {
@@ -1488,6 +1497,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         internal static string TitleStopMpps {
             get {
                 return ResourceManager.GetString("TitleStopMpps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Dicom Series.
+        /// </summary>
+        internal static string TitleUpdateDicomSeries {
+            get {
+                return ResourceManager.GetString("TitleUpdateDicomSeries", resourceCulture);
             }
         }
         

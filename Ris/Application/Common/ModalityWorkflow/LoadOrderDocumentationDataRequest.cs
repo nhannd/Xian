@@ -4,12 +4,12 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class LoadDataRequest : DataContractBase
+    public class LoadOrderDocumentationDataRequest : DataContractBase
     {
-        public LoadDataRequest(EntityRef orderRef)
+        public LoadOrderDocumentationDataRequest(EntityRef orderRef)
         {
             OrderRef = orderRef;
         }

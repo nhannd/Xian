@@ -29,23 +29,44 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System;
+using System.Windows.Forms;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-    [DataContract]
-    public class CompleteOrderDocumentationRequest : DataContractBase
+    /// <summary>
+    /// Provides a Windows Forms user-interface for <see cref="DicomSeriesEditorComponent"/>.
+    /// </summary>
+    public partial class DicomSeriesEditorComponentControl : ApplicationComponentUserControl
     {
-        public CompleteOrderDocumentationRequest(EntityRef orderRef)
-        {
-            OrderRef = orderRef;
-        }
+        private readonly DicomSeriesEditorComponent _component;
 
         /// <summary>
-        /// Specifies order for which documentation is to be marked complete.
+        /// Constructor.
         /// </summary>
-        [DataMember]
-        public EntityRef OrderRef;
+        public DicomSeriesEditorComponentControl(DicomSeriesEditorComponent component)
+            :base(component)
+        {
+			_component = component;
+            InitializeComponent();
+
+			_seriesNumber.DataBindings.Add("Value", _component, "SeriesNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+			_seriesDescription.DataBindings.Add("Value", _component, "SeriesDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+			_numberOfSeriesRelatedInstance.DataBindings.Add("Value", _component, "NumberOfSeriesRelatedInstances", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		private void _acceptButton_Click(object sender, EventArgs e)
+		{
+			_component.Accept();
+		}
+
+		private void _cancelButton_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
     }
 }

@@ -29,20 +29,17 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Hibernate;
+using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    [DataContract]
-    public class CanCompleteOrderDocumentationRequest : DataContractBase
+    [ExtensionOf(typeof(BrokerExtensionPoint))]
+	public class InterpretationStepBroker : EntityBroker<InterpretationStep, InterpretationStepSearchCriteria>, IInterpretationStepBroker
     {
-        public CanCompleteOrderDocumentationRequest(EntityRef orderRef)
-        {
-            OrderRef = orderRef;
-        }
-
-        [DataMember]
-        public EntityRef OrderRef;
     }
 }

@@ -29,27 +29,50 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-    [DataContract]
-    public class CompleteOrderDocumentationResponse : DataContractBase
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="DicomSeriesEditorComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(DicomSeriesEditorComponentViewExtensionPoint))]
+    public class DicomSeriesEditorComponentView : WinFormsView, IApplicationComponentView
     {
+        private DicomSeriesEditorComponent _component;
+        private DicomSeriesEditorComponentControl _control;
 
-		/// <summary>
-		/// Returns the updated procedure plan.
-		/// </summary>
-        [DataMember]
-        public ProcedurePlanDetail ProcedurePlan;
+        #region IApplicationComponentView Members
 
-		/// <summary>
-		/// Returns the set of interpretation steps that are now scheduled for the procedures in this order.
-		/// </summary>
-		//JR: this was added for the benefit of the Oto workflow service, that needs to know how to proceed in the workflow.
-		[DataMember]
-    	public List<EntityRef> InterpretationStepRefs;
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (DicomSeriesEditorComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new DicomSeriesEditorComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

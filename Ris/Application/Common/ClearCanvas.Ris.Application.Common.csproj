@@ -137,6 +137,7 @@
     <Compile Include="Admin\WorkQueueAdmin\RemoveWorkQueueItemResponse.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemRequest.cs" />
     <Compile Include="Admin\WorkQueueAdmin\ResubmitWorkQueueItemResponse.cs" />
+    <Compile Include="ModalityWorkflow\DicomSeriesDetail.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsRequest.cs" />
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsResponse.cs" />
     <Compile Include="WorkQueueItemDetail.cs" />
@@ -178,8 +179,8 @@
     <Compile Include="IWorklistService.cs" />
     <Compile Include="ListWorklistsForUserRequest.cs" />
     <Compile Include="ListWorklistsForUserResponse.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\LoadDataRequest.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\LoadDataResponse.cs" />
+    <Compile Include="ModalityWorkflow\LoadOrderDocumentationDataRequest.cs" />
+    <Compile Include="ModalityWorkflow\LoadOrderDocumentationDataResponse.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndPostRequest.cs" />
     <Compile Include="OrderNotes\AcknowledgeAndPostResponse.cs" />
     <Compile Include="OrderNotes\GetConversationEditorFormDataRequest.cs" />
@@ -290,8 +291,8 @@
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolCodeResponse.cs" />
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupRequest.cs" />
     <Compile Include="Admin\ProtocolAdmin\UpdateProtocolGroupResponse.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\CanCompleteOrderDocumentationRequest.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\CanCompleteOrderDocumentationResponse.cs" />
+    <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationRequest.cs" />
+    <Compile Include="ModalityWorkflow\CanCompleteOrderDocumentationResponse.cs" />
     <Compile Include="PatientAttachmentSummary.cs" />
     <Compile Include="OrderAttachmentSummary.cs" />
     <Compile Include="MimeDocumentService\GetAttachFaxFormDataRequest.cs" />
@@ -483,8 +484,8 @@
     <Compile Include="Jsml\InvokeOperationRequest.cs" />
     <Compile Include="Jsml\InvokeOperationResponse.cs" />
     <Compile Include="Jsml\JsmlBlob.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\CompleteOrderDocumentationRequest.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\CompleteOrderDocumentationResponse.cs" />
+    <Compile Include="ModalityWorkflow\CompleteOrderDocumentationRequest.cs" />
+    <Compile Include="ModalityWorkflow\CompleteOrderDocumentationResponse.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ModalityWorkflow\DiscontinueModalityProcedureStepsRequest.cs" />
@@ -499,8 +500,8 @@
     <Compile Include="ProcedureDetail.cs" />
     <Compile Include="ModalityWorkflow\StartModalityProcedureStepsRequest.cs" />
     <Compile Include="ModalityWorkflow\StartModalityProcedureStepsResponse.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\SaveDataRequest.cs" />
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\SaveDataResponse.cs" />
+    <Compile Include="ModalityWorkflow\SaveOrderDocumentationDataRequest.cs" />
+    <Compile Include="ModalityWorkflow\SaveOrderDocumentationDataResponse.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\CompleteModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="ProtocolCodeDetail.cs" />
@@ -654,7 +655,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="ModalityWorkflow\PerformingDocumentation\IPerformingDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
     <Compile Include="WorklistItemTextQueryRequest.cs" />
     <Compile Include="WorklistTokenAttribute.cs" />

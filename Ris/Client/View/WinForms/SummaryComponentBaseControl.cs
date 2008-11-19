@@ -64,6 +64,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _summaryTableView.DataBindings.Add("Selection", _component, "SummarySelection", true, DataSourceUpdateMode.OnPropertyChanged);
 			this.ErrorProvider.SetIconAlignment(_summaryTableView, ErrorIconAlignment.TopRight);
 
+			_buttonsPanel.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 			_okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
 			_cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");

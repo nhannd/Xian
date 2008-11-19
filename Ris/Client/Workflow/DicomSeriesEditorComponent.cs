@@ -29,31 +29,80 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Enterprise.Core.Modelling;
-using Iesi.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Ris.Client.Workflow
 {
-    public class ModalityPerformedProcedureStep : PerformedProcedureStep
-    {
-		private ISet<ClearCanvas.Healthcare.DicomSeries> _dicomSeries;
+	/// <summary>
+	/// Extension point for views onto <see cref="DicomSeriesEditorComponent"/>.
+	/// </summary>
+	[ExtensionPoint]
+	public sealed class DicomSeriesEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    	public ModalityPerformedProcedureStep()
-    	{
-			_dicomSeries = new HashedSet<ClearCanvas.Healthcare.DicomSeries>();
-		}
+	/// <summary>
+	/// DicomSeriesEditorComponent class.
+	/// </summary>
+	[AssociateView(typeof(DicomSeriesEditorComponentViewExtensionPoint))]
+	public class DicomSeriesEditorComponent : ApplicationComponent
+	{
+		private readonly DicomSeriesDetail _dicomSeries;
 
-    	public ModalityPerformedProcedureStep(Staff performingStaff, DateTime? startTime)
-			: base(performingStaff, startTime)
-    	{
-			_dicomSeries = new HashedSet<ClearCanvas.Healthcare.DicomSeries>();
-		}
-
-		[PersistentProperty]
-		public virtual ISet<ClearCanvas.Healthcare.DicomSeries> DicomSeries
+		public DicomSeriesEditorComponent(DicomSeriesDetail dicomSeries)
 		{
-			get { return _dicomSeries; }
+			_dicomSeries = dicomSeries;
 		}
+
+		#region Presentation Model
+
+		public string SeriesNumber
+		{
+			get { return _dicomSeries.SeriesNumber; }
+			set
+			{
+				_dicomSeries.SeriesNumber = value;
+				this.Modified = true;
+			}
+		}
+
+		public string SeriesDescription
+		{
+			get { return _dicomSeries.SeriesDescription; }
+			set
+			{
+				_dicomSeries.SeriesDescription = value;
+				this.Modified = true;
+			}
+		}
+
+		public int NumberOfSeriesRelatedInstances
+		{
+			get { return _dicomSeries.NumberOfSeriesRelatedInstances; }
+			set
+			{
+				_dicomSeries.NumberOfSeriesRelatedInstances = value;
+				this.Modified = true;
+			}
+		}
+
+		public bool AcceptEnabled
+		{
+			get { return this.Modified; }
+		}
+
+		public void Accept()
+		{
+			this.Exit(ApplicationComponentExitCode.Accepted);
+		}
+
+		public void Cancel()
+		{
+			this.Exit(ApplicationComponentExitCode.None);
+		}
+
+		#endregion
 	}
 }

@@ -43,6 +43,7 @@
     <Compile Include="CancelOrdersTool.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="DicomSeriesEditorComponent.cs" />
     <Compile Include="DowntimePrintFormsComponent.cs" />
     <Compile Include="DowntimeReportEntryComponent.cs" />
     <Compile Include="DowntimeSettings.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
+    <Compile Include="PerformedProcedureDicomSeriesComponent.cs" />
     <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
     <Compile Include="ProtocolWorkflowItemTool.cs" />

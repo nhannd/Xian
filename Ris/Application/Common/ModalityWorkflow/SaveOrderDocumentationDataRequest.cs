@@ -29,28 +29,44 @@
 
 #endregion
 
-using System.ServiceModel;
+using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
-    [RisServiceProvider]
-    [ServiceContract]
-    public interface IPerformingDocumentationService
+    [DataContract]
+    public class SaveOrderDocumentationDataRequest : DataContractBase
     {
-        [OperationContract]
-        LoadDataResponse LoadData(LoadDataRequest request);
+        public SaveOrderDocumentationDataRequest(EntityRef orderRef,
+            Dictionary<string, string> orderExtendedProperties,
+            List<OrderNoteDetail> orderNotes,
+			List<ModalityPerformedProcedureStepDetail> modalityPerformedProcedureSteps,
+            StaffSummary assignedInterpreter)
+        {
+            this.OrderRef = orderRef;
+            this.OrderExtendedProperties = orderExtendedProperties;
+            this.OrderNotes = orderNotes;
+			this.ModalityPerformedProcedureSteps = modalityPerformedProcedureSteps;
+            this.AssignedInterpreter = assignedInterpreter;
+        }
 
-        [OperationContract]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		[FaultContract(typeof(RequestValidationException))]
-		SaveDataResponse SaveData(SaveDataRequest request);
+        [DataMember]
+        public EntityRef OrderRef;
 
-        [OperationContract]
-        CanCompleteOrderDocumentationResponse CanCompleteOrderDocumentation(CanCompleteOrderDocumentationRequest request);
+        [DataMember]
+        public Dictionary<string, string> OrderExtendedProperties;
 
-        [OperationContract]
-		[FaultContract(typeof(ConcurrentModificationException))]
-		[FaultContract(typeof(RequestValidationException))]
-		CompleteOrderDocumentationResponse CompleteOrderDocumentation(CompleteOrderDocumentationRequest request);
+        [DataMember]
+        public List<OrderNoteDetail> OrderNotes;
+
+		[DataMember]
+		public List<ModalityPerformedProcedureStepDetail> ModalityPerformedProcedureSteps;
+
+        /// <summary>
+        /// Specifies a radiologist to which these procedures should be assigned for interpretation. Optional.
+        /// </summary>
+        [DataMember]
+        public StaffSummary AssignedInterpreter;
     }
 }

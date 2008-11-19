@@ -29,24 +29,15 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+using ClearCanvas.Enterprise.Core;
+
+namespace ClearCanvas.Healthcare.Brokers
 {
-    [DataContract]
-    public class CanCompleteOrderDocumentationResponse : DataContractBase
+    public interface IInterpretationStepBroker : IEntityBroker<InterpretationStep, InterpretationStepSearchCriteria>
     {
-        public CanCompleteOrderDocumentationResponse(bool canComplete, bool alreadyCompleted)
-        {
-            CanComplete = canComplete;
-            AlreadyCompleted = alreadyCompleted;
-        }
-
-        [DataMember]
-        public bool CanComplete;
-
-        [DataMember]
-        public bool AlreadyCompleted;
     }
 }

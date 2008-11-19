@@ -49,6 +49,13 @@
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CheckInOrderComponentView.cs" />
+    <Compile Include="DicomSeriesEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomSeriesEditorComponentControl.Designer.cs">
+      <DependentUpon>DicomSeriesEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomSeriesEditorComponentView.cs" />
     <Compile Include="DowntimePrintFormsComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -288,6 +295,10 @@
     <EmbeddedResource Include="Resources\NextSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DicomSeriesEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DicomSeriesEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DowntimePrintFormsComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DowntimePrintFormsComponentControl.cs</DependentUpon>

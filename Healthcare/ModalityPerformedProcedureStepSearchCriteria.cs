@@ -30,26 +30,26 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
+namespace ClearCanvas.Healthcare
 {
-    [DataContract]
-    public class DiscontinueModalityPerformedProcedureStepRequest : DataContractBase
+    public class ModalityPerformedProcedureStepSearchCriteria : PerformedProcedureStepSearchCriteria
     {
-		public DiscontinueModalityPerformedProcedureStepRequest(ModalityPerformedProcedureStepDetail mpps)
+        public ModalityPerformedProcedureStepSearchCriteria()
         {
-			this.Mpps = mpps;
+
         }
 
-        [DataMember]
-        public ModalityPerformedProcedureStepDetail Mpps;
-
 		/// <summary>
-		/// Optional. Specifies the discontinued time.  If null, the current time is assumed.
+		/// Constructor for sub-criteria (key required)
 		/// </summary>
-		[DataMember]
-		public DateTime? DiscontinuedTime;
-	}
+		public ModalityPerformedProcedureStepSearchCriteria(string key)
+			:base(key)
+		{
+		}
+    }
 }

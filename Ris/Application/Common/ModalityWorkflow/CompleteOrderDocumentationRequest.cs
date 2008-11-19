@@ -29,27 +29,23 @@
 
 #endregion
 
-using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class DiscontinueModalityPerformedProcedureStepRequest : DataContractBase
+    public class CompleteOrderDocumentationRequest : DataContractBase
     {
-		public DiscontinueModalityPerformedProcedureStepRequest(ModalityPerformedProcedureStepDetail mpps)
+        public CompleteOrderDocumentationRequest(EntityRef orderRef)
         {
-			this.Mpps = mpps;
+            OrderRef = orderRef;
         }
 
+        /// <summary>
+        /// Specifies order for which documentation is to be marked complete.
+        /// </summary>
         [DataMember]
-        public ModalityPerformedProcedureStepDetail Mpps;
-
-		/// <summary>
-		/// Optional. Specifies the discontinued time.  If null, the current time is assumed.
-		/// </summary>
-		[DataMember]
-		public DateTime? DiscontinuedTime;
-	}
+        public EntityRef OrderRef;
+    }
 }

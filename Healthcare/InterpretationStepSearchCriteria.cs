@@ -32,43 +32,37 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.PerformingDocumentation
+namespace ClearCanvas.Healthcare
 {
-    [DataContract]
-    public class SaveDataRequest : DataContractBase
+    public class InterpretationStepSearchCriteria : ProcedureStepSearchCriteria
     {
-        public SaveDataRequest(EntityRef orderRef,
-            Dictionary<string, string> orderExtendedProperties,
-            List<OrderNoteDetail> orderNotes,
-            Dictionary<EntityRef, Dictionary<string, string>> performedProcedureStepExtendedProperties,
-            StaffSummary assignedInterpreter)
-        {
-            this.OrderRef = orderRef;
-            this.OrderExtendedProperties = orderExtendedProperties;
-            this.OrderNotes = orderNotes;
-            this.PerformedProcedureStepExtendedProperties = performedProcedureStepExtendedProperties;
-            this.AssignedInterpreter = assignedInterpreter;
-        }
+ 		/// <summary>
+		/// Constructor for top-level search criteria (no key required)
+		/// </summary>
+		public InterpretationStepSearchCriteria()
+		{
+		}
+	
+		/// <summary>
+		/// Constructor for sub-criteria (key required)
+		/// </summary>
+		public InterpretationStepSearchCriteria(string key)
+			:base(key)
+		{
+		}
 
-        [DataMember]
-        public EntityRef OrderRef;
-
-        [DataMember]
-        public Dictionary<string, string> OrderExtendedProperties;
-
-        [DataMember]
-        public List<OrderNoteDetail> OrderNotes;
-
-        [DataMember]
-        public Dictionary<EntityRef, Dictionary<string, string>> PerformedProcedureStepExtendedProperties;
-
-        /// <summary>
-        /// Specifies a radiologist to which these procedures should be assigned for interpretation. Optional.
-        /// </summary>
-        [DataMember]
-        public StaffSummary AssignedInterpreter;
+		public ISearchCondition<ClearCanvas.Healthcare.ImageAvailabilityEnum> ImageAvailability
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("ImageAvailability"))
+				{
+					this.SubCriteria["ImageAvailability"] = new SearchCondition<ClearCanvas.Healthcare.ImageAvailabilityEnum>("ImageAvailability");
+				}
+				return (ISearchCondition<ClearCanvas.Healthcare.ImageAvailabilityEnum>)this.SubCriteria["ImageAvailability"];
+			}
+		}
     }
 }

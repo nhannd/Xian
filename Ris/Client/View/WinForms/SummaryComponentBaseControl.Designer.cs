@@ -62,24 +62,26 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._summaryTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this._buttonsPanel = new System.Windows.Forms.FlowLayoutPanel();
+			this.tableLayoutPanel1.SuspendLayout();
+			this._buttonsPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _summaryTableView
 			// 
-			this._summaryTableView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
+			this._summaryTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._summaryTableView.FilterTextBoxVisible = true;
 			this._summaryTableView.Location = new System.Drawing.Point(3, 3);
 			this._summaryTableView.Name = "_summaryTableView";
 			this._summaryTableView.ReadOnly = false;
-			this._summaryTableView.Size = new System.Drawing.Size(644, 457);
+			this._summaryTableView.Size = new System.Drawing.Size(644, 451);
 			this._summaryTableView.TabIndex = 0;
 			this._summaryTableView.ItemDoubleClicked += new System.EventHandler(this._staffGroupTableView_ItemDoubleClicked);
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(572, 466);
+			this._cancelButton.Location = new System.Drawing.Point(566, 3);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 2;
@@ -89,7 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(491, 466);
+			this._okButton.Location = new System.Drawing.Point(485, 3);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
 			this._okButton.TabIndex = 1;
@@ -97,15 +99,41 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.ColumnCount = 1;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.Controls.Add(this._buttonsPanel, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this._summaryTableView, 0, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 2;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(650, 492);
+			this.tableLayoutPanel1.TabIndex = 3;
+			// 
+			// _buttonsPanel
+			// 
+			this._buttonsPanel.Controls.Add(this._cancelButton);
+			this._buttonsPanel.Controls.Add(this._okButton);
+			this._buttonsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._buttonsPanel.Location = new System.Drawing.Point(3, 460);
+			this._buttonsPanel.Name = "_buttonsPanel";
+			this._buttonsPanel.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this._buttonsPanel.Size = new System.Drawing.Size(644, 29);
+			this._buttonsPanel.TabIndex = 0;
+			// 
 			// SummaryComponentBaseControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._okButton);
-			this.Controls.Add(this._cancelButton);
-			this.Controls.Add(this._summaryTableView);
+			this.Controls.Add(this.tableLayoutPanel1);
 			this.Name = "SummaryComponentBaseControl";
 			this.Size = new System.Drawing.Size(650, 492);
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this._buttonsPanel.ResumeLayout(false);
 			this.ResumeLayout(false);
 
         }
@@ -115,5 +143,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _summaryTableView;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.FlowLayoutPanel _buttonsPanel;
     }
 }

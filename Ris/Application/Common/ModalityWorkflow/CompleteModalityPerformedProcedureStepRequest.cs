@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -39,22 +38,18 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class CompleteModalityPerformedProcedureStepRequest : DataContractBase
     {
-        public CompleteModalityPerformedProcedureStepRequest(EntityRef mppsRef, Dictionary<string, string> extendedProperties)
+		public CompleteModalityPerformedProcedureStepRequest(ModalityPerformedProcedureStepDetail mpps)
         {
-            MppsRef = mppsRef;
-            this.ExtendedProperties = extendedProperties;
+            this.Mpps = mpps;
         }
 
         [DataMember]
-        public EntityRef MppsRef;
+        public ModalityPerformedProcedureStepDetail Mpps;
 
 		/// <summary>
 		/// Optional. Specifies the completed time.  If null, the current time is assumed.
 		/// </summary>
 		[DataMember]
 		public DateTime? CompletedTime;
-
-		[DataMember]
-        public Dictionary<string, string> ExtendedProperties;
     }
 }
