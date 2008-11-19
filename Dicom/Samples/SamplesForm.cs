@@ -197,34 +197,60 @@ namespace ClearCanvas.Dicom.Samples
 		private void _openFileButton_Click(object sender, EventArgs e)
 		{
 			openFileDialogStorageScu.Multiselect = false;
-            openFileDialogStorageScu.ShowDialog();
+			if (DialogResult.OK == openFileDialogStorageScu.ShowDialog())
+			{
+				_sourcePathTextBox.Text = openFileDialogStorageScu.FileName;
+				_destinationPathTextBox.Text = string.Empty;
 
+				_compression = new Compression(openFileDialogStorageScu.FileName);
+				_compression.Load();
 
-			_sourcePathTextBox.Text = openFileDialogStorageScu.FileName;
-			_compression = new Compression(openFileDialogStorageScu.FileName);
-
-			_compression.Load();
-			_sourceTransferSyntaxCombo.Items.Clear();
-			_sourceTransferSyntaxCombo.Items.Add(_compression.DicomFile.TransferSyntax);
-			_sourceTransferSyntaxCombo.SelectedItem = _compression.DicomFile.TransferSyntax;
-				
+				_sourceTransferSyntaxCombo.Items.Clear();
+				_sourceTransferSyntaxCombo.Items.Add(_compression.DicomFile.TransferSyntax);
+				_sourceTransferSyntaxCombo.SelectedItem = _compression.DicomFile.TransferSyntax;
+			}
 		}
 
 		private void _saveFileButton_Click(object sender, EventArgs e)
 		{
-			TransferSyntax destinationSyntax = _destinationSyntaxCombo.SelectedItem as TransferSyntax;
+			if (_compression != null)
+			{
+				TransferSyntax destinationSyntax = _destinationSyntaxCombo.SelectedItem as TransferSyntax;
 
-			string dump = _compression.DicomFile.Dump();
-			Logger.LogInfo(dump);
+				string dump = _compression.DicomFile.Dump();
+				Logger.LogInfo(dump);
 
-			_compression.ChangeSyntax(destinationSyntax);
+				_compression.ChangeSyntax(destinationSyntax);
 
-			dump = _compression.DicomFile.Dump();
-			Logger.LogInfo(dump);
+				dump = _compression.DicomFile.Dump();
+				Logger.LogInfo(dump);
 
-			saveFileDialog.ShowDialog();
-			_destinationPathTextBox.Text = saveFileDialog.FileName;
-			_compression.Save(saveFileDialog.FileName);
+				saveFileDialog.Filter = "DICOM|*.dcm";
+				if (DialogResult.OK == saveFileDialog.ShowDialog())
+				{
+					_destinationPathTextBox.Text = saveFileDialog.FileName;
+					_compression.Save(saveFileDialog.FileName);
+				}
+			}
+		}
+
+		private void _savePixelsButton_Click(object sender, EventArgs e)
+		{
+			if (_compression != null)
+			{
+				if (!_compression.DicomFile.TransferSyntax.Encapsulated)
+					saveFileDialog.Filter = "RAW|*.raw";
+				else if (_compression.DicomFile.TransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompression)
+					|| _compression.DicomFile.TransferSyntax.Equals(TransferSyntax.Jpeg2000ImageCompressionLosslessOnly))
+					saveFileDialog.Filter = "JPEG 2000|*.j2k";
+				else if (_compression.DicomFile.TransferSyntax.Equals(TransferSyntax.RleLossless))
+					saveFileDialog.Filter = "RLE|*.rle";
+				else
+					saveFileDialog.Filter = "JPEG|*.jpg";
+
+				if (DialogResult.OK == saveFileDialog.ShowDialog())
+					_compression.SavePixels(saveFileDialog.FileName);
+			}
 		}
     }
 }

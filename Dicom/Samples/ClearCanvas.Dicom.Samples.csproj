@@ -83,6 +83,10 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Codec\Jpeg2000\Dicom.Jpeg2000.vcproj">
+      <Project>{B389F627-F243-4B7E-8A04-90E1071B2754}</Project>
+      <Name>ClearCanvas.Dicom.Codec.Jpeg2000</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Codec\Plugin\ClearCanvas.Dicom.Codec.Plugin.csproj">
       <Project>{A5061667-48D0-4847-B72E-DCB2AB907F8E}</Project>
       <Name>ClearCanvas.Dicom.Codec.Plugin</Name>

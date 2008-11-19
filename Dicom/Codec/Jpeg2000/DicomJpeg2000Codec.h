@@ -19,6 +19,34 @@
 // Author:
 //    Colby Dillion (colby.dillion@gmail.com)
 
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+
 #ifndef __DCMJPEG2000CODEC_H__
 #define __DCMJPEG2000CODEC_H__
 
@@ -38,23 +66,29 @@ namespace Jpeg2000 {
 	private:
 		bool _irreversible;
 		float _rate;
-		array<float>^ _rates;
 		bool _isVerbose;
 		bool _enableMct;
 		bool _updatePmi;
+		bool _enablebypass;
+		bool _enablereset;
+		bool _enablerestart;
+		bool _enablevsc;
+		bool _enableerterm;
+		bool _enablesegmark;
 
 	public:
 		DicomJpeg2000Parameters() {
-			_irreversible = true;
-			_rate = 10;
+			_irreversible = false;
+			_rate = 8;
 			_isVerbose = false;
 			_enableMct = true;
 			_updatePmi = true;
-
-			_rates = gcnew array<float>(3);
-			_rates[0] = 80;
-			_rates[1] = 40;
-			_rates[2] = 20;
+			_enablebypass = false;
+			_enablereset = false;
+			_enablerestart = false;
+			_enablevsc = false;
+			_enableerterm = false;
+			_enablesegmark = false;
 		}
 
 		property bool Irreversible {
@@ -62,14 +96,12 @@ namespace Jpeg2000 {
 			void set(bool value) { _irreversible = value; }
 		}
 
+		///<summary>
+		///The compression rate.  Default value: 8
+		///</summary>
 		property float Rate {
 			float get() { return _rate; }
 			void set(float value) { _rate = value; }
-		}
-
-		property array<float>^ RateLevels {
-			array<float>^ get() { return _rates; }
-			void set(array<float>^ value) { _rates = value; }
 		}
 
 		property bool IsVerbose {
@@ -77,6 +109,45 @@ namespace Jpeg2000 {
 			void set(bool value) { _isVerbose = value; }
 		}
 
+		property bool EnableBypass {
+			bool get() { return _enablebypass; }
+			void set(bool value) { _enablebypass = value; }
+		}
+
+		property bool EnableReset {
+			bool get() { return _enablereset; }
+			void set(bool value) { _enablereset = value; }
+		}
+
+		property bool EnableRestart {
+			bool get() { return _enablerestart; }
+			void set(bool value) { _enablerestart = value; }
+		}
+
+		property bool EnableVsc {
+			bool get() { return _enablevsc; }
+			void set(bool value) { _enablevsc = value; }
+		}
+
+		///<summary>
+		/// Enable predictable termination of code blocks
+		///</summary>
+		property bool EnableErterm {
+			bool get() { return _enableerterm; }
+			void set(bool value) { _enableerterm = value; }
+		}
+
+		///<summary>
+		/// Enable segment markers in images.
+		///</summary>
+		property bool EnableSegmark {
+			bool get() { return _enablesegmark; }
+			void set(bool value) { _enablesegmark = value; }
+		}
+
+		/// <summary>
+		/// Multi-component transorm enabled, ie, transform to YBR
+		/// </summary>
 		property bool AllowMCT {
 			bool get() { return _enableMct; }
 			void set(bool value) { _enableMct = value; }

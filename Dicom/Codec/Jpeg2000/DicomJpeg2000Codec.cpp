@@ -19,6 +19,34 @@
 // Author:
 //    Colby Dillion (colby.dillion@gmail.com)
 
+// Copyright (c) 2006-2008, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+
 #include "stdio.h"
 #include "string.h"
 
@@ -41,7 +69,7 @@ extern "C" {
 	}
 
 	void opj_warning_callback(const char *msg, void *) {
-		Platform::Log(LogLevel::Info, "OpenJPEG Warning: {0}", gcnew String(msg));
+		Platform::Log(LogLevel::Warn, "OpenJPEG Warning: {0}", gcnew String(msg));
 	}
 
 	void opj_info_callback(const char *msg, void *) {
@@ -127,24 +155,43 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 		opj_set_event_mgr((opj_common_ptr)cinfo, &event_mgr, NULL);
 
 		opj_set_default_encoder_parameters(&eparams);
-		eparams.cp_disto_alloc = 1;
+
+		// Progression order by quality
+		eparams.prog_order = LRCP;
+		// Use Tiles?
+		eparams.tile_size_on=false;
+		// Tile Size
+		eparams.cp_tdx=1;
+		eparams.cp_tdy=1;
+		// Tile Origin
+		eparams.cp_tx0=0;
+		eparams.cp_ty0=0;
+
+		eparams.numresolution = 6;
+
+		// Image Offset
+		eparams.image_offset_x0 = 0;
+		eparams.image_offset_y0 = 0;
+
+		// Mode
+		eparams.mode = (jparams->EnableBypass ? 1 : 0) + (jparams->EnableReset ? 2 : 0)
+			+ (jparams->EnableRestart ? 4 : 0) + (jparams->EnableVsc ? 8 : 0)
+			+ (jparams->EnableErterm ? 16 : 0) + (jparams->EnableSegmark ? 32 : 0);
+
+		// Comment
+		eparams.cp_comment = "ClearCanvas DICOM OpenJPEG";
 
 		if (newPixelData->TransferSyntax->Equals(TransferSyntax::Jpeg2000ImageCompression) && jparams->Irreversible) {
 			eparams.irreversible = 1;
-
-			int r = 0;
-			for (; r < jparams->RateLevels->Length; r++) {
-				if (jparams->RateLevels[r] > jparams->Rate) {
-					eparams.tcp_numlayers++;
-					eparams.tcp_rates[r] = jparams->RateLevels[r];
-				} else
-					break;
-			}
-			eparams.tcp_numlayers++;
-			eparams.tcp_rates[r] = jparams->Rate;
-		} else {
-			eparams.tcp_rates[0] = 0;
+			eparams.tcp_rates[0] = jparams->Rate;
 			eparams.tcp_numlayers = 1;
+			eparams.cp_disto_alloc = 1;
+
+		} else {
+			eparams.irreversible = 0;
+			eparams.tcp_rates[0] = 1; // Lossless = 1
+			eparams.tcp_numlayers = 1;
+			eparams.cp_disto_alloc = 1;
 		}
 
 		if (oldPixelData->PhotometricInterpretation == "RGB" && jparams->AllowMCT)
@@ -165,8 +212,8 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 			OPJ_COLOR_SPACE color_space = getOpenJpegColorSpace(oldPixelData->PhotometricInterpretation);
 			image = opj_image_create(oldPixelData->SamplesPerPixel, &cmptparm[0], color_space);
 
-			image->x0 = eparams.image_offset_x0;
-			image->y0 = eparams.image_offset_y0;
+			image->x0 = 0;
+			image->y0 = 0;
 			image->x1 =	image->x0 + ((oldPixelData->ImageWidth - 1) * eparams.subsampling_dx) + 1;
 			image->y1 =	image->y0 + ((oldPixelData->ImageHeight - 1) * eparams.subsampling_dy) + 1;
 
@@ -248,7 +295,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 
 			cio = opj_cio_open((opj_common_ptr)cinfo, NULL, 0);
 
-			if (opj_encode(cinfo, cio, image, eparams.index)) {
+			if (opj_encode(cinfo, cio, image, NULL)) {
 				int clen = cio_tell(cio);
 				// Force the output fragment/frame to be even length
 				array<unsigned char>^ cbuf = gcnew array<unsigned char>(clen%2==1 ? clen+1 : clen);

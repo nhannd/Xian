@@ -101,6 +101,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
 			this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this._savePixelsButton = new System.Windows.Forms.Button();
 			this.SamplesSplitContainer.Panel1.SuspendLayout();
 			this.SamplesSplitContainer.Panel2.SuspendLayout();
 			this.SamplesSplitContainer.SuspendLayout();
@@ -384,6 +385,7 @@ namespace ClearCanvas.Dicom.Samples
 			// 
 			// tabPage1
 			// 
+			this.tabPage1.Controls.Add(this._savePixelsButton);
 			this.tabPage1.Controls.Add(this.label11);
 			this.tabPage1.Controls.Add(this.label10);
 			this.tabPage1.Controls.Add(this.label9);
@@ -443,7 +445,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._sourceTransferSyntaxCombo.FormattingEnabled = true;
 			this._sourceTransferSyntaxCombo.Location = new System.Drawing.Point(514, 30);
 			this._sourceTransferSyntaxCombo.Name = "_sourceTransferSyntaxCombo";
-			this._sourceTransferSyntaxCombo.Size = new System.Drawing.Size(298, 21);
+			this._sourceTransferSyntaxCombo.Size = new System.Drawing.Size(182, 21);
 			this._sourceTransferSyntaxCombo.TabIndex = 5;
 			// 
 			// _destinationSyntaxCombo
@@ -451,7 +453,7 @@ namespace ClearCanvas.Dicom.Samples
 			this._destinationSyntaxCombo.FormattingEnabled = true;
 			this._destinationSyntaxCombo.Location = new System.Drawing.Point(514, 73);
 			this._destinationSyntaxCombo.Name = "_destinationSyntaxCombo";
-			this._destinationSyntaxCombo.Size = new System.Drawing.Size(298, 21);
+			this._destinationSyntaxCombo.Size = new System.Drawing.Size(182, 21);
 			this._destinationSyntaxCombo.TabIndex = 4;
 			// 
 			// _destinationPathTextBox
@@ -523,6 +525,16 @@ namespace ClearCanvas.Dicom.Samples
 			this.saveFileDialog.DefaultExt = "dcm";
 			this.saveFileDialog.Title = "Save DICOM File";
 			// 
+			// _savePixelsButton
+			// 
+			this._savePixelsButton.Location = new System.Drawing.Point(742, 72);
+			this._savePixelsButton.Name = "_savePixelsButton";
+			this._savePixelsButton.Size = new System.Drawing.Size(98, 23);
+			this._savePixelsButton.TabIndex = 10;
+			this._savePixelsButton.Text = "Save Pixels";
+			this._savePixelsButton.UseVisualStyleBackColor = true;
+			this._savePixelsButton.Click += new System.EventHandler(this._savePixelsButton_Click);
+			// 
 			// SamplesForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -590,6 +602,7 @@ namespace ClearCanvas.Dicom.Samples
 		private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
+		private System.Windows.Forms.Button _savePixelsButton;
     }
 }
 
