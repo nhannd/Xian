@@ -149,61 +149,65 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				DicomMessage message = LoadMessageFromStudyXml();
 
 				// Use the command processor to do the archival.
-				ServerCommandProcessor commandProcessor = new ServerCommandProcessor("HSM Archive");
+                using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("HSM Archive"))
+                {
 
-				_archiveXml = new XmlDocument();
+                    _archiveXml = new XmlDocument();
 
-				// Create the study date folder
-				string zipFilename = Path.Combine(_hsmArchive.HsmPath, _storageLocation.StudyFolder);
-				commandProcessor.AddCommand(new CreateDirectoryCommand(zipFilename));
+                    // Create the study date folder
+                    string zipFilename = Path.Combine(_hsmArchive.HsmPath, _storageLocation.StudyFolder);
+                    commandProcessor.AddCommand(new CreateDirectoryCommand(zipFilename));
 
-				// Create a folder for the study
-				zipFilename = Path.Combine(zipFilename, _storageLocation.StudyInstanceUid);
-				commandProcessor.AddCommand(new CreateDirectoryCommand(zipFilename));
+                    // Create a folder for the study
+                    zipFilename = Path.Combine(zipFilename, _storageLocation.StudyInstanceUid);
+                    commandProcessor.AddCommand(new CreateDirectoryCommand(zipFilename));
 
-				// Save the archive data in the study folder, based on a filename with a date / time stamp
-				string filename = String.Format("{0}.zip",Platform.Time.ToString("yyyy-MM-dd-HHmm"));
-				zipFilename = Path.Combine(zipFilename, filename);
+                    // Save the archive data in the study folder, based on a filename with a date / time stamp
+                    string filename = String.Format("{0}.zip", Platform.Time.ToString("yyyy-MM-dd-HHmm"));
+                    zipFilename = Path.Combine(zipFilename, filename);
 
 
-				// Create the Xml data to store in the ArchiveStudyStorage table telling
-				// where the archived study is located.
-				XmlElement hsmArchiveElement = _archiveXml.CreateElement("HsmArchive");
-				_archiveXml.AppendChild(hsmArchiveElement);
-				XmlElement studyFolderElement = _archiveXml.CreateElement("StudyFolder");
-				hsmArchiveElement.AppendChild(studyFolderElement);
-				studyFolderElement.InnerText = _storageLocation.StudyFolder;
-				XmlElement filenameElement = _archiveXml.CreateElement("Filename");
-				hsmArchiveElement.AppendChild(filenameElement);
-				filenameElement.InnerText = filename;
-				XmlElement studyInstanceUidElement = _archiveXml.CreateElement("Uid");
-				hsmArchiveElement.AppendChild(studyInstanceUidElement);
-				studyInstanceUidElement.InnerText = _storageLocation.StudyInstanceUid;
+                    // Create the Xml data to store in the ArchiveStudyStorage table telling
+                    // where the archived study is located.
+                    XmlElement hsmArchiveElement = _archiveXml.CreateElement("HsmArchive");
+                    _archiveXml.AppendChild(hsmArchiveElement);
+                    XmlElement studyFolderElement = _archiveXml.CreateElement("StudyFolder");
+                    hsmArchiveElement.AppendChild(studyFolderElement);
+                    studyFolderElement.InnerText = _storageLocation.StudyFolder;
+                    XmlElement filenameElement = _archiveXml.CreateElement("Filename");
+                    hsmArchiveElement.AppendChild(filenameElement);
+                    filenameElement.InnerText = filename;
+                    XmlElement studyInstanceUidElement = _archiveXml.CreateElement("Uid");
+                    hsmArchiveElement.AppendChild(studyInstanceUidElement);
+                    studyInstanceUidElement.InnerText = _storageLocation.StudyInstanceUid;
+
+
+                    // Create the Zip file
+                    commandProcessor.AddCommand(new CreateStudyZipCommand(zipFilename, _studyXml, studyFolder));
+
+                    // Update the database.
+                    commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey, queueItem.PartitionArchiveKey, queueItem.GetKey(), _storageLocation.ServerTransferSyntaxKey, _archiveXml));
+
+                    // Apply the rules engine.
+                    ServerActionContext context = new ServerActionContext(message, _storageLocation.FilesystemKey, _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
+
+                    context.CommandProcessor = commandProcessor;
+
+                    _rulesEngine.Execute(context);
+
+                    if (!commandProcessor.Execute())
+                    {
+                        Platform.Log(LogLevel.Error, "Unexpected failure archiving study");
+
+                        _hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
+
+                    }
+                    else
+                        Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
+                                     _hsmArchive.PartitionArchive.Description);
+                }
+
 				
-
-				// Create the Zip file
-				commandProcessor.AddCommand(new CreateStudyZipCommand(zipFilename,_studyXml,studyFolder));
-
-				// Update the database.
-				commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey,queueItem.PartitionArchiveKey,queueItem.GetKey(),_storageLocation.ServerTransferSyntaxKey, _archiveXml));
-
-				// Apply the rules engine.
-				ServerActionContext context = new ServerActionContext(message, _storageLocation.FilesystemKey, _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
-
-				context.CommandProcessor = commandProcessor;
-
-				_rulesEngine.Execute(context);
-
-				if (!commandProcessor.Execute())
-				{
-					Platform.Log(LogLevel.Error, "Unexpected failure archiving study");
-
-					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
-
-				}
-				else
-					Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
-					             _hsmArchive.PartitionArchive.Description);
 			}
 			catch (Exception e)
 			{

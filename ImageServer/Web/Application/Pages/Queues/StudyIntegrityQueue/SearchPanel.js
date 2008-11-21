@@ -85,25 +85,27 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
             this._updateToolbarButtonStates();
         },
                       
+         /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //
+        // Methods
+        //
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         _updateToolbarButtonStates : function()
         {
             var itemlist = $find(this._ItemListClientID);
                       
+            this._enableReconcileButton(false);
             if (itemlist!=null )
             {
                 var rows = itemlist.getSelectedRowElements();
                 if (rows.length>0)
                 {
-                    this._enableReconcileButton(true);
+                    for(i=0; i<rows.length; i++)
+                    {
+                        this._enableReconcileButton(this._canReconcileStudy(rows[i]));
+                    }
                 }
-                else
-                {
-                    this._enableReconcileButton(false);
-                }
-            }
-            else
-            {
-                this._enableReconcileButton(false);
             }
         },     
         
@@ -111,6 +113,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         {
             var reconcileButton = $find(this._ReconcileButtonClientID);
             reconcileButton.set_enable(en);
+        },
+        
+        _canReconcileStudy:function(row)
+        {
+            //"canreconcile" is a custom attribute injected by the list control
+            return row.getAttribute('canreconcile')=='true';
         },
                      
         /////////////////////////////////////////////////////////////////////////////////////////////////////////

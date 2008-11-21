@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <summary>
         /// Gets/Sets the current selected device.
         /// </summary>
-        public IList<Model.StudyIntegrityQueue> SelectedItems
+        public IList<StudyIntegrityQueueSummary> SelectedItems
         {
             get
             {
@@ -117,12 +117,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 if (rows == null || rows.Length == 0)
                     return null;
 
-				IList<Model.StudyIntegrityQueue> queueItems = new List<Model.StudyIntegrityQueue>();
+                IList<StudyIntegrityQueueSummary> queueItems = new List<StudyIntegrityQueueSummary>();
                 for(int i=0; i<rows.Length; i++)
                 {
                     if (rows[i] < Items.Count)
                     {
-                        queueItems.Add(Items[rows[i]].TheStudyIntegrityQueueItem);
+                        queueItems.Add(Items[rows[i]]);
                     }
                 }
 
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedItems"></param>
-        public delegate void QueueItemSelectedEventHandler(object sender, IList<Model.StudyIntegrityQueue> selectedItems);
+        public delegate void QueueItemSelectedEventHandler(object sender, IList<StudyIntegrityQueueSummary> selectedItems);
 
         /// <summary>
         /// Occurs when the selected device in the list is changed.
@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected void StudyIntegrityQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            IList<Model.StudyIntegrityQueue> queueItems = SelectedItems;
+            IList<StudyIntegrityQueueSummary> queueItems = SelectedItems;
             if (queueItems != null)
                 if (OnQueueItemSelectionChanged != null)
                     OnQueueItemSelectionChanged(this, queueItems);            
@@ -256,9 +256,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 if (row.RowType == DataControlRowType.DataRow)
                 {
+                    CustomizeRowAttribute(e.Row);
                     CustomizeColumns(e.Row);
                 }
             }
+        }
+
+        private void CustomizeRowAttribute(GridViewRow row)
+        {
+            StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
+            row.Attributes["canreconcile"] = item.CanReconcile ? "true" : "false";
         }
 
         private void CustomizeColumns(GridViewRow row)
@@ -307,6 +314,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </remarks>
         public override void DataBind()
         {
+            // TODO: Is this call redundant?
             StudyIntegrityQueueGridView.DataBind();
         }
 

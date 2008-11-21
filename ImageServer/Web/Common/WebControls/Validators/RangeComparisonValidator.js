@@ -42,11 +42,11 @@ function @@CLIENTID@@_ClientSideEvaluator()
     
     if (this.input.value!=null && this.input.value!='' && !isNaN(this.input.value))
     {
-        controlValue = parseFloat(this.input.value);
+        controlValue = parseFloat(this.input.value.replace(/,/,"."));
             
         if (compareCtrl!=null && compareCtrl.value!='' &&  !isNaN(compareCtrl.value))
         {
-            compareValue = parseFloat(compareCtrl.value);
+            compareValue = parseFloat(compareCtrl.value.replace(/,/,"."));
             result.OK = controlValue >= @@MIN_VALUE@@ && controlValue<= @@MAX_VALUE@@ && controlValue @@COMPARISON_OP@@ compareValue;
         }
         else

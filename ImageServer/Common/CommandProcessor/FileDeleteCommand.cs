@@ -46,7 +46,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private bool _backedUp = false;
         private readonly string _path;
 
-		public FileDeleteCommand(string path, bool requiresRollback) : base("Delete File", requiresRollback)
+		public FileDeleteCommand(string path, bool requiresRollback) 
+            : base(String.Format("Delete {0}", path), requiresRollback)
 		{
 			_path = path;
 		}

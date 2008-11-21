@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot perform the action at this time: {0}. Please try again later..
+        /// </summary>
+        internal static string ActionNotAllowedAtThisTime {
+            get {
+                return ResourceManager.GetString("ActionNotAllowedAtThisTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to delete the study. See server log for more details..
         /// </summary>
         internal static string DeleteStudyError {

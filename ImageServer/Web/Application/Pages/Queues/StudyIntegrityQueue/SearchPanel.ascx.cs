@@ -36,6 +36,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using ClearCanvas.Common.Utilities;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -148,9 +149,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected override void OnPreRender(EventArgs e)
         {
-            ReconcileButton.Enabled = (StudyIntegrityQueueItemList.SelectedItems != null) ? true : false;
-
+            UpdateToolbarButtons();
 			base.OnPreRender(e);
+        }
+
+        protected void UpdateToolbarButtons()
+        {
+            ReconcileButton.Enabled = (StudyIntegrityQueueItemList.SelectedItems != null)
+                && CollectionUtils.TrueForAll<StudyIntegrityQueueSummary>(StudyIntegrityQueueItemList.SelectedItems,
+                delegate(StudyIntegrityQueueSummary item)
+                {
+                    return item.CanReconcile;
+                });
         }
        
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

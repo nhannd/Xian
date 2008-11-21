@@ -343,97 +343,100 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(_context, "_context");
             Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
 
-            ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file");
-            InsertInstanceCommand insertInstanceCommand = null;
-            InsertStudyXmlCommand insertStudyXmlCommand = null;
-            InstanceKeys keys = null;
-
-            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-            String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
-            
-            try
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file"))
             {
-                
-                // Update the StudyStream object
-                insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
-                processor.AddCommand(insertStudyXmlCommand);
+                InsertInstanceCommand insertInstanceCommand = null;
+                InsertStudyXmlCommand insertStudyXmlCommand = null;
+                InstanceKeys keys = null;
 
-                // Insert into the database, but only if its not a duplicate so the counts don't get off
-                if (!queueUid.Duplicate)
+                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
+                String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
+
+                try
                 {
-                    insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
-                    processor.AddCommand(insertInstanceCommand);
-                }
 
-                // Create a context for applying actions from the rules engine
-                ServerActionContext context =
-                    new ServerActionContext(file, StorageLocation.FilesystemKey, _context.WorkQueueItem.ServerPartitionKey, _context.WorkQueueItem.StudyStorageKey);
-                context.CommandProcessor = processor;
+                    // Update the StudyStream object
+                    insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
+                    processor.AddCommand(insertStudyXmlCommand);
 
-                // Run the rules engine against the object.
-                _sopProcessedRulesEngine.Execute(context);
-
-                // Do insert into the archival queue.  Note that we re-run this with each object processed
-                // so that the scheduled time is pushed back each time.  Note, however, if the study only 
-                // has one image, we could incorrectly insert an ArchiveQueue request, since the 
-                // study rules haven't been run.  We re-run the command when the study processed
-                // rules are run to remove out the archivequeue request again, if it isn't needed.
-				context.CommandProcessor.AddCommand(
-						new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey()));
-
-                // Do the actual processing
-                if (!processor.Execute())
-                {
-                    Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-                    Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
-                    throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
-
-                    if (insertInstanceCommand != null)
-                        keys = insertInstanceCommand.InsertKeys;
-
-                    if (keys != null)
+                    // Insert into the database, but only if its not a duplicate so the counts don't get off
+                    if (!queueUid.Duplicate)
                     {
-                        // We've inserted a new Study, process Study Rules
-                        if (keys.InsertStudy)
-                        {
-                            ProcessStudyRules(_context.WorkQueueItem, file);
-                        }
+                        insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
+                        processor.AddCommand(insertInstanceCommand);
+                    }
 
-                        // We've inserted a new Series, process Series Rules
-                        if (keys.InsertSeries)
+                    // Create a context for applying actions from the rules engine
+                    ServerActionContext context =
+                        new ServerActionContext(file, StorageLocation.FilesystemKey, _context.WorkQueueItem.ServerPartitionKey, _context.WorkQueueItem.StudyStorageKey);
+                    context.CommandProcessor = processor;
+
+                    // Run the rules engine against the object.
+                    _sopProcessedRulesEngine.Execute(context);
+
+                    // Do insert into the archival queue.  Note that we re-run this with each object processed
+                    // so that the scheduled time is pushed back each time.  Note, however, if the study only 
+                    // has one image, we could incorrectly insert an ArchiveQueue request, since the 
+                    // study rules haven't been run.  We re-run the command when the study processed
+                    // rules are run to remove out the archivequeue request again, if it isn't needed.
+                    context.CommandProcessor.AddCommand(
+                            new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey()));
+
+                    // Do the actual processing
+                    if (!processor.Execute())
+                    {
+                        Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+                        Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
+                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                    }
+                    else
+                    {
+                        Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+
+                        if (insertInstanceCommand != null)
+                            keys = insertInstanceCommand.InsertKeys;
+
+                        if (keys != null)
                         {
-                            ProcessSeriesRules(_context.WorkQueueItem, file);
+                            // We've inserted a new Study, process Study Rules
+                            if (keys.InsertStudy)
+                            {
+                                ProcessStudyRules(_context.WorkQueueItem, file);
+                            }
+
+                            // We've inserted a new Series, process Series Rules
+                            if (keys.InsertSeries)
+                            {
+                                ProcessSeriesRules(_context.WorkQueueItem, file);
+                            }
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
-                             processor.Description);
-                processor.Rollback();
-                throw new ApplicationException("Unexpected exception when processing file.", e);
-            }
-            finally
-            {
-                if (insertInstanceCommand != null && insertInstanceCommand.Statistics.IsSet)
-                    _instanceStats.InsertDBTime.Add(insertInstanceCommand.Statistics);
-                if (insertStudyXmlCommand != null && insertStudyXmlCommand.Statistics.IsSet)
-                    _instanceStats.InsertStreamTime.Add(insertStudyXmlCommand.Statistics);
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
+                                 processor.Description);
+                    processor.Rollback();
+                    throw new ApplicationException("Unexpected exception when processing file.", e);
+                }
+                finally
+                {
+                    if (insertInstanceCommand != null && insertInstanceCommand.Statistics.IsSet)
+                        _instanceStats.InsertDBTime.Add(insertInstanceCommand.Statistics);
+                    if (insertStudyXmlCommand != null && insertStudyXmlCommand.Statistics.IsSet)
+                        _instanceStats.InsertStreamTime.Add(insertStudyXmlCommand.Statistics);
 
-                        
-                _statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
-                if (String.IsNullOrEmpty(modality) == false)
-                    _statistics.Modality = modality;
 
-                // Update the statistics
-                _statistics.NumInstances++;
+                    _statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+                    if (String.IsNullOrEmpty(modality) == false)
+                        _statistics.Modality = modality;
 
+                    // Update the statistics
+                    _statistics.NumInstances++;
+
+                }
             }
+            
         }
         
         /// <summary>

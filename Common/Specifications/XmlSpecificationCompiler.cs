@@ -975,6 +975,12 @@ namespace ClearCanvas.Common.Specifications
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
 
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "test";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
             attrib = new XmlSchemaAttribute();
             attrib.Name = "failMessage";
             attrib.Use = XmlSchemaUse.Optional;
@@ -1023,6 +1029,12 @@ namespace ClearCanvas.Common.Specifications
             attrib.Use = XmlSchemaUse.Optional;
             attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
             type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "test";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
 
             attrib = new XmlSchemaAttribute();
             attrib.Name = "failMessage";

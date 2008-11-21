@@ -1,15 +1,23 @@
 ﻿<!-- 
 This rule instructs the server to use JPEG extended compression
-on CT and MR studies.
+on CT and MR studies where BitsStored <= 12.  Note that JPEG extended
+compression only works with 12 bit images.
 -->
 <rule>
-	<condition expressionLanguage="dicom">
-		<or>
-			<equal test="$Modality" refValue="CT" />
-			<equal test="$Modality" refValue="MR" />
-		</or>
-	</condition>
-	<action>
-		<jpeg-extended quality="70"  time="10" unit="weeks"/>
-	</action>
+  <condition expressionLanguage="dicom">
+	<and>
+	  <or>
+		<equal test="$BitsStored" refValue="12" />
+		<equal test="$BitsStored" refValue="10"/>
+		<equal test="$BitsStored" refValue="8"/>
+	  </or>
+	  <or>
+		<equal test="$Modality" refValue="CT" />
+		<equal test="$Modality" refValue="MR" />
+	  </or>
+	</and>
+  </condition>
+  <action>
+	<jpeg-extended quality="90"  time="10" unit="weeks"/>
+  </action>
 </rule>

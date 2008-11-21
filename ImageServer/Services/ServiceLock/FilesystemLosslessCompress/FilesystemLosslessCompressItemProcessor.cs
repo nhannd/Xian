@@ -86,8 +86,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.CompressScheduled;
 					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
 					{
-						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Lossless Compress, skipping study ({0}",
-									 location.StudyInstanceUid);
+						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Lossless Compress. Reason:{0}. Skipping study ({1})",
+									 lockParms.FailureReason, location.StudyInstanceUid);
 						continue;
 					}
 

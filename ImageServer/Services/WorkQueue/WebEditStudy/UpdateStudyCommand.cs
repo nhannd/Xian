@@ -599,36 +599,39 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             String destPath = _studyLocation.FilesystemPath;
             String extension = ".dcm";
 
-            ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Filesystem update processor");
-            filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, _partition.PartitionFolder);
-            filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, _newStudyFolder);
-            filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, _newStudyInstanceUid);
-            filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, seriesInstanceUid);
-            filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, sopInstanceUid);
-            destPath += extension;
-
-            if (File.Exists(destPath))
+            using (ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Filesystem update processor"))
             {
-                // overwrite it
-            }
+                filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
 
-            SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
-            filesystemUpdateProcessor.AddCommand(saveCommand);
+                destPath = Path.Combine(destPath, _partition.PartitionFolder);
+                filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
 
-            if (!filesystemUpdateProcessor.Execute())
-            {
-                throw new ApplicationException(String.Format("Unable to update image {0} : {1}", file.Filename, filesystemUpdateProcessor.FailureReason));
+                destPath = Path.Combine(destPath, _newStudyFolder);
+                filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, _newStudyInstanceUid);
+                filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, seriesInstanceUid);
+                filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, sopInstanceUid);
+                destPath += extension;
+
+                if (File.Exists(destPath))
+                {
+                    // overwrite it
+                }
+
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
+                filesystemUpdateProcessor.AddCommand(saveCommand);
+
+                if (!filesystemUpdateProcessor.Execute())
+                {
+                    throw new ApplicationException(String.Format("Unable to update image {0} : {1}", file.Filename, filesystemUpdateProcessor.FailureReason));
+                }
             }
+            
         }
 
         private void BackupFilesystem()

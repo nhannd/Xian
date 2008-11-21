@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ActionNotAllowedAtThisTime" xml:space="preserve">
+    <value>Cannot perform the action at this time: {0}. Please try again later.</value>
+  </data>
   <data name="DeleteStudyError" xml:space="preserve">
     <value>Unable to delete the study. See server log for more details.</value>
   </data>

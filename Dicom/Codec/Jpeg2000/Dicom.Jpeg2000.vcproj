@@ -324,10 +324,6 @@
 			ReferencedProjectIdentifier="{497CEAC5-C575-47A7-9230-610D6A3B6A2A}"
 			RelativePathToProject=".\Codec\Jpeg2000\OpenJPEG\OpenJPEG.vcproj"
 		/>
-		<ProjectReference
-			ReferencedProjectIdentifier="{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
-			RelativePathToProject="..\Common\ClearCanvas.Common.csproj"
-		/>
 	</References>
 	<Files>
 		<Filter

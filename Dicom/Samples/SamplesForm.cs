@@ -162,6 +162,8 @@ namespace ClearCanvas.Dicom.Samples
             }
             IAsyncResult o_AsyncResult = _verificationScu.BeginVerify(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port, new AsyncCallback(VerifyComplete), null);
             SetVerifyButton(true);
+
+			//QueryScu.Find(_textBoxStorageScuLocalAe.Text, _textBoxStorageScuRemoteAe.Text, _textBoxStorageScuRemoteHost.Text, port);
         }
 
         private void VerifyComplete(IAsyncResult ar)

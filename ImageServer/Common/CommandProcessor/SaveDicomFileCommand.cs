@@ -32,17 +32,16 @@
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using System;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
-	public class SaveDicomFileCommand : ServerCommand
+	public class SaveDicomFileCommand : ServerCommand, IDisposable
 	{
 		#region Private Members
 		private readonly string _path;
+        private string _backupPath;
 		private readonly DicomFile _file;
-	    private string _backupPath = ServerPlatform.GetTempPath();
-	    private bool _backup;
-	    private bool _saved;
 		#endregion
 
 		public SaveDicomFileCommand(string path, DicomFile file )
@@ -51,40 +50,51 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			Platform.CheckForNullReference(path, "File name");
 			Platform.CheckForNullReference(file, "Dicom File object");
 
-            if (RequiresRollback)
-                Backup();
-
 			_path = path;
-			_file = file;
+			_file = file;            
 		}
 
 	    private void Backup()
 	    {
             if (File.Exists(_path))
             {
+                Random random = new Random();
+                _backupPath = String.Format("{0}.bak.{1}", _path, random.Next()); 
                 File.Copy(_path, _backupPath);
-                _backup = true;
             }
 	    }
 
 
 	    protected override void OnExecute()
 		{
+            if (RequiresRollback)
+                Backup();
+
             _file.Save(_path, DicomWriteOptions.Default);
-	        _saved = true;
 		}
 
 		protected override void OnUndo()
 		{
-            if (_backup)
+            if (File.Exists(_path)) 
+                File.Delete(_path); 
+            
+            if (false==String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))
             {
-                if (_saved)
-                    File.Copy(_backupPath, _path);
-            }
-            else
-            {
-                File.Delete(_path);
-            }
+                // restore original file
+                File.Copy(_backupPath, _path, true);
+            }            
 		}
-	}
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (false == String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))
+            {
+                File.Delete(_backupPath);
+            }
+        }
+
+        #endregion
+    }
 }

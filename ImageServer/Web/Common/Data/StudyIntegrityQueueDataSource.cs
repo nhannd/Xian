@@ -35,6 +35,7 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -50,10 +51,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	    private DateTime _receivedTime;
         private StudyIntegrityQueue _studyIntegrityQueueItem;
 	    private ServerPartition _partition;
+        private StudySummary _study;
+
+        
 		#endregion Private members
 
 		#region Public Properties
 
+        public StudySummary StudySummary
+        {
+            get { return _study; }
+            set { _study = value; }
+        }
+        
+        
         public string ExistingAccessionNumber
         {
             get { return _existingAccessionNumber; }
@@ -98,6 +109,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             get { return _studyInstanceUID; }
             set { _studyInstanceUID = value; }
 	    }
+
+        public bool CanReconcile
+        {
+            get
+            {
+                if (_study.IsLocked || _study.IsNearline || _study.IsLocked || _study.IsProcessing)
+                    return false;
+                else
+                    return true;
+            }
+        }
 
 		#endregion Public Properties
 	}
@@ -221,31 +243,37 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// </remark>
 		private StudyIntegrityQueueSummary CreateStudyIntegrityQueueSummary(StudyIntegrityQueue item)
 		{
-			StudyIntegrityQueueSummary summary = new StudyIntegrityQueueSummary();
-			summary.TheStudyIntegrityQueueItem = item;
-			summary.ThePartition = Partition;
-
-		    ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
-		    queueDescription.Parse(item.Description);
-
-		    summary.ExistingPatientName = queueDescription.ExistingPatientName;
-            summary.ExistingAccessionNumber = queueDescription.ExistingAccessionNumber;
-		    summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
-		    summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
-		    summary.ReceivedTime = item.InsertTime;
-            
             StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);           
             StudyAdaptor studyAdaptor = new StudyAdaptor();
 			StudySelectCriteria studycriteria = new StudySelectCriteria();
 			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
 			IList<Study> studyList = studyAdaptor.Get(studycriteria);
-
-			if (studyList != null && studyList.Count > 0)
+            Study study = null;
+			    
+			if (studyList == null || studyList.Count == 0)
 			{
-			    Study study = studyList[0];
-			    summary.StudyInstanceUID = study.StudyInstanceUid;
-			}
+                throw new StudyNotFoundException(storages.StudyInstanceUid, "Unable to locate the study");
+            }
+
+            study = studyList[0];       
+            
+
+			StudyIntegrityQueueSummary summary = new StudyIntegrityQueueSummary();
+			summary.TheStudyIntegrityQueueItem = item;
+			summary.ThePartition = Partition;
+
+		    ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
+		    queueDescription.Parse(item.Description);
+            summary.StudySummary = StudySummaryAssembler.CreateStudySummary(study);
+            summary.StudyInstanceUID = summary.StudySummary.StudyInstanceUid;
+            summary.ExistingPatientName = queueDescription.ExistingPatientName;
+            summary.ExistingAccessionNumber = queueDescription.ExistingAccessionNumber;
+		    summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
+		    summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
+		    summary.ReceivedTime = item.InsertTime;
+            
+            
 
 			return summary;
 		}

@@ -1064,24 +1064,6 @@
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
     <None Include="Builds\PostBuild.proj" />
-    <None Include="Pages\Queues\WorkQueue\.svn\all-wcprops" />
-    <None Include="Pages\Queues\WorkQueue\.svn\entries" />
-    <None Include="Pages\Queues\WorkQueue\.svn\format" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPage.aspx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPage.aspx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPage.aspx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\SearchPanel.js.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemCollection.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueItemListPanel.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSettings.Designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSettings.settings.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSummary.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\.svn\text-base\WorkQueueSummaryAssembler.cs.svn-base" />
     <None Include="Helpers\.svn\text-base\DialogHelper.cs.svn-base" />
     <None Include="Helpers\.svn\text-base\ScriptHelper.cs.svn-base" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\all-wcprops" />
@@ -1181,11 +1163,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Pages\Queues\WorkQueue\.svn\prop-base\" />
-    <Folder Include="Pages\Queues\WorkQueue\.svn\props\" />
-    <Folder Include="Pages\Queues\WorkQueue\.svn\tmp\prop-base\" />
-    <Folder Include="Pages\Queues\WorkQueue\.svn\tmp\props\" />
-    <Folder Include="Pages\Queues\WorkQueue\.svn\tmp\text-base\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\prop-base\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\props\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\prop-base\" />

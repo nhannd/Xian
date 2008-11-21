@@ -120,25 +120,26 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 
                     
                     ServerActionContext context = new ServerActionContext(msg, location.FilesystemKey, location.ServerPartitionKey, location.GetKey());
-                    context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
-
-                    // Add a command to delete the current filesystemQueue entries, so that they can 
-                    // be reinserted by the rules engine.
-                    context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey()));
-
-                    // Execute the rules engine, insert commands to update the database into the command processor.
-                    engine.Execute(context);
-
-                    // Re-do insert into the archive queue.
-                    // Note: the stored procedure will update the archive entry if it already exists
-                    context.CommandProcessor.AddCommand(
-                        new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey()));
-
-
-                    // Do the actual database updates.
-                    if (false == context.CommandProcessor.Execute())
+                    using (context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor"))
                     {
-                        Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", location.StudyInstanceUid);
+                        // Add a command to delete the current filesystemQueue entries, so that they can 
+                        // be reinserted by the rules engine.
+                        context.CommandProcessor.AddCommand(new DeleteFilesystemQueueCommand(location.GetKey()));
+
+                        // Execute the rules engine, insert commands to update the database into the command processor.
+                        engine.Execute(context);
+
+                        // Re-do insert into the archive queue.
+                        // Note: the stored procedure will update the archive entry if it already exists
+                        context.CommandProcessor.AddCommand(
+                            new InsertArchiveQueueCommand(location.ServerPartitionKey, location.GetKey()));
+
+
+                        // Do the actual database updates.
+                        if (false == context.CommandProcessor.Execute())
+                        {
+                            Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", location.StudyInstanceUid);
+                        }
                     }
                 }
                 finally

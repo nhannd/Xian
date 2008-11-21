@@ -249,53 +249,54 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
             String seriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             String sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-            ServerCommandProcessor processor = new ServerCommandProcessor("Update file system");
-
-            String destPath = _destStudyStorage.FilesystemPath;
-            String extension = ".dcm";
-       
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, _destStudyStorage.PartitionFolder);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, _destStudyStorage.StudyFolder);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, _destStudyStorage.StudyInstanceUid);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, seriesInstanceUid);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, sopInstanceUid);
-            destPath += extension;
-
-            bool duplicate = File.Exists(destPath);
-
-            if (duplicate)
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Update file system"))
             {
-                if (uid!=null)
+                String destPath = _destStudyStorage.FilesystemPath;
+                String extension = ".dcm";
+
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, _destStudyStorage.PartitionFolder);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, _destStudyStorage.StudyFolder);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, _destStudyStorage.StudyInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, seriesInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, sopInstanceUid);
+                destPath += extension;
+
+                bool duplicate = File.Exists(destPath);
+
+                if (duplicate)
                 {
-                    Platform.Log(LogLevel.Warn, "Image {0} is a duplicate. Existing sop will be replaced.", file.Filename);
-                    _duplicateList.Add(uid);
+                    if (uid != null)
+                    {
+                        Platform.Log(LogLevel.Warn, "Image {0} is a duplicate. Existing sop will be replaced.", file.Filename);
+                        _duplicateList.Add(uid);
+                    }
                 }
-            }
 
 
-            Platform.Log(LogLevel.Debug, "Saving {0}", destPath);
-            SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
-            processor.AddCommand(saveCommand);
-            if (uid!=null)
-            {
-                processor.AddCommand(new UpdateWorkQueueCommand(file, _destStudyStorage, extension, duplicate));
-            }
+                Platform.Log(LogLevel.Debug, "Saving {0}", destPath);
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
+                processor.AddCommand(saveCommand);
+                if (uid != null)
+                {
+                    processor.AddCommand(new UpdateWorkQueueCommand(file, _destStudyStorage, extension, duplicate));
+                }
 
-            if (!processor.Execute())
-            {
-                _failedUidList.Add(uid);
-                throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
-            }
+                if (!processor.Execute())
+                {
+                    _failedUidList.Add(uid);
+                    throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
+                }
+            }            
 
             if (uid!=null)
             {

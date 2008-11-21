@@ -44,7 +44,7 @@ namespace ClearCanvas.Dicom.Codec.Plugin
 		{
 			DicomJpegParameters codecParms = new DicomJpegParameters();
 
-			codecParms.Quality = 70;
+			codecParms.Quality = 90;
 
 			return codecParms;
 		}

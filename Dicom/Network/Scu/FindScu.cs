@@ -278,15 +278,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
             if (pcid > 0)
             {
-                DicomMessage dicomMessage = new DicomMessage();
-                foreach(DicomAttribute dicomAttribute in _requestAttributeCollection)
-                {
-                    DicomAttribute dicomAttribute2 = dicomMessage.DataSet[dicomAttribute.Tag];
-                    if (dicomAttribute.IsNull)
-                        dicomAttribute2.SetNullValue();
-                    else if (!dicomAttribute.IsEmpty)
-                        dicomAttribute2.Values = dicomAttribute.Values;
-                }
+            	DicomMessage dicomMessage = new DicomMessage(new DicomAttributeCollection(),_requestAttributeCollection.Copy());
                 client.SendCFindRequest(pcid, client.NextMessageID(), dicomMessage);
             }
         }

@@ -123,7 +123,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             if (_processor != null)
             {
                 _processor.Rollback();
-                _processor = null;
             }
         }
 
@@ -324,51 +323,54 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             String destPath = destStudyStorage.FilesystemPath;
             String extension = ".dcm";
 
-            ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor");
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, destStudyStorage.PartitionFolder);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, destStudyStorage.StudyFolder);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, destStudyStorage.StudyInstanceUid);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, seriesInstanceUid);
-            processor.AddCommand(new CreateDirectoryCommand(destPath));
-
-            destPath = Path.Combine(destPath, sopInstanceUid);
-            destPath += extension;
-
-            if (File.Exists(destPath))
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
             {
-                if (_fileToUidMap.ContainsKey(workingImagePath))
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, destStudyStorage.PartitionFolder);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, destStudyStorage.StudyFolder);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, destStudyStorage.StudyInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, seriesInstanceUid);
+                processor.AddCommand(new CreateDirectoryCommand(destPath));
+
+                destPath = Path.Combine(destPath, sopInstanceUid);
+                destPath += extension;
+
+                if (File.Exists(destPath))
                 {
-                    #region Duplicate SOP
+                    if (_fileToUidMap.ContainsKey(workingImagePath))
+                    {
+                        #region Duplicate SOP
 
-                    // TODO: Add code to handle duplicate sop here
-                    Platform.Log(LogLevel.Warn, "Image {0} cannot be processed because of duplicate in {1}", sopInstanceUid, destPath);
-                    FailDuplicate(uid);
-                    _failedUidList.Add(uid);
-                    _duplicateList.Add(uid);
-                    #endregion
+                        // TODO: Add code to handle duplicate sop here
+                        Platform.Log(LogLevel.Warn, "Image {0} cannot be processed because of duplicate in {1}", sopInstanceUid, destPath);
+                        FailDuplicate(uid);
+                        _failedUidList.Add(uid);
+                        _duplicateList.Add(uid);
+                        #endregion
 
-                    return;
+                        return;
+                    }
+                }
+
+
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
+                processor.AddCommand(saveCommand);
+                processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension, false));
+
+                if (!processor.Execute())
+                {
+                    FailUid(uid, true);
+                    throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
                 }
             }
-
-
-            SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
-            processor.AddCommand(saveCommand);
-            processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension, false));
             
-            if (!processor.Execute())
-            {
-                FailUid(uid, true);
-                throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
-            }
 
             if (_fileToUidMap.ContainsKey(workingImagePath))
             {
@@ -512,6 +514,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         public void Dispose()
         {
             CleanupWorkingFolder();
+
+            if (_processor != null)
+            {
+                _processor.Dispose();
+                _processor = null;
+            }
         }
 
         #endregion

@@ -32,45 +32,83 @@
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using System;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
 	/// <summary>
 	/// A ServerCommand derived class for renaming a file.
 	/// </summary>
-	public class RenameFileCommand : ServerCommand
+	public class RenameFileCommand : ServerCommand, IDisposable
 	{
 		#region Private Members
 		private readonly string _sourceFile;
 		private readonly string _destinationFile;
+        private string _destBackupFile;
+        private bool _renamed =false;
 		#endregion
 
 		public RenameFileCommand(string sourceFile, string destinationFile)
-			: base("Rename File", true)
+			: base(String.Format("Rename {0} to {1}", sourceFile, destinationFile), true)
 		{
 			Platform.CheckForNullReference(sourceFile, "Source filename");
 			Platform.CheckForNullReference(destinationFile, "Destination filename");
 
 			_sourceFile = sourceFile;
 			_destinationFile = destinationFile;
+
+            
 		}
 
 		protected override void OnExecute()
 		{
+            if (RequiresRollback)
+                Backup();
+
 			if (File.Exists(_destinationFile))
 			{
 				File.Delete(_destinationFile);
 			}
-
-			File.Move(_sourceFile, _destinationFile);
+            File.Move(_sourceFile, _destinationFile);
+            _renamed = true;
+            
 		}
+
+        private void Backup()
+        {
+            if (File.Exists(_destinationFile))
+            {
+                Random random = new Random();
+                _destBackupFile = String.Format("{0}.bak.{1}", _destinationFile, random.Next());
+
+                File.Copy(_destinationFile, _destBackupFile);
+            }
+        }
 
 		protected override void OnUndo()
 		{
-			if (File.Exists(_sourceFile))
-				File.Delete(_sourceFile);
+            // restore the source
+            if (_renamed)
+            {
+                File.Move(_destinationFile, _sourceFile);
+            }				
 
-			File.Move(_destinationFile, _sourceFile);
+            // restore destination
+            if (false == String.IsNullOrEmpty(_destBackupFile) && File.Exists(_destBackupFile))
+            {
+                File.Move(_destBackupFile, _destinationFile);
+            }
+			
 		}
-	}
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (File.Exists(_destBackupFile))
+                File.Delete(_destBackupFile);
+        }
+
+        #endregion
+    }
 }

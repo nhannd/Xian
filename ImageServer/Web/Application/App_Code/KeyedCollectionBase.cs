@@ -29,9 +29,10 @@
 
 #endregion
 
-
+using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.App_Code
 {
@@ -73,7 +74,18 @@ namespace ClearCanvas.ImageServer.Web.Application.App_Code
 
         public void Add(TData item)
         {
-            Add(GetKey(item), item);
+            TKey key = GetKey(item);
+
+            if (IndexOf(key) > 0)
+            {
+                Exception e = new Exception(string.Format("Key {0} already exists in list.\n\nItem: {1}\n\nList: {2}", key, item, this));
+                Platform.Log(LogLevel.Error, e.Message);
+                throw e;
+            }
+            else
+            {
+                Add(key, item);
+            }
         }
 
         public int IndexOf(TKey key)

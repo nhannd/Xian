@@ -236,10 +236,6 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 
 		jpeg_create_compress(&cinfo);
 
-		// initialize client_data
-		//GCHandle^ thisHdl = GCHandle::Alloc(this, GCHandleType::Pinned);
-		//IntPtr thisPtr = thisHdl->AddrOfPinnedObject();
-		//cinfo.client_data = (void*)thisPtr;
 		cinfo.client_data = nullptr;
 		
 		JPEGCODEC::This = this;
@@ -255,10 +251,9 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		cinfo.image_height = oldPixelData->ImageHeight;
 		cinfo.input_components = oldPixelData->SamplesPerPixel;
 		cinfo.in_color_space = IJGVERS::getJpegColorSpace(oldPixelData->PhotometricInterpretation);
-		cinfo.optimize_coding = true;
-		cinfo.smoothing_factor = params->SmoothingFactor;
 
 		jpeg_set_defaults(&cinfo);
+		
 
 		if (Mode == JpegMode::Baseline || Mode == JpegMode::Sequential) {
 			jpeg_set_quality(&cinfo, params->Quality, 0);
@@ -275,32 +270,42 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 			jpeg_simple_lossless(&cinfo, Predictor, PointTransform);
 		}
 
-		// initialize sampling factors
-		if (cinfo.jpeg_color_space == JCS_YCbCr && params->SampleFactor != JpegSampleFactor::Unknown) {
-			switch(params->SampleFactor) {
-			  case JpegSampleFactor::SF444: /* 4:4:4 sampling (no subsampling) */
-				cinfo.comp_info[0].h_samp_factor = 1;
-				cinfo.comp_info[0].v_samp_factor = 1;
-				break;
-			  case JpegSampleFactor::SF422: /* 4:2:2 sampling (horizontal subsampling of chroma components) */
-				cinfo.comp_info[0].h_samp_factor = 2;
-				cinfo.comp_info[0].v_samp_factor = 1;
-				break;
-			//case JpegSampleFactor::SF411: /* 4:1:1 sampling (horizontal and vertical subsampling of chroma components) */
-			//	cinfo.comp_info[0].h_samp_factor = 2;
-			//	cinfo.comp_info[0].v_samp_factor = 2;
-			//	break;
-			}
-		}
-		else {
-			if (params->SampleFactor == JpegSampleFactor::Unknown)
-				jpeg_set_colorspace(&cinfo, cinfo.in_color_space);
-
-			// JPEG color space is not YCbCr, disable subsampling.
+		if (Mode == JpegMode::Lossless) {
+			jpeg_set_colorspace(&cinfo, cinfo.in_color_space);
 			cinfo.comp_info[0].h_samp_factor = 1;
 			cinfo.comp_info[0].v_samp_factor = 1;
 		}
+		else {
+			// initialize sampling factors
+			if (cinfo.jpeg_color_space == JCS_YCbCr && params->SampleFactor != JpegSampleFactor::Unknown) {
+				switch(params->SampleFactor) {
+				  case JpegSampleFactor::SF444: /* 4:4:4 sampling (no subsampling) */
+					cinfo.comp_info[0].h_samp_factor = 1;
+					cinfo.comp_info[0].v_samp_factor = 1;
+					break;
+				  case JpegSampleFactor::SF422: /* 4:2:2 sampling (horizontal subsampling of chroma components) */
+					cinfo.comp_info[0].h_samp_factor = 2;
+					cinfo.comp_info[0].v_samp_factor = 1;
+					break;
+				//case JpegSampleFactor::SF411: /* 4:1:1 sampling (horizontal and vertical subsampling of chroma components) */
+				//	cinfo.comp_info[0].h_samp_factor = 2;
+				//	cinfo.comp_info[0].v_samp_factor = 2;
+				//	break;
+				}
+			}
+			else {
+				//if (params->SampleFactor == JpegSampleFactor::Unknown)
+					jpeg_set_colorspace(&cinfo, cinfo.in_color_space);
 
+				// JPEG color space is not YCbCr, disable subsampling.
+				cinfo.comp_info[0].h_samp_factor = 1;
+				cinfo.comp_info[0].v_samp_factor = 1;
+			}
+		}
+		
+		cinfo.optimize_coding = true;
+		cinfo.smoothing_factor = params->SmoothingFactor;
+		
 		// all other components are set to 1x1
 		for (int sfi = 1; sfi < MAX_COMPONENTS; sfi++) {
 			cinfo.comp_info[sfi].h_samp_factor = 1;

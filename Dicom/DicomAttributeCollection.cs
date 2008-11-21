@@ -124,6 +124,10 @@ namespace ClearCanvas.Dicom
         /// <param name="copyBinary"></param>
         internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary)
         {
+        	_startTag = source.StartTagValue;
+        	_endTag = source.EndTagValue;
+        	_specificCharacterSet = source.SpecificCharacterSet;
+
             foreach (DicomAttribute attrib in source)
             {
                 if (copyBinary ||

@@ -46,62 +46,52 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         private static int ArraySize = 100;
 
-        public static ReconcileDetails CreateReconcileDetails(Model.StudyIntegrityQueue item)
+        public static ReconcileDetails CreateReconcileDetails(StudyIntegrityQueueSummary item)
         {
             ReconcileDetails details = new ReconcileDetails();
 
-            details.StudyIntegrityQueueItem = item;
+            details.StudyIntegrityQueueItem = item.TheStudyIntegrityQueueItem;
+            Study study = item.StudySummary.TheStudy;
+            details.StudyInstanceUID = study.StudyInstanceUid;
 
-            StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-            StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
-            StudyAdaptor studyAdaptor = new StudyAdaptor();
-            StudySelectCriteria studycriteria = new StudySelectCriteria();
-            studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-            IList<Study> studyList = studyAdaptor.Get(studycriteria);
+            //Set the demographic details of the Existing Patient
+            details.ExistingPatient.PatientID = study.PatientId;
+            details.ExistingPatient.AccessionNumber = study.AccessionNumber;
+            details.ExistingPatient.Sex = study.PatientsSex;
+            details.ExistingPatient.IssuerOfPatientID = study.IssuerOfPatientId;
+            details.ExistingPatient.BirthDate = study.PatientsBirthDate;
 
-            if (studyList != null && studyList.Count > 0)
+            SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
+            SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
+            seriesCriteria.StudyKey.EqualTo(study.GetKey());
+            seriesCriteria.ServerPartitionKey.EqualTo(item.StudySummary.ThePartition.GetKey());
+
+            IList<Series> series = seriesAdaptor.Get(seriesCriteria);
+
+            List<ReconcileDetails.SeriesDetails> existingSeriesList = new List<ReconcileDetails.SeriesDetails>();
+            if (series != null)
             {
-                Study study = studyList[0];
-                details.StudyInstanceUID = study.StudyInstanceUid;
-
-                //Set the demographic details of the Existing Patient
-                details.ExistingPatient.PatientID = study.PatientId;
-                details.ExistingPatient.AccessionNumber = study.AccessionNumber;
-                details.ExistingPatient.Sex = study.PatientsSex;
-                details.ExistingPatient.IssuerOfPatientID = study.IssuerOfPatientId;
-                details.ExistingPatient.BirthDate = study.PatientsBirthDate;
-
-                SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
-                SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
-                seriesCriteria.StudyKey.EqualTo(study.GetKey());
-                seriesCriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
-
-                IList<Series> series = seriesAdaptor.Get(seriesCriteria);
-
-                List<ReconcileDetails.SeriesDetails> existingSeriesList = new List<ReconcileDetails.SeriesDetails>();
-                if (series != null)
+                foreach (Series seriesItem in series)
                 {
-                    foreach (Series seriesItem in series)
-                    {
-                        ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
-                        seriesDetails.Description = seriesItem.SeriesDescription;
-                        seriesDetails.NumberOfInstances = seriesItem.NumberOfSeriesRelatedInstances;
+                    ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
+                    seriesDetails.Description = seriesItem.SeriesDescription;
+                    seriesDetails.NumberOfInstances = seriesItem.NumberOfSeriesRelatedInstances;
 
-                        existingSeriesList.Add(seriesDetails);
-                    }
+                    existingSeriesList.Add(seriesDetails);
                 }
-
-                details.ExistingPatient.Series = existingSeriesList.ToArray();
             }
 
-            ReconcileStudyQueueDescription description = ParseDescription(item.Description);
+            details.ExistingPatient.Series = existingSeriesList.ToArray();
+        
+
+            ReconcileStudyQueueDescription description = ParseDescription(item.TheStudyIntegrityQueueItem.Description);
 
             details.ExistingPatient.Name = description.ExistingPatientName;
             details.ConflictingPatient.Name = description.ConflictingPatientName;
 
             StringWriter sw = new StringWriter();
             XmlTextWriter xw = new XmlTextWriter(sw);
-            item.StudyData.WriteTo(xw);
+            item.TheStudyIntegrityQueueItem.StudyData.WriteTo(xw);
 
             string studyData = sw.ToString();
 
@@ -113,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             StudyIntegrityQueueUidAdaptor uidAdaptor = new StudyIntegrityQueueUidAdaptor();
             StudyIntegrityQueueUidSelectCriteria uidCriteria = new StudyIntegrityQueueUidSelectCriteria();
-            uidCriteria.StudyIntegrityQueueKey.EqualTo(item.GetKey());
+            uidCriteria.StudyIntegrityQueueKey.EqualTo(item.TheStudyIntegrityQueueItem.GetKey());
 
             IList<StudyIntegrityQueueUid> uidItems = uidAdaptor.Get(uidCriteria);
 

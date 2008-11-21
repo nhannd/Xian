@@ -121,25 +121,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
 
-            if(MergeUsingExistingStudy.Checked)
+            try
             {
-               controller.MergeStudy(itemKey, true);
+
+                if (MergeUsingExistingStudy.Checked)
+                {
+                    controller.MergeStudy(itemKey, true);
+                }
+                else if (MergeUsingConflictingStudy.Checked)
+                {
+                    controller.MergeStudy(itemKey, false);
+                }
+                else if (CreateNewStudy.Checked)
+                {
+                    controller.CreateNewStudy(itemKey);
+                }
+                else
+                {
+                    controller.Discard(itemKey);
+                }
             }
-            else if(MergeUsingConflictingStudy.Checked)
+            catch (Exception ex)
             {
-               controller.MergeStudy(itemKey, false);
-            }
-            else if (CreateNewStudy.Checked)
-            {
-               controller.CreateNewStudy(itemKey);
-            } 
-            else
-            {
-                controller.Discard(itemKey);
+                MessageBox.Message = String.Format(App_GlobalResources.ErrorMessages.ActionNotAllowedAtThisTime, ex.Message);
+                MessageBox.MessageType = ClearCanvas.ImageServer.Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Show();
             }
 
             ((Default)Page).UpdateUI();
-
             Close();
         }
 

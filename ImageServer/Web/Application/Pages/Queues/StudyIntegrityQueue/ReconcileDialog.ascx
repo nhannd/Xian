@@ -130,3 +130,5 @@
                 </table>
     </ContentTemplate>
 </ccAsp:ModalDialog>
+
+<ccAsp:MessageBox runat="server" ID="MessageBox" />

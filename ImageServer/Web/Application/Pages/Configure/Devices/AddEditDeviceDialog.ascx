@@ -60,10 +60,6 @@
                                                         ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
                                                         Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
                                                         Display="None"></ccValidator:ConditionalRequiredFieldValidator>
-                                                    <ccValidator:RegularExpressionFieldValidator ID="RegularExpressionFieldValidator1"
-                                                        runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
-                                                        IgnoreEmptyValue="true" ValidationGroup="vg1" ValidationExpression="^([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])\.([1-9]?\d|1\d\d|2[0-4]\d|25[0-5])$"
-                                                        Text="IP address is malformed" Display="None" InvalidInputIndicatorID="IPAddressHelp"></ccValidator:RegularExpressionFieldValidator>
                                                 </td>
                                             </tr>
                                         </table>

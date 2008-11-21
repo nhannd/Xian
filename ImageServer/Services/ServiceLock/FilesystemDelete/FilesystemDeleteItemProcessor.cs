@@ -327,8 +327,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 					lockParms.QueueStudyStateEnum = QueueStudyStateEnum.MigrationScheduled;
 					if (!lockstudy.Execute(lockParms) || !lockParms.Successful)
 					{
-						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Tier Migration, skipping study ({0}",
-									 location.StudyInstanceUid);
+						Platform.Log(LogLevel.Warn, "Unable to lock study for inserting Tier Migration. Reason:{0}. Skipping study ({1})",
+                                     lockParms.FailureReason, location.StudyInstanceUid);
 						continue;
 					}
 

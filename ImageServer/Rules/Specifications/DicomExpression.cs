@@ -34,13 +34,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Scripting;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Rules.Specifications
 {
     public class NoSuchDicomTagException : Exception
     {
-        private string _tagName;
+        private readonly string _tagName;
 
         public NoSuchDicomTagException(string tagName)
         {
@@ -120,19 +119,37 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
                 if (msg != null)
                 {
                     if (msg.DataSet.Contains(tag))
-                        return msg.DataSet[tag].ToString().Trim();
+                        collection = msg.DataSet;
                     else if (msg.MetaInfo.Contains(tag))
-                        return msg.MetaInfo[tag].ToString().Trim();
-
-                    return null;
+                        collection = msg.MetaInfo;
                 }
-                else
-                {
-                    if (collection.Contains(tag))
-                        return collection[tag].ToString().Trim();
+				if (collection == null)
+					return null;
 
-                    return null;
-                }
+            	DicomAttribute attrib;
+				if (collection.TryGetAttribute(tag,out attrib))
+				{
+				/*	if (attrib.Tag.VR.Equals(DicomVr.SLvr))
+						return attrib.GetInt32(0, 0);
+					else if (attrib.Tag.VR.Equals(DicomVr.SSvr))
+						return attrib.GetInt16(0, 0);
+					else if (attrib.Tag.VR.Equals(DicomVr.ATvr) || attrib.Tag.VR.Equals(DicomVr.ULvr))
+						return attrib.GetUInt32(0, 0);
+					else if (attrib.Tag.VR.Equals(DicomVr.DSvr) || attrib.Tag.VR.Equals(DicomVr.FDvr))
+						return attrib.GetFloat64(0, 0f);
+					else if (attrib.Tag.VR.Equals(DicomVr.FLvr))
+						return attrib.GetFloat32(0, 0f);
+					else if (attrib.Tag.VR.Equals(DicomVr.ISvr))
+						return attrib.GetInt64(0, 0);
+					else if (attrib.Tag.VR.Equals(DicomVr.USvr))
+						return attrib.GetUInt16(0, 0);
+					else if (attrib.Tag.VR.Equals(DicomVr.SLvr))
+						return attrib.GetInt32(0, 0);
+					else
+				*/		return attrib.ToString().Trim();
+				}
+
+            	return null;
             }
 
             return Text;

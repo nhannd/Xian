@@ -90,6 +90,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (_processor!=null)
             {
                 _processor.Rollback();
+                _processor.Dispose();
                 _processor = null;
             }
         }

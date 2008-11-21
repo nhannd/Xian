@@ -43,6 +43,7 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
@@ -100,11 +101,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 		protected bool ProcessUidList(Model.WorkQueue item, IDicomCodecFactory theCodecFactory)
 		{
 			StudyXml studyXml;
-
 			studyXml = LoadStudyXml(StorageLocation);
 
-			int successfulProcessCount = 0;
+            PerformSanityCheck(studyXml);
 
+            int successfulProcessCount = 0;
 			foreach (WorkQueueUid sop in WorkQueueUidList)
 			{
 				if (sop.Failed)
@@ -131,98 +132,92 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			_instanceStats.ProcessTime.Start();
 
 			// Use the command processor for rollback capabilities.
-			ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue Compress DICOM File");
-			string modality = String.Empty;
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue Compress DICOM File"))
+            {
+                string modality = String.Empty;
 
-			try
-			{
-				file = new DicomFile(path);
+                try
+                {
+                    file = new DicomFile(path);
 
-				_instanceStats.FileLoadTime.Start();
-				file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
-				_instanceStats.FileLoadTime.End();
+                    _instanceStats.FileLoadTime.Start();
+                    file.Load(DicomReadOptions.StorePixelDataReferences | DicomReadOptions.Default);
+                    _instanceStats.FileLoadTime.End();
 
-				modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
+                    modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
 
-			    FileInfo fileInfo = new FileInfo(path);
-				_instanceStats.FileSize = (ulong)fileInfo.Length;
+                    FileInfo fileInfo = new FileInfo(path);
+                    _instanceStats.FileSize = (ulong)fileInfo.Length;
 
-				// Get the Patients Name for processing purposes.
-				String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+                    // Get the Patients Name for processing purposes.
+                    String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
 
-				// Create a context for applying actions from the rules engine
-				ServerActionContext context =
-					new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
-				context.CommandProcessor = processor;
+                    // Create a context for applying actions from the rules engine
+                    ServerActionContext context =
+                        new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
+                    context.CommandProcessor = processor;
 
-				// Run the rules engine against the object.
-				//CompressionRulesEngine.Execute(context, true);
-				IDicomCodec codec = theCodecFactory.GetDicomCodec();
-				IImageServerXmlCodecParameters codecParmFactory = theCodecFactory as IImageServerXmlCodecParameters;
-				if (codecParmFactory == null)
-				{
-					Platform.Log(LogLevel.Error, "Incorrect Codec for ImageServer, unable to access IImageSeverXmlCodecParameters interface for codec {0}!", theCodecFactory.GetType().ToString());
-					throw new ApplicationException("Incorect codec type for ImageServer: " + theCodecFactory.GetType());
-				}
+                    // Run the rules engine against the object.
+                    //CompressionRulesEngine.Execute(context, true);
+                    IDicomCodec codec = theCodecFactory.GetDicomCodec();
+                    IImageServerXmlCodecParameters codecParmFactory = theCodecFactory as IImageServerXmlCodecParameters;
+                    if (codecParmFactory == null)
+                    {
+                        Platform.Log(LogLevel.Error, "Incorrect Codec for ImageServer, unable to access IImageSeverXmlCodecParameters interface for codec {0}!", theCodecFactory.GetType().ToString());
+                        throw new ApplicationException("Incorect codec type for ImageServer: " + theCodecFactory.GetType());
+                    }
 
-				DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
-				DicomCompressCommand compressCommand =
-					new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
-				processor.AddCommand(compressCommand);
+                    DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
+                    DicomCompressCommand compressCommand =
+                        new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
+                    processor.AddCommand(compressCommand);
 
-				// Update the StudyStream object, must be done after compression
-				UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
-				processor.AddCommand(insertStudyXmlCommand);
+                    SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file);
+                    processor.AddCommand(save);
 
-				file.Filename = path + "_saveNew";
-				SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file);
-				processor.AddCommand(save);
+                    // Update the StudyStream object, must be done after compression
+                    // and after the compressed image has been successfully saved
+                    UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
+                    processor.AddCommand(insertStudyXmlCommand);
 
-				RenameFileCommand renameOld = new RenameFileCommand(path, path + "_saveOld");
-				processor.AddCommand(renameOld);
+                    // Do the actual processing
+                    if (!processor.Execute())
+                    {
+                        _instanceStats.CompressTime.Add(compressCommand.CompressTime);
+                        Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+                        Platform.Log(LogLevel.Error, "Compression file that failed: {0}", file.Filename);
+                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                    }
+                    else
+                    {
+                        _instanceStats.CompressTime.Add(compressCommand.CompressTime);
+                        Platform.Log(LogLevel.Info, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
+                                     patientsName);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
+                                 processor.Description);
+                    processor.Rollback();
 
-				RenameFileCommand renameNew = new RenameFileCommand(path + "_saveNew", path);
-				processor.AddCommand(renameNew);
+                    throw new ApplicationException("Unexpected exception when compressing file.", e);
+                }
+                finally
+                {
+                    _instanceStats.ProcessTime.End();
+                    _studyStats.AddSubStats(_instanceStats);
 
-				FileDeleteCommand delete = new FileDeleteCommand(path + "_saveOld", false);
-				processor.AddCommand(delete);
+                    _studyStats.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+                    if (String.IsNullOrEmpty(modality) == false)
+                        _studyStats.Modality = modality;
 
-				// Do the actual processing
-				if (!processor.Execute())
-				{
-					_instanceStats.CompressTime.Add(compressCommand.CompressTime);
-					Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-					Platform.Log(LogLevel.Error,"Compression file that failed: {0}",file.Filename);
-					throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
-				}
-				else
-				{
-					_instanceStats.CompressTime.Add(compressCommand.CompressTime);
-					Platform.Log(LogLevel.Info, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
-								 patientsName);
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
-							 processor.Description);
-				processor.Rollback();
-
-				throw new ApplicationException("Unexpected exception when compressing file.", e);
-			}
-			finally
-			{
-				_instanceStats.ProcessTime.End();
-				_studyStats.AddSubStats(_instanceStats);
-
-				_studyStats.StudyInstanceUid = StorageLocation.StudyInstanceUid;
-				if (String.IsNullOrEmpty(modality) == false)
-					_studyStats.Modality = modality;
-
-				// Update the statistics
-				_studyStats.NumInstances++;
-			}
+                    // Update the statistics
+                    _studyStats.NumInstances++;
+                }
+            }
+			
 		}
 
 		protected override void ProcessItem(Model.WorkQueue item)
@@ -243,6 +238,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					PostProcessing(item, false, false, true);
 					return;
 				}
+
+
+
 				XmlElement element = item.Data.DocumentElement;
 
 				string syntax = element.Attributes["syntax"].Value;
@@ -280,6 +278,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 					PostProcessing(item, true, false, false); // batch processed, not complete
 				}
+
 			}
 		}
 
@@ -318,6 +317,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                 new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed });
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
             return relatedItems == null || relatedItems.Count == 0;
+        }
+
+
+        [Conditional("DEBUG")] 
+        private void PerformSanityCheck(StudyXml studyXml)
+        {
+            string[] files = Directory.GetFiles(StorageLocation.GetStudyPath(), "*.dcm", SearchOption.AllDirectories);
+            if (studyXml.NumberOfStudyRelatedInstances != files.Length)
+            {
+                ServerPlatform.Alert(AlertCategory.System, AlertLevel.Warning, "StudyCompress", 1023,
+                    "Image Count in XML does not match number of images in the folder: {0} vs {1}",
+                    studyXml.NumberOfStudyRelatedInstances, files.Length);
+            }
         }
     }
 }

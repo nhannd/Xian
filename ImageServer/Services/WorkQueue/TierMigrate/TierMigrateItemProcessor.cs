@@ -158,6 +158,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 throw new ApplicationException(msg);
             }
 
+            string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
+                
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Migrate Study"))
             {
                 TierMigrationContext context = new TierMigrationContext();
@@ -165,7 +167,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 context.Destination = newFilesystem;
 
                 string origFolder = context.OriginalStudyLocation.GetStudyPath();
-                string newPath = Path.Combine(newFilesystem.Filesystem.FilesystemPath, storage.PartitionFolder);
                 processor.AddCommand(new CreateDirectoryCommand(newPath));
 
                 newPath = Path.Combine(newPath, context.OriginalStudyLocation.StudyFolder);
@@ -191,9 +192,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
             stat.ProcessSpeed.SetData(studySize);
             stat.ProcessSpeed.End();
-           
-            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} [ {3} @ {4}]",
-                            storage.StudyInstanceUid, storage.FilesystemTierEnum, newFilesystem.Filesystem.FilesystemTierEnum, ByteCountFormatter.Format((ulong)studySize), stat.ProcessSpeed.FormattedValue);
+
+            string[] files = Directory.GetFiles(newPath, "*.dcm", SearchOption.AllDirectories);
+
+            Platform.Log(LogLevel.Info, "Successfully migrated study {0} from {1} to {2} [ {3} images, {4} @ {5}]",
+                            storage.StudyInstanceUid, storage.FilesystemTierEnum, 
+                            newFilesystem.Filesystem.FilesystemTierEnum, 
+                            files.Length,
+                            ByteCountFormatter.Format((ulong)studySize), stat.ProcessSpeed.FormattedValue);
 
             UpdateAverageStatistics(stat);
            

@@ -47,9 +47,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
                     WebEditStudyCommandXmlParser parser = new WebEditStudyCommandXmlParser();
 
-                    ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study");
                     StatisticsSet statistics = null;
-                    using (processor)
+                    using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
                     {
                         IList<IImageLevelUpdateCommand> updates = parser.ParseImageLevelCommands(item.Data.DocumentElement);
                         UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(partition, location, updates);
