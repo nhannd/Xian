@@ -26,9 +26,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				return _richTextBox;
 			}
 
-			public bool AllowEdit
+			public void SetSelectedText(string text)
 			{
-				get { return !_richTextBox.ReadOnly; }
+				_richTextBox.SelectedText = text;
 			}
 
 			#endregion
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _textEditor_KeyDown(object sender, KeyEventArgs e)
         {
-			if (_textEditor.AllowEdit && e.Control && e.KeyCode == Keys.OemPeriod)
+			if (e.Control && e.KeyCode == Keys.OemPeriod)
             {
 				Point pt = _textEditor.GetRichTextBox().GetPositionFromCharIndex(_textEditor.GetRichTextBox().SelectionStart);
 
@@ -91,9 +91,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             if (cannedText != null)
             {
 				if (cannedText.IsSnippet)
-					_textEditor.GetRichTextBox().SelectedText = _lookupHandler.GetFullText(cannedText);
+					_textEditor.SetSelectedText(_lookupHandler.GetFullText(cannedText));
 				else
-					_textEditor.GetRichTextBox().SelectedText = cannedText.Text;
+					_textEditor.SetSelectedText(cannedText.Text);
             }
         }
 

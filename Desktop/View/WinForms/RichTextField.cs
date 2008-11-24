@@ -43,9 +43,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 		RichTextBox GetRichTextBox();
 
 		/// <summary>
-		/// Gets whether the rich text box currently allows edit or not.  This would normally be the ReadOnly field.
+		/// Use this method instead of the RichTextBox.SelectedText
 		/// </summary>
-		bool AllowEdit { get; }
+		/// <param name="text"></param>
+		void SetSelectedText(string text);
 	}
 
 	public partial class RichTextField : UserControl, IRichTextBoxOwner
@@ -146,9 +147,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return _richTextBox;
 		}
 
-		public bool AllowEdit
+		public void SetSelectedText(string text)
 		{
-			get { return !this.ReadOnly; }
+			_richTextBox.SelectedText = text;
 		}
 
 		#endregion
