@@ -29,17 +29,19 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Healthcare.Brokers;
+using System.Configuration;
 
-namespace ClearCanvas.Healthcare.Hibernate.Brokers
+namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
-    [ExtensionOf(typeof(BrokerExtensionPoint))]
-	public class InterpretationStepBroker : EntityBroker<InterpretationStep, InterpretationStepSearchCriteria>, IInterpretationStepBroker
-    {
-    }
+
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class ImageAvailabilitySettings
+	{
+		public ImageAvailabilitySettings()
+		{
+			// Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
+		}
+	}
 }

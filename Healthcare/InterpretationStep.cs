@@ -46,29 +46,16 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class InterpretationStep : ReportingProcedureStep
 	{
-    	private ImageAvailability _imageAvailability;
-
         public InterpretationStep(Procedure procedure)
             :base(procedure, null)
         {
-			_imageAvailability = Healthcare.ImageAvailability.U;
 		}
 
         public InterpretationStep(ReportingProcedureStep previousStep)
             :base(previousStep)
         {
 			CustomInitialize();
-
-        	_imageAvailability = Healthcare.ImageAvailability.U;
 		}
-
-
-        /// <summary>
-        /// Default no-args constructor required by NHibernate
-        /// </summary>
-		public InterpretationStep()
-        {
-        }
 
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -93,13 +80,6 @@ namespace ClearCanvas.Healthcare {
             // discontinue step so we don't show up in any worklists
             this.Discontinue();
         }
-
-		[PersistentProperty]
-		public virtual ImageAvailability ImageAvailability
-		{
-			get { return _imageAvailability; }
-			set { _imageAvailability = value; }
-		}
 
         public override string Name
         {

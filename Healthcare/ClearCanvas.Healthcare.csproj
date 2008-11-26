@@ -70,7 +70,6 @@
     <Compile Include="Alerts\ReconciliationAlert.cs" />
     <Compile Include="Brokers\IExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\IExternalPractitionerContactPointBroker.cs" />
-    <Compile Include="Brokers\IInterpretationStepBroker.cs" />
     <Compile Include="Brokers\IPatientHistoryBroker.cs" />
     <Compile Include="Brokers\IPriorReportBroker.cs" />
     <Compile Include="Brokers\IProcedureTypeGroupBroker.cs" />
@@ -91,7 +90,6 @@
     <Compile Include="Imex\CannedTextImex.cs" />
     <Compile Include="Imex\LocationImex.cs" />
     <Compile Include="Imex\PatientNoteCategoryImex.cs" />
-    <Compile Include="InterpretationStepSearchCriteria.cs" />
     <Compile Include="ModalityPerformedProcedureStepSearchCriteria.cs" />
     <Compile Include="NoteboxFactory.cs" />
     <Compile Include="Imex\ExternalPractitionerImex.cs" />

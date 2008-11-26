@@ -46,7 +46,6 @@
     <Compile Include="Brokers\AccessionNumberBroker.cs" />
     <Compile Include="Brokers\ExternalPractitionerBroker.cs" />
     <Compile Include="Brokers\ExternalPractitionerContactPointBroker.cs" />
-    <Compile Include="Brokers\InterpretationStepBroker.cs" />
     <Compile Include="Brokers\OrderNoteboxItemBroker.cs" />
     <Compile Include="Brokers\ProcedureTypeGroupBroker.cs" />
     <Compile Include="Brokers\MimeDocumentDataBroker.cs" />

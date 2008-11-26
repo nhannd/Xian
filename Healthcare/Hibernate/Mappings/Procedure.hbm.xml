@@ -22,6 +22,7 @@
     <property name="Laterality" column="Laterality_" type="ClearCanvas.Healthcare.Hibernate.LateralityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <property name="Portable" type="Boolean" column="Portable_"/>
     <many-to-one name="ProcedureCheckIn" column="ProcedureCheckInOID_" class="ProcedureCheckIn" cascade="all" fetch="join"/>
+    <property name="ImageAvailability" column="ImageAvailability_" type="ClearCanvas.Healthcare.Hibernate.ImageAvailabilityEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
 
     <!-- Specifies whether the procedure is currently in downtime recovery mode -->
     <property name="DowntimeRecoveryMode" column="DowntimeRecoveryMode_" type="Boolean" not-null="true"/>

@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -71,6 +72,15 @@ namespace ClearCanvas.Enterprise.Common
         {
 
         }
+
+		/// <summary>
+		/// Deserialization constructor
+		/// </summary>
+		/// <param name="value">The serialized EntityRef value.</param>
+		public EntityRef(string value)
+		{
+			Deserialize(value);
+		}
 
         /// <summary>
         /// Constructs an instance of this class
@@ -222,6 +232,57 @@ namespace ClearCanvas.Enterprise.Common
         {
             return !(x == y);
 		}
+
+		#region Serialization / Deserialization Helper
+
+		public string Serialize()
+		{
+			return string.Format("{0}:{1}:{2}:{3}",
+				EntityRefUtils.GetClassName(this),
+				EntityRefUtils.GetOID(this).GetType().AssemblyQualifiedName,
+				EntityRefUtils.GetOID(this),
+				EntityRefUtils.GetVersion(this));
+		}
+
+		private void Deserialize(string value)
+		{
+			Platform.CheckForNullReference(value, "value");
+
+			string[] parts = value.Split(':');
+			if (parts.Length != 4)
+				throw new SerializationException("Invalid EntityRef string");
+
+			string entityClassName = parts[0];
+			Type oidType = Type.GetType(parts[1], true);
+			string oidValue = parts[2];
+			int version = int.Parse(parts[3]);
+
+			object oid = null;
+			if (oidType == typeof(int))
+			{
+				oid = int.Parse(oidValue);
+			}
+			else if (oidType == typeof(long))
+			{
+				oid = long.Parse(oidValue);
+			}
+			else if (oidType == typeof(string))
+			{
+				oid = oidValue;
+			}
+			else if (oidType == typeof(Guid))
+			{
+				oid = new Guid(oidValue);
+			}
+			else
+				throw new SerializationException("Invalid EntityRef string");
+
+			this.ClassName = entityClassName;
+			this.OID = oid;
+			this.Version = version;
+		}
+
+		#endregion
 
 		#region IVersionedEquatable
 

@@ -17,13 +17,19 @@ namespace ClearCanvas.Healthcare {
 		/// Unknown
 		/// </summary>
 		[EnumValue("Unknown")]
-		U,
+		X,
 
 		/// <summary>
-		/// None
+		/// Not Available
 		/// </summary>
-		[EnumValue("None")]
+		[EnumValue("Not Available")]
 		N,
+
+		/// <summary>
+		/// Zero
+		/// </summary>
+		[EnumValue("Zero")]
+		Z,
 
 		/// <summary>
 		/// Partial

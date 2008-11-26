@@ -32,20 +32,22 @@
 		<OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
 		<JscriptDirectory>$(SolutionDir)..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
 		<SetupDirectory>$(SolutionDir)setup</SetupDirectory>
+		<DicomDirectory>$(SolutionDir)..\..\Dicom</DicomDirectory>
 		<EnterpriseDirectory>$(SolutionDir)..\..\Enterprise</EnterpriseDirectory>
 		<WorkflowDirectory>$(SolutionDir)..\..\Workflow</WorkflowDirectory>
 		<HealthcareDirectory>$(SolutionDir)..\..\Healthcare</HealthcareDirectory>
 		<HL7Directory>$(SolutionDir)..\..\HL7</HL7Directory>
 		<ReferencedAssembliesDirectory>$(SolutionDir)..\..\ReferencedAssemblies</ReferencedAssembliesDirectory>
 		<RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
-	    <UhnModelDirectory>$(SolutionDir)..\..\Healthcare\Uhn</UhnModelDirectory>
-	    <UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
-	    <FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
-	    <FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
-	    <ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
+		<UhnModelDirectory>$(SolutionDir)..\..\Healthcare\Uhn</UhnModelDirectory>
+		<UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
+		<FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
+		<FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
+		<ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
 		<ShredHostServiceDirectory>$(SolutionDir)..\..\Server\ShredHostService</ShredHostServiceDirectory>
-	    <PublicationShredDirectory>$(SolutionDir)..\Shreds\Publication</PublicationShredDirectory>
-	    <TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
+		<PublicationShredDirectory>$(SolutionDir)..\Shreds\Publication</PublicationShredDirectory>
+		<ImageAvailabilityShredDirectory>$(SolutionDir)..\Shreds\ImageAvailability</ImageAvailabilityShredDirectory>
+		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 	</PropertyGroup>
 	
 	<ItemGroup>
@@ -109,6 +111,9 @@
     <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
     <RisFiles Include="$(PublicationShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.dll" />
     <RisFiles Include="$(PublicationShredDirectory)\MailFaxProcessor\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor.dll" />
+
+    <RisFiles Include="$(DicomDirectory)\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
+    <RisFiles Include="$(ImageAvailabilityShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.ImageAvailability.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="!$(ShredHostBuild)">

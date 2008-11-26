@@ -39,7 +39,6 @@ using System.IO;
 
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -153,7 +152,7 @@ namespace ClearCanvas.Enterprise.Common
             }
             else if (dataObject is EntityRef)
             {
-                writer.WriteElementString(objectName, SerializeEntityRef((EntityRef)dataObject));
+                writer.WriteElementString(objectName, ((EntityRef)dataObject).Serialize());
             }
             else if (IsDataContract(dataObject.GetType()))
             {
@@ -249,7 +248,7 @@ namespace ClearCanvas.Enterprise.Common
 
             if (dataType == typeof(EntityRef))
             {
-                dataObject = DeserializeEntityRef(xmlElement.InnerText);
+                dataObject = new EntityRef(xmlElement.InnerText);
             }
             else if (IsDataContract(dataType))
             {
@@ -358,51 +357,6 @@ namespace ClearCanvas.Enterprise.Common
         private static bool IsDataContract(Type t)
         {
             return t.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0;
-        }
-        
-        private static string SerializeEntityRef(EntityRef entityRef)
-        {
-            return string.Format("{0}:{1}:{2}:{3}",
-                EntityRefUtils.GetClassName(entityRef),
-                EntityRefUtils.GetOID(entityRef).GetType().AssemblyQualifiedName,
-                EntityRefUtils.GetOID(entityRef),
-                EntityRefUtils.GetVersion(entityRef));
-        }
-
-        private static EntityRef DeserializeEntityRef(string value)
-        {
-            Platform.CheckForNullReference(value, "value");
-
-            string[] parts = value.Split(':');
-            if (parts.Length != 4)
-                throw new SerializationException("Invalid EntityRef string");
-
-            string entityClassName = parts[0];
-            Type oidType = Type.GetType(parts[1], true);
-            string oidValue = parts[2];
-            int version = int.Parse(parts[3]);
-
-            object oid = null;
-            if(oidType == typeof(int))
-            {
-                oid = int.Parse(oidValue);
-            }
-            else if(oidType == typeof(long))
-            {
-                oid = long.Parse(oidValue);
-            }
-            else if(oidType == typeof(string))
-            {
-                oid = oidValue;
-            }
-            else if(oidType == typeof(Guid))
-            {
-                oid = new Guid(oidValue);
-            }
-            else
-                throw new SerializationException("Invalid EntityRef string");
-
-            return new EntityRef(entityClassName, oid, version);
         }
 
         #endregion
