@@ -29,6 +29,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
         
         /// <summary>
+        /// EditPartitionValidationSummary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary EditPartitionValidationSummary;
+        
+        /// <summary>
         /// Panel3 control.
         /// </summary>
         /// <remarks>

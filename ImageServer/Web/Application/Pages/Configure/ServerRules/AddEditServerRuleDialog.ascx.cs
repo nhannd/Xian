@@ -263,7 +263,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
   
             </script>";
 
-			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);             
+			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
+
+            EditServerRuleValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditServerRuleValidationError;
 		}
 
 		protected void Page_Load(object sender, EventArgs e)

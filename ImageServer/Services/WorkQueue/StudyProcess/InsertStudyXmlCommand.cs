@@ -77,44 +77,42 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Private Methods
 
-        private static void WriteStudyStream(string streamFile, StudyXml theStream)
-        {
-            XmlDocument doc = theStream.GetMemento(_outputSettings);
+		private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
+		{
+			XmlDocument doc = theStream.GetMemento(_outputSettings);
 
-            // allocate the random number generator here, in case we need it below
-            Random rand = new Random();
+			// allocate the random number generator here, in case we need it below
+			Random rand = new Random();
 
-            for (int i = 0;; i++)
-                try
-                {
-                    if (File.Exists(streamFile))
-                        File.Delete(streamFile);
+			for (int i = 0; ; i++)
+				try
+				{
+					if (File.Exists(streamFile))
+						File.Delete(streamFile);
+					if (File.Exists(gzStreamFile))
+						File.Delete(gzStreamFile);
 
-					using (Stream fileStream = new FileStream(streamFile, FileMode.CreateNew))
+					using (FileStream xmlStream = new FileStream(streamFile, FileMode.CreateNew),
+									  gzipStream = new FileStream(gzStreamFile, FileMode.CreateNew))
 					{
-						// Update the gz header file
-						string gzStreamFile = streamFile + ".gz";
-						using (Stream gzFileStream = FileStreamOpener.OpenForSoleUpdate(gzStreamFile, FileMode.OpenOrCreate)
-							)
-						{
-							StudyXmlIo.WriteXmlAndGzip(doc, fileStream, gzFileStream);
-						}
+						StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
+						xmlStream.Close();
+						gzipStream.Close();
+					}
+					return;
+				}
+				catch (IOException)
+				{
+					if (i < 5)
+					{
+						Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
+						continue;
 					}
 
-                	return;
-                }
-                catch (IOException)
-                {
-                    if (i < 5)
-                    {
-                        Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
-                        continue;
-                    }
-
-                    throw;
-                }
-        }
-
+					throw;
+				}
+		}
+       
         #endregion
 
         #region Overridden Protected Methods
@@ -129,20 +127,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 throw new ApplicationException("Unexpected error adding SOP to XML Study Descriptor for SOP: " +
                                                _file.MediaStorageSopInstanceUid);
             }
+
             // Write it back out.  We flush it out with every added image so that if a failure happens,
             // we can recover properly.
-            WriteStudyStream(
-                Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
-                _stream);
+			string streamFile =
+        		Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml");
+        	string gzStreamFile = streamFile + ".gz";
+
+        	WriteStudyStream(streamFile, gzStreamFile, _stream);
         }
 
         protected override void OnUndo()
         {
             _stream.RemoveFile(_file);
 
-            WriteStudyStream(
-                Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
-                _stream);
+			string streamFile =
+				Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml");
+			string gzStreamFile = streamFile + ".gz";
+			WriteStudyStream(streamFile, gzStreamFile, _stream);
         }
 
         #endregion

@@ -41,11 +41,9 @@
 		<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg.dll"/>
-		<PluginFiles Include="$(ProjectDir)\..\..\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg2000.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Rle.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
-		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll"/>
 	</ItemGroup>
 	<Target Name="CopyPlugins">

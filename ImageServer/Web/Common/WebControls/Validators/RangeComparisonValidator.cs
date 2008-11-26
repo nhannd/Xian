@@ -154,18 +154,23 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                         result = true;
                     }
                 }
-            }
 
-            if (result == false && String.IsNullOrEmpty(ErrorMessage))
+                if (result == false && String.IsNullOrEmpty(ErrorMessage))
+                {
+                    ErrorMessage = String.Format("{0} must be between {1} and {2} and {3} {4}",
+                                                 InputName,
+                                                 MinValue,
+                                                 MaxValue,
+                                                 GreaterThan ? "greater than" : "less than",
+                                                 CompareToInputName);
+                }
+
+            }
+            else
             {
-                ErrorMessage = String.Format("{0} must be between {1} and {2} and {3} {4}",
-                                             InputName,
-                                             MinValue,
-                                             MaxValue,
-                                             GreaterThan ? "greater than" : "less than",
-                                             CompareToInputName);
+                result = false;
+                ErrorMessage = String.Format("{0} is not a valid number.", InputName);
             }
-
 
             return result;
         }

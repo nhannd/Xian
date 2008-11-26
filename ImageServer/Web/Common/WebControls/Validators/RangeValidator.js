@@ -39,8 +39,8 @@ function @@CLIENTID@@_ClientSideEvaluator()
     if (this.input.value!=null && this.input.value!='')
     {
         if (!isNaN(this.input.value)){
-            portValue = parseInt(this.input.value);
-            result.OK = portValue >= @@MIN_VALUE@@ && portValue<= @@MAX_VALUE@@;            
+            var value = parseInt(this.input.value);
+            result.OK = value >= @@MIN_VALUE@@ && value<= @@MAX_VALUE@@;            
         }
         else
         {
@@ -67,23 +67,4 @@ function @@CLIENTID@@_ClientSideEvaluator()
     return result;
 
 };
-
-//@@CLIENTID@@_ClientSideEvaluator.prototype.OnValidationPassed = function()
-//{
-//    //alert('Length validator: input is valid');
-//    BaseClientValidator.prototype.OnValidationPassed.call(this);
-//}
-
-//@@CLIENTID@@_ClientSideEvaluator.prototype.OnValidationFailed = function(error)
-//{
-//    //alert('Length validator: input is valid : ' + error);
-//    BaseClientValidator.prototype.OnValidationFailed.call(this, error);
-//        
-//}
-
-//@@CLIENTID@@_ClientSideEvaluator.prototype.SetErrorMessage = function(result)
-//{
-//    BaseClientValidator.prototype.SetErrorMessage.call(this, result);
-//    alert(result.Message);
-//}
 

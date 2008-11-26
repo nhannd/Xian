@@ -120,6 +120,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerPartitio
                          defaultPortInput.disabled = !autoInsertCheck.checked;
                     }
                 </script>");
+
+            EditPartitionValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditPartitionValidationError;
         }
 
         protected void Page_Load(object sender, EventArgs e)

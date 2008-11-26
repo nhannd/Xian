@@ -31,7 +31,6 @@
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
-    <DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg2000.dll"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -75,7 +74,6 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Rle.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg2000.dll"/>
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 

@@ -180,14 +180,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         StudyStorage storage = StudyStorage.Load(Partition.Key, studyInstanceUid);
                         if (storage != null)
                         {
-                            returnStatus = DicomStatuses.ResourceLimitation;
+							returnStatus = DicomStatuses.StorageStorageOutOfResources;
                             string failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, Partition.Description);
                             Platform.Log(LogLevel.Error, failureMessage);
                             InsertRestore(storage.Key);
                             throw new ApplicationException(failureMessage);
                         }
 
-                        returnStatus = DicomStatuses.ResourceLimitation;
+						returnStatus = DicomStatuses.StorageStorageOutOfResources;
                         Platform.Log(LogLevel.Error, "Unable to process image, no writeable storage location: {0}", sopInstanceUid);
 
                         RaiseNoStorageAlert();
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     if (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle)
                         && (!studyLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.ProcessingScheduled)))
                     {
-                        returnStatus = DicomStatuses.ResourceLimitation;
+						returnStatus = DicomStatuses.StorageStorageOutOfResources;
                         string failureMessage =
                             String.Format("Study {0} on partition {1} is being processed: {2}, can't accept new images.",
                                           studyLocation.StudyInstanceUid, Partition.Description, studyLocation.QueueStudyStateEnum.Description);
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         ArchiveStudyStorage archiveLocation = StudyStorageLocation.GetArchiveLocation(studyLocation.Key);
                         if (archiveLocation != null && archiveLocation.ServerTransferSyntax.Lossless)
                         {
-                            returnStatus = DicomStatuses.ResourceLimitation;
+							returnStatus = DicomStatuses.StorageStorageOutOfResources;
                             string failureMessage =
                                 String.Format("Study {0} on partition {1} can't accept new images due to lossy compression of the study.  Restoring study.",
                                               studyLocation.StudyInstanceUid, Partition.Description);

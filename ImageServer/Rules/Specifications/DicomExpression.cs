@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
             	DicomAttribute attrib;
 				if (collection.TryGetAttribute(tag,out attrib))
 				{
-				/*	if (attrib.Tag.VR.Equals(DicomVr.SLvr))
+					if (attrib.Tag.VR.Equals(DicomVr.SLvr))
 						return attrib.GetInt32(0, 0);
 					else if (attrib.Tag.VR.Equals(DicomVr.SSvr))
 						return attrib.GetInt16(0, 0);
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageServer.Rules.Specifications
 					else if (attrib.Tag.VR.Equals(DicomVr.SLvr))
 						return attrib.GetInt32(0, 0);
 					else
-				*/		return attrib.ToString().Trim();
+						return attrib.ToString().Trim();
 				}
 
             	return null;

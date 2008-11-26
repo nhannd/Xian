@@ -12,13 +12,13 @@ function LoadFilesystemInfo()
     
 function RecalculateWatermark()
 {
+    HighWatermarkSize = document.getElementById('@@HW_SIZE_CLIENTID@@');
     hwtxt = document.getElementById('@@HW_PERCENTAGE_INPUT_CLIENTID@@').value;
-    if (!isNaN(hwtxt))
+    hwpct = parseNumber(hwtxt) / 100.0;
+    if (!isNaN(hwpct))
     {
-        hwpct = parseFloat(hwtxt) / 100.0;
         hwsize = hwpct * sizeTotal.value;
                                      
-        HighWatermarkSize = document.getElementById('@@HW_SIZE_CLIENTID@@');
         HighWatermarkSize.value = FormatSize(hwsize);
     }   
     else
@@ -26,13 +26,13 @@ function RecalculateWatermark()
         HighWatermarkSize.value = '';
     }
 
+    LowWatermarkSize = document.getElementById('@@LW_SIZE_CLIENTID@@');
     lwtxt = document.getElementById('@@LW_PERCENTAGE_INPUT_CLIENTID@@').value;
-    if (!isNaN(lwtxt))
+    lwpct = parseNumber(lwtxt) / 100.0;
+    if (!isNaN(lwpct))
     {
-        lwpct = parseFloat(lwtxt) / 100.0;
         lwsize = lwpct * sizeTotal.value;
                                      
-        LowWatermarkSize = document.getElementById('@@LW_SIZE_CLIENTID@@');
         LowWatermarkSize.value = FormatSize(lwsize);
     }   
     else
@@ -41,13 +41,13 @@ function RecalculateWatermark()
     }
 }
 
+
 // Returns a string containing a percentage value formatted to 
 // the number of decimal places specified by "decimalpoints"
 function FormatPercentage(value, decimalpoints)
 {
-    var pct = new NumberFormat(value * 100.0);
-    pct.setPlaces(decimalpoints);
-    return pct.toFormatted() + '%';
+    var pct = value * 100.0
+    return pct.toLocaleString() + '%';
 }
 
 // Returns a string formatted to the appropriate size (MB, GB, TB)
@@ -60,25 +60,22 @@ function FormatSize(sizeInKB)
         
         if (sizeInKB > TB)
         {
-            var num = new NumberFormat(sizeInKB / TB);
-            num.setPlaces(4);
-            return num.toFormatted() + ' TB';
+            var num = sizeInKB / TB;
+            return num.toLocaleString() + ' TB';
         }
         else if (sizeInKB > GB)
         {
-            var num = new NumberFormat(sizeInKB/GB);
-            num.setPlaces(3);
-            return num.toFormatted() + ' GB';
+            var num = (sizeInKB/GB);
+            return num.toLocaleString() + ' GB';
         }
         else if (sizeInKB > MB)
         {
-            var num = new NumberFormat(sizeInKB/MB);
-            num.setPlaces(2);
-            return num.toFormatted() + ' MB';
+            var num = sizeInKB/MB;
+            return num.toLocaleString() + ' MB';
         }
         else
         {
-            return  '' + sizeInKB + ' KB';
+            return  '' + sizeInKB.toLocaleString() + ' KB';
         }
 }
 

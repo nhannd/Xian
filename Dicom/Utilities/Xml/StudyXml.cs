@@ -108,10 +108,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             get
             {
-                if (_seriesList.ContainsKey(seriesInstanceUid))
-                    return _seriesList[seriesInstanceUid];
+            	SeriesXml series;
+				if (!_seriesList.TryGetValue(seriesInstanceUid, out series))
+					return null;
 
-                return null;
+            	return series;
             }
             set
             {

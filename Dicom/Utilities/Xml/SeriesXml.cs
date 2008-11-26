@@ -83,10 +83,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         {
             get
             {
-                if (_instanceList.ContainsKey(sopInstanceUid))
-                    return _instanceList[sopInstanceUid];
+            	InstanceXml instance;
+				if (!_instanceList.TryGetValue(sopInstanceUid, out instance))
+					return null;
 
-                return null;
+            	return instance;
             }
             set
             {

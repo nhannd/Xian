@@ -38,6 +38,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
         
         /// <summary>
+        /// EditFileSystemValidationSummary control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ValidationSummary EditFileSystemValidationSummary;
+        
+        /// <summary>
         /// TabContainer1 control.
         /// </summary>
         /// <remarks>

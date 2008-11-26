@@ -81,6 +81,42 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         /// <summary>
         ///   Looks up a localized string similar to Validation Error. Please check all tabs for indicated errors and correct before submitting changes..
         /// </summary>
+        internal static string EditDeviceValidationError {
+            get {
+                return ResourceManager.GetString("EditDeviceValidationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Error. Please check all tabs for indicated errors and correct before submitting changes..
+        /// </summary>
+        internal static string EditFileSystemValidationError {
+            get {
+                return ResourceManager.GetString("EditFileSystemValidationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Error. Please check all tabs for indicated errors and correct before submitting changes..
+        /// </summary>
+        internal static string EditPartitionValidationError {
+            get {
+                return ResourceManager.GetString("EditPartitionValidationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Error. Please check all tabs for indicated errors and correct before submitting changes..
+        /// </summary>
+        internal static string EditServerRuleValidationError {
+            get {
+                return ResourceManager.GetString("EditServerRuleValidationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validation Error. Please check all tabs for indicated errors and correct before submitting changes..
+        /// </summary>
         internal static string EditStudyValidationError {
             get {
                 return ResourceManager.GetString("EditStudyValidationError", resourceCulture);

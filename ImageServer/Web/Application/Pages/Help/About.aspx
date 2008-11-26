@@ -962,7 +962,10 @@ license allows shipping NUnit in source and binary form, if shipping a NUnit
 variant is the sole purpose of your product, please let us know.
 
 </pre> 
-    </asp:Panel>
+  <span style="font-size:x-small">
+  Server Regional Settings: <%=System.Globalization.CultureInfo.CurrentCulture %>, <%=System.Globalization.CultureInfo.CurrentUICulture %>
+  </span>
+  </asp:Panel>
   </td></tr>
   </table>
 </asp:Content>

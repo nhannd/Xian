@@ -140,6 +140,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.Devices
                                 ipBox.value = '';
                             }
                         </script>");
+
+            EditDeviceValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditStudyValidationError;
         }
 
 

@@ -3,6 +3,8 @@
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>
+            <asp:ValidationSummary ID="EditPartitionValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
+                EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStudyDialogErrorMessage" />   			
         <asp:Panel ID="Panel3" runat="server" DefaultButton="OKButton">
             <aspAjax:TabContainer ID="ServerPartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">
                 <aspAjax:TabPanel ID="GeneralTabPanel" runat="server" HeaderText="GeneralTabPanel" CssClass="DialogTabControl">

@@ -1,3 +1,39 @@
+// Helper methods to detect separators on the client machine
+var test = (0.5).toLocaleString();
+var dsep = test.charAt(1);
+var test = (1234.05).toLocaleString();
+var tsep = test.charAt(1);
+if (tsep == '2') tsep = ''; // no separator is used
+
+
+// normalize the localized numerical string into something usable by IsNaN() and parseFloat()
+function normalize(str) {
+    var rx = new RegExp('\\'+tsep, "g");
+    str = str.replace(rx, '');
+    var rx = new RegExp('\\' + dsep, "g");
+    str=str.replace(rx, '.');
+    return str; 
+}
+
+// return a value indicating whether a string is a valid number
+// To handle non-english number format, Use this function instead of isNan()
+function isNumber(str) {
+    var rx = new RegExp("^(\\d{1,3}(\\" + tsep + "\\d{3})+(\\" + dsep + "\\d+)?|(\\d+))(\\" + dsep + "\\d+)?$");
+    if (!str.match(rx)) {
+        return false;
+    }
+    return true;
+}
+
+// parse a string. Return NaN if the string is not a valid number
+// Use this function instead of parseFloat() to parse a number in non-english number format
+function parseNumber(str) {
+    if (!isNumber(str)) return NaN;
+    var value = parseFloat(normalize(str));
+    return value;
+}
+
+
 
 // mredkj.com
 function NumberFormat(num, inputDecimal)

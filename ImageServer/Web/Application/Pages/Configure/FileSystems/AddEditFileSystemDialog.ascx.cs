@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
             HighWatermarkTextBox.Attributes["onkeyup"] = "RecalculateWatermark()";
             LowWatermarkTextBox.Attributes["onkeyup"] = "RecalculateWatermark()";
 
-
+            EditFileSystemValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditFileSystemValidationError;
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -225,8 +225,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.FileSystems
                 PathTextBox.Text = string.Empty;
                 ReadCheckBox.Checked = true;
                 WriteCheckBox.Checked = true;
-                LowWatermarkTextBox.Text = "80.00";
-                HighWatermarkTextBox.Text = "90.00";
+                LowWatermarkTextBox.Text = (80.00f).ToString();
+                HighWatermarkTextBox.Text = (90.00f).ToString();
 
                 TiersDropDownList.SelectedIndex = 0;
             }

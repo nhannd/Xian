@@ -123,6 +123,18 @@
   <data name="DeleteStudyError" xml:space="preserve">
     <value>Unable to delete the study. See server log for more details.</value>
   </data>
+  <data name="EditDeviceValidationError" xml:space="preserve">
+    <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
+  </data>
+  <data name="EditFileSystemValidationError" xml:space="preserve">
+    <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
+  </data>
+  <data name="EditPartitionValidationError" xml:space="preserve">
+    <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
+  </data>
+  <data name="EditServerRuleValidationError" xml:space="preserve">
+    <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
+  </data>
   <data name="EditStudyValidationError" xml:space="preserve">
     <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
   </data>

@@ -116,7 +116,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			}
 
 			if (successfulProcessCount > 0)
-				Platform.Log(LogLevel.Info,"Completed compression of study {0}", StorageLocation.StudyInstanceUid);
+				Platform.Log(LogLevel.Info,"Completed compression of study {0}. {1} instances successfully processed.",
+                    StorageLocation.StudyInstanceUid, successfulProcessCount);
 
 			//TODO: Should we return true only if ALL uids have been processed instead?
 			return successfulProcessCount > 0;
@@ -152,15 +153,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                     // Get the Patients Name for processing purposes.
                     String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
-
-                    // Create a context for applying actions from the rules engine
-                    ServerActionContext context =
-                        new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
-                    context.CommandProcessor = processor;
-
-                    // Run the rules engine against the object.
-                    //CompressionRulesEngine.Execute(context, true);
-                    IDicomCodec codec = theCodecFactory.GetDicomCodec();
                     IImageServerXmlCodecParameters codecParmFactory = theCodecFactory as IImageServerXmlCodecParameters;
                     if (codecParmFactory == null)
                     {
@@ -168,33 +160,48 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         throw new ApplicationException("Incorect codec type for ImageServer: " + theCodecFactory.GetType());
                     }
 
-                    DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
-                    DicomCompressCommand compressCommand =
-                        new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
-                    processor.AddCommand(compressCommand);
-
-                    SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file);
-                    processor.AddCommand(save);
-
-                    // Update the StudyStream object, must be done after compression
-                    // and after the compressed image has been successfully saved
-                    UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
-                    processor.AddCommand(insertStudyXmlCommand);
-
-                    // Do the actual processing
-                    if (!processor.Execute())
+                    if (file.TransferSyntax.Equals(theCodecFactory.CodecTransferSyntax))
                     {
-                        _instanceStats.CompressTime.Add(compressCommand.CompressTime);
-                        Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-                        Platform.Log(LogLevel.Error, "Compression file that failed: {0}", file.Filename);
-                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                        Platform.Log(LogLevel.Warn, "Skip compressing SOP {0}. Its current transfer syntax is {1}", 
+                            file.MediaStorageSopInstanceUid, file.TransferSyntax.Name); 
                     }
                     else
                     {
-                        _instanceStats.CompressTime.Add(compressCommand.CompressTime);
-                        Platform.Log(LogLevel.Info, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
-                                     patientsName);
+                        IDicomCodec codec = theCodecFactory.GetDicomCodec();
+
+                        // Create a context for applying actions from the rules engine
+                        ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
+                        context.CommandProcessor = processor;
+                        
+                        DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
+                        DicomCompressCommand compressCommand =
+                            new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
+                        processor.AddCommand(compressCommand);
+
+                        SaveDicomFileCommand save = new SaveDicomFileCommand(file.Filename, file);
+                        processor.AddCommand(save);
+
+                        // Update the StudyStream object, must be done after compression
+                        // and after the compressed image has been successfully saved
+                        UpdateStudyXmlCommand insertStudyXmlCommand = new UpdateStudyXmlCommand(file, studyXml, StorageLocation);
+                        processor.AddCommand(insertStudyXmlCommand);
+
+                        // Do the actual processing
+                        if (!processor.Execute())
+                        {
+                            _instanceStats.CompressTime.Add(compressCommand.CompressTime);
+                            Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
+                            Platform.Log(LogLevel.Error, "Compression file that failed: {0}", file.Filename);
+                            throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                        }
+                        else
+                        {
+                            _instanceStats.CompressTime.Add(compressCommand.CompressTime);
+                            Platform.Log(LogLevel.Info, "Compress SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid,
+                                         patientsName);
+                        }
                     }
+                    
                 }
                 catch (Exception e)
                 {
@@ -217,7 +224,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                     _studyStats.NumInstances++;
                 }
             }
-			
 		}
 
 		protected override void ProcessItem(Model.WorkQueue item)

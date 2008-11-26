@@ -84,3 +84,15 @@ font-family: sans-serif;
     width: 20%;
     height: 30px;
 }
+
+.DialogValidationErrorMessage
+{
+    text-align:left; 
+    font-size: 12px; 
+    font-weight: bold; 
+    background: #FFFFCC url(../../../PersistantImage.ashx?key=ErrorMessageBackground) repeat-x;
+    padding: 3px;
+    margin: 4px;
+    color: #FF0000;
+    border: solid 1px #ff0000;
+}
