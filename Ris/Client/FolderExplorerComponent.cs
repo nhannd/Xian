@@ -162,8 +162,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-			_folderInvalidateTimer.Stop();
-			_folderInvalidateTimer.Dispose();
+			if (_folderInvalidateTimer != null)
+			{
+				_folderInvalidateTimer.Stop();
+				_folderInvalidateTimer.Dispose();
+			}
 
 			base.Stop();
 		}

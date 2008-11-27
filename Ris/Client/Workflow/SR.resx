@@ -393,6 +393,9 @@
   <data name="MessageReportingComponentAlreadyOpened" xml:space="preserve">
     <value>You are currently editing {0}.  Do you want to close it and open the report for {1} instead?</value>
   </data>
+  <data name="MessageTranscriptionComponentAlreadyOpened" xml:space="preserve">
+    <value>You are currently editing {0}.  Do you want to close it and open the report for {1} instead?</value>
+  </data>
   <data name="TextAny" xml:space="preserve">
     <value>(Any)</value>
   </data>
@@ -462,6 +465,9 @@
   <data name="TitleCreateReport" xml:space="preserve">
     <value>Create Report</value>
   </data>
+  <data name="TitleCreateTranscription" xml:space="preserve">
+    <value>Create Transcription</value>
+  </data>
   <data name="TitleDetail" xml:space="preserve">
     <value>Detail</value>
   </data>
@@ -482,6 +488,9 @@
   </data>
   <data name="TitleEditReport" xml:space="preserve">
     <value>Edit Report</value>
+  </data>
+  <data name="TitleEditTranscription" xml:space="preserve">
+    <value>Edit Transcription</value>
   </data>
   <data name="TitleEmailAddresses" xml:space="preserve">
     <value>Email Addresses</value>
@@ -596,6 +605,9 @@
   </data>
   <data name="TitleStopMpps" xml:space="preserve">
     <value>Performed</value>
+  </data>
+  <data name="TitleTranscriptionFolderSystem" xml:space="preserve">
+    <value>Transcription</value>
   </data>
   <data name="TitleUpdateDicomSeries" xml:space="preserve">
     <value>Update Dicom Series</value>

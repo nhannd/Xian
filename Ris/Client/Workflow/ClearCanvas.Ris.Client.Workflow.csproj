@@ -55,6 +55,7 @@
     <Compile Include="EditProtocolTool.cs" />
     <Compile Include="EditReportTool.cs" />
     <Compile Include="Folders\RadiologistAdminWorkflowFolders.cs" />
+    <Compile Include="Folders\TranscriptionWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PerformedProcedureDicomSeriesComponent.cs" />
     <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
@@ -71,6 +72,18 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
+    <Compile Include="TestTranscriptionTool.cs" />
+    <Compile Include="TranscriptionDocument.cs" />
+    <Compile Include="TranscriptionSettings.cs" />
+    <Compile Include="TranscriptionSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>TranscriptionSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="TranscriptionWorkflowFolder.cs" />
+    <Compile Include="TranscriptionWorkflowFolderSystem.cs" />
+    <Compile Include="TranscriptionWorkflowItemTool.cs" />
+    <Compile Include="TranscriptionWorkflowTools.cs" />
     <Compile Include="ViewImagesTool.cs" />
     <Compile Include="EmergencyWorkflowFolder.cs" />
     <Compile Include="EmergencyWorkflowFolderSystem.cs" />
@@ -211,6 +224,10 @@
     <None Include="PerformingDocumentationComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PerformingDocumentationComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="TranscriptionSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TranscriptionSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -147,12 +147,14 @@
     <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="Tests\WorklistTimePointTests.cs" />
+    <Compile Include="TranscriptionWorklists.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ReportingWorkflowSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Workflow\Transcription\TranscriptionOperations.cs" />
     <Compile Include="WorklistFactory.cs" />
     <Compile Include="WorklistFilters.cs" />
     <Compile Include="WorklistItemBase.cs" />

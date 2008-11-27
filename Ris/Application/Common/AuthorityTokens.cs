@@ -198,6 +198,12 @@ namespace ClearCanvas.Ris.Application.Common
 				public const string Cancel = "Workflow/Protocol/Cancel";
 			}
 
+			public static class Transcription
+			{
+				[AuthorityToken(Description = "Allow access to the Transcription Editor and creation of report transcriptions.")]
+				public const string Create = "Workflow/Transcription/Create";
+			}
+
 			public static class Patient
 			{
 				[AuthorityToken(Description = "Allow creation of new Patient records.")]
@@ -311,6 +317,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 			[AuthorityToken(Description = "Allow access to the Radiologist Admin folder system.")]
 			public const string RadiologistAdmin = "Folder Systems/Radiologist Admin";
+
+			[AuthorityToken(Description = "Allow access to the Transcription folder system.")]
+			public const string Transcription = "Folder Systems/Transcription";
 		}
 	}
 }

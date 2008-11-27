@@ -69,4 +69,9 @@
     <folder id="ProtocollingAdminAssignedFolder" />
     <folder id="RadiologistAdminSearchFolder" />
   </folder-system>
+  <folder-system id="ClearCanvas.Ris.Client.Workflow.TranscriptionWorkflowFolderSystem">
+    <folder id="ToBeTranscribedFolder" />
+    <folder id="DraftFolder" />
+    <folder id="CompletedFolder" />
+  </folder-system>
 </folder-systems>

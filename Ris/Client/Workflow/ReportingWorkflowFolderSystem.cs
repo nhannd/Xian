@@ -65,10 +65,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 
-			if(CurrentStaffCanSupervise())
-			{
+			//if(CurrentStaffCanSupervise())
+			//{
 				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
-			}
+			//}
 
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 

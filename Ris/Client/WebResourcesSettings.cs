@@ -174,6 +174,16 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("preview/transcription.htm")]
+		public string TranscriptionFolderSystemUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["TranscriptionFolderSystemUrl"]));
+			}
+		}
+
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
 		[global::System.Configuration.DefaultSettingValueAttribute("preview/emergency.htm")]
 		public string EmergencyFolderSystemUrl
 		{
@@ -348,6 +358,10 @@ namespace ClearCanvas.Ris.Client
 				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["DetailsPageUrl"]));
 			}
 		}
+
+		#endregion
+
+		#region Transcription Settings
 
 		#endregion
 	}

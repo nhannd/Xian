@@ -29,52 +29,20 @@
 
 #endregion
 
-using System;
+using System.Configuration;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	public class ReportDocument : Document
+
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class TranscriptionSettings
 	{
-		private readonly ReportingWorklistItem _worklistItem;
-		private readonly string _folderName;
-		private readonly EntityRef _worklistRef;
-		private readonly string _worklistClassName;
-
-		public ReportDocument(ReportingWorklistItem worklistItem, IReportingWorkflowItemToolContext context)
-			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
+		private TranscriptionSettings()
 		{
-			_worklistItem = worklistItem;
-			_folderName = context.SelectedFolder.Name;
-
-			if(context.SelectedFolder is ReportingWorkflowFolder)
-			{
-				_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
-				_worklistClassName = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistClassName;
-			}
-			else
-			{
-				_worklistRef = null;
-				_worklistClassName = null;
-			}
-		}
-
-		public override string GetTitle()
-		{
-			return ReportDocument.GetTitle(_worklistItem);
-		}
-
-		public override IApplicationComponent GetComponent()
-		{
-			return new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName);
-		}
-
-		public static string GetTitle(ReportingWorklistItem item)
-		{
-            return string.Format("Report - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

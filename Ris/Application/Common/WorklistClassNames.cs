@@ -176,5 +176,18 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ProtocollingAdminAssignedWorklist = "ProtocollingAdminAssignedWorklist";
 
 		#endregion
+
+		#region Transcription Worklist Class Names
+
+		[WorklistClassName]
+		public const string TranscriptionToBeTranscribedWorklist = "TranscriptionToBeTranscribedWorklist";
+
+		[WorklistClassName]
+		public const string TranscriptionDraftWorklist = "TranscriptionDraftWorklist";
+
+		[WorklistClassName]
+		public const string TranscriptionCompletedWorklist = "TranscriptionCompletedWorklist";
+
+		#endregion
 	}
 }

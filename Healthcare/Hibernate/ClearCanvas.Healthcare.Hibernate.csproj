@@ -225,6 +225,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Mappings\DicomSeries.hbm.xml" />
     <EmbeddedResource Include="Mappings\ImageAvailabilityEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TranscriptionWorklists.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueItem.hbm.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />

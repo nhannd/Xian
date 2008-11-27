@@ -13,25 +13,22 @@ namespace ClearCanvas.Ris.Client.Workflow {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class ReassignComponentSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class TranscriptionSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static ReassignComponentSettings defaultInstance = ((ReassignComponentSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ReassignComponentSettings())));
+        private static TranscriptionSettings defaultInstance = ((TranscriptionSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new TranscriptionSettings())));
         
-        public static ReassignComponentSettings Default {
+        public static TranscriptionSettings Default {
             get {
                 return defaultInstance;
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool KeepReport {
+        public bool AllowMultipleTranscriptionWorkspaces {
             get {
-                return ((bool)(this["KeepReport"]));
-            }
-            set {
-                this["KeepReport"] = value;
+                return ((bool)(this["AllowMultipleTranscriptionWorkspaces"]));
             }
         }
     }

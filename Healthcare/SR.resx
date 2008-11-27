@@ -444,6 +444,12 @@
   <data name="TelephoneNumber" xml:space="preserve">
     <value>Telephone Number</value>
   </data>
+  <data name="TranscriptionToBeTranscribedWorklist" xml:space="preserve">
+    <value>To be Transcribed</value>
+  </data>
+  <data name="TranscriptionToBeTranscribedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that need to be transcribed.</value>
+  </data>
   <data name="VersionCode" xml:space="preserve">
     <value>Version Code</value>
   </data>

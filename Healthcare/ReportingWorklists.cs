@@ -143,7 +143,7 @@ namespace ClearCanvas.Healthcare
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(TranscriptionStep);
 			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
-			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			criteria.ReportPart.Interpreter.EqualTo(wqc.Staff);
 			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
