@@ -642,6 +642,26 @@ Preview.ReportingProceduresTable = function () {
 			
 		return "";
 	}
+	
+	var _getImageAvailabilityIcon = function(imageAvailability)
+	{
+		switch (imageAvailability.Code)
+		{
+			case "X":
+				statusIcon = "question.png";
+			case "N":
+				return "question.png";
+			case "Z":
+				return "shield_red.png";
+			case "P":
+				return "shield_yellow.png";
+			case "C":
+				return "shield_green.png";
+			default:
+				return "question.png";
+		}
+		
+	}
 		 
 	return {
 		create: function(parentElement, procedures)
@@ -659,6 +679,10 @@ Preview.ReportingProceduresTable = function () {
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
+					{   label: "Image Availability",
+						cellType: "html",
+						getValue: function(item) { return "<img class='alert' src='" + imagePath + "/" + _getImageAvailabilityIcon(item.ImageAvailability) + "' alt='" + item.ImageAvailability.Value + "'/>"; }
+					},
 					{   label: "Procedure",
 						cellType: "text",
 						getValue: function(item) { return Ris.formatProcedureName(item); }

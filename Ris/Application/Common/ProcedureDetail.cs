@@ -75,6 +75,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public EnumValueInfo Laterality;
 
 		[DataMember]
+		public EnumValueInfo ImageAvailability;
+
+		[DataMember]
 		public bool Portable;
 
         [DataMember]

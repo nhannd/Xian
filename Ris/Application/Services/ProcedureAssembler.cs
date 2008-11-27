@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.CheckOutTime = rp.ProcedureCheckIn.CheckOutTime;
 			detail.PerformingFacility = new FacilityAssembler().CreateFacilitySummary(rp.PerformingFacility);
 			detail.Laterality = EnumUtils.GetEnumValueInfo(rp.Laterality, context);
+			detail.ImageAvailability = EnumUtils.GetEnumValueInfo(rp.ImageAvailability, context);
 			detail.Portable = rp.Portable;
 
 			List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.ProcedureSteps, procedureStepFilter);
