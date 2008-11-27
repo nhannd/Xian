@@ -2,10 +2,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 
-namespace ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor
+namespace ClearCanvas.Ris.Shreds
 {
 	[ExtensionOf(typeof(PublicationStepProcessorExtensionPoint))]
-	public class MailFaxProcessor : IPublicationStepProcessor
+	public class PublicationStepMailFaxProcessor : IPublicationStepProcessor
 	{
 		#region IPublicationStepProcessor Members
 

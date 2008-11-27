@@ -8,7 +8,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Ris.Shreds.ImageAvailability
+namespace ClearCanvas.Ris.Shreds
 {
 	/// <summary>
 	/// The default update strategy does not depend on the presence of MPPS from the modality.  The strategy queries DICOM 
@@ -16,11 +16,11 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	/// added together.  The NumberOfSeriesRelatedInstances from all the DicomSeries in an order are also added as a different 
 	/// sum.  The ImageAvailability of all procedures in the order are updated based on the comparison of these two sums.
 	/// </summary>
-	public class DefaultUpdateImageAvailabilityStrategy : IUpdateImageAvailabilityStrategy
+	public class DefaultImageAvailabilityUpdateStrategy : IImageAvailabilityUpdateStrategy
 	{
 		private const string ProcedureOIDKey = "ProcedureOID";
 
-		#region IUpdateImageAvailabilityStrategy Members
+		#region IImageAvailabilityUpdateStrategy Members
 
 		public string ScheduledWorkQueueItemType
 		{
@@ -29,10 +29,10 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 		public WorkQueueItem ScheduleWorkQueueItem(Procedure p, IPersistenceContext context)
 		{
-			ImageAvailabilitySettings settings = new ImageAvailabilitySettings();
+			ShredsSettings settings = new ShredsSettings();
 
 			WorkQueueItem item = new WorkQueueItem(this.ScheduledWorkQueueItemType);
-			item.ExpirationTime = DateTime.Now.AddHours(settings.DefaultStrategyExpirationTimeInHours);
+			item.ExpirationTime = DateTime.Now.AddHours(settings.DefaultImageAvailabilityUpdateStrategyExpirationTimeInHours);
 			item.ExtendedProperties.Add(ProcedureOIDKey, p.GetRef().Serialize());
 			context.Lock(item, DirtyState.New);
 
@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 		public void Update(WorkQueueItem item, IPersistenceContext context)
 		{
-			ImageAvailabilitySettings settings = new ImageAvailabilitySettings();
+			ShredsSettings settings = new ShredsSettings();
 
 			EntityRef procedureRef = new EntityRef(item.ExtendedProperties[ProcedureOIDKey]);
 			Procedure procedure = context.Load<Procedure>(procedureRef, EntityLoadFlags.Proxy);
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 			if (hasIncompleteDicomSeries)
 			{
-				UpdateImageAvailability(procedure.Order, Healthcare.ImageAvailability.N);
+				procedure.ImageAvailability = ImageAvailability.N;
 			}
 			else
 			{
@@ -60,20 +60,21 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				int numberOfInstancesFromDicomServer;
 
 				numberOfInstancesFromDicomServer = QueryDicomServer(procedure.Order,
-					settings.CallingAETitle,
-					settings.DicomServerAETitle,
-					settings.DicomServerHost,
-					settings.DicomServerPort,
+					settings.ImageAvailabilityDicomCallingAETitle,
+					settings.ImageAvailabilityDicomServerAETitle,
+					settings.ImageAvailabilityDicomServerHost,
+					settings.ImageAvailabilityDicomServerPort,
 					out studiesNotFound);
+
 				// Compare recorded result with the result from Dicom Query 
 				if (studiesNotFound || numberOfInstancesFromDicomServer == 0)
-					UpdateImageAvailability(procedure.Order, Healthcare.ImageAvailability.Z);
+					procedure.ImageAvailability = ImageAvailability.Z;
 				else if (numberOfInstancesFromDicomServer < numberOfInstancesFromDocumentation)
-					UpdateImageAvailability(procedure.Order, Healthcare.ImageAvailability.P);
+					procedure.ImageAvailability = ImageAvailability.P;
 				else if (numberOfInstancesFromDicomServer == numberOfInstancesFromDocumentation)
-					UpdateImageAvailability(procedure.Order, Healthcare.ImageAvailability.C);
+					procedure.ImageAvailability = ImageAvailability.C;
 				else
-					UpdateImageAvailability(procedure.Order, Healthcare.ImageAvailability.N);
+					procedure.ImageAvailability = ImageAvailability.N;
 			}
 
 			// update WorkQueueItem Status and the next ScheduledTime
@@ -82,16 +83,16 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				// ImageAvailability.X should never get pass into this method
 				// case Healthcare.ImageAvailability.X:
 				//     break;
-				case Healthcare.ImageAvailability.N:
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultStrategyNextScheduledTimeForUnknownAvailabilityInMinutes);
+				case ImageAvailability.N:
+					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForUnknownAvailabilityInMinutes);
 					break;
-				case Healthcare.ImageAvailability.Z:
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultStrategyNextScheduledTimeForZeroAvailabilityInMinutes);
+				case ImageAvailability.Z:
+					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForZeroAvailabilityInMinutes);
 					break;
-				case Healthcare.ImageAvailability.P:
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultStrategyNextScheduledTimeForPartialAvailabilityInMinutes);
+				case ImageAvailability.P:
+					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForPartialAvailabilityInMinutes);
 					break;
-				case Healthcare.ImageAvailability.C:
+				case ImageAvailability.C:
 					item.Status = WorkQueueStatus.CM;
 					break;
 				default:
@@ -100,16 +101,6 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 		}
 
 		#endregion
-
-		private static void UpdateImageAvailability(Order order, Healthcare.ImageAvailability availability)
-		{
-			// Update image availability of all the procedures in the order
-			CollectionUtils.ForEach(order.Procedures,
-				delegate(Procedure p)
-					{
-						p.ImageAvailability = availability;
-					});
-		}
 
 		private static int QueryDocumentation(Order order, out bool hasIncompleteDicomSeries)
 		{
@@ -124,7 +115,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 							delegate(ModalityProcedureStep mps)
 							{
 								List<PerformedStep> mppsList = CollectionUtils.Select(mps.PerformedSteps,
-									delegate(PerformedStep ps) { return ps is ModalityPerformedProcedureStep; });
+									delegate(PerformedStep ps) { return ps.Is<ModalityPerformedProcedureStep>(); });
 
 								if (mppsList.Count == 0)
 								{
@@ -135,9 +126,9 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 									CollectionUtils.ForEach(mps.PerformedSteps,
 										delegate(PerformedStep ps)
 										{
-											if (ps is ModalityPerformedProcedureStep)
+											if (ps.Is<ModalityPerformedProcedureStep>())
 											{
-												ModalityPerformedProcedureStep mpps = (ModalityPerformedProcedureStep)ps;
+												ModalityPerformedProcedureStep mpps = ps.As<ModalityPerformedProcedureStep>();
 												if (mpps.DicomSeries == null || mpps.DicomSeries.Count == 0)
 													isMissingDicomSeries = true;
 												else
@@ -188,25 +179,25 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 				if (scu.Status == ScuOperationStatus.Canceled)
 				{
-					String message = String.Format(SR.MessageFormatRemoteServerCancelledFind,
+					String message = String.Format(SR.MessageFormatDicomRemoteServerCancelledFind,
 					                               scu.FailureDescription ?? "no failure description provided");
 					throw new DicomException(message);
 				}
 				if (scu.Status == ScuOperationStatus.ConnectFailed)
 				{
-					String message = String.Format(SR.MessageFormatConnectionFailed,
+					String message = String.Format(SR.MessageFormatDicomConnectionFailed,
 					                               scu.FailureDescription ?? "no failure description provided");
 					throw new DicomException(message);
 				}
 				if (scu.Status == ScuOperationStatus.Failed)
 				{
-					String message = String.Format(SR.MessageFormatQueryOperationFailed,
+					String message = String.Format(SR.MessageFormatDicomQueryOperationFailed,
 					                               scu.FailureDescription ?? "no failure description provided");
 					throw new DicomException(message);
 				}
 				if (scu.Status == ScuOperationStatus.TimeoutExpired)
 				{
-					String message = String.Format(SR.MessageFormatConnectTimeoutExpired,
+					String message = String.Format(SR.MessageFormatDicomConnectTimeoutExpired,
 					                               scu.FailureDescription ?? "no failure description provided");
 					throw new DicomException(message);
 				}

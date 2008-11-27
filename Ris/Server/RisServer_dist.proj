@@ -45,8 +45,7 @@
 		<FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
 		<ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
 		<ShredHostServiceDirectory>$(SolutionDir)..\..\Server\ShredHostService</ShredHostServiceDirectory>
-		<PublicationShredDirectory>$(SolutionDir)..\Shreds\Publication</PublicationShredDirectory>
-		<ImageAvailabilityShredDirectory>$(SolutionDir)..\Shreds\ImageAvailability</ImageAvailabilityShredDirectory>
+		<RisShredsDirectory>$(SolutionDir)..\Shreds</RisShredsDirectory>
 		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 	</PropertyGroup>
 	
@@ -109,11 +108,9 @@
 
   <ItemGroup>
     <RisFiles Include="$(ShredHostDirectory)\bin\$(Configuration)\ClearCanvas.Server.ShredHost.dll" />
-    <RisFiles Include="$(PublicationShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.dll" />
-    <RisFiles Include="$(PublicationShredDirectory)\MailFaxProcessor\bin\$(Configuration)\ClearCanvas.Ris.Shreds.Publication.MailFaxProcessor.dll" />
 
     <RisFiles Include="$(DicomDirectory)\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
-    <RisFiles Include="$(ImageAvailabilityShredDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.ImageAvailability.dll" />
+    <RisFiles Include="$(RisShredsDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="!$(ShredHostBuild)">

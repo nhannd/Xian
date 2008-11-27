@@ -2,9 +2,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 
-namespace ClearCanvas.Ris.Shreds.ImageAvailability
+namespace ClearCanvas.Ris.Shreds
 {
-	public interface IUpdateImageAvailabilityStrategy
+	public interface IImageAvailabilityUpdateStrategy
 	{
 		string ScheduledWorkQueueItemType { get; }
 
@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	}
 
 	[ExtensionPoint]
-	public class UpdateImageAvailabilityStrategyExtensionPoint : ExtensionPoint<IUpdateImageAvailabilityStrategy>
+	public class ImageAvailabilityUpdateStrategyExtensionPoint : ExtensionPoint<IImageAvailabilityUpdateStrategy>
 	{
 	}
 }

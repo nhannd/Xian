@@ -31,15 +31,15 @@
 
 using System.Configuration;
 
-namespace ClearCanvas.Ris.Shreds.ImageAvailability
+namespace ClearCanvas.Ris.Shreds
 {
 
 	// TODO add a description of the purpose of the settings group here
 	[SettingsGroupDescription("")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class ImageAvailabilitySettings
+	internal sealed partial class ShredsSettings
 	{
-		public ImageAvailabilitySettings()
+		public ShredsSettings()
 		{
 			// Note: server-side settings classes do not register in the <see cref="ApplicationSettingsRegistry"/>
 		}

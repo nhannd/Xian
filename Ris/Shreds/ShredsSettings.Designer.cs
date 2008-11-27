@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Shreds.ImageAvailability {
+namespace ClearCanvas.Ris.Shreds {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class ImageAvailabilitySettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class ShredsSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static ImageAvailabilitySettings defaultInstance = ((ImageAvailabilitySettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageAvailabilitySettings())));
+        private static ShredsSettings defaultInstance = ((ShredsSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ShredsSettings())));
         
-        public static ImageAvailabilitySettings Default {
+        public static ShredsSettings Default {
             get {
                 return defaultInstance;
             }
@@ -26,72 +26,75 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("24")]
-        public int DefaultStrategyExpirationTimeInHours {
+        public int DefaultImageAvailabilityUpdateStrategyExpirationTimeInHours {
             get {
-                return ((int)(this["DefaultStrategyExpirationTimeInHours"]));
+                return ((int)(this["DefaultImageAvailabilityUpdateStrategyExpirationTimeInHours"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int DefaultStrategyNextScheduledTimeForUnknownAvailabilityInMinutes {
+        public int DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForUnknownAvailabilityInMinutes {
             get {
-                return ((int)(this["DefaultStrategyNextScheduledTimeForUnknownAvailabilityInMinutes"]));
+                return ((int)(this["DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForUnknownAvailabilityInMi" +
+                    "nutes"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int DefaultStrategyNextScheduledTimeForZeroAvailabilityInMinutes {
+        public int DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForZeroAvailabilityInMinutes {
             get {
-                return ((int)(this["DefaultStrategyNextScheduledTimeForZeroAvailabilityInMinutes"]));
+                return ((int)(this["DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForZeroAvailabilityInMinut" +
+                    "es"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int DefaultStrategyNextScheduledTimeForPartialAvailabilityInMinutes {
+        public int DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForPartialAvailabilityInMinutes {
             get {
-                return ((int)(this["DefaultStrategyNextScheduledTimeForPartialAvailabilityInMinutes"]));
+                return ((int)(this["DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForPartialAvailabilityInMi" +
+                    "nutes"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ImageAvailabilityScu")]
-        public string CallingAETitle {
+        public string ImageAvailabilityDicomCallingAETitle {
             get {
-                return ((string)(this["CallingAETitle"]));
+                return ((string)(this["ImageAvailabilityDicomCallingAETitle"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("serverAE")]
-        public string DicomServerAETitle {
+        public string ImageAvailabilityDicomServerAETitle {
             get {
-                return ((string)(this["DicomServerAETitle"]));
+                return ((string)(this["ImageAvailabilityDicomServerAETitle"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("serverHost")]
-        public string DicomServerHost {
+        public string ImageAvailabilityDicomServerHost {
             get {
-                return ((string)(this["DicomServerHost"]));
+                return ((string)(this["ImageAvailabilityDicomServerHost"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("4006")]
-        public int DicomServerPort {
+        public int ImageAvailabilityDicomServerPort {
             get {
-                return ((int)(this["DicomServerPort"]));
+                return ((int)(this["ImageAvailabilityDicomServerPort"]));
             }
         }
         
@@ -116,9 +119,9 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("10")]
-        public int NextScheduledTimeForErrorInMinutes {
+        public int ImageAvailabilityNextScheduledTimeForErrorInMinutes {
             get {
-                return ((int)(this["NextScheduledTimeForErrorInMinutes"]));
+                return ((int)(this["ImageAvailabilityNextScheduledTimeForErrorInMinutes"]));
             }
         }
     }

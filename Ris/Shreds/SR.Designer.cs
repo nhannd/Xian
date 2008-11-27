@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Shreds.ImageAvailability {
+namespace ClearCanvas.Ris.Shreds {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Ris.Shreds.ImageAvailability.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Ris.Shreds.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,110 +61,128 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Connection failed ({0})..
-        /// </summary>
-        internal static string MessageFormatConnectionFailed {
-            get {
-                return ResourceManager.GetString("MessageFormatConnectionFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The connection timeout expired ({0})..
-        /// </summary>
-        internal static string MessageFormatConnectTimeoutExpired {
-            get {
-                return ResourceManager.GetString("MessageFormatConnectTimeoutExpired", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The query operation failed ({0})..
-        /// </summary>
-        internal static string MessageFormatQueryOperationFailed {
-            get {
-                return ResourceManager.GetString("MessageFormatQueryOperationFailed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The remote server cancelled the query ({0})..
-        /// </summary>
-        internal static string MessageFormatRemoteServerCancelledFind {
-            get {
-                return ResourceManager.GetString("MessageFormatRemoteServerCancelledFind", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The ImageAvailability Processor service has failed to start.  Please check the log for more details..
-        /// </summary>
-        internal static string ServiceFailedToStart {
-            get {
-                return ResourceManager.GetString("ServiceFailedToStart", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The ImageAvailability Processor service has failed to stop.  Please check the log for more details..
-        /// </summary>
-        internal static string ServiceFailedToStop {
-            get {
-                return ResourceManager.GetString("ServiceFailedToStop", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The ImageAvailability Processor service has started successfully..
-        /// </summary>
-        internal static string ServiceStartedSuccessfully {
-            get {
-                return ResourceManager.GetString("ServiceStartedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Starting ImageAvailability Shred.
-        /// </summary>
-        internal static string ServiceStarting {
-            get {
-                return ResourceManager.GetString("ServiceStarting", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The ImageAvailability Processor service has stopped successfully..
-        /// </summary>
-        internal static string ServiceStoppedSuccessfully {
-            get {
-                return ResourceManager.GetString("ServiceStoppedSuccessfully", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Stopping ImageAvailability Shred.
-        /// </summary>
-        internal static string ServiceStopping {
-            get {
-                return ResourceManager.GetString("ServiceStopping", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This shred hosts the ImageAvailability Processor which is responsible for querying the DICOM server and update the image availability of each procedure.
         /// </summary>
-        internal static string ShredDescription {
+        internal static string ImageAvailabilityShredDescription {
             get {
-                return ResourceManager.GetString("ShredDescription", resourceCulture);
+                return ResourceManager.GetString("ImageAvailabilityShredDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Image Availability.
         /// </summary>
-        internal static string ShredName {
+        internal static string ImageAvailabilityShredName {
             get {
-                return ResourceManager.GetString("ShredName", resourceCulture);
+                return ResourceManager.GetString("ImageAvailabilityShredName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection failed ({0})..
+        /// </summary>
+        internal static string MessageFormatDicomConnectionFailed {
+            get {
+                return ResourceManager.GetString("MessageFormatDicomConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The connection timeout expired ({0})..
+        /// </summary>
+        internal static string MessageFormatDicomConnectTimeoutExpired {
+            get {
+                return ResourceManager.GetString("MessageFormatDicomConnectTimeoutExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The query operation failed ({0})..
+        /// </summary>
+        internal static string MessageFormatDicomQueryOperationFailed {
+            get {
+                return ResourceManager.GetString("MessageFormatDicomQueryOperationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The remote server cancelled the query ({0})..
+        /// </summary>
+        internal static string MessageFormatDicomRemoteServerCancelledFind {
+            get {
+                return ResourceManager.GetString("MessageFormatDicomRemoteServerCancelledFind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This shred hosts the Publication Processor which is responsible for processing scheduled publication steps.
+        /// </summary>
+        internal static string PublicationShredDescription {
+            get {
+                return ResourceManager.GetString("PublicationShredDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publication.
+        /// </summary>
+        internal static string PublicationShredName {
+            get {
+                return ResourceManager.GetString("PublicationShredName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} shred has failed to start.  Please check the log for more details..
+        /// </summary>
+        internal static string ShredFailedToStart {
+            get {
+                return ResourceManager.GetString("ShredFailedToStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} shred has failed to stop.  Please check the log for more details..
+        /// </summary>
+        internal static string ShredFailedToStop {
+            get {
+                return ResourceManager.GetString("ShredFailedToStop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} shred has started successfully..
+        /// </summary>
+        internal static string ShredStartedSuccessfully {
+            get {
+                return ResourceManager.GetString("ShredStartedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting {0} Shred.
+        /// </summary>
+        internal static string ShredStarting {
+            get {
+                return ResourceManager.GetString("ShredStarting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The {0} shred has stopped successfully..
+        /// </summary>
+        internal static string ShredStoppedSuccessfully {
+            get {
+                return ResourceManager.GetString("ShredStoppedSuccessfully", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stopping {0} Shred.
+        /// </summary>
+        internal static string ShredStopping {
+            get {
+                return ResourceManager.GetString("ShredStopping", resourceCulture);
             }
         }
     }
