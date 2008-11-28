@@ -66,6 +66,9 @@ namespace ClearCanvas.Ris.Client
 
         private static string RemoveLineBreak(string input)
         {
+			if (string.IsNullOrEmpty(input))
+				return input;
+
             string newString = input.Replace("\r\n", " ");
             newString = newString.Replace("\r", " ");
             newString = newString.Replace("\n", " ");

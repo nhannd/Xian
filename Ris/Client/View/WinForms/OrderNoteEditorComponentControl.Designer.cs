@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
 			this.tableLayoutPanel1.RowCount = 2;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -62,12 +63,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 157);
 			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
 			this.flowLayoutPanel3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.flowLayoutPanel3.Size = new System.Drawing.Size(318, 29);
+			this.flowLayoutPanel3.Size = new System.Drawing.Size(303, 29);
 			this.flowLayoutPanel3.TabIndex = 1;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(240, 3);
+			this._cancelButton.Location = new System.Drawing.Point(225, 3);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 1;
@@ -77,7 +78,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _acceptButton
 			// 
-			this._acceptButton.Location = new System.Drawing.Point(159, 3);
+			this._acceptButton.Location = new System.Drawing.Point(144, 3);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 0;
@@ -94,7 +95,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._comment.MaximumLength = 2147483647;
 			this._comment.Name = "_comment";
 			this._comment.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Both;
-			this._comment.Size = new System.Drawing.Size(320, 150);
+			this._comment.Size = new System.Drawing.Size(305, 150);
 			this._comment.TabIndex = 0;
 			this._comment.Value = null;
 			// 

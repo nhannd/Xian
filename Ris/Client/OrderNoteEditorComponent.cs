@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -66,6 +67,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _cannedTextLookupHandler; }
 		}
 		
+		[ValidateNotNull]
 		public string Comment
         {
             get { return _note.NoteBody; }
@@ -83,6 +85,12 @@ namespace ClearCanvas.Ris.Client
 
         public void Accept()
         {
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
             this.ExitCode = ApplicationComponentExitCode.Accepted;
             Host.Exit();
         }
