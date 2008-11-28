@@ -56,20 +56,40 @@ namespace ClearCanvas.Common.Specifications
 
         private readonly int _min = 0;
         private readonly int _max = Int32.MaxValue;
-        private readonly ISpecification _innerSpecification;
+        private readonly ISpecification _filterSpecification;
 
-        public CountSpecification(int min, int max, ISpecification innerSpecification)
+        public CountSpecification(int min, int max, ISpecification filterSpecification)
         {
+			Platform.CheckArgumentRange(min, 0, int.MaxValue, "min");
+			Platform.CheckArgumentRange(max, 0, int.MaxValue, "max");
+			if(max < min)
+				throw new ArgumentException("min cannot be larger than max");
+
             _max = max;
             _min = min;
-            _innerSpecification = innerSpecification ?? NullFilter;
+            _filterSpecification = filterSpecification ?? NullFilter;
         }
+
+    	public int Min
+    	{
+			get { return _min; }
+    	}
+
+    	public int Max
+    	{
+			get { return _max; }
+    	}
+
+    	public ISpecification FilterSpecification
+    	{
+			get { return _filterSpecification; }
+    	}
 
         protected override TestResult InnerTest(object exp, object root)
         {
             // optimizations
             // if _innerSpecification is NullFilter, and exp is an Array or ICollection, we can just use Length/Count
-            if (_innerSpecification == NullFilter)
+            if (_filterSpecification == NullFilter)
             {
                 if (exp is Array)
                 {
@@ -86,7 +106,7 @@ namespace ClearCanvas.Common.Specifications
             if (exp is IEnumerable)
             {
                 ICollection countableItems = CollectionUtils.Select(exp as IEnumerable,
-                    delegate(object item) { return _innerSpecification.Test(item).Success; });
+                    delegate(object item) { return _filterSpecification.Test(item).Success; });
 
                 return DefaultTestResult(InRange(countableItems.Count));
             }

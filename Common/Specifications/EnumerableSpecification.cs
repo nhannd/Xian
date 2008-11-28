@@ -37,19 +37,20 @@ namespace ClearCanvas.Common.Specifications
 {
     public abstract class EnumerableSpecification : Specification
     {
-        private ISpecification _elementSpecification;
+        private readonly ISpecification _elementSpecification;
 
         public EnumerableSpecification(ISpecification elementSpecification)
         {
+			Platform.CheckForNullReference(elementSpecification, "elementSpecification");
             _elementSpecification = elementSpecification;
         }
 
-        protected ISpecification ElementSpec
+        protected internal ISpecification ElementSpec
         {
             get { return _elementSpecification; }
         }
 
-        protected IEnumerable AsEnumerable(object obj)
+        protected static IEnumerable AsEnumerable(object obj)
         {
             IEnumerable enumerable = obj as IEnumerable;
             if (enumerable == null)

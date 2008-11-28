@@ -41,7 +41,7 @@ namespace ClearCanvas.Common.Specifications
 
         protected override TestResult InnerTest(object exp, object root)
         {
-            foreach (ISpecification subSpec in this.SubSpecs)
+            foreach (ISpecification subSpec in this.Elements)
             {
                 TestResult r = subSpec.Test(exp);
                 if (r.Fail)

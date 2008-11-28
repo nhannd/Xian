@@ -44,7 +44,7 @@ namespace ClearCanvas.Common.Specifications
         {
             TestResult r;
 
-            foreach (ISpecification subSpec in this.SubSpecs)
+            foreach (ISpecification subSpec in this.Elements)
             {
                 r = subSpec.Test(exp);
                 if (r.Success)

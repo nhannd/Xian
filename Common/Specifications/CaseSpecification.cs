@@ -46,6 +46,9 @@ namespace ClearCanvas.Common.Specifications
 
         internal CaseSpecification(List<WhenThenPair> whenThens, ISpecification elseSpecification)
         {
+			Platform.CheckForNullReference(whenThens, "whenThens");
+			Platform.CheckForNullReference(elseSpecification, "elseSpecification");
+
             _whenThens = whenThens;
             _else = elseSpecification;
         }
