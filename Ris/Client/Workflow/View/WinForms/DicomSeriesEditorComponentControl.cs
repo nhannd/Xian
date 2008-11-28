@@ -52,6 +52,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_component = component;
             InitializeComponent();
 
+			_studyInstanceUID.DataBindings.Add("Value", _component, "StudyInstanceUID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_seriesInstanceUID.DataBindings.Add("Value", _component, "SeriesInstanceUID", true, DataSourceUpdateMode.OnPropertyChanged);
 			_seriesNumber.DataBindings.Add("Value", _component, "SeriesNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_seriesDescription.DataBindings.Add("Value", _component, "SeriesDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 			_numberOfSeriesRelatedInstance.DataBindings.Add("Value", _component, "NumberOfSeriesRelatedInstances", true, DataSourceUpdateMode.OnPropertyChanged);

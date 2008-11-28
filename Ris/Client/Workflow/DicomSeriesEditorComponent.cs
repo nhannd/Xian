@@ -29,9 +29,11 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -58,26 +60,27 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Presentation Model
 
+		public string StudyInstanceUID
+		{
+			get { return _dicomSeries.StudyInstanceUID; }
+		}
+
+		public string SeriesInstanceUID
+		{
+			get { return _dicomSeries.SeriesInstanceUID; }
+		}
+
 		public string SeriesNumber
 		{
 			get { return _dicomSeries.SeriesNumber; }
-			set
-			{
-				_dicomSeries.SeriesNumber = value;
-				this.Modified = true;
-			}
 		}
 
 		public string SeriesDescription
 		{
 			get { return _dicomSeries.SeriesDescription; }
-			set
-			{
-				_dicomSeries.SeriesDescription = value;
-				this.Modified = true;
-			}
 		}
 
+		[ValidateGreaterThan(0)]
 		public int NumberOfSeriesRelatedInstances
 		{
 			get { return _dicomSeries.NumberOfSeriesRelatedInstances; }
@@ -95,6 +98,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void Accept()
 		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
 			this.Exit(ApplicationComponentExitCode.Accepted);
 		}
 

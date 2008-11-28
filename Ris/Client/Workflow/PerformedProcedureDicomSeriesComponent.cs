@@ -50,17 +50,25 @@ namespace ClearCanvas.Ris.Client.Workflow
     {
         public DicomSeriesTable()
         {
-            this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Series Number",
+			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Study Instance UID",
+				delegate(DicomSeriesDetail detail) { return detail.SeriesNumber; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Series Instance UID",
+				delegate(DicomSeriesDetail detail) { return detail.SeriesNumber; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Series Number",
                 delegate(DicomSeriesDetail detail) { return detail.SeriesNumber; }, 
-                1.0f));
+                0.5f));
 
             this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Description",
                 delegate(DicomSeriesDetail detail) { return detail.SeriesDescription; }, 
                 1.0f));
 
-            this.Columns.Add(new TableColumn<DicomSeriesDetail, int>("Number of SOP Instances",
+            this.Columns.Add(new TableColumn<DicomSeriesDetail, int>("Number of Instances",
                 delegate(DicomSeriesDetail detail) { return detail.NumberOfSeriesRelatedInstances; }, 
-                1.0f));
+                0.5f));
 		}
     }
 
@@ -166,13 +174,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			editedItems = new List<DicomSeriesDetail>();
 			DicomSeriesDetail detail = CollectionUtils.FirstElement(items);
+			DicomSeriesDetail clone = (DicomSeriesDetail) detail.Clone();
 
 			// Keep looping until user enters an unique Dicom Series Number, or cancel the edit operation
-			DicomSeriesEditorComponent editor = new DicomSeriesEditorComponent(detail);
+			DicomSeriesEditorComponent editor = new DicomSeriesEditorComponent(clone);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateDicomSeries);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				editedItems.Add(detail);
+				editedItems.Add(clone);
 				return true;
 			}
 

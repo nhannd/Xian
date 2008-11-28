@@ -1,10 +1,11 @@
+using System;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
 	[DataContract]
-	public class DicomSeriesDetail : DataContractBase
+	public class DicomSeriesDetail : DataContractBase, ICloneable 
 	{
 		[DataMember]
 		public EntityRef ModalityPerformedProcedureStepRef;
@@ -26,5 +27,22 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
 		[DataMember]
 		public int NumberOfSeriesRelatedInstances;
+
+		#region ICloneable Members
+
+		public object Clone()
+		{
+			DicomSeriesDetail clone = new DicomSeriesDetail();
+			clone.ModalityPerformedProcedureStepRef = this.ModalityPerformedProcedureStepRef;
+			clone.DicomSeriesRef = this.DicomSeriesRef;
+			clone.StudyInstanceUID = this.StudyInstanceUID;
+			clone.SeriesInstanceUID = this.SeriesInstanceUID;
+			clone.SeriesNumber = this.SeriesNumber;
+			clone.SeriesDescription = this.SeriesDescription;
+			clone.NumberOfSeriesRelatedInstances = this.NumberOfSeriesRelatedInstances;
+			return clone;
+		}
+
+		#endregion
 	}
 }
