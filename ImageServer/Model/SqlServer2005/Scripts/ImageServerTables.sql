@@ -1280,6 +1280,100 @@ GO
 SET ANSI_PADDING OFF
 GO
 
+/****** Object:  Table [dbo].[StudyDeleteRecord]    Script Date: 11/28/2008 13:11:15 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[StudyDeleteRecord](
+	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyDeleteRecord_GUID]  DEFAULT (newid()),
+	[Timestamp] [datetime] NOT NULL,
+	[Reason] [nvarchar](1024) NULL,
+	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[FilesystemGUID] [uniqueidentifier] NOT NULL,
+	[ArchiveStorageGUID] [uniqueidentifier] NULL,
+	[BackupPath] [nvarchar](256)  NULL,
+	[StudyInstanceUid] [varchar](64)  NOT NULL,
+	[AccessionNumber] [varchar](64)  NULL,
+	[PatientId] [varchar](64)  NULL,
+	[PatientsName] [nvarchar](256)  NULL,
+	[StudyId] [nvarchar](64)  NULL,
+	[StudyDescription] [nvarchar](64)  NULL,
+	[StudyDate] [varchar](16)  NULL,
+	[StudyTime] [varchar](32)  NULL,
+	[ExtendedInfo] [nvarchar](max)  NULL,
+ CONSTRAINT [PK_StudyDeleteRecord] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+SET ANSI_PADDING OFF
+
+
+/****** Object:  Index [IX_StudyDeleteRecord]    Script Date: 11/28/2008 13:26:28 ******/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_StudyDeleteRecord] ON [dbo].[StudyDeleteRecord] 
+(
+	[GUID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
+/****** Object:  Index [IX_StudyDeleteRecord_AcccessionNumber]    Script Date: 11/28/2008 13:26:56 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_AcccessionNumber] ON [dbo].[StudyDeleteRecord] 
+(
+	[AccessionNumber] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+USE [ImageServer]
+GO
+/****** Object:  Index [IX_StudyDeleteRecord_PatientId]    Script Date: 11/28/2008 13:27:11 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_PatientId] ON [dbo].[StudyDeleteRecord] 
+(
+	[PatientId] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
+USE [ImageServer]
+GO
+/****** Object:  Index [IX_StudyDeleteRecord_PatientsName]    Script Date: 11/28/2008 13:27:19 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_PatientsName] ON [dbo].[StudyDeleteRecord] 
+(
+	[PatientsName] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
+GO
+/****** Object:  Index [IX_StudyDeleteRecord_ServerPartition]    Script Date: 11/28/2008 13:27:26 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_ServerPartition] ON [dbo].[StudyDeleteRecord] 
+(
+	[ServerPartitionGUID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+/****** Object:  Index [IX_StudyDeleteRecord_StudyInstanceUid]    Script Date: 11/28/2008 13:27:35 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_StudyInstanceUid] ON [dbo].[StudyDeleteRecord] 
+(
+	[StudyInstanceUid] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+/****** Object:  Index [IX_StudyDeleteRecord_StudyInstanceUidServerPartition]    Script Date: 11/28/2008 13:27:42 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_StudyInstanceUidServerPartition] ON [dbo].[StudyDeleteRecord] 
+(
+	[StudyInstanceUid] ASC,
+	[ServerPartitionGUID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+/****** Object:  Index [IX_StudyDeleteRecord_Timestamp]    Script Date: 11/28/2008 13:27:49 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_Timestamp] ON [dbo].[StudyDeleteRecord] 
+(
+	[Timestamp] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
@@ -1676,8 +1770,28 @@ ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_De
 REFERENCES [dbo].[StudyStorage] ([GUID])
 GO
 
+
 /****** Object:  ForeignKey [FK_StudyHistory_StudyStorage]    Script Date: 09/26/2008 16:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyHistory_StudyHistoryTypeEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyHistory]'))
 ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_StudyHistoryTypeEnum] FOREIGN KEY([StudyHistoryTypeEnum])
 REFERENCES [dbo].[StudyHistoryTypeEnum] ([Enum])
 GO
+
+/****** Object:  ForeignKey [FK_StudyDeleteRecord_ArchiveStudyStorage]    Script Date: 11/30/2008 16:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_ArchiveStudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
+ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_ArchiveStudyStorage] FOREIGN KEY([ArchiveStorageGUID])
+REFERENCES [dbo].[ArchiveStudyStorage] ([GUID])
+GO
+
+/****** Object:  ForeignKey [FK_StudyDeleteRecord_Filesystem]    Script Date: 11/30/2008 16:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_Filesystem]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
+ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_Filesystem] FOREIGN KEY([FilesystemGUID])
+REFERENCES [dbo].[Filesystem] ([GUID])
+GO
+
+/****** Object:  ForeignKey [FK_StudyDeleteRecord_ServerPartition]    Script Date: 11/30/2008 16:50:28 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
+ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
+REFERENCES [dbo].[ServerPartition] ([GUID])
+GO
+

@@ -102,6 +102,7 @@
     <Compile Include="EntityBrokers\ServiceLockEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ServiceLockTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemStudyStorageEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\StudyDeleteRecordEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistoryEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\StudyHistoryTypeEnumBroker.gen.cs" />

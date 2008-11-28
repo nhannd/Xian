@@ -29,11 +29,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -46,11 +46,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
     {
         #region Private Members
 
+        private IList<IDeleteStudyProcessorExtension> _extensions;
         private ServerPartition _partition;
-
+        private Study _study;
         protected ServerPartition Partition
         {
             get { return _partition; }
+        }
+        protected Study Study
+        {
+            get { return _study; }
         }
 
         #endregion
@@ -84,6 +89,38 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                     updateContext.Commit();
             }
         }
+
+        private void LoadEntities()
+        {
+            _partition = ServerPartition.Load(WorkQueueItem.ServerPartitionKey);
+            _study = Study.Find(StorageLocation.StudyInstanceUid, _partition);
+        }
+
+        private IList<IDeleteStudyProcessorExtension> LoadExtensions()
+        {
+            if (_extensions == null)
+            {
+                _extensions = CollectionUtils.Cast<IDeleteStudyProcessorExtension>(
+                    new DeleteStudyProcessorExtensionPoint().CreateExtensions());
+
+
+                foreach (IDeleteStudyProcessorExtension ext in _extensions)
+                {
+                    DeleteStudyContext context = new DeleteStudyContext();
+                    context.WorkQueueItem = WorkQueueItem;
+                    context.ServerPartition = Partition;
+                    context.Study = Study;
+                    context.StorageLocation = StorageLocation;
+                    context.Filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
+                    ext.Initialize(context);
+                }
+
+            }
+
+            return _extensions;
+        }
+
+        
         #endregion
 
         #region Overridden Protected Method
@@ -106,23 +143,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 }
                 else
                 {
-                    _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
+                    LoadEntities();
 
-                    Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
+                    LoadExtensions();
+
+                    Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'",
+                                 StorageLocation.StudyInstanceUid,
                                  Partition.Description);
+
+                    OnDeletingStudy();
 
                     RemoveFilesystem();
 
                     RemoveDatabase(item);
 
-                    // No need to remove / update the Queue entry, it was deleted as part of the delete process.
+                    OnStudyDeleted();
+
                 }
                 
             }
             
         }
-
-        #endregion
 
         protected override bool CanStart()
         {
@@ -141,8 +182,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                                                             });
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-            
+
             return (relatedItems == null || relatedItems.Count == 0);
         }
+
+
+        #endregion
+
+        #region Virtual Protected Method
+
+        protected virtual void OnStudyDeleted()
+        {
+            IList<IDeleteStudyProcessorExtension> extensions = LoadExtensions();
+            foreach (IDeleteStudyProcessorExtension ext in extensions)
+            {
+                if (ext.Enabled)
+                    ext.OnStudyDeleted();
+            }
+        }
+
+        protected virtual void OnDeletingStudy()
+        {
+            foreach (IDeleteStudyProcessorExtension ext in _extensions)
+            {
+                if (ext.Enabled)
+                    ext.OnStudyDeleting();
+            }
+        }
+
+        #endregion
+
     }
 }

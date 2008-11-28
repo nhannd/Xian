@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common
 {
@@ -54,5 +55,8 @@ namespace ClearCanvas.ImageServer.Common
         {
             return Path.Combine(Path.Combine(Path.GetPathRoot(Path.GetTempPath()), "temp"), Path.GetRandomFileName());
         }
+
+
+
     }
 }

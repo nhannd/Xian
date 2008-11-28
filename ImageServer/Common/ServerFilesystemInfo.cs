@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
@@ -123,6 +124,7 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+
         /// <summary>
         /// Is the filesystem above the low watermark?
         /// </summary>
@@ -144,6 +146,8 @@ namespace ClearCanvas.ImageServer.Common
                 return (UsedSpacePercentage > (float)Filesystem.HighWatermark);
             }
         }
+
+
         #endregion
 
 
@@ -154,6 +158,11 @@ namespace ClearCanvas.ImageServer.Common
             _freeBytes = copy.FreeBytes;
             _totalBytes = copy.TotalBytes;
         }
+
+        public string ResolveAbsolutePath(string relativePath)
+        {
+            return _filesystem.GetAbsolutePath(relativePath);
+        } 
 
         internal ServerFilesystemInfo(Filesystem filesystem)
         {

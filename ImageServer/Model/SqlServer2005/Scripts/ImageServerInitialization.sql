@@ -81,19 +81,6 @@ SELECT @OnlineRetentionServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE L
 SELECT @StudyCompressServerRuleTypeEnum = Enum FROM ServerRuleTypeEnum WHERE Lookup = 'StudyCompress'
 
 INSERT INTO [ImageServer].[dbo].[ServerRule]
-		   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[RuleXml])
-	 VALUES
-		   (newid(),'Pediatric Retention',@ServerPartitionGuid, @StudyArchiveRuleApplyTimeEnum, @OnlineRetentionServerRuleTypeEnum, 1, 0,
-			'<rule id="Pediatric Retention">
-			  <condition expressionLanguage="dicom">
-				<dicom-age-less-than test="$PatientsBirthDate" units="years" refValue="21" />
-			  </condition>
-			  <action>
-				<study-delete time="21" timeUnits="patientAge" />
-			  </action>
-			</rule>' )
-
-INSERT INTO [ImageServer].[dbo].[ServerRule]
 		   ([GUID],[RuleName],[ServerPartitionGUID],[ServerRuleApplyTimeEnum],[ServerRuleTypeEnum],[Enabled],[DefaultRule],[ExemptRule], [RuleXml])
 	 VALUES
 		   (newid(),'Delete Exempt Rule',@ServerPartitionGuid, @StudyProcessedRuleApplyTimeEnum, @StudyDeleteServerRuleTypeEnum, 1, 0, 1,

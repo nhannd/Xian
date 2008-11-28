@@ -69,11 +69,31 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             StringWriter sw = new StringWriter();
             XmlTextWriter xmlTextWriter = new XmlTextWriter(sw);
             XmlSerializer serializer = new XmlSerializer(obj.GetType());
-            serializer.Serialize(xmlTextWriter, obj);
+            serializer.Serialize(xmlTextWriter, obj, null);
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(sw.ToString());
             return doc.DocumentElement;
+        }
+
+        public static string SerializeAsString(Object obj)
+        {
+            StringWriter sw = new StringWriter();
+            XmlWriterSettings settings = new XmlWriterSettings();
+			settings.Indent = true;
+			settings.NewLineOnAttributes = false;
+			settings.OmitXmlDeclaration = true;
+			settings.Encoding = Encoding.UTF8;
+
+
+			using(XmlWriter writer = XmlWriter.Create(sw, settings))
+			{
+                XmlNode node = Serialize(obj);
+                node.WriteTo(writer);
+                writer.Flush();
+			}
+            
+            return sw.ToString();
         }
 
         /// <summary>

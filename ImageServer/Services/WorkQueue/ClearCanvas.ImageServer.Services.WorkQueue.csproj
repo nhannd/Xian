@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Utils.Zip, Version=1.5.0.11, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\Ionic.Utils.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -54,6 +58,11 @@
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
     <Compile Include="CompressStudy\CompressStudyFactoryExtension.cs" />
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
+    <Compile Include="DeleteStudy\Extensions\Uhn\StudyDeleteProcessorExtension.cs" />
+    <Compile Include="DeleteStudy\Extensions\Uhn\ZipStudyFolderCOmmand.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DeleteStudy\IDeleteStudyProcessorExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommand.cs">
