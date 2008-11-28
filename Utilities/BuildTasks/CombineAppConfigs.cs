@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using System.Xml;
+using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System.Text;
 
@@ -41,38 +42,55 @@ namespace ClearCanvas.Utilities.BuildTasks
 	{
 		private string[] _sourceFiles;
 		private string _outputFile;
+		private bool _checkDependency = false;
 
 		public CombineAppConfigs()
 		{
 			_outputFile = "app.config";
 		}
-
+		
+		[Required]
 		public string OutputFile
 		{
 			get { return _outputFile; }
 			set { _outputFile = value; }
 		}
 	
+		[Required]
 		public string[] SourceFiles
 		{
 			get { return _sourceFiles; }
 			set { _sourceFiles = value; }
+		}
+		
+		[Required]
+		public bool CheckDependency
+		{
+			get { return _checkDependency; }
+			set { _checkDependency = value; }
 		}
 				
 		public override bool Execute()
 		{
 			try
 			{
-				StringBuilder builder = new StringBuilder();
-				builder.AppendLine("Combining App Configs:");
-				foreach (string sourceFile in _sourceFiles)
-					builder.AppendFormat("\t{0}\n", sourceFile);
+				if (ShouldBuildTarget())
+				{
+					StringBuilder builder = new StringBuilder();
+					builder.AppendLine("Combining App Configs:");
+					foreach (string sourceFile in _sourceFiles)
+						builder.AppendFormat("\t{0}\n", sourceFile);
 
-				builder.AppendFormat("into file: {0}", _outputFile);
+					builder.AppendFormat("into file: {0}", _outputFile);
 
-				base.Log.LogMessage(builder.ToString());
+					base.Log.LogMessage(builder.ToString());
 
-				Run();
+					Run();
+				}
+				else
+				{
+					base.Log.LogMessage("Combining App Configs skipped because output file is already up-to-date");
+				}
 				
 				return true;
 			}
@@ -80,6 +98,36 @@ namespace ClearCanvas.Utilities.BuildTasks
 			{
 				base.Log.LogErrorFromException(e);
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// Allows various conditions to be checked to see whether 
+		/// target should actually be built or skipped, such as
+		/// check timestamps for dependency
+		/// </summary>
+		/// <returns></returns>
+		private bool ShouldBuildTarget()
+		{
+			if (CheckDependency)
+			{
+				// get timestamp of output file
+				FileInfo fiOutput = new FileInfo(OutputFile);
+
+				foreach (string sourceFile in SourceFiles)
+				{
+					FileInfo fiSource = new FileInfo(sourceFile);
+					if (fiSource.LastWriteTime > fiOutput.LastWriteTime)
+						return true;
+				}
+
+				return false;
+			}
+			else
+			{
+				// if no dependency check is required, we should
+				// always build the target
+				return true;
 			}
 		}
 
