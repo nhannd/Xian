@@ -8,12 +8,8 @@ namespace ClearCanvas.Ris.Shreds.Publication
 	[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class PublicationShred : RisShredBase
 	{
-		private readonly PublicationProcessor _processor;
-
 		public PublicationShred()
 		{
-            PublicationShredSettings settings = new PublicationShredSettings();
-			_processor = new PublicationProcessor(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds));
 		}
 
 		public override string GetDisplayName()
@@ -28,10 +24,10 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 		protected override IList<IProcessor> GetProcessors()
 		{
-			List<IProcessor> processors = new List<IProcessor>();
-			processors.Add(_processor);
-			return processors;
-		}
+            PublicationShredSettings settings = new PublicationShredSettings();
+            PublicationProcessor p = new PublicationProcessor(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds));
+            return new IProcessor[] { p };
+        }
 
 	}
 }

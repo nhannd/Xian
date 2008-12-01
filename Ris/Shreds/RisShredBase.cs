@@ -6,14 +6,27 @@ using System.Threading;
 
 namespace ClearCanvas.Ris.Shreds
 {
+    /// <summary>
+    /// Specialization of <see cref="Shred"/> for running code packaged in <see cref="IProcessor"/>
+    /// implementations.
+    /// </summary>
 	public abstract class RisShredBase : Shred
 	{
 		private bool _isStarted = false;
         private List<IProcessor> _processors = new List<IProcessor>();
         private List<Thread> _processorThreads = new List<Thread>();
 
-        //TODO: make this into a setting
         private readonly TimeSpan _shutDownTimeOut = new TimeSpan(0, 0, 60);
+
+        /// <summary>
+        /// Obtains a set of processors to be executed by this shred.
+        /// </summary>
+        /// <remarks>
+        /// This method will be called every time the shred is started.  Subsequent
+        /// invocations need not return the same processor instances.
+        /// </remarks>
+        /// <returns></returns>
+        protected abstract IList<IProcessor> GetProcessors();
 
 		#region Shred overrides
 
@@ -35,7 +48,7 @@ namespace ClearCanvas.Ris.Shreds
 
 		#endregion
 
-        protected abstract IList<IProcessor> GetProcessors();
+        #region Helpers
 
         /// <summary>
         /// Starts all processors returned by <see cref="GetProcessors"/>.  This method is transactional:
@@ -152,6 +165,8 @@ namespace ClearCanvas.Ris.Shreds
             thread.Start();
             return thread;
         }
+
+        #endregion
 
     }
 }
