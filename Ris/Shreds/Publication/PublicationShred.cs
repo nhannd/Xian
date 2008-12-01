@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
+using System;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {
@@ -11,7 +12,8 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 		public PublicationShred()
 		{
-			_processor = new PublicationProcessor();
+            PublicationShredSettings settings = new PublicationShredSettings();
+			_processor = new PublicationProcessor(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds));
 		}
 
 		public override string GetDisplayName()

@@ -19,6 +19,12 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	public class DefaultImageAvailabilityUpdateStrategy : IImageAvailabilityUpdateStrategy
 	{
 		private const string ProcedureOIDKey = "ProcedureOID";
+        private ImageAvailabilityShredSettings _settings;
+
+        public DefaultImageAvailabilityUpdateStrategy()
+        {
+            _settings = new ImageAvailabilityShredSettings();
+        }
 
 		#region IImageAvailabilityUpdateStrategy Members
 
@@ -29,10 +35,8 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 		public WorkQueueItem ScheduleWorkQueueItem(Procedure p, IPersistenceContext context)
 		{
-			ShredsSettings settings = new ShredsSettings();
-
 			WorkQueueItem item = new WorkQueueItem(this.ScheduledWorkQueueItemType);
-			item.ExpirationTime = DateTime.Now.AddHours(settings.DefaultImageAvailabilityUpdateStrategyExpirationTimeInHours);
+            item.ExpirationTime = DateTime.Now.AddHours(_settings.ExpirationTimeInHours);
 			item.ExtendedProperties.Add(ProcedureOIDKey, p.GetRef().Serialize());
 			context.Lock(item, DirtyState.New);
 
@@ -41,8 +45,6 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 		public void Update(WorkQueueItem item, IPersistenceContext context)
 		{
-			ShredsSettings settings = new ShredsSettings();
-
 			EntityRef procedureRef = new EntityRef(item.ExtendedProperties[ProcedureOIDKey]);
 			Procedure procedure = context.Load<Procedure>(procedureRef, EntityLoadFlags.Proxy);
 
@@ -60,10 +62,10 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				int numberOfInstancesFromDicomServer;
 
 				numberOfInstancesFromDicomServer = QueryDicomServer(procedure.Order,
-					settings.ImageAvailabilityDicomCallingAETitle,
-					settings.ImageAvailabilityDicomServerAETitle,
-					settings.ImageAvailabilityDicomServerHost,
-					settings.ImageAvailabilityDicomServerPort,
+                    _settings.DicomCallingAETitle,
+                    _settings.DicomServerAETitle,
+                    _settings.DicomServerHost,
+                    _settings.DicomServerPort,
 					out studiesNotFound);
 
 				// Compare recorded result with the result from Dicom Query 
@@ -84,13 +86,13 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				// case Healthcare.ImageAvailability.X:
 				//     break;
                 case Healthcare.ImageAvailability.N:
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForUnknownAvailabilityInMinutes);
+                    item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForUnknownAvailabilityInMinutes);
 					break;
                 case Healthcare.ImageAvailability.Z:
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForZeroAvailabilityInMinutes);
+                    item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForZeroAvailabilityInMinutes);
 					break;
                 case Healthcare.ImageAvailability.P:
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForPartialAvailabilityInMinutes);
+                    item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForPartialAvailabilityInMinutes);
 					break;
                 case Healthcare.ImageAvailability.C:
 					item.Status = WorkQueueStatus.CM;

@@ -10,30 +10,34 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Ris.Shreds.Publication
 {
 	/// <summary>
-	/// Defines the interface for processing publication step after it is published.
+	/// Defines the interface for a publication action, that is, an action to be taken
+    /// upon publication of a radiololgy report.
 	/// </summary>
-	public interface IPublicationStepProcessor
+	public interface IPublicationAction
 	{
-		void Process(PublicationStep step, IPersistenceContext context);
+		void Execute(PublicationStep step, IPersistenceContext context);
 	}
 
 	[ExtensionPoint]
-	public class PublicationStepProcessorExtensionPoint : ExtensionPoint<IPublicationStepProcessor>
+	public class PublicationActionExtensionPoint : ExtensionPoint<IPublicationAction>
 	{
 	}
 
-	public class PublicationProcessor : ProcessorBase<PublicationStep>
+    /// <summary>
+    /// Processes <see cref="PublicationStep"/>s, performing all <see cref="IPublicationAction"/>s
+    /// on each step.
+    /// </summary>
+    public class PublicationProcessor : QueueProcessor<PublicationStep>
 	{
-		private object[] _publicationStepProcessors;
+		private object[] _publicationActions;
 
-		public override void Initialize(int batchSize, int sleepDurationInSeconds)
-		{
-			_publicationStepProcessors = new PublicationStepProcessorExtensionPoint().CreateExtensions();
+        public PublicationProcessor(int batchSize, TimeSpan sleepTime)
+            :base(batchSize, sleepTime)
+        {
+            _publicationActions = new PublicationActionExtensionPoint().CreateExtensions();
+        }
 
-			base.Initialize(batchSize, sleepDurationInSeconds);
-		}
-
-		public override IList<PublicationStep> GetNextBatch(int batchSize)
+		protected override IList<PublicationStep> GetNextBatch(int batchSize)
 		{
 			IList<PublicationStep> items;
 
@@ -59,7 +63,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			return items;
 		}
 
-		public override void ProcessItem(PublicationStep item)
+        protected override void ProcessItem(PublicationStep item)
 		{
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 			{
@@ -70,9 +74,9 @@ namespace ClearCanvas.Ris.Shreds.Publication
 				{
 					context.Lock(item);
 
-					foreach (IPublicationStepProcessor processor in _publicationStepProcessors)
+					foreach (IPublicationAction action in _publicationActions)
 					{
-						processor.Process(item, context);
+						action.Execute(item, context);
 					}
 
 					item.Complete(item.AssignedStaff);

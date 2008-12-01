@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Shreds {
+namespace ClearCanvas.Ris.Shreds.Publication {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class ShredsSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class PublicationShredSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static ShredsSettings defaultInstance = ((ShredsSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ShredsSettings())));
+        private static PublicationShredSettings defaultInstance = ((PublicationShredSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new PublicationShredSettings())));
         
-        public static ShredsSettings Default {
+        public static PublicationShredSettings Default {
             get {
                 return defaultInstance;
             }
@@ -38,15 +38,6 @@ namespace ClearCanvas.Ris.Shreds {
         public int SleepDurationInSeconds {
             get {
                 return ((int)(this["SleepDurationInSeconds"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("60")]
-        public int ShutdownTimeOutInSeconds {
-            get {
-                return ((int)(this["ShutdownTimeOutInSeconds"]));
             }
         }
     }

@@ -4,12 +4,15 @@ using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {
-	[ExtensionOf(typeof(PublicationStepProcessorExtensionPoint))]
-	public class PublicationStepMailFaxProcessor : IPublicationStepProcessor
+    /// <summary>
+    /// This publication action sends the report to the outbound fax/mail queue.
+    /// </summary>
+	[ExtensionOf(typeof(PublicationActionExtensionPoint))]
+	public class MailFaxAction : IPublicationAction
 	{
-		#region IPublicationStepProcessor Members
+		#region IPublicationAction Members
 
-		public void Process(PublicationStep step, IPersistenceContext context)
+		public void Execute(PublicationStep step, IPersistenceContext context)
 		{
 			foreach (ResultRecipient recipient in step.Procedure.Order.ResultRecipients)
 			{

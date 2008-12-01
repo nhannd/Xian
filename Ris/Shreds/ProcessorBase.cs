@@ -3,76 +3,50 @@ using System.Threading;
 
 namespace ClearCanvas.Ris.Shreds
 {
-	public interface IProcessor
+    /// <summary>
+    /// Abstract base implementation of <see cref="IProcessor"/>.
+    /// </summary>
+    /// <remarks>
+    /// Would be implementors of <see cref="IProcessor"/> should inherit this class instead to be
+    /// shielded from potential changes to the <see cref="IProcessor"/> interface.
+    /// </remarks>
+	public abstract class ProcessorBase : IProcessor
 	{
-		void Initialize(int batchSize, int sleepDurationInSeconds);
-		void Start();
-		void RequestStop();
-	}
+		private volatile bool _stopRequested;
 
-	public abstract class ProcessorBase<TItem> : IProcessor
-	{
-		private volatile bool _shouldStop;
-		private int _batchSize;
-		private int _sleepDurationInMilliseconds;
-		private const int _snoozeIntervalInMilliseconds = 100;
-		private Thread _processThread;
+        protected ProcessorBase()
+        {
+        }
 
-		public virtual void Initialize(int batchSize, int sleepDurationInSeconds)
-		{
-			_batchSize = batchSize;
-			_sleepDurationInMilliseconds = sleepDurationInSeconds * 1000;
-			_processThread = new Thread(Process);
-		}
+        #region IProcessor Members
 
-		public void Start()
-		{
-			_processThread.Start();
-		}
+        void IProcessor.Run()
+        {
+            RunCore();
+        }
 
-		public void RequestStop()
-		{
-			_shouldStop = true;
-			_processThread.Join();
-		}
+        void IProcessor.RequestStop()
+        {
+            _stopRequested = true;
+        }
 
-		public abstract IList<TItem> GetNextBatch(int batchSize);
-		public abstract void ProcessItem(TItem item);
+        #endregion
 
-		#region Private Helpers
+        /// <summary>
+        /// Implements the main logic of the processor.
+        /// </summary>
+        /// <remarks>
+        /// Implementation is expected to run indefinitely but must poll the
+        /// <see cref="StopRequested"/> property and exit in a timely manner when true.
+        /// </remarks>
+        protected abstract void RunCore();
 
-		private void Process()
-		{
-			while (_shouldStop == false)
-			{
-				IList<TItem> items = GetNextBatch(_batchSize);
-
-				if (items.Count == 0 && _shouldStop == false)
-					Sleep();
-
-				foreach (TItem item in items)
-				{
-					ProcessItem(item);
-					if (_shouldStop)
-						break;
-				}
-			}
-		}
-
-		private void Sleep()
-		{
-			int sleepTimeInMilliseconds = 0;
-
-			while (sleepTimeInMilliseconds < _sleepDurationInMilliseconds)
-			{
-				Thread.Sleep(_snoozeIntervalInMilliseconds);
-				if (_shouldStop)
-					break;
-
-				sleepTimeInMilliseconds += _snoozeIntervalInMilliseconds;
-			}
-		}
-
-		#endregion
+        /// <summary>
+        /// Gets a value indicating whether this processor has been requested to terminate.
+        /// </summary>
+        protected bool StopRequested
+        {
+            get { return _stopRequested; }
+        }
 	}
 }

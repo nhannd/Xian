@@ -7,12 +7,15 @@ using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
-	public class ImageAvailabilityProcedureProcessor : ProcessorBase<Procedure>
+	public class ImageAvailabilityProcedureProcessor : QueueProcessor<Procedure>
 	{
 		private IImageAvailabilityUpdateStrategy _updateStrategy;
+        private ImageAvailabilityShredSettings _settings;
 
-		public override void Initialize(int batchSize, int sleepDurationInSeconds)
+        internal ImageAvailabilityProcedureProcessor(ImageAvailabilityShredSettings settings)
+            :base(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds))
 		{
+            _settings = settings;
 			try
 			{
 				_updateStrategy = (IImageAvailabilityUpdateStrategy)(new ImageAvailabilityUpdateStrategyExtensionPoint()).CreateExtension();
@@ -21,11 +24,9 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			{
 				_updateStrategy = new DefaultImageAvailabilityUpdateStrategy();
 			}
-
-			base.Initialize(batchSize, sleepDurationInSeconds);
 		}
 
-		public override IList<Procedure> GetNextBatch(int batchSize)
+		protected override IList<Procedure> GetNextBatch(int batchSize)
 		{
 			IList<Procedure> procedures;
 
@@ -54,7 +55,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			return procedures;
 		}
 
-		public override void ProcessItem(Procedure procedure)
+		protected override void ProcessItem(Procedure procedure)
 		{
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 			{
@@ -79,12 +80,15 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 		}
 	}
 
-	public class ImageAvailabilityWorkQueueItemProcessor : ProcessorBase<WorkQueueItem>
+    public class ImageAvailabilityWorkQueueItemProcessor : QueueProcessor<WorkQueueItem>
 	{
 		private IImageAvailabilityUpdateStrategy _updateStrategy;
+        private ImageAvailabilityShredSettings _settings;
 
-		public override void Initialize(int batchSize, int sleepDurationInSeconds)
+        internal ImageAvailabilityWorkQueueItemProcessor(ImageAvailabilityShredSettings settings)
+            : base(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds))
 		{
+            _settings = settings;
 			try
 			{
 				_updateStrategy = (IImageAvailabilityUpdateStrategy)(new ImageAvailabilityUpdateStrategyExtensionPoint()).CreateExtension();
@@ -93,11 +97,9 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			{
 				_updateStrategy = new DefaultImageAvailabilityUpdateStrategy();
 			}
+	    }
 
-			base.Initialize(batchSize, sleepDurationInSeconds);
-		}
-
-		public override IList<WorkQueueItem> GetNextBatch(int batchSize)
+		protected override IList<WorkQueueItem> GetNextBatch(int batchSize)
 		{
 			IList<WorkQueueItem> items;
 
@@ -130,7 +132,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			return items;
 		}
 
-		public override void ProcessItem(WorkQueueItem item)
+		protected override void ProcessItem(WorkQueueItem item)
 		{
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 			{
@@ -146,8 +148,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				{
 					ExceptionLogger.Log("ImageAvailabilityProcessor.ProcessWorkQueueItems", e);
 
-					ShredsSettings settings = new ShredsSettings();
-					item.ScheduledTime = DateTime.Now.AddMinutes(settings.ImageAvailabilityNextScheduledTimeForErrorInMinutes);
+					item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForErrorInMinutes);
 					item.FailureCount++;
 					item.FailureDescription = e.Message;
 				}

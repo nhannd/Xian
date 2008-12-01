@@ -7,13 +7,8 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class ImageAvailabilityShred : RisShredBase
 	{
-		private readonly ImageAvailabilityProcedureProcessor _procedureProcessor;
-		private readonly ImageAvailabilityWorkQueueItemProcessor _workQueueItemProcessor;
-
 		public ImageAvailabilityShred()
 		{
-			_procedureProcessor = new ImageAvailabilityProcedureProcessor();
-			_workQueueItemProcessor = new ImageAvailabilityWorkQueueItemProcessor();
 		}
 
 		public override string GetDisplayName()
@@ -28,9 +23,12 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 		protected override IList<IProcessor> GetProcessors()
 		{
-			List<IProcessor> processors = new List<IProcessor>();
-			processors.Add(_procedureProcessor);
-			processors.Add(_workQueueItemProcessor);
+            ImageAvailabilityShredSettings settings = new ImageAvailabilityShredSettings();
+            IProcessor[] processors = new IProcessor[] {
+                new ImageAvailabilityProcedureProcessor(settings),
+                new ImageAvailabilityWorkQueueItemProcessor(settings)
+            };
+
 			return processors;
 		}
 	}

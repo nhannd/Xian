@@ -41,10 +41,24 @@
     <Compile Include="ImageAvailability\DefaultImageAvailabilityUpdateStrategy.cs" />
     <Compile Include="ImageAvailability\IImageAvailabilityUpdateStrategy.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityProcessor.cs" />
+    <Compile Include="ImageAvailability\ImageAvailabilityShredSettings.cs" />
+    <Compile Include="ImageAvailability\ImageAvailabilityShredSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ImageAvailabilityShredSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ImageAvailability\ImageAvailabilityShred.cs" />
+    <Compile Include="IProcessor.cs" />
     <Compile Include="Publication\PublicationProcessor.cs" />
     <Compile Include="Publication\PublicationShred.cs" />
-    <Compile Include="Publication\PublicationStepMailFaxProcessor.cs" />
+    <Compile Include="Publication\PublicationShredSettings.cs" />
+    <Compile Include="Publication\PublicationShredSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PublicationShredSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Publication\MailFaxAction.cs" />
+    <Compile Include="QueueProcessor.cs" />
     <Compile Include="ShredsSettings.cs" />
     <Compile Include="ShredsSettings.Designer.cs">
       <DependentUpon>ShredsSettings.settings</DependentUpon>
@@ -99,6 +113,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ImageAvailability\ImageAvailabilityShredSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImageAvailabilityShredSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Publication\PublicationShredSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PublicationShredSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ShredsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ShredsSettings.Designer.cs</LastGenOutput>
