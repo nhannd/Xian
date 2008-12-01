@@ -7,7 +7,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Ris.Shreds.Publication
 {
 	/// <summary>
 	/// Defines the interface for processing publication step after it is published.

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Server.ShredHost;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class ImageAvailabilityShred : RisShredBase

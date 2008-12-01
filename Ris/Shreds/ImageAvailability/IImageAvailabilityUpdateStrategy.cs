@@ -2,7 +2,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	public interface IImageAvailabilityUpdateStrategy
 	{

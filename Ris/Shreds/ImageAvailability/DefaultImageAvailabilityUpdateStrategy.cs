@@ -8,7 +8,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	/// <summary>
 	/// The default update strategy does not depend on the presence of MPPS from the modality.  The strategy queries DICOM 
@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Shreds
 
 			if (hasIncompleteDicomSeries)
 			{
-				procedure.ImageAvailability = ImageAvailability.N;
+                procedure.ImageAvailability = Healthcare.ImageAvailability.N;
 			}
 			else
 			{
@@ -68,13 +68,13 @@ namespace ClearCanvas.Ris.Shreds
 
 				// Compare recorded result with the result from Dicom Query 
 				if (studiesNotFound || numberOfInstancesFromDicomServer == 0)
-					procedure.ImageAvailability = ImageAvailability.Z;
+                    procedure.ImageAvailability = Healthcare.ImageAvailability.Z;
 				else if (numberOfInstancesFromDicomServer < numberOfInstancesFromDocumentation)
-					procedure.ImageAvailability = ImageAvailability.P;
+                    procedure.ImageAvailability = Healthcare.ImageAvailability.P;
 				else if (numberOfInstancesFromDicomServer == numberOfInstancesFromDocumentation)
-					procedure.ImageAvailability = ImageAvailability.C;
+                    procedure.ImageAvailability = Healthcare.ImageAvailability.C;
 				else
-					procedure.ImageAvailability = ImageAvailability.N;
+                    procedure.ImageAvailability = Healthcare.ImageAvailability.N;
 			}
 
 			// update WorkQueueItem Status and the next ScheduledTime
@@ -83,16 +83,16 @@ namespace ClearCanvas.Ris.Shreds
 				// ImageAvailability.X should never get pass into this method
 				// case Healthcare.ImageAvailability.X:
 				//     break;
-				case ImageAvailability.N:
+                case Healthcare.ImageAvailability.N:
 					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForUnknownAvailabilityInMinutes);
 					break;
-				case ImageAvailability.Z:
+                case Healthcare.ImageAvailability.Z:
 					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForZeroAvailabilityInMinutes);
 					break;
-				case ImageAvailability.P:
+                case Healthcare.ImageAvailability.P:
 					item.ScheduledTime = DateTime.Now.AddMinutes(settings.DefaultImageAvailabilityUpdateStrategyNextScheduledTimeForPartialAvailabilityInMinutes);
 					break;
-				case ImageAvailability.C:
+                case Healthcare.ImageAvailability.C:
 					item.Status = WorkQueueStatus.CM;
 					break;
 				default:

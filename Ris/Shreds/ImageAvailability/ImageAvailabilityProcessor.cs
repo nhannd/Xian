@@ -5,7 +5,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	public class ImageAvailabilityProcedureProcessor : ProcessorBase<Procedure>
 	{
@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Shreds
 					// Find a list of procedures that match the criteria
 					ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
 					criteria.Status.EqualTo(ProcedureStatus.IP);
-					criteria.ImageAvailability.EqualTo(ImageAvailability.X);
+					criteria.ImageAvailability.EqualTo(Healthcare.ImageAvailability.X);
 
 					SearchResultPage page = new SearchResultPage(0, batchSize);
 					procedures = scope.Context.GetBroker<IProcedureBroker>().Find(criteria, page);
@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Shreds
 					_updateStrategy.ScheduleWorkQueueItem(procedure, context);
 
 					// Set this to Not Available so the worklist item doesn't get scheduled again for this procedure
-					procedure.ImageAvailability = ImageAvailability.N;
+                    procedure.ImageAvailability = Healthcare.ImageAvailability.N;
 				}
 				catch (Exception e)
 				{

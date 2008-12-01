@@ -38,19 +38,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultImageAvailabilityUpdateStrategy.cs" />
-    <Compile Include="ImageAvailabilityProcessor.cs" />
-    <Compile Include="PublicationStepMailFaxProcessor.cs" />
-    <Compile Include="PublicationProcessor.cs" />
-    <Compile Include="PublicationShred.cs" />
+    <Compile Include="ImageAvailability\DefaultImageAvailabilityUpdateStrategy.cs" />
+    <Compile Include="ImageAvailability\IImageAvailabilityUpdateStrategy.cs" />
+    <Compile Include="ImageAvailability\ImageAvailabilityProcessor.cs" />
+    <Compile Include="ImageAvailability\ImageAvailabilityShred.cs" />
+    <Compile Include="Publication\PublicationProcessor.cs" />
+    <Compile Include="Publication\PublicationShred.cs" />
+    <Compile Include="Publication\PublicationStepMailFaxProcessor.cs" />
     <Compile Include="ShredsSettings.cs" />
     <Compile Include="ShredsSettings.Designer.cs">
       <DependentUpon>ShredsSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ImageAvailabilityShred.cs" />
-    <Compile Include="IImageAvailabilityUpdateStrategy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProcessorBase.cs" />
     <Compile Include="RisShredBase.cs" />
