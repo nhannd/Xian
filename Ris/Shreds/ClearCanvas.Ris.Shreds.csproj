@@ -38,8 +38,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImageAvailability\DefaultImageAvailabilityUpdateStrategy.cs" />
-    <Compile Include="ImageAvailability\IImageAvailabilityUpdateStrategy.cs" />
+    <Compile Include="ImageAvailability\DefaultImageAvailabilityStrategy.cs" />
+    <Compile Include="ImageAvailability\IImageAvailabilityStrategy.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityProcessor.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityShredSettings.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityShredSettings.Designer.cs">

@@ -16,45 +16,26 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	/// added together.  The NumberOfSeriesRelatedInstances from all the DicomSeries in an order are also added as a different 
 	/// sum.  The ImageAvailability of all procedures in the order are updated based on the comparison of these two sums.
 	/// </summary>
-	public class DefaultImageAvailabilityUpdateStrategy : IImageAvailabilityUpdateStrategy
+	public class DefaultImageAvailabilityStrategy : IImageAvailabilityStrategy
 	{
-		private const string ProcedureOIDKey = "ProcedureOID";
         private readonly ImageAvailabilityShredSettings _settings;
 
-        public DefaultImageAvailabilityUpdateStrategy()
+        public DefaultImageAvailabilityStrategy()
         {
             _settings = new ImageAvailabilityShredSettings();
         }
 
-		#region IImageAvailabilityUpdateStrategy Members
+		#region IImageAvailabilityStrategy Members
 
-		public string ScheduledWorkQueueItemType
+		public Healthcare.ImageAvailability ComputeProcedureImageAvailability(Procedure procedure, IReadContext context)
 		{
-			get { return "Image Availability"; }
-		}
-
-		public WorkQueueItem ScheduleWorkQueueItem(Procedure p, IPersistenceContext context)
-		{
-			WorkQueueItem item = new WorkQueueItem(this.ScheduledWorkQueueItemType);
-            item.ExpirationTime = DateTime.Now.AddHours(_settings.ExpirationTimeInHours);
-			item.ExtendedProperties.Add(ProcedureOIDKey, p.GetRef().Serialize());
-			context.Lock(item, DirtyState.New);
-
-			return item;
-		}
-
-		public void Update(WorkQueueItem item, IPersistenceContext context)
-		{
-			EntityRef procedureRef = new EntityRef(item.ExtendedProperties[ProcedureOIDKey]);
-			Procedure procedure = context.Load<Procedure>(procedureRef, EntityLoadFlags.Proxy);
-
 			// Find the number of instances recorded in the DicomSeries
 			bool hasIncompleteDicomSeries;
 			int numberOfInstancesFromDocumentation = QueryDocumentation(procedure.Order, out hasIncompleteDicomSeries);
 
 			if (hasIncompleteDicomSeries)
 			{
-                procedure.ImageAvailability = Healthcare.ImageAvailability.N;
+                return Healthcare.ImageAvailability.N;
 			}
 			else
 			{
@@ -70,35 +51,13 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 				// Compare recorded result with the result from Dicom Query 
 				if (studiesNotFound || numberOfInstancesFromDicomServer == 0)
-                    procedure.ImageAvailability = Healthcare.ImageAvailability.Z;
+                    return Healthcare.ImageAvailability.Z;
 				else if (numberOfInstancesFromDicomServer < numberOfInstancesFromDocumentation)
-                    procedure.ImageAvailability = Healthcare.ImageAvailability.P;
+                    return Healthcare.ImageAvailability.P;
 				else if (numberOfInstancesFromDicomServer == numberOfInstancesFromDocumentation)
-                    procedure.ImageAvailability = Healthcare.ImageAvailability.C;
+                    return Healthcare.ImageAvailability.C;
 				else
-                    procedure.ImageAvailability = Healthcare.ImageAvailability.N;
-			}
-
-			// update WorkQueueItem Status and the next ScheduledTime
-			switch (procedure.ImageAvailability)
-			{
-				// ImageAvailability.X should never get pass into this method
-				// case Healthcare.ImageAvailability.X:
-				//     break;
-                case Healthcare.ImageAvailability.N:
-                    item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForUnknownAvailabilityInMinutes));
-					break;
-                case Healthcare.ImageAvailability.Z:
-                    item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForZeroAvailabilityInMinutes));
-					break;
-                case Healthcare.ImageAvailability.P:
-                    item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForPartialAvailabilityInMinutes));
-					break;
-                case Healthcare.ImageAvailability.C:
-					item.Complete();
-					break;
-				default:
-					break;
+                    return Healthcare.ImageAvailability.N;
 			}
 		}
 
