@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate.Hql;
+using ClearCanvas.Common;
+using System;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -19,14 +22,23 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
 			query.SelectDistinct = true;
 
-			return DoQuery(query);
+			return ExecuteHql<string>(query);
+		}
+
+		public IList<WorkQueueItem> GetPendingItems(string type, int maxItems)
+		{
+			HqlQuery query = new HqlQuery("from WorkQueueItem item");
+			query.Conditions.Add(new HqlCondition("item.Type = ?", type));
+			query.Conditions.Add(new HqlCondition("item.Status = ?", WorkQueueStatus.PN));
+
+			DateTime now = Platform.Time;
+			query.Conditions.Add(new HqlCondition("item.ScheduledTime is null or item.ScheduledTime < ?", now));
+			query.Conditions.Add(new HqlCondition("item.ExpirationTime is null or item.ExpirationTime > ?", now));
+			query.Page = new SearchResultPage(0, maxItems);
+
+			return ExecuteHql<WorkQueueItem>(query);
 		}
 
 		#endregion
-
-		protected IList<string> DoQuery(HqlQuery query)
-		{
-			return ExecuteHql<string>(query);
-		}
 	}
 }

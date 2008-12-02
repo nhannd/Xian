@@ -6,15 +6,15 @@
     </id>
     <version name="Version" column="Version_"/>
     
-    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true"/>
-    <property name="ScheduledTime" column="ScheduledTime_" type="DateTime" not-null="true"/>
+    <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="ScheduledTime" column="ScheduledTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
     <property name="ExpirationTime" column="ExpirationTime_" type="DateTime"/>
-    <property name="User" column="User_" type="String"/>
-    <property name="Type" column="Type_" type="String" not-null="true"/>
-    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.WorkQueueStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-    <property name="ProcessedTime" column="ProcessedTime_" type="DateTime"/>
-    <property name="FailureCount" column="FailureCount_" type="int" not-null="true"/>
-    <property name="FailureDescription" column="FailureDescription_" type="String" length="1024" not-null="false"/>
+    <property name="User" column="User_" type="String" access="nosetter.camelcase-underscore"/>
+    <property name="Type" column="Type_" type="String" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.WorkQueueStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="ProcessedTime" column="ProcessedTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    <property name="FailureCount" column="FailureCount_" type="int" not-null="true" access="nosetter.camelcase-underscore"/>
+    <property name="FailureDescription" column="FailureDescription_" type="String" length="1024" not-null="false" access="nosetter.camelcase-underscore"/>
 
     <map name="ExtendedProperties" lazy="true" table="WorkQueueExtendedProperty_">
       <key column="WorkQueueOID_"/>

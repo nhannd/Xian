@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	public class DefaultImageAvailabilityUpdateStrategy : IImageAvailabilityUpdateStrategy
 	{
 		private const string ProcedureOIDKey = "ProcedureOID";
-        private ImageAvailabilityShredSettings _settings;
+        private readonly ImageAvailabilityShredSettings _settings;
 
         public DefaultImageAvailabilityUpdateStrategy()
         {
@@ -86,16 +86,16 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				// case Healthcare.ImageAvailability.X:
 				//     break;
                 case Healthcare.ImageAvailability.N:
-                    item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForUnknownAvailabilityInMinutes);
+                    item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForUnknownAvailabilityInMinutes));
 					break;
                 case Healthcare.ImageAvailability.Z:
-                    item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForZeroAvailabilityInMinutes);
+                    item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForZeroAvailabilityInMinutes));
 					break;
                 case Healthcare.ImageAvailability.P:
-                    item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForPartialAvailabilityInMinutes);
+                    item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForPartialAvailabilityInMinutes));
 					break;
                 case Healthcare.ImageAvailability.C:
-					item.Status = WorkQueueStatus.CM;
+					item.Complete();
 					break;
 				default:
 					break;

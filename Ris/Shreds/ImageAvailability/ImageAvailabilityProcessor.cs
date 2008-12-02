@@ -47,7 +47,6 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				catch (Exception e)
 				{
 					ExceptionLogger.Log("ImageAvailabilityProcessor.NextBatchOfProcedures", e);
-					scope.Dispose();
 					procedures = new List<Procedure>();
 				}
 			}
@@ -107,24 +106,13 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			{
 				try
 				{
-					DateTime now = DateTime.Now;
-
-					// Find a list of procedures that match the criteria
-					WorkQueueItemSearchCriteria criteria = new WorkQueueItemSearchCriteria();
-					criteria.Type.EqualTo(_updateStrategy.ScheduledWorkQueueItemType);
-					criteria.Status.EqualTo(WorkQueueStatus.PN);
-					criteria.ExpirationTime.MoreThan(now);
-					criteria.ScheduledTime.LessThan(now);
-
-					SearchResultPage page = new SearchResultPage(0, batchSize);
-					items = scope.Context.GetBroker<IWorkQueueItemBroker>().Find(criteria, page);
+					items = scope.Context.GetBroker<IWorkQueueItemBroker>().GetPendingItems(_updateStrategy.ScheduledWorkQueueItemType, batchSize);
 
 					scope.Complete();
 				}
 				catch (Exception e)
 				{
 					ExceptionLogger.Log("ImageAvailabilityProcessor.NextBatchOfWorkQueueItems", e);
-					scope.Dispose();
 					items = new List<WorkQueueItem>();
 				}
 			}
@@ -147,14 +135,8 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				catch (Exception e)
 				{
 					ExceptionLogger.Log("ImageAvailabilityProcessor.ProcessWorkQueueItems", e);
-
-					item.ScheduledTime = DateTime.Now.AddMinutes(_settings.NextScheduledTimeForErrorInMinutes);
-					item.FailureCount++;
-					item.FailureDescription = e.Message;
-				}
-				finally
-				{
-					item.ProcessedTime = DateTime.Now;
+					item.Fail(e.Message);
+					item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForErrorInMinutes));
 				}
 
 				scope.Complete();

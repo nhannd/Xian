@@ -420,12 +420,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
 			foreach (PublishRecipientDetail detail in request.Recipients)
             {
-				MailFaxWorkQueueItem.Schedule(
+				WorkQueueItem item = MailFaxWorkQueueItem.Create(
 					order.AccessionNumber,
 					request.ReportRef,
 					detail.PractitionerRef,
-					detail.ContactPointRef,
-					this.PersistenceContext);
+					detail.ContactPointRef);
+
+				PersistenceContext.Lock(item, DirtyState.New);
             }
 			return new SendReportToQueueResponse();
         }

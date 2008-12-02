@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 		public ResubmitWorkQueueItemResponse ResubmitWorkQueueItem(ResubmitWorkQueueItemRequest request)
 		{
 			WorkQueueItem item = this.PersistenceContext.Load<WorkQueueItem>(request.WorkQueueItemRef);
-			item.Resubmit();
+			item.Reschedule();
 			this.PersistenceContext.SynchState();
 			return new ResubmitWorkQueueItemResponse(new WorkQueueItemAssembler().CreateWorkQueueItemSummary(item, this.PersistenceContext));
 		}

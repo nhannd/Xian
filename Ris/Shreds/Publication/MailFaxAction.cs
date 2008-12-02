@@ -16,12 +16,13 @@ namespace ClearCanvas.Ris.Shreds.Publication
 		{
 			foreach (ResultRecipient recipient in step.Procedure.Order.ResultRecipients)
 			{
-				MailFaxWorkQueueItem.Schedule(
+				WorkQueueItem item = MailFaxWorkQueueItem.Create(
 					step.Procedure.Order.AccessionNumber,
 					step.ReportPart.Report.GetRef(),
 					recipient.PractitionerContactPoint.Practitioner.GetRef(),
-					recipient.PractitionerContactPoint.GetRef(),
-					context);
+					recipient.PractitionerContactPoint.GetRef());
+
+				context.Lock(item, DirtyState.New);
 			}
 		}
 

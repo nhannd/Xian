@@ -13,8 +13,8 @@ namespace ClearCanvas.Ris.Shreds
 	public abstract class RisShredBase : Shred
 	{
 		private bool _isStarted = false;
-        private List<IProcessor> _processors = new List<IProcessor>();
-        private List<Thread> _processorThreads = new List<Thread>();
+        private readonly List<IProcessor> _processors = new List<IProcessor>();
+        private readonly List<Thread> _processorThreads = new List<Thread>();
 
         private readonly TimeSpan _shutDownTimeOut = new TimeSpan(0, 0, 60);
 
@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Shreds
         /// </summary>
         /// <param name="processor"></param>
         /// <returns></returns>
-        private Thread StartProcessorThread(IProcessor processor)
+        private static Thread StartProcessorThread(IProcessor processor)
         {
             Thread thread = new Thread(
                 delegate()
