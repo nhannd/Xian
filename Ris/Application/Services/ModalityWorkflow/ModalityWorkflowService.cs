@@ -359,13 +359,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Documentation.Accept))
 				return new CanCompleteOrderDocumentationResponse(false, false);
 
-			// order documentation can be completed if all modality steps have been terminated
 			Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
+			// order documentation can be completed if all modality steps have been terminated
 			bool allModalityStepsTerminated = CollectionUtils.TrueForAll(order.Procedures,
 				delegate(Procedure p) { return AreAllModalityStepsTerminated(p); });
 
-			bool alreadyCompleted = CollectionUtils.Contains(order.Procedures,
+			// order documentation is already completed if all procedures have a completed documentation step
+			bool alreadyCompleted = CollectionUtils.TrueForAll(order.Procedures,
 				delegate(Procedure p) { return p.DocumentationProcedureStep != null && p.DocumentationProcedureStep.IsTerminated; });
 
 			return new CanCompleteOrderDocumentationResponse(
@@ -399,8 +400,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 						// bug #3037: schedule the interpretation for the performed time, which may be earlier than the current time 
 						// in downtime mode
 						interpretationStep.Schedule(procedure.PerformedTime);
+						interpSteps.Add(interpretationStep);
 					}
-					interpSteps.Add(interpretationStep);
 				}
 			}
 
