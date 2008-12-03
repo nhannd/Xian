@@ -32,8 +32,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			query.Conditions.Add(new HqlCondition("item.Status = ?", WorkQueueStatus.PN));
 
 			DateTime now = Platform.Time;
-			query.Conditions.Add(new HqlCondition("item.ScheduledTime is null or item.ScheduledTime < ?", now));
-			query.Conditions.Add(new HqlCondition("item.ExpirationTime is null or item.ExpirationTime > ?", now));
+			query.Conditions.Add(new HqlCondition("(item.ScheduledTime is null or item.ScheduledTime < ?)", now));
+			query.Conditions.Add(new HqlCondition("(item.ExpirationTime is null or item.ExpirationTime > ?)", now));
 			query.Page = new SearchResultPage(0, maxItems);
 
 			return ExecuteHql<WorkQueueItem>(query);
