@@ -73,11 +73,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public string SeriesNumber
 		{
 			get { return _dicomSeries.SeriesNumber; }
+			set
+			{
+				_dicomSeries.SeriesNumber = value;
+				this.Modified = true;
+			}
 		}
 
 		public string SeriesDescription
 		{
 			get { return _dicomSeries.SeriesDescription; }
+			set
+			{
+				_dicomSeries.SeriesDescription = value;
+				this.Modified = true;
+			}
 		}
 
 		[ValidateGreaterThan(0)]

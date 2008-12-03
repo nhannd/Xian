@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_seriesInstanceUID.DataBindings.Add("Value", _component, "SeriesInstanceUID", true, DataSourceUpdateMode.OnPropertyChanged);
 			_seriesNumber.DataBindings.Add("Value", _component, "SeriesNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_seriesDescription.DataBindings.Add("Value", _component, "SeriesDescription", true, DataSourceUpdateMode.OnPropertyChanged);
-			_numberOfSeriesRelatedInstance.DataBindings.Add("Value", _component, "NumberOfSeriesRelatedInstances", true, DataSourceUpdateMode.OnPropertyChanged);
+			_numberOfImages.DataBindings.Add("Value", _component, "NumberOfSeriesRelatedInstances", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}

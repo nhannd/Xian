@@ -50,14 +50,6 @@ namespace ClearCanvas.Ris.Client.Workflow
     {
         public DicomSeriesTable()
         {
-			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Study Instance UID",
-				delegate(DicomSeriesDetail detail) { return detail.SeriesNumber; },
-				1.0f));
-
-			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Series Instance UID",
-				delegate(DicomSeriesDetail detail) { return detail.SeriesNumber; },
-				1.0f));
-
 			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Series Number",
                 delegate(DicomSeriesDetail detail) { return detail.SeriesNumber; }, 
                 0.5f));
@@ -66,9 +58,17 @@ namespace ClearCanvas.Ris.Client.Workflow
                 delegate(DicomSeriesDetail detail) { return detail.SeriesDescription; }, 
                 1.0f));
 
-            this.Columns.Add(new TableColumn<DicomSeriesDetail, int>("Number of Instances",
+            this.Columns.Add(new TableColumn<DicomSeriesDetail, int>("Number of Images",
                 delegate(DicomSeriesDetail detail) { return detail.NumberOfSeriesRelatedInstances; }, 
                 0.5f));
+
+			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Study Instance UID",
+				delegate(DicomSeriesDetail detail) { return detail.StudyInstanceUID; },
+				1.0f));
+
+			this.Columns.Add(new TableColumn<DicomSeriesDetail, string>("Series Instance UID",
+				delegate(DicomSeriesDetail detail) { return detail.SeriesInstanceUID; },
+				1.0f));
 		}
     }
 
@@ -78,18 +78,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class PerformedProcedureDicomSeriesComponent : SummaryComponentBase<DicomSeriesDetail, DicomSeriesTable>, IPerformedStepEditorPage
 	{
 		private readonly IPerformedStepEditorContext _context;
-		private List<DicomSeriesDetail> _dicomSeries;
 
 		public PerformedProcedureDicomSeriesComponent(IPerformedStepEditorContext context)
 		{
 			_context = context;
-			_dicomSeries = new List<DicomSeriesDetail>();
 			_context.SelectedPerformedStepChanged += OnSelectedPerformedStepChanged;
 		}
 
 		private void OnSelectedPerformedStepChanged(object sender, System.EventArgs e)
 		{
-			_dicomSeries = _context.SelectedPerformedStep.DicomSeries;
 			this.Table.Items.Clear();
 			this.Table.Items.AddRange(_context.SelectedPerformedStep.DicomSeries);
 		}
@@ -112,20 +109,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		protected override bool SupportsPaging
 		{
 			get { return false; }
-		}
-
-		/// <summary>
-		/// Override this method to perform custom initialization of the action model,
-		/// such as adding permissions or adding custom actions.
-		/// </summary>
-		/// <param name="model"></param>
-		protected override void InitializeActionModel(AdminActionModel model)
-		{
-			base.InitializeActionModel(model);
-
-			model.Add.Enabled = true;
-			model.Edit.Enabled = true;
-			model.Delete.Enabled = true;
 		}
 
 		/// <summary>
@@ -157,7 +140,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(detail);
-				_dicomSeries.Add(detail);
 				return true;
 			}
 
@@ -203,7 +185,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			foreach (DicomSeriesDetail item in items)
 			{
 				deletedItems.Add(item);
-				_dicomSeries.Remove(item);
 			}
 
 			return deletedItems.Count > 0;
@@ -226,7 +207,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void Save()
 		{
-			_context.SelectedPerformedStep.DicomSeries = _dicomSeries;
+			if(_context.SelectedPerformedStep != null)
+			{
+				_context.SelectedPerformedStep.DicomSeries = new List<DicomSeriesDetail>(this.Table.Items);
+			}
 		}
 
 		public Path Path
