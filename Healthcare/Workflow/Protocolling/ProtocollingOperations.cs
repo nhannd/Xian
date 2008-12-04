@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Protocolling
 {
@@ -186,7 +187,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 					replacementAssignmentStep.Assign(reassignToStaff);
 				}
 
-				replacementAssignmentStep.Schedule(DateTime.Now);
+				replacementAssignmentStep.Schedule(Platform.Time);
 			}
 
 			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)
@@ -336,7 +337,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 				ProtocolAssignmentStep approvalStep = new ProtocolAssignmentStep(assignmentStep.Protocol);
 				assignmentStep.Procedure.AddProcedureStep(approvalStep);
 
-				approvalStep.Schedule(DateTime.Now);
+				approvalStep.Schedule(Platform.Time);
 				if (supervisor == null)
 				{
 					// Use previously supervisor set in previous operation if it exists.
