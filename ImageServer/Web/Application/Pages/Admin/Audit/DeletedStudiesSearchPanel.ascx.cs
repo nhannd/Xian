@@ -2,14 +2,34 @@ using System;
 using System.Globalization;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit
 {
+    public class DeletedStudyViewDetailsClickedEventArgs:EventArgs
+    {
+        private DeletedStudyInfo _deletedStudyInfo;
+        public DeletedStudyInfo DeletedStudyInfo
+        {
+            get { return _deletedStudyInfo; }
+            set { _deletedStudyInfo = value; }
+        }
+    }
+
     public partial class DeletedStudiesSearchPanel : UserControl
     {
-        
+        private EventHandler<DeletedStudyViewDetailsClickedEventArgs> _viewDetailsClicked;
+
+        public event EventHandler<DeletedStudyViewDetailsClickedEventArgs> ViewDetailsClicked
+        {
+            add { _viewDetailsClicked += value; }
+            remove { _viewDetailsClicked -= value; }
+        }
+
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -60,6 +80,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit
             DataBind();
         }
 
+        protected void ViewDetails(object sender, ImageClickEventArgs e)
+        {
+            DeletedStudyViewDetailsClickedEventArgs args = new DeletedStudyViewDetailsClickedEventArgs();
+            args.DeletedStudyInfo = SearchResultGridView1.SelectedItem;
+            EventsHelper.Fire(_viewDetailsClicked, this, args);
+        }
     }
 
 }

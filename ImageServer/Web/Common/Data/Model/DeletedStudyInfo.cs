@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.Model
 {
     public class DeletedStudyInfo
     {
+        private object _key;
         private string _studyInstanceUid;
         private string _patientsName;
         private string _patientId;
@@ -13,6 +15,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
         private string _studyDate;
         private string _partitionAE;
         private string _studyDescription;
+        private string _deletedFolderPath;
+        private string _reasonForDeletion;
+        private DateTime _deleteTime;
+        private ServerEntityKey _archiveLocation;
 
         public string StudyInstanceUid
         {
@@ -54,6 +60,36 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
         {
             get { return _studyDescription; }
             set { _studyDescription = value; }
+        }
+
+        public object Key
+        {
+            get { return _key; }
+            set { _key = value; }
+        }
+
+        public string DeletedFolderPath
+        {
+            get { return _deletedFolderPath; }
+            set { _deletedFolderPath = value; }
+        }
+
+        public string ReasonForDeletion
+        {
+            get { return _reasonForDeletion; }
+            set { _reasonForDeletion = value; }
+        }
+
+        public DateTime DeleteTime
+        {
+            get { return _deleteTime; }
+            set { _deleteTime = value; }
+        }
+
+        public ServerEntityKey ArchiveLocation
+        {
+            get { return _archiveLocation; }
+            set { _archiveLocation = value; }
         }
     }
 }

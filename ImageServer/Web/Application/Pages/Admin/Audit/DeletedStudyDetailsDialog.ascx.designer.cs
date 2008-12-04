@@ -12,21 +12,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
     
     
     /// <summary>
-    /// DeletedStudies class.
+    /// DeletedStudyDetailsDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class DeletedStudies {
+    public partial class DeletedStudyDetailsDialog {
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// ModalDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
+        
+        /// <summary>
+        /// Panel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel3;
+        
+        /// <summary>
+        /// StudyDetailView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DetailsView StudyDetailView;
         
         /// <summary>
         /// Panel1 control.
@@ -38,21 +56,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// SearchPanel control.
+        /// OKButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudiesSearchPanel SearchPanel;
-        
-        /// <summary>
-        /// DetailsDialogd control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudyDetailsDialog DetailsDialogd;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
     }
 }

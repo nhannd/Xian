@@ -181,6 +181,13 @@
     <Compile Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx.designer.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx.cs">
+      <DependentUpon>DeletedStudyDetailsDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx.designer.cs">
+      <DependentUpon>DeletedStudyDetailsDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Audit\SearchResultGridView.ascx.cs">
       <DependentUpon>SearchResultGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -966,6 +973,7 @@
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Admin\Audit\DeletedStudies.aspx" />
     <Content Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx" />
     <Content Include="Pages\Admin\Audit\SearchResultGridView.ascx" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BaseAdminPage.aspx" />

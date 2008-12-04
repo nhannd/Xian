@@ -25,12 +25,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             set { _accessionNumber  = value; }
         }
 
-        public IList<DeletedStudyInfo> Studies
+        public DeletedStudyInfo  Find(object key)
         {
-            get
-            {
-                return _studies;
-            }
+            return CollectionUtils.SelectFirst<DeletedStudyInfo>(_studies,
+                delegate(DeletedStudyInfo info)
+                    {
+                        return info.Key.Equals(key);
+                    });
         }
 
         public string PatientId
@@ -112,6 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public static DeletedStudyInfo CreateDeletedStudyInfo(StudyDeleteRecord record)
         {
             DeletedStudyInfo info = new DeletedStudyInfo();
+            info.Key = record.GetKey().Key;
             info.StudyInstanceUid = record.StudyInstanceUid;
             info.PatientsName = record.PatientsName;
             info.AccessionNumber = record.AccessionNumber;
@@ -119,6 +121,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             info.StudyDate = record.StudyDate;
             info.PartitionAE = record.ServerPartitionAE;
             info.StudyDescription = record.StudyDescription;
+            info.DeletedFolderPath = record.BackupPath;
+            info.ReasonForDeletion = record.Reason;
+            info.DeleteTime = record.Timestamp;
+            info.ArchiveLocation = record.ArchiveStorageKey;
+
             return info;
         }
     }

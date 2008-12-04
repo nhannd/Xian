@@ -3,18 +3,20 @@
     Title="Audit Deleted Studies" %>
 
 <%@ Register Src="DeletedStudiesSearchPanel.ascx" TagName="DeletedStudiesSearchPanel" TagPrefix="localAsp" %>
+<%@ Register Src="DeletedStudyDetailsDialog.ascx" TagName="DetailsDialog" TagPrefix="localAsp" %>
 
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">Find Deleted Studies</asp:Content>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
-
-
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
             <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel">
                 <localAsp:DeletedStudiesSearchPanel ID="SearchPanel" runat="server"/>
             </asp:Panel>
+            
         </ContentTemplate>
+      
     </asp:UpdatePanel>
-    
+      <localAsp:DetailsDialog runat="server" ID="DetailsDialogd" />
 </asp:Content>
+

@@ -1,6 +1,7 @@
 using System;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit
 {
@@ -24,6 +25,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit
             }
         }
 
+        public DeletedStudyInfo SelectedItem
+        {
+            get
+            {
+                return _dataSource.Find(ListControl.SelectedValue);
+            }
+        }
+
         public ObjectDataSource DataSourceContainer
         {
             get
@@ -36,6 +45,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit
         {
             base.OnInit(e);
             DataSourceContainer.ObjectCreated += DataSourceContainer_ObjectCreated;
+            DataSourceContainer.Selected += new ObjectDataSourceStatusEventHandler(DataSourceContainer_Selected);
+        }
+
+        void DataSourceContainer_Selected(object sender, ObjectDataSourceStatusEventArgs e)
+        {
+            
         }
 
         void DataSourceContainer_ObjectCreated(object sender, ObjectDataSourceEventArgs e)

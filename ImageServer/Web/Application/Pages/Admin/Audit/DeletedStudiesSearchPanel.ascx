@@ -76,7 +76,7 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <!-- toolbar buttons section -->
+                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewDetails" />                                        
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
@@ -100,12 +100,16 @@
                     </asp:TableCell>
                 </asp:TableRow>
             </asp:Table>
+            
+           
     </ContentTemplate>
     <Triggers>
         <asp:AsyncPostBackTrigger ControlID="SearchButton" EventName="Click" />
     </Triggers>
 
 </asp:UpdatePanel>
+ 
+
 
 
                                 

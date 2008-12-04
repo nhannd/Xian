@@ -18,7 +18,7 @@
 					Width="100%" EmptyDataText=""
 					CellPadding="0"  DataSourceID="DataSource"
 					SelectionMode="Multiple" PageSize="25" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-					BorderWidth="0px" HorizontalAlign="Left">
+					BorderWidth="0px" HorizontalAlign="Left" DataKeyNames="Key">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
