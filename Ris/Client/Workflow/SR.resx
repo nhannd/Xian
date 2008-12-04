@@ -342,6 +342,9 @@
   <data name="ExceptionReconcilePatientProfiles" xml:space="preserve">
     <value>Unable to reconcile patient profiles</value>
   </data>
+  <data name="FormatContinuousWorkflowDescription" xml:space="preserve">
+    <value>{0} from the "{1}" worklist</value>
+  </data>
   <data name="FormatProtocolFolderName" xml:space="preserve">
     <value>Protocolling from the "{0}" worklist</value>
   </data>

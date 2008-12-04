@@ -736,6 +736,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} from the &quot;{1}&quot; worklist.
+        /// </summary>
+        internal static string FormatContinuousWorkflowDescription {
+            get {
+                return ResourceManager.GetString("FormatContinuousWorkflowDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protocolling from the &quot;{0}&quot; worklist.
         /// </summary>
         internal static string FormatProtocolFolderName {

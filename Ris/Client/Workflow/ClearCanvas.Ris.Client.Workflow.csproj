@@ -71,9 +71,13 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="ReportEditorComponentBase.cs" />
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
     <Compile Include="TestTranscriptionTool.cs" />
+    <Compile Include="TranscriptionComponent.cs" />
+    <Compile Include="TranscriptionComponentWorklistItemManager.cs" />
     <Compile Include="TranscriptionDocument.cs" />
+    <Compile Include="TranscriptionEditorComponent.cs" />
     <Compile Include="TranscriptionSettings.cs" />
     <Compile Include="TranscriptionSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -173,6 +177,7 @@
     <Compile Include="PerformingWorkflowFolderSystem.cs" />
     <Compile Include="PerformingWorkflowFolderSystemBase.cs" />
     <Compile Include="PerformingWorklistTable.cs" />
+    <Compile Include="WorklistItemManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

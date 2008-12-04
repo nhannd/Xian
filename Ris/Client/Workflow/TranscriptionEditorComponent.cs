@@ -35,24 +35,27 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="ReportEditorComponent"/>
+	/// Extension point for views onto <see cref="TranscriptionEditorComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public class ReportEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class TranscriptionEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	[AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
-	public class ReportEditorComponent : ReportEditorComponentBase<IReportEditorContext, ReportEditorCloseReason>, IReportEditor
+	/// <summary>
+	/// TranscriptionEditorComponent class.
+	/// </summary>
+	[AssociateView(typeof(TranscriptionEditorComponentViewExtensionPoint))]
+	public class TranscriptionEditorComponent : ReportEditorComponentBase<ITranscriptionEditorContext, TranscriptionEditorCloseReason>, ITranscriptionEditor
 	{
-		public ReportEditorComponent(IReportEditorContext context)
+		public TranscriptionEditorComponent(ITranscriptionEditorContext context)
 			: base(context)
 		{
 		}
 
 		protected override string PreviewUrl
 		{
-			get { return WebResourcesSettings.Default.ReportPreviewPageUrl; }
+			get { return WebResourcesSettings.Default.TranscriptionPreviewPageUrl; }
 		}
 	}
 }

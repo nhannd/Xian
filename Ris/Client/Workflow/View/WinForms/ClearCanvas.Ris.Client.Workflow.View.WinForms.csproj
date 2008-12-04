@@ -162,6 +162,7 @@
       <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReportEditorComponentView.cs" />
+    <Compile Include="ReportEditorComponentViewBase.cs" />
     <Compile Include="ReportingComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -188,6 +189,20 @@
       <DependentUpon>PerformingDocumentationOrderDetailsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PerformingDocumentationOrderDetailsComponentView.cs" />
+    <Compile Include="TranscriptionComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TranscriptionComponentControl.Designer.cs">
+      <DependentUpon>TranscriptionComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TranscriptionComponentView.cs" />
+    <Compile Include="RichTextReportEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RichTextReportEditorComponentControl.Designer.cs">
+      <DependentUpon>RichTextReportEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TranscriptionEditorComponentView.cs" />
     <Compile Include="VisitDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -344,6 +359,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TranscriptionComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TranscriptionComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RichTextReportEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RichTextReportEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -29,30 +29,54 @@
 
 #endregion
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
+using System.ComponentModel;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="ReportEditorComponent"/>
+	/// Provides a Windows Forms user-interface for <see cref="TranscriptionEditorComponent"/>.
 	/// </summary>
-	[ExtensionPoint]
-	public class ReportEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public partial class RichTextReportEditorComponentControl : ApplicationComponentUserControl
 	{
-	}
+		private readonly IReportEditorComponent _component;
+		private readonly CannedTextSupport _cannedTextSupport;
 
-	[AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
-	public class ReportEditorComponent : ReportEditorComponentBase<IReportEditorContext, ReportEditorCloseReason>, IReportEditor
-	{
-		public ReportEditorComponent(IReportEditorContext context)
-			: base(context)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public RichTextReportEditorComponentControl(IReportEditorComponent component)
+			: base(component)
 		{
+			_component = component;
+			InitializeComponent();
+
+			_richText.DataBindings.Add("Text", _component, "EditorText", true, DataSourceUpdateMode.OnPropertyChanged);
+			_cannedTextSupport = new CannedTextSupport(_richText, _component.CannedTextLookupHandler);
+
+			if (_component.PreviewVisible)
+			{
+				Control reportPreview = (Control)_component.ReportPreviewHost.ComponentView.GuiElement;
+				reportPreview.Dock = DockStyle.Fill;
+				_splitContainer.Panel1.Controls.Add(reportPreview);
+				_splitContainer.Panel1Collapsed = false;
+			}
+			else
+			{
+				_splitContainer.Panel1Collapsed = true;
+			}
+
+			((INotifyPropertyChanged)_component).PropertyChanged += _component_PropertyChanged;
 		}
 
-		protected override string PreviewUrl
+		void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			get { return WebResourcesSettings.Default.ReportPreviewPageUrl; }
+			if (e.PropertyName == "EditorText")
+			{
+				_richText.Text = _component.EditorText;
+			}
 		}
 	}
 }

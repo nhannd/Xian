@@ -29,30 +29,50 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="ReportEditorComponent"/>
-	/// </summary>
-	[ExtensionPoint]
-	public class ReportEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{
-	}
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="TranscriptionComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(TranscriptionComponentViewExtensionPoint))]
+    public class TranscriptionComponentView : WinFormsView, IApplicationComponentView
+    {
+        private TranscriptionComponent _component;
+        private TranscriptionComponentControl _control;
 
-	[AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
-	public class ReportEditorComponent : ReportEditorComponentBase<IReportEditorContext, ReportEditorCloseReason>, IReportEditor
-	{
-		public ReportEditorComponent(IReportEditorContext context)
-			: base(context)
-		{
-		}
+        #region IApplicationComponentView Members
 
-		protected override string PreviewUrl
-		{
-			get { return WebResourcesSettings.Default.ReportPreviewPageUrl; }
-		}
-	}
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (TranscriptionComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new TranscriptionComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

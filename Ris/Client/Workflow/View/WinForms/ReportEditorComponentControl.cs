@@ -51,9 +51,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             InitializeComponent();
             _component = component;
 
-            Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
-            reportEditor.Dock = DockStyle.Fill;
-            _browserSplitContainer.Panel1.Controls.Add(reportEditor);
+			//Control reportEditor = (Control)_component.ReportEditorHost.ComponentView.GuiElement;
+			//reportEditor.Dock = DockStyle.Fill;
+			//_browserSplitContainer.Panel1.Controls.Add(reportEditor);
 
             Control reportPreview = (Control)_component.ReportPreviewHost.ComponentView.GuiElement;
             reportPreview.Dock = DockStyle.Fill;

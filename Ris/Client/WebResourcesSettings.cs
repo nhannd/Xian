@@ -363,6 +363,15 @@ namespace ClearCanvas.Ris.Client
 
 		#region Transcription Settings
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("transcription/report-preview.htm")]
+		public string TranscriptionPreviewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["TranscriptionPreviewPageUrl"]));
+			}
+		}
 		#endregion
 	}
 

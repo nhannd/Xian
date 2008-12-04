@@ -1,4 +1,3 @@
-using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -19,10 +18,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_worklistItem = worklistItem;
 			_folderName = context.SelectedFolder.Name;
 
-			if(context.SelectedFolder is ReportingWorkflowFolder)
+			if(context.SelectedFolder is TranscriptionWorkflowFolder)
 			{
-				_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
-				_worklistClassName = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistClassName;
+				_worklistRef = ((TranscriptionWorkflowFolder)context.SelectedFolder).WorklistRef;
+				_worklistClassName = ((TranscriptionWorkflowFolder)context.SelectedFolder).WorklistClassName;
 			}
 			else
 			{
@@ -38,8 +37,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override IApplicationComponent GetComponent()
 		{
-			throw new NotImplementedException();
-			//return new TranscriptionComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName);
+			return new TranscriptionComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName);
 		}
 
 		public static string GetTitle(ReportingWorklistItem item)

@@ -30,29 +30,14 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client.Workflow
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="ReportEditorComponent"/>
+	/// Provides a Windows Forms view onto <see cref="TranscriptionEditorComponent"/>.
 	/// </summary>
-	[ExtensionPoint]
-	public class ReportEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	[ExtensionOf(typeof(TranscriptionEditorComponentViewExtensionPoint))]
+	public class TranscriptionEditorComponentView : ReportEditorComponentViewBase
 	{
-	}
-
-	[AssociateView(typeof(ReportEditorComponentViewExtensionPoint))]
-	public class ReportEditorComponent : ReportEditorComponentBase<IReportEditorContext, ReportEditorCloseReason>, IReportEditor
-	{
-		public ReportEditorComponent(IReportEditorContext context)
-			: base(context)
-		{
-		}
-
-		protected override string PreviewUrl
-		{
-			get { return WebResourcesSettings.Default.ReportPreviewPageUrl; }
-		}
 	}
 }
