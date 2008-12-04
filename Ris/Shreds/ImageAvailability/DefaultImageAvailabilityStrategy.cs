@@ -11,9 +11,9 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	/// <summary>
-	/// The default update strategy does not depend on the presence of MPPS from the modality.  The strategy queries DICOM 
-	/// server for a list of studies with a given accession number.  The NumberOfStudyRelatedInstances for all studies are
-	/// added together.  The NumberOfSeriesRelatedInstances from all the DicomSeries in an order are also added as a different 
+	/// The strategy queries DICOM server for a list of studies with a given accession number.
+    /// The NumberOfStudyRelatedInstances for all studies are added together.
+    /// The NumberOfSeriesRelatedInstances from all the DicomSeries in an order are also added as a different 
 	/// sum.  The ImageAvailability of all procedures in the order are updated based on the comparison of these two sums.
 	/// </summary>
 	public class DefaultImageAvailabilityStrategy : IImageAvailabilityStrategy
@@ -42,22 +42,37 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 				bool studiesNotFound;
 				int numberOfInstancesFromDicomServer;
 
-				numberOfInstancesFromDicomServer = QueryDicomServer(procedure.Order,
+                numberOfInstancesFromDicomServer = QueryDicomServer(procedure.Order,
                     _settings.DicomCallingAETitle,
                     _settings.DicomServerAETitle,
                     _settings.DicomServerHost,
                     _settings.DicomServerPort,
-					out studiesNotFound);
+                    out studiesNotFound);
 
 				// Compare recorded result with the result from Dicom Query 
 				if (studiesNotFound || numberOfInstancesFromDicomServer == 0)
+                {
                     return Healthcare.ImageAvailability.Z;
-				else if (numberOfInstancesFromDicomServer < numberOfInstancesFromDocumentation)
+                }
+                else if (numberOfInstancesFromDicomServer < numberOfInstancesFromDocumentation)
+                {
                     return Healthcare.ImageAvailability.P;
-				else if (numberOfInstancesFromDicomServer == numberOfInstancesFromDocumentation)
+                }
+                else if (numberOfInstancesFromDicomServer == numberOfInstancesFromDocumentation)
+                {
                     return Healthcare.ImageAvailability.C;
-				else
+                }
+                else if (numberOfInstancesFromDicomServer > numberOfInstancesFromDocumentation)
+                {
+                    // there are more images on the PACS than were recorded
+                    // by the tech - perhaps documentation is incomplete
+                    // consider this an 'indeterminate' scenario
                     return Healthcare.ImageAvailability.N;
+                }
+                else
+                {
+                    return Healthcare.ImageAvailability.N;
+                }
 			}
 		}
 

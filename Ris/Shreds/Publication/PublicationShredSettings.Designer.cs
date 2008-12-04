@@ -23,7 +23,11 @@ namespace ClearCanvas.Ris.Shreds.Publication {
             }
         }
         
+        /// <summary>
+        /// Number of items to pull from queue per read
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Number of items to pull from queue per read")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("20")]
         public int BatchSize {
@@ -32,12 +36,16 @@ namespace ClearCanvas.Ris.Shreds.Publication {
             }
         }
         
+        /// <summary>
+        /// Number of seconds to sleep when queue is empty
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Number of seconds to sleep when queue is empty")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public int SleepDurationInSeconds {
+        public int EmptyQueueSleepTime {
             get {
-                return ((int)(this["SleepDurationInSeconds"]));
+                return ((int)(this["EmptyQueueSleepTime"]));
             }
         }
     }

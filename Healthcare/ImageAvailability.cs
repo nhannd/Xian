@@ -16,31 +16,31 @@ namespace ClearCanvas.Healthcare {
 		/// <summary>
 		/// Unknown
 		/// </summary>
-		[EnumValue("Unknown")]
+		[EnumValue("Unknown", Description = "Image availability has not been checked.")]
 		X,
 
 		/// <summary>
-		/// Not Available
+		/// Indeterminate
 		/// </summary>
-		[EnumValue("Not Available")]
+        [EnumValue("Indeterminate", Description = "The system does not have enough information to determine image availability.")]
 		N,
 
 		/// <summary>
 		/// Zero
 		/// </summary>
-		[EnumValue("Zero")]
+		[EnumValue("Zero", Description = "No images are available.")]
 		Z,
 
 		/// <summary>
 		/// Partial
 		/// </summary>
-		[EnumValue("Partial")]
+		[EnumValue("Partial", Description = "Some images are available, but not as many as expected.")]
 		P,
 
 		/// <summary>
 		/// Complete
 		/// </summary>
-		[EnumValue("Complete")]
+		[EnumValue("Complete", Description = "All images are available.")]
 		C
 	}
 }

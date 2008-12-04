@@ -4,6 +4,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
@@ -24,7 +25,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 		public static WorkQueueItem CreateWorkQueueItem(Procedure p, TimeSpan expirationTime)
 		{
 			WorkQueueItem item = new WorkQueueItem(WorkQueueItemType);
-			item.ExpirationTime = DateTime.Now.Add(expirationTime);
+			item.ExpirationTime = Platform.Time.Add(expirationTime);
 			item.ExtendedProperties.Add(ProcedureOIDKey, p.GetRef().Serialize());
 
 			return item;
@@ -62,7 +63,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
         private readonly ImageAvailabilityShredSettings _settings;
 
         internal ImageAvailabilityProcedureProcessor(ImageAvailabilityShredSettings settings)
-            :base(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds))
+            :base(settings.BatchSize, TimeSpan.FromSeconds(settings.EmptyQueueSleepTime))
 		{
             _settings = settings;
 		}
@@ -104,7 +105,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 					context.Lock(procedure);
 
 					// create the workqueue item
-					TimeSpan expirationTime = TimeSpan.FromHours(_settings.ExpirationTimeInHours);
+					TimeSpan expirationTime = TimeSpan.FromHours(_settings.ExpirationTime);
 					WorkQueueItem item = ImageAvailabilityWorkQueue.CreateWorkQueueItem(procedure, expirationTime);
 					context.Lock(item, DirtyState.New);
 
@@ -133,7 +134,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
         private readonly ImageAvailabilityShredSettings _settings;
 
         internal ImageAvailabilityWorkQueueItemProcessor(ImageAvailabilityShredSettings settings)
-            : base(settings.BatchSize, TimeSpan.FromSeconds(settings.SleepDurationInSeconds))
+            : base(settings.BatchSize, TimeSpan.FromSeconds(settings.EmptyQueueSleepTime))
 		{
             _settings = settings;
 			try
@@ -205,8 +206,21 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 				if(error == null)
 				{
+                    // update the procedure
 					procedure.ImageAvailability = imageAvailability;
-					UpdateWorkQueueItem(item, procedure.ImageAvailability);
+
+                    // reschedule or complete the workitem
+                    DateTime nextPollTime = Platform.Time.Add(GetPollingInterval(imageAvailability));
+                    if (nextPollTime > item.ExpirationTime)
+                    {
+                        // item would expire prior to next poll time, so consider it complete
+                        item.Complete();
+                    }
+                    else
+                    {
+                        // reschedule item
+                        item.Reschedule(nextPollTime);
+                    }
 				}
 				else
 				{
@@ -214,35 +228,29 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 					item.Fail(error.Message);
 
 					// reschedule the work item so that it will be retried
-					item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForErrorInMinutes));
+                    item.Reschedule(Platform.Time.AddSeconds(_settings.PollingIntervalForError));
 				}
 
 				scope.Complete();
 			}
 		}
 
-		private void UpdateWorkQueueItem(WorkQueueItem item, Healthcare.ImageAvailability imageAvailability)
-		{
-			switch (imageAvailability)
-			{
-				// ImageAvailability.X should never get pass into this method
-				// case Healthcare.ImageAvailability.X:
-				//     break;
-				case Healthcare.ImageAvailability.N:
-					item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForUnknownAvailabilityInMinutes));
-					break;
-				case Healthcare.ImageAvailability.Z:
-					item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForZeroAvailabilityInMinutes));
-					break;
-				case Healthcare.ImageAvailability.P:
-					item.Reschedule(DateTime.Now.AddMinutes(_settings.NextScheduledTimeForPartialAvailabilityInMinutes));
-					break;
-				case Healthcare.ImageAvailability.C:
-					item.Complete();
-					break;
-				default:
-					break;
-			}
-		}
+        private TimeSpan GetPollingInterval(Healthcare.ImageAvailability imageAvailability)
+        {
+            switch (imageAvailability)
+            {
+                case Healthcare.ImageAvailability.N:
+                    return TimeSpan.FromSeconds(_settings.PollingIntervalForIndeterminate);
+                case Healthcare.ImageAvailability.Z:
+                    return TimeSpan.FromSeconds(_settings.PollingIntervalForZero);
+                case Healthcare.ImageAvailability.P:
+                    return TimeSpan.FromSeconds(_settings.PollingIntervalForPartial);
+                case Healthcare.ImageAvailability.C:
+                    return TimeSpan.FromSeconds(_settings.PollingIntervalForComplete);
+                default:
+                    // ImageAvailability.X should never get pass into this method
+                    throw new NotImplementedException();
+            }
+        }
 	}
 }
