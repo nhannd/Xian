@@ -14,7 +14,10 @@
 				<siteMapNode url="~/Pages/Configure/Devices/Default.aspx" title="$Resources: Titles, Devices"  />
 				<siteMapNode url="~/Pages/Configure/ServerPartitions/Default.aspx" title="$Resources: Titles, ServerPartitions"  />
 				<siteMapNode url="~/Pages/Configure/FileSystems/Default.aspx" title="$Resources: Titles, FileSystems"  />
-  			<siteMapNode url="~/Pages/Configure/ServerRules/Default.aspx" title="$Resources: Titles, ServerRules" />
+				<siteMapNode url="" title="Audit">
+					<siteMapNode url="~/Pages/Admin/Audit/DeletedStudies.aspx" title="Deleted Studies"  />
+				</siteMapNode>
+			<siteMapNode url="~/Pages/Configure/ServerRules/Default.aspx" title="$Resources: Titles, ServerRules" />
         <siteMapNode url="~/Pages/Configure/ServiceLocks/Default.aspx" title="$Resources: Titles, ServiceScheduling" />
         <siteMapNode url="~/Pages/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" />
     </siteMapNode>

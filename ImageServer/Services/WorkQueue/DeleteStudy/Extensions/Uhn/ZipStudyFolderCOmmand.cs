@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using Ionic.Utils.Zip;
 
@@ -16,6 +17,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
         public ZipStudyFolderCommand(string source, string dest)
             : base("Zip study folder", true)
         {
+            Platform.CheckForNullReference(source, "source");
+            Platform.CheckForNullReference(dest, "dest");
             _source = source;
             _dest = dest;
         }
@@ -70,7 +73,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
 
         public void Dispose()
         {
-            if (String.IsNullOrEmpty(_destBackup))
+            if (!String.IsNullOrEmpty(_destBackup))
             {
                 if (File.Exists(_destBackup))
                 {

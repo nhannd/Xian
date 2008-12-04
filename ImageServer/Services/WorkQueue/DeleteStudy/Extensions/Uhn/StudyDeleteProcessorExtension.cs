@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
                     StudyDeleteRecordUpdateColumns parms = new StudyDeleteRecordUpdateColumns();
                     parms.Timestamp = Platform.Time;
                     parms.Reason = _context.WorkQueueItem.WorkQueueTypeEnum.LongDescription;
-                    parms.ServerPartitionKey = _context.ServerPartition.GetKey();
+                    parms.ServerPartitionAE = _context.ServerPartition.AeTitle;
                     parms.FilesystemKey = storage.FilesystemKey;
 
                     parms.AccessionNumber = study.AccessionNumber;

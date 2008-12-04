@@ -8,10 +8,10 @@ namespace ClearCanvas.ImageServer.Model
 {
     public partial class StudyDeleteRecord
     {
-        public StudyDeleteRecord(ServerEntity partition, string studyInstanceUid, string accessionNumber, string patientId, string patientName)
+        public StudyDeleteRecord(ServerPartition partition, string studyInstanceUid, string accessionNumber, string patientId, string patientName)
             : base("StudyDeleteRecord")
         {
-            this.ServerPartitionKey = partition.GetKey();
+            this.ServerPartitionAE = partition.AeTitle;
             this.StudyInstanceUid = studyInstanceUid;
             this.Timestamp = Platform.Time;
             this.AccessionNumber = accessionNumber;

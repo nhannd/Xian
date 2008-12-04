@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         private void ReconcileStudy(string command, ServerEntityKey itemKey)
         {
-            Model.StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
+            StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
 
             //Ignore the reconcile command if the item is null.
             if (item == null) return;
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
         {
             StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
-            Model.StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
+            StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
 
             string PatientName = string.Empty;
             string PatientID = string.Empty;;

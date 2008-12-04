@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		{
 			get
 			{
-				if (!_queueStudyStateEnum.Equals(Model.QueueStudyStateEnum.Idle))
+				if (!_queueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
 					return String.Format("{0}, {1}", _studyStatusEnum.Description, _queueStudyStateEnum.Description);
 
 				return _studyStatusEnum.Description;
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 	    public bool IsNearline
 	    {
-            get { return _studyStatusEnum == Model.StudyStatusEnum.Nearline; }
+            get { return _studyStatusEnum == StudyStatusEnum.Nearline; }
 	    }
 
 	    public string StudyInstanceUid

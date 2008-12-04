@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _patientId;
         private System.String _patientsName;
         private System.String _reason;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private System.String _serverPartitionAE;
         private System.String _studyDate;
         private System.String _studyDescription;
         private System.String _studyId;
@@ -117,11 +117,11 @@ namespace ClearCanvas.ImageServer.Model
         get { return _reason; }
         set { _reason = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
+        public System.String ServerPartitionAE
         {
-        get { return _serverPartitionKey; }
-        set { _serverPartitionKey = value; }
+        get { return _serverPartitionAE; }
+        set { _serverPartitionAE = value; }
         }
         [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]

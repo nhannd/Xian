@@ -382,6 +382,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {
 				if (orderBy.Length > 0)
 					sb.AppendFormat("SELECT {0}.*,ROW_NUMBER() OVER({1}) as RowNum FROM {0}", entityName, orderBy);
+                else
+				{
+                    // no OrderBy clause to sort the list, just assign row number to 1 to keep their order as is
+                    sb.AppendFormat("SELECT {0}.*,ROW_NUMBER() OVER( ORDER BY (SELECT 1)) as RowNum FROM {0}", entityName);
+				}
             }
             // Generate an array of the WHERE clauses to be used.
             String[] where = GetWhereSearchCriteria(entityName, criteria, command);

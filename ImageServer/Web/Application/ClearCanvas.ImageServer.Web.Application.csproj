@@ -167,12 +167,40 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies.aspx.cs">
+      <DependentUpon>DeletedStudies.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies.aspx.designer.cs">
+      <DependentUpon>DeletedStudies.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx.cs">
+      <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx.designer.cs">
+      <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\SearchResultGridView.ascx.cs">
+      <DependentUpon>SearchResultGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\SearchResultGridView.ascx.designer.cs">
+      <DependentUpon>SearchResultGridView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Common\BarChart.aspx.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Common\BarChart.aspx.designer.cs">
       <DependentUpon>BarChart.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Common\BaseAdminPage.aspx.cs">
+      <DependentUpon>BaseAdminPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Common\BaseAdminPage.aspx.designer.cs">
+      <DependentUpon>BaseAdminPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Common\BasePage.aspx.cs">
       <DependentUpon>BasePage.aspx</DependentUpon>
@@ -936,7 +964,11 @@
     <Content Include="Helpers\DialogHelper.cs" />
     <Content Include="Helpers\ScriptHelper.cs" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies.aspx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\SearchResultGridView.ascx" />
     <Content Include="Pages\Common\BarChart.aspx" />
+    <Content Include="Pages\Common\BaseAdminPage.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
     <Content Include="Pages\Common\Default.aspx" />
     <Content Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx" />

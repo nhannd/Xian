@@ -76,9 +76,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Reason"] = new EntityUpdateColumn<System.String>("Reason", value); }
         }
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public System.String ServerPartitionAE
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ServerPartitionAE"] = new EntityUpdateColumn<System.String>("ServerPartitionAE", value); }
         }
        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         public System.String StudyDate

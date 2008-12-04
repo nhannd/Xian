@@ -129,15 +129,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Reason"];
             } 
         }
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
+        public ISearchCondition<System.String> ServerPartitionAE
         {
             get
             {
-              if (!SubCriteria.ContainsKey("ServerPartitionKey"))
+              if (!SubCriteria.ContainsKey("ServerPartitionAE"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["ServerPartitionAE"] = new SearchCondition<System.String>("ServerPartitionAE");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+              return (ISearchCondition<System.String>)SubCriteria["ServerPartitionAE"];
             } 
         }
         public ISearchCondition<System.String> StudyDate

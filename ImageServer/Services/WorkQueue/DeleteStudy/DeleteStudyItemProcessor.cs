@@ -143,21 +143,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 }
                 else
                 {
+                    Platform.Log(LogLevel.Info, "Processing {0} (GUID={1})", 
+                        WorkQueueItem.WorkQueueTypeEnum.Description,
+                        WorkQueueItem.Key.Key); 
+                    
                     LoadEntities();
 
                     LoadExtensions();
 
+                    OnDeletingStudy();
+                    
+                    
                     Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'",
                                  StorageLocation.StudyInstanceUid,
                                  Partition.Description);
-
-                    OnDeletingStudy();
-
+                    
                     RemoveFilesystem();
 
                     RemoveDatabase(item);
 
                     OnStudyDeleted();
+
+                    Platform.Log(LogLevel.Info, "{0} is completed. (GUID={1})",
+                        WorkQueueItem.WorkQueueTypeEnum.Description,
+                        WorkQueueItem.Key.Key); 
+                    
 
                 }
                 

@@ -1291,7 +1291,7 @@ CREATE TABLE [dbo].[StudyDeleteRecord](
 	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyDeleteRecord_GUID]  DEFAULT (newid()),
 	[Timestamp] [datetime] NOT NULL,
 	[Reason] [nvarchar](1024) NULL,
-	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[ServerPartitionAE] [varchar(64)] NOT NULL,
 	[FilesystemGUID] [uniqueidentifier] NOT NULL,
 	[ArchiveStorageGUID] [uniqueidentifier] NULL,
 	[BackupPath] [nvarchar](256)  NULL,
@@ -1343,16 +1343,15 @@ CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_PatientsName] ON [dbo].[StudyDel
 (
 	[PatientsName] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
-
-
 GO
-/****** Object:  Index [IX_StudyDeleteRecord_ServerPartition]    Script Date: 11/28/2008 13:27:26 ******/
+
+/****** Object:  Index [IX_StudyDeleteRecord_ServerPartition]    Script Date: 12/04/2008 14:54:55 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_ServerPartition] ON [dbo].[StudyDeleteRecord] 
 (
-	[ServerPartitionGUID] ASC
+	[ServerPartitionAE] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
-
 GO
+
 /****** Object:  Index [IX_StudyDeleteRecord_StudyInstanceUid]    Script Date: 11/28/2008 13:27:35 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_StudyInstanceUid] ON [dbo].[StudyDeleteRecord] 
 (
@@ -1360,13 +1359,12 @@ CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_StudyInstanceUid] ON [dbo].[Stud
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 GO
-/****** Object:  Index [IX_StudyDeleteRecord_StudyInstanceUidServerPartition]    Script Date: 11/28/2008 13:27:42 ******/
+/****** Object:  Index [IX_StudyDeleteRecord_StudyInstanceUidServerPartition]    Script Date: 12/04/2008 14:55:57 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_StudyInstanceUidServerPartition] ON [dbo].[StudyDeleteRecord] 
 (
 	[StudyInstanceUid] ASC,
-	[ServerPartitionGUID] ASC
+	[ServerPartitionAE] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
-
 GO
 /****** Object:  Index [IX_StudyDeleteRecord_Timestamp]    Script Date: 11/28/2008 13:27:49 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_Timestamp] ON [dbo].[StudyDeleteRecord] 
@@ -1374,6 +1372,7 @@ CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_Timestamp] ON [dbo].[StudyDelete
 	[Timestamp] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 GO
+
 
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
@@ -1788,10 +1787,3 @@ IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo
 ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_Filesystem] FOREIGN KEY([FilesystemGUID])
 REFERENCES [dbo].[Filesystem] ([GUID])
 GO
-
-/****** Object:  ForeignKey [FK_StudyDeleteRecord_ServerPartition]    Script Date: 11/30/2008 16:50:28 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_ServerPartition]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
-ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_ServerPartition] FOREIGN KEY([ServerPartitionGUID])
-REFERENCES [dbo].[ServerPartition] ([GUID])
-GO
-
