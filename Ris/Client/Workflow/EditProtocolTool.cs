@@ -83,17 +83,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 			return false;
 		}
 
-		private ProtocollingComponentMode GetMode(ReportingWorklistItem item)
+		private IContinuousWorkflowComponentMode GetMode(ReportingWorklistItem item)
 		{
 			if (item == null)
-				return ProtocollingComponentMode.Review;
+				return ProtocollingComponentModes.Review;
 
 			if (CanCreateProtocol(item))
-				return ProtocollingComponentMode.Assign;
+				return ProtocollingComponentModes.Assign;
 			else if (CanEditProtocol(item))
-				return ProtocollingComponentMode.Edit;
+				return ProtocollingComponentModes.Edit;
 			else
-				return ProtocollingComponentMode.Review;
+				return ProtocollingComponentModes.Review;
 		}
 
 		private bool CanCreateProtocol(ReportingWorklistItem item)

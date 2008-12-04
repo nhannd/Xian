@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#region Private Members
 
 		private readonly ReportingWorklistItem _item;
-		private readonly ProtocollingComponentMode _mode;
+		private readonly IContinuousWorkflowComponentMode _mode;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Constructor
 
-		public ProtocollingComponentDocument(ReportingWorklistItem item, ProtocollingComponentMode mode, IReportingWorkflowItemToolContext context)
+		public ProtocollingComponentDocument(ReportingWorklistItem item, IContinuousWorkflowComponentMode mode, IReportingWorkflowItemToolContext context)
 			: base(null, context.DesktopWindow)
 		{
 			_item = item;

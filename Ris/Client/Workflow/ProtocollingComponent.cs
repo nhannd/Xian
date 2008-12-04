@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
-using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -40,7 +39,6 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -84,9 +82,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ProtocollingComponent(ReportingWorklistItem worklistItem, ProtocollingComponentMode mode, string folderName, EntityRef worklistRef, string worklistClassName)
+		public ProtocollingComponent(ReportingWorklistItem worklistItem, IContinuousWorkflowComponentMode mode, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
-			_worklistItemManager = new ProtocollingComponentWorklistItemManager(worklistItem, mode, folderName, worklistRef, worklistClassName);
+			_worklistItemManager = new ProtocollingComponentWorklistItemManager(folderName, worklistRef, worklistClassName);
+			_worklistItemManager.Initialize(worklistItem, mode);
 			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
 		}
 
@@ -171,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ShowStatusText
 		{
-			get { return _worklistItemManager.ShowStatusText; }
+			get { return _worklistItemManager.StatusTextVisible; }
 		}
 
 		public string ProceduresText
@@ -181,13 +180,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public bool ProtocolNextItem
 		{
-			get { return _worklistItemManager.ProtocolNextItem; }
-			set { _worklistItemManager.ProtocolNextItem = value; }
+			get { return _worklistItemManager.ReportNextItem; }
+			set { _worklistItemManager.ReportNextItem = value; }
 		}
 
 		public bool ProtocolNextItemEnabled
 		{
-			get { return _worklistItemManager.ProtocolNextItemEnabled; }
+			get { return _worklistItemManager.ReportNextItemEnabled; }
 		}
 
 		public ApplicationComponentHost BannerComponentHost

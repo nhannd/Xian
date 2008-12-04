@@ -124,7 +124,6 @@
     </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentDocument.cs" />
-    <Compile Include="ProtocollingComponentMode.cs" />
     <Compile Include="ProtocolReasonComponent.cs" />
     <Compile Include="ProtocolWorkflowFolderSystem.cs" />
     <Compile Include="RandomOrderTool.cs" />
