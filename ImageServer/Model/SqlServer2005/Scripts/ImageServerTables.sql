@@ -1290,8 +1290,8 @@ GO
 CREATE TABLE [dbo].[StudyDeleteRecord](
 	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyDeleteRecord_GUID]  DEFAULT (newid()),
 	[Timestamp] [datetime] NOT NULL,
-	[Reason] [nvarchar](1024) NULL,
-	[ServerPartitionAE] [varchar(64)] NOT NULL,
+	[Reason] [nvarchar] (1024) NULL,
+	[ServerPartitionAE] [varchar] (64) NOT NULL,
 	[FilesystemGUID] [uniqueidentifier] NOT NULL,
 	[ArchiveStorageGUID] [uniqueidentifier] NULL,
 	[BackupPath] [nvarchar](256)  NULL,
