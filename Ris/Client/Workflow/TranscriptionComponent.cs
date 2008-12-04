@@ -111,55 +111,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		ITranscriptionEditor GetEditor(ITranscriptionEditorContext context);
 	}
 
-	///// <summary>
-	///// Defines an interface for providing a custom report editor page with access to the reporting
-	///// context.
-	///// </summary>
-	//public interface ITranscriptionEditorContext : IReportingContext
-	//{
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Verify operation is enabled.
-	//    /// </summary>
-	//    bool CanComplete { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Save operation is enabled.
-	//    /// </summary>
-	//    bool CanSaveReport { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Reject operation is enabled.
-	//    /// </summary>
-	//    bool CanReject { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating the active report part is an addendum.
-	//    /// </summary>
-	//    bool IsAddendum { get; }
-
-	//    /// <summary>
-	//    /// Gets or sets the report content for the active report part.
-	//    /// </summary>
-	//    string ReportContent { get; set; }
-
-	//    /// <summary>
-	//    /// Gets or sets the extended properties for the active report part.
-	//    /// </summary>
-	//    Dictionary<string, string> ExtendedProperties { get; set; }
-
-	//    ///// <summary>
-	//    ///// Gets or sets the supervisor for the active report part.
-	//    ///// </summary>
-	//    //StaffSummary Supervisor { get; set; }
-
-	//    /// <summary>
-	//    /// Allows the report editor to request that the reporting component close.
-	//    /// For example, the report editor may wish to have a microphone button initiate the 'Verify' action.
-	//    /// </summary>
-	//    /// <param name="reason"></param>
-	//    void RequestClose(TranscriptionEditorCloseReason reason);
-	//}
-
 	/// <summary>
 	/// Defines an interface for providing a custom report editor page with access to the reporting
 	/// context.
@@ -208,25 +159,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		Reject
 	}
 
-	///// <summary>
-	///// Defines an interface to a custom report editor.
-	///// </summary>
-	//public interface ITranscriptionEditor
-	//{
-	//    /// <summary>
-	//    /// Gets the report editor application component.
-	//    /// </summary>
-	//    /// <returns></returns>
-	//    IApplicationComponent GetComponent();
-
-	//    /// <summary>
-	//    /// Instructs the report editor to save the report content and any other data.
-	//    /// The report editor may be veto the action by returning false.
-	//    /// </summary>
-	//    /// <param name="reason"></param>
-	//    /// <returns>True to continue with save, or false to veto the operation.</returns>
-	//    bool Save(TranscriptionEditorCloseReason reason);
-	//}
 	public interface ITranscriptionEditor : IReportEditorBase<TranscriptionEditorCloseReason>
 	{
 	}
@@ -367,8 +299,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ChildComponentHost _rightHandComponentContainerHost;
 		private TabComponentContainer _rightHandComponentContainer;
 
-		//private string _proceduresText;
-
 		private bool _canComplete;
 		private bool _canReject;
 		private bool _canSaveReport;
@@ -381,11 +311,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		//private StaffSummary _supervisor;
 		private Dictionary<string, string> _reportPartExtendedProperties;
 
-		//private PriorReportComponent _priorReportComponent;
 		private ReportingOrderDetailViewComponent _orderComponent;
-		//private OrderAdditionalInfoComponent _additionalInfoComponent;
 
-		//private List<IReportingPage> _extensionPages;
 		private event EventHandler _worklistItemChanged;
 
 		/// <summary>
@@ -420,28 +347,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			_orderComponent = new ReportingOrderDetailViewComponent(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order", _orderComponent));
-
-			//_priorReportComponent = new PriorReportComponent(this.WorklistItem);
-			//_rightHandComponentContainer.Pages.Add(new TabPage("Priors", _priorReportComponent));
-
-			//_additionalInfoComponent = new OrderAdditionalInfoComponent(true);
-			//_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
-			//_additionalInfoComponent.HealthcareContext = this.WorklistItem;
-			//_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _additionalInfoComponent));
-
-			//// instantiate all extension pages
-			//_extensionPages = new List<IReportingPage>();
-			//foreach (IReportingPageProvider pageProvider in new ReportingPageProviderExtensionPoint().CreateExtensions())
-			//{
-			//    _extensionPages.AddRange(pageProvider.GetPages(new ReportingContext(this)));
-			//}
-
-			//// add extension pages to container and set initial context
-			//// the container will start those components if the user goes to that page
-			//foreach (IReportingPage page in _extensionPages)
-			//{
-			//    _rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
-			//}
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
@@ -500,11 +405,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get { return _worklistItemManager.StatusTextVisible; }
 		}
-
-		//public string ProceduresText
-		//{
-		//    get { return "Reported Procedure(s): " + _proceduresText; }
-		//}
 
 		public bool TranscribeNextItem
 		{
@@ -781,7 +681,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				try
 				{
 					StartTranscribingWorklistItem();
-					UpdateChildComponents(true);
+					UpdateChildComponents();
 					// notify extension pages that the worklist item has changed
 					EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 				}
@@ -813,13 +713,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 					_report = response.Report;
 					_activeReportPartIndex = response.ReportPartIndex;
 					_orderDetail = response.Order;
-
-					//StringBuilder sb = new StringBuilder();
-					//foreach (ProcedureDetail detail in _report.Procedures)
-					//{
-					//    sb.Append(ProcedureFormat.Format(detail) + ", ");
-					//}
-					//_proceduresText = sb.ToString().TrimEnd(", ".ToCharArray());
 
 					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
 					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
@@ -860,27 +753,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 				item.ProcedureStepRef = response.TranscriptionStepRef;
 			}
 		}
-		private void UpdateChildComponents(bool orderDetailIsCurrent)
+		private void UpdateChildComponents()
 		{
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
-			//_priorReportComponent.WorklistItem = this.WorklistItem;
 			_orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
-
-			if (orderDetailIsCurrent)
-			{
-				//_additionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
-				//_additionalInfoComponent.HealthcareContext = this.WorklistItem;
-			}
-			else
-			{
-				//_additionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
-				//_additionalInfoComponent.HealthcareContext = null;
-			}
 
 			this.Host.Title = ReportDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
-			//NotifyPropertyChanged("ProceduresText");
 		}
 	}
 }

@@ -150,60 +150,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		IReportEditor GetEditor(IReportEditorContext context);
 	}
 
-	///// <summary>
-	///// Defines an interface for providing a custom report editor page with access to the reporting
-	///// context.
-	///// </summary>
-	//public interface IReportEditorContext : IReportingContext
-	//{
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Verify operation is enabled.
-	//    /// </summary>
-	//    bool CanVerify { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Send To Verify operation is enabled.
-	//    /// </summary>
-	//    bool CanSendToBeVerified { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Send To Transcription operation is enabled.
-	//    /// </summary>
-	//    bool CanSendToTranscription { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating whether the Save operation is enabled.
-	//    /// </summary>
-	//    bool CanSaveReport { get; }
-
-	//    /// <summary>
-	//    /// Gets a value indicating the active report part is an addendum.
-	//    /// </summary>
-	//    bool IsAddendum { get; }
-
-	//    /// <summary>
-	//    /// Gets or sets the report content for the active report part.
-	//    /// </summary>
-	//    string ReportContent { get; set; }
-
-	//    /// <summary>
-	//    /// Gets or sets the extended properties for the active report part.
-	//    /// </summary>
-	//    Dictionary<string, string> ExtendedProperties { get; set; }
-
-	//    /// <summary>
-	//    /// Gets or sets the supervisor for the active report part.
-	//    /// </summary>
-	//    StaffSummary Supervisor { get; set; }
-
-	//    /// <summary>
-	//    /// Allows the report editor to request that the reporting component close.
-	//    /// For example, the report editor may wish to have a microphone button initiate the 'Verify' action.
-	//    /// </summary>
-	//    /// <param name="reason"></param>
-	//    void RequestClose(ReportEditorCloseReason reason);
-	//}
-
 	/// <summary>
 	/// Defines an interface for providing a custom report editor page with access to the reporting
 	/// context.
@@ -262,25 +208,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		Verify
 	}
 
-	///// <summary>
-	///// Defines an interface to a custom report editor.
-	///// </summary>
-	//public interface IReportEditor
-	//{
-	//    /// <summary>
-	//    /// Gets the report editor application component.
-	//    /// </summary>
-	//    /// <returns></returns>
-	//    IApplicationComponent GetComponent();
-
-	//    /// <summary>
-	//    /// Instructs the report editor to save the report content and any other data.
-	//    /// The report editor may be veto the action by returning false.
-	//    /// </summary>
-	//    /// <param name="reason"></param>
-	//    /// <returns>True to continue with save, or false to veto the operation.</returns>
-	//    bool Save(ReportEditorCloseReason reason);
-	//}
 	public interface IReportEditor : IReportEditorBase<ReportEditorCloseReason>
 	{
 	}
@@ -453,7 +380,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// </summary>
 		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
 		{
-			_worklistItemManager = new ReportingComponentWorklistItemManager(worklistItem, folderName, worklistRef, worklistClassName);
+			_worklistItemManager = new ReportingComponentWorklistItemManager(folderName, worklistRef, worklistClassName);
+			_worklistItemManager.Initialize(worklistItem);
 			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
 		}
 

@@ -7,6 +7,13 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
+	public enum WorklistItemCompletedResult
+	{
+		Completed,
+		Skipped,
+		Invalid
+	}
+
 	public interface IContinuousWorkflowComponentMode
 	{
 		bool ShouldUnclaim { get; }
@@ -161,7 +168,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if(!_isInitialized)
+				if (!_isInitialized)
 					throw new Exception("Not initialized.");
 
 				return _worklistItem;
@@ -172,7 +179,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			if (result == WorklistItemCompletedResult.Completed)
 				_completedItems++;
-			else if(result == WorklistItemCompletedResult.Skipped)
+			else if (result == WorklistItemCompletedResult.Skipped)
 				_skippedItems.Add(_worklistItem);
 
 			_isInitialItem = false;
@@ -284,11 +291,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool WorklistItemWasPreviouslySkipped(TWorklistItem item)
 		{
-			return CollectionUtils.Contains(_skippedItems,
-			                                delegate(TWorklistItem skippedItem)
-			                                {
-			                                	return skippedItem.AccessionNumber == item.AccessionNumber;
-			                                });
+			return CollectionUtils.Contains(
+				_skippedItems,
+				delegate(TWorklistItem skippedItem)
+				{
+					return skippedItem.AccessionNumber == item.AccessionNumber;
+				});
 		}
 
 		#endregion
