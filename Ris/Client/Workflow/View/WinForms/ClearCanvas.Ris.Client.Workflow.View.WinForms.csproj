@@ -155,12 +155,6 @@
       <DependentUpon>ReconciliationConfirmComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ReconciliationConfirmComponentView.cs" />
-    <Compile Include="ReportEditorComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ReportEditorComponentControl.Designer.cs">
-      <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="ReportEditorComponentView.cs" />
     <Compile Include="ReportEditorComponentViewBase.cs" />
     <Compile Include="ReportingComponentControl.cs">
@@ -345,10 +339,6 @@
     <EmbeddedResource Include="ReassignComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReassignComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReportEditorComponentControl.resx">
-      <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReportingComponentControl.resx">
       <DependentUpon>ReportingComponentControl.cs</DependentUpon>
