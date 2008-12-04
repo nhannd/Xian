@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
             ImageAvailabilityShredSettings settings = new ImageAvailabilityShredSettings();
             IProcessor[] processors = new IProcessor[] {
                 new ImageAvailabilityProcedureProcessor(settings),
-                new ImageAvailabilityWorkQueueItemProcessor(settings)
+                new ImageAvailabilityWorkQueueProcessor(settings)
             };
 
 			return processors;
