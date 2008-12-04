@@ -315,7 +315,6 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Load a DICOM file (as set by the <see cref="Filename"/> property) with the 
         /// default <see cref="DicomReadOptions"/> set.
-        /// the file name to 
         /// </summary>
         /// <remarks>
         /// Note:  If the file does not contain DICM encoded in it, the routine will assume
