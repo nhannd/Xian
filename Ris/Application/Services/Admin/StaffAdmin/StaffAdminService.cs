@@ -150,6 +150,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 				if (affectedUser != null)
 					affectedUser.DisplayName = null;
 
+				//bug #3324: because StaffGroup owns the collection, need to iterate over each group
+				//and manually remove this staff
+				List<StaffGroup> groups = new List<StaffGroup>(item.Groups);
+				foreach (StaffGroup group in groups)
+				{
+					group.RemoveMember(item);
+				}
+
 				broker.Delete(item);
 				PersistenceContext.SynchState();
 				return new DeleteStaffResponse();
