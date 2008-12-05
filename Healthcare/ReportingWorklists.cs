@@ -152,6 +152,23 @@ namespace ClearCanvas.Healthcare
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
 	[WorklistSupportsTimeFilter(false)]
 	[StaticWorklist(true)]
+	[WorklistClassDescription("ReportingReviewTranscriptionWorklistDescription")]
+	public class ReportingReviewTranscriptionWorklist : ReportingWorklist
+	{
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
+		{
+			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStepClass = typeof(TranscriptionReviewStep);
+			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+			return new WorklistItemSearchCriteria[] { criteria };
+		}
+	}
+
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(false)]
+	[StaticWorklist(true)]
 	[WorklistClassDescription("ReportingAwaitingReviewWorklistDescription")]
 	public class ReportingAwaitingReviewWorklist : ReportingWorklist
 	{

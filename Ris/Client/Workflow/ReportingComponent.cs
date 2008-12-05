@@ -1080,7 +1080,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool ClaimAndLinkWorklistItem(ReportingWorklistItem item)
 		{
-			if (item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
+			// no need to claim if the item is not scheduled
+			if (item.ActivityStatus.Code != StepState.Scheduled)
+				return true;
+
+			if (item.ProcedureStepName == StepType.Interpretation)
 			{
 				// if creating a new report, check for linked interpretations
 
@@ -1105,13 +1109,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 					throw;
 				}
 			}
-			else if (item.ProcedureStepName == StepType.Verification && item.ActivityStatus.Code == StepState.Scheduled)
+			else if (item.ProcedureStepName == StepType.Verification)
 			{
 				// start the verification step
 				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
 				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Verify))
 					item.ProcedureStepRef = StartVerification(item);
 			}
+			else if (item.ProcedureStepName == StepType.TranscriptionReview)
+			{
+				// start the transcription review step
+				// note: updating only the ProcedureStepRef is hacky - the service should return an updated item
+				if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create))
+					item.ProcedureStepRef = StartTranscriptionReview(item);
+			}
+
 			return true;
 		}
 
@@ -1211,6 +1223,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			EntityRef result = response.InterpretationStepRef;
 			assignedStaffRef = response.AssignedStaffRef;
+
+			return result;
+		}
+
+		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+		private static EntityRef StartTranscriptionReview(ReportingWorklistItem item)
+		{
+			EntityRef result = null;
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					StartTranscriptionReviewResponse response = service.StartTranscriptionReview(new StartTranscriptionReviewRequest(item.ProcedureStepRef));
+					result = response.TranscriptionReviewStepRef;
+				});
 
 			return result;
 		}

@@ -234,7 +234,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					return false;   // user cancelled out
 			}
 
-			if (item.ProcedureStepName == "Interpretation")
+			if (item.ProcedureStepName == StepType.Transcription || item.ProcedureStepName == StepType.TranscriptionReview)
 			{
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
@@ -242,17 +242,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 						service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item.ProcedureStepRef));
 					});
 			}
-			else if (item.ProcedureStepName == "Verification")
+			else if (item.ProcedureStepName == StepType.Verification)
 			{
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
 					{
 						service.CompleteVerification(new CompleteVerificationRequest(item.ProcedureStepRef));
 					});
-			}
-			else // (item.StepType == "Transcription")
-			{
-				// Not defined
 			}
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));

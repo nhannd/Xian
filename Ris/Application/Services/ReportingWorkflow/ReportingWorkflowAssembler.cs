@@ -54,14 +54,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.PatientClass),
                 domainItem.DiagnosticServiceName,
                 domainItem.ProcedureName,
-				domainItem.ProcedurePortable,
-				EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
+                domainItem.ProcedurePortable,
+                domainItem.HasErrors,
+                EnumUtils.GetEnumValueInfo(domainItem.ProcedureLaterality, context),
                 domainItem.ProcedureStepName,
                 domainItem.Time,
                 EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context),
-				domainItem.ReportPartIndex
+                domainItem.ReportPartIndex
                 );
         }
-
     }
 }

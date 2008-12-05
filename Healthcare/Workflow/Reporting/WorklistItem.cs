@@ -38,12 +38,12 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     public class WorklistItemKey
     {
         private readonly EntityRef _procedureStepRef;
-		private readonly EntityRef _procedureRef;
+        private readonly EntityRef _procedureRef;
 
         public WorklistItemKey(EntityRef procedureStepRef, EntityRef procedureRef)
         {
             _procedureStepRef = procedureStepRef;
-        	_procedureRef = procedureRef;
+            _procedureRef = procedureRef;
         }
 
         public EntityRef ProcedureStepRef
@@ -51,19 +51,18 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             get { return _procedureStepRef; }
         }
 
-    	public EntityRef ProcedureRef
-    	{
-			get { return _procedureRef; }
-    	}
+        public EntityRef ProcedureRef
+        {
+            get { return _procedureRef; }
+        }
     }
 
     public class WorklistItem : WorklistItemBase
     {
         private readonly ActivityStatus _activityStatus;
         private readonly EntityRef _reportRef;
-    	private readonly int _reportPartIndex = -1;
-
-
+        private readonly int _reportPartIndex = -1;
+        private readonly bool _hasErrors;
 
         /// <summary>
         /// Constructor for protocol item (no report)
@@ -81,8 +80,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-			bool procedurePortable,
-			Laterality procedureLaterality,
+            bool procedurePortable,
+            bool hasErrors,
+            Laterality procedureLaterality,
             DateTime? time,
             ActivityStatus activityStatus)
             : base(
@@ -98,12 +98,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
-				procedurePortable,
-				procedureLaterality,
+                procedurePortable,
+                procedureLaterality,
                 time
             )
         {
             _activityStatus = activityStatus;
+            _hasErrors = hasErrors;
         }
 
         /// <summary>
@@ -122,12 +123,12 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-			bool procedurePortable,
-			Laterality procedureLaterality,
-			DateTime? scheduledStartTime,
+            bool procedurePortable,
+            Laterality procedureLaterality,
+            DateTime? scheduledStartTime,
             ActivityStatus activityStatus,
             Report report,
-			ReportPart reportPart)
+            ReportPart reportPart)
             : base(
                 procedureStep,
                 procedure,
@@ -141,51 +142,97 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
-				procedurePortable,
-				procedureLaterality,
+                procedurePortable,
+                procedureLaterality,
                 scheduledStartTime
             )
         {
             _reportRef = report == null ? null : report.GetRef();
             _activityStatus = activityStatus;
-        	_reportPartIndex = reportPart == null ? -1 : reportPart.Index;
+            _reportPartIndex = reportPart == null ? -1 : reportPart.Index;
         }
 
 		/// <summary>
-		/// Constructor for patient search result item.
+		/// Constructor for reporting item (with report and hasErrors flag)
 		/// </summary>
-		/// <param name="patient"></param>
-		/// <param name="profile"></param>
-		/// <param name="mrn"></param>
-		/// <param name="patientName"></param>
 		public WorklistItem(
+			ProcedureStep procedureStep,
+			Procedure procedure,
+			Order order,
 			Patient patient,
 			PatientProfile profile,
 			PatientIdentifier mrn,
-			PersonName patientName)
-			: base(
-			null,
-			null,
-			null,
-			patient,
-			profile,
-			mrn,
-			patientName,
-			null,
-			Healthcare.OrderPriority.R,// technically this should be null, but we don't have that option because its a value type
-			null,
-			null,
-			null,
-			false,// technically this should be null, but we don't have that option because its a value type
-			Laterality.N,// technically this should be null, but we don't have that option because its a value type
-			null)
+			PersonName patientName,
+			string accessionNumber,
+			OrderPriority orderPriority,
+			PatientClassEnum patientClass,
+			string diagnosticServiceName,
+			string procedureName,
+			bool procedurePortable,
+			Laterality procedureLaterality,
+			DateTime? scheduledStartTime,
+			ActivityStatus activityStatus,
+			Report report,
+			ReportPart reportPart,
+			bool hasErrors)
+			: this(
+				procedureStep,
+				procedure,
+				order,
+				patient,
+				profile,
+				mrn,
+				patientName,
+				accessionNumber,
+				orderPriority,
+				patientClass,
+				diagnosticServiceName,
+				procedureName,
+				procedurePortable,
+				procedureLaterality,
+				scheduledStartTime,
+				activityStatus,
+				report,
+				reportPart)
 		{
+			_hasErrors = hasErrors;
 		}
 
 		/// <summary>
-		/// Constructor for procedure search result item.
-		/// </summary>
-		public WorklistItem(
+        /// Constructor for patient search result item.
+        /// </summary>
+        /// <param name="patient"></param>
+        /// <param name="profile"></param>
+        /// <param name="mrn"></param>
+        /// <param name="patientName"></param>
+        public WorklistItem(
+            Patient patient,
+            PatientProfile profile,
+            PatientIdentifier mrn,
+            PersonName patientName)
+            : base(
+            null,
+            null,
+            null,
+            patient,
+            profile,
+            mrn,
+            patientName,
+            null,
+            Healthcare.OrderPriority.R,// technically this should be null, but we don't have that option because its a value type
+            null,
+            null,
+            null,
+            false,// technically this should be null, but we don't have that option because its a value type
+            Laterality.N,// technically this should be null, but we don't have that option because its a value type
+            null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor for procedure search result item.
+        /// </summary>
+        public WorklistItem(
             Procedure procedure,
             Order order,
             Patient patient,
@@ -197,30 +244,29 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             PatientClassEnum patientClass,
             string diagnosticServiceName,
             string procedureName,
-			bool procedurePortable,
-			Laterality procedureLaterality,
+            bool procedurePortable,
+            Laterality procedureLaterality,
             DateTime? time)
-			:base(
-			null,
-			procedure,
-			order,
-			patient,
-			profile,
-			mrn,
-			patientName,
-			accessionNumber,
-			orderPriority,
-			patientClass,
-			diagnosticServiceName,
-			procedureName,
-			procedurePortable,
-			procedureLaterality,
-			time)
+            :base(
+            null,
+            procedure,
+            order,
+            patient,
+            profile,
+            mrn,
+            patientName,
+            accessionNumber,
+            orderPriority,
+            patientClass,
+            diagnosticServiceName,
+            procedureName,
+            procedurePortable,
+            procedureLaterality,
+            time)
         {
-        	
         }
 
-		#region Public Properties
+        #region Public Properties
 
         public EntityRef ReportRef
         {
@@ -232,13 +278,18 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             get { return _activityStatus; }
         }
 
-		/// <summary>
-		/// Gets the report part index, or -1 if there is no report part.
-		/// </summary>
-    	public int ReportPartIndex
-    	{
-			get { return _reportPartIndex; }
-    	}
+        /// <summary>
+        /// Gets the report part index, or -1 if there is no report part.
+        /// </summary>
+        public int ReportPartIndex
+        {
+            get { return _reportPartIndex; }
+        }
+
+        public bool HasErrors
+        {
+            get { return _hasErrors; }
+        }
 
         #endregion
     }

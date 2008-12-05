@@ -178,7 +178,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public void ProceedToNextWorklistItem(WorklistItemCompletedResult result)
 		{
 			if (result == WorklistItemCompletedResult.Completed)
+			{
 				_completedItems++;
+				_skippedItems.Add(_worklistItem);
+			}
 			else if (result == WorklistItemCompletedResult.Skipped)
 				_skippedItems.Add(_worklistItem);
 

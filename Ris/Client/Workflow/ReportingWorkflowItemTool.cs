@@ -41,6 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 {
 	public class StepType
 	{
+		public const string TranscriptionReview = "Transcription Review";
 		public const string Interpretation = "Interpretation";
 		public const string Transcription = "Transcription";
 		public const string Verification = "Verification";

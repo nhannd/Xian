@@ -408,6 +408,12 @@
   <data name="ReportingAdminUnreportedWorklistDescription" xml:space="preserve">
     <value>Lists procedures that have been performed but not yet reported.</value>
   </data>
+  <data name="ReportingReviewTranscriptionWorklist" xml:space="preserve">
+    <value>Review Transcription</value>
+  </data>
+  <data name="ReportingReviewTranscriptionWorklistDescription" xml:space="preserve">
+    <value>Lists procedures with transcriptions that need to be reviewed.</value>
+  </data>
   <data name="ReportingToBeProtocolledWorklist" xml:space="preserve">
     <value>To be Protocolled</value>
   </data>

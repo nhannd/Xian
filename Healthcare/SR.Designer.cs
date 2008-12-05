@@ -934,6 +934,24 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Review Transcription.
+        /// </summary>
+        internal static string ReportingReviewTranscriptionWorklist {
+            get {
+                return ResourceManager.GetString("ReportingReviewTranscriptionWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procedures with transcriptions that need to be reviewed..
+        /// </summary>
+        internal static string ReportingReviewTranscriptionWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingReviewTranscriptionWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To be Protocolled.
         /// </summary>
         internal static string ReportingToBeProtocolledWorklist {

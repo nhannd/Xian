@@ -52,12 +52,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             EnumValueInfo patientClass,
             string diagnosticServiceName,
             string procedureName,
-			bool procedurePortable,
-			EnumValueInfo procedureLaterality,
-			string procedureStepName,
+            bool procedurePortable,
+            bool hasErrors,
+            EnumValueInfo procedureLaterality,
+            string procedureStepName,
             DateTime? time,
             EnumValueInfo activityStatus,
-			int reportPartIndex)
+            int reportPartIndex)
             : base(
                 procedureStepRef,
                 procedureRef,
@@ -71,15 +72,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
                 patientClass,
                 diagnosticServiceName,
                 procedureName,
-				procedurePortable,
-				procedureLaterality,
+                procedurePortable,
+                procedureLaterality,
                 procedureStepName,
                 time
             )
         {
             this.ReportRef = reportRef;
             this.ActivityStatus = activityStatus;
-        	this.ReportPartIndex = reportPartIndex;
+            this.ReportPartIndex = reportPartIndex;
+            this.HasErrors = hasErrors;
         }
 
         [DataMember]
@@ -88,15 +90,18 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [DataMember]
         public EnumValueInfo ActivityStatus;
 
-		[DataMember]
-		public int ReportPartIndex;
+        [DataMember]
+        public int ReportPartIndex;
 
-		/// <summary>
-		/// Gets a value indicating if this worklist item refers to an addendum.
-		/// </summary>
-    	public bool IsAddendumStep
-    	{
-			get { return this.ReportPartIndex > 0; }
-    	}
-	}
+        [DataMember]
+        public bool HasErrors;
+
+        /// <summary>
+        /// Gets a value indicating if this worklist item refers to an addendum.
+        /// </summary>
+        public bool IsAddendumStep
+        {
+            get { return this.ReportPartIndex > 0; }
+        }
+    }
 }

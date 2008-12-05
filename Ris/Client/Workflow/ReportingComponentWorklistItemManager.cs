@@ -21,6 +21,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (worklistItem.ProcedureStepName == StepType.Verification)
 				return ReportingComponentModes.Verify;
 
+			if (worklistItem.ProcedureStepName == StepType.TranscriptionReview)
+				return ReportingComponentModes.ReviewTranscription;
+
 			switch (worklistItem.ActivityStatus.Code)
 			{
 				case StepState.Scheduled:
@@ -45,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public static CreateReportComponentMode Create = new CreateReportComponentMode();
 		public static CreateReportAddendumComponentMode CreateAddendum = new CreateReportAddendumComponentMode();
 		public static EditReportComponentMode Edit = new EditReportComponentMode();
+		public static ReviewTranscriptionReportComponentMode ReviewTranscription = new ReviewTranscriptionReportComponentMode();
 		public static ReviewReportComponentMode Review = new ReviewReportComponentMode();
 		public static VerifyReportComponentMode Verify = new VerifyReportComponentMode();
 	}
@@ -84,6 +88,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class VerifyReportComponentMode : ContinuousWorkflowComponentMode
 	{
 		public VerifyReportComponentMode()
+			: base(false, false, true)
+		{
+		}
+	}
+
+	public class ReviewTranscriptionReportComponentMode : ContinuousWorkflowComponentMode
+	{
+		public ReviewTranscriptionReportComponentMode()
 			: base(false, false, true)
 		{
 		}

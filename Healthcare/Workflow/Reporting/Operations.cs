@@ -134,9 +134,34 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			}
 		}
 
+		public class StartTranscriptionReview : ReportingOperation
+		{
+			public void Execute(TranscriptionReviewStep step, Staff executingStaff)
+			{
+				step.Start(executingStaff);
+			}
+
+			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
+			{
+				// must be an interpretation step
+				if (step.Is<TranscriptionReviewStep>() == false)
+					return false;
+
+				// must be scheduled
+				if (step.State != ActivityStatus.SC)
+					return false;
+
+				// must not be assigned to another staff
+				if (!Equals(step.AssignedStaff, executingStaff))
+					return false;
+
+				return true;
+			}
+		}
+
 		public abstract class CompleteInterpretationBase : ReportingOperation
 		{
-			protected void UpdateStep(InterpretationStep step, Staff executingStaff)
+			protected void UpdateStep(ReportingProcedureStep step, Staff executingStaff)
 			{
 				if (step.PerformingStaff == null)
 					step.Complete(executingStaff);
@@ -150,11 +175,15 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			public override bool CanExecute(ReportingProcedureStep step, Staff executingStaff)
 			{
-				if (step.Is<InterpretationStep>() == false)
+				if (!step.Is<InterpretationStep>() && !step.Is<TranscriptionReviewStep>())
 					return false;
 
-				// must be in progress
-				if (step.State != ActivityStatus.IP)
+				// interpretation steps must be in progress
+				if (step.Is<InterpretationStep>() && step.State != ActivityStatus.IP)
+					return false;
+
+				// transcription review step must not be terminated
+				if (step.Is<TranscriptionReviewStep>() && step.IsTerminated)
 					return false;
 
 				// must not be assigned to someone else
@@ -167,7 +196,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteInterpretationForTranscription : CompleteInterpretationBase
 		{
-			public ReportingProcedureStep Execute(InterpretationStep step, Staff executingStaff, IWorkflow workflow)
+			public ReportingProcedureStep Execute(ReportingProcedureStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				UpdateStep(step, executingStaff);
 
@@ -179,7 +208,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteInterpretationForVerification : CompleteInterpretationBase
 		{
-			public ReportingProcedureStep Execute(InterpretationStep step, Staff executingStaff, IWorkflow workflow)
+			public ReportingProcedureStep Execute(ReportingProcedureStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				UpdateStep(step, executingStaff);
 
@@ -195,7 +224,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 		public class CompleteInterpretationAndVerify : CompleteInterpretationBase
 		{
-			public ReportingProcedureStep Execute(InterpretationStep step, Staff executingStaff, IWorkflow workflow)
+			public ReportingProcedureStep Execute(ReportingProcedureStep step, Staff executingStaff, IWorkflow workflow)
 			{
 				UpdateStep(step, executingStaff);
 

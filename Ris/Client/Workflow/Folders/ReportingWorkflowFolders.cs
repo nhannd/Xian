@@ -75,6 +75,12 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		{
 		}
 
+		[FolderForWorklistClass(WorklistClassNames.ReportingReviewTranscriptionWorklist)]
+		[FolderPath("My Items/Review Transcription")]
+		public class ReviewTranscriptionFolder : ReportingWorkflowFolder
+		{
+		}
+
 		[FolderForWorklistClass(WorklistClassNames.ReportingAwaitingReviewWorklist)]
 		[FolderPath("My Items/Awaiting Review")]
 		public class AwaitingReviewFolder : ReportingWorkflowFolder

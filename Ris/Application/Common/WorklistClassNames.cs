@@ -107,6 +107,9 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string ReportingInTranscriptionWorklist = "ReportingInTranscriptionWorklist";
 
 		[WorklistClassName]
+		public const string ReportingReviewTranscriptionWorklist = "ReportingReviewTranscriptionWorklist";
+
+		[WorklistClassName]
 		public const string ReportingToBeReviewedReportWorklist = "ReportingToBeReviewedReportWorklist";
 
 		[WorklistClassName]

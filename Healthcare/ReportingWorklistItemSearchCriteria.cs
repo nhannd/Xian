@@ -30,7 +30,6 @@
 #endregion
 
 using ClearCanvas.Enterprise.Core;
-using System;
 
 namespace ClearCanvas.Healthcare
 {
@@ -57,6 +56,18 @@ namespace ClearCanvas.Healthcare
                     this.SubCriteria["Protocol"] = new ProtocolSearchCriteria("Protocol");
                 }
                 return (ProtocolSearchCriteria)this.SubCriteria["Protocol"];
+            }
+        }
+
+        public ISearchCondition<bool> HasErrors
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("HasErrors"))
+                {
+                    this.SubCriteria["HasErrors"] = new SearchCondition<bool>("HasErrors");
+                }
+                return (ISearchCondition<bool>)this.SubCriteria["HasErrors"];
             }
         }
     }

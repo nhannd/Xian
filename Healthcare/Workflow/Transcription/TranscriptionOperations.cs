@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
@@ -81,10 +80,11 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 			public void Execute(TranscriptionStep step, Staff performingStaff)
 			{
 				step.Complete();
-				VerificationStep verificationStep = new VerificationStep(step);
-				step.Procedure.AddProcedureStep(verificationStep);
-				verificationStep.Assign(step.ReportPart.Interpreter);
-				verificationStep.Schedule(Platform.Time);
+
+				TranscriptionReviewStep transcriptionReviewStep = new TranscriptionReviewStep(step);
+				step.Procedure.AddProcedureStep(transcriptionReviewStep);
+				transcriptionReviewStep.Assign(step.ReportPart.Interpreter);
+				transcriptionReviewStep.Schedule(Platform.Time);
 			}
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
@@ -104,11 +104,12 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 			public void Execute(TranscriptionStep step, Staff rejectedBy, string reason)
 			{
 				step.Complete();
-				VerificationStep verificationStep = new VerificationStep(step);
-				step.Procedure.AddProcedureStep(verificationStep);
-				verificationStep.Assign(step.ReportPart.Interpreter);
-				verificationStep.Schedule(Platform.Time);
-				// TODO: schedule verification step and indicate errors
+
+				TranscriptionReviewStep transcriptionReviewStep = new TranscriptionReviewStep(step);
+				step.Procedure.AddProcedureStep(transcriptionReviewStep);
+				transcriptionReviewStep.Assign(step.ReportPart.Interpreter);
+				transcriptionReviewStep.Schedule(Platform.Time);
+				transcriptionReviewStep.HasErrors = true;
 			}
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)

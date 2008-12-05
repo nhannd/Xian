@@ -76,6 +76,7 @@
     <Compile Include="Brokers\IProtocolGroupBroker.cs" />
     <Compile Include="Brokers\IPublicationStepBroker.cs" />
     <Compile Include="Brokers\IStaffBroker.cs" />
+    <Compile Include="Brokers\ITranscriptionReviewStepBroker.cs" />
     <Compile Include="Brokers\IWorklistBroker.cs" />
     <Compile Include="Alerts\IAlert.cs" />
     <Compile Include="Alerts\LanguageAlert.cs" />
@@ -147,6 +148,8 @@
     <Compile Include="Tests\TestLocationFactory.cs" />
     <Compile Include="Tests\TestOrderNoteFactory.cs" />
     <Compile Include="Tests\WorklistTimePointTests.cs" />
+    <Compile Include="TranscriptionReviewStep.cs" />
+    <Compile Include="TranscriptionReviewStepSearchCriteria.cs" />
     <Compile Include="TranscriptionWorklists.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.cs" />
     <Compile Include="Workflow\Reporting\ReportingWorkflowSettings.Designer.cs">

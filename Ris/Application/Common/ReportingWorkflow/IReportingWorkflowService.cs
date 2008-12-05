@@ -50,6 +50,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         StartInterpretationResponse StartInterpretation(StartInterpretationRequest request);
 
         /// <summary>
+        /// Start a transcription review step
+        /// </summary>
+        /// <param name="request"><see cref="StartTranscriptionReviewRequest"/></param>
+        /// <returns><see cref="StartTranscriptionReviewResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        StartTranscriptionReviewResponse StartTranscriptionReview(StartTranscriptionReviewRequest request);
+
+        /// <summary>
         /// Complete an interpretation step and create a transcription step.
         /// </summary>
         /// <param name="request"><see cref="CompleteInterpretationForTranscriptionRequest"/></param>

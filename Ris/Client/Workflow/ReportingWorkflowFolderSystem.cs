@@ -65,15 +65,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 
-			//if(CurrentStaffCanSupervise())
-			//{
+			if (CurrentStaffCanSupervise())
+			{
 				this.Folders.Add(new Folders.Reporting.AssignedForReviewFolder());
-			//}
+			}
 
 			this.Folders.Add(new Folders.Reporting.DraftFolder());
 
 			if (ReportingSettings.Default.EnableTranscriptionWorkflow)
+			{
 				this.Folders.Add(new Folders.Reporting.InTranscriptionFolder());
+				this.Folders.Add(new Folders.Reporting.ReviewTranscriptionFolder());
+			}
 
 			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 				this.Folders.Add(new Folders.Reporting.AwaitingReviewFolder());

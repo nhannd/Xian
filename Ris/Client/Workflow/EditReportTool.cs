@@ -105,6 +105,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				return
 					this.Context.GetOperationEnablement("StartInterpretation") ||
+					this.Context.GetOperationEnablement("StartTranscriptionReview") ||
 					this.Context.GetOperationEnablement("StartVerification") ||
 
 					// there is no specific workflow operation for editing a previously created draft,
