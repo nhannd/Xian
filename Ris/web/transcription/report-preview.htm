@@ -2,15 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<title>Report Preview</title>
-		<link href="../../css/default.css" rel="stylesheet" type="text/css" />
-		<link href="../../JDMI/css/structuredreport.css" rel="stylesheet" type="text/css" />
-		<script type="text/javascript" src="../../js/jsx.js"></script>
-		<script type="text/javascript" src="../../js/jsml.js"></script>
-		<script type="text/javascript" src="../../js/ui.js"></script>
-		<script type="text/javascript" src="../../js/ris.js"></script>
-		<script type="text/javascript" src="../../js/preview.js"></script>
-		<script type="text/javascript" src="../../JDMI/js/preview.js"></script>
-		<script type="text/javascript" src="../../JDMI/js/structuredreportsummary.js"></script>
+		<link href="../css/default.css" rel="stylesheet" type="text/css" />
+		<script type="text/javascript" src="../js/jsx.js"></script>
+		<script type="text/javascript" src="../js/jsml.js"></script>
+		<script type="text/javascript" src="../js/ui.js"></script>
+		<script type="text/javascript" src="../js/ris.js"></script>
+		<script type="text/javascript" src="../js/preview.js"></script>
 		<script type="text/javascript" >
 			var data = {};
 			var errorProvider = new ErrorProvider();
@@ -20,8 +17,8 @@
 				if(!Ris)
 					return;
 
-				//try
-				//{
+				try
+				{
 					var report = Ris.getHealthcareContext();
 					
 					if (!report)
@@ -31,14 +28,12 @@
 					}
 					
 					Preview.ReportPreview.create($("preview"), report);
-/*
 				}
 				catch(e)
 				{
 					var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
 					Field.setValue($("myForm"), message);
 				}
-*/
 			}
 		</script>
 	</head>
