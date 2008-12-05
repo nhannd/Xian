@@ -114,7 +114,6 @@ namespace ClearCanvas.Ris.Client
         public void AddNote()
         {
             PatientNoteDetail note = new PatientNoteDetail();
-            note.Category = _noteCategoryChoices.Count == 0 ? null : _noteCategoryChoices[0];
 
             try
             {

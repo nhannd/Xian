@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._category.Location = new System.Drawing.Point(2, 2);
 			this._category.Margin = new System.Windows.Forms.Padding(2);
 			this._category.Name = "_category";
-			this._category.Size = new System.Drawing.Size(260, 41);
+			this._category.Size = new System.Drawing.Size(314, 41);
 			this._category.TabIndex = 0;
 			this._category.Value = null;
 			// 
@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._description.Margin = new System.Windows.Forms.Padding(2);
 			this._description.Name = "_description";
 			this._description.ReadOnly = true;
-			this._description.Size = new System.Drawing.Size(330, 69);
+			this._description.Size = new System.Drawing.Size(314, 69);
 			this._description.TabIndex = 1;
 			this._description.TabStop = false;
 			this._description.Value = null;
@@ -148,7 +148,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._comment.Location = new System.Drawing.Point(2, 2);
 			this._comment.Margin = new System.Windows.Forms.Padding(2);
 			this._comment.Name = "_comment";
-			this._comment.Size = new System.Drawing.Size(330, 149);
+			this._comment.Size = new System.Drawing.Size(314, 149);
 			this._comment.TabIndex = 0;
 			this._comment.Value = null;
 			// 
