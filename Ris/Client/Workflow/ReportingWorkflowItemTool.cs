@@ -117,9 +117,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 				Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
 				doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
 
-				// open the images
-				if (ViewImagesHelper.IsSupported)
-					ViewImagesHelper.Open(item.AccessionNumber);
+				try
+				{
+					// open the images
+					if (ViewImagesHelper.IsSupported)
+						ViewImagesHelper.Open(item.AccessionNumber);
+				}
+				catch (Exception)
+				{
+					ReportingComponent component = (ReportingComponent) DocumentManager.Get<ReportDocument>(item.ProcedureStepRef).Component;
+					component.ImagesAvailable = false;
+				}
 			}
 		}
 

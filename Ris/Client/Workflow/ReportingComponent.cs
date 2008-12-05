@@ -353,6 +353,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private TabComponentContainer _rightHandComponentContainer;
 
 		private string _proceduresText;
+		private bool _imagesAvailable = true;
 
 		private bool _canCompleteInterpretationAndVerify;
 		private bool _canCompleteVerification;
@@ -517,6 +518,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public bool StatusTextVisible
 		{
 			get { return _worklistItemManager.StatusTextVisible; }
+		}
+
+		public bool ImagesAvailable
+		{
+			get { return _imagesAvailable; }
+			set
+			{
+				_imagesAvailable = value;
+				NotifyPropertyChanged("ImagesUnavailableVisible");
+			}
+		}
+
+		public bool ImagesUnavailableVisible
+		{
+			get { return ViewImagesHelper.IsSupported && !_imagesAvailable; }
 		}
 
 		public string ProceduresText
@@ -977,7 +993,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					UpdateChildComponents(true);
 					// notify extension pages that the worklist item has changed
 					EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
-
+					
 					OpenImages();
 				}
 				catch (Exception)
@@ -1065,8 +1081,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void OpenImages()
 		{
-			if (ViewImagesHelper.IsSupported)
+			if (!ViewImagesHelper.IsSupported) 
+				return;
+
+			try
+			{
 				ViewImagesHelper.Open(this.WorklistItem.AccessionNumber);
+				this.ImagesAvailable = true;
+			}
+			catch (Exception)
+			{
+				this.ImagesAvailable = false;
+			}
 		}
 
 		private void CloseImages()
