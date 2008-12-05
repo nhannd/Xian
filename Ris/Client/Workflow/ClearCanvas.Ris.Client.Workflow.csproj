@@ -73,7 +73,6 @@
     </Compile>
     <Compile Include="ReportEditorComponentBase.cs" />
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
-    <Compile Include="TestTranscriptionTool.cs" />
     <Compile Include="TranscriptionComponent.cs" />
     <Compile Include="TranscriptionComponentWorklistItemManager.cs" />
     <Compile Include="TranscriptionDocument.cs" />

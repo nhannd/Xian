@@ -2,7 +2,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare
 {
-	public class TranscriptionReviewStepSearchCriteria : ReportingWorklistItemSearchCriteria
+	public class TranscriptionReviewStepSearchCriteria : ReportingProcedureStepSearchCriteria
 	{
 		public ISearchCondition<bool> HasErrors
 		{

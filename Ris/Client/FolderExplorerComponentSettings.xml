@@ -3,10 +3,10 @@
   <folder-system id="ClearCanvas.Ris.Client.Workflow.PerformingWorkflowFolderSystem">
     <folder id="CheckedInPerformingWorkflowFolder" />	
     <folder id="InProgressPerformingWorkflowFolder" />
-	<folder id="UndocumentedPerformingWorkflowFolder" />
+  <folder id="UndocumentedPerformingWorkflowFolder" />
     <folder id="CompletedPerformingWorkflowFolder" />
     <folder id="ScheduledPerformingWorkflowFolder" />
-	<folder id="CancelledPerformingWorkflowFolder" />    
+  <folder id="CancelledPerformingWorkflowFolder" />    
     <folder id="PerformingSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RegistrationWorkflowFolderSystem">
@@ -31,6 +31,7 @@
     <folder id="AssignedForReviewFolder" />
     <folder id="DraftFolder" />
     <folder id="InTranscriptionFolder" />
+    <folder id="TranscriptionReviewFolder" />
     <folder id="AwaitingReviewFolder" />
     <folder id="VerifiedFolder" />
     <folder id="ReportingSearchFolder" />
