@@ -18,7 +18,7 @@
                             <asp:Label ID="ServerRuleTypeEnum" runat="server" />
                         </ItemTemplate>
                     </asp:TemplateField>
-                    <asp:TemplateField HeaderText="Apply Time" ItemStyle-HorizontalAlign="Center">
+                    <asp:TemplateField HeaderText="Apply Time" >
                         <ItemTemplate>
                             <asp:Label ID="ServerRuleApplyTimeEnum" runat="server"></asp:Label>
                         </ItemTemplate>
