@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using Iesi.Collections;
@@ -124,6 +125,11 @@ namespace ClearCanvas.Healthcare {
         {
             get { return false; }
         }
+
+		public override List<Procedure> GetLinkedProcedures()
+		{
+			return new List<Procedure>();
+		}
 
 		protected override ProcedureStep CreateScheduledCopy()
 		{

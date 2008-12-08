@@ -67,7 +67,7 @@ namespace ClearCanvas.Healthcare
 				delegate(Type t) { return t.FullName.EndsWith(subclassName); });
 		}
 
-		private Procedure procedure;
+		private Procedure _procedure;
 
         /// <summary>
         /// No-args constructor required by NHibernate.
@@ -82,7 +82,7 @@ namespace ClearCanvas.Healthcare
         /// <param name="procedure"></param>
         public ProcedureStep(Procedure procedure)
         {
-            this.procedure = procedure;
+            this._procedure = procedure;
             procedure.ProcedureSteps.Add(this);
         }
 
@@ -93,13 +93,28 @@ namespace ClearCanvas.Healthcare
 
 
         /// <summary>
-        /// Gets the associated procedure
+        /// Gets the associated procedure.
         /// </summary>
         public virtual Procedure Procedure
         {
-            get { return procedure; }
-            internal set { procedure = value; }
+            get { return _procedure; }
+            internal set { _procedure = value; }
         }
+
+		/// <summary>
+		/// Gets the entire set of associated procedures, which is the <see cref="Procedure"/> plus any linked procedures
+		/// return by <see cref="GetLinkedProcedures"/>.
+		/// </summary>
+    	public virtual List<Procedure> AllProcedures
+    	{
+			get { return CollectionUtils.Concat<Procedure>(GetLinkedProcedures(), new Procedure[] {_procedure}); }
+    	}
+
+		/// <summary>
+		/// Gets any linked procedures that are reachable through this step.
+		/// </summary>
+		/// <returns></returns>
+    	public abstract List<Procedure> GetLinkedProcedures();
 
         /// <summary>
         /// Assigns the specified staff as the scheduled performer of this step.  Note that this operation is only valid
@@ -205,7 +220,7 @@ namespace ClearCanvas.Healthcare
         /// </summary>
         protected override void OnSchedulingChanged()
         {
-            procedure.UpdateScheduling();
+            _procedure.UpdateScheduling();
 
             base.OnSchedulingChanged();
         }
@@ -219,7 +234,7 @@ namespace ClearCanvas.Healthcare
         {
             if (this.IsPreStep == false)
             {
-                procedure.UpdateStatus();
+                _procedure.UpdateStatus();
             }
 
             base.OnStateChanged(previousState, newState);

@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace ClearCanvas.Healthcare
 {
     public partial class DocumentationProcedureStep : ProcedureStep
@@ -54,6 +56,11 @@ namespace ClearCanvas.Healthcare
         {
             get { return false; }
         }
+
+		public override List<Procedure> GetLinkedProcedures()
+		{
+			return new List<Procedure>();
+		}
 
 		protected override ProcedureStep CreateScheduledCopy()
 		{

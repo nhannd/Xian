@@ -61,6 +61,19 @@ namespace ClearCanvas.Healthcare
             get { return false; }
         }
 
+		public override List<Procedure> GetLinkedProcedures()
+		{
+			if(_reportPart != null && _reportPart.Report != null)
+			{
+				return CollectionUtils.Select(_reportPart.Report.Procedures,
+					delegate(Procedure p) { return !Equals(p, this.Procedure); });
+			}
+			else
+			{
+				return new List<Procedure>();
+			}
+		}
+
         public virtual ReportPart ReportPart
         {
             get { return _reportPart; }

@@ -155,11 +155,13 @@ namespace ClearCanvas.Healthcare
                     delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
 
                 // return the max end-time over all completed MPS
-                return CollectionUtils.Max(completedSteps, null,
+                ModalityProcedureStep maxMps = CollectionUtils.Max(completedSteps, null,
                     delegate(ModalityProcedureStep mps1, ModalityProcedureStep mps2)
                     {
                         return Nullable.Compare(mps1.EndTime, mps2.EndTime);
-                    }).EndTime;
+                    });
+
+            	return maxMps != null ? maxMps.EndTime : null;
             }
         }
 
@@ -313,15 +315,23 @@ namespace ClearCanvas.Healthcare
 
         #region Helper methods
 
-        /// <summary>
+		/// <summary>
         /// Called by a child procedure step to complete this procedure.
         /// </summary>
-        protected internal virtual void Complete()
+        protected internal virtual void Complete(DateTime completeTime)
         {
             if (_status != ProcedureStatus.IP)
                 throw new WorkflowException("Only procedures in the IP status can be completed");
 
             SetStatus(ProcedureStatus.CM);
+
+			// over-write the end-time with actual completed time
+			// TODO: this is a bit of a hack to deal with linked procedures, and the fact that
+			// the final ProcedureStep may not exist in our ProcedureSteps collection, 
+			// if this procedure was linked to another for reporting.
+			// Ideally we should get rid of this at some point, when we build in better tracking
+			// of procedure linkages
+			_endTime = completeTime;
         }
 
         /// <summary>
@@ -372,21 +382,6 @@ namespace ClearCanvas.Healthcare
                 if (anyStepStartedNotDiscontinued)
                 {
                     SetStatus(ProcedureStatus.IP);
-                }
-            }
-
-            // check if the procedure should auto-completed
-            if (_status == ProcedureStatus.IP)
-            {
-                bool anyPublicationStepsCompleted = CollectionUtils.Contains(_procedureSteps,
-                    delegate(ProcedureStep step)
-                    {
-                        return step.Is<PublicationStep>() && step.State == ActivityStatus.CM;
-                    });
-
-                if (anyPublicationStepsCompleted)
-                {
-                    SetStatus(ProcedureStatus.CM);
                 }
             }
         }

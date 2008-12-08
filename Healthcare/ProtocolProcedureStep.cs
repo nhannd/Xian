@@ -29,6 +29,9 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
+
 namespace ClearCanvas.Healthcare
 {
     public abstract class ProtocolProcedureStep : ProcedureStep
@@ -72,6 +75,19 @@ namespace ClearCanvas.Healthcare
                 return true;
             }
         }
+
+		public override List<Procedure> GetLinkedProcedures()
+		{
+			if (_protocol != null)
+			{
+				return CollectionUtils.Select(_protocol.Procedures,
+					delegate(Procedure p) { return !Equals(p, this.Procedure); });
+			}
+			else
+			{
+				return new List<Procedure>();
+			}
+		}
 
 		#endregion
 	}
