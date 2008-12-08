@@ -98,7 +98,10 @@
 
 				var reportDetail = data.GetReportDetailResponse ? data.GetReportDetailResponse.Report : null;
 				if (reportDetail)
+				{
 					Preview.ReportPreview.create($("report"), reportDetail);
+					Preview.ReportPreview.toggleTranscriptionErrors(worklistItem.HasErrors);
+				}
 				else
 					Field.show($("reportSection"), false);
 					

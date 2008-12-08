@@ -535,6 +535,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return ViewImagesHelper.IsSupported && !_imagesAvailable; }
 		}
 
+		public bool HasErrorsVisible
+		{
+			get { return this.WorklistItem != null ? this.WorklistItem.HasErrors : false; }
+		}
+
 		public string ProceduresText
 		{
 			get { return "Reported Procedure(s): " + _proceduresText; }

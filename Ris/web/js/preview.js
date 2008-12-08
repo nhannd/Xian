@@ -966,6 +966,9 @@ Preview.ReportPreview = function () {
 			element.className = 'reportPreview';
 
 			var formattedReport = "<br>";
+
+			formattedReport += '<div id="transcriptionErrorsDiv" style="{display:none; border: 1px solid black; text-align: center; color: red; margin-bottom:1em; font-weight:bold;}">Transcription has errors.</div>'
+
 			if (report.Parts.length > 1)
 			{
 				for (var i = report.Parts.length-1; i > 0; i--)
@@ -991,6 +994,11 @@ Preview.ReportPreview = function () {
 			formattedReport += _formatReportPerformer(part0);
 
 			element.innerHTML = formattedReport;
+		},
+		
+		toggleTranscriptionErrors: function(hasErrors)
+		{
+			Field.show($("transcriptionErrorsDiv"), hasErrors);
 		}
 	};
 }();

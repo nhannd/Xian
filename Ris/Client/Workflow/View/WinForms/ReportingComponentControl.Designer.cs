@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._statusText = new System.Windows.Forms.Label();
 			this._bannerPanel = new System.Windows.Forms.Panel();
+			this._hasErrors = new System.Windows.Forms.Label();
 			this._reportEditorSplitContainer.Panel1.SuspendLayout();
 			this._reportEditorSplitContainer.Panel2.SuspendLayout();
 			this._reportEditorSplitContainer.SuspendLayout();
@@ -110,16 +111,18 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel2.ColumnCount = 2;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel2.Controls.Add(this._hasErrors, 0, 1);
 			this.tableLayoutPanel2.Controls.Add(this._imagesUnavailable, 0, 0);
-			this.tableLayoutPanel2.Controls.Add(this._supervisor, 0, 3);
-			this.tableLayoutPanel2.Controls.Add(this._cancelButton, 1, 4);
-			this.tableLayoutPanel2.Controls.Add(this._reportEditorPanel, 0, 2);
-			this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 4);
-			this.tableLayoutPanel2.Controls.Add(this._reportedProcedures, 0, 1);
+			this.tableLayoutPanel2.Controls.Add(this._supervisor, 0, 4);
+			this.tableLayoutPanel2.Controls.Add(this._cancelButton, 1, 5);
+			this.tableLayoutPanel2.Controls.Add(this._reportEditorPanel, 0, 3);
+			this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 5);
+			this.tableLayoutPanel2.Controls.Add(this._reportedProcedures, 0, 2);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			this.tableLayoutPanel2.RowCount = 5;
+			this.tableLayoutPanel2.RowCount = 6;
+			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -176,9 +179,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportEditorPanel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.tableLayoutPanel2.SetColumnSpan(this._reportEditorPanel, 2);
 			this._reportEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reportEditorPanel.Location = new System.Drawing.Point(3, 52);
+			this._reportEditorPanel.Location = new System.Drawing.Point(3, 80);
 			this._reportEditorPanel.Name = "_reportEditorPanel";
-			this._reportEditorPanel.Size = new System.Drawing.Size(455, 643);
+			this._reportEditorPanel.Size = new System.Drawing.Size(455, 615);
 			this._reportEditorPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel1
@@ -267,7 +270,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportedProcedures.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._reportedProcedures.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this._reportedProcedures.ForeColor = System.Drawing.SystemColors.ControlText;
-			this._reportedProcedures.Location = new System.Drawing.Point(3, 28);
+			this._reportedProcedures.Location = new System.Drawing.Point(3, 56);
 			this._reportedProcedures.Name = "_reportedProcedures";
 			this._reportedProcedures.Padding = new System.Windows.Forms.Padding(0, 2, 0, 0);
 			this._reportedProcedures.Size = new System.Drawing.Size(455, 21);
@@ -324,6 +327,24 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Size = new System.Drawing.Size(977, 79);
 			this._bannerPanel.TabIndex = 0;
 			// 
+			// _hasErrors
+			// 
+			this._hasErrors.AutoSize = true;
+			this._hasErrors.BackColor = System.Drawing.Color.White;
+			this._hasErrors.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tableLayoutPanel2.SetColumnSpan(this._hasErrors, 2);
+			this._hasErrors.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._hasErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._hasErrors.ForeColor = System.Drawing.Color.Red;
+			this._hasErrors.Location = new System.Drawing.Point(3, 31);
+			this._hasErrors.Margin = new System.Windows.Forms.Padding(3);
+			this._hasErrors.Name = "_hasErrors";
+			this._hasErrors.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
+			this._hasErrors.Size = new System.Drawing.Size(455, 22);
+			this._hasErrors.TabIndex = 5;
+			this._hasErrors.Text = "Transcription has errors.";
+			this._hasErrors.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
 			// ReportingComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -365,5 +386,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Label _reportedProcedures;
 		private System.Windows.Forms.Label _imagesUnavailable;
 		private System.Windows.Forms.Label _statusText;
+		private System.Windows.Forms.Label _hasErrors;
     }
 }
