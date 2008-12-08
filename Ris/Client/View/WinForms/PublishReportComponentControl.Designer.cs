@@ -64,11 +64,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._addConsultantButton = new System.Windows.Forms.Button();
 			this._groupBoxRecipients = new System.Windows.Forms.GroupBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._printButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._browserPanel = new System.Windows.Forms.Panel();
 			this._publishButton = new System.Windows.Forms.Button();
-			this._consultantLookup = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._groupBoxRecipients.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.SuspendLayout();
@@ -144,6 +144,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Add New Recipient";
 			// 
+			// _consultantLookup
+			// 
+			this._consultantLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._consultantLookup.LabelText = "Find Practitioner";
+			this._consultantLookup.Location = new System.Drawing.Point(5, 18);
+			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
+			this._consultantLookup.Name = "_consultantLookup";
+			this._consultantLookup.Size = new System.Drawing.Size(258, 41);
+			this._consultantLookup.TabIndex = 0;
+			this._consultantLookup.Value = null;
+			// 
 			// _printButton
 			// 
 			this._printButton.Location = new System.Drawing.Point(542, 684);
@@ -173,26 +186,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _publishButton
 			// 
-			this._publishButton.Location = new System.Drawing.Point(395, 684);
+			this._publishButton.Location = new System.Drawing.Point(461, 684);
 			this._publishButton.Name = "_publishButton";
-			this._publishButton.Size = new System.Drawing.Size(141, 23);
+			this._publishButton.Size = new System.Drawing.Size(75, 23);
 			this._publishButton.TabIndex = 2;
-			this._publishButton.Text = "Send to Print/Fax Queue";
+			this._publishButton.Text = "Fax Queue";
 			this._publishButton.UseVisualStyleBackColor = true;
 			this._publishButton.Click += new System.EventHandler(this._publishButton_Click);
-			// 
-			// _consultantLookup
-			// 
-			this._consultantLookup.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._consultantLookup.LabelText = "Find Practitioner";
-			this._consultantLookup.Location = new System.Drawing.Point(5, 18);
-			this._consultantLookup.Margin = new System.Windows.Forms.Padding(2);
-			this._consultantLookup.Name = "_consultantLookup";
-			this._consultantLookup.Size = new System.Drawing.Size(258, 41);
-			this._consultantLookup.TabIndex = 0;
-			this._consultantLookup.Value = null;
 			// 
 			// PublishReportComponentControl
 			// 
