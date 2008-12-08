@@ -2,7 +2,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ModalDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog" %>
 
-<asp:UpdatePanel ID="ModalDialogUpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="ModalDialogUpdatePanel" runat="server" UpdateMode="Conditional" >
     <ContentTemplate>
     
         <!-- Dialog Box -->
@@ -46,7 +46,6 @@
                 </asp:Table>
 
             </ContentTemplate>
-
         </asp:UpdatePanel>
 
         <!-- Covers the entire background and prevents the user from clicking on the screen outside of
@@ -57,6 +56,8 @@
         <aspAjax:ModalPopupExtender ID="ModalPopupExtender" runat="server" TargetControlID="DummyPanel" 
             PopupControlID="DialogContainer" PopupDragHandleControlID="TitleBarPanel" RepositionMode="None">
         </aspAjax:ModalPopupExtender>
+        
+
 
     </ContentTemplate>
 </asp:UpdatePanel>

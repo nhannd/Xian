@@ -285,6 +285,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             set { _showCloseBox = value; }
         }
 
+        public string PopupExtenderID
+        {
+            get { return ModalPopupExtender.ClientID; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
