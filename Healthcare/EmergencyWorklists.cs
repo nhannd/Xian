@@ -16,7 +16,8 @@ namespace ClearCanvas.Healthcare
 			// this is slightly different than the registration scheduled worklist, because we include
 			// 'checked in' items here, rather than having a separate 'checked in' worklist
 			RegistrationWorklistItemSearchCriteria criteria = new RegistrationWorklistItemSearchCriteria();
-			criteria.Order.Status.EqualTo(OrderStatus.SC);
+			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);
+			//criteria.Order.Status.EqualTo(OrderStatus.SC);
 			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureScheduledStartTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
