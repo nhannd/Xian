@@ -498,26 +498,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             bool isDowntime =
                 CollectionUtils.Contains(order.Procedures, delegate(Procedure p) { return p.DowntimeRecoveryMode; });
 
-            // deletions - remove any procedure not in the requisition
-            List<Procedure> proceduresCopy = new List<Procedure>(order.Procedures);
-            foreach (Procedure rp in proceduresCopy)
-            {
-                bool shouldDelete = !procedureReqs.Exists(delegate(ProcedureRequisition req) { return req.ProcedureIndex == rp.Index; });
-                if (shouldDelete)
-                {
-                    if (rp.Status == ProcedureStatus.SC)
-                    {
-                        // if RP is still scheduled, just remove it from the order
-                        order.RemoveProcedure(rp);
-                    }
-                    else if (rp.Status == ProcedureStatus.IP)
-                    {
-                        // if RP in-progress, discontinue it
-                        rp.Discontinue();
-                    }
-                }
-            }
-
             // insertions and updates
             foreach (ProcedureRequisition req in procedureReqs)
             {

@@ -50,7 +50,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             bool portableModality,
             bool checkedIn,
             EnumValueInfo status,
-            bool canModify)
+            bool canModify,
+			bool cancelled)
         {
             this.ProcedureType = procedureType;
             this.ProcedureIndex = procedureIndex;
@@ -61,6 +62,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.CheckedIn = checkedIn;
             this.Status = status;
             this.CanModify = canModify;
+        	this.Cancelled = cancelled;
         }
 
         /// <summary>
@@ -130,5 +132,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// </summary>
         [DataMember]
         public bool CheckedIn;
-    }
+
+		/// <summary>
+		/// Set by the server if this procedure is cancelled, or by the client to indicate that the procedure should be cancelled.
+		/// </summary>
+		[DataMember]
+		public bool Cancelled;
+	}
 }

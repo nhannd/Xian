@@ -155,11 +155,30 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 procedure.Portable,
                 procedure.ProcedureCheckIn.IsPreCheckIn == false,
                 EnumUtils.GetEnumValueInfo(procedure.Status, context),
-                IsProcedureModifiable(procedure));
+                IsProcedureModifiable(procedure),
+				procedure.Status == ProcedureStatus.CA || procedure.Status == ProcedureStatus.DC);
         }
 
         public void UpdateProcedureFromRequisition(Procedure procedure, ProcedureRequisition requisition, IPersistenceContext context)
         {
+			// check if the procedure was cancelled
+			if(requisition.Cancelled)
+			{
+				if (procedure.Status == ProcedureStatus.SC)
+				{
+					// if RP is still scheduled, cancel it
+					procedure.Cancel();
+				}
+				else if (procedure.Status == ProcedureStatus.IP)
+				{
+					// if RP in-progress, discontinue it
+					procedure.Discontinue();
+				}
+
+				// early exit - nothing else to update
+				return;
+			}
+
             // modify scheduling time/portability of procedure steps that are still scheduled
             // bug #1356 fix: don't modify scheduling time of reporting procedure steps
             // only pre-procedure steps and modality procedure steps are re-scheduled

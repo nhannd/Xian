@@ -300,16 +300,27 @@ namespace ClearCanvas.Ris.Client
                                       delegate(ProcedureRequisition item)
                                       {
                                           // if new or scheduled
-                                          if (item.Status == null || item.Status.Code == "SC")
-                                              return Format.DateTime(item.ScheduledTime);
-                                          else
-                                              return item.Status.Value;
+										  if (item.Status == null || item.Status.Code == "SC")
+										  {
+											  if (item.Cancelled)
+										  		return "Cancel Pending";
+											  else
+									  			return Format.DateTime(item.ScheduledTime);
+										  }
+										  else
+											  return item.Status.Value;
                                       }));
 
             _proceduresActionModel = new CrudActionModel();
             _proceduresActionModel.Add.SetClickHandler(AddProcedure);
             _proceduresActionModel.Edit.SetClickHandler(EditSelectedProcedure);
-            _proceduresActionModel.Delete.SetClickHandler(RemoveSelectedProcedure);
+            _proceduresActionModel.Delete.SetClickHandler(CancelSelectedProcedure);
+
+			// in "modify" mode, the Delete action is actually a Cancel action
+			if (_mode == Mode.ModifyOrder)
+				_proceduresActionModel.Delete.Tooltip = "Cancel";
+
+
             UpdateProcedureActionModel();
 
             _recipientsTable = new Table<ResultRecipientDetail>();
@@ -887,13 +898,23 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public void RemoveSelectedProcedure()
+        public void CancelSelectedProcedure()
         {
             if (_selectedProcedure == null || !_selectedProcedure.CanModify)
                 return;
-            _proceduresTable.Items.Remove(_selectedProcedure);
-            _selectedProcedure = null;
-            NotifyPropertyChanged("SelectedProcedure");
+
+			if(_mode == Mode.ModifyOrder)
+			{
+				_selectedProcedure.Cancelled = true;
+				_proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+			}
+			else
+			{
+				_proceduresTable.Items.Remove(_selectedProcedure);
+				_selectedProcedure = null;
+				NotifyPropertyChanged("SelectedProcedure");
+			}
+
             this.Modified = true;
         }
 
@@ -901,7 +922,7 @@ namespace ClearCanvas.Ris.Client
         {
             _proceduresActionModel.Add.Enabled = _selectedDiagnosticService != null;
             _proceduresActionModel.Edit.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
-            _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify);
+            _proceduresActionModel.Delete.Enabled = (_selectedProcedure != null && _selectedProcedure.CanModify && !_selectedProcedure.Cancelled);
         }
 
         public void AddRecipient()
