@@ -1,3 +1,7 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.Model"%>
+<%@ Import namespace="System.ComponentModel"%>
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Application.Helpers"%>
+<%@ Import namespace="Microsoft.JScript"%>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeletedStudyDetailsDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudyDetailsDialog" %>
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="775px">
@@ -43,9 +47,12 @@
                         <asp:BoundField DataField="DeletedFolderPath" HeaderText="Backup Folder:">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="ReasonForDeletion" HeaderText="Reason For Deletion:">
+                         <asp:TemplateField HeaderText="Reason For Deletion: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
-                        </asp:BoundField>
+                            <ItemTemplate>
+                            <%# HtmlEncoder.EncodeText((Container.DataItem as DeletedStudyInfo).ReasonForDeletion)%>
+                            </ItemTemplate>
+                        </asp:TemplateField>
                         <asp:TemplateField HeaderText="Delete Date/Time: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>

@@ -31,11 +31,18 @@
 
 using System;
 using System.Web.UI;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
+    public class StudyDetailsPanelDeleteStudyClickEventArgs : EventArgs
+    {}
+
+    public class StudyDetailsPanelEditStudyClickEventArgs : EventArgs
+    { }
+
     /// <summary>
     /// Main panel within the <see cref="Default"/>
     /// </summary>
@@ -44,6 +51,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         #region Private Members
         private StudySummary _study;
         private Default _enclosingPage;
+        private EventHandler<StudyDetailsPanelDeleteStudyClickEventArgs> _deleteStudyClickedHandler;
+        private EventHandler<StudyDetailsPanelEditStudyClickEventArgs> _editStudyClickedHandler;
         #endregion Private Members
 
         #region Public Properties
@@ -57,13 +66,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { _study = value; }
         }
 
-        public Default EnclosingPage
-        {
-            get { return _enclosingPage; }
-            set { _enclosingPage = value; }
-        }
-        
         #endregion Public Properties
+
+        #region Events
+        public event EventHandler<StudyDetailsPanelDeleteStudyClickEventArgs> DeleteStudyClicked
+        {
+            add { _deleteStudyClickedHandler += value; }
+            remove { _deleteStudyClickedHandler -= value; }
+        }
+        public event EventHandler<StudyDetailsPanelEditStudyClickEventArgs> EditStudyClicked
+        {
+            add { _editStudyClickedHandler += value; }
+            remove { _editStudyClickedHandler -= value; }
+        }
+        #endregion
 
         #region Protected Methods
 
@@ -110,12 +126,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
-            EnclosingPage.DeleteStudy();
+            EventsHelper.Fire(_deleteStudyClickedHandler, this, new StudyDetailsPanelDeleteStudyClickEventArgs());
         }
 
         protected void EditStudyButton_Click(object sender, EventArgs e)
         {
-            EnclosingPage.EditStudy();
+            EventsHelper.Fire(_editStudyClickedHandler, this, new StudyDetailsPanelEditStudyClickEventArgs());
         }
 
         #endregion Protected Methods

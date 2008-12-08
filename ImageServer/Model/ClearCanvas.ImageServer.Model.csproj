@@ -281,6 +281,7 @@
     <Compile Include="StudyStorage.cs" />
     <Compile Include="StudyStorage.gen.cs" />
     <Compile Include="StudyStorageLocation.cs" />
+    <Compile Include="WebDeleteStudyData.cs" />
     <Compile Include="WorkQueue.cs" />
     <Compile Include="WorkQueue.gen.cs" />
     <Compile Include="Parameters\InsertStudyStorageParameters.cs" />

@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// <param name="node">The node to be deserialized</param>
         /// <returns></returns>
         public static T Deserialize<T>(XmlNode node)
+            where T:class
         {
             Platform.CheckForNullReference(node, "node");
 
@@ -53,6 +54,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             XmlNodeReader reader = new XmlNodeReader(node);
             return (T)serializer.Deserialize(reader);
         }
+
+        
 
         /// <summary>
         /// Serializes an object into an XML format.
@@ -64,6 +67,11 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// </remarks>
         public static XmlNode Serialize(Object obj)
         {
+            return SerializeAsXmlDoc(obj).DocumentElement;
+        }
+
+        public static XmlDocument SerializeAsXmlDoc(Object obj)
+        {
             Platform.CheckForNullReference(obj, "obj");
 
             StringWriter sw = new StringWriter();
@@ -73,11 +81,14 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(sw.ToString());
-            return doc.DocumentElement;
+
+            return doc;
         }
 
         public static string SerializeAsString(Object obj)
         {
+            Platform.CheckForNullReference(obj, "obj");
+
             StringWriter sw = new StringWriter();
             XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -94,7 +95,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// <summary>
 		/// Delete a Study.
 		/// </summary>
-		public void DeleteStudy(ServerEntityKey studyKey)
+		public void DeleteStudy(ServerEntityKey studyKey, string reason)
         {
             StudySummary study = StudySummaryAssembler.CreateStudySummary(Study.Load(studyKey));
             if (study.IsReconcileRequired)
@@ -126,6 +127,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				insertParms.ScheduledTime = DateTime.Now; // spread by 15 seconds
 				insertParms.ExpirationTime = DateTime.Now.AddMinutes(1);
 
+			    WebDeleteStudyData extendedData = new WebDeleteStudyData();
+                extendedData.Reason = reason;
+                insertParms.WorkQueueData = XmlUtils.SerializeAsXmlDoc(extendedData);
 				IInsertWorkQueue insertWorkQueue = ctx.GetBroker<IInsertWorkQueue>();
 				
                 if (insertWorkQueue.FindOne(insertParms)==null)

@@ -32,11 +32,13 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
@@ -76,10 +78,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         protected void SetupEventHandlers()
         {
+            StudyDetailsPanel.EditStudyClicked += StudyDetailsPanel_EditStudyClicked;
+            StudyDetailsPanel.DeleteStudyClicked += StudyDetailsPanel_DeleteStudyClicked;
             EditStudyDialog.StudyEdited += EditStudyDialog_StudyEdited;
             DeleteConfirmDialog.Confirmed += DeleteConfirmDialog_Confirmed;
+            DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
         }
 
+        void StudyDetailsPanel_DeleteStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelDeleteStudyClickEventArgs e)
+        {
+            DeleteStudy();
+        }
+
+        void StudyDetailsPanel_EditStudyClicked(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanelEditStudyClickEventArgs e)
+        {
+            EditStudy();
+        }
+
+        void DeleteStudyConfirmDialog_StudyDeleting(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialogStudyDeletingEventArgs e)
+        {
+            
+        }
+
+        void DeleteStudyConfirmDialog_StudyDeleted(object sender, ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialogStudyDeletedEventArgs e)
+        {
+            Refresh();
+        }
         
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -113,15 +137,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
 
         protected override void OnInit(EventArgs e)
         {
-            StudyDetailsPanel.EnclosingPage = this;
-
             SetupEventHandlers();
 
             base.OnInit(e);
         }
 
-
-        
         protected void LoadStudy()
         {
             if (String.IsNullOrEmpty(_studyInstanceUid))
@@ -212,11 +232,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             }
             else
             {
-                DeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
-                DeleteConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
-                DeleteConfirmDialog.Data = _study.TheStudy;
+                //DeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                //DeleteConfirmDialog.Message = App_GlobalResources.SR.SingleStudyDelete;
+                //DeleteConfirmDialog.Data = _study.TheStudy;
 
-                DeleteConfirmDialog.Show();
+                //DeleteConfirmDialog.Show();
+                List<StudySummary> studyList = new List<StudySummary>();
+                studyList.Add(_study);
+
+                DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
+                    studyList,
+                    delegate(StudySummary study)
+                    {
+                        DeleteStudyInfo info = new DeleteStudyInfo();
+                        info.StudyKey = study.TheStudy.GetKey();
+                        info.AccessionNumber = study.AccessionNumber;
+                        info.Modalities = study.ModalitiesInStudy;
+                        info.PatientId = study.PatientId;
+                        info.PatientsName = study.PatientsName;
+                        info.StudyDate = study.StudyDate;
+                        info.StudyDescription = study.StudyDescription;
+                        info.StudyInstanceUid = study.StudyInstanceUid;
+                        return info;
+                    }
+                );
+
+                DeleteStudyConfirmDialog.Show();
+                updatepanel.Update();
             }
         }
 
@@ -227,7 +269,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             {
                 StudyController controller = new StudyController();
                 Study study = DeleteConfirmDialog.Data as Study;
-                controller.DeleteStudy(study.GetKey());
+                controller.DeleteStudy(study.GetKey(), "hey");
             }
             finally
             {

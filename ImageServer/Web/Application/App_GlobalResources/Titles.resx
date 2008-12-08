@@ -219,4 +219,7 @@
   <data name="WorkQueuePageTitle" xml:space="preserve">
     <value>Work Queue | ClearCanvas ImageServer</value>
   </data>
+  <data name="DeleteStudyConfirmDialogTitle" xml:space="preserve">
+    <value>Delete Study Confirmation</value>
+  </data>
 </root>

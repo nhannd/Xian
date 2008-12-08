@@ -263,13 +263,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
         
         /// <summary>
-        /// DeleteMessageBox control.
+        /// MessageBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteMessageBox;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
+        
+        /// <summary>
+        /// DeleteStudyConfirmDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialog DeleteStudyConfirmDialog;
         
         /// <summary>
         /// RestoreMessageBox control.

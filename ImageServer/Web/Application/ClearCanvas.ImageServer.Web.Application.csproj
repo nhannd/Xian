@@ -163,6 +163,7 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Helpers\DialogHelper.cs" />
+    <Compile Include="Helpers\HtmlEncoder.cs" />
     <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -635,6 +636,13 @@
     <Compile Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx.designer.cs">
       <DependentUpon>ArchivePanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\DeleteStudyConfirmDialog.ascx.cs">
+      <DependentUpon>DeleteStudyConfirmDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\DeleteStudyConfirmDialog.ascx.designer.cs">
+      <DependentUpon>DeleteStudyConfirmDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\EditStudyDetailsDialog.ascx.cs">
       <DependentUpon>EditStudyDetailsDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -933,6 +941,7 @@
     <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
+    <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
@@ -1055,6 +1064,7 @@
     <Content Include="Pages\Studies\SeriesDetails\SeriesDetailsView.ascx" />
     <Content Include="Pages\Studies\SeriesDetails\StudySummaryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\ArchivePanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\DeleteStudyConfirmDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\EditStudyDetailsDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\FileSystemQueueGridView.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\PatientSummaryPanel.ascx" />

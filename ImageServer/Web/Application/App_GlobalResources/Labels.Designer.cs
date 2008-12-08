@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
+        /// </summary>
+        internal static string DeleteStudyConfirmDialog_StudyListingLabel {
+            get {
+                return ResourceManager.GetString("DeleteStudyConfirmDialog_StudyListingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reason for deletion:.
+        /// </summary>
+        internal static string DeleteStudyConfirmReasonLabel {
+            get {
+                return ResourceManager.GetString("DeleteStudyConfirmReasonLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Study.
         /// </summary>
         internal static string EditStudyDialog {

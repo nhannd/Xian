@@ -2,6 +2,7 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel" %>
 
 <%@ Register Src="StudyListGridView.ascx" TagName="StudyListGridView" TagPrefix="localAsp" %>
+<%@ Register Src="StudyDetails/Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
@@ -88,7 +89,8 @@
                          <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                  <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
-                                <tr><td style="background-color: white;"><localAsp:StudyListGridView id="StudyListGridView" runat="server" Height="500px"></localAsp:StudyListGridView></td></tr>
+                                <tr><td style="background-color: white;">
+                                <localAsp:StudyListGridView id="StudyListGridView" runat="server" Height="500px"></localAsp:StudyListGridView></td></tr>
                                 <tr><td style="border-top: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>                    
                             </table>                        
                         </asp:Panel>
@@ -105,6 +107,7 @@
 
 </asp:UpdatePanel>
 
-        <ccAsp:MessageBox ID="DeleteMessageBox" runat="server" />    
-        <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
+<ccAsp:MessageBox ID="MessageBox" runat="server" />
+<localAsp:DeleteStudyConfirmDialog ID="DeleteStudyConfirmDialog" runat="server"/>
+<ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
 

@@ -36,11 +36,14 @@ using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
 
@@ -131,34 +134,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                               return StudyListGridView.ResultCount;
                                           };
 
-            DeleteMessageBox.Confirmed += delegate(object data)
-                            {
-                                if (data is IList<Study>)
-                                {
-                                    IList<Study> studies = data as IList<Study>;
-                                    foreach (Study study in studies)
-                                    {
-                                        _controller.DeleteStudy(study.GetKey());
-                                    }
-                                }
-								if (data is IList<StudySummary>)
-								{
-									IList<StudySummary> studies = data as IList<StudySummary>;
-									foreach (StudySummary study in studies)
-									{
-										_controller.DeleteStudy(study.TheStudy.GetKey());
-									}
-								}
-								else if (data is Study)
-                                {
-                                    Study study = data as Study;
-                                    _controller.DeleteStudy(study.GetKey());
-                                }
-
-                                DataBind();
-                                UpdatePanel.Update(); // force refresh
-                            };
-
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Study>)
@@ -203,6 +178,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                             if (!String.IsNullOrEmpty(StudyDescription.Text))
                                                 source.StudyDescription = StudyDescription.Text;
                                         };
+
+            DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
+        }
+
+        void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
+        {
+            Refresh();
         }
 
         #endregion Private Methods
@@ -252,34 +234,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				DataBind();
 			}
         }
-        
-        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
+
+        protected void Refresh()
         {
             StudyListGridView.StudyListGrid.ClearSelections();
-        	StudyListGridView.StudyListGrid.PageIndex = 0;
-			DataBind();
+            StudyListGridView.StudyListGrid.PageIndex = 0;
+            DataBind();
+        }
+
+        protected void SearchButton_Click(object sender, ImageClickEventArgs e)
+        {
+            Refresh();
         }
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)
         {
-            IList<StudySummary> studies = StudyListGridView.SelectedStudies;
-
-            if (studies != null && studies.Count>0)
-            {
-                string message = studies.Count > 1 ? string.Format(App_GlobalResources.SR.MultipleStudyDelete) :
-                                                     string.Format(App_GlobalResources.SR.SingleStudyDelete);
-
-                DeleteMessageBox.Message = DialogHelper.createConfirmationMessage(message);
-                DeleteMessageBox.Message += DialogHelper.createStudyTable(studies);
-
-                DeleteMessageBox.Title = App_GlobalResources.Titles.DeleteStudyConfirmation;
-                DeleteMessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
-            	IList<Study> studyList = new List<Study>();
-				foreach (StudySummary summary in studies)
-					studyList.Add(summary.TheStudy);
-				DeleteMessageBox.Data = studyList;
-                DeleteMessageBox.Show();
-            }
+            DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
+                StudyListGridView.SelectedStudies,
+                delegate(StudySummary study)
+                    {
+                        DeleteStudyInfo info = new DeleteStudyInfo();
+                        info.StudyKey = study.TheStudy.GetKey();
+                        info.AccessionNumber = study.AccessionNumber;
+                        info.Modalities = study.ModalitiesInStudy;
+                        info.PatientId = study.PatientId;
+                        info.PatientsName = study.PatientsName;
+                        info.StudyDate = study.StudyDate;
+                        info.StudyDescription = study.StudyDescription;
+                        info.StudyInstanceUid = study.StudyInstanceUid;
+                        return info;
+                    }
+                );
+            DeleteStudyConfirmDialog.Show();
         }
 
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)

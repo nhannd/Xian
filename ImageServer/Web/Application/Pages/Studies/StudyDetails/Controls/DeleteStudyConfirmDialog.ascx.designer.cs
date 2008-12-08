@@ -8,87 +8,96 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls {
     
     
     /// <summary>
-    /// Default class.
+    /// DeleteStudyConfirmDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class Default {
+    public partial class DeleteStudyConfirmDialog {
         
         /// <summary>
-        /// Table1 control.
+        /// ModalDialog control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table Table1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
         
         /// <summary>
-        /// LinkButton1 control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// updatepanel control.
+        /// StudyListing control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel updatepanel;
+        protected global::System.Web.UI.WebControls.Repeater StudyListing;
         
         /// <summary>
-        /// StudyDetailsPanel control.
+        /// InvalidReasonIndicator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsPanel StudyDetailsPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator InvalidReasonIndicator;
         
         /// <summary>
-        /// EditStudyDialog control.
+        /// Reason control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.EditStudyDetailsDialog EditStudyDialog;
+        protected global::System.Web.UI.WebControls.TextBox Reason;
         
         /// <summary>
-        /// MessageDialog control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageDialog;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// DeleteConfirmDialog control.
+        /// DeleteButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteConfirmDialog;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteButton;
         
         /// <summary>
-        /// DeleteStudyConfirmDialog control.
+        /// CancelButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialog DeleteStudyConfirmDialog;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
+        
+        /// <summary>
+        /// ReasonValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator ReasonValidator;
     }
 }
