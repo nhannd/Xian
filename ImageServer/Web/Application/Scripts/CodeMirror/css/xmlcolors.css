@@ -1,47 +1,53 @@
 .editbox {
-  margin: .4em;
-  padding: 0;
-  font-family: monospace;
-  font-size: 10pt;
-  color: black;
+  font-family: Sans-Serif;
+  font-size: 12px;
+  font-weight: normal;
+  padding-left: 2px;
+  width: 100px;
+  margin-left: 3px;
+  margin-right: 3px;
 }
 
 .editbox p {
   margin: 0;
 }
 
-span.tagname {
-  color: #AA00BB;
+span.xml-tagname {
+  color: #A0B;
 }
 
-span.attribute {
-  color: #228811;
+span.xml-attribute {
+  color: #281;
 }
 
-span.punctuation {
+span.xml-punctuation {
   color: black;
 }
 
-span.attname {
-  color: #0000FF;
+span.xml-attname {
+  color: #00F;
 }
 
-span.comment {
-  color: #AA7700;
+span.xml-comment {
+  color: #A70;
 }
 
-span.cdata {
-  color: #4488AA;
+span.xml-cdata {
+  color: #48A;
 }
 
-span.entity {
-  color: #AA2222;
+span.xml-processing {
+  color: #999;
 }
 
-span.error {
-  color: #FF0000;
+span.xml-entity {
+  color: #A22;
 }
 
-span.text {
+span.xml-error {
+  color: #F00;
+}
+
+span.xml-text {
   color: black;
 }
