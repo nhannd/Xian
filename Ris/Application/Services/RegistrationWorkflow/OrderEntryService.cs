@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Threading;
@@ -79,6 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.Status.NotEqualTo(VisitStatus.DC);
             criteria.Patient.EqualTo(patient);
+            criteria.AdmitTime.SortDesc(0);
 
             VisitAssembler assembler = new VisitAssembler();
             return new ListActiveVisitsForPatientResponse(
