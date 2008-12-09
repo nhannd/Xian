@@ -2,15 +2,15 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteStudyConfirmDialog.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.DeleteStudyConfirmDialog" %>
-    
-<ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="<%$ Resources:Titles, DeleteStudyConfirmDialogTitle %>">
+
+<ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="<%$ Resources:Titles, DeleteStudyConfirmDialogTitle %>" Width="800px">
     <ContentTemplate>
         <div class="ContentPanel">
         <div class="DialogPanelContent">
-        <table border="0" cellspacing="5">
+        <table border="0" cellspacing="5" width="100%">
             <tr>
                 <td>
-                    <table>
+                    <table width="100%">
                         <tr>
                             <td>
                                 <asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel" 
@@ -24,17 +24,17 @@
                                         <table  cellspacing="0" width="100%" class="GlobalGridView"
                                             style="border: solid 1px #3d98d1;">
                                             <tr class="GlobalGridViewHeader">
-                                                <th>
+                                                <th style="white-space:nowrap">
                                                     Patient's Name</th>
-                                                <th>
+                                                <th style="white-space:nowrap">
                                                     Patient Id</th>
-                                                <th>
+                                                <th style="white-space:nowrap">
                                                     Study Date</th>
-                                                <th>
+                                                <th style="white-space:nowrap">
                                                     Study Description</th>
-                                                <th>
+                                                <th style="white-space:nowrap">
                                                     Accession #</th>
-                                                <th>
+                                                <th style="white-space:nowrap">
                                                     Modality</th>
                                             </tr>
                                     </HeaderTemplate>
@@ -91,7 +91,7 @@
                                         
                                         <td>
                                                 <asp:TextBox  Width="100%" Rows="3"
-                                                    ID="Reason" runat="server" TextMode="MultiLine" ValidationGroup="<%= ModalDialog.ClientID %>" />
+                                                    ID="Reason" runat="server" TextMode="MultiLine"   />
                                             
                                         </td>
                                     </tr>
@@ -112,7 +112,8 @@
             <tr align="right">
                 <td>
                     <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="YesButton" ValidationGroup="<%= ModalDialog.ClientID %>"
+                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="YesButton" 
+                            ValidationGroup="<%= ClientID %>"
                             OnClick="DeleteButton_Clicked" />
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton"
                             OnClick="CancelButton_Clicked" />
@@ -121,10 +122,11 @@
             </tr>
         </table>
         </div>
-       
        <ccValidator:ConditionalRequiredFieldValidator ID="ReasonValidator" runat="server"
-                                                ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" ValidationGroup="<%= ModalDialog.ClientID %>"
-                                                Text="You must specify the reason for deleting the studies" Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
-        
+                                                ControlToValidate="Reason" InvalidInputIndicatorID="InvalidReasonIndicator" 
+                                                ValidationGroup="<%= ClientID %>"
+                                                Text="You must specify the reason for deleting the studies for future auditing purpose." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
+       
+       
     </ContentTemplate>
 </ccAsp:ModalDialog>

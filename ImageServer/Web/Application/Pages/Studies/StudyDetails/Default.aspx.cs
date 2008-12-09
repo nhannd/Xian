@@ -253,6 +253,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
                         info.StudyDate = study.StudyDate;
                         info.StudyDescription = study.StudyDescription;
                         info.StudyInstanceUid = study.StudyInstanceUid;
+                        info.ServerPartitionAE = study.ThePartition.AeTitle;
                         return info;
                     }
                 );

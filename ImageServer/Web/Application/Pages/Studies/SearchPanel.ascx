@@ -108,6 +108,5 @@
 </asp:UpdatePanel>
 
 <ccAsp:MessageBox ID="MessageBox" runat="server" />
-<localAsp:DeleteStudyConfirmDialog ID="DeleteStudyConfirmDialog" runat="server"/>
 <ccAsp:MessageBox ID="RestoreMessageBox" runat="server" />   
 

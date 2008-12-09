@@ -19,6 +19,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         private string _studyDescription;
         private string _modalities;
         private string _studyDate;
+        private string _serverPartitionAE;
 
         public string StudyInstanceUid
         {
@@ -66,6 +67,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             get { return _studyKey; }
             set { _studyKey = value; }
+        }
+
+        public string ServerPartitionAE
+        {
+            get { return _serverPartitionAE; }
+            set { _serverPartitionAE = value; }
         }
     }
 

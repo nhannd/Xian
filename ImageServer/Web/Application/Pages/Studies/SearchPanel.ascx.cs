@@ -49,14 +49,31 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Control
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
+    public class SearchPanelDeleteButtonClickedEventArgs:EventArgs
+    {
+        private IEnumerable<StudySummary> _selectedStudies;
+        public IEnumerable<StudySummary> SelectedStudies
+        {
+            set { _selectedStudies = value; }
+            get { return _selectedStudies; }
+        }
+    }
     [ClientScriptResource(ComponentType="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel", ResourcePath="ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js")]
     public partial class SearchPanel : AJAXScriptControl
     {
         #region Private members
         private ServerPartition _serverPartition;
         private StudyController _controller = new StudyController();
-
+        private EventHandler<SearchPanelDeleteButtonClickedEventArgs> _deleteButtonClickedHandler;
     	#endregion Private members
+
+        #region Events
+        public event EventHandler<SearchPanelDeleteButtonClickedEventArgs> DeleteButtonClicked
+        {
+            add { _deleteButtonClickedHandler += value; }
+            remove { _deleteButtonClickedHandler -= value; }
+        }
+        #endregion
 
         #region Public Properties
 
@@ -179,7 +196,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                                 source.StudyDescription = StudyDescription.Text;
                                         };
 
-            DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
         }
 
         void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
@@ -235,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 			}
         }
 
-        protected void Refresh()
+        public void Refresh()
         {
             StudyListGridView.StudyListGrid.ClearSelections();
             StudyListGridView.StudyListGrid.PageIndex = 0;
@@ -247,27 +263,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             Refresh();
         }
 
-        protected void DeleteStudyButton_Click(object sender, EventArgs e)
-        {
-            DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
-                StudyListGridView.SelectedStudies,
-                delegate(StudySummary study)
-                    {
-                        DeleteStudyInfo info = new DeleteStudyInfo();
-                        info.StudyKey = study.TheStudy.GetKey();
-                        info.AccessionNumber = study.AccessionNumber;
-                        info.Modalities = study.ModalitiesInStudy;
-                        info.PatientId = study.PatientId;
-                        info.PatientsName = study.PatientsName;
-                        info.StudyDate = study.StudyDate;
-                        info.StudyDescription = study.StudyDescription;
-                        info.StudyInstanceUid = study.StudyInstanceUid;
-                        return info;
-                    }
-                );
-            DeleteStudyConfirmDialog.Show();
-        }
-
+        
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
 		{
 			IList<StudySummary> studies = StudyListGridView.SelectedStudies;
@@ -291,5 +287,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 		}
 
         #endregion Protected Methods
+
+        protected void DeleteStudyButton_Click(object sender, ImageClickEventArgs e)
+        {
+            SearchPanelDeleteButtonClickedEventArgs args = new SearchPanelDeleteButtonClickedEventArgs();
+            args.SelectedStudies = StudyListGridView.SelectedStudies;
+            EventsHelper.Fire(_deleteButtonClickedHandler, this, args);
+        }
     }
 }
