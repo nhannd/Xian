@@ -78,6 +78,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Titles.resx</DependentUpon>
     </Compile>
+    <Compile Include="CodeMirror.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>CodeMirror.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CodeMirror.aspx.designer.cs">
+      <DependentUpon>CodeMirror.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CheckJavascript.ascx.cs">
       <DependentUpon>CheckJavascript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -966,6 +973,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
+    <Content Include="CodeMirror.aspx" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
     <Content Include="Controls\MessageBox.ascx" />
