@@ -30,30 +30,6 @@
 					if(Ris)
 					{
 						canEdit = Ris.getTag("ReadOnly") !== "true";
-
-						var worklistItem = Ris.getHealthcareContext();
-						if (worklistItem == null)
-						{
-							Field.setValue($("myForm"), "");
-							return;
-						}
-
-						var request = {
-							GetPatientProfileDetailRequest: 
-								{
-									PatientProfileRef: worklistItem.PatientProfileRef, 
-									IncludeAlerts: true 
-								}
-						};
-						
-						var service = Ris.getPatientDataService();
-						var serviceData = service.getData(request);
-						if (serviceData == null || serviceData.length == 0)
-						{
-							Field.setValue($("myForm"), "");
-							return;
-						}
-
 						data = JSML.parse(Ris.getTag("PreExamDetails")) || {};
 					}
 

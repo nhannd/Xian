@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_healthcareContext = value;
+				NotifyAllPropertiesChanged();
 			}
 		}
 

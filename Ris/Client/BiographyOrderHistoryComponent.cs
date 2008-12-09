@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
@@ -41,6 +42,50 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Defines an interface for providing custom pages to be displayed in the biography order history component.
+	/// </summary>
+	public interface IBiographyOrderHistoryPageProvider : IExtensionPageProvider<IBiographyOrderHistoryPage, IBiographyOrderHistoryContext>
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface to a custom reporting page.
+	/// </summary>
+	public interface IBiographyOrderHistoryPage : IExtensionPage
+	{
+	}
+
+	/// <summary>
+	/// Defines an interface for providing a custom page with access to the order context.
+	/// </summary>
+	public interface IBiographyOrderHistoryContext
+	{
+		/// <summary>
+		/// Gets the reporting worklist item.
+		/// </summary>
+		OrderListItem OrderListItem { get; }
+
+		/// <summary>
+		/// Occurs to indicate that the <see cref="OrderListItem"/> property has changed,
+		/// meaning the entire order context is now focused on a different order.
+		/// </summary>
+		event EventHandler OrderListItemChanged;
+
+		/// <summary>
+		/// Gets the order detail associated with the report.
+		/// </summary>
+		OrderDetail Order { get; }
+	}
+
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the reporting component.
+	/// </summary>
+	[ExtensionPoint]
+	public class BiographyOrderHistoryPageProviderExtensionPoint : ExtensionPoint<IBiographyOrderHistoryPageProvider>
+	{
+	}
+
 	/// <summary>
 	/// Extension point for views onto <see cref="BiographyOrderHistoryComponent"/>
 	/// </summary>
@@ -55,6 +100,36 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(PatientOrderHistoryComponentViewExtensionPoint))]
 	public class BiographyOrderHistoryComponent : ApplicationComponent
 	{
+		private class BiographyOrderHistoryContext : IBiographyOrderHistoryContext
+		{
+			private readonly BiographyOrderHistoryComponent _component;
+
+			public BiographyOrderHistoryContext(BiographyOrderHistoryComponent component)
+			{
+				_component = component;
+			}
+
+			#region IBiographyOrderHistoryContext Members
+
+			public OrderListItem OrderListItem
+			{
+				get { return _component._selectedOrder; }
+			}
+
+			public event EventHandler OrderListItemChanged
+			{
+				add { _component._orderLlistItemChanged += value; }
+				remove { _component._orderLlistItemChanged -= value; }
+			}
+
+			public OrderDetail Order
+			{
+				get { return _component._orderDetail; }
+			}
+
+			#endregion
+		}
+
 		private readonly EntityRef _patientRef;
 		private readonly OrderListTable _orderList;
 		private OrderListItem _selectedOrder;
@@ -67,6 +142,10 @@ namespace ClearCanvas.Ris.Client
 		private VisitDetailViewComponent _visitDetailComponent;
 		private MimeDocumentPreviewComponent _orderDocumentComponent;
 		private BiographyOrderReportsComponent _orderReportsComponent;
+		private OrderAdditionalInfoComponent _orderAdditionalInfoComponent;
+
+		private List<IBiographyOrderHistoryPage> _extensionPages;
+		private event EventHandler _orderLlistItemChanged;
 
 		/// <summary>
 		/// Constructor
@@ -93,12 +172,28 @@ namespace ClearCanvas.Ris.Client
 			_visitDetailComponent = new BiographyVisitDetailViewComponent();
 			_orderReportsComponent = new BiographyOrderReportsComponent();
 			_orderDocumentComponent = new MimeDocumentPreviewComponent(true, true, MimeDocumentPreviewComponent.AttachmentMode.Order);
+			_orderAdditionalInfoComponent = new OrderAdditionalInfoComponent(true);
 
 			_rightHandComponentContainer = new TabComponentContainer();
 			_rightHandComponentContainer.Pages.Add(new TabPage("Order Details", _orderDetailComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Visit Details", _visitDetailComponent));
+			_rightHandComponentContainer.Pages.Add(new TabPage("Additional Info", _orderAdditionalInfoComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Reports", _orderReportsComponent));
 			_rightHandComponentContainer.Pages.Add(new TabPage("Attachments", _orderDocumentComponent));
+
+			// instantiate all extension pages
+			_extensionPages = new List<IBiographyOrderHistoryPage>();
+			foreach (IBiographyOrderHistoryPageProvider pageProvider in new BiographyOrderHistoryPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetPages(new BiographyOrderHistoryContext(this)));
+			}
+
+			// add extension pages to container and set initial context
+			// the container will start those components if the user goes to that page
+			foreach (IBiographyOrderHistoryPage page in _extensionPages)
+			{
+				_rightHandComponentContainer.Pages.Add(new TabPage(page.Path.LocalizedPath, page.GetComponent()));
+			}
 
 			_rightHandComponentContainerHost = new ChildComponentHost(this.Host, _rightHandComponentContainer);
 			_rightHandComponentContainerHost.StartComponent();
@@ -108,11 +203,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Stop()
 		{
-            if (_rightHandComponentContainerHost != null)
-            {
-                _rightHandComponentContainerHost.StopComponent();
-                _rightHandComponentContainerHost = null;
-            }
+			if (_rightHandComponentContainerHost != null)
+			{
+				_rightHandComponentContainerHost.StopComponent();
+				_rightHandComponentContainerHost = null;
+			}
 
 			base.Stop();
 		}
@@ -166,6 +261,7 @@ namespace ClearCanvas.Ris.Client
 						{
 							GetDataRequest request = new GetDataRequest();
 							request.GetOrderDetailRequest = new GetOrderDetailRequest(_selectedOrder.OrderRef, true, true, false, false, true, false);
+							request.GetOrderDetailRequest.IncludeExtendedProperties = true;
 							GetDataResponse response = service.GetData(request);
 
 							_orderDetail = response.GetOrderDetailResponse.Order;
@@ -190,6 +286,8 @@ namespace ClearCanvas.Ris.Client
 				_visitDetailComponent.Context = null;
 				_orderReportsComponent.Context = null;
 				_orderDocumentComponent.OrderAttachments = new List<OrderAttachmentSummary>();
+				_orderAdditionalInfoComponent.OrderExtendedProperties = new Dictionary<string, string>();
+				_orderAdditionalInfoComponent.HealthcareContext = null;
 			}
 			else
 			{
@@ -197,8 +295,11 @@ namespace ClearCanvas.Ris.Client
 				_visitDetailComponent.Context = new VisitDetailViewComponent.VisitContext(_selectedOrder.VisitRef);
 				_orderReportsComponent.Context = new BiographyOrderReportsComponent.ReportsContext(_selectedOrder.OrderRef, _orderDetail.PatientRef);
 				_orderDocumentComponent.OrderAttachments = _orderDetail == null ? new List<OrderAttachmentSummary>() : _orderDetail.Attachments;
+				_orderAdditionalInfoComponent.OrderExtendedProperties = _orderDetail.ExtendedProperties;
+				_orderAdditionalInfoComponent.HealthcareContext = _selectedOrder;
 			}
 
+			EventsHelper.Fire(_orderLlistItemChanged, this, EventArgs.Empty);
 		}
 	}
 }
