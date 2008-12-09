@@ -92,7 +92,7 @@
 
   <!-- ShredHost App Config -->
   <Target Name="Copy ShredHost App Config">
-	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.config"/>
+	<CombineAppConfigs CheckDependency="false" SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.config"/>
   </Target>
 
   <Target Name="Copy Project Files" >
