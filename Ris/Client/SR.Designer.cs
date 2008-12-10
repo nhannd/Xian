@@ -1258,11 +1258,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You must have at least one procedure..
+        ///   Looks up a localized string similar to At least one active procedure is required..
         /// </summary>
-        internal static string MessageNoProcedures {
+        internal static string MessageNoActiveProcedures {
             get {
-                return ResourceManager.GetString("MessageNoProcedures", resourceCulture);
+                return ResourceManager.GetString("MessageNoActiveProcedures", resourceCulture);
             }
         }
         

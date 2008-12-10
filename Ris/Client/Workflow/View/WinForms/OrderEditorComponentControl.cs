@@ -92,8 +92,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
             _consultantContactPoint.DataBindings.Add("Value", _component, "RecipientContactPointToAdd", true, DataSourceUpdateMode.OnPropertyChanged);
             _consultantContactPoint.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatContactPoint(e.ListItem); };
 
+            _visit.DataSource = _component.ActiveVisits;
             _visit.DataBindings.Add("Value", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
-            _visit.DataBindings.Add("DataSource", _component, "ActiveVisits", true, DataSourceUpdateMode.Never);
             _visit.Format += delegate(object source, ListControlConvertEventArgs e) { e.Value = _component.FormatVisit(e.ListItem); };
 
             _priority.DataSource = _component.PriorityChoices;
@@ -117,7 +117,17 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
         	_downtimeAccession.DataBindings.Add("Visible", _component, "IsDowntimeAccessionNumberVisible");
 			_downtimeAccession.DataBindings.Add("Value", _component, "DowntimeAccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-		}
+
+            _component.PropertyChanged += _component_PropertyChanged;
+        }
+
+        private void _component_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "ActiveVisits")
+            {
+                _visit.DataSource = _component.ActiveVisits;
+            }
+        }
 
         private void _placeOrderButton_Click(object sender, EventArgs e)
         {

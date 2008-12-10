@@ -516,8 +516,8 @@
   <data name="MessageMergeIdenticalItems" xml:space="preserve">
     <value>You cannot merge two identical items.</value>
   </data>
-  <data name="MessageNoProcedures" xml:space="preserve">
-    <value>You must have at least one procedure.</value>
+  <data name="MessageNoActiveProcedures" xml:space="preserve">
+    <value>At least one active procedure is required.</value>
   </data>
   <data name="MessageNoRecipientsSelected" xml:space="preserve">
     <value>At least one recipient must be selected in order to post a note.</value>

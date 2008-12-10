@@ -349,6 +349,15 @@ namespace ClearCanvas.Ris.Client
                     return new ValidationResult(!(this.IsDowntimeAccessionNumberVisible && string.IsNullOrEmpty(_downtimeAccessionNumber)),
                         SR.MessageDowntimeAccessionNumberRequired);
                 }));
+            // add validation rule to ensure the table has at least non-cancelled procedure
+            this.Validation.Add(new ValidationRule("SelectedProcedure",
+                delegate
+                {
+                    bool ok = CollectionUtils.Contains(_proceduresTable.Items,
+                                delegate(ProcedureRequisition p) { return !p.Cancelled; });
+
+                    return new ValidationResult(ok, SR.MessageNoActiveProcedures);
+                }));
 
             _noteSummaryComponent = new OrderNoteSummaryComponent(OrderNoteCategory.General);
             _noteSummaryComponent.ModifiedChanged += delegate { this.Modified = true; };
@@ -408,20 +417,6 @@ namespace ClearCanvas.Ris.Client
             }
 
             InitializeTabPages();
-
-            // add validation rule to ensure the table has at least one entry (preventing 0 items case)
-            this.Validation.Add(new ValidationRule("SelectedProcedure",
-                delegate
-                {
-                    bool countIsNotZero;
-
-                    if (_proceduresTable.Items.Count > 0)
-                        countIsNotZero = true;
-                    else
-                        countIsNotZero = false;
-
-                    return new ValidationResult(countIsNotZero, SR.MessageNoProcedures);
-                }));
 
             base.Start();
         }
@@ -888,9 +883,9 @@ namespace ClearCanvas.Ris.Client
                     == ApplicationComponentExitCode.Accepted)
                 {
                     _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
-                }
 
-                this.Modified = true;
+                    this.Modified = true;
+                }
             }
             catch (Exception e)
             {
