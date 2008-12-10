@@ -81,7 +81,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             string diagnosticServiceName,
             string procedureName,
             bool procedurePortable,
-            bool hasErrors,
             Laterality procedureLaterality,
             DateTime? time,
             ActivityStatus activityStatus)
@@ -104,7 +103,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             )
         {
             _activityStatus = activityStatus;
-            _hasErrors = hasErrors;
         }
 
         /// <summary>
