@@ -38,9 +38,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.BrowsePatientData;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -195,25 +194,25 @@ namespace ClearCanvas.Ris.Client
                 }
             }
 
-			public string FormatProcedureName(string jsml)
-			{
-				try
-				{
-					ProcedureSummary summary = JsmlSerializer.Deserialize<ProcedureSummary>(jsml);
-					return summary == null ? "" : ProcedureFormat.Format(summary);
-				}
-				catch (InvalidCastException)
-				{
-					ProcedureDetail detail = JsmlSerializer.Deserialize<ProcedureDetail>(jsml);
-					return detail == null ? "" : ProcedureFormat.Format(detail);
-				}
-			}
+            public string FormatProcedureName(string jsml)
+            {
+                try
+                {
+                    ProcedureSummary summary = JsmlSerializer.Deserialize<ProcedureSummary>(jsml);
+                    return summary == null ? "" : ProcedureFormat.Format(summary);
+                }
+                catch (InvalidCastException)
+                {
+                    ProcedureDetail detail = JsmlSerializer.Deserialize<ProcedureDetail>(jsml);
+                    return detail == null ? "" : ProcedureFormat.Format(detail);
+                }
+            }
 
-			public string FormatOrderListItemProcedureName(string jsml)
-			{
-				OrderListItem item = JsmlSerializer.Deserialize<OrderListItem>(jsml);
-				return item == null ? "" : ProcedureFormat.Format(item);
-			}
+            public string FormatOrderListItemProcedureName(string jsml)
+            {
+                OrderListItem item = JsmlSerializer.Deserialize<OrderListItem>(jsml);
+                return item == null ? "" : ProcedureFormat.Format(item);
+            }
 
             public string FormatTelephone(string jsml)
             {
@@ -233,12 +232,27 @@ namespace ClearCanvas.Ris.Client
 
             public string ResolveStaffName(string search)
             {
-                StaffSummary staff = null;
+                StaffSummary staff;
                 StaffLookupHandler lookupHandler = new StaffLookupHandler(_component.Host.DesktopWindow);
                 bool resolved = lookupHandler.ResolveName(search, out staff);
 
-				// bug #2896: the name may "resolve" to nothing, so we still need to check if staff actually has a value 
-                if(!resolved || staff == null)
+                // bug #2896: the name may "resolve" to nothing, so we still need to check if staff actually has a value 
+                if (!resolved || staff == null)
+                {
+                    resolved = lookupHandler.ResolveNameInteractive(search, out staff);
+                }
+                return resolved ? JsmlSerializer.Serialize(staff, "staff") : null;
+            }
+
+            public string ResolveFilteredStaffName(string search, string jsmlFilter)
+            {
+                StaffSummary staff;
+                List<string> filter = JsmlSerializer.Deserialize<List<String>>(jsmlFilter);
+                StaffLookupHandler lookupHandler = new StaffLookupHandler(_component.Host.DesktopWindow, filter.ToArray());
+                bool resolved = lookupHandler.ResolveName(search, out staff);
+
+                // bug #2896: the name may "resolve" to nothing, so we still need to check if staff actually has a value 
+                if (!resolved || staff == null)
                 {
                     resolved = lookupHandler.ResolveNameInteractive(search, out staff);
                 }
@@ -291,15 +305,15 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
-    	public DHtmlComponent(string url)
+        public DHtmlComponent(string url)
         {
             SetUrl(url);
         }
 
         public virtual void SaveData()
         {
-			if (_htmlPageUrl != null)
-	            EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
+            if (_htmlPageUrl != null)
+                EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
         }
 
         public override void Start()
@@ -321,7 +335,7 @@ namespace ClearCanvas.Ris.Client
             {
                 // Do not assume same url implies page should not be reloaded
                 _htmlPageUrl = value;
-            	NotifyAllPropertiesChanged();
+                NotifyAllPropertiesChanged();
             }
         }
 
@@ -347,15 +361,15 @@ namespace ClearCanvas.Ris.Client
                 ActionPath uriPath = new ActionPath(path, null);
                 foreach (ActionModelNode child in embeddedActionModel.ChildNodes)
                 {
-					if(child is ActionNode)
-					{
-						ActionNode actionNode = (ActionNode) child;
-						if (actionNode.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
-						{
-							((IClickAction)actionNode.Action).Click();
-							break;
-						}
-					}
+                    if (child is ActionNode)
+                    {
+                        ActionNode actionNode = (ActionNode)child;
+                        if (actionNode.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
+                        {
+                            ((IClickAction)actionNode.Action).Click();
+                            break;
+                        }
+                    }
                 }
             }
         }

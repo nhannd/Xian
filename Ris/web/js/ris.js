@@ -58,6 +58,23 @@ if(window.external)
 				staffSummary.StaffType.Value);
 		},
 		
+		// attempts to resolve the specified query string to a staff person,
+		// returning a Staff object if successful, otherwise null.
+		// note: this method may interact with the user via a dialog box if the query is not specific enough
+		resolveStaffNameWithFilter: function(query, filter)
+		{
+			filter = filter || [];
+			var f = JSML.create(filter, "filter");
+			var staffSummary = JSML.parse(window.external.ResolveFilteredStaffName(query, f));
+			if(staffSummary == null)
+				return null;
+			
+			return new Staff(
+				staffSummary.StaffId,
+				staffSummary.Name.FamilyName + ", " + staffSummary.Name.GivenName,
+				staffSummary.StaffType.Value);
+		},
+		
 		// gets the application format string for showing date only
 		// this format string is based on the .NET DateTime class format specifiers
 		getDateFormat: function()

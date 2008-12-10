@@ -334,7 +334,7 @@
 						},
 						{	label: "Radiologist",
 							cellType: "lookup",
-							lookup: function(query) { return Ris.resolveStaffName(query); },
+							lookup: function(query) { return Ris.resolveStaffNameWithFilter(query, ["PRAD"]); },
 							getValue: function(item) { return item.sedationRadiologist; },
 							setValue: function(item, value) { item.sedationRadiologist = value; },
 							getError: function(item) { return null; },
@@ -384,6 +384,34 @@
 					]);
 				cardiacConditionTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 				cardiacConditionTable.bindItems([data.patientScreening]);
+
+				var diabetesTable = Table.createTable($("diabetesTable"), { editInPlace: canEdit, flow: true, checkBoxes: false, empty: Table.defaultEmptyOption },
+				[
+					{	label: "Is patient diabetic?",
+						cellType: "choice",
+						choices: ["No", "Yes"],
+						getValue: function(item) { return item.hasDiabetes || "No"; },
+						setValue: function(item, value) { item.hasDiabetes = value; },
+						getError: function(item) { return null; }
+					},
+					{	label: "How is it controlled?",
+						cellType: "choice",
+						choices: ["Diet", "Medication", "Insulin"],
+						getValue: function(item) { return item.diabetesControl; },
+						setValue: function(item, value) { item.diabetesControl = value; },
+						getVisible: function(item) { return item.hasDiabetes == "Yes"; },
+						getError: function(item) { return item.hasDiabetes == "Yes" ? "Value required" : null; }
+					},
+					{	label: "Medication",
+						cellType: "text",
+						getValue: function(item) { return item.diabetesMedication; },
+						setValue: function(item, value) { item.diabetesMedication = value; },
+						getVisible: function(item) { return item.diabetesControl == "Medication"; },
+						getError: function(item) { return null; }
+					}
+				]);
+				diabetesTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+				diabetesTable.bindItems([data.patientScreening]);
 			}
 
 			function initLabResultsTable()
@@ -463,6 +491,12 @@
 							cellType: "text",
 							getValue: function(item) { return item.wbc; },
 							setValue: function(item, value) { item.wbc = value; },
+							getError: function(item) { return null; }
+						},
+						{	label: "HCG",
+							cellType: "text",
+							getValue: function(item) { return item.hcg; },
+							setValue: function(item, value) { item.hcg = value; },
 							getError: function(item) { return null; }
 						},
 						{	label: "Date",
@@ -611,6 +645,11 @@
 
 				<p class="sectionheading">Cardiac Condition</p>
 				<table id="cardiacConditionTable"  width="100%">
+				<tr><td class="tableheading"></td></tr>
+				</table>
+
+				<p class="sectionheading">Diabetes</p>
+				<table id="diabetesTable"  width="100%">
 				<tr><td class="tableheading"></td></tr>
 				</table>
 			</div>
