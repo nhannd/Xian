@@ -318,7 +318,7 @@ namespace ClearCanvas.Ris.Client
 
             // in "modify" mode, the Delete action is actually a Cancel action
             if (_mode == Mode.ModifyOrder)
-                _proceduresActionModel.Delete.Tooltip = "Cancel";
+				_proceduresActionModel.Delete.Label = _proceduresActionModel.Delete.Tooltip = "Cancel";
 
 
             UpdateProcedureActionModel();
@@ -898,17 +898,18 @@ namespace ClearCanvas.Ris.Client
             if (_selectedProcedure == null || !_selectedProcedure.CanModify)
                 return;
 
-            if (_mode == Mode.ModifyOrder)
+            if (_selectedProcedure.Status == null)
             {
-                _selectedProcedure.Cancelled = true;
-                _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+				// unsaved procedure
+				_proceduresTable.Items.Remove(_selectedProcedure);
+				_selectedProcedure = null;
+				NotifyPropertyChanged("SelectedProcedure");
             }
             else
             {
-                _proceduresTable.Items.Remove(_selectedProcedure);
-                _selectedProcedure = null;
-                NotifyPropertyChanged("SelectedProcedure");
-            }
+				_selectedProcedure.Cancelled = true;
+				_proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+			}
 
             this.Modified = true;
         }

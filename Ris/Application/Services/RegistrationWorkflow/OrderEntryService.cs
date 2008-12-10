@@ -498,38 +498,58 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             bool isDowntime =
                 CollectionUtils.Contains(order.Procedures, delegate(Procedure p) { return p.DowntimeRecoveryMode; });
 
-            // insertions and updates
-            foreach (ProcedureRequisition req in procedureReqs)
-            {
-                ProcedureType requestedType = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
+			// separate the list into additions and updates
+			List<ProcedureRequisition> existingReqs = new List<ProcedureRequisition>();
+			List<ProcedureRequisition> addedReqs = new List<ProcedureRequisition>();
 
-                Procedure rp = CollectionUtils.SelectFirst(order.Procedures,
-                    delegate(Procedure x) { return req.ProcedureIndex == x.Index; });
+			foreach (ProcedureRequisition req in procedureReqs)
+			{
+				if (CollectionUtils.Contains(order.Procedures,
+					delegate(Procedure x) { return req.ProcedureIndex == x.Index; }))
+				{
+					existingReqs.Add(req);
+				}
+				else
+				{
+					addedReqs.Add(req);
+				}
+			}
 
-                if (rp == null)
-                {
-                    // create a new procedure for this requisition
-                    rp = new Procedure(requestedType);
-                    rp.DowntimeRecoveryMode = isDowntime;
-                    order.AddProcedure(rp);
+			// process the additions first, so that we don't accidentally cancel an order (if all its procedures are cancelled momentarily)
+			foreach (ProcedureRequisition req in addedReqs)
+			{
+				ProcedureType requestedType = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
 
-                    // note: need to lock the new procedure now, prior to creating the procedure steps
-                    // otherwise may get exceptions saying the Procedure is a transient object
-                    PersistenceContext.Lock(rp, DirtyState.New);
+				// create a new procedure for this requisition
+				Procedure rp = new Procedure(requestedType);
+				rp.DowntimeRecoveryMode = isDowntime;
+				order.AddProcedure(rp);
 
-                    // create the procedure steps
-                    rp.CreateProcedureSteps();
-                }
-                else
-                {
-                    // validate that the type has not changed
-                    if (!rp.Type.Equals(requestedType))
-                        throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
-                }
+				// note: need to lock the new procedure now, prior to creating the procedure steps
+				// otherwise may get exceptions saying the Procedure is a transient object
+				PersistenceContext.Lock(rp, DirtyState.New);
 
-                // apply the requisition information to the actual procedure
-                assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
-            }
+				// create the procedure steps
+				rp.CreateProcedureSteps();
+
+				// apply the requisition information to the actual procedure
+				assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
+			}
+
+			// process updates
+			foreach (ProcedureRequisition req in existingReqs)
+			{
+				ProcedureType requestedType = PersistenceContext.Load<ProcedureType>(req.ProcedureType.ProcedureTypeRef);
+				Procedure rp = CollectionUtils.SelectFirst(order.Procedures,
+					delegate(Procedure x) { return req.ProcedureIndex == x.Index; });
+
+				// validate that the type has not changed
+				if (!rp.Type.Equals(requestedType))
+					throw new RequestValidationException("Order modification must not modify the type of a requested procedure.");
+
+				// apply the requisition information to the actual procedure
+				assembler.UpdateProcedureFromRequisition(rp, req, PersistenceContext);
+			}
         }
     }
 }
