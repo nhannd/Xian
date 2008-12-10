@@ -52,10 +52,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class DicomSeriesEditorComponent : ApplicationComponent
 	{
 		private readonly DicomSeriesDetail _dicomSeries;
+		private bool _isNew;
 
-		public DicomSeriesEditorComponent(DicomSeriesDetail dicomSeries)
+		public DicomSeriesEditorComponent(DicomSeriesDetail dicomSeries, bool isNew)
 		{
 			_dicomSeries = dicomSeries;
+			_isNew = isNew;
 		}
 
 		#region Presentation Model
@@ -70,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _dicomSeries.SeriesInstanceUID; }
 		}
 
+		[ValidateNotNull]
 		public string SeriesNumber
 		{
 			get { return _dicomSeries.SeriesNumber; }
@@ -78,6 +81,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_dicomSeries.SeriesNumber = value;
 				this.Modified = true;
 			}
+		}
+
+		public bool IsSeriesNumberReadOnly
+		{
+			get { return !_isNew; }
 		}
 
 		public string SeriesDescription

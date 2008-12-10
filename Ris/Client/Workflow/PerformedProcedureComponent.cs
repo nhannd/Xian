@@ -275,7 +275,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (_editorPages.Count == 0)
 			{
 				_editorPages.Add(new MppsDetailsComponent(new EditorContext(this)));
-				_editorPages.Add(new PerformedProcedureDicomSeriesComponent(new EditorContext(this)));
+
+				if(PerformingDocumentationComponentSettings.Default.ShowDicomSeriesTab)
+				{
+					_editorPages.Add(new PerformedProcedureDicomSeriesComponent(new EditorContext(this)));
+				}
 			}
 
 

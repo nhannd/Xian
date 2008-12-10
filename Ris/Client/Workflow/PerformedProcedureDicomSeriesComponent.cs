@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			DicomSeriesDetail detail = new DicomSeriesDetail();
 
 			// Keep looping until user enters an unique Dicom Series Number, or cancel the add operation
-			DicomSeriesEditorComponent editor = new DicomSeriesEditorComponent(detail);
+			DicomSeriesEditorComponent editor = new DicomSeriesEditorComponent(detail, true);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddDicomSeries);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			DicomSeriesDetail clone = (DicomSeriesDetail) detail.Clone();
 
 			// Keep looping until user enters an unique Dicom Series Number, or cancel the edit operation
-			DicomSeriesEditorComponent editor = new DicomSeriesEditorComponent(clone);
+			DicomSeriesEditorComponent editor = new DicomSeriesEditorComponent(clone, false);
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateDicomSeries);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
@@ -198,7 +198,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <returns></returns>
 		protected override bool IsSameItem(DicomSeriesDetail x, DicomSeriesDetail y)
 		{
-			return x.DicomSeriesRef.Equals(y.DicomSeriesRef, true);
+			if (ReferenceEquals(x, y))
+				return true;
+
+			if (x.DicomSeriesRef != null && y.DicomSeriesRef != null)
+				return x.DicomSeriesRef.Equals(y.DicomSeriesRef, true);
+
+			//TODO: this won't work very well, because nothing prevents user from modifying series number
+			//should fix in future when we have a better understanding of how this component will work.
+			if (x.SeriesNumber == y.SeriesNumber)
+				return true;
+
+			return false;
 		}
 
 		#endregion

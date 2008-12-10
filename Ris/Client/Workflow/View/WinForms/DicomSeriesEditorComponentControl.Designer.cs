@@ -147,6 +147,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// _numberOfImages
 			// 
 			this._numberOfImages.Location = new System.Drawing.Point(149, 20);
+			this._numberOfImages.Maximum = new decimal(new int[] {
+            100000000,
+            0,
+            0,
+            0});
 			this._numberOfImages.Name = "_numberOfImages";
 			this._numberOfImages.Size = new System.Drawing.Size(120, 20);
 			this._numberOfImages.TabIndex = 1;
