@@ -300,15 +300,15 @@ namespace ClearCanvas.Ris.Client
                                       delegate(ProcedureRequisition item)
                                       {
                                           // if new or scheduled
-										  if (item.Status == null || item.Status.Code == "SC")
-										  {
-											  if (item.Cancelled)
-										  		return "Cancel Pending";
-											  else
-									  			return Format.DateTime(item.ScheduledTime);
-										  }
-										  else
-											  return item.Status.Value;
+                                          if (item.Status == null || item.Status.Code == "SC")
+                                          {
+                                              if (item.Cancelled)
+                                                  return "Cancel Pending";
+                                              else
+                                                  return Format.DateTime(item.ScheduledTime);
+                                          }
+                                          else
+                                              return item.Status.Value;
                                       }));
 
             _proceduresActionModel = new CrudActionModel();
@@ -316,9 +316,9 @@ namespace ClearCanvas.Ris.Client
             _proceduresActionModel.Edit.SetClickHandler(EditSelectedProcedure);
             _proceduresActionModel.Delete.SetClickHandler(CancelSelectedProcedure);
 
-			// in "modify" mode, the Delete action is actually a Cancel action
-			if (_mode == Mode.ModifyOrder)
-				_proceduresActionModel.Delete.Tooltip = "Cancel";
+            // in "modify" mode, the Delete action is actually a Cancel action
+            if (_mode == Mode.ModifyOrder)
+                _proceduresActionModel.Delete.Tooltip = "Cancel";
 
 
             UpdateProcedureActionModel();
@@ -534,12 +534,12 @@ namespace ClearCanvas.Ris.Client
             }
             visitIdentity.Append(v.VisitNumber.Id);
 
-			if(v.CurrentLocation != null)
-			{
-				visitIdentity.Append(", ");
-				visitIdentity.Append(v.CurrentLocation.Name);
-				visitIdentity.Append(",");
-			}
+            if (v.CurrentLocation != null)
+            {
+                visitIdentity.Append(", ");
+                visitIdentity.Append(v.CurrentLocation.Name);
+                visitIdentity.Append(",");
+            }
 
             StringBuilder visitType = new StringBuilder();
             visitType.Append(v.PatientClass.Value);
@@ -898,17 +898,17 @@ namespace ClearCanvas.Ris.Client
             if (_selectedProcedure == null || !_selectedProcedure.CanModify)
                 return;
 
-			if(_mode == Mode.ModifyOrder)
-			{
-				_selectedProcedure.Cancelled = true;
-				_proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
-			}
-			else
-			{
-				_proceduresTable.Items.Remove(_selectedProcedure);
-				_selectedProcedure = null;
-				NotifyPropertyChanged("SelectedProcedure");
-			}
+            if (_mode == Mode.ModifyOrder)
+            {
+                _selectedProcedure.Cancelled = true;
+                _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);
+            }
+            else
+            {
+                _proceduresTable.Items.Remove(_selectedProcedure);
+                _selectedProcedure = null;
+                NotifyPropertyChanged("SelectedProcedure");
+            }
 
             this.Modified = true;
         }
@@ -1022,7 +1022,15 @@ namespace ClearCanvas.Ris.Client
             requisition.ResultRecipients = new List<ResultRecipientDetail>(_recipientsTable.Items);
 
             // only send the downtime number if a new downtime order is being entered
-            requisition.DowntimeAccessionNumber = this.IsDowntimeAccessionNumberVisible ? _downtimeAccessionNumber : null;
+            if (this.IsDowntimeAccessionNumberVisible)
+            {
+                requisition.DowntimeAccessionNumber = _downtimeAccessionNumber;
+                requisition.Notes.Insert(0, new OrderNoteDetail(OrderNoteCategory.General.Key, SR.MessageDowntimeOrderNote, null, false, null, null));
+            }
+            else
+            {
+                requisition.DowntimeAccessionNumber = null;
+            }
 
             // there should always be a selected contact point, unless the ordering practitioner has 0 contact points
             if (_selectedOrderingPractitionerContactPoint != null)

@@ -504,6 +504,9 @@
   <data name="MessageDowntimeAccessionNumberRequired" xml:space="preserve">
     <value>A dowtime accession number is required.</value>
   </data>
+  <data name="MessageDowntimeOrderNote" xml:space="preserve">
+    <value>This order is a downtime recovery order.</value>
+  </data>
   <data name="MessageExternalPractitionerContactPointNotUnique" xml:space="preserve">
     <value>A contact point with the name '{0}' already exists.  Please enter a different name.</value>
   </data>
